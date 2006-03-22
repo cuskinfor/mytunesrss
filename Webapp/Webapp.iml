@@ -3,9 +3,9 @@
   <component name="AppServerSpecificValidatorsManager" />
   <component name="ModuleRootManager" />
   <component name="NewModuleRootManager">
-    <output url="file://$MODULE_DIR$/../distribution/exploded/WEB-INF/classes" />
+    <output url="file://$MODULE_DIR$/../distribution/webapps/ROOT/WEB-INF/classes" />
     <exclude-output />
-    <exploded url="file://$MODULE_DIR$/../distribution/exploded" />
+    <exploded url="file://$MODULE_DIR$/../distribution/webapps/ROOT" />
     <exclude-exploded />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
@@ -30,7 +30,7 @@
     <orderEntryProperties />
   </component>
   <component name="WebModuleBuildComponent">
-    <setting name="EXPLODED_URL" value="file://$MODULE_DIR$/../distribution/exploded" />
+    <setting name="EXPLODED_URL" value="file://$MODULE_DIR$/../distribution/webapps/ROOT" />
     <setting name="EXPLODED_ENABLED" value="true" />
     <setting name="JAR_URL" value="file://" />
     <setting name="JAR_ENABLED" value="false" />

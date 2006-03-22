@@ -1,15 +1,14 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
+  -->
 
 <web-app version="2.4"
          xmlns="http://java.sun.com/xml/ns/j2ee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <display-name>iTunes RSS</display-name>
-    <context-param>
-        <description>Location of the iTunes library file</description>
-        <param-name>iTunesLibrary</param-name>
-        <param-value>/Users/mdescher/Music/iTunes/iTunes Music Library.xml</param-value>
-    </context-param>
     <filter>
         <filter-name>ParameterTrimmerFilter</filter-name>
         <filter-class>de.codewave.utils.servlet.ServletRequestParameterTrimmer</filter-class>
