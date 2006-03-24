@@ -11,12 +11,12 @@ import org.apache.catalina.startup.*;
 import java.io.*;
 
 /**
- * de.codewave.mytunesrss.ITunesRss
+ * de.codewave.mytunesrss.MyTunesRss
  */
-public class ITunesRss {
+public class MyTunesRss {
     public static void main(String[] args) throws LifecycleException {
         int listenPort = Integer.parseInt(System.getProperty("listenPort"));
-        Embedded server = EmbeddedTomcat.createServer("iTunesRss", null, listenPort, new File("webapps"), "ROOT", "");
+        Embedded server = EmbeddedTomcat.createServer("MyTunesRss", null, listenPort, new File("webapps"), "ROOT", "");
         server.start();
     }
 }

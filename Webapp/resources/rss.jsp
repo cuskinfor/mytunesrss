@@ -7,17 +7,29 @@
 
 <rss version="2.0">
     <channel>
-        <title><c:out value="${channel}"/></title>
-        <link>${servletUrl}?method=getRssFeed&amp;channel=${cwfn:urlEncode(channel, 'UTF-8')}<c:forEach items="${musicFiles}" var="file">&amp;id=${file.id}</c:forEach></link>
-        <description>Codewave PSP-RSS Feeder</description>
+        <title>
+            <c:out value="${channel}"/>
+        </title>
+        <link>${servletUrl}?method=getRssFeed&amp;channel=${cwfn:urlEncode(channel, 'UTF-8')}
+        <c:forEach items="${musicFiles}" var="file">&amp;id=${file.id}</c:forEach></link>
+        <description>Codewave MyTunesRSS Feed</description>
         <c:forEach items="${musicFiles}" var="item">
             <item>
-                <title><c:if test="{item.trackNumber != 0}">${item.textualTrackNumber} - </c:if><c:out value="${item.name}"/></title>
-                <description><c:out value="${item.album}"/> - <c:out value="${item.artist}"/></description>
+                <title>
+                    <c:if test="{item.trackNumber != 0}">${item.textualTrackNumber} -</c:if>
+                    <c:out value="${item.name}"/>
+                </title>
+                <description>
+                    <c:out value="${item.album}"/>
+                    -
+                    <c:out value="${item.artist}"/>
+                </description>
                 <link>${servletUrl}/${item.id}</link>
                 <guid>${servletUrl}/${item.id}</guid>
                 <pubDate>${pubDate}</pubDate>
-                <enclosure url="${servletUrl}/${item.id}/${cwfn:urlEncode(item.virtualFileName, 'UTF-8')}" type="audio/mp3" length="${item.fileLength}"/>
+                <enclosure url="${servletUrl}/${item.id}/${cwfn:urlEncode(item.virtualFileName, 'UTF-8')}"
+                           type="audio/mp3"
+                           length="${item.fileLength}"/>
             </item>
         </c:forEach>
     </channel>

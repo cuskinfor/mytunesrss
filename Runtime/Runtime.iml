@@ -15,9 +15,9 @@
         <attribute name="URI" value="/tomcat" />
       </containerElement>
     </containerInfo>
-    <setting name="jarUrl" value="file://$MODULE_DIR$/../distribution/iTunesRss.jar" />
+    <setting name="jarUrl" value="file://$MODULE_DIR$/../distribution/MyTunesRss.jar" />
     <setting name="buildJar" value="true" />
-    <setting name="mainClass" value="de.codewave.itunesrss.ITunesRss" />
+    <setting name="mainClass" value="de.codewave.mytunesrss.MyTunesRss" />
   </component>
   <component name="ModuleRootManager" />
   <component name="NewModuleRootManager">

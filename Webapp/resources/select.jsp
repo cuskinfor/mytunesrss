@@ -6,7 +6,7 @@
 
 <html>
 <head>
-    <title>Codewave PSP RSS Feeder</title>
+    <title>Codewave MyTunesRSS Feed</title>
     <script type="text/javascript">
 
         function sort(sortMethod) {
@@ -21,11 +21,11 @@
 <form id="select" action="${servletUrl}" method="get">
     <input type="hidden" name="method" value="getRssFeed" />
 
-    <jsp:include page="/error.jsp"/>
+    <jsp:include page="/error.jsp" />
 
-    <h1>Select results for your personal RSS feed</h1>
+    <h1>Select results for your personal MyTunesRSS feed</h1>
 
-    <h2>Enter a name for your RSS feed</h2>
+    <h2>Enter a name for your feed</h2>
     <input type="text" name="channel" value="<c:out value="${param.channel}"/>" />
 
     <h2>Select titles for your feed</h2>
@@ -46,29 +46,39 @@
         <c:forEach items="${section.items}" var="item">
             <input type="checkbox" name="id" value="${item.file.id}" <c:if test="${item.selected}"> checked="checked"</c:if> />&nbsp;
             <a href="${servletUrl}/${item.file.id}/${cwfn:urlEncode(item.file.virtualFileName, 'UTF-8')}">play</a>&nbsp;
-            <c:choose>
-                <c:when test="${!commonArtist && !commonAlbum}">
-                    <c:out value="${item.file.album} -" />
-                    <c:if test="${!empty item.file.textualTrackNumber}">${item.file.textualTrackNumber} -</c:if>
-                    <c:out value="${item.file.artist}" />: <span class="title"><c:out value="${item.file.name}" /></span>
-                </c:when>
-                <c:when test="${!commonArtist}">
-                    <c:if test="${!empty item.file.textualTrackNumber}">${item.file.textualTrackNumber} -</c:if>
-                    <c:out value="${item.file.artist}" />: <span class="title"><c:out value="${item.file.name}" /></span>
-                </c:when>
-                <c:when test="${!commonAlbum}">
-                    <c:out value="${item.file.album} -" />
-                    <c:if test="${!empty item.file.textualTrackNumber}">${item.file.textualTrackNumber} -</c:if>
-                    <span class="title"><c:out value="${item.file.name}" /></span>
-                </c:when>
-                <c:otherwise>
-                    <c:if test="${!empty item.file.textualTrackNumber}">${item.file.textualTrackNumber} -</c:if>
-                    <span class="title"><c:out value="${item.file.name}" /></span>
-                </c:otherwise>
-            </c:choose><br />
+                                                                                                                  <c:choose>
+                                                                                                                      <c:when test="${!commonArtist && !commonAlbum}">
+                                                                                                                          <c:out value="${item.file.album} -" />
+                                                                                                                          <c:if test="${!empty item.file.textualTrackNumber}">${item.file.textualTrackNumber}
+                                                                                                                              -</c:if>
+                                                                                                                          <c:out value="${item.file.artist}" />
+                                                                                                                          : <span class="title"><c:out
+                                                                                                                              value="${item.file.name}" /></span>
+                                                                                                                      </c:when>
+                                                                                                                      <c:when test="${!commonArtist}">
+                                                                                                                          <c:if test="${!empty item.file.textualTrackNumber}">${item.file.textualTrackNumber}
+                                                                                                                              -</c:if>
+                                                                                                                          <c:out value="${item.file.artist}" />
+                                                                                                                          : <span class="title"><c:out
+                                                                                                                              value="${item.file.name}" /></span>
+                                                                                                                      </c:when>
+                                                                                                                      <c:when test="${!commonAlbum}">
+                                                                                                                          <c:out value="${item.file.album} -" />
+                                                                                                                          <c:if test="${!empty item.file.textualTrackNumber}">${item.file.textualTrackNumber}
+                                                                                                                              -</c:if>
+                                                                                                                          <span class="title"><c:out
+                                                                                                                                  value="${item.file.name}" /></span>
+                                                                                                                      </c:when>
+                                                                                                                      <c:otherwise>
+                                                                                                                          <c:if test="${!empty item.file.textualTrackNumber}">${item.file.textualTrackNumber}
+                                                                                                                              -</c:if>
+                                                                                                                          <span class="title"><c:out
+                                                                                                                                  value="${item.file.name}" /></span>
+                                                                                                                      </c:otherwise>
+                                                                                                                  </c:choose><br />
         </c:forEach>
     </c:forEach>
-    <a href="#" onclick="document.forms[0].submit()">create RSS feed</a>
+    <a href="#" onclick="document.forms[0].submit()">create feed</a>
 </form>
 </body>
 </html>
