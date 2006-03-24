@@ -20,19 +20,19 @@
     <listener>
         <description>Servlet context listener for loading the iTunes library</description>
         <display-name>iTunesLibraryListener</display-name>
-        <listener-class>de.codewave.itunesrss.itunes.ITunesLibraryContextListener</listener-class>
+        <listener-class>de.codewave.mytunesrss.itunes.ITunesLibraryContextListener</listener-class>
     </listener>
     <servlet>
         <description>Servlet for creating the RSS feed</description>
         <display-name>RSSFeed</display-name>
         <servlet-name>RSSFeed</servlet-name>
-        <servlet-class>de.codewave.itunesrss.servlet.RSSFeedServlet</servlet-class>
+        <servlet-class>de.codewave.mytunesrss.servlet.RSSFeedServlet</servlet-class>
     </servlet>
     <servlet>
         <description>Servlet for delivering MP3 content</description>
         <display-name>MP3Delivery</display-name>
         <servlet-name>MP3Delivery</servlet-name>
-        <servlet-class>de.codewave.itunesrss.servlet.MP3DeliveryServlet</servlet-class>
+        <servlet-class>de.codewave.mytunesrss.servlet.MP3DeliveryServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>MP3Delivery</servlet-name>
