@@ -27,11 +27,13 @@ public class Settings {
     private JButton myQuitButton;
     private JButton myLookupButton;
     private Embedded myServer;
+    private static final String DEFAULT_LIBRARY_PATH = "";
+    private static final String DEFAULT_TOMCAT_PORT = "8080";
 
     public Settings() {
         setStatus(myMainBundle.getString("info.server.idle"));
-        myPort.setText(Preferences.userRoot().get("/de/codewave/mytunesrss/port", "8080"));
-        myTunesXmlPath.setText(Preferences.userRoot().get("/de/codewave/mytunesrss/library", ""));
+        myPort.setText(Preferences.userRoot().node("/de/codewave/mytunesrss").get("port", DEFAULT_TOMCAT_PORT));
+        myTunesXmlPath.setText(Preferences.userRoot().node("/de/codewave/mytunesrss").get("library", DEFAULT_LIBRARY_PATH));
         myStartStopButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 doStartStopServer();
@@ -80,12 +82,12 @@ public class Settings {
     public void doStartServer() {
         int port;
         try {
-            port = Integer.parseInt(myPort.getText());
+            port = Integer.parseInt(myPort.getText().trim());
         } catch (NumberFormatException e) {
             port = MIN_PORT - 1;
         }
         final int serverPort = port;
-        final File library = new File(myTunesXmlPath.getText());
+        final File library = new File(myTunesXmlPath.getText().trim());
         if (port < MIN_PORT || port > MAX_PORT) {
             showErrorMessage(myMainBundle.getString("error.startServer.port"));
         } else if (!new ITunesLibraryFileFilter().accept(library)) {
@@ -148,8 +150,21 @@ public class Settings {
             if (myServer != null) {
                 doStopServer();
             }
-            Preferences.userRoot().put("/de/codewave/mytunesrss/port", myPort.getText());
-            Preferences.userRoot().put("/de/codewave/mytunesrss/library", myTunesXmlPath.getText());
+            String savedPort = Preferences.userRoot().node("/de/codewave/mytunesrss").get("port", DEFAULT_TOMCAT_PORT);
+            String savedPath = Preferences.userRoot().node("/de/codewave/mytunesrss").get("library", DEFAULT_LIBRARY_PATH);
+            if (!myPort.getText().trim().equals(savedPort) || !myTunesXmlPath.getText().trim().equals(savedPath)) {
+                if (JOptionPane.showOptionDialog(myRootPanel.getTopLevelAncestor(),
+                                                 myMainBundle.getString("dialog.saveSettingsQuestion.message"),
+                                                 myMainBundle.getString("dialog.saveSettingsQuestion.title"),
+                                                 JOptionPane.YES_NO_OPTION,
+                                                 JOptionPane.QUESTION_MESSAGE,
+                                                 null,
+                                                 null,
+                                                 null) == JOptionPane.YES_OPTION) {
+                    Preferences.userRoot().node("/de/codewave/mytunesrss").put("port", myPort.getText().trim());
+                    Preferences.userRoot().node("/de/codewave/mytunesrss").put("library", myTunesXmlPath.getText().trim());
+                }
+            }
             System.exit(0);
         } else {
             showErrorMessage(myMainBundle.getString("error.quitWhileStartingOrStopping"));

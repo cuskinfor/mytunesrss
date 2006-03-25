@@ -2,6 +2,10 @@
 <module version="4" relativePaths="true" type="JAVA_MODULE">
   <component name="BuildJarSettings">
     <containerInfo>
+      <containerElement type="module" name="CodewaveUtils">
+        <attribute name="method" value="1" />
+        <attribute name="URI" value="/" />
+      </containerElement>
       <containerElement type="module" name="EmbeddedTomcat">
         <attribute name="method" value="1" />
         <attribute name="URI" value="/" />
@@ -13,6 +17,14 @@
       <containerElement type="library" name="apache-tomcat-embed" level="application">
         <attribute name="method" value="2" />
         <attribute name="URI" value="/tomcat" />
+      </containerElement>
+      <containerElement type="library" name="commons-lang" level="application">
+        <attribute name="method" value="2" />
+        <attribute name="URI" value="/3rdparty" />
+      </containerElement>
+      <containerElement type="library" name="commons-logging" level="application">
+        <attribute name="method" value="2" />
+        <attribute name="URI" value="/3rdparty" />
       </containerElement>
     </containerInfo>
     <setting name="jarUrl" value="file://$MODULE_DIR$/../distribution/MyTunesRss.jar" />
