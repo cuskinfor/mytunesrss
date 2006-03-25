@@ -3,20 +3,22 @@ package de.codewave.mytunesrss;
 import de.codewave.embedtomcat.*;
 import org.apache.catalina.*;
 import org.apache.catalina.startup.*;
-import org.apache.commons.logging.*;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.*;
 import java.util.prefs.*;
 
 /**
  * de.codewave.mytunesrss.Settings
  */
 public class Settings {
-    private static final Log LOG = LogFactory.getLog(Settings.class);
+    private static final int MIN_PORT = 1;
+    private static final int MAX_PORT = 65535;
+    private static final String LIBRARY_XML_FILE_NAME = "iTunes Music Library.xml";
 
+    private final ResourceBundle myMainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
     private JTextField myPort;
     private JTextField myTunesXmlPath;
     private JPanel myRootPanel;
@@ -27,22 +29,22 @@ public class Settings {
     private Embedded myServer;
 
     public Settings() {
-        setStatus("Please configure your server.", false);
+        setStatus(myMainBundle.getString("info.server.idle"));
         myPort.setText(Preferences.userRoot().get("/de/codewave/mytunesrss/port", "8080"));
         myTunesXmlPath.setText(Preferences.userRoot().get("/de/codewave/mytunesrss/library", ""));
         myStartStopButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                doStartStopServer(e);
+                doStartStopServer();
             }
         });
         myQuitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                doQuitApplication(e);
+                doQuitApplication();
             }
         });
         myLookupButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                doLookupLibraryFile(e);
+                doLookupLibraryFile();
             }
         });
         myRootPanel.validate();
@@ -52,82 +54,84 @@ public class Settings {
         return myRootPanel;
     }
 
-    public void doLookupLibraryFile(ActionEvent event) {
+    public void doLookupLibraryFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new ITunesLibraryFileFilter());
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.addChoosableFileFilter(new ITunesLibraryFileFilter());
-        fileChooser.setDialogTitle("Select your iTunes Library");
-        if (fileChooser.showDialog(myRootPanel, null) == JFileChooser.APPROVE_OPTION) {
+        fileChooser.setDialogTitle(myMainBundle.getString("dialog.lookupLibraryXml.title"));
+        if (fileChooser.showDialog(getRootPanel().getTopLevelAncestor(), null) == JFileChooser.APPROVE_OPTION) {
             try {
                 myTunesXmlPath.setText(fileChooser.getSelectedFile().getCanonicalPath());
             } catch (IOException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not approve file selection.", e);
-                }
+                showErrorMessage(myMainBundle.getString("error.lookupLibraryXml.failure") + e.getMessage());
             }
         }
     }
 
-    public void doStartStopServer(ActionEvent event) {
+    public void doStartStopServer() {
         if (myServer == null) {
-            doStartServer(event);
+            doStartServer();
         } else {
-            doStopServer(event);
+            doStopServer();
         }
     }
 
-    public void doStartServer(ActionEvent event) {
+    public void doStartServer() {
         int port;
         try {
             port = Integer.parseInt(myPort.getText());
         } catch (NumberFormatException e) {
-            port = -1;
+            port = MIN_PORT - 1;
         }
         final int serverPort = port;
         final File library = new File(myTunesXmlPath.getText());
-        if (port < 1 || port > 65535) {
-            setStatus("Please enter a port number between 1 and 65535.", true);
+        if (port < MIN_PORT || port > MAX_PORT) {
+            showErrorMessage(myMainBundle.getString("error.startServer.port"));
         } else if (!new ITunesLibraryFileFilter().accept(library)) {
-            setStatus("Please select the \"iTunes Music Library.xml\" file.", true);
+            showErrorMessage(myMainBundle.getString("error.startServer.libraryXmlFile"));
         } else {
             disableButtons();
             disableConfig();
             myRootPanel.validate();
-            setStatus("Starting server... please wait.", false);
+            setStatus(myMainBundle.getString("info.server.starting"));
             new Thread(new Runnable() {
                 public void run() {
                     try {
                         myServer = EmbeddedTomcat.createServer("MyTunesRss", null, serverPort, new File("webapps"), "ROOT", "");
                         System.setProperty("iTunesLibrary", library.getCanonicalPath());
                         myServer.start();
-                        myStartStopButton.setText("Stop myTunesRSS Webserver");
+                        myStartStopButton.setText(myMainBundle.getString("gui.settings.button.stopServer"));
+                        myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.stopServer"));
                     } catch (Exception e) {
-                        setStatus("Could not start server: " + e.getMessage(), true);
+                        showErrorMessage(myMainBundle.getString("error.server.startFailure") + e.getMessage());
+                        setStatus(myMainBundle.getString("info.server.idle"));
                         enableConfig();
                     }
                     enableButtons();
                     myRootPanel.validate();
-                    setStatus("Server running.", false);
+                    setStatus(myMainBundle.getString("info.server.running"));
                 }
             }).start();
         }
     }
 
-    public void doStopServer(ActionEvent event) {
+    public void doStopServer() {
         disableButtons();
         myRootPanel.validate();
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    setStatus("Stopping server... please wait.", false);
+                    setStatus(myMainBundle.getString("info.server.stopping"));
                     myServer.stop();
                     myServer = null;
-                    setStatus("Please configure your server.", false);
+                    setStatus(myMainBundle.getString("info.server.idle"));
                     enableConfig();
-                    myStartStopButton.setText("Start myTunesRSS Webserver");
+                    myStartStopButton.setText(myMainBundle.getString("gui.settings.button.startServer"));
+                    myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.startServer"));
                 } catch (LifecycleException e) {
-                    setStatus("Could not stop server: " + e.getMessage(), true);
+                    showErrorMessage(myMainBundle.getString("error.server.stopFailure") + e.getMessage());
+                    setStatus(myMainBundle.getString("info.server.running"));
                 }
                 enableButtons();
                 myRootPanel.validate();
@@ -135,19 +139,25 @@ public class Settings {
         }).start();
     }
 
-    private void setStatus(String text, boolean error) {
-        myStatusText.setBackground(error ? Color.RED : Color.WHITE);
-        myStatusText.setForeground(error ? Color.WHITE : Color.BLACK);
+    private void setStatus(String text) {
         myStatusText.setText(text);
     }
 
-    public void doQuitApplication(ActionEvent event) {
-        if (myServer != null) {
-            doStopServer(event);
+    public void doQuitApplication() {
+        if (myQuitButton.isEnabled()) {
+            if (myServer != null) {
+                doStopServer();
+            }
+            Preferences.userRoot().put("/de/codewave/mytunesrss/port", myPort.getText());
+            Preferences.userRoot().put("/de/codewave/mytunesrss/library", myTunesXmlPath.getText());
+            System.exit(0);
+        } else {
+            showErrorMessage(myMainBundle.getString("error.quitWhileStartingOrStopping"));
         }
-        Preferences.userRoot().put("/de/codewave/mytunesrss/port", myPort.getText());
-        Preferences.userRoot().put("/de/codewave/mytunesrss/library", myTunesXmlPath.getText());
-        System.exit(0);
+    }
+
+    private void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(getRootPanel().getTopLevelAncestor(), message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     private void enableButtons() {
@@ -174,7 +184,7 @@ public class Settings {
 
     public static class ITunesLibraryFileFilter extends javax.swing.filechooser.FileFilter {
         public boolean accept(File f) {
-            return f != null && f.exists() && f.getName().toLowerCase().equals("itunes music library.xml");
+            return f != null && f.exists() && LIBRARY_XML_FILE_NAME.equalsIgnoreCase(f.getName());
         }
 
         public String getDescription() {
