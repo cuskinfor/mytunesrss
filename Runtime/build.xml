@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="MyTunesRSS Runtime" basedir="." default="zip.distribution">
+
+    <target name="zip.distribution">
+        <zip destfile="../MyTunesRss.zip" basedir="../distribution"/>
+    </target>
+
+</project>
