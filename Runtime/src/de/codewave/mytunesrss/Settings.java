@@ -100,8 +100,8 @@ public class Settings {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        myServer = EmbeddedTomcat.createServer("MyTunesRss", null, serverPort, new File("webapps"), "ROOT", "");
-                        System.setProperty("iTunesLibrary", library.getCanonicalPath());
+                        myServer = EmbeddedTomcat.createServer("MyTunesRss", null, serverPort, new File("."), "ROOT", "");
+                        System.setProperty("mytunesrss.iTunesLibrary", library.getCanonicalPath());
                         myServer.start();
                         myStartStopButton.setText(myMainBundle.getString("gui.settings.button.stopServer"));
                         myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.stopServer"));

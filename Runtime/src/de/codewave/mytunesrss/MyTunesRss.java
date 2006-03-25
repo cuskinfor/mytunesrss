@@ -4,17 +4,23 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.utils.moduleinfo.*;
 import org.apache.catalina.*;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
  */
 public class MyTunesRss {
     public static void main(String[] args) throws LifecycleException {
-        JFrame frame = new JFrame("Codewave MyTunesRSS Feeder");
+        ResourceBundle mainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
+        ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("codewave-version.xml", "MyTunesRSS");
+        String version = modulesInfo.getVersion();
+        System.setProperty("mytunesrss.version", version);
+        JFrame frame = new JFrame(mainBundle.getString("gui.title") + " v" + version);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         Settings settingsForm = new Settings();
         frame.addWindowListener(new MyTunesRssMainWindowListener(settingsForm));

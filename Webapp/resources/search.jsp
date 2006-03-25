@@ -1,10 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
 <html>
 <head>
-    <title>Codewave MyTunesRSS Feed</title>
+    <title>Codewave MyTunesRSS v${cwfn:sysprop('mytunesrss.version')}</title>
 </head>
 
 <body>

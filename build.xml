@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="MyTunesRSS Runtime" basedir="." default="zip.distribution">
+
+    <import file="../CodewaveAnt/etc/svn-macros.xml"/>
+    <taskdef name="codewave.moduleinfo" classname="de.codewave.ant.task.moduleinfo.ModuleInfoTask"/>
+
+    <target name="generate.version">
+        <svn.propget property="version" path="." name="codewave:version"/>
+        <mkdir dir="Runtime/gen-src"/>
+        <codewave.moduleinfo destfile="Runtime/gen-src/codewave-version.xml" name="MyTunesRSS" version="${version}"/>
+    </target>
+
+    <target name="zip.distribution">
+        <zip destfile="MyTunesRss.zip" basedir="distribution"/>
+    </target>
+
+</project>

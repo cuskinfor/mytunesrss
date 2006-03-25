@@ -13,20 +13,12 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="CodewaveUtils" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$APPLICATION_HOME_DIR$/lib/javaee.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="commons-jxpath" level="application" />
     <orderEntry type="library" name="commons-logging" level="application" />
     <orderEntry type="library" name="xerces" level="application" />
     <orderEntry type="library" name="commons-lang" level="application" />
     <orderEntry type="library" name="jakarta-taglibs-standard-1.1" level="application" />
+    <orderEntry type="library" name="Tomcat 5.5" level="application_server_libraries" />
     <orderEntryProperties />
   </component>
   <component name="WebModuleBuildComponent">

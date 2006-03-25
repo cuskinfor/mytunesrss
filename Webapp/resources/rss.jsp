@@ -11,8 +11,9 @@
             <c:out value="${channel}"/>
         </title>
         <link>${servletUrl}?method=getRssFeed&amp;channel=${cwfn:urlEncode(channel, 'UTF-8')}
-        <c:forEach items="${musicFiles}" var="file">&amp;id=${file.id}</c:forEach></link>
-        <description>Codewave MyTunesRSS Feed</description>
+            <c:forEach items="${musicFiles}" var="file">&amp;id=${file.id}</c:forEach>
+        </link>
+        <description>Codewave MyTunesRSS v${cwfn:sysprop('mytunesrss.version')}</description>
         <c:forEach items="${musicFiles}" var="item">
             <item>
                 <title>

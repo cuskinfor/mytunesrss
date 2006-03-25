@@ -6,7 +6,7 @@
 
 <html>
 <head>
-    <title>Codewave MyTunesRSS Feed</title>
+    <title>Codewave MyTunesRSS v${cwfn:sysprop('mytunesrss.version')}</title>
     <script type="text/javascript">
 
         function sort(sortMethod) {
@@ -66,14 +66,12 @@
                                                                                                                           <c:out value="${item.file.album} -" />
                                                                                                                           <c:if test="${!empty item.file.textualTrackNumber}">${item.file.textualTrackNumber}
                                                                                                                               -</c:if>
-                                                                                                                          <span class="title"><c:out
-                                                                                                                                  value="${item.file.name}" /></span>
+          <span class="title"><c:out value="${item.file.name}" /></span>
                                                                                                                       </c:when>
                                                                                                                       <c:otherwise>
                                                                                                                           <c:if test="${!empty item.file.textualTrackNumber}">${item.file.textualTrackNumber}
                                                                                                                               -</c:if>
-                                                                                                                          <span class="title"><c:out
-                                                                                                                                  value="${item.file.name}" /></span>
+          <span class="title"><c:out value="${item.file.name}" /></span>
                                                                                                                       </c:otherwise>
                                                                                                                   </c:choose><br />
         </c:forEach>
