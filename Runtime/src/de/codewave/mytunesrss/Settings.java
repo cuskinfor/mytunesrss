@@ -1,12 +1,12 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.embedtomcat.*;
-import de.codewave.utils.swing.*;
 import org.apache.catalina.*;
 import org.apache.catalina.startup.*;
 import org.apache.commons.logging.*;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.prefs.*;
@@ -20,15 +20,31 @@ public class Settings {
     private JTextField myPort;
     private JTextField myTunesXmlPath;
     private JPanel myRootPanel;
-    private JPanel myIdlePanel;
     private JLabel myStatusText;
+    private JButton myStartStopButton;
+    private JButton myQuitButton;
+    private JButton myLookupButton;
     private Embedded myServer;
 
     public Settings() {
-        SwingUtils.assignActionListeners(myRootPanel, this);
-        myStatusText.setText("Please configure your server.");
+        setStatus("Please configure your server.", false);
         myPort.setText(Preferences.userRoot().get("/de/codewave/mytunesrss/port", "8080"));
         myTunesXmlPath.setText(Preferences.userRoot().get("/de/codewave/mytunesrss/library", ""));
+        myStartStopButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                doStartStopServer(e);
+            }
+        });
+        myQuitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                doQuitApplication(e);
+            }
+        });
+        myLookupButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                doLookupLibraryFile(e);
+            }
+        });
         myRootPanel.validate();
     }
 
@@ -36,7 +52,6 @@ public class Settings {
         return myRootPanel;
     }
 
-    @ActionListenerComponent("lookupButton")
     public void doLookupLibraryFile(ActionEvent event) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new ITunesLibraryFileFilter());
@@ -54,7 +69,6 @@ public class Settings {
         }
     }
 
-    @ActionListenerComponent("startStopButton")
     public void doStartStopServer(ActionEvent event) {
         if (myServer == null) {
             doStartServer(event);
@@ -73,50 +87,60 @@ public class Settings {
         final int serverPort = port;
         final File library = new File(myTunesXmlPath.getText());
         if (port < 1 || port > 65535) {
-            myStatusText.setText("Please enter a port number between 1 and 65535.");
+            setStatus("Please enter a port number between 1 and 65535.", true);
         } else if (!new ITunesLibraryFileFilter().accept(library)) {
-            myStatusText.setText("Please select the \"iTunes Music Library.xml\" file.");
+            setStatus("Please select the \"iTunes Music Library.xml\" file.", true);
         } else {
-            myIdlePanel.setEnabled(false);
+            disableButtons();
+            disableConfig();
             myRootPanel.validate();
-            myStatusText.setText("Starting server... please wait.");
+            setStatus("Starting server... please wait.", false);
             new Thread(new Runnable() {
                 public void run() {
                     try {
                         myServer = EmbeddedTomcat.createServer("MyTunesRss", null, serverPort, new File("webapps"), "ROOT", "");
                         System.setProperty("iTunesLibrary", library.getCanonicalPath());
                         myServer.start();
+                        myStartStopButton.setText("Stop myTunesRSS Webserver");
                     } catch (Exception e) {
-                        myStatusText.setText("Could not start server: " + e.getMessage());
+                        setStatus("Could not start server: " + e.getMessage(), true);
+                        enableConfig();
                     }
+                    enableButtons();
                     myRootPanel.validate();
-                    myStatusText.setText("Server running.");
+                    setStatus("Server running.", false);
                 }
             }).start();
         }
     }
 
-    @ActionListenerComponent("stopButton")
     public void doStopServer(ActionEvent event) {
-        myIdlePanel.setEnabled(false);
+        disableButtons();
         myRootPanel.validate();
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    myStatusText.setText("Stopping server... please wait.");
+                    setStatus("Stopping server... please wait.", false);
                     myServer.stop();
                     myServer = null;
-                    myStatusText.setText("Please configure your server.");
+                    setStatus("Please configure your server.", false);
+                    enableConfig();
+                    myStartStopButton.setText("Start myTunesRSS Webserver");
                 } catch (LifecycleException e) {
-                    myStatusText.setText("Could not stop server: " + e.getMessage());
+                    setStatus("Could not stop server: " + e.getMessage(), true);
                 }
-                myIdlePanel.setEnabled(true);
+                enableButtons();
                 myRootPanel.validate();
             }
         }).start();
     }
 
-    @ActionListenerComponent("quitButton")
+    private void setStatus(String text, boolean error) {
+        myStatusText.setBackground(error ? Color.RED : Color.WHITE);
+        myStatusText.setForeground(error ? Color.WHITE : Color.BLACK);
+        myStatusText.setText(text);
+    }
+
     public void doQuitApplication(ActionEvent event) {
         if (myServer != null) {
             doStopServer(event);
@@ -124,6 +148,28 @@ public class Settings {
         Preferences.userRoot().put("/de/codewave/mytunesrss/port", myPort.getText());
         Preferences.userRoot().put("/de/codewave/mytunesrss/library", myTunesXmlPath.getText());
         System.exit(0);
+    }
+
+    private void enableButtons() {
+        myStartStopButton.setEnabled(true);
+        myQuitButton.setEnabled(true);
+    }
+
+    private void disableButtons() {
+        myStartStopButton.setEnabled(false);
+        myQuitButton.setEnabled(false);
+    }
+
+    private void enableConfig() {
+        myLookupButton.setEnabled(true);
+        myPort.setEnabled(true);
+        myTunesXmlPath.setEnabled(true);
+    }
+
+    private void disableConfig() {
+        myLookupButton.setEnabled(false);
+        myPort.setEnabled(false);
+        myTunesXmlPath.setEnabled(false);
     }
 
     public static class ITunesLibraryFileFilter extends javax.swing.filechooser.FileFilter {
