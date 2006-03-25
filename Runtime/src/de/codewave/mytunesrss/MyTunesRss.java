@@ -4,19 +4,20 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.embedtomcat.*;
 import org.apache.catalina.*;
-import org.apache.catalina.startup.*;
 
-import java.io.*;
+import javax.swing.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
  */
 public class MyTunesRss {
     public static void main(String[] args) throws LifecycleException {
-        int listenPort = Integer.parseInt(System.getProperty("listenPort"));
-        Embedded server = EmbeddedTomcat.createServer("MyTunesRss", null, listenPort, new File("webapps"), "ROOT", "");
-        server.start();
+        JFrame frame = new JFrame("Codewave MyTunesRSS Feeder");
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        Settings settingsForm = new Settings();
+        frame.getContentPane().add(settingsForm.getRootPanel());
+        frame.pack();
+        frame.setVisible(true);
     }
 }

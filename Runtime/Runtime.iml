@@ -29,6 +29,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="EmbeddedTomcat" />
+    <orderEntry type="module" module-name="CodewaveUtils" />
     <orderEntryProperties />
   </component>
   <component name="copyright">
