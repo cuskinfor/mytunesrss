@@ -18,6 +18,10 @@
         <attribute name="method" value="2" />
         <attribute name="URI" value="/tomcat" />
       </containerElement>
+      <containerElement type="library" name="commons-jxpath" level="application">
+        <attribute name="method" value="2" />
+        <attribute name="URI" value="/3rdparty" />
+      </containerElement>
       <containerElement type="library" name="commons-lang" level="application">
         <attribute name="method" value="2" />
         <attribute name="URI" value="/3rdparty" />
@@ -27,7 +31,7 @@
         <attribute name="URI" value="/3rdparty" />
       </containerElement>
     </containerInfo>
-    <setting name="jarUrl" value="file://$MODULE_DIR$/../distribution/MyTunesRss.jar" />
+    <setting name="jarUrl" value="file://$MODULE_DIR$/../distribution/MyTunesRSS.jar" />
     <setting name="buildJar" value="true" />
     <setting name="mainClass" value="de.codewave.mytunesrss.MyTunesRss" />
   </component>

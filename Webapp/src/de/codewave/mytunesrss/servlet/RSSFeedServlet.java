@@ -4,18 +4,17 @@
 
 package de.codewave.mytunesrss.servlet;
 
+import de.codewave.mytunesrss.itunes.*;
+import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.musicfile.*;
 import org.apache.commons.lang.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.lang.reflect.*;
-import java.util.*;
 import java.text.*;
-
-import de.codewave.mytunesrss.jsp.*;
-import de.codewave.mytunesrss.musicfile.*;
-import de.codewave.mytunesrss.itunes.*;
+import java.util.*;
 
 public class RSSFeedServlet extends HttpServlet {
 
@@ -74,7 +73,7 @@ public class RSSFeedServlet extends HttpServlet {
         request.setAttribute("musicFiles", feedFiles);
         String channel = request.getParameter("channel");
         if (StringUtils.isEmpty(channel)) {
-            channel = "Codewave PSP-RSS Feeder";
+            channel = "Codewave MyTunesRSS v" + System.getProperty("mytunesrss.version");
         }
         request.setAttribute("channel", channel);
         request.setAttribute("pubDate", new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US).format(new Date()));
