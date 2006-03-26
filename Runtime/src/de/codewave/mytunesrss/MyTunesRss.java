@@ -17,7 +17,7 @@ import java.util.*;
 public class MyTunesRss {
     public static void main(String[] args) throws LifecycleException {
         ResourceBundle mainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
-        ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("codewave-version.xml", "MyTunesRSS");
+        ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
         String version = modulesInfo.getVersion();
         System.setProperty("mytunesrss.version", version);
         JFrame frame = new JFrame(mainBundle.getString("gui.title") + " v" + version);
