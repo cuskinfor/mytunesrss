@@ -1,10 +1,10 @@
 package de.codewave.mytunesrss.itunes;
 
-import de.codewave.utils.xml.*;
 import de.codewave.mytunesrss.musicfile.*;
+import de.codewave.utils.xml.*;
 import org.apache.commons.jxpath.*;
-import org.apache.commons.logging.*;
 import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 
 import java.io.*;
 import java.net.*;
@@ -27,6 +27,8 @@ public class ITunesLibrary implements Serializable {
     private Set<String> myUsedIds = new HashSet<String>();
 
     public void load(URL iTunesLibraryXml) {
+        JXPathUtils.registerEntity("-//Apple Computer//DTD PLIST 1.0//EN",
+                                   getClass().getClassLoader().getResource("de/codewave/mytunesrss/plist.dtd"));
         JXPathContext rootContext = JXPathUtils.getContext(iTunesLibraryXml);
         for (Iterator<JXPathContext> iterator = JXPathUtils.getContextIterator(rootContext, "/plist/dict/dict/dict"); iterator.hasNext();) {
             JXPathContext titleContext = iterator.next();
