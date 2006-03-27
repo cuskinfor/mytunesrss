@@ -58,9 +58,8 @@ public class Settings {
 
     public void doLookupLibraryFile() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileFilter(new ITunesLibraryFileFilter());
+        fileChooser.setFileFilter(new ITunesLibraryFileFilter(true));
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.addChoosableFileFilter(new ITunesLibraryFileFilter());
         fileChooser.setDialogTitle(myMainBundle.getString("dialog.lookupLibraryXml.title"));
         if (fileChooser.showDialog(getRootPanel().getTopLevelAncestor(), null) == JFileChooser.APPROVE_OPTION) {
             try {
@@ -90,7 +89,7 @@ public class Settings {
         final File library = new File(myTunesXmlPath.getText().trim());
         if (port < MIN_PORT || port > MAX_PORT) {
             showErrorMessage(myMainBundle.getString("error.startServer.port"));
-        } else if (!new ITunesLibraryFileFilter().accept(library)) {
+        } else if (!new ITunesLibraryFileFilter(false).accept(library)) {
             showErrorMessage(myMainBundle.getString("error.startServer.libraryXmlFile"));
         } else {
             disableButtons();
@@ -198,8 +197,16 @@ public class Settings {
     }
 
     public static class ITunesLibraryFileFilter extends javax.swing.filechooser.FileFilter {
+        private boolean myAllowDirectories;
+
+
+        public ITunesLibraryFileFilter(boolean allowDirectories) {
+            myAllowDirectories = allowDirectories;
+        }
+
         public boolean accept(File f) {
-            return f != null && f.exists() && LIBRARY_XML_FILE_NAME.equalsIgnoreCase(f.getName());
+            return f != null && f.exists() &&
+                    ((f.isDirectory() && myAllowDirectories) || (f.isFile() && LIBRARY_XML_FILE_NAME.equalsIgnoreCase(f.getName())));
         }
 
         public String getDescription() {

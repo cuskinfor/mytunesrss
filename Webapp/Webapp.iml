@@ -15,7 +15,6 @@
     <orderEntry type="module" module-name="CodewaveUtils" />
     <orderEntry type="library" name="commons-jxpath" level="application" />
     <orderEntry type="library" name="commons-logging" level="application" />
-    <orderEntry type="library" name="xerces" level="application" />
     <orderEntry type="library" name="commons-lang" level="application" />
     <orderEntry type="library" name="jakarta-taglibs-standard-1.1" level="application" />
     <orderEntry type="library" name="Tomcat 5.5" level="application_server_libraries" />
