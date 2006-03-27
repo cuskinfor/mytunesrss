@@ -28,6 +28,7 @@ public class ITunesLibrary implements Serializable {
 
     public void load(URL iTunesLibraryXml) {
         JXPathUtils.registerEntity("-//Apple Computer//DTD PLIST 1.0//EN",
+                                   "http://www.apple.com/DTDs/PropertyList-1.0.dtd",
                                    getClass().getClassLoader().getResource("de/codewave/mytunesrss/plist.dtd"));
         JXPathContext rootContext = JXPathUtils.getContext(iTunesLibraryXml);
         for (Iterator<JXPathContext> iterator = JXPathUtils.getContextIterator(rootContext, "/plist/dict/dict/dict"); iterator.hasNext();) {
