@@ -9,17 +9,19 @@
     <title>Codewave MyTunesRSS v${cwfn:sysprop('mytunesrss.version')}</title>
     <script type="text/javascript">
 
-        function sort(sortMethod) {
-            document.forms['select'].elements['method'].value = sortMethod;
-            document.forms['select'].submit();
+        function sort(sortOrder) {
+            document.forms["select"].action = "${appctx}/sort";
+            document.forms["select"].elements["sortOrder"].value = sortOrder;
+            document.forms["select"].submit();
         }
 
     </script>
 </head>
 
 <body>
-<form id="select" action="${servletUrl}" method="get">
-    <input type="hidden" name="method" value="getRssFeed" />
+<form id="select" action="${appctx}/select" method="post">
+    <input type="hidden" name="sortOrder" value="${sortOrder}" />
+    <input type="hidden" name="final" value="true" />
 
     <jsp:include page="/error.jsp" />
 
@@ -30,7 +32,8 @@
 
     <h2>Select titles for your feed</h2>
 
-    <a href="#" onclick="sort('sortResultsByAlbum')">Group by Album</a> <a href="#" onclick="sort('sortResultsByArtist')">Group by Artist</a>
+    <c:if test="${sortOrder != 'Album'}"><a href="#" onclick="sort('Album')">Group by Album</a></c:if>
+    <c:if test="${sortOrder != 'Artist'}"><a href="#" onclick="sort('Artist')">Group by Artist</a></c:if>
 
     <c:forEach items="${sections}" var="section">
         <c:set var="commonArtist" value="${section.commonArtist}" />
@@ -66,17 +69,19 @@
                                                                                                                           <c:out value="${item.file.album} -" />
                                                                                                                           <c:if test="${!empty item.file.textualTrackNumber}">${item.file.textualTrackNumber}
                                                                                                                               -</c:if>
-          <span class="title"><c:out value="${item.file.name}" /></span>
+                                                                                                                          <span class="title"><c:out
+                                                                                                                                  value="${item.file.name}" /></span>
                                                                                                                       </c:when>
                                                                                                                       <c:otherwise>
                                                                                                                           <c:if test="${!empty item.file.textualTrackNumber}">${item.file.textualTrackNumber}
                                                                                                                               -</c:if>
-          <span class="title"><c:out value="${item.file.name}" /></span>
+                                                                                                                          <span class="title"><c:out
+                                                                                                                                  value="${item.file.name}" /></span>
                                                                                                                       </c:otherwise>
                                                                                                                   </c:choose><br />
         </c:forEach>
     </c:forEach>
-    <a href="#" onclick="document.forms[0].submit()">create feed</a>
+    <input type="submit" value="create feed" />
 </form>
 </body>
 </html>

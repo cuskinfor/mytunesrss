@@ -23,6 +23,24 @@
         <listener-class>de.codewave.mytunesrss.itunes.ITunesLibraryContextListener</listener-class>
     </listener>
     <servlet>
+        <description>Servlet for searching the library</description>
+        <display-name>Search</display-name>
+        <servlet-name>Search</servlet-name>
+        <servlet-class>de.codewave.mytunesrss.servlet.SearchServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <description>Servlet for sorting results</description>
+        <display-name>Sort</display-name>
+        <servlet-name>Sort</servlet-name>
+        <servlet-class>de.codewave.mytunesrss.servlet.SortServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <description>Servlet for selecting results</description>
+        <display-name>Select</display-name>
+        <servlet-name>Select</servlet-name>
+        <servlet-class>de.codewave.mytunesrss.servlet.SelectServlet</servlet-class>
+    </servlet>
+    <servlet>
         <description>Servlet for creating the RSS feed</description>
         <display-name>RSSFeed</display-name>
         <servlet-name>RSSFeed</servlet-name>
@@ -35,11 +53,33 @@
         <servlet-class>de.codewave.mytunesrss.servlet.MP3DeliveryServlet</servlet-class>
     </servlet>
     <servlet-mapping>
+        <servlet-name>Search</servlet-name>
+        <url-pattern>/search</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Sort</servlet-name>
+        <url-pattern>/sort</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Select</servlet-name>
+        <url-pattern>/select</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>MP3Delivery</servlet-name>
-        <url-pattern>/rss/*</url-pattern>
+        <url-pattern>/get/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RSSFeed</servlet-name>
-        <url-pattern>/rss</url-pattern>
+        <url-pattern>/rss/*</url-pattern>
     </servlet-mapping>
+    <filter>
+        <description>Filter for putting the application context into a request attribute.</description>
+        <display-name>AppCtxFilter</display-name>
+        <filter-name>AppCtx</filter-name>
+        <filter-class>de.codewave.mytunesrss.servlet.AppCtxFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AppCtx</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>
