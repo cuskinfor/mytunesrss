@@ -17,8 +17,12 @@ public class Settings {
     private static final int MIN_PORT = 1;
     private static final int MAX_PORT = 65535;
     private static final String LIBRARY_XML_FILE_NAME = "iTunes Music Library.xml";
+    private static final String DEFAULT_LIBRARY_PATH = "";
+    private static final String DEFAULT_TOMCAT_PORT = "8080";
 
     private final ResourceBundle myMainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
+
+    private JFrame myFrame;
     private JTextField myPort;
     private JTextField myTunesXmlPath;
     private JPanel myRootPanel;
@@ -27,10 +31,9 @@ public class Settings {
     private JButton myQuitButton;
     private JButton myLookupButton;
     private Embedded myServer;
-    private static final String DEFAULT_LIBRARY_PATH = "";
-    private static final String DEFAULT_TOMCAT_PORT = "8080";
 
-    public Settings() {
+    public Settings(JFrame frame) {
+        myFrame = frame;
         setStatus(myMainBundle.getString("info.server.idle"));
         myPort.setText(Preferences.userRoot().node("/de/codewave/mytunesrss").get("port", DEFAULT_TOMCAT_PORT));
         myTunesXmlPath.setText(Preferences.userRoot().node("/de/codewave/mytunesrss").get("library", DEFAULT_LIBRARY_PATH));
@@ -49,6 +52,7 @@ public class Settings {
                 doLookupLibraryFile();
             }
         });
+
         myRootPanel.validate();
     }
 
@@ -149,6 +153,8 @@ public class Settings {
             if (myServer != null) {
                 doStopServer();
             }
+            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_x", myFrame.getLocation().x);
+            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", myFrame.getLocation().y);
             String savedPort = Preferences.userRoot().node("/de/codewave/mytunesrss").get("port", DEFAULT_TOMCAT_PORT);
             String savedPath = Preferences.userRoot().node("/de/codewave/mytunesrss").get("library", DEFAULT_LIBRARY_PATH);
             if (!myPort.getText().trim().equals(savedPort) || !myTunesXmlPath.getText().trim().equals(savedPath)) {
