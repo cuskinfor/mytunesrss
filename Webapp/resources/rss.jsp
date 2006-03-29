@@ -10,8 +10,9 @@
         <title>
             <c:out value="${channel}"/>
         </title>
-        <link>${appctx}/rss/channel=${cwfn:urlEncode(channel, 'UTF-8')}
-        <c:forEach items="${musicFiles}" var="file">/${file.id}</c:forEach></link>
+        <link>${urlMap.rss}/channel=${cwfn:urlEncode(channel, 'UTF-8')}
+            <c:forEach items="${musicFiles}" var="file">/${file.id}</c:forEach>
+        </link>
         <description>visit http://www.codewave.de for more information!</description>
         <c:forEach items="${musicFiles}" var="item">
             <item>
@@ -27,10 +28,10 @@
                 <author>
                     <c:out value="${item.artist}"/>
                 </author>
-                <link>${appctx}/get/${item.id}</link>
-                <guid>${appctx}/get/${item.id}</guid>
+                <link>${urlMap.rss}/${item.id}</link>
+                <guid>${urlMap.rss}/${item.id}</guid>
                 <pubDate>${pubDate}</pubDate>
-                <enclosure url="${appctx}/get/${item.id}/${cwfn:urlEncode(item.virtualFileName, 'UTF-8')}"
+                <enclosure url="${urlMap.rss}/${item.id}/${cwfn:urlEncode(item.virtualFileName, 'UTF-8')}"
                            type="audio/mp3"
                            length="${item.fileLength}"/>
             </item>

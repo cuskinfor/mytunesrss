@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
-  -->
-
 <web-app version="2.4"
          xmlns="http://java.sun.com/xml/ns/j2ee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-    <display-name>iTunes RSS</display-name>
+    <display-name>MyTunesRSS</display-name>
     <filter>
         <filter-name>ParameterTrimmerFilter</filter-name>
         <filter-class>de.codewave.utils.servlet.ServletRequestParameterTrimmer</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>ParameterTrimmerFilter</filter-name>
-        <servlet-name>RSSFeed</servlet-name>
+        <servlet-name>Search</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ParameterTrimmerFilter</filter-name>
+        <servlet-name>Sort</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ParameterTrimmerFilter</filter-name>
+        <servlet-name>Select</servlet-name>
     </filter-mapping>
     <listener>
         <description>Servlet context listener for loading the iTunes library</description>
@@ -73,13 +77,13 @@
         <url-pattern>/rss/*</url-pattern>
     </servlet-mapping>
     <filter>
-        <description>Filter for putting the application context into a request attribute.</description>
-        <display-name>AppCtxFilter</display-name>
-        <filter-name>AppCtx</filter-name>
-        <filter-class>de.codewave.mytunesrss.servlet.AppCtxFilter</filter-class>
+        <description>Filter for putting the servlet urls into a session attribute.</description>
+        <display-name>MyTunesRssServletFilter</display-name>
+        <filter-name>MyTunesRssServletFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.servlet.MyTunesRssServletFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>AppCtx</filter-name>
+        <filter-name>MyTunesRssServletFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 </web-app>

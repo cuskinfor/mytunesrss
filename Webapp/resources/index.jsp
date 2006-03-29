@@ -9,7 +9,7 @@
 </head>
 
 <body>
-<form id="search" action="${appctx}/search" method="post">
+<form id="search" action="${urlMap.search}" method="post">
     <jsp:include page="/error.jsp" />
     <h1>Search the iTunes Music Library</h1>
     Album <input type="text" name="album" value="<c:out value="${param.album}"/>" /><br />

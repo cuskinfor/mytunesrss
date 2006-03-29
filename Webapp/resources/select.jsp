@@ -10,7 +10,7 @@
     <script type="text/javascript">
 
         function sort(sortOrder) {
-            document.forms["select"].action = "${appctx}/sort";
+            document.forms["select"].action = "${urlMap.sort}";
             document.forms["select"].elements["sortOrder"].value = sortOrder;
             document.forms["select"].submit();
         }
@@ -19,7 +19,7 @@
 </head>
 
 <body>
-<form id="select" action="${appctx}/select" method="post">
+<form id="select" action="${urlMap.select}" method="post">
     <input type="hidden" name="sortOrder" value="${sortOrder}" />
     <input type="hidden" name="final" value="true" />
 
