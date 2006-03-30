@@ -16,7 +16,9 @@ import java.util.prefs.*;
  * de.codewave.mytunesrss.MyTunesRss
  */
 public class MyTunesRss {
-    public static void main(String[] args) throws LifecycleException {
+    public static void main(String[] args)
+            throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         ResourceBundle mainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
         String version = modulesInfo.getVersion();
