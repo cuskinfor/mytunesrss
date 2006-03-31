@@ -19,7 +19,7 @@
           <text value=""/>
         </properties>
       </component>
-      <grid id="3032c" layout-manager="GridLayoutManager" row-count="9" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="2">
+      <grid id="3032c" layout-manager="GridLayoutManager" row-count="9" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="2">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="3" indent="0" use-parent-layout="false">
@@ -32,7 +32,7 @@
         <children>
           <component id="83ead" class="javax.swing.JLabel">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.label.port"/>
@@ -40,7 +40,7 @@
           </component>
           <component id="888f2" class="javax.swing.JLabel">
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.label.libraryXmlFile"/>
@@ -48,7 +48,7 @@
           </component>
           <grid id="e1bd5" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints>
-              <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="7" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="8" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="7" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <background color="-1"/>
@@ -83,7 +83,7 @@
           </component>
           <component id="a5bda" class="javax.swing.JButton" binding="myLookupButton">
             <constraints>
-              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <name value=""/>
@@ -134,6 +134,13 @@
               </grid>
             </constraints>
           </vspacer>
+          <hspacer id="ffebc">
+            <constraints>
+              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="5" height="-1"/>
+              </grid>
+            </constraints>
+          </hspacer>
         </children>
       </grid>
       <grid id="975fa" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
