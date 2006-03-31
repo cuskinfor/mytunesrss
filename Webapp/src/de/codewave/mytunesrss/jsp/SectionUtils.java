@@ -25,10 +25,12 @@ public class SectionUtils {
     }
 
     public static Collection<Section> buildAlbumSections(Collection<MusicFile> musicFiles) {
+        List<MusicFile> sortedFiles = new ArrayList<MusicFile>(musicFiles);
+        Collections.sort(sortedFiles, new AlbumComparator());
         Collection<Section> sections = new ArrayList<Section>();
         Section section = null;
         String album = null;
-        for (MusicFile musicFile : musicFiles) {
+        for (MusicFile musicFile : sortedFiles) {
             if (!musicFile.getAlbum().equals(album)) {
                 section = new Section();
                 sections.add(section);
@@ -40,10 +42,12 @@ public class SectionUtils {
     }
 
     public static Collection<Section> buildArtistSections(Collection<MusicFile> musicFiles) {
+        List<MusicFile> sortedFiles = new ArrayList<MusicFile>(musicFiles);
+        Collections.sort(sortedFiles, new ArtistComparator());
         Collection<Section> sections = new ArrayList<Section>();
         Section section = null;
         String artist = null;
-        for (MusicFile musicFile : musicFiles) {
+        for (MusicFile musicFile : sortedFiles) {
             if (!musicFile.getArtist().equals(artist)) {
                 section = new Section();
                 sections.add(section);

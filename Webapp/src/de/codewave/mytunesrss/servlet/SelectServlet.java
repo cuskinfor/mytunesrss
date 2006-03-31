@@ -26,24 +26,38 @@ public class SelectServlet extends BaseServlet {
 
     private void doCommand(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         Collection<String> requestSelection = getRequestSelection(request);
-        if (!requestSelection.isEmpty()) {
+        Collection<MusicFile> playlist = (Collection<MusicFile>)request.getSession().getAttribute("playlist");
+        if (playlist == null) {
+            playlist = new ArrayList<MusicFile>();
+            request.getSession().setAttribute("playlist", playlist);
+        }
+        boolean finalSelection = "true".equalsIgnoreCase(request.getParameter("final"));
+        if (!requestSelection.isEmpty() || !finalSelection || !playlist.isEmpty()) {
             ITunesLibrary library = ITunesLibraryContextListener.getLibrary(request);
             List<MusicFile> selectedFiles = new ArrayList<MusicFile>();
             for (String id : requestSelection) {
-                selectedFiles.addAll(library.getMatchingFiles(new MusicFileIdSearch(id)));
-            }
-            Collection<MusicFile> playlist = (Collection<MusicFile>)request.getSession().getAttribute("playlist");
-            if (playlist == null) {
-                playlist = new ArrayList<MusicFile>();
-                request.getSession().setAttribute("playlist", playlist);
+                List<MusicFile> matches = library.getMatchingFiles(new MusicFileIdSearch(id));
+                SortOrder sortOrder = SortOrder.valueOf(request.getParameter("sortOrder"));
+                switch (sortOrder) {
+                    case Album:
+                        Collections.sort(matches, new AlbumComparator());
+                        break;
+                    case Artist:
+                        Collections.sort(matches, new ArtistComparator());
+                        break;
+                    default:
+                        // intentionally left blank
+                }
+                selectedFiles.addAll(matches);
             }
             playlist.addAll(selectedFiles);
-            if ("true".equalsIgnoreCase(request.getParameter("final"))) {
+            if (finalSelection) {
                 String channel = request.getParameter("channel");
                 if (StringUtils.isEmpty(channel)) {
                     channel = "Codewave MyTunesRSS v" + System.getProperty("mytunesrss.version");
                 }
-                StringBuffer url = new StringBuffer(ServletUtils.getApplicationUrl(request)).append("/rss/channel=").append(channel);
+                Map<String, String> urls = (Map<String, String>)request.getSession().getAttribute("urlMap");
+                StringBuffer url = new StringBuffer(urls.get("rss")).append("/channel=").append(channel);
                 for (MusicFile musicFile : playlist) {
                     url.append("/").append(musicFile.getId());
                 }
@@ -52,6 +66,7 @@ public class SelectServlet extends BaseServlet {
                 request.getRequestDispatcher("/index.jsp").forward(request, response);
             }
         } else {
+            request.setAttribute("error", "You must select at least one title for your feed!");
             SortOrder sortOrder = SortOrder.valueOf(request.getParameter("sortOrder"));
             createSectionsAndForward(request, response, sortOrder);
         }

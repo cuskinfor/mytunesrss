@@ -28,7 +28,6 @@ public class SearchServlet extends BaseServlet {
         ITunesLibrary library = ITunesLibraryContextListener.getLibrary(request);
         List<MusicFile> matchingFiles = library.getMatchingFiles(new MusicFileAlbumSearch(albumPattern), new MusicFileArtistSearch(artistPattern));
         if (matchingFiles != null && !matchingFiles.isEmpty()) {
-            Collections.sort(matchingFiles, new AlbumComparator());
             request.getSession().setAttribute("searchResult", matchingFiles);
             createSectionsAndForward(request, response, SortOrder.Album);
         } else {

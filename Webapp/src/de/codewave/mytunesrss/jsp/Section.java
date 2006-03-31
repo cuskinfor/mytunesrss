@@ -4,8 +4,8 @@
 
 package de.codewave.mytunesrss.jsp;
 
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.jsp.Section
@@ -47,5 +47,16 @@ public class Section implements Serializable {
 
     public String getFirstArtist() {
         return myItems != null && !myItems.isEmpty() ? myItems.get(0).getFile().getArtist() : null;
+    }
+
+    public String getSectionIds() {
+        StringBuffer ids = new StringBuffer();
+        for (Iterator<SectionItem> iterator = myItems.iterator(); iterator.hasNext(); ) {
+            ids.append(iterator.next().getFile().getId());
+            if (iterator.hasNext()) {
+                ids.append(";");
+            }
+        }
+        return ids.toString();
     }
 }
