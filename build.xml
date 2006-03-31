@@ -8,6 +8,7 @@
     <target name="idea.after-compile" description="target to execute after compilation in idea">
         <antcall target="generate.moduleinfo"/>
         <antcall target="copy.tomcat-config"/>
+        <antcall target="copy.scripts"/>
     </target>
 
     <target name="generate.moduleinfo" description="generate the model information files">
@@ -24,6 +25,15 @@
         </copy>
     </target>
 
+    <target name="copy.scripts" description="copy the scripts to the distribution">
+        <copy todir="distribution" overwrite="true">
+            <fileset dir="etc">
+                <include name="*.bat"/>
+                <include name="*.sh"/>
+            </fileset>
+        </copy>
+    </target>
+
     <target name="zip.distribution" description="generate a zip archive of the whole distribution">
         <svn.propget property="version" path="." name="codewave:version"/>
         <zip destfile="distribution/MyTunesRSS-${version}.zip" basedir="distribution">
@@ -32,6 +42,8 @@
             <include name="tomcat/**"/>
             <include name="webapps/**"/>
             <include name="MyTunesRSS.jar"/>
+            <include name="*.bat"/>
+            <include name="*.sh"/>
         </zip>
     </target>
 

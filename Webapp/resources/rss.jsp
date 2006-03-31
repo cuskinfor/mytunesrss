@@ -7,27 +7,14 @@
 
 <rss version="2.0">
     <channel>
-        <title>
-            <c:out value="${channel}"/>
-        </title>
-        <link>${urlMap.rss}/channel=${cwfn:urlEncode(channel, 'UTF-8')}
-            <c:forEach items="${musicFiles}" var="file">/${file.id}</c:forEach>
-        </link>
+        <title><c:out value="${channel}"/></title>
+        <link>${urlMap.rss}/channel=${cwfn:urlEncode(channel, 'UTF-8')}<c:forEach items="${musicFiles}" var="file">/${file.id}</c:forEach></link>
         <description>visit http://www.codewave.de for more information!</description>
         <c:forEach items="${musicFiles}" var="item">
             <item>
-                <title>
-                    <c:if test="{item.trackNumber != 0}">${item.textualTrackNumber} -</c:if>
-                    <c:out value="${item.name}"/>
-                </title>
-                <description>
-                    <c:out value="${item.album}"/>
-                    -
-                    <c:out value="${item.artist}"/>
-                </description>
-                <author>
-                    <c:out value="${item.artist}"/>
-                </author>
+                <title><c:if test="{item.trackNumber != 0}">${item.textualTrackNumber} - </c:if><c:out value="${item.name}"/></title>
+                <description><c:out value="${item.album}"/> - <c:out value="${item.artist}"/></description>
+                <author><c:out value="${item.artist}"/></author>
                 <link>${urlMap.rss}/${item.id}</link>
                 <guid>${urlMap.rss}/${item.id}</guid>
                 <pubDate>${pubDate}</pubDate>
