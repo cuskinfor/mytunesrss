@@ -29,6 +29,7 @@ public class MyTunesRssServletFilter implements Filter {
             servletUrls.put("rss", ServletUtils.getServletUrl((HttpServletRequest)servletRequest, RSSFeedServlet.class));
             servletUrls.put("select", ServletUtils.getServletUrl((HttpServletRequest)servletRequest, SelectServlet.class));
             servletUrls.put("mp3", ServletUtils.getServletUrl((HttpServletRequest)servletRequest, MP3DeliveryServlet.class));
+            servletUrls.put("index", ServletUtils.getApplicationUrl((HttpServletRequest)servletRequest));
             session.setAttribute("urlMap", servletUrls);
         }
         filterChain.doFilter(servletRequest, servletResponse);

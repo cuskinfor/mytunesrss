@@ -21,14 +21,14 @@
             document.forms["select"].submit();
         }
 
-        function all(ids) {
+        function selectAll(ids) {
             var idArray = ids.split(";");
             for (var i = 0; i < idArray.length; i++) {
                 document.getElementById("item" + idArray[i]).checked = true;
             }
         }
 
-        function none(ids) {
+        function selectNone(ids) {
             var idArray = ids.split(";");
             for (var i = 0; i < idArray.length; i++) {
                 document.getElementById("item" + idArray[i]).checked = false;
@@ -62,7 +62,7 @@
             <c:set var="commonArtist" value="${section.commonArtist}" />
             <c:set var="commonAlbum" value="${section.commonAlbum}" />
             <tr>
-                <td><a href="#" onclick="all('${section.sectionIds}')"><fmt:message key="select.all"/></a>&nbsp;<a href="#" onclick="none('${section.sectionIds}')"><fmt:message key="select.none"/></a></td>
+                <td><a href="#" onclick="selectAll('${section.sectionIds}')"><fmt:message key="select.all"/></a>&nbsp;<a href="#" onclick="selectNone('${section.sectionIds}')"><fmt:message key="select.none"/></a></td>
                 <td>&nbsp;</td>
                 <td>
                     <b><u>
@@ -108,6 +108,7 @@
 
     <br />
 
+    <input type="button" onclick="document.location.href='${urlMap.index}'" value="<fmt:message key="select.new_search"/>"/>
     <input type="submit" value="<fmt:message key="select.createfeed"/>" />
 
 </form>
