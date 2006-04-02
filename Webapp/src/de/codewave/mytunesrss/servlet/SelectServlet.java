@@ -13,6 +13,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
+import java.text.*;
 
 public class SelectServlet extends BaseServlet {
 
@@ -54,7 +55,8 @@ public class SelectServlet extends BaseServlet {
             if (finalSelection) {
                 String channel = request.getParameter("channel");
                 if (StringUtils.isEmpty(channel)) {
-                    channel = "Codewave MyTunesRSS v" + System.getProperty("mytunesrss.version");
+                    String channelPattern = ResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRSSWeb").getString("rss.channel.default_name");
+                    channel = MessageFormat.format(channelPattern, System.getProperty("mytunesrss.version"));
                 }
                 Map<String, String> urls = (Map<String, String>)request.getSession().getAttribute("urlMap");
                 StringBuffer url = new StringBuffer(urls.get("rss")).append("/channel=").append(channel);
@@ -66,7 +68,7 @@ public class SelectServlet extends BaseServlet {
                 request.getRequestDispatcher("/index.jsp").forward(request, response);
             }
         } else {
-            request.setAttribute("error", "You must select at least one title for your feed!");
+            request.setAttribute("error", "error.must_select_one_song");
             SortOrder sortOrder = SortOrder.valueOf(request.getParameter("sortOrder"));
             createSectionsAndForward(request, response, sortOrder);
         }

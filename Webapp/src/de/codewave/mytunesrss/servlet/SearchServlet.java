@@ -13,6 +13,7 @@ import java.io.*;
 import java.util.*;
 
 public class SearchServlet extends BaseServlet {
+    private static final int MAXIMUM_RESULTS = 200;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doCommand(request, response);
@@ -28,10 +29,16 @@ public class SearchServlet extends BaseServlet {
         ITunesLibrary library = ITunesLibraryContextListener.getLibrary(request);
         List<MusicFile> matchingFiles = library.getMatchingFiles(new MusicFileAlbumSearch(albumPattern), new MusicFileArtistSearch(artistPattern));
         if (matchingFiles != null && !matchingFiles.isEmpty()) {
-            request.getSession().setAttribute("searchResult", matchingFiles);
-            createSectionsAndForward(request, response, SortOrder.Album);
+            if (matchingFiles.size() < MAXIMUM_RESULTS) {
+                request.getSession().setAttribute("searchResult", matchingFiles);
+                createSectionsAndForward(request, response, SortOrder.Album);
+            } else {
+                request.setAttribute("error", "error.too_many_results");
+                request.setAttribute("errorParam0", new Integer(MAXIMUM_RESULTS));
+                request.getRequestDispatcher("/index.jsp").forward(request, response);
+            }
         } else {
-            request.setAttribute("error", "No matching songs found!");
+            request.setAttribute("error", "error.no_matching_songs");
             request.getRequestDispatcher("/index.jsp").forward(request, response);
         }
     }
