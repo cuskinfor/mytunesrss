@@ -2,10 +2,6 @@
 <module version="4" relativePaths="true" type="JAVA_MODULE">
   <component name="BuildJarSettings">
     <containerInfo>
-      <containerElement type="module" name="CodewaveUtils">
-        <attribute name="method" value="1" />
-        <attribute name="URI" value="/" />
-      </containerElement>
       <containerElement type="module" name="EmbeddedTomcat">
         <attribute name="method" value="1" />
         <attribute name="URI" value="/" />
@@ -14,21 +10,26 @@
         <attribute name="method" value="1" />
         <attribute name="URI" value="/" />
       </containerElement>
+      <containerElement type="library" level="module">
+        <attribute name="method" value="2" />
+        <attribute name="URI" value="/lib/codewave-utils-1.0.jar" />
+        <url>jar://$MODULE_DIR$/../lib/codewave-utils-1.0.jar!/</url>
+      </containerElement>
       <containerElement type="library" name="apache-tomcat-embed" level="application">
         <attribute name="method" value="2" />
         <attribute name="URI" value="/tomcat" />
       </containerElement>
       <containerElement type="library" name="commons-jxpath" level="application">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/3rdparty" />
+        <attribute name="URI" value="/lib" />
       </containerElement>
       <containerElement type="library" name="commons-lang" level="application">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/3rdparty" />
+        <attribute name="URI" value="/lib" />
       </containerElement>
       <containerElement type="library" name="commons-logging" level="application">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/3rdparty" />
+        <attribute name="URI" value="/lib" />
       </containerElement>
     </containerInfo>
     <setting name="jarUrl" value="file://$MODULE_DIR$/../distribution/MyTunesRSS.jar" />
@@ -45,7 +46,18 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="EmbeddedTomcat" />
-    <orderEntry type="module" module-name="CodewaveUtils" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="commons-lang" level="application" />
+    <orderEntry type="library" name="commons-jxpath" level="application" />
+    <orderEntry type="library" name="commons-logging" level="application" />
     <orderEntryProperties />
   </component>
   <component name="copyright">
