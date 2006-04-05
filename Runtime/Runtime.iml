@@ -31,6 +31,10 @@
         <attribute name="method" value="2" />
         <attribute name="URI" value="/lib" />
       </containerElement>
+      <containerElement type="library" name="logging-log4j" level="application">
+        <attribute name="method" value="2" />
+        <attribute name="URI" value="/lib" />
+      </containerElement>
     </containerInfo>
     <setting name="jarUrl" value="file://$MODULE_DIR$/../distribution/MyTunesRSS.jar" />
     <setting name="buildJar" value="true" />
@@ -58,6 +62,7 @@
     <orderEntry type="library" name="commons-lang" level="application" />
     <orderEntry type="library" name="commons-jxpath" level="application" />
     <orderEntry type="library" name="commons-logging" level="application" />
+    <orderEntry type="library" name="logging-log4j" level="application" />
     <orderEntryProperties />
   </component>
   <component name="copyright">

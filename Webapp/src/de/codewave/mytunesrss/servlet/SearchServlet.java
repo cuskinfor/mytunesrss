@@ -12,7 +12,11 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.commons.logging.*;
+
 public class SearchServlet extends BaseServlet {
+    private static final Log LOG = LogFactory.getLog(SearchServlet.class);
+
     private static final int MAXIMUM_RESULTS = 200;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -28,6 +32,7 @@ public class SearchServlet extends BaseServlet {
         String artistPattern = request.getParameter("artist");
         ITunesLibrary library = ITunesLibraryContextListener.getLibrary(request);
         List<MusicFile> matchingFiles = library.getMatchingFiles(new MusicFileAlbumSearch(albumPattern), new MusicFileArtistSearch(artistPattern));
+        removeMissingFiles(matchingFiles);
         if (matchingFiles != null && !matchingFiles.isEmpty()) {
             if (matchingFiles.size() < MAXIMUM_RESULTS) {
                 request.getSession().setAttribute("searchResult", matchingFiles);
@@ -40,6 +45,18 @@ public class SearchServlet extends BaseServlet {
         } else {
             request.setAttribute("error", "error.no_matching_songs");
             request.getRequestDispatcher("/index.jsp").forward(request, response);
+        }
+    }
+
+    private void removeMissingFiles(Collection<MusicFile> matchingFiles) {
+        for (Iterator<MusicFile> filesIterator = matchingFiles.iterator(); filesIterator.hasNext(); ) {
+            MusicFile file = filesIterator.next();
+            if (!file.getFile().exists() || !file.getFile().isFile()) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Title \"" + file.getName() + "\" with missing file \"" + file.getFile() + "\" removed from search result.");
+                }
+                filesIterator.remove();
+            }
         }
     }
 }
