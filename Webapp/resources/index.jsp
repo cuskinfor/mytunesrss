@@ -6,28 +6,61 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb"/>
 
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"> 
 
-<head>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+  
     <title><fmt:message key="title"/> v${cwfn:sysprop('mytunesrss.version')}</title>
-</head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="styles/mytunesrss.css" />
+    <!--[if IE]>
+      <link rel="stylesheet" type="text/css" href="styles/ie.css" />
+    <![endif]-->
+      
+  </head>
+  
+  <body>
+  
+    <div class="body">
+      
+      <div class="head index">
+      
+        <h1 class="index">MyTunesRSS</h1>
+        
+      </div>
+    
+      <jsp:include page="/error.jsp" />
+      
+      <form id="search" action="${urlMap.search}" method="post">
+      
+        <table class="search" cellspacing="0">
+          <tr>
+            <th style="width: 50%;">&nbsp;</th>
+            <th colspan="2"><fmt:message key="index.caption"/></th>
+            <th style="width: 50%;">&nbsp;</th>
+          </tr>
+          <tr>
+            <td rowspan="3">&nbsp;</td>
+            <td><fmt:message key="album"/></td>
+            <td><input class="text" type="text" name="album" value="<c:out value="${param.album}"/>" /></td>
+            <td rowspan="3">&nbsp;</td>
+          </tr>
+          <tr>
+            <td><fmt:message key="artist"/></td>
+            <td><input class="text" type="text" name="artist" value="<c:out value="${param.artist}"/>" /></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td style="text-align: right;"><input class="button" type="submit" value="<fmt:message key="index.search"/>" /></td>
+          </tr>
+        </table>
+      
+      </form>
+      
+    </div>
 
-<body>
-
-<jsp:include page="/error.jsp" />
-
-<b><u><fmt:message key="index.caption"/></u></b><br /><br />
-
-<form id="search" action="${urlMap.search}" method="post">
-
-    <table border="0" cellspacing="0" cellpadding="1">
-        <tr><td><fmt:message key="album"/></td><td><input type="text" name="album" value="<c:out value="${param.album}"/>" /></td></tr>
-        <tr><td><fmt:message key="artist"/></td><td><input type="text" name="artist" value="<c:out value="${param.artist}"/>" /></td></tr>
-        <tr><td>&nbsp;</td><td><br /><input type="submit" value="<fmt:message key="index.search"/>" /></td></tr>
-    </table>
-
-</form>
-
-</body>
+  </body>
 
 </html>

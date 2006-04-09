@@ -1,0 +1,5 @@
+/* CSS Document */
+
+div.body {
+	width: expression( document.body.clientWidth > 480 ? "480px" : "auto" );
+}

@@ -6,9 +6,9 @@
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb"/>
 
 <c:if test="${!empty error}">
-    <b><font color="red">
-        <fmt:message key="${error}">
-            <fmt:param value="${errorParam0}"/>
-        </fmt:message>
-    </font></b><br /><br />
+  <div class="error">
+    <fmt:message key="${error}">
+      <fmt:param value="${errorParam0}"/>
+    </fmt:message>
+  </div>
 </c:if>
