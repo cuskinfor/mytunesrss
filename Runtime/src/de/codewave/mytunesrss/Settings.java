@@ -10,6 +10,8 @@ import java.io.*;
 import java.util.*;
 import java.util.prefs.*;
 
+import sun.plugin.viewer.*;
+
 /**
  * de.codewave.mytunesrss.Settings
  */
@@ -108,7 +110,15 @@ public class Settings {
                         myServer.start();
                         myStartStopButton.setText(myMainBundle.getString("gui.settings.button.stopServer"));
                         myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.stopServer"));
-                    } catch (Exception e) {
+                    } catch (LifecycleException e) {
+                        if (e.getMessage().contains("BindException")) {
+                            showErrorMessage(myMainBundle.getString("error.server.startFailureBindException"));
+                        } else {
+                            showErrorMessage(myMainBundle.getString("error.server.startFailure") + e.getMessage());
+                        }
+                        setStatus(myMainBundle.getString("info.server.idle"));
+                        enableConfig();
+                    } catch (IOException e) {
                         showErrorMessage(myMainBundle.getString("error.server.startFailure") + e.getMessage());
                         setStatus(myMainBundle.getString("info.server.idle"));
                         enableConfig();
