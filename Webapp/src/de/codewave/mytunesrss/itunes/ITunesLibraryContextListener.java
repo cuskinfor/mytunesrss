@@ -26,7 +26,7 @@ public class ITunesLibraryContextListener implements ServletContextListener {
         ITunesLibrary library = new ITunesLibrary();
         try {
             library.load(new File(System.getProperty("mytunesrss.iTunesLibrary")).toURL());
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not load iTunes library xml.", e);
             }

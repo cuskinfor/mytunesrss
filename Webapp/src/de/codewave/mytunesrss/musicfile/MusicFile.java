@@ -94,7 +94,7 @@ public class MusicFile implements Serializable {
                              myFile.getAbsolutePath());
     }
 
-    public boolean isComplete() {
+    public boolean isValid() {
         return (myName != null && myArtist != null && myId != null && myAlbum != null && myFile.getAbsolutePath().toLowerCase().endsWith(".mp3"));
     }
 

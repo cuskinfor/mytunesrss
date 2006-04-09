@@ -2,10 +2,11 @@ package de.codewave.mytunesrss.itunes;
 
 import de.codewave.mytunesrss.musicfile.*;
 import de.codewave.utils.xml.*;
-import org.apache.commons.jxpath.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.xml.sax.*;
 
+import javax.xml.parsers.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -16,59 +17,30 @@ import java.util.*;
 public class ITunesLibrary implements Serializable {
     private static final Log LOG = LogFactory.getLog(ITunesLibrary.class);
 
-    private static final String TOKEN_ALBUM = "Album";
-    private static final String TOKEN_ARTIST = "Artist";
-    private static final String TOKEN_NAME = "Name";
-    private static final String TOKEN_TRACK_NUMBER = "Track Number";
-    private static final String TOKEN_LOCATION = "Locationfile://localhost";
-    private static final String TOKEN_ID = "Track ID";
-
     private List<MusicFile> myTitles = new ArrayList<MusicFile>();
-    private Set<String> myUsedIds = new HashSet<String>();
 
-    public void load(URL iTunesLibraryXml) {
-        JXPathUtils.registerEntity("-//Apple Computer//DTD PLIST 1.0//EN",
-                                   "http://www.apple.com/DTDs/PropertyList-1.0.dtd",
-                                   getClass().getClassLoader().getResource("de/codewave/mytunesrss/plist.dtd"));
-        JXPathContext rootContext = JXPathUtils.getContext(iTunesLibraryXml);
-        for (Iterator<JXPathContext> iterator = JXPathUtils.getContextIterator(rootContext, "/plist/dict/dict/dict"); iterator.hasNext();) {
-            JXPathContext titleContext = iterator.next();
-            MusicFile title = new MusicFile();
-            for (StringTokenizer tokenizer = new StringTokenizer((String)titleContext.getValue("."), "\n"); tokenizer.hasMoreTokens();) {
-                String line = tokenizer.nextToken().trim();
-                if (line.startsWith(TOKEN_ALBUM)) {
-                    title.setAlbum(line.substring(TOKEN_ALBUM.length()));
-                }
-                if (line.startsWith(TOKEN_ARTIST)) {
-                    title.setArtist(line.substring(TOKEN_ARTIST.length()));
-                }
-                if (line.startsWith(TOKEN_NAME)) {
-                    title.setName(line.substring(TOKEN_NAME.length()));
-                }
-                if (line.startsWith(TOKEN_TRACK_NUMBER)) {
-                    String trackNumber = line.substring(TOKEN_TRACK_NUMBER.length());
-                    if (!StringUtils.isEmpty(trackNumber)) {
-                        title.setTrackNumber(Integer.parseInt(trackNumber));
-                    }
-                }
-                if (line.startsWith(TOKEN_LOCATION)) {
-                    try {
-                        title.setFile(new File(URLDecoder.decode(line.substring(TOKEN_LOCATION.length()), "UTF-8")));
-                    } catch (UnsupportedEncodingException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not create file for \"" + line.substring(TOKEN_LOCATION.length()) + "\".", e);
-                        }
-                    }
-                }
-                if (line.startsWith(TOKEN_ID)) {
-                    title.setId(line.substring(TOKEN_ID.length()));
+    public void load(URL iTunesLibraryXml) throws IOException, SAXException, ParserConfigurationException {
+        Map plist = (Map)XmlUtils.parseApplePList(iTunesLibraryXml);
+        Map<String, Map<String, String>> tracks = (Map<String, Map<String, String>>)plist.get("Tracks");
+        for (Iterator<Map<String, String>> trackIterator = tracks.values().iterator(); trackIterator.hasNext();) {
+            Map<String, String> track = trackIterator.next();
+            MusicFile musicFile = new MusicFile();
+            musicFile.setAlbum(track.get("Album"));
+            musicFile.setArtist(track.get("Artist"));
+            musicFile.setId(track.get("Track ID"));
+            musicFile.setName(track.get("Name"));
+            String trackNumber = track.get("Track Number");
+            musicFile.setTrackNumber(StringUtils.isNotEmpty(trackNumber) ? Integer.parseInt(trackNumber) : 0);
+            String location = track.get("Location").substring("file://localhost".length());
+            try {
+                musicFile.setFile(new File(URLDecoder.decode(location, "UTF-8")));
+            } catch (UnsupportedEncodingException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not create file for \"" + location + "\".", e);
                 }
             }
-            if (title.isComplete()) {
-                if (!myUsedIds.contains(title.getId())) {
-                    myUsedIds.add(title.getId());
-                    myTitles.add(title);
-                }
+            if (musicFile.isValid()) {
+                myTitles.add(musicFile);
             }
         }
         Collections.sort(myTitles, new MusicFileComparator());
