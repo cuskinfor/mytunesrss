@@ -12,8 +12,8 @@
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib/codewave-utils-1.0.jar" />
-        <url>jar://$MODULE_DIR$/../lib/codewave-utils-1.0.jar!/</url>
+        <attribute name="URI" value="/lib/codewave-utils-1.1.jar" />
+        <url>jar://$MODULE_DIR$/../lib/codewave-utils-1.1.jar!/</url>
       </containerElement>
       <containerElement type="library" name="apache-tomcat-embed" level="application">
         <attribute name="method" value="2" />
@@ -62,6 +62,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="commons-jxpath" level="application" />
     <orderEntryProperties />
   </component>
   <component name="copyright">

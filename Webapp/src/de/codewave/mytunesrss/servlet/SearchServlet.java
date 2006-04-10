@@ -28,6 +28,15 @@ public class SearchServlet extends BaseServlet {
     }
 
     private void doCommand(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if (request.getAttribute("useAuth") != null && ((Boolean)request.getAttribute("useAuth")).booleanValue()) {
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            if (!username.equals(System.getProperty("mytunesrss.authUsername")) || !password.equals(System.getProperty("mytunesrss.authPassword"))) {
+                request.setAttribute("error", "error.wrong_auth");
+                request.getRequestDispatcher("/index.jsp").forward(request, response);
+                return; // early return!
+            }
+        }
         String albumPattern = request.getParameter("album");
         String artistPattern = request.getParameter("artist");
         ITunesLibrary library = ITunesLibraryContextListener.getLibrary(request);

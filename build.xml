@@ -36,6 +36,7 @@
             <include name="*.sh"/>
             <include name="*.pdf"/>
             <fileset dir="etc">
+                <include name="*.app"/>
                 <include name="*.bat"/>
                 <include name="*.sh"/>
                 <include name="*.pdf"/>

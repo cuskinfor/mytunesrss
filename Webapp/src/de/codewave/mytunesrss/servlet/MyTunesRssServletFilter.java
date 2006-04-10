@@ -32,6 +32,7 @@ public class MyTunesRssServletFilter implements Filter {
             servletUrls.put("index", ServletUtils.getApplicationUrl((HttpServletRequest)servletRequest));
             session.setAttribute("urlMap", servletUrls);
         }
+        servletRequest.setAttribute("useAuth", Boolean.valueOf(System.getProperty("mytunesrss.useAuth", "false")));
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
