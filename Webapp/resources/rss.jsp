@@ -10,7 +10,7 @@
 <rss version="2.0">
     <channel>
         <title><c:out value="${channel}"/></title>
-        <link>${urlMap.rss}/channel=${cwfn:urlEncode(channel, 'UTF-8')}<c:forEach items="${musicFiles}" var="file">/${file.id}</c:forEach></link>
+        <link>${feedUrl}</link>
         <description><fmt:message key="rss.channel.description"/></description>
         <c:forEach items="${musicFiles}" var="item">
             <item>

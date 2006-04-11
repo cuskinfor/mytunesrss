@@ -30,12 +30,17 @@ public class RSSFeedServlet extends HttpServlet {
             String token = tokenizer.nextToken();
             if (token.startsWith("channel=")) {
                 request.setAttribute("channel", token.substring("channel=".length()));
+            } else if (token.startsWith("playlist=")) {
+                PlayList playlist = library.getPlayListWithId(token.substring("playlist=".length()));
+                request.setAttribute("channel", playlist.getName());
+                feedFiles.addAll(playlist.getMusicFiles());
             } else {
                 feedFiles.addAll(library.getMatchingFiles(new MusicFileIdSearch(token)));
             }
         }
         request.setAttribute("musicFiles", feedFiles);
         request.setAttribute("pubDate", new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US).format(new Date()));
+        request.setAttribute("feedUrl", request.getRequestURL().toString());
         request.getRequestDispatcher("/rss.jsp").forward(request, response);
     }
 }
