@@ -12,19 +12,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="commons-logging" level="application" />
-    <orderEntry type="library" name="commons-lang" level="application" />
     <orderEntry type="library" name="jakarta-taglibs-standard-1.1" level="application" />
     <orderEntry type="library" name="Tomcat 5.5" level="application_server_libraries" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-1.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="module" module-name="Runtime" />
     <orderEntryProperties />
   </component>
   <component name="WebModuleBuildComponent">
@@ -37,19 +27,6 @@
     <setting name="RUN_JASPER_VALIDATION" value="false" />
   </component>
   <component name="WebModuleProperties">
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/codewave-utils-1.1.jar" />
-      <url>jar://$MODULE_DIR$/../lib/codewave-utils-1.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" name="commons-lang" level="application">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib" />
-    </containerElement>
-    <containerElement type="library" name="commons-logging" level="application">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib" />
-    </containerElement>
     <containerElement type="library" name="jakarta-taglibs-standard-1.1" level="application">
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib" />

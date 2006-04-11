@@ -7,19 +7,19 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb"/>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
   <head>
-  
+
     <title><fmt:message key="title"/> v${cwfn:sysprop('mytunesrss.version')}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="styles/mytunesrss.css" />
     <!--[if IE]>
       <link rel="stylesheet" type="text/css" href="styles/ie.css" />
     <![endif]-->
-  
+
     <script type="text/javascript">
 
       function sort(sortOrder) {
@@ -27,14 +27,14 @@
           document.forms["select"].elements["sortOrder"].value = sortOrder;
           document.forms["select"].submit();
       }
-  
+
       function selectAll(ids, checkbox) {
           var idArray = ids.split(";");
           for (var i = 0; i < idArray.length; i++) {
               document.getElementById("item" + idArray[i]).checked = checkbox.checked == true ? true : false;
           }
       }
-      
+
       function registerTR() {
         var trs = document.getElementsByTagName("TR");
         for ( var i=0; i<trs.length; i++) {
@@ -48,42 +48,44 @@
           }
         }
       }
-      
+
       function selectTrack() {
         var checkbox = this.parentNode.getElementsByTagName("input")[0];
         checkbox.checked =  ( checkbox.checked == true ) ? false : true;
       }
 
     </script>
-  
+
   </head>
-  
+
   <body onLoad="document.forms['select'].elements['channel'].focus(); registerTR();">
-  
+
     <div id="content" class="body">
-    
+
       <form id="select" action="${urlMap.select}" method="post">
-    
+
         <input type="hidden" name="sortOrder" value="${sortOrder}" />
         <input type="hidden" name="final" value="true" />
-    
+
         <jsp:include page="/error.jsp" />
-        
+
         <div class="head select">
-    
+
           <h1><fmt:message key="select.channel"/></h1>
-      
+
           <div class="input">
             <input type="text" name="channel" value="<c:out value="${param.channel}"/>" />
           </div>
-      
-          <div class="link">
-            <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album"/></a></c:if>
-            <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist"/></a></c:if>
-          </div>
-        
+
+          <c:if test="${fn:length(sections) > 1}">
+            <div class="link">
+              <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album"/></a></c:if>
+              <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist"/></a></c:if>
+            </div>
+          </c:if>
+
         </div>
-    
+
         <table border="0" cellspacing="0" cellpadding="0">
           <c:forEach items="${sections}" var="section">
             <c:set var="commonArtist" value="${section.commonArtist}" />
@@ -129,16 +131,16 @@
             </c:forEach>
           </c:forEach>
         </table>
-        
+
         <div class="buttons">
-          <input type="button" onClick="document.location.href='${urlMap.index}'" value="<fmt:message key="select.new_search"/>"/>
+          <input type="button" onClick="document.location.href='${urlMap.searchPage}'" value="<fmt:message key="select.new_search"/>"/>
           <input type="submit" value="<fmt:message key="select.createfeed"/>" />
         </div>
-    
+
       </form>
-    
+
     </div>
-  
+
   </body>
 
 </html>

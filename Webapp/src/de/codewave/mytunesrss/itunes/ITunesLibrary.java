@@ -19,12 +19,12 @@ public class ITunesLibrary implements Serializable {
 
     private List<MusicFile> myTitles = new ArrayList<MusicFile>();
 
-    public void load(URL iTunesLibraryXml) throws IOException, SAXException, ParserConfigurationException {
+    public void load(URL iTunesLibraryXml, String fakeMp3Suffix, String fakeM4aSuffix) throws IOException, SAXException, ParserConfigurationException {
         Map plist = (Map)XmlUtils.parseApplePList(iTunesLibraryXml);
         Map<String, Map<String, String>> tracks = (Map<String, Map<String, String>>)plist.get("Tracks");
         for (Iterator<Map<String, String>> trackIterator = tracks.values().iterator(); trackIterator.hasNext();) {
             Map<String, String> track = trackIterator.next();
-            MusicFile musicFile = new MusicFile();
+            MusicFile musicFile = new MusicFile(fakeMp3Suffix, fakeM4aSuffix);
             musicFile.setAlbum(track.get("Album"));
             musicFile.setArtist(track.get("Artist"));
             musicFile.setId(track.get("Track ID"));

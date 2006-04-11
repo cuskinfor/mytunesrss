@@ -6,9 +6,47 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <display-name>MyTunesRSS</display-name>
     <filter>
+        <description>Filter for trimming all parameter strings.</description>
+        <display-name>ParameterTrimmerFilter</display-name>
         <filter-name>ParameterTrimmerFilter</filter-name>
         <filter-class>de.codewave.utils.servlet.ServletRequestParameterTrimmer</filter-class>
     </filter>
+    <filter>
+        <description>Filter for putting the servlet urls into a session attribute.</description>
+        <display-name>MyTunesRssServletFilter</display-name>
+        <filter-name>MyTunesRssServletFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.servlet.MyTunesRssServletFilter</filter-class>
+    </filter>
+    <filter>
+        <description>Filter for checking authentication.</description>
+        <display-name>AuthFilter</display-name>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.servlet.AuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>MyTunesRssServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <servlet-name>Search</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <servlet-name>Sort</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <servlet-name>Select</servlet-name>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>ParameterTrimmerFilter</filter-name>
         <servlet-name>Search</servlet-name>
@@ -56,6 +94,12 @@
         <servlet-name>MP3Delivery</servlet-name>
         <servlet-class>de.codewave.mytunesrss.servlet.MP3DeliveryServlet</servlet-class>
     </servlet>
+    <servlet>
+        <description>Servlet for logging into the application.</description>
+        <display-name>Login</display-name>
+        <servlet-name>Login</servlet-name>
+        <servlet-class>de.codewave.mytunesrss.servlet.LoginServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Search</servlet-name>
         <url-pattern>/search</url-pattern>
@@ -69,6 +113,10 @@
         <url-pattern>/select</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>Login</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>MP3Delivery</servlet-name>
         <url-pattern>/get/*</url-pattern>
     </servlet-mapping>
@@ -76,14 +124,7 @@
         <servlet-name>RSSFeed</servlet-name>
         <url-pattern>/rss/*</url-pattern>
     </servlet-mapping>
-    <filter>
-        <description>Filter for putting the servlet urls into a session attribute.</description>
-        <display-name>MyTunesRssServletFilter</display-name>
-        <filter-name>MyTunesRssServletFilter</filter-name>
-        <filter-class>de.codewave.mytunesrss.servlet.MyTunesRssServletFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>MyTunesRssServletFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <welcome-file-list>
+        <welcome-file>/search.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>

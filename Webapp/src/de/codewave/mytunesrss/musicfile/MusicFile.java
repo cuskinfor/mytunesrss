@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss.musicfile;
 
+import org.apache.commons.lang.*;
+
 import java.io.*;
 
 /**
@@ -17,6 +19,14 @@ public class MusicFile implements Serializable {
     private String myId;
     private int myTrackNumber;
     private String myVirtualFileName;
+    private String myFakeMp3Suffix;
+    private String myFakeM4aSuffix;
+
+
+    public MusicFile(String fakeMp3Suffix, String fakeM4aSuffix) {
+        myFakeMp3Suffix = fakeMp3Suffix;
+        myFakeM4aSuffix = fakeM4aSuffix;
+    }
 
     public String getAlbum() {
         return myAlbum;
@@ -95,7 +105,15 @@ public class MusicFile implements Serializable {
     }
 
     public boolean isValid() {
-        return (myName != null && myArtist != null && myId != null && myAlbum != null && myFile.getAbsolutePath().toLowerCase().endsWith(".mp3"));
+        return (myName != null && myArtist != null && myId != null && myAlbum != null && (isMP3() || isM4A()));
+    }
+
+    private boolean isMP3() {
+        return myFile.getName().toLowerCase().endsWith(".mp3");
+    }
+
+    private boolean isM4A() {
+        return myFile.getName().toLowerCase().endsWith(".m4a");
     }
 
     public synchronized String getVirtualFileName() {
@@ -105,9 +123,26 @@ public class MusicFile implements Serializable {
             if (trackNumber != null) {
                 myVirtualFileName += trackNumber + " - ";
             }
-            myVirtualFileName += myName + ".mp3";
+            String suffix = myFile.getName().substring(myFile.getName().lastIndexOf(".") + 1);
+            if ("mp3".equals(suffix.toLowerCase())) {
+                if (StringUtils.isNotEmpty(myFakeMp3Suffix)) {
+                    suffix = myFakeMp3Suffix;
+                }
+            } else {
+                if (StringUtils.isNotEmpty(myFakeM4aSuffix)) {
+                    suffix = myFakeM4aSuffix;
+                }
+            }
+            myVirtualFileName += myName + "." + suffix;
             myVirtualFileName = myVirtualFileName.replace(' ', '_');
         }
         return myVirtualFileName;
+    }
+
+    public String getContentType() {
+        if (isMP3()) {
+            return "audio/mp3";
+        }
+        return "audio/aac";
     }
 }

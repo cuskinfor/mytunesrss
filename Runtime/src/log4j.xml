@@ -9,6 +9,10 @@
         <param name="MaxBackupIndex" value="3"/>
         <layout class="org.apache.log4j.PatternLayout"/>
     </appender>
+    <logger name="de.codewave" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="file"/>
+    </logger>
     <root>
         <level value="info"/>
         <appender-ref ref="file"/>

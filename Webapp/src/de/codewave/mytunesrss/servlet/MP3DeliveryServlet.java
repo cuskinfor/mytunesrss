@@ -53,7 +53,7 @@ public class MP3DeliveryServlet extends HttpServlet {
                 List<MusicFile> matchingFiles = library.getMatchingFiles(new MusicFileIdSearch(titleId));
                 MusicFile title = matchingFiles != null && !matchingFiles.isEmpty() ? matchingFiles.get(0) : null;
                 if (title != null && title.getFile().exists() && title.getFile().isFile()) {
-                    return new FileSender(title.getFile(), "audio/mp3");
+                    return new FileSender(title.getFile(), title.getContentType());
                 } else {
                     if (LOG.isErrorEnabled()) {
                         if (title == null) {

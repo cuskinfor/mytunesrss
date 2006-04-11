@@ -38,32 +38,22 @@
         <table class="search" cellspacing="0">
           <tr>
             <th style="width: 50%;">&nbsp;</th>
-            <th colspan="2"><fmt:message key="index.caption"/></th>
+            <th colspan="2"><fmt:message key="search.caption"/></th>
             <th style="width: 50%;">&nbsp;</th>
           </tr>
           <tr>
-            <td rowspan="5">&nbsp;</td>
+            <td rowspan="3">&nbsp;</td>
             <td><fmt:message key="album"/></td>
             <td><input class="text" type="text" name="album" value="<c:out value="${param.album}"/>" /></td>
-            <td rowspan="5">&nbsp;</td>
+            <td rowspan="3">&nbsp;</td>
           </tr>
           <tr>
             <td><fmt:message key="artist"/></td>
             <td><input class="text" type="text" name="artist" value="<c:out value="${param.artist}"/>" /></td>
           </tr>
-          <c:if test="${useAuth}">
-            <tr>
-                <td><fmt:message key="index.username"/></td>
-                <td><input class="text" type="text" name="username" value="<c:out value="${param.username}"/>" /></td>
-            </tr>
-            <tr>
-                <td><fmt:message key="index.password"/></td>
-                <td><input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" /></td>
-            </tr>
-          </c:if>
           <tr>
             <td>&nbsp;</td>
-            <td style="text-align: right;"><input class="button" type="submit" value="<fmt:message key="index.search"/>" /></td>
+            <td style="text-align: right;"><input class="button" type="submit" value="<fmt:message key="search.search"/>" /></td>
           </tr>
         </table>
 

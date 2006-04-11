@@ -21,7 +21,7 @@
                 <guid>${urlMap.rss}/${item.id}</guid>
                 <pubDate>${pubDate}</pubDate>
                 <enclosure url="${urlMap.mp3}/${item.id}/${cwfn:urlEncode(item.virtualFileName, 'UTF-8')}"
-                           type="audio/mp3"
+                           type="${item.contentType}"
                            length="${item.fileLength}"/>
             </item>
         </c:forEach>

@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.servlet;
 
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.musicfile.*;
+import de.codewave.mytunesrss.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -32,5 +33,9 @@ public abstract class BaseServlet extends HttpServlet {
                                                                     sortOrder));
         SectionUtils.setSelection((Collection<Section>)request.getAttribute("sections"), requestSelection);
         request.getRequestDispatcher("/select.jsp").forward(request, response);
+    }
+
+    protected MyTunesRssConfig getMyTunesRssConfig(HttpServletRequest request) {
+        return (MyTunesRssConfig)request.getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
     }
 }

@@ -9,7 +9,8 @@ import org.apache.commons.logging.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
-import java.net.*;
+
+import de.codewave.mytunesrss.*;
 
 /**
  * de.codewave.mytunesrss.itunes.ITunesLibraryContextListener
@@ -25,7 +26,8 @@ public class ITunesLibraryContextListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         ITunesLibrary library = new ITunesLibrary();
         try {
-            library.load(new File(System.getProperty("mytunesrss.iTunesLibrary")).toURL());
+            MyTunesRssConfig config = (MyTunesRssConfig)servletContextEvent.getServletContext().getAttribute(MyTunesRssConfig.class.getName());
+            library.load(new File(config.getLibraryXml()).toURL(), config.getFakeMp3Suffix(), config.getFakeM4aSuffix());
         } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not load iTunes library xml.", e);

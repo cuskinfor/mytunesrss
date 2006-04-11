@@ -6,17 +6,16 @@ package de.codewave.mytunesrss;
 
 import org.apache.commons.lang.*;
 
-import java.io.*;
 import java.util.prefs.*;
 
 /**
- * de.codewave.mytunesrss.PrefData
+ * de.codewave.mytunesrss.MyTunesRssConfig
  */
-public class PrefData {
-    public static PrefData getSavedPrefData() {
-        PrefData prefData = new PrefData();
-        prefData.load();
-        return prefData;
+public class MyTunesRssConfig {
+    public static MyTunesRssConfig getSavedPrefData() {
+        MyTunesRssConfig config = new MyTunesRssConfig();
+        config.load();
+        return config;
     }
 
     private String myPort;
@@ -110,13 +109,13 @@ public class PrefData {
     @Override
     public int hashCode() {
         // todo: implement method
-        throw new UnsupportedOperationException("method hashCode of class PrefData is not yet implemented!");
+        throw new UnsupportedOperationException("method hashCode of class MyTunesRssConfig is not yet implemented!");
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof PrefData) {
-            PrefData other = (PrefData)obj;
+        if (obj != null && obj instanceof MyTunesRssConfig) {
+            MyTunesRssConfig other = (MyTunesRssConfig)obj;
             boolean result = StringUtils.equals(getPort(), other.getPort());
             result &= StringUtils.equals(getLibraryXml(), other.getLibraryXml());
             result &= isAuth() == other.isAuth();

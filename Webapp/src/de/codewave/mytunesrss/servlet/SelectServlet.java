@@ -65,7 +65,7 @@ public class SelectServlet extends BaseServlet {
                 }
                 response.sendRedirect(url.toString());
             } else {
-                request.getRequestDispatcher("/index.jsp").forward(request, response);
+                request.getRequestDispatcher("/search.jsp").forward(request, response);
             }
         } else {
             request.setAttribute("error", "error.must_select_one_song");

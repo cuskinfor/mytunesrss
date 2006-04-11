@@ -50,10 +50,10 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="EmbeddedTomcat" />
-    <orderEntry type="library" name="commons-lang" level="application" />
-    <orderEntry type="library" name="commons-logging" level="application" />
-    <orderEntry type="library" name="logging-log4j" level="application" />
-    <orderEntry type="module-library">
+    <orderEntry type="library" exported="" name="commons-lang" level="application" />
+    <orderEntry type="library" exported="" name="commons-logging" level="application" />
+    <orderEntry type="library" exported="" name="logging-log4j" level="application" />
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/codewave-utils-1.1.jar!/" />
@@ -62,7 +62,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="commons-jxpath" level="application" />
+    <orderEntry type="library" exported="" name="commons-jxpath" level="application" />
     <orderEntryProperties />
   </component>
   <component name="copyright">
