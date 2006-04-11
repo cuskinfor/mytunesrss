@@ -3,16 +3,12 @@ package de.codewave.mytunesrss;
 import de.codewave.embedtomcat.*;
 import org.apache.catalina.*;
 import org.apache.catalina.startup.*;
-import org.apache.commons.lang.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.*;
-
-import sun.plugin.viewer.*;
 
 /**
  * de.codewave.mytunesrss.Settings
@@ -21,11 +17,6 @@ public class Settings {
     private static final int MIN_PORT = 1;
     private static final int MAX_PORT = 65535;
     private static final String LIBRARY_XML_FILE_NAME = "iTunes Music Library.xml";
-    private static final String DEFAULT_LIBRARY_PATH = "";
-    private static final String DEFAULT_AUTH_USER = "";
-    private static final String DEFAULT_AUTH_PASS = "";
-    private static final boolean DEFAULT_USE_AUTH = false;
-    private static final String DEFAULT_TOMCAT_PORT = "8080";
 
     private final ResourceBundle myMainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
 
@@ -40,18 +31,22 @@ public class Settings {
     private JCheckBox myUseAuthCheck;
     private JTextField myUsername;
     private JPasswordField myPassword;
-    private JPanel myAuthInfoPanel;
+    private JTextField myFakeMp3Suffix;
+    private JTextField myFakeM4aSuffix;
     private Embedded myServer;
 
     public Settings(JFrame frame) {
         myFrame = frame;
         setStatus(myMainBundle.getString("info.server.idle"));
-        myPort.setText(Preferences.userRoot().node("/de/codewave/mytunesrss").get("port", DEFAULT_TOMCAT_PORT));
-        myTunesXmlPath.setText(Preferences.userRoot().node("/de/codewave/mytunesrss").get("library", DEFAULT_LIBRARY_PATH));
-        myUsername.setText(Preferences.userRoot().node("/de/codewave/mytunesrss").get("authUsername", DEFAULT_AUTH_USER));
-        myPassword.setText(Preferences.userRoot().node("/de/codewave/mytunesrss").get("authPassword", DEFAULT_AUTH_PASS));
-        myUseAuthCheck.setSelected(Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("useAuth", DEFAULT_USE_AUTH));
-        handleAuthInfoPanel();
+        PrefData data = new PrefData();
+        data.load();
+        myPort.setText(data.getPort());
+        myTunesXmlPath.setText(data.getLibraryXml());
+        myUseAuthCheck.setSelected(data.isAuth());
+        myUsername.setText(data.getUsername());
+        myPassword.setText(data.getPassword());
+        myFakeMp3Suffix.setText(data.getFakeMp3Suffix());
+        myFakeM4aSuffix.setText(data.getFakeM4aSuffix());
         myStartStopButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 doStartStopServer();
@@ -67,18 +62,8 @@ public class Settings {
                 doLookupLibraryFile();
             }
         });
-        myUseAuthCheck.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                handleAuthInfoPanel();
-            }
-        });
 
         myRootPanel.validate();
-    }
-
-    private void handleAuthInfoPanel() {
-        myUsername.setEnabled(myUseAuthCheck.isSelected());
-        myPassword.setEnabled(myUseAuthCheck.isSelected());
     }
 
     public JPanel getRootPanel() {
@@ -129,10 +114,8 @@ public class Settings {
                 public void run() {
                     try {
                         myServer = EmbeddedTomcat.createServer("MyTunesRss", null, serverPort, new File("."), "ROOT", "");
-                        System.setProperty("mytunesrss.iTunesLibrary", library.getCanonicalPath());
-                        System.setProperty("mytunesrss.useAuth", Boolean.toString(myUseAuthCheck.isSelected()));
-                        System.setProperty("mytunesrss.authUsername", myUsername.getText());
-                        System.setProperty("mytunesrss.authPassword", new String(myPassword.getPassword()));
+                        PrefData prefData = createPrefDataFromGUI();
+                        // todo: store pref data somewhere to use in web application
                         myServer.start();
                         myStartStopButton.setText(myMainBundle.getString("gui.settings.button.stopServer"));
                         myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.stopServer"));
@@ -191,12 +174,8 @@ public class Settings {
             }
             Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_x", myFrame.getLocation().x);
             Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", myFrame.getLocation().y);
-            String savedPort = Preferences.userRoot().node("/de/codewave/mytunesrss").get("port", DEFAULT_TOMCAT_PORT);
-            String savedPath = Preferences.userRoot().node("/de/codewave/mytunesrss").get("library", DEFAULT_LIBRARY_PATH);
-            String savedUsername = Preferences.userRoot().node("/de/codewave/mytunesrss").get("authUsername", DEFAULT_AUTH_USER);
-            String savedPassword = Preferences.userRoot().node("/de/codewave/mytunesrss").get("authPassword", DEFAULT_AUTH_PASS);
-            boolean savedUseAuth = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("useAuth", DEFAULT_USE_AUTH);
-            if (!myPort.getText().trim().equals(savedPort) || !myTunesXmlPath.getText().trim().equals(savedPath) || !myUsername.getText().trim().equals(savedUsername) || !new String(myPassword.getPassword()).trim().equals(savedPassword) || myUseAuthCheck.isSelected() != savedUseAuth) {
+            PrefData prefData = createPrefDataFromGUI();
+            if (prefData.isDiffenrentFromSaved()) {
                 if (JOptionPane.showOptionDialog(myRootPanel.getTopLevelAncestor(),
                                                  myMainBundle.getString("dialog.saveSettingsQuestion.message"),
                                                  myMainBundle.getString("dialog.saveSettingsQuestion.title"),
@@ -205,17 +184,25 @@ public class Settings {
                                                  null,
                                                  null,
                                                  null) == JOptionPane.YES_OPTION) {
-                    Preferences.userRoot().node("/de/codewave/mytunesrss").put("port", myPort.getText().trim());
-                    Preferences.userRoot().node("/de/codewave/mytunesrss").put("library", myTunesXmlPath.getText().trim());
-                    Preferences.userRoot().node("/de/codewave/mytunesrss").put("authUsername", myUsername.getText().trim());
-                    Preferences.userRoot().node("/de/codewave/mytunesrss").put("authPassword", new String(myPassword.getPassword()).trim());
-                    Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("useAuth", myUseAuthCheck.isSelected());
+                    prefData.save();
                 }
             }
             System.exit(0);
         } else {
             showErrorMessage(myMainBundle.getString("error.quitWhileStartingOrStopping"));
         }
+    }
+
+    private PrefData createPrefDataFromGUI() {
+        PrefData prefData = new PrefData();
+        prefData.setPort(myPort.getText().trim());
+        prefData.setLibraryXml(myTunesXmlPath.getText().trim());
+        prefData.setAuth(myUseAuthCheck.isSelected());
+        prefData.setUsername(myUsername.getText().trim());
+        prefData.setPassword(new String(myPassword.getPassword()).trim());
+        prefData.setFakeMp3Suffix(myFakeMp3Suffix.getText().trim());
+        prefData.setFakeM4aSuffix(myFakeM4aSuffix.getText().trim());
+        return prefData;
     }
 
     private void showErrorMessage(String message) {
