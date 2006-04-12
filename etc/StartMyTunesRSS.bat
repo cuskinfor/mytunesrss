@@ -1,2 +1,2 @@
 @echo off
-java -jar MyTunesRSS.jar
+java -Xmx64m -jar MyTunesRSS.jar
