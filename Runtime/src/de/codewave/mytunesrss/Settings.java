@@ -6,6 +6,7 @@ import org.apache.catalina.startup.*;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.*;
@@ -33,6 +34,7 @@ public class Settings {
     private JPasswordField myPassword;
     private JTextField myFakeMp3Suffix;
     private JTextField myFakeM4aSuffix;
+    private JLabel myProductIcon;
     private Embedded myServer;
 
     public Settings(JFrame frame) {
@@ -60,6 +62,27 @@ public class Settings {
         myLookupButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 doLookupLibraryFile();
+            }
+        });
+        myProductIcon.addMouseListener(new MouseListener() {
+            public void mouseClicked(MouseEvent e) {
+                About.displayAbout(myFrame);
+            }
+
+            public void mousePressed(MouseEvent e) {
+                // intentionally left blank
+            }
+
+            public void mouseReleased(MouseEvent e) {
+                // intentionally left blank
+            }
+
+            public void mouseEntered(MouseEvent e) {
+                // intentionally left blank
+            }
+
+            public void mouseExited(MouseEvent e) {
+                // intentionally left blank
             }
         });
 
