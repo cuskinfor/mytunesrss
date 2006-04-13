@@ -11,6 +11,7 @@ import javax.servlet.http.*;
 import java.io.*;
 
 import org.apache.commons.logging.*;
+import org.apache.commons.lang.*;
 
 /**
  * de.codewave.mytunesrss.servlet.MyTunesRssServletFilter
@@ -29,7 +30,7 @@ public class AuthFilter implements Filter {
         }
         HttpSession session = ((HttpServletRequest)servletRequest).getSession();
         MyTunesRssConfig config = (MyTunesRssConfig)session.getServletContext().getAttribute(MyTunesRssConfig.class.getName());
-        if (!config.isAuth() || session.getAttribute("authenticated") != null) {
+        if (!config.isAuth() || StringUtils.isNotEmpty((String)session.getAttribute("authHash"))) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No authentication necessary.");
             }

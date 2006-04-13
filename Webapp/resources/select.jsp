@@ -126,7 +126,7 @@
                     </c:otherwise>
                   </c:choose>
                 </td>
-                <td class="play"><a href="${urlMap.mp3}/${item.file.id}/${cwfn:urlEncode(item.file.virtualFileName, 'UTF-8')}"><img src="images/play.png" alt="<fmt:message key="select.play"/>"/></a></td>
+                <td class="play"><a href="${urlMap.mp3}/id=${item.file.id}${authInfo}/${cwfn:urlEncode(item.file.virtualFileName, 'UTF-8')}"><img src="images/play.png" alt="<fmt:message key="select.play"/>"/></a></td>
               </tr>
             </c:forEach>
           </c:forEach>

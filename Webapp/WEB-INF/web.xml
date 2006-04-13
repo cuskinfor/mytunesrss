@@ -54,6 +54,10 @@
         <servlet-name>Select</servlet-name>
     </filter-mapping>
     <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <servlet-name>PlayListFeed</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
         <filter-name>ParameterTrimmerFilter</filter-name>
         <servlet-name>/*</servlet-name>
     </filter-mapping>
@@ -62,39 +66,39 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <listener>
-        <description>Servlet context listener for loading the iTunes library</description>
+        <description>Servlet context listener for loading the iTunes library.</description>
         <display-name>iTunesLibraryListener</display-name>
         <listener-class>de.codewave.mytunesrss.itunes.ITunesLibraryContextListener</listener-class>
     </listener>
     <servlet>
-        <description>Servlet for searching the library</description>
+        <description>Servlet for searching the library.</description>
         <display-name>Search</display-name>
         <servlet-name>Search</servlet-name>
         <servlet-class>de.codewave.mytunesrss.servlet.SearchServlet</servlet-class>
     </servlet>
     <servlet>
-        <description>Servlet for sorting results</description>
+        <description>Servlet for sorting results.</description>
         <display-name>Sort</display-name>
         <servlet-name>Sort</servlet-name>
         <servlet-class>de.codewave.mytunesrss.servlet.SortServlet</servlet-class>
     </servlet>
     <servlet>
-        <description>Servlet for selecting results</description>
+        <description>Servlet for selecting results.</description>
         <display-name>Select</display-name>
         <servlet-name>Select</servlet-name>
         <servlet-class>de.codewave.mytunesrss.servlet.SelectServlet</servlet-class>
     </servlet>
     <servlet>
-        <description>Servlet for creating the RSS feed</description>
+        <description>Servlet for creating the RSS feed.</description>
         <display-name>RSSFeed</display-name>
         <servlet-name>RSSFeed</servlet-name>
         <servlet-class>de.codewave.mytunesrss.servlet.RSSFeedServlet</servlet-class>
     </servlet>
     <servlet>
-        <description>Servlet for delivering MP3 content</description>
-        <display-name>MP3Delivery</display-name>
-        <servlet-name>MP3Delivery</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.MP3DeliveryServlet</servlet-class>
+        <description>Servlet for delivering content.</description>
+        <display-name>MusicDelivery</display-name>
+        <servlet-name>MusicDelivery</servlet-name>
+        <servlet-class>de.codewave.mytunesrss.servlet.MusicDeliveryServlet</servlet-class>
     </servlet>
     <servlet>
         <description>Servlet for logging into the application.</description>
@@ -125,7 +129,7 @@
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>MP3Delivery</servlet-name>
+        <servlet-name>MusicDelivery</servlet-name>
         <url-pattern>/get/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>

@@ -59,9 +59,12 @@ public class SelectServlet extends BaseServlet {
                     channel = MessageFormat.format(channelPattern, System.getProperty("mytunesrss.version"));
                 }
                 Map<String, String> urls = (Map<String, String>)request.getSession().getAttribute("urlMap");
-                StringBuffer url = new StringBuffer(urls.get("rss")).append("/channel=").append(channel);
+                StringBuffer url = new StringBuffer(urls.get("rss")).append("/ch=").append(channel);
                 for (MusicFile musicFile : playlist) {
-                    url.append("/").append(musicFile.getId());
+                    url.append("/id=").append(musicFile.getId());
+                }
+                if (StringUtils.isNotEmpty((String)request.getSession().getAttribute("authHash"))) {
+                    url.append("/au=").append(request.getSession().getAttribute("authHash"));
                 }
                 response.sendRedirect(url.toString());
             } else {

@@ -29,7 +29,6 @@ public class Settings {
     private JButton myQuitButton;
     private JButton myLookupButton;
     private JCheckBox myUseAuthCheck;
-    private JTextField myUsername;
     private JPasswordField myPassword;
     private JTextField myFakeMp3Suffix;
     private JTextField myFakeM4aSuffix;
@@ -44,7 +43,6 @@ public class Settings {
         myPort.setText(data.getPort());
         myTunesXmlPath.setText(data.getLibraryXml());
         myUseAuthCheck.setSelected(data.isAuth());
-        myUsername.setText(data.getUsername());
         myPassword.setText(data.getPassword());
         myFakeMp3Suffix.setText(data.getFakeMp3Suffix());
         myFakeM4aSuffix.setText(data.getFakeM4aSuffix());
@@ -127,6 +125,8 @@ public class Settings {
             showErrorMessage(myMainBundle.getString("error.startServer.port"));
         } else if (!new ITunesLibraryFileFilter(false).accept(library)) {
             showErrorMessage(myMainBundle.getString("error.startServer.libraryXmlFile"));
+        } else if (myUseAuthCheck.isSelected() && new String(myPassword.getPassword()).trim().length() == 0) {
+            showErrorMessage(myMainBundle.getString("error.startServer.useAuthButNoPassword"));
         } else {
             enableButtons(false);
             enableConfig(false);
@@ -223,7 +223,6 @@ public class Settings {
         config.setPort(myPort.getText().trim());
         config.setLibraryXml(myTunesXmlPath.getText().trim());
         config.setAuth(myUseAuthCheck.isSelected());
-        config.setUsername(myUsername.getText().trim());
         config.setPassword(new String(myPassword.getPassword()).trim());
         config.setFakeMp3Suffix(myFakeMp3Suffix.getText().trim());
         config.setFakeM4aSuffix(myFakeM4aSuffix.getText().trim());
@@ -244,7 +243,6 @@ public class Settings {
         myPort.setEnabled(enabled);
         myTunesXmlPath.setEnabled(enabled);
         myUseAuthCheck.setEnabled(enabled);
-        myUsername.setEnabled(enabled);
         myPassword.setEnabled(enabled);
         myFakeMp3Suffix.setEnabled(enabled);
         myFakeM4aSuffix.setEnabled(enabled);

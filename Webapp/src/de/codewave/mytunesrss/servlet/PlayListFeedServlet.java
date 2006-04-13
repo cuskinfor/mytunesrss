@@ -25,7 +25,10 @@ public class PlayListFeedServlet extends BaseServlet {
         String playListId = request.getParameter("playlist");
         if (StringUtils.isNotEmpty(playListId)) {
             Map<String, String> urls = (Map<String, String>)request.getSession().getAttribute("urlMap");
-            StringBuffer url = new StringBuffer(urls.get("rss")).append("/playlist=").append(playListId);
+            StringBuffer url = new StringBuffer(urls.get("rss")).append("/pl=").append(playListId);
+            if (StringUtils.isNotEmpty((String)request.getSession().getAttribute("authHash"))) {
+                url.append("/au=").append(request.getSession().getAttribute("authHash"));
+            }
             response.sendRedirect(url.toString());
         } else {
             request.setAttribute("error", "error.must_select_a_playlist");

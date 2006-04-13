@@ -4,8 +4,10 @@
 
 package de.codewave.mytunesrss.servlet;
 
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.itunes.*;
 import de.codewave.mytunesrss.musicfile.*;
+import org.apache.commons.lang.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -13,7 +15,7 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 
-public class RSSFeedServlet extends HttpServlet {
+public class RSSFeedServlet extends BaseServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doCommand(request, response);
@@ -26,21 +28,31 @@ public class RSSFeedServlet extends HttpServlet {
     private void doCommand(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         ITunesLibrary library = ITunesLibraryContextListener.getLibrary(request);
         Collection<MusicFile> feedFiles = new ArrayList<MusicFile>();
+        String authHash = null;
         for (StringTokenizer tokenizer = new StringTokenizer(request.getPathInfo(), "/"); tokenizer.hasMoreTokens();) {
             String token = tokenizer.nextToken();
-            if (token.startsWith("channel=")) {
-                request.setAttribute("channel", token.substring("channel=".length()));
-            } else if (token.startsWith("playlist=")) {
-                PlayList playlist = library.getPlayListWithId(token.substring("playlist=".length()));
+            if (token.startsWith("ch=")) {
+                request.setAttribute("channel", token.substring("ch=".length()));
+            } else if (token.startsWith("pl=")) {
+                PlayList playlist = library.getPlayListWithId(token.substring("pl=".length()));
                 request.setAttribute("channel", playlist.getName());
                 feedFiles.addAll(playlist.getMusicFiles());
-            } else {
-                feedFiles.addAll(library.getMatchingFiles(new MusicFileIdSearch(token)));
+            } else if (token.startsWith("au=")) {
+                authHash = token.substring("au=".length());
+            } else if (token.startsWith("id=")) {
+                feedFiles.addAll(library.getMatchingFiles(new MusicFileIdSearch(token.substring("id=".length()))));
             }
         }
         request.setAttribute("musicFiles", feedFiles);
         request.setAttribute("pubDate", new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US).format(new Date()));
+        if (StringUtils.isNotEmpty(authHash)) {
+            request.setAttribute("authInfo", "/au=" + authHash);
+        }
         request.setAttribute("feedUrl", request.getRequestURL().toString());
-        request.getRequestDispatcher("/rss.jsp").forward(request, response);
+        if (isAuthorized(request, authHash)) {
+            request.getRequestDispatcher("/rss.jsp").forward(request, response);
+        } else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
     }
 }

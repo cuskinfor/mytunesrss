@@ -42,14 +42,10 @@
             <th style="width: 50%;">&nbsp;</th>
           </tr>
           <tr>
-            <td rowspan="5">&nbsp;</td>
-              <td><fmt:message key="login.username"/></td>
-              <td><input class="text" type="text" name="username" value="<c:out value="${param.username}"/>" /></td>
-            <td rowspan="5">&nbsp;</td>
-          </tr>
-          <tr>
+            <td rowspan="2">&nbsp;</td>
               <td><fmt:message key="login.password"/></td>
               <td><input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" /></td>
+            <td rowspan="2">&nbsp;</td>
           </tr>
           <tr>
             <td>&nbsp;</td>

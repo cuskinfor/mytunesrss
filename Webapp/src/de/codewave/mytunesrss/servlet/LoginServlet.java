@@ -10,10 +10,7 @@ import org.apache.commons.lang.*;
 import javax.servlet.http.*;
 import javax.servlet.*;
 import java.io.*;
-import java.util.*;
 
-import de.codewave.mytunesrss.itunes.*;
-import de.codewave.mytunesrss.musicfile.*;
 import de.codewave.mytunesrss.*;
 
 public class LoginServlet extends BaseServlet {
@@ -28,17 +25,16 @@ public class LoginServlet extends BaseServlet {
     }
 
     private void doCommand(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        String username = request.getParameter("username");
         String password = request.getParameter("password");
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Trying to login user \"" + username + "\" with password \"" + password + "\".");
+            LOG.debug("Trying to authenticate user with password \"" + password + "\".");
         }
         MyTunesRssConfig config = getMyTunesRssConfig(request);
-        if (StringUtils.equals(username, config.getUsername()) && StringUtils.equals(password, config.getPassword())) {
+        if (password.hashCode() == config.getPasswordHash()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Login successful.");
             }
-            request.getSession().setAttribute("authenticated", Boolean.TRUE);
+            request.getSession().setAttribute("authHash", Integer.toString(config.getPasswordHash()));
             request.getRequestDispatcher("/search.jsp").forward(request, response);
         } else {
             if (LOG.isDebugEnabled()) {

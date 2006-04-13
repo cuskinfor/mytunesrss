@@ -21,7 +21,6 @@ public class MyTunesRssConfig {
     private String myPort;
     private String myLibraryXml;
     private boolean myAuth;
-    private String myUsername;
     private String myPassword;
     private String myFakeMp3Suffix;
     private String myFakeM4aSuffix;
@@ -58,6 +57,10 @@ public class MyTunesRssConfig {
         myLibraryXml = libraryXml;
     }
 
+    public int getPasswordHash() {
+        return myPassword != null ? myPassword.hashCode() : 0;
+    }
+
     public String getPassword() {
         return myPassword;
     }
@@ -74,19 +77,10 @@ public class MyTunesRssConfig {
         myPort = port;
     }
 
-    public String getUsername() {
-        return myUsername;
-    }
-
-    public void setUsername(String username) {
-        myUsername = username;
-    }
-
     public void load() {
         myPort = Preferences.userRoot().node("/de/codewave/mytunesrss").get("port", "8080");
         myLibraryXml = Preferences.userRoot().node("/de/codewave/mytunesrss").get("library", "");
-        myAuth = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("useAuth", true);
-        myUsername = Preferences.userRoot().node("/de/codewave/mytunesrss").get("authUsername", "");
+        myAuth = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("useAuth", false);
         myPassword = Preferences.userRoot().node("/de/codewave/mytunesrss").get("authPassword", "");
         myFakeMp3Suffix = Preferences.userRoot().node("/de/codewave/mytunesrss").get("fakeMp3Suffix", "");
         myFakeM4aSuffix = Preferences.userRoot().node("/de/codewave/mytunesrss").get("fakeM4aSuffix", "mp4");
@@ -96,7 +90,6 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("port", myPort);
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("library", myLibraryXml);
         Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("useAuth", myAuth);
-        Preferences.userRoot().node("/de/codewave/mytunesrss").put("authUsername", myUsername);
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("authPassword", myPassword);
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("fakeMp3Suffix", myFakeMp3Suffix);
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("fakeM4aSuffix", myFakeM4aSuffix);
@@ -119,7 +112,6 @@ public class MyTunesRssConfig {
             boolean result = StringUtils.equals(getPort(), other.getPort());
             result &= StringUtils.equals(getLibraryXml(), other.getLibraryXml());
             result &= isAuth() == other.isAuth();
-            result &= StringUtils.equals(getUsername(), other.getUsername());
             result &= StringUtils.equals(getPassword(), other.getPassword());
             result &= StringUtils.equals(getFakeMp3Suffix(), other.getFakeMp3Suffix());
             result &= StringUtils.equals(getFakeM4aSuffix(), other.getFakeM4aSuffix());

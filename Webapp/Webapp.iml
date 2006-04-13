@@ -27,6 +27,11 @@
     <setting name="RUN_JASPER_VALIDATION" value="false" />
   </component>
   <component name="WebModuleProperties">
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/codewave-utils-1.1.jar" />
+      <url>jar://$MODULE_DIR$/../lib/codewave-utils-1.1.jar!/</url>
+    </containerElement>
     <containerElement type="library" name="jakarta-taglibs-standard-1.1" level="application">
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib" />

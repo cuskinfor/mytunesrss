@@ -13,6 +13,8 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.commons.lang.*;
+
 /**
  * de.codewave.mytunesrss.servlet.BaseServlet
  */
@@ -32,10 +34,19 @@ public abstract class BaseServlet extends HttpServlet {
         request.setAttribute("sections", SectionUtils.buildSections((Collection<MusicFile>)request.getSession().getAttribute("searchResult"),
                                                                     sortOrder));
         SectionUtils.setSelection((Collection<Section>)request.getAttribute("sections"), requestSelection);
+        String authHash = (String)request.getSession().getAttribute("authHash");
+        if (StringUtils.isNotEmpty(authHash)) {
+            request.setAttribute("authInfo", "/au=" + authHash);
+        }
         request.getRequestDispatcher("/select.jsp").forward(request, response);
     }
 
     protected MyTunesRssConfig getMyTunesRssConfig(HttpServletRequest request) {
         return (MyTunesRssConfig)request.getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
+    }
+
+    protected boolean isAuthorized(HttpServletRequest request, String authHash) {
+        MyTunesRssConfig config = getMyTunesRssConfig(request);
+        return !config.isAuth() || ("" + config.getPasswordHash()).equals(authHash);
     }
 }

@@ -17,10 +17,10 @@
                 <title><c:if test="{item.trackNumber != 0}">${item.textualTrackNumber} - </c:if><c:out value="${item.name}"/></title>
                 <description><c:out value="${item.album}"/> - <c:out value="${item.artist}"/></description>
                 <author><c:out value="${item.artist}"/></author>
-                <link>${urlMap.rss}/${item.id}</link>
-                <guid>${urlMap.rss}/${item.id}</guid>
+                <link>${urlMap.rss}/id=${item.id}${authInfo}</link>
+                <guid>${urlMap.rss}/id=${item.id}${authInfo}</guid>
                 <pubDate>${pubDate}</pubDate>
-                <enclosure url="${urlMap.mp3}/${item.id}/${cwfn:urlEncode(item.virtualFileName, 'UTF-8')}"
+                <enclosure url="${urlMap.mp3}/id=${item.id}${authInfo}/${cwfn:urlEncode(item.virtualFileName, 'UTF-8')}"
                            type="${item.contentType}"
                            length="${item.fileLength}"/>
             </item>
