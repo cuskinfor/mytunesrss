@@ -6,7 +6,6 @@ import org.apache.catalina.startup.*;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.*;
@@ -129,8 +128,8 @@ public class Settings {
         } else if (!new ITunesLibraryFileFilter(false).accept(library)) {
             showErrorMessage(myMainBundle.getString("error.startServer.libraryXmlFile"));
         } else {
-            disableButtons();
-            disableConfig();
+            enableButtons(false);
+            enableConfig(false);
             myRootPanel.validate();
             setStatus(myMainBundle.getString("info.server.starting"));
             new Thread(new Runnable() {
@@ -152,13 +151,13 @@ public class Settings {
                             showErrorMessage(myMainBundle.getString("error.server.startFailure") + e.getMessage());
                         }
                         setStatus(myMainBundle.getString("info.server.idle"));
-                        enableConfig();
+                        enableConfig(true);
                     } catch (IOException e) {
                         showErrorMessage(myMainBundle.getString("error.server.startFailure") + e.getMessage());
                         setStatus(myMainBundle.getString("info.server.idle"));
-                        enableConfig();
+                        enableConfig(true);
                     }
-                    enableButtons();
+                    enableButtons(true);
                     myRootPanel.validate();
                     setStatus(myMainBundle.getString("info.server.running"));
                 }
@@ -167,7 +166,7 @@ public class Settings {
     }
 
     public void doStopServer() {
-        disableButtons();
+        enableButtons(false);
         myRootPanel.validate();
         new Thread(new Runnable() {
             public void run() {
@@ -176,14 +175,14 @@ public class Settings {
                     myServer.stop();
                     myServer = null;
                     setStatus(myMainBundle.getString("info.server.idle"));
-                    enableConfig();
+                    enableConfig(true);
                     myStartStopButton.setText(myMainBundle.getString("gui.settings.button.startServer"));
                     myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.startServer"));
                 } catch (LifecycleException e) {
                     showErrorMessage(myMainBundle.getString("error.server.stopFailure") + e.getMessage());
                     setStatus(myMainBundle.getString("info.server.running"));
                 }
-                enableButtons();
+                enableButtons(true);
                 myRootPanel.validate();
             }
         }).start();
@@ -235,26 +234,20 @@ public class Settings {
         JOptionPane.showMessageDialog(getRootPanel().getTopLevelAncestor(), message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    private void enableButtons() {
-        myStartStopButton.setEnabled(true);
-        myQuitButton.setEnabled(true);
+    private void enableButtons(boolean enabled) {
+        myStartStopButton.setEnabled(enabled);
+        myQuitButton.setEnabled(enabled);
     }
 
-    private void disableButtons() {
-        myStartStopButton.setEnabled(false);
-        myQuitButton.setEnabled(false);
-    }
-
-    private void enableConfig() {
-        myLookupButton.setEnabled(true);
-        myPort.setEnabled(true);
-        myTunesXmlPath.setEnabled(true);
-    }
-
-    private void disableConfig() {
-        myLookupButton.setEnabled(false);
-        myPort.setEnabled(false);
-        myTunesXmlPath.setEnabled(false);
+    private void enableConfig(boolean enabled) {
+        myLookupButton.setEnabled(enabled);
+        myPort.setEnabled(enabled);
+        myTunesXmlPath.setEnabled(enabled);
+        myUseAuthCheck.setEnabled(enabled);
+        myUsername.setEnabled(enabled);
+        myPassword.setEnabled(enabled);
+        myFakeMp3Suffix.setEnabled(enabled);
+        myFakeM4aSuffix.setEnabled(enabled);
     }
 
     public static class ITunesLibraryFileFilter extends javax.swing.filechooser.FileFilter {
