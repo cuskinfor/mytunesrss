@@ -18,7 +18,7 @@
 
     <target name="copy.tomcat-config" description="copy the tomcat embedded configuration to the distribution">
         <copy todir="distribution" overwrite="true">
-            <fileset dir="../EmbeddedTomcat/etc">
+            <fileset dir="etc">
                 <include name="conf/**"/>
             </fileset>
         </copy>

@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.embedtomcat.*;
 import org.apache.catalina.*;
 import org.apache.catalina.startup.*;
 

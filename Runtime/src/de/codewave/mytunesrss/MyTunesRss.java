@@ -6,6 +6,7 @@ package de.codewave.mytunesrss;
 
 import de.codewave.utils.moduleinfo.*;
 import org.apache.catalina.*;
+import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.awt.event.*;

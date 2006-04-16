@@ -5,13 +5,17 @@
 package de.codewave.mytunesrss.musicfile;
 
 import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 
 import java.io.*;
+import java.net.*;
 
 /**
  * de.codewave.mytunesrss.musicfile.MusicFile
  */
 public class MusicFile implements Serializable {
+    private static final Log LOG = LogFactory.getLog(MusicFile.class);
+
     private String myAlbum;
     private String myArtist;
     private File myFile;
@@ -101,19 +105,21 @@ public class MusicFile implements Serializable {
                              myTrackNumber,
                              myArtist,
                              myId,
-                             myFile.getAbsolutePath());
+                             myFile != null ? myFile.getAbsolutePath() : "?unknown location?");
     }
 
     public boolean isValid() {
-        return (myName != null && myArtist != null && myId != null && myAlbum != null && (isMP3() || isM4A()));
+        return (myName != null && myArtist != null && myId != null && myAlbum != null && myFile != null && (isMP3() || isM4A()));
     }
 
     private boolean isMP3() {
-        return myFile.getName().toLowerCase().endsWith(".mp3");
+        String name = myFile.getName();
+        return StringUtils.isNotEmpty(name) && name.toLowerCase().endsWith(".mp3");
     }
 
     private boolean isM4A() {
-        return myFile.getName().toLowerCase().endsWith(".m4a");
+        String name = myFile.getName();
+        return StringUtils.isNotEmpty(name) && name.toLowerCase().endsWith(".m4a");
     }
 
     public synchronized String getVirtualFileName() {
@@ -143,6 +149,30 @@ public class MusicFile implements Serializable {
         if (isMP3()) {
             return "audio/mp3";
         }
-        return "audio/aac";
+        return "audio/mp4";
+    }
+
+    public void setFile(String location) {
+        if (location.toLowerCase().startsWith("file://localhost")) {
+            try {
+                String pathname = URLDecoder.decode(location.substring("file://localhost".length()), "UTF-8");
+                File file = new File(pathname);
+                if (file.exists() && file.isFile()) {
+                    setFile(file);
+                } else {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("File \"" + pathname + "\" omitted (not found or is not a file).");
+                    }
+                }
+            } catch (UnsupportedEncodingException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not create location for \"" + location + "\".", e);
+                }
+            }
+        } else {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Location \"" + location + "\" not recognized.");
+            }
+        }
     }
 }

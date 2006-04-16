@@ -75,17 +75,14 @@ public class ITunesLibrary implements Serializable {
             musicFile.setName(track.get("Name"));
             String trackNumber = track.get("Track Number");
             musicFile.setTrackNumber(StringUtils.isNotEmpty(trackNumber) ? Integer.parseInt(trackNumber) : 0);
-            String location = track.get("Location").substring("file://localhost".length());
-            try {
-                musicFile.setFile(new File(URLDecoder.decode(location, "UTF-8")));
-            } catch (UnsupportedEncodingException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not create file for \"" + location + "\".", e);
-                }
-            }
+            musicFile.setFile(track.get("Location"));
             if (musicFile.isValid()) {
                 myTitles.add(musicFile);
                 trackIds.add(musicFile.getId());
+            } else {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Invalid music file \"" + musicFile + "\" omitted.");
+                }
             }
         }
         Collections.sort(myTitles, new MusicFileComparator());
