@@ -101,8 +101,13 @@ public class MyTunesRssConfig {
 
     @Override
     public int hashCode() {
-        // todo: implement method
-        throw new UnsupportedOperationException("method hashCode of class MyTunesRssConfig is not yet implemented!");
+        int hash = getPort() != null ? getPort().hashCode() : 0;
+        hash |= getLibraryXml() != null ? getLibraryXml().hashCode() : 0;
+        hash |= getPassword() != null ? getPassword().hashCode() : 0;
+        hash |= getFakeMp3Suffix() != null ? getFakeMp3Suffix().hashCode() : 0;
+        hash |= getFakeM4aSuffix() != null ? getFakeM4aSuffix().hashCode() : 0;
+        hash |=  Boolean.valueOf(isAuth()).hashCode();
+        return hash;
     }
 
     @Override

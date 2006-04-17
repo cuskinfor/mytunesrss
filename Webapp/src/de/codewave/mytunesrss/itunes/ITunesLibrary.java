@@ -77,11 +77,23 @@ public class ITunesLibrary implements Serializable {
             musicFile.setTrackNumber(StringUtils.isNotEmpty(trackNumber) ? Integer.parseInt(trackNumber) : 0);
             musicFile.setFile(track.get("Location"));
             if (musicFile.isValid()) {
-                myTitles.add(musicFile);
-                trackIds.add(musicFile.getId());
+                if (musicFile.isMP3() || musicFile.isM4A()) {
+                    myTitles.add(musicFile);
+                    trackIds.add(musicFile.getId());
+                } else {
+                    if (musicFile.isM4P()) {
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("Protected AAC file [" + musicFile + "] omitted.");
+                        }
+                    } else {
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("Unsupported music file [" + musicFile + "] omitted.");
+                        }
+                    }
+                }
             } else {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Invalid music file \"" + musicFile + "\" omitted.");
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Invalid music file [" + musicFile + "] omitted.");
                 }
             }
         }

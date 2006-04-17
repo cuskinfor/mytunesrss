@@ -33,7 +33,7 @@ public class MusicFile implements Serializable {
     }
 
     public String getAlbum() {
-        return myAlbum;
+        return myAlbum != null ? myAlbum : "";
     }
 
     public synchronized void setAlbum(String album) {
@@ -42,7 +42,7 @@ public class MusicFile implements Serializable {
     }
 
     public String getArtist() {
-        return myArtist;
+        return myArtist != null ? myArtist : "";
     }
 
     public synchronized void setArtist(String artist) {
@@ -84,10 +84,12 @@ public class MusicFile implements Serializable {
     }
 
     public String getTextualTrackNumber() {
-        if (myTrackNumber > 9) {
-            return "" + myTrackNumber;
-        } else if (myTrackNumber > 0) {
-            return "0" + myTrackNumber;
+        if (myTrackNumber > 0) {
+            String textualTrackNumber = Integer.toString(myTrackNumber);
+            if (textualTrackNumber.length() == 1) {
+                return "0" + textualTrackNumber; // make at least 2 digits long; most albumbs will have less than 100 titles
+            }
+            return textualTrackNumber;
         }
         return null;
     }
@@ -100,31 +102,36 @@ public class MusicFile implements Serializable {
     @Override
     public String toString() {
         return String.format("name:\"%s\", album:\"%s\", track:%d, artist:\"%s\", id:%s, path:\"%s\"",
-                             myName,
-                             myAlbum,
+                             myName != null ? myName : "",
+                             myAlbum != null ? myAlbum : "",
                              myTrackNumber,
-                             myArtist,
-                             myId,
+                             myArtist != null ? myArtist : "",
+                             myId != null ? myId : "",
                              myFile != null ? myFile.getAbsolutePath() : "");
     }
 
     public boolean isValid() {
-        return (myName != null && myArtist != null && myId != null && myAlbum != null && myFile != null && (isMP3() || isM4A()));
+        return (myName != null && myId != null && myFile != null);
     }
 
-    private boolean isMP3() {
+    public boolean isMP3() {
         String name = myFile.getName();
         return StringUtils.isNotEmpty(name) && name.toLowerCase().endsWith(".mp3");
     }
 
-    private boolean isM4A() {
+    public boolean isM4A() {
         String name = myFile.getName();
         return StringUtils.isNotEmpty(name) && name.toLowerCase().endsWith(".m4a");
     }
 
+    public boolean isM4P() {
+        String name = myFile.getName();
+        return StringUtils.isNotEmpty(name) && name.toLowerCase().endsWith(".m4p");
+    }
+
     public synchronized String getVirtualFileName() {
         if (myVirtualFileName == null) {
-            myVirtualFileName = myArtist + " - " + myAlbum + " - ";
+            myVirtualFileName = (myArtist != null ? myArtist + " - " : "") + (myAlbum != null ? myAlbum + " - " : "");
             String trackNumber = getTextualTrackNumber();
             if (trackNumber != null) {
                 myVirtualFileName += trackNumber + " - ";
@@ -149,7 +156,7 @@ public class MusicFile implements Serializable {
         if (isMP3()) {
             return "audio/mp3";
         }
-        return "audio/mp4";
+        return "audio/mp4"; // todo: check if this content type is correct
     }
 
     public void setFile(String location) {
@@ -160,18 +167,18 @@ public class MusicFile implements Serializable {
                 if (file.exists() && file.isFile()) {
                     setFile(file);
                 } else {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("File \"" + pathname + "\" omitted (not found or is not a file).");
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("File \"" + pathname + "\" either not found or not a file.");
                     }
                 }
             } catch (UnsupportedEncodingException e) {
                 if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not create location for \"" + location + "\".", e);
+                    LOG.error("Could not decode location \"" + location + "\".", e);
                 }
             }
         } else {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Location \"" + location + "\" not recognized.");
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Location \"" + location + "\" not recognized.");
             }
         }
     }

@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss.musicfile;
 
+import org.apache.commons.lang.*;
+
 /**
  * de.codewave.mytunesrss.musicfile.MusicFileAlbumSearch
  */
@@ -15,6 +17,6 @@ public class MusicFileArtistSearch implements MusicFileSearch {
     }
 
     public boolean matches(MusicFile musicFile) {
-        return myPattern == null || myPattern.length() == 0 || musicFile.getArtist().toLowerCase().contains(myPattern);
+        return StringUtils.isEmpty(myPattern) || musicFile.getArtist().toLowerCase().contains(myPattern);
     }
 }
