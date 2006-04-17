@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss;
 
 import org.apache.catalina.*;
+import org.apache.catalina.session.*;
 import org.apache.catalina.startup.*;
 
 import javax.swing.*;
@@ -8,6 +9,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.*;
+import java.net.*;
 
 /**
  * de.codewave.mytunesrss.Settings
@@ -134,12 +136,7 @@ public class Settings {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        myServer = EmbeddedTomcat.createServer("mytunesrss", null, serverPort, new File("."), "ROOT", "");
-                        MyTunesRssConfig config = createPrefDataFromGUI();
-                        Engine engine = (Engine)myServer.getContainer();
-                        Host host = (Host)engine.findChild("host.mytunesrss");
-                        Context context = (Context)host.findChild("");
-                        context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
+                        myServer = createServer("mytunesrss", null, serverPort, new File("."), "ROOT", "");
                         myServer.start();
                         myStartStopButton.setText(myMainBundle.getString("gui.settings.button.stopServer"));
                         myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.stopServer"));
@@ -162,6 +159,27 @@ public class Settings {
                 }
             }).start();
         }
+    }
+
+    private Embedded createServer(String name, InetAddress listenAddress, int listenPort, File catalinaBasePath, String webAppName,
+            String webAppContext) throws IOException {
+        Embedded server = new Embedded();
+        server.setCatalinaBase(catalinaBasePath.getCanonicalPath());
+        Engine engine = server.createEngine();
+        engine.setName("engine." + name);
+        engine.setDefaultHost("host." + name);
+        Host host = server.createHost("host." + name, new File(catalinaBasePath, "webapps").getCanonicalPath());
+        engine.addChild(host);
+        Context context = server.createContext(webAppContext, webAppName);
+        StandardManager sessionManager = new StandardManager();
+        sessionManager.setPathname("");
+        context.setManager(sessionManager);
+        MyTunesRssConfig config = createPrefDataFromGUI();
+        context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
+        host.addChild(context);
+        server.addEngine(engine);
+        server.addConnector(server.createConnector(listenAddress, listenPort, false));
+        return server;
     }
 
     public void doStopServer() {

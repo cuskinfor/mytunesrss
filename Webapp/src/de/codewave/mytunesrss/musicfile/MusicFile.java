@@ -99,13 +99,13 @@ public class MusicFile implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Title '%s' on album '%s' (track %d) by artist '%s' with id '%s' can be found at '%s'",
+        return String.format("name:\"%s\", album:\"%s\", track:%d, artist:\"%s\", id:%s, path:\"%s\"",
                              myName,
                              myAlbum,
                              myTrackNumber,
                              myArtist,
                              myId,
-                             myFile != null ? myFile.getAbsolutePath() : "?unknown location?");
+                             myFile != null ? myFile.getAbsolutePath() : "");
     }
 
     public boolean isValid() {
