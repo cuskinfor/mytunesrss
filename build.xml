@@ -3,7 +3,7 @@
 <project name="MyTunesRSS Runtime" basedir="." default="zip.distribution">
 
     <import file="../CodewaveAnt/etc/svn-macros.xml"/>
-    <taskdef name="codewave.moduleinfo" classname="de.codewave.ant.task.moduleinfo.ModuleInfoTask"/>
+    <import file="../CodewaveAnt/etc/moduleinfo-macros.xml"/>
 
     <target name="idea.after-compile" description="target to execute after compilation in idea">
         <antcall target="generate.moduleinfo"/>
@@ -12,8 +12,7 @@
 
     <target name="generate.moduleinfo" description="generate the model information files">
         <svn.propget property="version" path="." name="codewave:version"/>
-        <mkdir dir="Runtime/classes/META-INF"/>
-        <codewave.moduleinfo destfile="Runtime/classes/META-INF/codewave-version.xml" name="MyTunesRSS" version="${version}"/>
+        <moduleinfo.jar destfile="distribution/MyTunesRSS.jar" name="MyTunesRSS" version="${version}"/>
     </target>
 
     <target name="copy.tomcat-config" description="copy the tomcat embedded configuration to the distribution">
