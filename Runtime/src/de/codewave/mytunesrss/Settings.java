@@ -34,6 +34,9 @@ public class Settings {
     private JTextField myFakeMp3Suffix;
     private JTextField myFakeM4aSuffix;
     private JLabel myProductIcon;
+    private JTabbedPane myTabbedPane;
+    private JPanel mySecurityPanel;
+    private JPanel myFileTypesPanel;
     private Embedded myServer;
 
     public Settings(JFrame frame) {
@@ -83,8 +86,11 @@ public class Settings {
                 // intentionally left blank
             }
         });
-
-        myRootPanel.validate();
+        if (!MyTunesRss.REGISTERED) {
+            myTabbedPane.remove(mySecurityPanel);
+            myTabbedPane.remove(myFileTypesPanel);
+        }
+        myRootPanel.doLayout();
     }
 
     public JPanel getRootPanel() {

@@ -15,6 +15,7 @@ public class About {
     public static void displayAbout(JFrame parent) {
         About about = new About();
         JDialog dialog = new JDialog(parent, parent.getTitle(), true);
+        dialog.setResizable(false);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setContentPane(about.myRootPanel);
         dialog.pack();
