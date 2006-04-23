@@ -180,11 +180,11 @@ public class Settings {
         StandardManager sessionManager = new StandardManager();
         sessionManager.setPathname("");
         context.setManager(sessionManager);
-        MyTunesRssConfig config = createPrefDataFromGUI();
-        context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
         host.addChild(context);
         server.addEngine(engine);
         server.addConnector(server.createConnector(listenAddress, listenPort, false));
+        MyTunesRssConfig config = createPrefDataFromGUI();
+        context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
         return server;
     }
 
