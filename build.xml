@@ -31,13 +31,27 @@
             <include name="tomcat/**"/>
             <include name="webapps/**"/>
             <include name="MyTunesRSS.jar"/>
-            <include name="*.bat"/>
-            <include name="*.sh"/>
-            <include name="*.pdf"/>
             <fileset dir="etc">
-                <include name="*.app"/>
                 <include name="*.bat"/>
                 <include name="*.sh"/>
+                <include name="*.pdf"/>
+            </fileset>
+        </zip>
+        <zip destfile="distribution/MyTunesRSS-MacOSX-${version}.zip">
+            <fileset dir="etc/MacOS-Bundle">
+                <exclude name="**/JavaApplicationStub*"/>
+            </fileset>
+            <zipfileset dir="etc/MacOS-Bundle" filemode="755">
+                <include name="**/JavaApplicationStub*"/>
+            </zipfileset>
+            <zipfileset dir="distribution" prefix="MyTunesRSS.app/Contents/Resources/Java">
+                <include name="conf/**"/>
+                <include name="lib/**"/>
+                <include name="tomcat/**"/>
+                <include name="webapps/**"/>
+                <include name="MyTunesRSS.jar"/>
+            </zipfileset>
+            <fileset dir="etc">
                 <include name="*.pdf"/>
             </fileset>
         </zip>

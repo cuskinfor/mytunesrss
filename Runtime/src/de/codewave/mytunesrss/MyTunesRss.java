@@ -16,10 +16,13 @@ import java.util.*;
 import java.util.prefs.*;
 import java.io.*;
 
+import com.apple.eawt.*;
+
 /**
  * de.codewave.mytunesrss.MyTunesRss
  */
 public class MyTunesRss {
+    private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
     static final String SER_NUM_RANDOM = "myTUNESrss4eeeever!";
     public static boolean REGISTERED;
 
@@ -41,7 +44,54 @@ public class MyTunesRss {
         int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", frame.getLocation().y);
         frame.setLocation(x, y);
         frame.pack();
+        activateAppleExtensions(frame, settingsForm);
         frame.setVisible(true);
+    }
+
+    private static void activateAppleExtensions(final JFrame frame, final Settings settings) {
+        try {
+            Class.forName("com.apple.eawt.Application");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Running an Apple JRE.");
+            }
+            Application application = Application.getApplication();
+            application.removePreferencesMenuItem();
+            application.addApplicationListener(new ApplicationListener() {
+                public void handleAbout(ApplicationEvent applicationEvent) {
+                    applicationEvent.setHandled(true);
+                    About.displayAbout(frame);
+                }
+
+                public void handleOpenApplication(ApplicationEvent applicationEvent) {
+                    applicationEvent.setHandled(true);
+                }
+
+                public void handleOpenFile(ApplicationEvent applicationEvent) {
+                    applicationEvent.setHandled(true);
+                }
+
+                public void handlePreferences(ApplicationEvent applicationEvent) {
+                    applicationEvent.setHandled(true);
+                }
+
+                public void handlePrintFile(ApplicationEvent applicationEvent) {
+                    applicationEvent.setHandled(true);
+                }
+
+                public void handleQuit(ApplicationEvent applicationEvent) {
+                    applicationEvent.setHandled(true);
+                    settings.doQuitApplication();
+                }
+
+                public void handleReOpenApplication(ApplicationEvent applicationEvent) {
+                    applicationEvent.setHandled(true);
+                }
+            });
+        } catch (ClassNotFoundException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Not running an Apple JRE.");
+            }
+        }
     }
 
     private static void checkRegistration(JFrame frame) throws UnsupportedEncodingException {
