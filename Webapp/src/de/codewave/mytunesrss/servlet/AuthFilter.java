@@ -30,7 +30,7 @@ public class AuthFilter implements Filter {
         }
         HttpSession session = ((HttpServletRequest)servletRequest).getSession();
         MyTunesRssConfig config = (MyTunesRssConfig)session.getServletContext().getAttribute(MyTunesRssConfig.class.getName());
-        if (!config.isAuth() || StringUtils.isNotEmpty((String)session.getAttribute("authHash"))) {
+        if (!MyTunesRss.REGISTERED || !config.isAuth() || StringUtils.isNotEmpty((String)session.getAttribute("authHash"))) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No authentication necessary.");
             }

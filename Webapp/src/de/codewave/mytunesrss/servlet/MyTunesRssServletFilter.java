@@ -41,7 +41,7 @@ public class MyTunesRssServletFilter implements Filter {
             servletUrls.put("login", ServletUtils.getServletUrl((HttpServletRequest)servletRequest, LoginServlet.class));
             servletUrls.put("playlist", ServletUtils.getServletUrl((HttpServletRequest)servletRequest, PlayListFeedServlet.class));
             servletUrls.put("mp3", ServletUtils.getServletUrl((HttpServletRequest)servletRequest, MusicDeliveryServlet.class));
-            servletUrls.put("searchPage", ServletUtils.getApplicationUrl((HttpServletRequest)servletRequest) + "search.jsp");
+            servletUrls.put("searchPage", ServletUtils.getApplicationUrl((HttpServletRequest)servletRequest) + "/search.jsp");
             session.setAttribute("urlMap", servletUrls);
         }
         filterChain.doFilter(servletRequest, servletResponse);

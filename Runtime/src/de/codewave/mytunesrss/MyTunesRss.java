@@ -21,7 +21,7 @@ import java.io.*;
  */
 public class MyTunesRss {
     static final String SER_NUM_RANDOM = "myTUNESrss4eeeever!";
-    static boolean REGISTERED;
+    public static boolean REGISTERED;
 
     public static void main(String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
             ClassNotFoundException, IOException {

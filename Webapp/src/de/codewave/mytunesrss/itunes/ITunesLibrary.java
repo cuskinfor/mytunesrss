@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.itunes;
 
 import de.codewave.mytunesrss.musicfile.*;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.xml.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
@@ -24,7 +25,9 @@ public class ITunesLibrary implements Serializable {
             throws IOException, SAXException, ParserConfigurationException {
         Map plist = (Map)XmlUtils.parseApplePList(iTunesLibraryXml);
         Set<String> trackIds = createListOfMusicFiles(plist, fakeMp3Suffix, fakeM4aSuffix);
-        createListOfPlayLists(plist, trackIds);
+        if (MyTunesRss.REGISTERED) {
+            createListOfPlayLists(plist, trackIds);
+        }
     }
 
     private void createListOfPlayLists(Map plist, Set<String> trackIds) {
@@ -77,13 +80,17 @@ public class ITunesLibrary implements Serializable {
             musicFile.setTrackNumber(StringUtils.isNotEmpty(trackNumber) ? Integer.parseInt(trackNumber) : 0);
             musicFile.setFile(track.get("Location"));
             if (musicFile.isValid()) {
-                if (musicFile.isMP3() || musicFile.isM4A()) {
+                if (musicFile.isMP3() || (MyTunesRss.REGISTERED && musicFile.isM4A())) {
                     myTitles.add(musicFile);
                     trackIds.add(musicFile.getId());
                 } else {
                     if (musicFile.isM4P()) {
                         if (LOG.isInfoEnabled()) {
                             LOG.info("Protected AAC file [" + musicFile + "] omitted.");
+                        }
+                    } else if (musicFile.isM4A()) {
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("Unprotected AAC file [" + musicFile + "] omitted (please register for AAC support).");
                         }
                     } else {
                         if (LOG.isInfoEnabled()) {
