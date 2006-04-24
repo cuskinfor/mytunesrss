@@ -25,69 +25,46 @@
 
     <div class="body">
 
-      <div class="head index">
-
-        <h1 class="index">MyTunesRSS</h1>
-
-      </div>
+			<h1 class="index">MyTunesRSS</h1>
 
       <jsp:include page="/error.jsp" />
 
-        <c:if test="${!empty playlists}">
-        <form id="playlist" action="${urlMap.playlist}" method="post">
 
-          <table class="search" cellspacing="0">
-            <tr>
-              <th style="width: 50%;">&nbsp;</th>
-              <th colspan="2"><fmt:message key="playlist.caption"/></th>
-              <th style="width: 50%;">&nbsp;</th>
-            </tr>
-            <tr>
-              <td rowspan="2">&nbsp;</td>
-              <td><fmt:message key="playlist.playlists"/></td>
-              <td>
-                <select class="text" name="playlist">
-                  <c:forEach items="${playlists}" var="playlist">
-                    <option value="${playlist.id}">${playlist.name}</option>
-                  </c:forEach>
-                </select>
-              </td>
-              <td rowspan="2">&nbsp;</td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td style="text-align: right;"><input class="button" type="submit" value="<fmt:message key="playlist.use"/>" /></td>
-            </tr>
-          </table>
-
-        </form>
-        </c:if>
-
-      <form id="search" action="${urlMap.search}" method="post">
-
-        <table class="search" cellspacing="0">
-          <tr>
-            <th style="width: 50%;">&nbsp;</th>
-            <th colspan="2"><fmt:message key="search.caption"/></th>
-            <th style="width: 50%;">&nbsp;</th>
-          </tr>
-          <tr>
-            <td rowspan="3">&nbsp;</td>
-            <td><fmt:message key="album"/></td>
-            <td><input class="text" type="text" name="album" value="<c:out value="${param.album}"/>" /></td>
-            <td rowspan="3">&nbsp;</td>
-          </tr>
-          <tr>
-            <td><fmt:message key="artist"/></td>
-            <td><input class="text" type="text" name="artist" value="<c:out value="${param.artist}"/>" /></td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td style="text-align: right;"><input class="button" type="submit" value="<fmt:message key="search.search"/>" /></td>
-          </tr>
-        </table>
-
-      </form>
+				<table class="search" cellspacing="0">
+					<tr>
+						<th style="width: 50%;">&nbsp;</th>
+						<th <c:if test="${!empty playlists}">colspan="2"</c:if>><fmt:message key="search.caption"/></th>
+						<th style="width: 50%;">&nbsp;</th>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>
+							<form id="search" action="${urlMap.search}" method="post">
+								<fmt:message key="album"/><br/>
+								<input class="text" type="text" name="album" value="<c:out value="${param.album}"/>" /><br/>
+								<fmt:message key="artist"/><br/>
+								<input class="text" type="text" name="artist" value="<c:out value="${param.artist}"/>" /><br/>
+								<input class="button" type="submit" value="<fmt:message key="search.search"/>" />
+							</form>
+						</td>
+						<c:if test="${!empty playlists}">
+							<td class="playlist">
+								<div class="playlist">
+									<form id="playlist" action="${urlMap.playlist}" method="post">
+										<fmt:message key="playlist.caption"/><br/>
+										<select class="text" name="playlist">
+											<c:forEach items="${playlists}" var="playlist">
+												<option value="${playlist.id}">${playlist.name}</option>
+											</c:forEach>
+										</select>
+										<input class="button" type="submit" value="<fmt:message key="playlist.use"/>" />
+									</form>
+								</div>
+							</td>
+						</c:if>
+						<td>&nbsp;</td>
+					</tr>
+				</table>
 
     </div>
 

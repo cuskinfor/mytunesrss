@@ -39,21 +39,20 @@ div.head.select h1 {
 
 
 div.head.select div.input {
-	background: url("../images/select_head.gif") bottom left;
-	margin: 0;
-	padding: 0;
-	height: 35px;
+	padding: 4px 0 13px 20px;
+	background: url("../images/input_background.gif") 10px 0 no-repeat;
 }
 
 div.head.select div.input input {
-	margin: 4px 0 0 18px;
-	background: none;
+	width: 230px;
+	margin: 1px;
+	padding: 0;
 	border: none;
-	width: 250px;
+	background: none;
 }
 
 * html div.head.select div.input input {
-	margin-top: 3px;
+	margin: 0;
 }
 
 
@@ -158,7 +157,6 @@ div.shadow {
 	position: absolute;
 	color: #000;
 	z-index: 1;
-	margin-top: -15px;
 }
 
 table.search {
@@ -168,34 +166,41 @@ table.search {
 
 table.search th {
 	padding-left: 0;
-	text-align: center;
+	text-align: left;
 }
 
 table.search td {
-	padding: 15px 0 0 0;
+	padding: 15px 0 15px 0;
 	border: none;
+	vertical-align: top;
 }
 
 table.search input.text {
-	width: 180px;
-	margin-left: 15px;
+	width: 200px;
+	margin: 3px 30px 10px 0;
+}
+
+table.search select{
+	width: 200px;
+	margin: 3px 0 10px 0;
 }
 
 table.search input.button {
-	margin-bottom: 15px;
 }
 
-div.head.index h1 {
-	font-size: 0px;
+div.playlist {
+	padding: 10px;
+	background: #fff;
+	border: 1px solid #b5cff5;
+}
+
+h1.index {
+	font-size: 1px;
 	color: #eeeded;
 	background: url("../images/index_head.gif") center center no-repeat;
 	height: 60px;
 	padding: 0;
 	margin: 0;
-}
-
-div.head.index {
-	background-position: top left;
 }
 
 div.error {

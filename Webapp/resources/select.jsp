@@ -73,9 +73,7 @@
 
           <h1><fmt:message key="select.channel"/></h1>
 
-          <div class="input">
-            <input type="text" name="channel" value="<c:out value="${param.channel}"/>" />
-          </div>
+          <div class="input"><input type="text" name="channel" value="<c:out value="${param.channel}"/>" /></div>
 
           <c:if test="${fn:length(sections) > 1}">
             <div class="link">
