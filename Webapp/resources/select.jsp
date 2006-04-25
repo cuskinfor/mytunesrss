@@ -60,7 +60,7 @@
 
   <body onLoad="document.forms['select'].elements['channel'].focus(); registerTR();">
 
-    <div id="content" class="body">
+    <div class="body">
 
       <form id="select" action="${urlMap.select}" method="post">
 
@@ -69,7 +69,7 @@
 
         <jsp:include page="/error.jsp" />
 
-        <div class="head select">
+        <div class="head">
 
           <h1><fmt:message key="select.channel"/></h1>
 
@@ -84,7 +84,7 @@
 
         </div>
 
-        <table border="0" cellspacing="0" cellpadding="0">
+        <table class="select" cellspacing="0">
           <c:forEach items="${sections}" var="section">
             <c:set var="commonArtist" value="${section.commonArtist}" />
             <c:set var="commonAlbum" value="${section.commonAlbum}" />

@@ -25,11 +25,7 @@
 
     <div class="body">
 
-      <div class="head index">
-
-        <h1 class="index">MyTunesRSS</h1>
-
-      </div>
+			<h1 class="search"><span>MyTunesRSS</span></h1>
 
       <jsp:include page="/error.jsp" />
 
@@ -37,19 +33,14 @@
 
         <table class="search" cellspacing="0">
           <tr>
-            <th style="width: 50%;">&nbsp;</th>
-            <th colspan="2"><fmt:message key="login.caption"/></th>
-            <th style="width: 50%;">&nbsp;</th>
+            <th colspan="5"><fmt:message key="login.caption"/></th>
           </tr>
           <tr>
-            <td rowspan="2">&nbsp;</td>
-              <td><fmt:message key="login.password"/></td>
-              <td><input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" /></td>
-            <td rowspan="2">&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td style="text-align: right;"><input class="button" type="submit" value="<fmt:message key="login.login"/>" /></td>
+            <td class="spacer">&nbsp;</td>
+						<td class="artist"><fmt:message key="login.password"/></td>
+						<td class="input"><input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" /></td>
+            <td class="button"><input class="button" type="submit" value="<fmt:message key="login.login"/>" /></td>
+            <td class="spacer">&nbsp;</td>
           </tr>
         </table>
 

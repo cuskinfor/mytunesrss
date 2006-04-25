@@ -1,5 +1,8 @@
 /* CSS Document */
 
+
+/* Body */
+
 body {
 	margin: 0;
 	padding: 0;
@@ -8,65 +11,33 @@ body {
 	background: #ccc url("../images/background.gif") center top repeat-y;
 }
 
+div.body {
+	max-width: 480px;
+	min-width: 250px;
+	margin: 0 auto;
+}
+
+/* Common Definitions */
+
 form {
 	margin: 0;
 	padding: 0;
 }
 
-div.body {
-	max-width: 480px;
-	min-width: 250px;
-	margin: 0 auto;
-	background: #fff;
-}
-
-
-div.head.select {
-	background: url("../images/select_head.gif") top right repeat-x;
-	border-top: 1px solid #666;
-}
-
-div.head.select h1 {
-	margin: 0;
-	padding: 6px 10px 5px 10px;
-	font-size: 12px;
-	color: #000;
-}
-
-* html div.head.select h1 {
-	padding-top: 5px;
-}
-
-
-div.head.select div.input {
-	padding: 4px 0 13px 20px;
-	background: url("../images/input_background.gif") 10px 0 no-repeat;
-}
-
-div.head.select div.input input {
-	width: 230px;
-	margin: 1px;
-	padding: 0;
+img {
 	border: none;
-	background: none;
-}
-
-* html div.head.select div.input input {
 	margin: 0;
+	vertical-align: middle;
 }
-
-
-
 
 table {
 	width: 100%;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 12px;
-	border-bottom: 1px solid #666;
 }
 
 th {
-	text-align: left;
+	text-align: center;
 	background: url("../images/th.gif");
 	border-top: 1px solid #666;
 	border-bottom: 1px solid #666;
@@ -75,17 +46,122 @@ th {
 	cursor: default;
 }
 
-th.check {
-	text-align: center;
-	vertical-align: middle;
-	padding: 0;
-}
-
 td {
 	padding: 5px 10px;
 	border-left: 1px solid #d9d9d9;
 	cursor: default;
 }
+
+div.error {
+	color: #f00;
+	padding: 10px;
+	border-top: 1px solid #666;
+	background: #fee;
+	font-weight: bold;
+}
+
+
+/* Search Page */
+
+h1.search {
+	background: url("../images/index_head.gif") center center no-repeat;
+	height: 60px;
+	padding: 0;
+	margin: 0;
+}
+
+h1.search span {
+	visibility: hidden;
+}
+
+td.artist {
+	padding: 19px 0 0 0;
+	border: none;
+	text-align: right;
+	vertical-align: top;
+}
+
+td.input {
+	padding: 15px 10px 0 10px;
+	border: none;
+	text-align: left;
+	vertical-align: top;
+}
+
+td.button {
+	padding: 15px 0 20px 0;
+	border: none;
+	text-align: left;
+	vertical-align: top;
+}
+
+td.input input, td.input select {
+	width: 150px;
+}
+
+td.spacer {
+	width: 50%;
+	padding: 0;
+	border: none;
+}
+
+
+/* Result Page */
+
+div.head {
+	background: url("../images/select_head.gif") top right no-repeat;
+}
+
+div.head h1 {
+	font-size: 12px;
+	color: #666;
+	margin: 0;
+	padding: 5px 0 3px 10px;
+}
+
+div.input {
+	padding: 4px 0 16px 15px;
+	background: url("../images/input_background.gif") 10px 0 no-repeat;
+}
+
+div.input input {
+	width: 230px;
+	margin: 1px;
+	padding: 0;
+	border: none;
+	background: none;
+}
+
+* body div.input input {
+	margin: 0;
+}
+
+div.link {
+	background: url("../images/link.gif") top left no-repeat;
+	padding: 5px 0 7px 20px;
+}
+
+div.link a {
+	font-size: 10px;
+	font-weight: bold;
+	color: #fff;
+}
+
+table.select {
+	background: #fff;
+}
+
+table.select th {
+	text-align: left;
+	padding-left: 10px;
+}
+
+table.select th.check {
+	text-align: center;
+	vertical-align: middle;
+	padding: 0;
+}
+
 
 tr.odd td {
 	background: #edf3fe;
@@ -112,101 +188,10 @@ td.play {
 	border: none;
 }
 
-img {
-	border: none;
-	margin: 0;
-	vertical-align: middle;
-}
-
-div.head.select div.link {
-	background: url("../images/link.gif");
-}
-
-
-div.head.select div.link a {
-	display: block;
-	color: #fff;
-	font-size: 10px;
-	font-weight: bold;
-	text-decoration: none;
-	padding: 7px 20px;
-}
-
 div.buttons {
 	background: url("../images/head.gif") left bottom repeat-x;
-	border-bottom: 1px solid #666;
-}
-
-div.buttons input {
-	margin: 10px;
-}
-
-div.title {
-	background: #B5B5B5 url("../images/link.gif") top right repeat-x;
-	margin: 40px 0 0 0;
-	padding: 3px 10px;
-	color: #000;
-}
-
-div.title span {
-color: #ddd;
-margin-top: 1px;
-}
-
-div.shadow {
-	position: absolute;
-	color: #000;
-	z-index: 1;
-}
-
-table.search {
-	background: #E7EDF6;
-	border-bottom: none;
-}
-
-table.search th {
-	padding-left: 0;
-	text-align: left;
-}
-
-table.search td {
-	padding: 15px 0 15px 0;
-	border: none;
-	vertical-align: top;
-}
-
-table.search input.text {
-	width: 200px;
-	margin: 3px 30px 10px 0;
-}
-
-table.search select{
-	width: 200px;
-	margin: 3px 0 10px 0;
-}
-
-table.search input.button {
-}
-
-div.playlist {
-	padding: 10px;
-	background: #fff;
-	border: 1px solid #b5cff5;
-}
-
-h1.index {
-	font-size: 1px;
-	color: #eeeded;
-	background: url("../images/index_head.gif") center center no-repeat;
-	height: 60px;
-	padding: 0;
-	margin: 0;
-}
-
-div.error {
-	color: #f00;
-	padding: 10px;
 	border-top: 1px solid #666;
-	background: #fee;
-	font-weight: bold;
+	border-bottom: 1px solid #666;
+	text-align: center;
+	padding: 15px;
 }
