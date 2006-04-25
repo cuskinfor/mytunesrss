@@ -12,11 +12,10 @@ import org.apache.commons.logging.*;
 import javax.swing.*;
 import javax.imageio.*;
 import java.awt.event.*;
+import java.io.*;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.prefs.*;
-import java.io.*;
-
-import com.apple.eawt.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -34,6 +33,7 @@ public class MyTunesRss {
         String version = modulesInfo.getVersion();
         System.setProperty("mytunesrss.version", version);
         JFrame frame = new JFrame(mainBundle.getString("gui.title") + " v" + version);
+        frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("FrameIcon.png")));
         checkRegistration(frame);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         Settings settingsForm = new Settings(frame);
@@ -54,39 +54,15 @@ public class MyTunesRss {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Running an Apple JRE.");
             }
-            Application application = Application.getApplication();
-            application.removePreferencesMenuItem();
-            application.addApplicationListener(new ApplicationListener() {
-                public void handleAbout(ApplicationEvent applicationEvent) {
-                    applicationEvent.setHandled(true);
-                    About.displayAbout(frame);
+            try {
+                Class clazz = Class.forName("de.codewave.mytunesrss.AppleExtensions");
+                Method method = clazz.getMethod("activate", JFrame.class, Settings.class);
+                method.invoke(null, frame, settings);
+            } catch (Exception e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not activate Apple extensions.", e);
                 }
-
-                public void handleOpenApplication(ApplicationEvent applicationEvent) {
-                    applicationEvent.setHandled(true);
-                }
-
-                public void handleOpenFile(ApplicationEvent applicationEvent) {
-                    applicationEvent.setHandled(true);
-                }
-
-                public void handlePreferences(ApplicationEvent applicationEvent) {
-                    applicationEvent.setHandled(true);
-                }
-
-                public void handlePrintFile(ApplicationEvent applicationEvent) {
-                    applicationEvent.setHandled(true);
-                }
-
-                public void handleQuit(ApplicationEvent applicationEvent) {
-                    applicationEvent.setHandled(true);
-                    settings.doQuitApplication();
-                }
-
-                public void handleReOpenApplication(ApplicationEvent applicationEvent) {
-                    applicationEvent.setHandled(true);
-                }
-            });
+            }
         } catch (ClassNotFoundException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Not running an Apple JRE.");
