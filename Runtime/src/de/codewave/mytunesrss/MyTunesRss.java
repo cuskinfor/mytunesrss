@@ -9,8 +9,8 @@ import de.codewave.utils.serialnumber.*;
 import org.apache.catalina.*;
 import org.apache.commons.logging.*;
 
-import javax.swing.*;
 import javax.imageio.*;
+import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -22,7 +22,6 @@ import java.util.prefs.*;
  */
 public class MyTunesRss {
     private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
-    static final String SER_NUM_RANDOM = "myTUNESrss4eeeever!";
     public static boolean REGISTERED;
 
     public static void main(String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
@@ -34,7 +33,6 @@ public class MyTunesRss {
         System.setProperty("mytunesrss.version", version);
         JFrame frame = new JFrame(mainBundle.getString("gui.title") + " v" + version);
         frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("FrameIcon.png")));
-        checkRegistration(frame);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         Settings settingsForm = new Settings(frame);
         frame.addWindowListener(new MyTunesRssMainWindowListener(settingsForm));
@@ -67,15 +65,6 @@ public class MyTunesRss {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Not running an Apple JRE.");
             }
-        }
-    }
-
-    private static void checkRegistration(JFrame frame) throws UnsupportedEncodingException {
-        String regName = Preferences.userRoot().node("/de/codewave/mytunesrss").get("regname", "");
-        String regCode = Preferences.userRoot().node("/de/codewave/mytunesrss").get("regcode", "0000-0000-0000-0000-0000");
-        REGISTERED = SerialNumberUtils.isValid(regName, regCode, SER_NUM_RANDOM);
-        if (!REGISTERED) {
-            Registration.displayRegistration(frame);
         }
     }
 

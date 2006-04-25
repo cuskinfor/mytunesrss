@@ -3,21 +3,27 @@ package de.codewave.mytunesrss;
 import org.apache.catalina.*;
 import org.apache.catalina.session.*;
 import org.apache.catalina.startup.*;
+import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.*;
 import java.net.*;
 
+import de.codewave.utils.serialnumber.*;
+
 /**
  * de.codewave.mytunesrss.Settings
  */
 public class Settings {
+    private static final Log LOG = LogFactory.getLog(Settings.class);
     private static final int MIN_PORT = 1;
     private static final int MAX_PORT = 65535;
     private static final String LIBRARY_XML_FILE_NAME = "iTunes Music Library.xml";
+    private static final String SER_NUM_RANDOM = "myTUNESrss4eeeever!";
 
     private final ResourceBundle myMainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
 
@@ -37,10 +43,17 @@ public class Settings {
     private JTabbedPane myTabbedPane;
     private JPanel mySecurityPanel;
     private JPanel myFileTypesPanel;
+    private JTextField myRegisterName;
+    private JButton myRegisterButton;
+    private JTextField myRegisterCode;
+    private JPanel myRegisterPanel;
     private Embedded myServer;
 
-    public Settings(JFrame frame) {
+    public Settings(JFrame frame) throws UnsupportedEncodingException {
         myFrame = frame;
+        String regName = Preferences.userRoot().node("/de/codewave/mytunesrss").get("regname", "");
+        String regCode = Preferences.userRoot().node("/de/codewave/mytunesrss").get("regcode", "");
+        MyTunesRss.REGISTERED = SerialNumberUtils.isValid(regName, regCode, SER_NUM_RANDOM);
         setStatus(myMainBundle.getString("info.server.idle"));
         MyTunesRssConfig data = new MyTunesRssConfig();
         data.load();
@@ -50,6 +63,11 @@ public class Settings {
         myPassword.setText(data.getPassword());
         myFakeMp3Suffix.setText(data.getFakeMp3Suffix());
         myFakeM4aSuffix.setText(data.getFakeM4aSuffix());
+        myRegisterButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                doRegister();
+            }
+        });
         myStartStopButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 doStartStopServer();
@@ -89,12 +107,35 @@ public class Settings {
         if (!MyTunesRss.REGISTERED) {
             myTabbedPane.remove(mySecurityPanel);
             myTabbedPane.remove(myFileTypesPanel);
+        } else {
+            myTabbedPane.remove(myRegisterPanel);
         }
         myRootPanel.doLayout();
     }
 
     public JPanel getRootPanel() {
         return myRootPanel;
+    }
+
+    public void doRegister() {
+        String regName = myRegisterName.getText();
+        String regCode = myRegisterCode.getText();
+        try {
+            MyTunesRss.REGISTERED = SerialNumberUtils.isValid(regName, regCode, SER_NUM_RANDOM);
+        } catch (UnsupportedEncodingException e1) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not validate registration code.", e1);
+            }
+        }
+        if (MyTunesRss.REGISTERED) {
+            Preferences.userRoot().node("/de/codewave/mytunesrss").put("regname", regName);
+            Preferences.userRoot().node("/de/codewave/mytunesrss").put("regcode", regCode);
+            myTabbedPane.remove(myRegisterPanel);
+            myTabbedPane.addTab(myMainBundle.getString("gui.settings.tab.security"), mySecurityPanel);
+            myTabbedPane.addTab(myMainBundle.getString("gui.settings.tab.filetypes"), myFileTypesPanel);
+        } else {
+            showErrorMessage(myMainBundle.getString("error.registration.failure"));
+        }
     }
 
     public void doLookupLibraryFile() {
