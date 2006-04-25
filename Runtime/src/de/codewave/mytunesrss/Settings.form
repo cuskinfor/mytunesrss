@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.codewave.mytunesrss.Settings">
-  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
+  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="0">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="354" height="498"/>
+      <xy x="20" y="20" width="354" height="552"/>
     </constraints>
     <properties>
       <background color="-1"/>
@@ -17,16 +17,13 @@
         <properties>
           <icon value="de/codewave/mytunesrss/MyTunesRSS.png"/>
           <text value=""/>
-          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.label.product"/>
+          <toolTipText value=""/>
         </properties>
       </component>
       <grid id="3032c" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="5" vgap="5">
         <margin top="5" left="15" bottom="15" right="15"/>
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="8" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="350" height="-1"/>
-            <maximum-size width="350" height="-1"/>
-          </grid>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -73,7 +70,7 @@
                   <horizontalAlignment value="0"/>
                   <label resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.button.startServer"/>
                   <name value=""/>
-                  <text value="&amp;Server starten"/>
+                  <text value="&amp;Start Server"/>
                   <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.startServer"/>
                 </properties>
               </component>
@@ -91,10 +88,11 @@
           </grid>
           <tabbedpane id="5c03" binding="myTabbedPane">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="7" anchor="9" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="9" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <enabled value="true"/>
+              <toolTipText value=""/>
             </properties>
             <border type="none"/>
             <children>
@@ -104,7 +102,7 @@
                   <tabbedpane title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.tab.general"/>
                 </constraints>
                 <properties>
-                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.tab.general"/>
+                  <toolTipText value=""/>
                 </properties>
                 <border type="none"/>
                 <children>
@@ -177,7 +175,7 @@
                   <tabbedpane title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.tab.security"/>
                 </constraints>
                 <properties>
-                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.tab.security"/>
+                  <toolTipText value=""/>
                 </properties>
                 <border type="none"/>
                 <children>
@@ -228,7 +226,7 @@
                   <tabbedpane title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.tab.filetypes"/>
                 </constraints>
                 <properties>
-                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.tab.filetypes"/>
+                  <toolTipText value=""/>
                 </properties>
                 <border type="none"/>
                 <children>
@@ -329,6 +327,83 @@
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.registration.button.register"/>
                     </properties>
                   </component>
+                </children>
+              </grid>
+              <grid id="18e5c" layout-manager="GridLayoutManager" row-count="9" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+                <margin top="5" left="5" bottom="5" right="5"/>
+                <constraints>
+                  <tabbedpane title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.tab.about"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="38df2" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.about.label.programming"/>
+                    </properties>
+                  </component>
+                  <vspacer id="826e3">
+                    <constraints>
+                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </vspacer>
+                  <component id="8f413" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font name="Lucida Grande" size="13" style="1"/>
+                      <text value="Michael Descher"/>
+                    </properties>
+                  </component>
+                  <component id="2dd27" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.about.label.design"/>
+                    </properties>
+                  </component>
+                  <component id="c4653" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font name="Lucida Grande" size="13" style="1"/>
+                      <text value="Roland Müller"/>
+                    </properties>
+                  </component>
+                  <component id="af0ea" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font name="Lucida Grande" size="16" style="1"/>
+                      <text value="http://www.codewave.de"/>
+                    </properties>
+                  </component>
+                  <vspacer id="7d0cb">
+                    <constraints>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                        <preferred-size width="-1" height="5"/>
+                      </grid>
+                    </constraints>
+                  </vspacer>
+                  <vspacer id="2f7c6">
+                    <constraints>
+                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                        <preferred-size width="-1" height="5"/>
+                      </grid>
+                    </constraints>
+                  </vspacer>
+                  <vspacer id="6169">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </vspacer>
                 </children>
               </grid>
             </children>

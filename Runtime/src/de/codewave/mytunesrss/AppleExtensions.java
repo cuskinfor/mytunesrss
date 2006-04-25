@@ -14,11 +14,11 @@ import javax.swing.*;
 public class AppleExtensions {
     public static void activate(final JFrame frame, final Settings settings) {
         Application application = Application.getApplication();
+        application.removeAboutMenuItem();
         application.removePreferencesMenuItem();
         application.addApplicationListener(new ApplicationListener() {
             public void handleAbout(ApplicationEvent applicationEvent) {
                 applicationEvent.setHandled(true);
-                About.displayAbout(frame);
             }
 
             public void handleOpenApplication(ApplicationEvent applicationEvent) {
