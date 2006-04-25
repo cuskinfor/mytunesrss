@@ -75,12 +75,10 @@
 
           <div class="input"><input type="text" name="channel" value="<c:out value="${param.channel}"/>" /></div>
 
-          <c:if test="${fn:length(sections) > 1}">
-            <div class="link">
-              <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album"/></a></c:if>
-              <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist"/></a></c:if>
-            </div>
-          </c:if>
+          <div class="link">
+            <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album"/></a></c:if>
+            <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist"/></a></c:if>
+          </div>
 
         </div>
 
