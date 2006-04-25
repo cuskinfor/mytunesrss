@@ -181,10 +181,9 @@ td.check {
 }
 
 td.play {
-	width: 30px;
-	text-align: center;
+	text-align: right;
 	vertical-align: middle;
-	padding: 0 5px 0 0;
+	padding: 0 10px 0 0;
 	border: none;
 }
 
