@@ -41,9 +41,9 @@ public class MyTunesRss {
         int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", frame.getLocation().x);
         int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", frame.getLocation().y);
         frame.setLocation(x, y);
-        frame.pack();
         activateAppleExtensions(frame, settingsForm);
         frame.setVisible(true);
+        frame.pack();
     }
 
     private static void activateAppleExtensions(final JFrame frame, final Settings settings) {

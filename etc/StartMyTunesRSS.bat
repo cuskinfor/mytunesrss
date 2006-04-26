@@ -1,2 +1,2 @@
 @echo off
-java -Xms16m -Xmx128m -jar MyTunesRSS.jar
+start javaw -Xms16m -Xmx128m -jar MyTunesRSS.jar

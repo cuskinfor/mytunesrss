@@ -1,18 +1,18 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.utils.serialnumber.*;
 import org.apache.catalina.*;
 import org.apache.catalina.session.*;
 import org.apache.catalina.startup.*;
 import org.apache.commons.logging.*;
+import org.apache.log4j.*;
 
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.*;
 import java.util.*;
 import java.util.prefs.*;
-import java.net.*;
-
-import de.codewave.utils.serialnumber.*;
 
 /**
  * de.codewave.mytunesrss.Settings
@@ -38,18 +38,19 @@ public class Settings {
     private JPasswordField myPassword;
     private JTextField myFakeMp3Suffix;
     private JTextField myFakeM4aSuffix;
-    private JLabel myProductIcon;
-    private JTabbedPane myTabbedPane;
-    private JPanel mySecurityPanel;
-    private JPanel myFileTypesPanel;
     private JTextField myRegisterName;
     private JButton myRegisterButton;
     private JTextField myRegisterCode;
-    private JPanel myRegisterPanel;
-    private JEditorPane myHeadHeadBodyPEditorPane;
+    private JCheckBox myLogDebugCheckBox;
+    private JTextArea myLogTextArea;
     private Embedded myServer;
 
     public Settings(JFrame frame) throws UnsupportedEncodingException {
+        Logger.getRootLogger().removeAllAppenders();
+        Logger.getLogger("de.codewave").removeAllAppenders();
+        TextAreaAppender textAreaAppender = new TextAreaAppender(myLogTextArea);
+        Logger.getRootLogger().addAppender(textAreaAppender);
+        Logger.getLogger("de.codewave").addAppender(textAreaAppender);
         myFrame = frame;
         String regName = Preferences.userRoot().node("/de/codewave/mytunesrss").get("regname", "");
         String regCode = Preferences.userRoot().node("/de/codewave/mytunesrss").get("regcode", "");
@@ -63,6 +64,7 @@ public class Settings {
         myPassword.setText(data.getPassword());
         myFakeMp3Suffix.setText(data.getFakeMp3Suffix());
         myFakeM4aSuffix.setText(data.getFakeM4aSuffix());
+        enableConfig(true);
         myRegisterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 doRegister();
@@ -83,13 +85,15 @@ public class Settings {
                 doLookupLibraryFile();
             }
         });
-        if (!MyTunesRss.REGISTERED) {
-            myTabbedPane.remove(mySecurityPanel);
-            myTabbedPane.remove(myFileTypesPanel);
-        } else {
-            myTabbedPane.remove(myRegisterPanel);
-        }
-        myRootPanel.doLayout();
+        myLogDebugCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (myLogDebugCheckBox.isSelected()) {
+                    Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
+                } else {
+                    Logger.getLogger("de.codewave").setLevel(Level.INFO);
+                }
+            }
+        });
     }
 
     public JPanel getRootPanel() {
@@ -109,9 +113,8 @@ public class Settings {
         if (MyTunesRss.REGISTERED) {
             Preferences.userRoot().node("/de/codewave/mytunesrss").put("regname", regName);
             Preferences.userRoot().node("/de/codewave/mytunesrss").put("regcode", regCode);
-            myTabbedPane.remove(myRegisterPanel);
-            myTabbedPane.addTab(myMainBundle.getString("gui.settings.tab.security"), mySecurityPanel);
-            myTabbedPane.addTab(myMainBundle.getString("gui.settings.tab.filetypes"), myFileTypesPanel);
+            showInfoMessage(myMainBundle.getString("error.registration.failure"));
+            enableConfig(true);
         } else {
             showErrorMessage(myMainBundle.getString("error.registration.failure"));
         }
@@ -273,7 +276,17 @@ public class Settings {
     }
 
     private void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(getRootPanel().getTopLevelAncestor(), message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(getRootPanel().getTopLevelAncestor(),
+                                      message,
+                                      myMainBundle.getString("error.title"),
+                                      JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void showInfoMessage(String message) {
+        JOptionPane.showMessageDialog(getRootPanel().getTopLevelAncestor(),
+                                      message,
+                                      myMainBundle.getString("info.title"),
+                                      JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void enableButtons(boolean enabled) {
@@ -285,10 +298,13 @@ public class Settings {
         myLookupButton.setEnabled(enabled);
         myPort.setEnabled(enabled);
         myTunesXmlPath.setEnabled(enabled);
-        myUseAuthCheck.setEnabled(enabled);
-        myPassword.setEnabled(enabled);
-        myFakeMp3Suffix.setEnabled(enabled);
-        myFakeM4aSuffix.setEnabled(enabled);
+        myUseAuthCheck.setEnabled(enabled && MyTunesRss.REGISTERED);
+        myPassword.setEnabled(enabled && MyTunesRss.REGISTERED);
+        myFakeMp3Suffix.setEnabled(enabled && MyTunesRss.REGISTERED);
+        myFakeM4aSuffix.setEnabled(enabled && MyTunesRss.REGISTERED);
+        myRegisterName.setEnabled(enabled && !MyTunesRss.REGISTERED);
+        myRegisterCode.setEnabled(enabled && !MyTunesRss.REGISTERED);
+        myRegisterButton.setEnabled(enabled && !MyTunesRss.REGISTERED);
     }
 
     public static class ITunesLibraryFileFilter extends javax.swing.filechooser.FileFilter {
