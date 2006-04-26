@@ -59,6 +59,7 @@ public class Settings {
         MyTunesRssConfig data = new MyTunesRssConfig();
         data.load();
         Logger.getLogger("de.codewave").setLevel(data.isVerboseLogging() ? Level.DEBUG : Level.INFO);
+        myLogDebugCheckBox.setSelected(data.isVerboseLogging());
         myPort.setText(data.getPort());
         myTunesXmlPath.setText(data.getLibraryXml());
         myUseAuthCheck.setSelected(data.isAuth());
