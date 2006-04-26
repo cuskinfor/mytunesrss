@@ -329,9 +329,7 @@ public class Settings {
 
     private void setGuiToRegisteredMode() {
         myTabbedPane.setEnabledAt(1, true);
-        myTabbedPane.setEnabledAt(2, true);
         myTabbedPane.setToolTipTextAt(1, null);
-        myTabbedPane.setToolTipTextAt(2, null);
         myRegisterName.setEditable(false);
         myRegisterCode.setEditable(false);
         myRegisterButton.setVisible(false);
@@ -340,9 +338,7 @@ public class Settings {
 
     private void setGuiToUnregisteredMode() {
         myTabbedPane.setEnabledAt(1, false);
-        myTabbedPane.setEnabledAt(2, false);
         myTabbedPane.setToolTipTextAt(1, myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
-        myTabbedPane.setToolTipTextAt(2, myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
     }
 
     public static class ITunesLibraryFileFilter extends javax.swing.filechooser.FileFilter {
