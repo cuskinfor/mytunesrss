@@ -58,6 +58,7 @@ public class Settings {
         setStatus(myMainBundle.getString("info.server.idle"));
         MyTunesRssConfig data = new MyTunesRssConfig();
         data.load();
+        Logger.getLogger("de.codewave").setLevel(data.isVerboseLogging() ? Level.DEBUG : Level.INFO);
         myPort.setText(data.getPort());
         myTunesXmlPath.setText(data.getLibraryXml());
         myUseAuthCheck.setSelected(data.isAuth());
@@ -272,6 +273,7 @@ public class Settings {
         config.setPassword(new String(myPassword.getPassword()).trim());
         config.setFakeMp3Suffix(myFakeMp3Suffix.getText().trim());
         config.setFakeM4aSuffix(myFakeM4aSuffix.getText().trim());
+        config.setVerboseLogging(myLogDebugCheckBox.isSelected());
         return config;
     }
 

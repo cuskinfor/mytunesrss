@@ -24,6 +24,7 @@ public class MyTunesRssConfig {
     private String myPassword;
     private String myFakeMp3Suffix;
     private String myFakeM4aSuffix;
+    private boolean myVerboseLogging;
 
     public boolean isAuth() {
         return myAuth;
@@ -77,6 +78,14 @@ public class MyTunesRssConfig {
         myPort = port;
     }
 
+    public boolean isVerboseLogging() {
+        return myVerboseLogging;
+    }
+
+    public void setVerboseLogging(boolean verboseLogging) {
+        myVerboseLogging = verboseLogging;
+    }
+
     public void load() {
         myPort = Preferences.userRoot().node("/de/codewave/mytunesrss").get("port", "8080");
         myLibraryXml = Preferences.userRoot().node("/de/codewave/mytunesrss").get("library", "");
@@ -84,6 +93,7 @@ public class MyTunesRssConfig {
         myPassword = Preferences.userRoot().node("/de/codewave/mytunesrss").get("authPassword", "");
         myFakeMp3Suffix = Preferences.userRoot().node("/de/codewave/mytunesrss").get("fakeMp3Suffix", "");
         myFakeM4aSuffix = Preferences.userRoot().node("/de/codewave/mytunesrss").get("fakeM4aSuffix", "mp4");
+        myVerboseLogging = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("verboseLogging", false);
     }
 
     public void save() {
@@ -93,6 +103,7 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("authPassword", myPassword);
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("fakeMp3Suffix", myFakeMp3Suffix);
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("fakeM4aSuffix", myFakeM4aSuffix);
+        Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("verboseLogging", myVerboseLogging);
     }
 
     public boolean isDiffenrentFromSaved() {
@@ -106,7 +117,8 @@ public class MyTunesRssConfig {
         hash |= getPassword() != null ? getPassword().hashCode() : 0;
         hash |= getFakeMp3Suffix() != null ? getFakeMp3Suffix().hashCode() : 0;
         hash |= getFakeM4aSuffix() != null ? getFakeM4aSuffix().hashCode() : 0;
-        hash |=  Boolean.valueOf(isAuth()).hashCode();
+        hash |= Boolean.valueOf(isAuth()).hashCode();
+        hash |= Boolean.valueOf(isVerboseLogging()).hashCode();
         return hash;
     }
 
@@ -117,6 +129,7 @@ public class MyTunesRssConfig {
             boolean result = StringUtils.equals(getPort(), other.getPort());
             result &= StringUtils.equals(getLibraryXml(), other.getLibraryXml());
             result &= isAuth() == other.isAuth();
+            result &= isVerboseLogging() == other.isVerboseLogging();
             result &= StringUtils.equals(getPassword(), other.getPassword());
             result &= StringUtils.equals(getFakeMp3Suffix(), other.getFakeMp3Suffix());
             result &= StringUtils.equals(getFakeM4aSuffix(), other.getFakeM4aSuffix());
