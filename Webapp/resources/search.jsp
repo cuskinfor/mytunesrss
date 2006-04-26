@@ -29,9 +29,8 @@
 
       <jsp:include page="/error.jsp" />
 
-			<form id="search" action="${urlMap.search}" method="post">
-			
 			<table class="search" cellspacing="0">
+                <form id="search" action="${urlMap.search}" method="post">
 				<tr>
 					<th colspan="5"><fmt:message key="search.caption"/></th>
 				</tr>
@@ -46,16 +45,17 @@
 					<td class="input"><input class="text" type="text" name="album" value="<c:out value="${param.album}"/>" /></td>
 					<td class="button"><input class="button" type="submit" value="<fmt:message key="search.search"/>" /></td>
 				</tr>
+                </form>
 				<c:if test="${!empty playlists}">
-				
+
 					<tr>
 						<th colspan="5"><fmt:message key="playlist.caption"/></th>
 					</tr>
 					<tr>
 						<td class="spacer">&nbsp;</td>
 						<td class="artist">Playlists</td>
+                        <form id="playlist" action="${urlMap.playlist}" method="post">
 						<td class="input">
-							<form id="playlist" action="${urlMap.playlist}" method="post">
 							<select class="text" name="playlist">
 								<c:forEach items="${playlists}" var="playlist">
 									<option value="${playlist.id}">${playlist.name}</option>
@@ -64,17 +64,14 @@
 						</td>
 						<td class="button">
 							<input class="button" type="submit" value="<fmt:message key="playlist.use"/>" />
-							</form>
 						</td>
+                        </form>
 						<td class="spacer">&nbsp;</td>
 					</tr>
-							
+
 				</c:if>
 			</table>
-		
-			</form>
 
-			
     </div>
 
   </body>

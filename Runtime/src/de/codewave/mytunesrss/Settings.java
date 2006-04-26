@@ -73,6 +73,7 @@ public class Settings {
         myTunesXmlPath.setText(data.getLibraryXml());
         myUseAuthCheck.setSelected(data.isAuth());
         myPassword.setText(data.getPassword());
+        myPassword.setEnabled(data.isAuth());
         myFakeMp3Suffix.setText(data.getFakeMp3Suffix());
         myFakeM4aSuffix.setText(data.getFakeM4aSuffix());
         enableConfig(true);
@@ -102,6 +103,15 @@ public class Settings {
                     Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
                 } else {
                     Logger.getLogger("de.codewave").setLevel(Level.INFO);
+                }
+            }
+        });
+        myUseAuthCheck.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (myUseAuthCheck.isSelected()) {
+                    myPassword.setEnabled(true);
+                } else {
+                    myPassword.setEnabled(false);
                 }
             }
         });
@@ -166,8 +176,6 @@ public class Settings {
             showErrorMessage(myMainBundle.getString("error.startServer.port"));
         } else if (!new ITunesLibraryFileFilter(false).accept(library)) {
             showErrorMessage(myMainBundle.getString("error.startServer.libraryXmlFile"));
-        } else if (myUseAuthCheck.isSelected() && new String(myPassword.getPassword()).trim().length() == 0) {
-            showErrorMessage(myMainBundle.getString("error.startServer.useAuthButNoPassword"));
         } else {
             enableButtons(false);
             enableConfig(false);
@@ -311,7 +319,7 @@ public class Settings {
         myPort.setEnabled(enabled);
         myTunesXmlPath.setEnabled(enabled);
         myUseAuthCheck.setEnabled(enabled);
-        myPassword.setEnabled(enabled);
+        myPassword.setEnabled(enabled && myUseAuthCheck.isSelected());
         myFakeMp3Suffix.setEnabled(enabled);
         myFakeM4aSuffix.setEnabled(enabled);
         myRegisterName.setEnabled(enabled);

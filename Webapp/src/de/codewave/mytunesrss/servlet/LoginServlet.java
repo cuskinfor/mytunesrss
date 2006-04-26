@@ -27,7 +27,7 @@ public class LoginServlet extends BaseServlet {
     private void doCommand(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String password = request.getParameter("password");
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Trying to authenticate user with password \"" + password + "\".");
+            LOG.debug("Trying to authenticate user with password.");
         }
         MyTunesRssConfig config = getMyTunesRssConfig(request);
         if (password.hashCode() == config.getPasswordHash()) {
