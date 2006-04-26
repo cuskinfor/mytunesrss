@@ -87,7 +87,7 @@
               </component>
             </children>
           </grid>
-          <tabbedpane id="5c03">
+          <tabbedpane id="5c03" binding="myTabbedPane">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="400" height="-1"/>
@@ -182,7 +182,10 @@
                   <tabbedpane title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.tab.security"/>
                 </constraints>
                 <properties>
+                  <enabled value="true"/>
+                  <focusable value="true"/>
                   <toolTipText value=""/>
+                  <visible value="false"/>
                 </properties>
                 <border type="none"/>
                 <children>
@@ -387,7 +390,7 @@
                       </grid>
                     </constraints>
                   </vspacer>
-                  <component id="8ab33" class="javax.swing.JTextArea">
+                  <component id="8ab33" class="javax.swing.JTextArea" binding="myRegisterInfoTextArea">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false">
                         <preferred-size width="0" height="-1"/>
