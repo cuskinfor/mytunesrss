@@ -43,7 +43,6 @@ public class Settings {
     private JButton myRegisterButton;
     private JTextField myRegisterCode;
     private JCheckBox myLogDebugCheckBox;
-    private JTabbedPane myTabbedPane;
     private JTextArea myRegisterInfoTextArea;
     private JButton myShowLogButton;
     private Embedded myServer;
@@ -56,8 +55,8 @@ public class Settings {
         Logger.getRootLogger().addAppender(myStringBufferAppender);
         Logger.getLogger("de.codewave").addAppender(myStringBufferAppender);
         myFrame = frame;
-        String regName = Preferences.userRoot().node("/de/codewave/mytunesrss").get("regname", "");
-        String regCode = Preferences.userRoot().node("/de/codewave/mytunesrss").get("regcode", "");
+        String regName = Boolean.getBoolean("unregistered") ? "" : Preferences.userRoot().node("/de/codewave/mytunesrss").get("regname", "");
+        String regCode = Boolean.getBoolean("unregistered") ? "" : Preferences.userRoot().node("/de/codewave/mytunesrss").get("regcode", "");
         MyTunesRss.REGISTERED = SerialNumberUtils.isValid(regName, regCode, SER_NUM_RANDOM);
         if (MyTunesRss.REGISTERED) {
             setGuiToRegisteredMode();
@@ -75,7 +74,7 @@ public class Settings {
         myTunesXmlPath.setText(data.getLibraryXml());
         myUseAuthCheck.setSelected(data.isAuth());
         myPassword.setText(data.getPassword());
-        myPassword.setEnabled(data.isAuth());
+        enableElementAndLabel(myPassword, data.isAuth());
         myFakeMp3Suffix.setText(data.getFakeMp3Suffix());
         myFakeM4aSuffix.setText(data.getFakeM4aSuffix());
         enableConfig(true);
@@ -111,9 +110,9 @@ public class Settings {
         myUseAuthCheck.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (myUseAuthCheck.isSelected()) {
-                    myPassword.setEnabled(true);
+                    enableElementAndLabel(myPassword, true);
                 } else {
-                    myPassword.setEnabled(false);
+                    enableElementAndLabel(myPassword, false);
                 }
             }
         });
@@ -330,15 +329,27 @@ public class Settings {
 
     private void enableConfig(boolean enabled) {
         myLookupButton.setEnabled(enabled);
-        myPort.setEnabled(enabled);
-        myTunesXmlPath.setEnabled(enabled);
+        enableElementAndLabel(myPort, enabled);
+        enableElementAndLabel(myTunesXmlPath, enabled);
         myUseAuthCheck.setEnabled(enabled && MyTunesRss.REGISTERED);
-        myPassword.setEnabled(enabled && myUseAuthCheck.isSelected() && MyTunesRss.REGISTERED);
-        myFakeMp3Suffix.setEnabled(enabled && MyTunesRss.REGISTERED);
-        myFakeM4aSuffix.setEnabled(enabled && MyTunesRss.REGISTERED);
+        enableElementAndLabel(myPassword, enabled && myUseAuthCheck.isSelected() && MyTunesRss.REGISTERED);
+        enableElementAndLabel(myFakeMp3Suffix, enabled && MyTunesRss.REGISTERED);
+        enableElementAndLabel(myFakeM4aSuffix, enabled && MyTunesRss.REGISTERED);
         myRegisterName.setEnabled(enabled && !MyTunesRss.REGISTERED);
         myRegisterCode.setEnabled(enabled && !MyTunesRss.REGISTERED);
         myRegisterButton.setEnabled(enabled);
+    }
+
+    private void enableElementAndLabel(JComponent element, boolean enabled) {
+        element.setEnabled(enabled);
+        Component[] components = element.getParent().getComponents();
+        if (components != null && components.length > 0) {
+            for (int i = 0; i < components.length; i++) {
+                if (components[i] instanceof JLabel && ((JLabel)components[i]).getLabelFor() == element) {
+                    components[i].setEnabled(enabled);
+                }
+            }
+        }
     }
 
     private void setGuiToRegisteredMode() {
@@ -346,9 +357,9 @@ public class Settings {
         myRegisterCode.setEnabled(false);
         myRegisterButton.setVisible(false);
         myUseAuthCheck.setEnabled(true);
-        myPassword.setEnabled(myUseAuthCheck.isSelected());
-        myFakeMp3Suffix.setEnabled(true);
-        myFakeM4aSuffix.setEnabled(true);
+        enableElementAndLabel(myPassword, myUseAuthCheck.isSelected());
+        enableElementAndLabel(myFakeMp3Suffix, true);
+        enableElementAndLabel(myFakeM4aSuffix, true);
         myRegisterInfoTextArea.setText(myMainBundle.getString("gui.settings.registration.infotext.registered"));
         myUseAuthCheck.setToolTipText(myMainBundle.getString("gui.settings.tooltip.useAuth"));
         myPassword.setToolTipText(myMainBundle.getString("gui.settings.tooltip.password"));
@@ -358,9 +369,9 @@ public class Settings {
 
     private void setGuiToUnregisteredMode() {
         myUseAuthCheck.setEnabled(false);
-        myPassword.setEnabled(false);
-        myFakeMp3Suffix.setEnabled(false);
-        myFakeM4aSuffix.setEnabled(false);
+        enableElementAndLabel(myPassword, false);
+        enableElementAndLabel(myFakeMp3Suffix, false);
+        enableElementAndLabel(myFakeM4aSuffix, false);
         myUseAuthCheck.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
         myPassword.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
         myFakeMp3Suffix.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
