@@ -188,7 +188,7 @@ td.play {
 }
 
 div.buttons {
-	background: url("../images/head.gif") left bottom repeat-x;
+	background: url("../images/buttons.gif") left bottom repeat-x;
 	border-top: 1px solid #666;
 	border-bottom: 1px solid #666;
 	text-align: center;
