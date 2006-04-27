@@ -13,6 +13,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <font swing-font="Button.font"/>
           <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.logfile.refresh"/>
           <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.logfile.tooltip.refresh"/>
         </properties>
@@ -31,6 +32,7 @@
             <constraints/>
             <properties>
               <editable value="false"/>
+              <font swing-font="TextArea.font"/>
               <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.logfile.tooltip.log"/>
             </properties>
           </component>
@@ -41,6 +43,7 @@
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <font swing-font="Button.font"/>
           <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.logfile.close"/>
           <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.logfile.tooltip.close"/>
         </properties>
