@@ -9,6 +9,7 @@ import org.apache.log4j.*;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -42,17 +43,18 @@ public class Settings {
     private JButton myRegisterButton;
     private JTextField myRegisterCode;
     private JCheckBox myLogDebugCheckBox;
-    private JTextArea myLogTextArea;
     private JTabbedPane myTabbedPane;
     private JTextArea myRegisterInfoTextArea;
+    private JButton myShowLogButton;
     private Embedded myServer;
+    private StringBufferAppender myStringBufferAppender;
 
-    public Settings(JFrame frame) throws UnsupportedEncodingException {
+    public Settings(final JFrame frame) throws UnsupportedEncodingException {
         Logger.getRootLogger().removeAllAppenders();
         Logger.getLogger("de.codewave").removeAllAppenders();
-        TextAreaAppender textAreaAppender = new TextAreaAppender(myLogTextArea);
-        Logger.getRootLogger().addAppender(textAreaAppender);
-        Logger.getLogger("de.codewave").addAppender(textAreaAppender);
+        myStringBufferAppender = new StringBufferAppender();
+        Logger.getRootLogger().addAppender(myStringBufferAppender);
+        Logger.getLogger("de.codewave").addAppender(myStringBufferAppender);
         myFrame = frame;
         String regName = Preferences.userRoot().node("/de/codewave/mytunesrss").get("regname", "");
         String regCode = Preferences.userRoot().node("/de/codewave/mytunesrss").get("regcode", "");
@@ -115,6 +117,17 @@ public class Settings {
                 }
             }
         });
+        myShowLogButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                myShowLogButton.setEnabled(false);
+                final JDialog dialog = new JDialog(frame, myMainBundle.getString("gui.logfile.title"), false);
+                dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                LogDisplay logDisplay = new LogDisplay(dialog, myShowLogButton, myStringBufferAppender);
+                dialog.add(logDisplay.getRootPanel());
+                dialog.setVisible(true);
+                dialog.pack();
+            }
+        });
     }
 
     public JPanel getRootPanel() {
@@ -136,6 +149,7 @@ public class Settings {
             Preferences.userRoot().node("/de/codewave/mytunesrss").put("regcode", regCode);
             showInfoMessage(myMainBundle.getString("info.registration.success"));
             setGuiToRegisteredMode();
+            myFrame.pack();
         } else {
             showErrorMessage(myMainBundle.getString("error.registration.failure"));
         }
@@ -318,27 +332,39 @@ public class Settings {
         myLookupButton.setEnabled(enabled);
         myPort.setEnabled(enabled);
         myTunesXmlPath.setEnabled(enabled);
-        myUseAuthCheck.setEnabled(enabled);
-        myPassword.setEnabled(enabled && myUseAuthCheck.isSelected());
-        myFakeMp3Suffix.setEnabled(enabled);
-        myFakeM4aSuffix.setEnabled(enabled);
-        myRegisterName.setEnabled(enabled);
-        myRegisterCode.setEnabled(enabled);
+        myUseAuthCheck.setEnabled(enabled && MyTunesRss.REGISTERED);
+        myPassword.setEnabled(enabled && myUseAuthCheck.isSelected() && MyTunesRss.REGISTERED);
+        myFakeMp3Suffix.setEnabled(enabled && MyTunesRss.REGISTERED);
+        myFakeM4aSuffix.setEnabled(enabled && MyTunesRss.REGISTERED);
+        myRegisterName.setEnabled(enabled && !MyTunesRss.REGISTERED);
+        myRegisterCode.setEnabled(enabled && !MyTunesRss.REGISTERED);
         myRegisterButton.setEnabled(enabled);
     }
 
     private void setGuiToRegisteredMode() {
-        myTabbedPane.setEnabledAt(1, true);
-        myTabbedPane.setToolTipTextAt(1, null);
-        myRegisterName.setEditable(false);
-        myRegisterCode.setEditable(false);
+        myRegisterName.setEnabled(false);
+        myRegisterCode.setEnabled(false);
         myRegisterButton.setVisible(false);
+        myUseAuthCheck.setEnabled(true);
+        myPassword.setEnabled(myUseAuthCheck.isSelected());
+        myFakeMp3Suffix.setEnabled(true);
+        myFakeM4aSuffix.setEnabled(true);
         myRegisterInfoTextArea.setText(myMainBundle.getString("gui.settings.registration.infotext.registered"));
+        myUseAuthCheck.setToolTipText(myMainBundle.getString("gui.settings.tooltip.useAuth"));
+        myPassword.setToolTipText(myMainBundle.getString("gui.settings.tooltip.password"));
+        myFakeMp3Suffix.setToolTipText(myMainBundle.getString("gui.settings.tooltip.fake.mp3"));
+        myFakeM4aSuffix.setToolTipText(myMainBundle.getString("gui.settings.tooltip.fake.m4a"));
     }
 
     private void setGuiToUnregisteredMode() {
-        myTabbedPane.setEnabledAt(1, false);
-        myTabbedPane.setToolTipTextAt(1, myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
+        myUseAuthCheck.setEnabled(false);
+        myPassword.setEnabled(false);
+        myFakeMp3Suffix.setEnabled(false);
+        myFakeM4aSuffix.setEnabled(false);
+        myUseAuthCheck.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
+        myPassword.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
+        myFakeMp3Suffix.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
+        myFakeM4aSuffix.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
     }
 
     public static class ITunesLibraryFileFilter extends javax.swing.filechooser.FileFilter {
