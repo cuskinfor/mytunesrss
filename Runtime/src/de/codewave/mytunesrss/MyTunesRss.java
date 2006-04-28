@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.utils.moduleinfo.*;
-import de.codewave.utils.serialnumber.*;
 import org.apache.catalina.*;
 import org.apache.commons.logging.*;
 
@@ -49,8 +48,8 @@ public class MyTunesRss {
     private static void activateAppleExtensions(final JFrame frame, final Settings settings) {
         try {
             Class.forName("com.apple.eawt.Application");
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Running an Apple JRE.");
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Apple extension class found on this system.");
             }
             try {
                 Class clazz = Class.forName("de.codewave.mytunesrss.AppleExtensions");
@@ -62,8 +61,8 @@ public class MyTunesRss {
                 }
             }
         } catch (ClassNotFoundException e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Not running an Apple JRE.");
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Apple extension class not found on this system.");
             }
         }
     }

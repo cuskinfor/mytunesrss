@@ -8,8 +8,8 @@ import org.apache.commons.logging.*;
 import org.apache.log4j.*;
 
 import javax.swing.*;
-import java.awt.event.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -46,14 +46,13 @@ public class Settings {
     private JTextArea myRegisterInfoTextArea;
     private JButton myShowLogButton;
     private Embedded myServer;
-    private StringBufferAppender myStringBufferAppender;
+    private LogDisplay myLogDisplay = new LogDisplay();
 
     public Settings(final JFrame frame) throws UnsupportedEncodingException {
         Logger.getRootLogger().removeAllAppenders();
         Logger.getLogger("de.codewave").removeAllAppenders();
-        myStringBufferAppender = new StringBufferAppender();
-        Logger.getRootLogger().addAppender(myStringBufferAppender);
-        Logger.getLogger("de.codewave").addAppender(myStringBufferAppender);
+        Logger.getRootLogger().addAppender(myLogDisplay);
+        Logger.getLogger("de.codewave").addAppender(myLogDisplay);
         myFrame = frame;
         String regName = Boolean.getBoolean("unregistered") ? "" : Preferences.userRoot().node("/de/codewave/mytunesrss").get("regname", "");
         String regCode = Boolean.getBoolean("unregistered") ? "" : Preferences.userRoot().node("/de/codewave/mytunesrss").get("regcode", "");
@@ -119,12 +118,7 @@ public class Settings {
         myShowLogButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 myShowLogButton.setEnabled(false);
-                final JDialog dialog = new JDialog(frame, myMainBundle.getString("gui.logfile.title"), false);
-                dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                LogDisplay logDisplay = new LogDisplay(dialog, myShowLogButton, myStringBufferAppender);
-                dialog.add(logDisplay.getRootPanel());
-                dialog.setVisible(true);
-                dialog.pack();
+                myLogDisplay.show(frame, myShowLogButton);
             }
         });
     }
@@ -199,8 +193,18 @@ public class Settings {
                     try {
                         myServer = createServer("mytunesrss", null, serverPort, new File("."), "ROOT", "");
                         myServer.start();
-                        myStartStopButton.setText(myMainBundle.getString("gui.settings.button.stopServer"));
-                        myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.stopServer"));
+                        byte health = checkServerHealth(serverPort);
+                        if (health == CheckHealthResult.OK) {
+                            myStartStopButton.setText(myMainBundle.getString("gui.settings.button.stopServer"));
+                            myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.stopServer"));
+                            setStatus(myMainBundle.getString("info.server.running"));
+                        } else {
+                            myServer.stop();
+                            myServer = null;
+                            showErrorMessage(myMainBundle.getString("error.server.startFailureHealth"));
+                            setStatus(myMainBundle.getString("info.server.idle"));
+                            enableConfig(true);
+                        }
                     } catch (LifecycleException e) {
                         if (e.getMessage().contains("BindException")) {
                             showErrorMessage(myMainBundle.getString("error.server.startFailureBindException"));
@@ -216,9 +220,34 @@ public class Settings {
                     }
                     enableButtons(true);
                     myRootPanel.validate();
-                    setStatus(myMainBundle.getString("info.server.running"));
                 }
+
             }).start();
+        }
+    }
+
+    private byte checkServerHealth(int port) {
+        HttpURLConnection connection = null;
+        try {
+            URL targetUrl = new URL("http://127.0.0.1:" + port + "/health");
+            connection = (HttpURLConnection)targetUrl.openConnection();
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                InputStream inputStream = connection.getInputStream();
+                int result = inputStream.read();
+                return result != -1 ? (byte)result : CheckHealthResult.EOF;
+            } else {
+                return CheckHealthResult.INVALID_HTTP_RESPONSE;
+            }
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not get a proper server health status.", e);
+            }
+            return CheckHealthResult.SERVER_COMMUNICATION_FAILURE;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
     }
 
@@ -345,7 +374,7 @@ public class Settings {
         Component[] components = element.getParent().getComponents();
         if (components != null && components.length > 0) {
             for (int i = 0; i < components.length; i++) {
-                if (components[i] instanceof JLabel && ((JLabel)components[i]).getLabelFor() == element) {
+                if (components[i]instanceof JLabel && ((JLabel)components[i]).getLabelFor() == element) {
                     components[i].setEnabled(enabled);
                 }
             }

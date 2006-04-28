@@ -8,14 +8,14 @@
     <properties/>
     <border type="none"/>
     <children>
-      <component id="54c1f" class="javax.swing.JButton" binding="myRefreshButton">
+      <component id="54c1f" class="javax.swing.JButton" binding="myClearButton">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font swing-font="Button.font"/>
-          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.logfile.refresh"/>
-          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.logfile.tooltip.refresh"/>
+          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.logfile.clear"/>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.logfile.tooltip.clear"/>
         </properties>
       </component>
       <scrollpane id="98bdf">
@@ -28,12 +28,10 @@
         <properties/>
         <border type="etched"/>
         <children>
-          <component id="6f225" class="javax.swing.JTextArea" binding="myTextArea">
+          <component id="d819" class="javax.swing.JTextArea" binding="myTextArea">
             <constraints/>
             <properties>
               <editable value="false"/>
-              <font swing-font="TextArea.font"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.logfile.tooltip.log"/>
             </properties>
           </component>
         </children>

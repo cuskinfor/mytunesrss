@@ -4,39 +4,89 @@
 
 package de.codewave.mytunesrss;
 
+import org.apache.log4j.*;
+import org.apache.log4j.spi.*;
+
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.LogDisplay
  */
-public class LogDisplay {
+public class LogDisplay extends AppenderSkeleton {
     private JPanel myRootPanel;
-    private JButton myRefreshButton;
+    private JButton myClearButton;
     private JButton myCloseButton;
     private JTextArea myTextArea;
 
-    private JButton myOpenButton;
-    private StringBufferAppender myStringBufferAppender;
-
-    public LogDisplay(final JDialog dialog, JButton openButton, StringBufferAppender stringBufferAppender) {
-        myOpenButton = openButton;
-        myStringBufferAppender = stringBufferAppender;
-        myRefreshButton.addActionListener(new ActionListener() {
+    public LogDisplay() {
+        myClearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                myTextArea.setText(myStringBufferAppender.getText());
+                myTextArea.setText(null);
             }
         });
+    }
+
+    protected synchronized void append(final LoggingEvent loggingEvent) {
+        final String text = getText(loggingEvent);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                myTextArea.append(text);
+            }
+        });
+    }
+
+    private String getText(LoggingEvent loggingEvent) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(loggingEvent.getRenderedMessage()).append(System.getProperty("line.separator"));
+        ThrowableInformation throwableInformation = loggingEvent.getThrowableInformation();
+        String[] throwableStrRep = throwableInformation != null ? throwableInformation.getThrowableStrRep() : null;
+        if (throwableStrRep != null && throwableStrRep.length > 0) {
+            for (int i = 0; i < throwableStrRep.length; i++) {
+                buffer.append(throwableStrRep[i]).append(System.getProperty("line.separator"));
+            }
+        }
+        return buffer.toString();
+    }
+
+    public void close() {
+        // intentionally left blank
+    }
+
+    public boolean requiresLayout() {
+        return false;
+    }
+
+    public void show(JFrame frame, final JButton openButton) {
+        final JDialog dialog = new JDialog(frame,
+                                           PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss").getString("gui.logfile.title"),
+                                           false);
         myCloseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                myOpenButton.setEnabled(true);
+                openButton.setEnabled(true);
                 dialog.dispose();
             }
         });
-        myTextArea.setText(stringBufferAppender.getText());
-    }
-
-    public JPanel getRootPanel() {
-        return myRootPanel;
+        dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                openButton.setEnabled(true);
+                dialog.dispose();
+            }
+        });
+        dialog.add(myRootPanel);
+        dialog.setVisible(true);
+        dialog.pack();
+        final Dimension minSize = dialog.getSize();
+        dialog.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                Dimension size = dialog.getSize();
+                dialog.setSize(new Dimension(Math.max(size.width, minSize.width), Math.max(size.height, minSize.height)));
+            }
+        });
     }
 }

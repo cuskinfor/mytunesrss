@@ -21,6 +21,10 @@ public class ITunesLibrary implements Serializable {
     private List<MusicFile> myTitles = new ArrayList<MusicFile>();
     private List<PlayList> myPlayLists = new ArrayList<PlayList>();
 
+    public boolean isEmpty() {
+        return myTitles.isEmpty();
+    }
+
     public void load(URL iTunesLibraryXml, String fakeMp3Suffix, String fakeM4aSuffix)
             throws IOException, SAXException, ParserConfigurationException {
         Map plist = (Map)XmlUtils.parseApplePList(iTunesLibraryXml);

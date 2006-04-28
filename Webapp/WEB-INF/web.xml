@@ -112,6 +112,12 @@
         <servlet-name>PlayListFeed</servlet-name>
         <servlet-class>de.codewave.mytunesrss.servlet.PlayListFeedServlet</servlet-class>
     </servlet>
+    <servlet>
+        <description>Servlet to check the health of the application.</description>
+        <display-name>Check Health</display-name>
+        <servlet-name>CheckHealth</servlet-name>
+        <servlet-class>de.codewave.mytunesrss.servlet.CheckHealthServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Search</servlet-name>
         <url-pattern>/search</url-pattern>
@@ -139,6 +145,10 @@
     <servlet-mapping>
         <servlet-name>PlayListFeed</servlet-name>
         <url-pattern>/playlist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CheckHealth</servlet-name>
+        <url-pattern>/health</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>/search.jsp</welcome-file>
