@@ -37,7 +37,7 @@
                 <include name="java.properties"/>
             </zipfileset>
             <include name="*.exe"/>
-            <include name="*.pdf"/>
+            <include name="documentation/**"/>
         </zip>
         <zip destfile="distribution/MyTunesRSS-MacOSX-${version}.zip">
             <fileset dir="etc/MacOS-Bundle">
@@ -54,7 +54,7 @@
                 <include name="MyTunesRSS.jar"/>
             </zipfileset>
             <fileset dir="etc">
-                <include name="*.pdf"/>
+                <include name="documentation/**"/>
             </fileset>
         </zip>
     </target>
