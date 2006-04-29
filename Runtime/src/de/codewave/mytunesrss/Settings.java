@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.utils.serialnumber.*;
+import de.codewave.utils.*;
 import org.apache.catalina.*;
 import org.apache.catalina.session.*;
 import org.apache.catalina.startup.*;
@@ -45,6 +46,9 @@ public class Settings {
     private JCheckBox myLogDebugCheckBox;
     private JTextArea myRegisterInfoTextArea;
     private JButton myShowLogButton;
+    private JSpinner myMaxMemSpinner;
+    private JButton mySaveMaxMemButton;
+    private JPanel myMemoryPanel;
     private Embedded myServer;
     private LogDisplay myLogDisplay = new LogDisplay();
 
@@ -76,6 +80,12 @@ public class Settings {
         enableElementAndLabel(myPassword, data.isAuth());
         myFakeMp3Suffix.setText(data.getFakeMp3Suffix());
         myFakeM4aSuffix.setText(data.getFakeM4aSuffix());
+        int maxMemory = ProgramUtils.getMaxMemorySwitch();
+        if (maxMemory != -1) {
+            myMaxMemSpinner.setValue(new Integer(maxMemory));
+        } else {
+            myMemoryPanel.setVisible(false);
+        }
         enableConfig(true);
         myRegisterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

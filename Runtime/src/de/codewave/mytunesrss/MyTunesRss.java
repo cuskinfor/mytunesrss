@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.utils.*;
 import de.codewave.utils.moduleinfo.*;
 import org.apache.catalina.*;
 import org.apache.commons.logging.*;
@@ -40,31 +41,8 @@ public class MyTunesRss {
         int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", frame.getLocation().x);
         int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", frame.getLocation().y);
         frame.setLocation(x, y);
-        activateAppleExtensions(frame, settingsForm);
         frame.setVisible(true);
         frame.pack();
-    }
-
-    private static void activateAppleExtensions(final JFrame frame, final Settings settings) {
-        try {
-            Class.forName("com.apple.eawt.Application");
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Apple extension class found on this system.");
-            }
-            try {
-                Class clazz = Class.forName("de.codewave.mytunesrss.AppleExtensions");
-                Method method = clazz.getMethod("activate", JFrame.class, Settings.class);
-                method.invoke(null, frame, settings);
-            } catch (Exception e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not activate Apple extensions.", e);
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Apple extension class not found on this system.");
-            }
-        }
     }
 
     public static class MyTunesRssMainWindowListener extends WindowAdapter {

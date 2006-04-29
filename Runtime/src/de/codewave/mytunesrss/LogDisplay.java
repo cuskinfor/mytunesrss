@@ -22,11 +22,16 @@ public class LogDisplay extends AppenderSkeleton {
     private JTextArea myTextArea;
 
     public LogDisplay() {
+        restartLog();
         myClearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                myTextArea.setText(null);
+                restartLog();
             }
         });
+    }
+
+    private void restartLog() {
+        myTextArea.setText("Operating system: " + System.getProperty("os.name") + System.getProperty("line.separator"));
     }
 
     protected synchronized void append(final LoggingEvent loggingEvent) {
