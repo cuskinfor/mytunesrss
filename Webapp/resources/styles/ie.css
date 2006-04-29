@@ -3,3 +3,7 @@
 div.body {
 	width: expression( document.body.clientWidth > 480 ? "480px" : "auto" );
 }
+
+body div.input input {
+	margin: 0;
+}

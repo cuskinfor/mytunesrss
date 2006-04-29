@@ -132,10 +132,6 @@ div.input input {
 	background: none;
 }
 
-*body div.input input {
-	margin: 0;
-}
-
 div.link {
 	background: url("../images/link.gif") top left no-repeat;
 	padding: 5px 0 7px 20px;
