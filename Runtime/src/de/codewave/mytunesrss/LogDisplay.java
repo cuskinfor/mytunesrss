@@ -20,9 +20,9 @@ public class LogDisplay extends AppenderSkeleton {
     private JButton myClearButton;
     private JButton myCloseButton;
     private JTextArea myTextArea;
+    private boolean myLoggingEnabled;
 
     public LogDisplay() {
-        restartLog();
         myClearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 restartLog();
@@ -30,17 +30,32 @@ public class LogDisplay extends AppenderSkeleton {
         });
     }
 
-    private void restartLog() {
-        myTextArea.setText("Operating system: " + System.getProperty("os.name") + System.getProperty("line.separator"));
+    public boolean isLoggingEnabled() {
+        return myLoggingEnabled;
+    }
+
+    public void setLoggingEnabled(boolean loggingEnabled) {
+        myLoggingEnabled = loggingEnabled;
+        restartLog();
+    }
+
+    public void restartLog() {
+        if (myLoggingEnabled) {
+            myTextArea.setText("Operating system: " + System.getProperty("os.name") + System.getProperty("line.separator"));
+        } else {
+            myTextArea.setText(null);
+        }
     }
 
     protected synchronized void append(final LoggingEvent loggingEvent) {
-        final String text = getText(loggingEvent);
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                myTextArea.append(text);
-            }
-        });
+        if (myLoggingEnabled) {
+            final String text = getText(loggingEvent);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    myTextArea.append(text);
+                }
+            });
+        }
     }
 
     private String getText(LoggingEvent loggingEvent) {
@@ -64,13 +79,17 @@ public class LogDisplay extends AppenderSkeleton {
         return false;
     }
 
+    public boolean containsText(String text) {
+        return myTextArea.getText().contains(text);
+    }
+
     public void show(JFrame frame, final JButton openButton) {
         final JDialog dialog = new JDialog(frame,
                                            PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss").getString("gui.logfile.title"),
                                            false);
         myCloseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                openButton.setEnabled(true);
+                openButton.setEnabled(isLoggingEnabled());
                 dialog.dispose();
             }
         });
@@ -78,7 +97,7 @@ public class LogDisplay extends AppenderSkeleton {
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                openButton.setEnabled(true);
+                openButton.setEnabled(isLoggingEnabled());
                 dialog.dispose();
             }
         });

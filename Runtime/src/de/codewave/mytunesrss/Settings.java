@@ -43,12 +43,12 @@ public class Settings {
     private JTextField myRegisterName;
     private JButton myRegisterButton;
     private JTextField myRegisterCode;
-    private JCheckBox myLogDebugCheckBox;
     private JTextArea myRegisterInfoTextArea;
     private JButton myShowLogButton;
+    private JLabel myMaxMemLabel;
     private JSpinner myMaxMemSpinner;
-    private JButton mySaveMaxMemButton;
-    private JPanel myMemoryPanel;
+    private JButton myMaxMemSaveButton;
+    private JCheckBox myWriteLogCheckbox;
     private Embedded myServer;
     private LogDisplay myLogDisplay = new LogDisplay();
 
@@ -71,8 +71,6 @@ public class Settings {
         setStatus(myMainBundle.getString("info.server.idle"));
         MyTunesRssConfig data = new MyTunesRssConfig();
         data.load();
-        Logger.getLogger("de.codewave").setLevel(data.isVerboseLogging() ? Level.DEBUG : Level.INFO);
-        myLogDebugCheckBox.setSelected(data.isVerboseLogging());
         myPort.setText(data.getPort());
         myTunesXmlPath.setText(data.getLibraryXml());
         myUseAuthCheck.setSelected(data.isAuth());
@@ -80,11 +78,20 @@ public class Settings {
         enableElementAndLabel(myPassword, data.isAuth());
         myFakeMp3Suffix.setText(data.getFakeMp3Suffix());
         myFakeM4aSuffix.setText(data.getFakeM4aSuffix());
-        int maxMemory = ProgramUtils.getMaxMemorySwitch();
+        myWriteLogCheckbox.setSelected(data.isLoggingEnabled());
+        myLogDisplay.setLoggingEnabled(data.isLoggingEnabled());
+        if (!myLogDisplay.isLoggingEnabled()) {
+            myShowLogButton.setEnabled(false);
+        }
+        int minMemory = ProgramUtils.getMemorySwitch(MemorySwitchType.Minimum);
+        int maxMemory = ProgramUtils.getMemorySwitch(MemorySwitchType.Maxmimum);
         if (maxMemory != -1) {
-            myMaxMemSpinner.setValue(new Integer(maxMemory));
+            SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(maxMemory, Math.max(10, minMemory), 500, 10);
+            myMaxMemSpinner.setModel(spinnerNumberModel);
         } else {
-            myMemoryPanel.setVisible(false);
+            myMaxMemLabel.setVisible(false);
+            myMaxMemSpinner.setVisible(false);
+            myMaxMemSaveButton.setVisible(false);
         }
         enableConfig(true);
         myRegisterButton.addActionListener(new ActionListener() {
@@ -107,15 +114,6 @@ public class Settings {
                 doLookupLibraryFile();
             }
         });
-        myLogDebugCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (myLogDebugCheckBox.isSelected()) {
-                    Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
-                } else {
-                    Logger.getLogger("de.codewave").setLevel(Level.INFO);
-                }
-            }
-        });
         myUseAuthCheck.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (myUseAuthCheck.isSelected()) {
@@ -129,6 +127,27 @@ public class Settings {
             public void actionPerformed(ActionEvent e) {
                 myShowLogButton.setEnabled(false);
                 myLogDisplay.show(frame, myShowLogButton);
+            }
+        });
+        myWriteLogCheckbox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (myWriteLogCheckbox.isSelected()) {
+                    myShowLogButton.setEnabled(true);
+                    myLogDisplay.setLoggingEnabled(true);
+                } else {
+                    myShowLogButton.setEnabled(false);
+                    myLogDisplay.setLoggingEnabled(false);
+                }
+            }
+        });
+        myMaxMemSaveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int maxMem = ((Integer)myMaxMemSpinner.getValue()).intValue();
+                if (ProgramUtils.updateMemorySwitch(MemorySwitchType.Maxmimum, maxMem)) {
+                    showInfoMessage(myMainBundle.getString("info.savemem.success"));
+                } else {
+                    showErrorMessage(myMainBundle.getString("error.memsave.failure"));
+                }
             }
         });
     }
@@ -198,6 +217,7 @@ public class Settings {
             enableConfig(false);
             myRootPanel.validate();
             setStatus(myMainBundle.getString("info.server.starting"));
+            myLogDisplay.restartLog();
             new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -211,7 +231,11 @@ public class Settings {
                         } else {
                             myServer.stop();
                             myServer = null;
-                            showErrorMessage(myMainBundle.getString("error.server.startFailureHealth"));
+                            if (myLogDisplay.containsText("OutOfMemoryError")) {
+                                showErrorMessage(myMainBundle.getString("error.server.startFailureOutOfMemory"));
+                            } else {
+                                showErrorMessage(myMainBundle.getString("error.server.startFailureHealth"));
+                            }
                             setStatus(myMainBundle.getString("info.server.idle"));
                             enableConfig(true);
                         }
@@ -343,7 +367,7 @@ public class Settings {
         config.setPassword(new String(myPassword.getPassword()).trim());
         config.setFakeMp3Suffix(myFakeMp3Suffix.getText().trim());
         config.setFakeM4aSuffix(myFakeM4aSuffix.getText().trim());
-        config.setVerboseLogging(myLogDebugCheckBox.isSelected());
+        config.setLoggingEnabled(myWriteLogCheckbox.isSelected());
         return config;
     }
 

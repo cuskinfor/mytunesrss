@@ -8,6 +8,7 @@ import de.codewave.utils.*;
 import de.codewave.utils.moduleinfo.*;
 import org.apache.catalina.*;
 import org.apache.commons.logging.*;
+import org.apache.log4j.*;
 
 import javax.imageio.*;
 import javax.swing.*;
@@ -26,6 +27,9 @@ public class MyTunesRss {
 
     public static void main(String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
             ClassNotFoundException, IOException {
+        if (ProgramUtils.getCommandLineArguments(args).containsKey("debug")) {
+            Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
+        }
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         ResourceBundle mainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");

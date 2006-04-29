@@ -2,10 +2,6 @@
 <module version="4" relativePaths="true" type="JAVA_MODULE">
   <component name="BuildJarSettings">
     <containerInfo>
-      <containerElement type="module" name="EmbeddedTomcat">
-        <attribute name="method" value="1" />
-        <attribute name="URI" value="/" />
-      </containerElement>
       <containerElement type="module" name="Runtime">
         <attribute name="method" value="1" />
         <attribute name="URI" value="/" />
@@ -13,27 +9,31 @@
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
         <attribute name="URI" value="/lib/codewave-utils-1.1.jar" />
-        <url>jar://$MODULE_DIR$/../lib/codewave-utils-1.1.jar!/</url>
+        <url>jar://$MODULE_DIR$/lib/codewave-utils-1.1.jar!/</url>
       </containerElement>
-      <containerElement type="library" name="apache-tomcat-embed" level="application">
+      <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/tomcat" />
+        <attribute name="URI" value="/lib/commons-jxpath-1.2.jar" />
+        <url>jar://$MODULE_DIR$/lib/commons-jxpath-1.2.jar!/</url>
       </containerElement>
-      <containerElement type="library" name="commons-jxpath" level="application">
+      <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib" />
+        <attribute name="URI" value="/lib/commons-lang-2.1.jar" />
+        <url>jar://$MODULE_DIR$/lib/commons-lang-2.1.jar!/</url>
       </containerElement>
-      <containerElement type="library" name="commons-lang" level="application">
+      <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib" />
+        <attribute name="URI" value="/lib/commons-logging.jar" />
+        <url>jar://$MODULE_DIR$/lib/commons-logging.jar!/</url>
       </containerElement>
-      <containerElement type="library" name="commons-logging" level="application">
+      <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib" />
+        <attribute name="URI" value="/lib/log4j-1.2.11.jar" />
+        <url>jar://$MODULE_DIR$/lib/log4j-1.2.11.jar!/</url>
       </containerElement>
-      <containerElement type="library" name="logging-log4j" level="application">
+      <containerElement type="library" name="Tomcat" level="project">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib" />
+        <attribute name="URI" value="/lib/tomcat" />
       </containerElement>
     </containerInfo>
     <setting name="jarUrl" value="file://$MODULE_DIR$/../distribution/MyTunesRSS.jar" />
@@ -49,20 +49,52 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="commons-lang" level="application" />
-    <orderEntry type="library" exported="" name="commons-logging" level="application" />
-    <orderEntry type="library" exported="" name="logging-log4j" level="application" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/codewave-utils-1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" exported="" name="commons-jxpath" level="application" />
-    <orderEntry type="library" exported="" name="apache-tomcat-embed" level="application" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/commons-lang-2.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/log4j-1.2.11.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/commons-jxpath-1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/commons-logging.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Tomcat" level="project" />
     <orderEntryProperties />
   </component>
   <component name="copyright">
