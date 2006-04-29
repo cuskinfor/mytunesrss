@@ -21,8 +21,8 @@
           <toolTipText value=""/>
         </properties>
       </component>
-      <grid id="3032c" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="5" vgap="5">
-        <margin top="5" left="15" bottom="15" right="15"/>
+      <grid id="3032c" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+        <margin top="5" left="10" bottom="10" right="10"/>
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="0" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -101,12 +101,13 @@
             </properties>
             <border type="none"/>
             <children>
-              <grid id="cdbe6" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+              <grid id="cdbe6" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
                 <margin top="5" left="5" bottom="5" right="5"/>
                 <constraints>
                   <tabbedpane title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.tab.general"/>
                 </constraints>
                 <properties>
+                  <opaque value="false"/>
                   <toolTipText value=""/>
                 </properties>
                 <border type="none"/>
@@ -123,7 +124,9 @@
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <opaque value="false"/>
+                    </properties>
                     <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.title.server"/>
                     <children>
                       <component id="821ae" class="javax.swing.JTextField" binding="myPort">
@@ -173,15 +176,6 @@
                           <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.memory.tooltip.button"/>
                         </properties>
                       </component>
-                      <component id="492bf" class="javax.swing.JCheckBox" binding="myWriteLogCheckbox">
-                        <constraints>
-                          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties>
-                          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.writelog"/>
-                          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.writelog"/>
-                        </properties>
-                      </component>
                       <component id="109d0" class="javax.swing.JButton" binding="myShowLogButton">
                         <constraints>
                           <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
@@ -192,14 +186,33 @@
                           <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.showLog"/>
                         </properties>
                       </component>
+                      <component id="492bf" class="javax.swing.JCheckBox" binding="myWriteLogCheckbox">
+                        <constraints>
+                          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value=""/>
+                          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.writelog"/>
+                        </properties>
+                      </component>
+                      <component id="cf071" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.label.writeLog"/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
                   <grid id="955d3" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
                     <margin top="5" left="5" bottom="5" right="5"/>
                     <constraints>
-                      <grid row="2" column="0" row-span="2" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <opaque value="false"/>
+                    </properties>
                     <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.title.itunes"/>
                     <children>
                       <component id="ba3a" class="javax.swing.JTextField" binding="myTunesXmlPath">
@@ -245,7 +258,7 @@
                   </grid>
                   <vspacer id="6648f">
                     <constraints>
-                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
                 </children>
@@ -258,6 +271,7 @@
                 <properties>
                   <enabled value="true"/>
                   <focusable value="true"/>
+                  <opaque value="false"/>
                   <toolTipText value=""/>
                   <visible value="false"/>
                 </properties>
@@ -280,7 +294,9 @@
                     <constraints>
                       <grid row="0" column="0" row-span="2" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <opaque value="false"/>
+                    </properties>
                     <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.options.title.security"/>
                     <children>
                       <component id="4913a" class="javax.swing.JCheckBox" binding="myUseAuthCheck">
@@ -321,7 +337,9 @@
                     <constraints>
                       <grid row="3" column="0" row-span="2" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <opaque value="false"/>
+                    </properties>
                     <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.options.title.filetypes"/>
                     <children>
                       <component id="64dda" class="javax.swing.JLabel">
@@ -369,27 +387,31 @@
                   </grid>
                 </children>
               </grid>
-              <grid id="18e5c" layout-manager="GridLayoutManager" row-count="9" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+              <grid id="18e5c" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
                 <margin top="5" left="5" bottom="5" right="5"/>
                 <constraints>
                   <tabbedpane title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.tab.about"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <opaque value="false"/>
+                </properties>
                 <border type="none"/>
                 <children>
                   <vspacer id="39250">
                     <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
                         <preferred-size width="-1" height="5"/>
                       </grid>
                     </constraints>
                   </vspacer>
-                  <grid id="65549" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="-1">
+                  <grid id="65549" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="-1">
                     <margin top="5" left="5" bottom="5" right="5"/>
                     <constraints>
-                      <grid row="0" column="0" row-span="2" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <opaque value="false"/>
+                    </properties>
                     <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.info.title.developer"/>
                     <children>
                       <component id="38df2" class="javax.swing.JLabel">
@@ -428,14 +450,34 @@
                           <text value="Roland Müller"/>
                         </properties>
                       </component>
+                      <component id="63350" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <font swing-font="Label.font"/>
+                          <text value="Homepage:"/>
+                        </properties>
+                      </component>
+                      <component id="fdcfa" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <font swing-font="Label.font"/>
+                          <text value="www.codewave.de"/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
                   <grid id="289f8" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
                     <margin top="5" left="5" bottom="5" right="5"/>
                     <constraints>
-                      <grid row="3" column="0" row-span="5" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <opaque value="false"/>
+                    </properties>
                     <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.info.title.registration"/>
                     <children>
                       <component id="cb036" class="javax.swing.JTextArea" binding="myRegisterInfoTextArea">
@@ -515,7 +557,7 @@
                   </grid>
                   <vspacer id="fd943">
                     <constraints>
-                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
                 </children>

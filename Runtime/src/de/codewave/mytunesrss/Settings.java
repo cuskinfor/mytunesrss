@@ -374,17 +374,24 @@ public class Settings {
     }
 
     private void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(getRootPanel().getTopLevelAncestor(),
-                                      message,
-                                      myMainBundle.getString("error.title"),
-                                      JOptionPane.ERROR_MESSAGE);
+        showMessage(JOptionPane.ERROR_MESSAGE, myMainBundle.getString("error.title"), message);
+    }
+
+    private void showMessage(int type, String title, String message) {
+        JOptionPane pane = new JOptionPane() {
+            @Override
+            public int getMaxCharactersPerLineCount() {
+                return 100;
+            }
+        };
+        pane.setMessageType(type);
+        pane.setMessage(message);
+        JDialog dialog = pane.createDialog(myFrame, title);
+        dialog.setVisible(true);
     }
 
     private void showInfoMessage(String message) {
-        JOptionPane.showMessageDialog(getRootPanel().getTopLevelAncestor(),
-                                      message,
-                                      myMainBundle.getString("info.title"),
-                                      JOptionPane.INFORMATION_MESSAGE);
+        showMessage(JOptionPane.INFORMATION_MESSAGE, myMainBundle.getString("info.title"), message);
     }
 
     private void enableButtons(boolean enabled) {
