@@ -162,7 +162,9 @@ public class MusicFile implements Serializable {
     public void setFile(String location) {
         if (location.toLowerCase().startsWith("file://localhost")) {
             try {
-                String pathname = URLDecoder.decode(location.substring("file://localhost".length()), "UTF-8");
+                location = location.substring("file://localhost".length());
+                location = location.replace("+", "%" + Integer.toHexString('+'));
+                String pathname = URLDecoder.decode(location, "UTF-8");
                 File file = new File(pathname);
                 if (file.exists() && file.isFile()) {
                     setFile(file);
