@@ -231,8 +231,10 @@ public class Settings {
                         } else {
                             myServer.stop();
                             myServer = null;
-                            if (myLogDisplay.containsText("OutOfMemoryError")) {
+                            if (myLogDisplay.isOutOfMemoryError()) {
                                 showErrorMessage(myMainBundle.getString("error.server.startFailureOutOfMemory"));
+                            } else if (health == CheckHealthResult.EMPTY_LIBRARY) {
+                                showErrorMessage(myMainBundle.getString("error.server.startFailureEmptyLibrary"));
                             } else {
                                 showErrorMessage(myMainBundle.getString("error.server.startFailureHealth"));
                             }

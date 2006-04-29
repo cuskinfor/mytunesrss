@@ -21,6 +21,7 @@ public class LogDisplay extends AppenderSkeleton {
     private JButton myCloseButton;
     private JTextArea myTextArea;
     private boolean myLoggingEnabled;
+    boolean myOutOfMemoryError;
 
     public LogDisplay() {
         myClearButton.addActionListener(new ActionListener() {
@@ -45,11 +46,15 @@ public class LogDisplay extends AppenderSkeleton {
         } else {
             myTextArea.setText(null);
         }
+        myOutOfMemoryError = false;
     }
 
     protected synchronized void append(final LoggingEvent loggingEvent) {
+        final String text = getText(loggingEvent);
+        if (text.contains("OutOfMemoryError")) {
+            myOutOfMemoryError = true;
+        }
         if (myLoggingEnabled) {
-            final String text = getText(loggingEvent);
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     myTextArea.append(text);
@@ -81,6 +86,10 @@ public class LogDisplay extends AppenderSkeleton {
 
     public boolean containsText(String text) {
         return myTextArea.getText().contains(text);
+    }
+
+    public boolean isOutOfMemoryError() {
+        return myOutOfMemoryError;
     }
 
     public void show(JFrame frame, final JButton openButton) {
