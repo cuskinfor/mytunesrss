@@ -111,7 +111,6 @@ public class LogDisplay extends AppenderSkeleton {
             }
         });
         dialog.add(myRootPanel);
-        dialog.setVisible(true);
         dialog.pack();
         final Dimension minSize = dialog.getSize();
         dialog.addComponentListener(new ComponentAdapter() {
@@ -121,5 +120,7 @@ public class LogDisplay extends AppenderSkeleton {
                 dialog.setSize(new Dimension(Math.max(size.width, minSize.width), Math.max(size.height, minSize.height)));
             }
         });
+        dialog.setVisible(true);
     }
+
 }

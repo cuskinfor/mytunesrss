@@ -25,17 +25,19 @@
 
     <target name="zip.distribution" description="generate a zip archive of the whole distribution">
         <svn.propget property="version" path="." name="codewave:version"/>
-        <zip destfile="distribution/MyTunesRSS-${version}.zip" basedir="distribution">
-            <include name="conf/**"/>
-            <include name="lib/**"/>
-            <include name="tomcat/**"/>
-            <include name="webapps/**"/>
-            <include name="MyTunesRSS.jar"/>
-            <fileset dir="etc">
-                <include name="*.bat"/>
-                <include name="*.sh"/>
-                <include name="*.pdf"/>
-            </fileset>
+        <zip destfile="distribution/MyTunesRSS-Windows-${version}.zip" basedir="etc">
+            <zipfileset dir="distribution" prefix="data">
+                <include name="conf/**"/>
+                <include name="lib/**"/>
+                <include name="tomcat/**"/>
+                <include name="webapps/**"/>
+                <include name="MyTunesRSS.jar"/>
+            </zipfileset>
+            <zipfileset dir="etc" prefix="data">
+                <include name="java.properties"/>
+            </zipfileset>
+            <include name="*.exe"/>
+            <include name="*.pdf"/>
         </zip>
         <zip destfile="distribution/MyTunesRSS-MacOSX-${version}.zip">
             <fileset dir="etc/MacOS-Bundle">

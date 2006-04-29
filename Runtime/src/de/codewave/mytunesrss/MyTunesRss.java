@@ -14,7 +14,6 @@ import javax.imageio.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.prefs.*;
 
@@ -35,8 +34,8 @@ public class MyTunesRss {
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
         String version = modulesInfo.getVersion();
         System.setProperty("mytunesrss.version", version);
-        JFrame frame = new JFrame(mainBundle.getString("gui.title") + " v" + version);
-        frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("FrameIcon.png")));
+        final JFrame frame = new JFrame(mainBundle.getString("gui.title") + " v" + version);
+        frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         Settings settingsForm = new Settings(frame);
         frame.addWindowListener(new MyTunesRssMainWindowListener(settingsForm));
@@ -46,7 +45,11 @@ public class MyTunesRss {
         int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", frame.getLocation().y);
         frame.setLocation(x, y);
         frame.setVisible(true);
-        frame.pack();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                frame.pack();
+            }
+        });
     }
 
     public static class MyTunesRssMainWindowListener extends WindowAdapter {

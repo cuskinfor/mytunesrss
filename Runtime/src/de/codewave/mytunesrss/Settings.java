@@ -49,6 +49,7 @@ public class Settings {
     private JSpinner myMaxMemSpinner;
     private JButton myMaxMemSaveButton;
     private JCheckBox myWriteLogCheckbox;
+    private JPanel myRegistrationPanel;
     private Embedded myServer;
     private LogDisplay myLogDisplay = new LogDisplay();
 

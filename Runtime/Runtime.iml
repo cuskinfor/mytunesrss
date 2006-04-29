@@ -7,9 +7,9 @@
         <attribute name="URI" value="/" />
       </containerElement>
       <containerElement type="library" level="module">
-        <attribute name="method" value="2" />
+        <attribute name="method" value="1" />
         <attribute name="URI" value="/lib/codewave-utils-1.1.jar" />
-        <url>jar://$MODULE_DIR$/lib/codewave-utils-1.1.jar!/</url>
+        <url>jar://$MODULE_DIR$/../lib/codewave-utils-1.1.jar!/</url>
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
@@ -52,15 +52,6 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/codewave-utils-1.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/commons-lang-2.1.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -95,6 +86,15 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="Tomcat" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntryProperties />
   </component>
   <component name="copyright">
