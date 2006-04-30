@@ -29,6 +29,20 @@
         <filter-name>PlayListFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.servlet.PlayListFilter</filter-class>
     </filter>
+    <filter>
+        <description>Filter for setting the request encoding.</description>
+        <display-name>EncodingFilter</display-name>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.servlet.EncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>MyTunesRssServletFilter</filter-name>
         <url-pattern>/*</url-pattern>

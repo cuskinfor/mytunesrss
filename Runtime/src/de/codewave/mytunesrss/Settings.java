@@ -433,6 +433,8 @@ public class Settings {
         myRegisterName.setEnabled(enabled && !MyTunesRss.REGISTERED);
         myRegisterCode.setEnabled(enabled && !MyTunesRss.REGISTERED);
         myRegisterButton.setEnabled(enabled);
+        myMaxMemSaveButton.setEnabled(enabled);
+        enableElementAndLabel(myMaxMemSpinner, enabled);
     }
 
     private void enableElementAndLabel(JComponent element, boolean enabled) {
