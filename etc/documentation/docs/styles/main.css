@@ -1,7 +1,7 @@
-/* * * * * * * * * * * * * * * * * * 
+/* * * * * * * * * * * * * * * * * *
  * Copyright 2006, Michael Descher *
  * www.codewave.de                 *
- * * * * * * * * * * * * * * * * * * 
+ * * * * * * * * * * * * * * * * * *
 
 
 
@@ -120,6 +120,14 @@ a:HOVER {
 	font-weight: normal;
 }
 
+#content h2 {
+	margin: 0;
+	padding: 10px 0 0 0;
+	font-family: "Trebuchet MS", "Lucida Grande", verdana, helvetica, arial, sans-serif;
+	color: #8392c0;
+	font-size: 16px;
+	font-weight: bold;
+}
 
 span.date {
 	margin: 5px 0 10px 0;
