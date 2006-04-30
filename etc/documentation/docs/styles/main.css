@@ -1,6 +1,11 @@
-/*
- * Copyright (c) 2006, Codewave Software. All Rights Reserved.
- */
+/* * * * * * * * * * * * * * * * * * 
+ * Copyright 2006, Michael Descher *
+ * www.codewave.de                 *
+ * * * * * * * * * * * * * * * * * * 
+
+
+
+/* * * document definition * * */
 
 body {
 	position: relative;
@@ -17,17 +22,17 @@ body {
 
 #head {
 	width: 748px;
-	height: 135px;
+	height: 100px;
 	margin: 0 auto;
 	padding: 0 11px;
-	background: url("../images/head_background.gif" ) top center no-repeat;
+	background: url("../images/head_background.gif") top center no-repeat;
 }
 
 #menu {
 	height: 134px;
 	margin: 0;
 	padding: 0 0 0 10px;
-	background: url("../images/menu_background.gif" ) 0 100px no-repeat;
+	background: url("../images/menu_background.gif") 0 100px no-repeat;
 	list-style: none;
 }
 
@@ -51,14 +56,14 @@ body {
 	float: left;
 	margin: 95px 0 0 0;
 	padding: 0 0 0 10px;
-	background: url("../images/menu_active_left.gif" ) top left no-repeat;
+	background: url("../images/menu_active_left.gif") top left no-repeat;
 }
 
 #menu li.active a {
 	display: block;
 	margin: 0;
 	padding: 15px 25px 10px 15px;
-	background: url("../images/menu_active_right.gif" ) top right no-repeat;
+	background: url("../images/menu_active_right.gif") top right no-repeat;
 	color: #b5d747;
 	font-weight: bold;
 	text-decoration: none;
@@ -73,19 +78,19 @@ body {
 	width: 748px;
 	margin: 0 auto;
 	padding: 0 11px;
-	background: url("../images/body_background.gif" ) top center repeat-y;
+	background: url("../images/body_background.gif") top center repeat-y;
 }
 
 #content {
 	position: relative;
-	padding: 0 260px 0 90px;
+	padding: 0 25px 0 260px;
 }
 
 #sidebar {
-	float: right;
+	float: left;
 	width: 170px;
-	margin: 30px -230px 0 0;
-	padding: 0 0 0 30px;
+	margin: 30px 0 0 -230px;
+	padding: 0 30px 0 0;
 }
 
 /*** IE6 Fix (floating margin bug) ***/
@@ -196,23 +201,23 @@ span.date {
 	display: block;
 	padding: 5px 0 5px 22px;
 	margin: 0 0 5px 0;
-	background: url("../images/link_next.gif" ) 0 5px no-repeat;
+	background: url("../images/link_next.gif") 0 5px no-repeat;
 }
 
 #sidebar ul.links li a.back {
-	background-image: url("../images/link_back.gif" );
+	background-image: url("../images/link_back.gif");
 }
 
 #sidebar ul.links li a.extern {
-	background-image: url("../images/link_extern.gif" );
+	background-image: url("../images/link_extern.gif");
 }
 
 #sidebar ul.links li a.down {
-	background-image: url("../images/link_down.gif" );
+	background-image: url("../images/link_down.gif");
 }
 
 #sidebar ul.links li a.up {
-	background-image: url("../images/link_up.gif" );
+	background-image: url("../images/link_up.gif");
 }
 
 
@@ -229,7 +234,7 @@ div.selectBox {
 
 div.selectBox span.text {
 	display: block;
-	background: url("../images/select_background.gif" ) 100% 0 no-repeat;
+	background: url("../images/select_background.gif") 100% 0 no-repeat;
 	border-left: 1px solid #999;
 	margin: 0;
 	padding: 5px;
@@ -327,14 +332,14 @@ ul.pager li.back a {
 	display: block;
 	padding: 0 0 2px 22px;
 	margin: 0;
-	background: url("../images/link_back.gif" ) 0 0 no-repeat;
+	background: url("../images/link_back.gif") 0 0 no-repeat;
 }
 
 ul.pager li.next a {
 	display: block;
 	padding: 0 22px 0 0;
 	margin: 0;
-	background: url("../images/link_next.gif" ) 100% 0 no-repeat;
+	background: url("../images/link_next.gif") 100% 0 no-repeat;
 }
 
 fieldset {
