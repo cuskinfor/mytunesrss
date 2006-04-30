@@ -23,15 +23,19 @@ public class PlayListFeedServlet extends BaseServlet {
 
     private void doCommand(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String playListId = request.getParameter("playlist");
-        if (StringUtils.isNotEmpty(playListId)) {
-            Map<String, String> urls = (Map<String, String>)request.getSession().getAttribute("urlMap");
-            StringBuffer url = new StringBuffer(urls.get("rss")).append("/pl=").append(playListId);
-            if (StringUtils.isNotEmpty((String)request.getSession().getAttribute("authHash"))) {
-                url.append("/au=").append(request.getSession().getAttribute("authHash"));
+        if (playListId != null) {
+            if (playListId.length() > 0) {
+                Map<String, String> urls = (Map<String, String>)request.getSession().getAttribute("urlMap");
+                StringBuffer url = new StringBuffer(urls.get("rss")).append("/pl=").append(playListId);
+                if (StringUtils.isNotEmpty((String)request.getSession().getAttribute("authHash"))) {
+                    url.append("/au=").append(request.getSession().getAttribute("authHash"));
+                }
+                response.sendRedirect(url.toString());
+            } else {
+                request.setAttribute("error", "error.must_select_a_playlist");
+                request.getRequestDispatcher("/search.jsp").forward(request, response);
             }
-            response.sendRedirect(url.toString());
         } else {
-            request.setAttribute("error", "error.must_select_a_playlist");
             request.getRequestDispatcher("/search.jsp").forward(request, response);
         }
     }

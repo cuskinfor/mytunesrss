@@ -212,6 +212,8 @@ public class Settings {
             showErrorMessage(myMainBundle.getString("error.startServer.port"));
         } else if (!new ITunesLibraryFileFilter(false).accept(library)) {
             showErrorMessage(myMainBundle.getString("error.startServer.libraryXmlFile"));
+        } else if (myUseAuthCheck.isSelected() && myPassword.getPassword().length == 0) {
+            showErrorMessage(myMainBundle.getString("error.authButNoPassword"));
         } else {
             enableButtons(false);
             enableConfig(false);

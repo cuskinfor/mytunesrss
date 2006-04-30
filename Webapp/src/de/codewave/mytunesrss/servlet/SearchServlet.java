@@ -30,20 +30,24 @@ public class SearchServlet extends BaseServlet {
     private void doCommand(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String albumPattern = request.getParameter("album");
         String artistPattern = request.getParameter("artist");
-        ITunesLibrary library = ITunesLibraryContextListener.getLibrary(request);
-        List<MusicFile> matchingFiles = library.getMatchingFiles(new MusicFileAlbumSearch(albumPattern), new MusicFileArtistSearch(artistPattern));
-        removeMissingFiles(matchingFiles);
-        if (matchingFiles != null && !matchingFiles.isEmpty()) {
-            if (matchingFiles.size() < MAXIMUM_RESULTS) {
-                request.getSession().setAttribute("searchResult", matchingFiles);
-                createSectionsAndForward(request, response, SortOrder.Album);
+        if (albumPattern != null && artistPattern != null) {
+            ITunesLibrary library = ITunesLibraryContextListener.getLibrary(request);
+            List<MusicFile> matchingFiles = library.getMatchingFiles(new MusicFileAlbumSearch(albumPattern), new MusicFileArtistSearch(artistPattern));
+            removeMissingFiles(matchingFiles);
+            if (matchingFiles != null && !matchingFiles.isEmpty()) {
+                if (matchingFiles.size() < MAXIMUM_RESULTS) {
+                    request.getSession().setAttribute("searchResult", matchingFiles);
+                    createSectionsAndForward(request, response, SortOrder.Album);
+                } else {
+                    request.setAttribute("error", "error.too_many_results");
+                    request.setAttribute("errorParam0", new Integer(MAXIMUM_RESULTS));
+                    request.getRequestDispatcher("/search.jsp").forward(request, response);
+                }
             } else {
-                request.setAttribute("error", "error.too_many_results");
-                request.setAttribute("errorParam0", new Integer(MAXIMUM_RESULTS));
+                request.setAttribute("error", "error.no_matching_songs");
                 request.getRequestDispatcher("/search.jsp").forward(request, response);
             }
         } else {
-            request.setAttribute("error", "error.no_matching_songs");
             request.getRequestDispatcher("/search.jsp").forward(request, response);
         }
     }

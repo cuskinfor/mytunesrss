@@ -26,22 +26,30 @@ public class LoginServlet extends BaseServlet {
 
     private void doCommand(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String password = request.getParameter("password");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Trying to authenticate user with password.");
-        }
         MyTunesRssConfig config = getMyTunesRssConfig(request);
-        if (password.hashCode() == config.getPasswordHash()) {
+        if (password != null && MyTunesRss.REGISTERED && config.isAuth()) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Login successful.");
+                LOG.debug("Trying to authenticate user with password.");
             }
-            request.getSession().setAttribute("authHash", Integer.toString(config.getPasswordHash()));
-            request.getRequestDispatcher("/search.jsp").forward(request, response);
+            if (password.hashCode() == config.getPasswordHash()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Login successful.");
+                }
+                request.getSession().setAttribute("authHash", Integer.toString(config.getPasswordHash()));
+                request.getRequestDispatcher("/search.jsp").forward(request, response);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Login denied.");
+                }
+                request.setAttribute("error", "error.login_denied");
+                request.getRequestDispatcher("/login.jsp").forward(request, response);
+            }
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Login denied.");
+            if (MyTunesRss.REGISTERED && config.isAuth()) {
+                request.getRequestDispatcher("/login.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("/search.jsp").forward(request, response);
             }
-            request.setAttribute("error", "error.login_denied");
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
     }
 
