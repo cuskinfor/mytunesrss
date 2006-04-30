@@ -95,7 +95,7 @@ body {
 
 /*** IE6 Fix (floating margin bug) ***/
 * html #sidebar {
-	margin-right: -115px
+	margin-left: -115px
 }
 
 
