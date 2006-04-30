@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="0">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="404" height="1849"/>
+      <xy x="20" y="20" width="934" height="732"/>
     </constraints>
     <properties>
       <background color="-1"/>
@@ -394,7 +394,7 @@
                   </grid>
                 </children>
               </grid>
-              <grid id="18e5c" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+              <grid id="18e5c" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
                 <margin top="5" left="5" bottom="5" right="5"/>
                 <constraints>
                   <tabbedpane title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.tab.about"/>
@@ -477,13 +477,14 @@
                       </component>
                     </children>
                   </grid>
-                  <grid id="289f8" binding="myRegistrationPanel" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+                  <grid id="289f8" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
                     <margin top="5" left="5" bottom="5" right="5"/>
                     <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <opaque value="false"/>
+                      <visible value="false"/>
                     </properties>
                     <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.info.title.registration"/>
                     <children>
@@ -565,9 +566,35 @@
                   </grid>
                   <vspacer id="fd943">
                     <constraints>
-                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
+                  <grid id="33c17" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+                    <margin top="5" left="5" bottom="5" right="5"/>
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <opaque value="false"/>
+                      <visible value="true"/>
+                    </properties>
+                    <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.info.freeware"/>
+                    <children>
+                      <component id="509a1" class="javax.swing.JTextArea">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <editable value="false"/>
+                          <font swing-font="Label.font"/>
+                          <lineWrap value="true"/>
+                          <opaque value="false"/>
+                          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.info.freeware.txt"/>
+                          <wrapStyleWord value="true"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
                 </children>
               </grid>
             </children>

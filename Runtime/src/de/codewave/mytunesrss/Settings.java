@@ -49,7 +49,6 @@ public class Settings {
     private JSpinner myMaxMemSpinner;
     private JButton myMaxMemSaveButton;
     private JCheckBox myWriteLogCheckbox;
-    private JPanel myRegistrationPanel;
     private Embedded myServer;
     private LogDisplay myLogDisplay = new LogDisplay();
 
@@ -61,7 +60,7 @@ public class Settings {
         myFrame = frame;
         String regName = Boolean.getBoolean("unregistered") ? "" : Preferences.userRoot().node("/de/codewave/mytunesrss").get("regname", "");
         String regCode = Boolean.getBoolean("unregistered") ? "" : Preferences.userRoot().node("/de/codewave/mytunesrss").get("regcode", "");
-        MyTunesRss.REGISTERED = SerialNumberUtils.isValid(regName, regCode, SER_NUM_RANDOM);
+        MyTunesRss.REGISTERED = true; // SerialNumberUtils.isValid(regName, regCode, SER_NUM_RANDOM);
         if (MyTunesRss.REGISTERED) {
             setGuiToRegisteredMode();
             myRegisterName.setText(regName);

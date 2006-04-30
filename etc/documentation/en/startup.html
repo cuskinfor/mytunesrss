@@ -10,20 +10,36 @@
 <body>
 
 <div class="body">
-    <h1>Starten von MyTunesRSS</h1>
+    <h1>Starting MyTunesRSS</h1>
 
     <h2>Mac OS X</h2>
 
     <p>
-        In der Mac OS X Distribution befindet sich ein Applikationspaket. Sie starten MyTunesRSS einfach durch einen Doppelklick auf das Symbol. Sie
-        können die Applikation in jeden beliebigen Ordner ziehen. Am besten legen Sie MyTunesRSS in den Programme-Ordner. </p>
+        The Mac OS X distribution contains an application bundle. Just double click the icon to start MyTunesRSS. You can drag the application to any
+        place but usually it should be placed into the Applications folder. </p>
 
     <h2>Windows</h2>
 
     <p>
-        Unter Windows finden Sie im MyTunesRSS Verzeichnis die Startdatei MyTunesRSS.exe, die Sie durch einen Doppelklick starten.
-        Sie können den MyTunesRSS Ordner an einer beliebigen
-        Stelle ablegen. Am besten legen Sie ihn in das Programme-Verzeichnis. </p>
+        The Windows distribution contains an executable which can simply be double clicked to start. You can place the MyTunesRSS folder anywhere but
+        usually it should be put into the Programs folder. </p>
+
+    <h2>Other systems</h2>
+
+    <p>
+        You can run MyTunesRSS on any java-enabled system. You simply need to open a command line, change the working directory to MyTunesRSS and
+        start with the following command. </p>
+
+    <pre>java -jar MyTunesRSS.jar</pre>
+
+    <p>
+        In contrast to the Windows and OS X distributions you cannot adjust the memory parameters through the application. In case you get memory
+        problems, please set the parameter on the command line: </p>
+
+    <pre>java -Xmx128m MyTunesRSS.jar</pre>
+
+    <p>
+        The value specifies the maximum memory in megabyte the application can use. The default value for Java is 64 megabyte. </p>
 
 </div>
 
