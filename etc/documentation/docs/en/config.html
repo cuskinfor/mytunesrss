@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="../styles/main.css" />
+</head>
+
+<body>
+
+<div id="head"></div>
+
+<div id="body">
+
+    <div id="content">
+
+        <div id="sidebar">
+
+            <ul class="links">
+
+                <li><a href="intro.html">Introduction</a></li>
+
+                <li><a href="sysreqs.html">System requirements</a></li>
+
+                <li><a href="startup.html">Starting MyTunesRSS</a></li>
+
+                <li><a href="config.html">The configuration</a></li>
+
+                <li><a href="webapp.html">The web application</a></li>
+
+                <li><a href="outro.html">Contact</a></li>
+
+            </ul>
+
+        </div>
+
+        <h1>The configuration</h1>
+
+        <p>
+            After starting the application you see a configuration panel. The settings can be found on three pages. On the first page you can make
+            general settings. </p>
+        <img src="images/general.png" alt="General settings" />
+
+        <p>
+            You can choose the port on which the server is listening for incoming connections. The default port 8080 of the embedded Tomcat server
+            should be alright in most cases. On some systems using ports below 1024 might be restricted. </p>
+
+        <p>
+            Logging can usually be deactivated. In case you have problems and want to request support from Codewave Software, please always attach a
+            log to your request. Activate logging after starting MyTunesRSS and use the application until you encounter the problem. The button "Show
+            log" opens a new window with the log messages which can be copied. </p>
+
+        <p>
+            When starting the server you might get a message about memory problems. In this case you can increase the maximum memory the application
+            may use. Enter the new value in the field and save it using the button next to the field. After saving the new value, you have to restart
+            MyTunesRSS to activate it. This option is not available if you do not use the special Windows or Mac OS X starter applications but call
+            Java directly from the command line. </p>
+
+        <p>
+            In the lower part of the genral settings you have to specify the path to the file "iTunes Music Library.xml" on your system. Either enter
+            the path directly or use the (...) button to search and select it. On windows it should be located in the "iTunes" folder which is located
+            in "My Music". On Mac OS X it is usually located in "iTunes" which is in "Music". </p>
+        <img src="images/options.png" alt="Options" />
+
+        <p>
+            The second page shows advanced options. You can activate authentication for the web application here and enter a password. The password is
+            saved as plain text, so please do not use a password you are using for protecting critical data elsewhere. </p>
+
+        <p>
+            Specifying a fake suffix can be necessary in case the target device which should use the RSS feed does not support the default suffix. The
+            Playstation Portable with firmware version 2.60 for example can play AAC files only with the suffix MP4 and not with the standard suffix
+            M4A used in iTunes. So you can offer the target device an alternative suffix for the supported file types MP3 and M4A. </p>
+        <img src="images/info.png" alt="Information" />
+
+        <p>
+            On the last page you can find some information on the developer team and a request to make a donation in case you like the program. </p>
+
+        <p>
+            Below the configuration pages you find the buttons to start and stop the server and to quit the program. Settings cannot be changed while
+            the server is running. </p>
+
+        <p>
+            A running server is automatically stopped when quitting the application. The window position is saved automatically for the next start. If
+            you made any changes to the configuration, the application asks you whether you want to save them for the next start or discard them. </p>
+
+    </div>
+
+    <div id="footer">
+        &copy; 2006 Codewave Software </div>
+
+</div>
+
+</body>
+
+</html>
