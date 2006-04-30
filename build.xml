@@ -75,4 +75,12 @@
         </zip>
     </target>
 
+    <target name="copy.distribution.website" description="copy the distribution to the website project">
+        <copy todir="../Codewave/Website/download/files">
+            <fileset dir="distribution">
+                <include name="*.zip"/>
+            </fileset>
+        </copy>
+    </target>
+
 </project>
