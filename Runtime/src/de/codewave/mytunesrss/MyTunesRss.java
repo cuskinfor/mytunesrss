@@ -16,6 +16,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.*;
+import java.net.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -50,6 +51,22 @@ public class MyTunesRss {
                 frame.pack();
             }
         });
+    }
+
+    public static String[] getLocalAddresses() throws IOException {
+        List<String> localAddresses = new ArrayList<String>();
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+        while (interfaces.hasMoreElements()) {
+            NetworkInterface intFace = interfaces.nextElement();
+            Enumeration<InetAddress> addresses = intFace.getInetAddresses();
+            while (addresses.hasMoreElements()) {
+                InetAddress address = addresses.nextElement();
+                if (address.isSiteLocalAddress()) {
+                    localAddresses.add(address.getHostAddress());
+                }
+            }
+        }
+        return localAddresses.toArray(new String[localAddresses.size()]);
     }
 
     public static class MyTunesRssMainWindowListener extends WindowAdapter {

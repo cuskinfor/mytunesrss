@@ -227,7 +227,7 @@ public class Settings {
                         if (health == CheckHealthResult.OK) {
                             myStartStopButton.setText(myMainBundle.getString("gui.settings.button.stopServer"));
                             myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.stopServer"));
-                            setStatus(myMainBundle.getString("info.server.running"));
+                            setServerRunningStatus(serverPort);
                         } else {
                             myServer.stop();
                             myServer = null;
@@ -259,6 +259,28 @@ public class Settings {
                 }
 
             }).start();
+        }
+    }
+
+    private void setServerRunningStatus(int serverPort) {
+        try {
+            String[] localAddresses = MyTunesRss.getLocalAddresses();
+            if (localAddresses.length == 0) {
+                setStatus(myMainBundle.getString("info.server.running"));
+            } else {
+                setStatus(myMainBundle.getString("info.server.running") + " [ http://" + localAddresses[0] + ":" + serverPort + " ] ");
+                StringBuffer tooltip = new StringBuffer("<html>").append(myMainBundle.getString("info.server.running.addressInfo"));
+                for (int i = 0; i < localAddresses.length; i++) {
+                    tooltip.append("http://").append(localAddresses[i]).append(":").append(serverPort);
+                    tooltip.append(i + 1 < localAddresses.length ? "<br>" : "</html>");
+                }
+                myStatusText.setToolTipText(tooltip.toString());
+            }
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not get local network addresses.", e);
+            }
+            setStatus(myMainBundle.getString("info.server.running"));
         }
     }
 
@@ -315,6 +337,7 @@ public class Settings {
             public void run() {
                 try {
                     setStatus(myMainBundle.getString("info.server.stopping"));
+                    myStatusText.setToolTipText(null);
                     myServer.stop();
                     myServer = null;
                     setStatus(myMainBundle.getString("info.server.idle"));
@@ -323,7 +346,7 @@ public class Settings {
                     myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.startServer"));
                 } catch (LifecycleException e) {
                     showErrorMessage(myMainBundle.getString("error.server.stopFailure") + e.getMessage());
-                    setStatus(myMainBundle.getString("info.server.running"));
+                    setServerRunningStatus(Integer.parseInt(myPort.getText()));
                 }
                 enableButtons(true);
                 myRootPanel.validate();
