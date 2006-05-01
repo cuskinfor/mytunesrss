@@ -67,10 +67,10 @@ public class ITunesLibrary implements Serializable {
                                 String partListId = playlist.getId() + "_" + startIndex + "_" + endIndex;
                                 String partListName;
                                 if (startIndex < endIndex) {
-                                    partListName = playlist.getName() + " [ " + createNumberString(startIndex, originalSize, ' ') + " - " +
-                                            createNumberString(endIndex, originalSize, ' ') + " ]";
+                                    partListName = playlist.getName() + " [" + createNumberString(startIndex, originalSize, '0') + " - " +
+                                            createNumberString(endIndex, originalSize, ' ') + "]";
                                 } else {
-                                    partListName = playlist.getName() + " [ " + createNumberString(startIndex, originalSize, ' ') + " ]";
+                                    partListName = playlist.getName() + " [" + createNumberString(startIndex, originalSize, '0') + "]";
                                 }
                                 PlayList partList = new PlayList(partListId, partListName);
                                 for (int i = startIndex - 1; i < endIndex; i++) {
