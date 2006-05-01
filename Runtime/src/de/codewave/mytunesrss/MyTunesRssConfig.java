@@ -25,6 +25,8 @@ public class MyTunesRssConfig {
     private String myFakeMp3Suffix;
     private String myFakeM4aSuffix;
     private boolean myLoggingEnabled;
+    private boolean myLimitRss;
+    private String myMaxRssItems;
 
     public boolean isAuth() {
         return myAuth;
@@ -86,6 +88,22 @@ public class MyTunesRssConfig {
         myLoggingEnabled = loggingEnabled;
     }
 
+    public boolean isLimitRss() {
+        return myLimitRss;
+    }
+
+    public void setLimitRss(boolean limitRss) {
+        myLimitRss = limitRss;
+    }
+
+    public String getMaxRssItems() {
+        return myMaxRssItems;
+    }
+
+    public void setMaxRssItems(String maxRssItems) {
+        myMaxRssItems = maxRssItems;
+    }
+
     public void load() {
         myPort = Preferences.userRoot().node("/de/codewave/mytunesrss").get("port", "8080");
         myLibraryXml = Preferences.userRoot().node("/de/codewave/mytunesrss").get("library", "");
@@ -94,6 +112,8 @@ public class MyTunesRssConfig {
         myFakeMp3Suffix = Preferences.userRoot().node("/de/codewave/mytunesrss").get("fakeMp3Suffix", "");
         myFakeM4aSuffix = Preferences.userRoot().node("/de/codewave/mytunesrss").get("fakeM4aSuffix", "mp4");
         myLoggingEnabled = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("loggingEnabled", false);
+        myLimitRss = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("limitRss", true);
+        myMaxRssItems = Preferences.userRoot().node("/de/codewave/mytunesrss").get("maxRssItems", "100");
     }
 
     public void save() {
@@ -104,6 +124,8 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("fakeMp3Suffix", myFakeMp3Suffix);
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("fakeM4aSuffix", myFakeM4aSuffix);
         Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("loggingEnabled", myLoggingEnabled);
+        Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("limitRss", myLimitRss);
+        Preferences.userRoot().node("/de/codewave/mytunesrss").put("maxRssItems", myMaxRssItems);
     }
 
     public boolean isDiffenrentFromSaved() {
@@ -119,6 +141,8 @@ public class MyTunesRssConfig {
         hash |= getFakeM4aSuffix() != null ? getFakeM4aSuffix().hashCode() : 0;
         hash |= Boolean.valueOf(isAuth()).hashCode();
         hash |= Boolean.valueOf(isLoggingEnabled()).hashCode();
+        hash |= Boolean.valueOf(isLimitRss()).hashCode();
+        hash |= getMaxRssItems() != null ? getMaxRssItems().hashCode() : 0;
         return hash;
     }
 
@@ -133,6 +157,8 @@ public class MyTunesRssConfig {
             result &= StringUtils.equals(getPassword(), other.getPassword());
             result &= StringUtils.equals(getFakeMp3Suffix(), other.getFakeMp3Suffix());
             result &= StringUtils.equals(getFakeM4aSuffix(), other.getFakeM4aSuffix());
+            result &= StringUtils.equals(getMaxRssItems(), other.getMaxRssItems());
+            result &= isLimitRss() == other.isLimitRss();
             return result;
         }
         return false;

@@ -18,33 +18,21 @@
         <filter-class>de.codewave.mytunesrss.servlet.MyTunesRssServletFilter</filter-class>
     </filter>
     <filter>
-        <description>Filter for checking authentication.</description>
+        <description>Filter for authentication checking.</description>
         <display-name>AuthFilter</display-name>
         <filter-name>AuthFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.servlet.AuthFilter</filter-class>
     </filter>
-    <filter>
-        <description>Filter for preparing playlists in the request.</description>
-        <display-name>PlayListFilter</display-name>
-        <filter-name>PlayListFilter</filter-name>
-        <filter-class>de.codewave.mytunesrss.servlet.PlayListFilter</filter-class>
-    </filter>
-    <filter>
-        <description>Filter for setting the request encoding.</description>
-        <display-name>EncodingFilter</display-name>
-        <filter-name>EncodingFilter</filter-name>
-        <filter-class>de.codewave.mytunesrss.servlet.EncodingFilter</filter-class>
-    </filter>
     <filter-mapping>
-        <filter-name>EncodingFilter</filter-name>
+        <filter-name>MyTunesRssServletFilter</filter-name>
         <url-pattern>/</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>EncodingFilter</filter-name>
+        <filter-name>MyTunesRssServletFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>MyTunesRssServletFilter</filter-name>
+        <filter-name>ParameterTrimmerFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
@@ -61,6 +49,10 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
+        <servlet-name>NewSearch</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
         <servlet-name>Sort</servlet-name>
     </filter-mapping>
     <filter-mapping>
@@ -70,14 +62,6 @@
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
         <servlet-name>PlayListFeed</servlet-name>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>ParameterTrimmerFilter</filter-name>
-        <servlet-name>/*</servlet-name>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>PlayListFilter</filter-name>
-        <url-pattern>/*</url-pattern>
     </filter-mapping>
     <listener>
         <description>Servlet context listener for loading the iTunes library.</description>
@@ -132,6 +116,12 @@
         <servlet-name>CheckHealth</servlet-name>
         <servlet-class>de.codewave.mytunesrss.servlet.CheckHealthServlet</servlet-class>
     </servlet>
+    <servlet>
+        <description>Servlet for starting a new search</description>
+        <display-name>New Search</display-name>
+        <servlet-name>NewSearch</servlet-name>
+        <servlet-class>de.codewave.mytunesrss.servlet.NewSearchServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Search</servlet-name>
         <url-pattern>/search</url-pattern>
@@ -163,6 +153,10 @@
     <servlet-mapping>
         <servlet-name>CheckHealth</servlet-name>
         <url-pattern>/health</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NewSearch</servlet-name>
+        <url-pattern>/newSearch</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>/search.jsp</welcome-file>

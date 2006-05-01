@@ -25,16 +25,16 @@ public class ITunesLibrary implements Serializable {
         return myTitles.isEmpty();
     }
 
-    public void load(URL iTunesLibraryXml, String fakeMp3Suffix, String fakeM4aSuffix)
+    public void load(URL iTunesLibraryXml, MyTunesRssConfig config)
             throws IOException, SAXException, ParserConfigurationException {
         Map plist = (Map)XmlUtils.parseApplePList(iTunesLibraryXml);
-        Set<String> trackIds = createListOfMusicFiles(plist, fakeMp3Suffix, fakeM4aSuffix);
+        Set<String> trackIds = createListOfMusicFiles(plist, config.getFakeMp3Suffix(), config.getFakeM4aSuffix());
         if (MyTunesRss.REGISTERED) {
-            createListOfPlayLists(plist, trackIds);
+            createListOfPlayLists(plist, trackIds, config.isLimitRss(), Integer.parseInt(config.getMaxRssItems()));
         }
     }
 
-    private void createListOfPlayLists(Map plist, Set<String> trackIds) {
+    private void createListOfPlayLists(Map plist, Set<String> trackIds, boolean limitFeedSize, int maxFeedItems) {
         List<Map<String, Object>> playlists = (List<Map<String, Object>>)plist.get("Playlists");
         for (Iterator<Map<String, Object>> iterator = playlists.iterator(); iterator.hasNext();) {
             Map<String, Object> playlistMap = iterator.next();
@@ -59,15 +59,48 @@ public class ITunesLibrary implements Serializable {
                         }
                     }
                     if (!playlist.getMusicFiles().isEmpty()) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Added playlist with name \"" + playlist.getName() + "\".");
+                        int originalSize = playlist.getMusicFiles().size();
+                        if (limitFeedSize && originalSize > maxFeedItems) {
+                            int startIndex = 1;
+                            do {
+                                int endIndex = Math.min(startIndex + maxFeedItems - 1, originalSize);
+                                String partListId = playlist.getId() + "_" + startIndex + "_" + endIndex;
+                                String partListName;
+                                if (startIndex < endIndex) {
+                                    partListName = playlist.getName() + " [ " + createNumberString(startIndex, originalSize, ' ') + " - " +
+                                            createNumberString(endIndex, originalSize, ' ') + " ]";
+                                } else {
+                                    partListName = playlist.getName() + " [ " + createNumberString(startIndex, originalSize, ' ') + " ]";
+                                }
+                                PlayList partList = new PlayList(partListId, partListName);
+                                for (int i = startIndex - 1; i < endIndex; i++) {
+                                    partList.addMusicFile(playlist.getMusicFiles().get(i));
+                                }
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Added partial playlist with name \"" + partList.getName() + "\".");
+                                }
+                                myPlayLists.add(partList);
+                                startIndex = endIndex + 1;
+                            } while (startIndex - 1 < originalSize);
+                        } else {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Added playlist with name \"" + playlist.getName() + "\".");
+                            }
+                            myPlayLists.add(playlist);
                         }
-                        myPlayLists.add(playlist);
                     }
                 }
             }
         }
         Collections.sort(myPlayLists, new PlayListComparator());
+    }
+
+    private String createNumberString(int number, int len, char padding) {
+        String numberString = Integer.toString(number);
+        while (numberString.length() < len) {
+            numberString = padding + numberString;
+        }
+        return numberString;
     }
 
     private Set<String> createListOfMusicFiles(Map plist, String fakeMp3Suffix, String fakeM4aSuffix) {

@@ -280,7 +280,7 @@
                   <focusable value="true"/>
                   <opaque value="false"/>
                   <toolTipText value=""/>
-                  <visible value="false"/>
+                  <visible value="true"/>
                 </properties>
                 <border type="none"/>
                 <children>
@@ -340,7 +340,7 @@
                       </component>
                     </children>
                   </grid>
-                  <grid id="b32cd" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+                  <grid id="b32cd" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
                     <margin top="5" left="5" bottom="5" right="5"/>
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -348,7 +348,7 @@
                     <properties>
                       <opaque value="false"/>
                     </properties>
-                    <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.options.title.filetypes"/>
+                    <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.rss"/>
                     <children>
                       <component id="64dda" class="javax.swing.JLabel">
                         <constraints>
@@ -389,6 +389,38 @@
                           <font swing-font="TextField.font"/>
                           <text value=""/>
                           <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.fake.m4a"/>
+                        </properties>
+                      </component>
+                      <component id="e8051" class="javax.swing.JCheckBox" binding="myLimitRssItemsCheckbox">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <font swing-font="CheckBox.font"/>
+                          <opaque value="false"/>
+                          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.rss.maxitems.checkbox"/>
+                          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.rss.maxitems.checkbox.tooltip"/>
+                        </properties>
+                      </component>
+                      <component id="b23a9" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <font swing-font="Label.font"/>
+                          <labelFor value="8d5c1"/>
+                          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.rss.maxitems.label"/>
+                        </properties>
+                      </component>
+                      <component id="8d5c1" class="javax.swing.JTextField" binding="myMaxRssEntries">
+                        <constraints>
+                          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <font swing-font="TextField.font"/>
+                          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.rss.maxitems.tooltip"/>
                         </properties>
                       </component>
                     </children>

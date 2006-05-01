@@ -54,6 +54,11 @@
         checkbox.checked =  ( checkbox.checked == true ) ? false : true;
       }
 
+      function keepAndSearchMore() {
+          document.forms["select"].elements["final"].value = 'false';
+          document.forms["select"].submit();
+      }
+
     </script>
 
   </head>
@@ -67,13 +72,13 @@
         <input type="hidden" name="sortOrder" value="${sortOrder}" />
         <input type="hidden" name="final" value="true" />
 
-        <jsp:include page="/error.jsp" />
-
         <div class="head">
 
           <h1><fmt:message key="select.channel"/></h1>
 
           <div class="input"><input type="text" name="channel" value="<c:out value="${param.channel}"/>" /></div>
+
+          <jsp:include page="/error.jsp" />
 
           <div class="link">
             <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album"/></a></c:if>
@@ -129,7 +134,8 @@
         </table>
 
         <div class="buttons">
-          <input type="button" onClick="document.location.href='${urlMap.searchPage}'" value="<fmt:message key="select.new_search"/>"/>
+          <input type="button" onClick="document.location.href='${urlMap.newSearch}'" value="<fmt:message key="select.new_search"/>"/>
+            <input type="button" onClick="keepAndSearchMore()" value="<fmt:message key="select.keep_and_search_more"/>"/>
           <input type="submit" value="<fmt:message key="select.createfeed"/>" />
         </div>
 

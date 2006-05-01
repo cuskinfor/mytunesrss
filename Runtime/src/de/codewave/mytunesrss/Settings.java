@@ -1,7 +1,7 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.serialnumber.*;
 import de.codewave.utils.*;
+import de.codewave.utils.serialnumber.*;
 import org.apache.catalina.*;
 import org.apache.catalina.session.*;
 import org.apache.catalina.startup.*;
@@ -49,6 +49,8 @@ public class Settings {
     private JSpinner myMaxMemSpinner;
     private JButton myMaxMemSaveButton;
     private JCheckBox myWriteLogCheckbox;
+    private JTextField myMaxRssEntries;
+    private JCheckBox myLimitRssItemsCheckbox;
     private Embedded myServer;
     private LogDisplay myLogDisplay = new LogDisplay();
 
@@ -60,7 +62,7 @@ public class Settings {
         myFrame = frame;
         String regName = Boolean.getBoolean("unregistered") ? "" : Preferences.userRoot().node("/de/codewave/mytunesrss").get("regname", "");
         String regCode = Boolean.getBoolean("unregistered") ? "" : Preferences.userRoot().node("/de/codewave/mytunesrss").get("regcode", "");
-        MyTunesRss.REGISTERED = true; // SerialNumberUtils.isValid(regName, regCode, SER_NUM_RANDOM);
+        MyTunesRss.REGISTERED = true;// SerialNumberUtils.isValid(regName, regCode, SER_NUM_RANDOM);
         if (MyTunesRss.REGISTERED) {
             setGuiToRegisteredMode();
             myRegisterName.setText(regName);
@@ -75,7 +77,8 @@ public class Settings {
         myTunesXmlPath.setText(data.getLibraryXml());
         myUseAuthCheck.setSelected(data.isAuth());
         myPassword.setText(data.getPassword());
-        enableElementAndLabel(myPassword, data.isAuth());
+        myLimitRssItemsCheckbox.setSelected(data.isLimitRss());
+        myMaxRssEntries.setText(data.getMaxRssItems());
         myFakeMp3Suffix.setText(data.getFakeMp3Suffix());
         myFakeM4aSuffix.setText(data.getFakeM4aSuffix());
         myWriteLogCheckbox.setSelected(data.isLoggingEnabled());
@@ -116,11 +119,12 @@ public class Settings {
         });
         myUseAuthCheck.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (myUseAuthCheck.isSelected()) {
-                    enableElementAndLabel(myPassword, true);
-                } else {
-                    enableElementAndLabel(myPassword, false);
-                }
+                enableElementAndLabel(myPassword, myUseAuthCheck.isSelected());
+            }
+        });
+        myLimitRssItemsCheckbox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                enableElementAndLabel(myMaxRssEntries, myLimitRssItemsCheckbox.isSelected());
             }
         });
         myShowLogButton.addActionListener(new ActionListener() {
@@ -206,10 +210,18 @@ public class Settings {
         } catch (NumberFormatException e) {
             port = MIN_PORT - 1;
         }
+        int maxRssEntries;
+        try {
+            maxRssEntries = Integer.parseInt(myMaxRssEntries.getText().trim());
+        } catch (NumberFormatException e) {
+            maxRssEntries = 0;
+        }
         final int serverPort = port;
         final File library = new File(myTunesXmlPath.getText().trim());
         if (port < MIN_PORT || port > MAX_PORT) {
             showErrorMessage(myMainBundle.getString("error.startServer.port"));
+        } else if (myLimitRssItemsCheckbox.isSelected() && maxRssEntries <= 0) {
+            showErrorMessage(myMainBundle.getString("error.startServer.limitItemsButIllegalMaxValue"));
         } else if (!new ITunesLibraryFileFilter(false).accept(library)) {
             showErrorMessage(myMainBundle.getString("error.startServer.libraryXmlFile"));
         } else if (myUseAuthCheck.isSelected() && myPassword.getPassword().length == 0) {
@@ -395,6 +407,8 @@ public class Settings {
         config.setFakeMp3Suffix(myFakeMp3Suffix.getText().trim());
         config.setFakeM4aSuffix(myFakeM4aSuffix.getText().trim());
         config.setLoggingEnabled(myWriteLogCheckbox.isSelected());
+        config.setLimitRss(myLimitRssItemsCheckbox.isSelected());
+        config.setMaxRssItems(myMaxRssEntries.getText());
         return config;
     }
 
@@ -437,6 +451,8 @@ public class Settings {
         myRegisterButton.setEnabled(enabled);
         myMaxMemSaveButton.setEnabled(enabled);
         enableElementAndLabel(myMaxMemSpinner, enabled);
+        myLimitRssItemsCheckbox.setEnabled(enabled);
+        enableElementAndLabel(myMaxRssEntries, enabled && myLimitRssItemsCheckbox.isSelected());
     }
 
     private void enableElementAndLabel(JComponent element, boolean enabled) {

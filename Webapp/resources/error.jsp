@@ -9,6 +9,7 @@
   <div class="error">
     <fmt:message key="${error}">
       <fmt:param value="${errorParam0}"/>
+      <fmt:param value="${errorParam1}"/>
     </fmt:message>
   </div>
 </c:if>

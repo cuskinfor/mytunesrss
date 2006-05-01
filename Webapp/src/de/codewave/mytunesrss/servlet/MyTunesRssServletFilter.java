@@ -4,14 +4,14 @@
 
 package de.codewave.mytunesrss.servlet;
 
+import de.codewave.mytunesrss.itunes.*;
 import de.codewave.utils.servlet.*;
+import org.apache.commons.logging.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
-
-import org.apache.commons.logging.*;
 
 /**
  * de.codewave.mytunesrss.servlet.MyTunesRssServletFilter
@@ -25,9 +25,18 @@ public class MyTunesRssServletFilter implements Filter {
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("MyTunesRSS servlet filter invoked.");
-        }
+        servletRequest.setCharacterEncoding("UTF-8");
+        ensureUrlMapInSession(servletRequest);
+        createPlayListsInRequest(servletRequest);
+        filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    private void createPlayListsInRequest(ServletRequest servletRequest) {
+        ITunesLibrary library = ITunesLibraryContextListener.getLibrary((HttpServletRequest)servletRequest);
+        servletRequest.setAttribute("playlists", library.getPlayLists());
+    }
+
+    private void ensureUrlMapInSession(ServletRequest servletRequest) {
         HttpSession session = ((HttpServletRequest)servletRequest).getSession();
         if (session.getAttribute("urlMap") == null) {
             if (LOG.isDebugEnabled()) {
@@ -41,10 +50,9 @@ public class MyTunesRssServletFilter implements Filter {
             servletUrls.put("login", ServletUtils.getServletUrl((HttpServletRequest)servletRequest, LoginServlet.class));
             servletUrls.put("playlist", ServletUtils.getServletUrl((HttpServletRequest)servletRequest, PlayListFeedServlet.class));
             servletUrls.put("mp3", ServletUtils.getServletUrl((HttpServletRequest)servletRequest, MusicDeliveryServlet.class));
-            servletUrls.put("searchPage", ServletUtils.getApplicationUrl((HttpServletRequest)servletRequest) + "/search.jsp");
+            servletUrls.put("newSearch", ServletUtils.getServletUrl((HttpServletRequest)servletRequest, NewSearchServlet.class));
             session.setAttribute("urlMap", servletUrls);
         }
-        filterChain.doFilter(servletRequest, servletResponse);
     }
 
     public void destroy() {
