@@ -12,6 +12,7 @@
 
     <target name="generate.moduleinfo" description="generate the model information files">
         <svn.propget property="version" path="." name="codewave:version"/>
+        <echo message="version ${version}"/>
         <moduleinfo.jar destfile="distribution/MyTunesRSS.jar" name="MyTunesRSS" version="${version}"/>
     </target>
 

@@ -60,6 +60,7 @@ public class ITunesLibrary implements Serializable {
                     }
                     if (!playlist.getMusicFiles().isEmpty()) {
                         int originalSize = playlist.getMusicFiles().size();
+                        int splitNumberLen = Integer.toString(originalSize).length();
                         if (limitFeedSize && originalSize > maxFeedItems) {
                             int startIndex = 1;
                             do {
@@ -67,10 +68,10 @@ public class ITunesLibrary implements Serializable {
                                 String partListId = playlist.getId() + "_" + startIndex + "_" + endIndex;
                                 String partListName;
                                 if (startIndex < endIndex) {
-                                    partListName = playlist.getName() + " [" + createNumberString(startIndex, originalSize, '0') + " - " +
-                                            createNumberString(endIndex, originalSize, ' ') + "]";
+                                    partListName = playlist.getName() + " [" + createNumberString(startIndex, splitNumberLen, '0') + " - " +
+                                            createNumberString(endIndex, splitNumberLen, ' ') + "]";
                                 } else {
-                                    partListName = playlist.getName() + " [" + createNumberString(startIndex, originalSize, '0') + "]";
+                                    partListName = playlist.getName() + " [" + createNumberString(startIndex, splitNumberLen, '0') + "]";
                                 }
                                 PlayList partList = new PlayList(partListId, partListName);
                                 for (int i = startIndex - 1; i < endIndex; i++) {
