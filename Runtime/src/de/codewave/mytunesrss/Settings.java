@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.utils.*;
+import de.codewave.utils.network.*;
 import de.codewave.utils.serialnumber.*;
 import org.apache.catalina.*;
 import org.apache.catalina.session.*;
@@ -13,8 +14,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.text.*;
 import java.util.*;
 import java.util.prefs.*;
+
+import com.sun.java_cup.internal.*;
 
 /**
  * de.codewave.mytunesrss.Settings
@@ -51,6 +55,8 @@ public class Settings {
     private JCheckBox myWriteLogCheckbox;
     private JTextField myMaxRssEntries;
     private JCheckBox myLimitRssItemsCheckbox;
+    private JCheckBox myUpdateOnStartCheckbox;
+    private JButton myUpdateButton;
     private Embedded myServer;
     private LogDisplay myLogDisplay = new LogDisplay();
 
@@ -96,6 +102,7 @@ public class Settings {
             myMaxMemSpinner.setVisible(false);
             myMaxMemSaveButton.setVisible(false);
         }
+        myUpdateOnStartCheckbox.setSelected(data.isCheckUpdateOnStart());
         enableConfig(true);
         myRegisterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -154,6 +161,19 @@ public class Settings {
                 }
             }
         });
+        myUpdateButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        checkForUpdate(false);
+                    }
+                });
+            }
+        });
+    }
+
+    public boolean isUpdateCheckOnStartup() {
+        return myUpdateOnStartCheckbox.isSelected();
     }
 
     public JPanel getRootPanel() {
@@ -277,24 +297,17 @@ public class Settings {
     }
 
     private void setServerRunningStatus(int serverPort) {
-        try {
-            String[] localAddresses = MyTunesRss.getLocalAddresses();
-            if (localAddresses.length == 0) {
-                setStatus(myMainBundle.getString("info.server.running"));
-            } else {
-                setStatus(myMainBundle.getString("info.server.running") + " [ http://" + localAddresses[0] + ":" + serverPort + " ] ");
-                StringBuffer tooltip = new StringBuffer("<html>").append(myMainBundle.getString("info.server.running.addressInfo"));
-                for (int i = 0; i < localAddresses.length; i++) {
-                    tooltip.append("http://").append(localAddresses[i]).append(":").append(serverPort);
-                    tooltip.append(i + 1 < localAddresses.length ? "<br>" : "</html>");
-                }
-                myStatusText.setToolTipText(tooltip.toString());
-            }
-        } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not get local network addresses.", e);
-            }
+        String[] localAddresses = NetworkUtils.getLocalNetworkAddresses();
+        if (localAddresses.length == 0) {
             setStatus(myMainBundle.getString("info.server.running"));
+        } else {
+            setStatus(myMainBundle.getString("info.server.running") + " [ http://" + localAddresses[0] + ":" + serverPort + " ] ");
+            StringBuffer tooltip = new StringBuffer("<html>").append(myMainBundle.getString("info.server.running.addressInfo"));
+            for (int i = 0; i < localAddresses.length; i++) {
+                tooltip.append("http://").append(localAddresses[i]).append(":").append(serverPort);
+                tooltip.append(i + 1 < localAddresses.length ? "<br>" : "</html>");
+            }
+            myStatusText.setToolTipText(tooltip.toString());
         }
     }
 
@@ -409,6 +422,7 @@ public class Settings {
         config.setLoggingEnabled(myWriteLogCheckbox.isSelected());
         config.setLimitRss(myLimitRssItemsCheckbox.isSelected());
         config.setMaxRssItems(myMaxRssEntries.getText());
+        config.setCheckUpdateOnStart(myUpdateOnStartCheckbox.isSelected());
         return config;
     }
 
@@ -453,6 +467,8 @@ public class Settings {
         enableElementAndLabel(myMaxMemSpinner, enabled);
         myLimitRssItemsCheckbox.setEnabled(enabled);
         enableElementAndLabel(myMaxRssEntries, enabled && myLimitRssItemsCheckbox.isSelected());
+        myUpdateOnStartCheckbox.setEnabled(enabled);
+        myUpdateButton.setEnabled(enabled);
     }
 
     private void enableElementAndLabel(JComponent element, boolean enabled) {
@@ -491,6 +507,96 @@ public class Settings {
         myPassword.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
         myFakeMp3Suffix.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
         myFakeM4aSuffix.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
+    }
+
+    public void checkForUpdate(boolean autoCheck) {
+        final UpdateInfo updateInfo = NetworkUtils.getCurrentUpdateInfo(MyTunesRss.UPDATE_URLS);
+        if (updateInfo != null) {
+            String noNagVersion = Preferences.userRoot().node("/de/codewave/mytunesrss").get("noNagVersion", MyTunesRss.VERSION);
+            if (!updateInfo.getVersion().equals(MyTunesRss.VERSION) && (!autoCheck || !noNagVersion.equals(updateInfo.getVersion()))) {
+                if (askForUpdate(updateInfo, autoCheck)) {
+                    final JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+                    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    fileChooser.setSelectedFile(new File(updateInfo.getFileName()));
+                    if (fileChooser.showSaveDialog(myFrame) == JFileChooser.APPROVE_OPTION) {
+                        downloadUpdate(updateInfo.getUrl(), fileChooser.getSelectedFile(), updateInfo.getVersion());
+                    }
+                }
+            }
+        }
+    }
+
+    private void downloadUpdate(final URL url, final File file, String version) {
+        final DownloadProgress progress = new DownloadProgress();
+        progress.getLabel().setText(MessageFormat.format(myMainBundle.getString("gui.download.message"), version));
+        final JDialog dialog = new JDialog(myFrame, myMainBundle.getString("gui.download.title"), true);
+        dialog.add(progress.getRootPanel());
+        dialog.pack();
+        dialog.setLocationRelativeTo(myFrame);
+        final Downloader downloader = NetworkUtils.createDownloader(url, file, new DownloadListener() {
+            public void setPercentageComplete(int i) {
+                progress.getProgressBar().setValue(i);
+                progress.getProgressBar().setString(i + "%");
+                progress.getProgressBar().validate();
+            }
+
+            public void stateChange(DownloadState state) {
+                if (state == DownloadState.Failed || state == DownloadState.Cancelled) {
+                    if (file.exists() && file.isFile()) {
+                        file.delete();
+                    }
+                    dialog.dispose();
+                    if (state == DownloadState.Failed) {
+                        showErrorMessage(myMainBundle.getString("error.updateDownloadFailed"));
+                    } else {
+                        showErrorMessage(myMainBundle.getString("error.updateDownloadCancelled"));
+                    }
+                } else if (state == DownloadState.Success) {
+                    dialog.dispose();
+                    showInfoMessage(myMainBundle.getString("info.updateDownloadComplete"));
+                }
+            }
+        });
+        progress.getCancelButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                progress.getCancelButton().setEnabled(false);
+                downloader.cancelDownload();
+            }
+        });
+        downloader.startDownload();
+        dialog.setVisible(true);
+    }
+
+    private boolean askForUpdate(UpdateInfo updateInfo, boolean autoCheck) {
+        JOptionPane pane = new JOptionPane() {
+            @Override
+            public int getMaxCharactersPerLineCount() {
+                return 100;
+            }
+        };
+        pane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+        pane.setMessage(MessageFormat.format(myMainBundle.getString("info.newVersionAvailable.message"),
+                                             MyTunesRss.VERSION,
+                                             updateInfo.getVersion()));
+        String stopNagging = myMainBundle.getString("info.newVersionAvailable.stopNagging");
+        String later = myMainBundle.getString("info.newVersionAvailable.later");
+        String download = myMainBundle.getString("info.newVersionAvailable.download");
+        String cancel = myMainBundle.getString("info.newVersionAvailable.cancel");
+        if (autoCheck) {
+            pane.setOptions(new String[] {download, later, stopNagging});
+        } else {
+            pane.setOptions(new String[] {download, cancel});
+        }
+        pane.setInitialValue(download);
+        JDialog dialog = pane.createDialog(myFrame, MessageFormat.format(myMainBundle.getString("info.newVersionAvailable.title"),
+                                                                         updateInfo.getVersion()));
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        dialog.setVisible(true);
+        if (pane.getValue() == stopNagging) {
+            Preferences.userRoot().node("/de/codewave/mytunesrss").put("noNagVersion", updateInfo.getVersion());
+        }
+        return pane.getValue() == download;
     }
 
     public static class ITunesLibraryFileFilter extends javax.swing.filechooser.FileFilter {

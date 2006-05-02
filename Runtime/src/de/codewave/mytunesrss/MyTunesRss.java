@@ -18,12 +18,30 @@ import java.util.*;
 import java.util.prefs.*;
 import java.net.*;
 
+import com.sun.java_cup.internal.*;
+
 /**
  * de.codewave.mytunesrss.MyTunesRss
  */
 public class MyTunesRss {
     private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
     public static boolean REGISTERED;
+    public static String VERSION;
+    public static Map<OperatingSystem, URL> UPDATE_URLS;
+
+    static {
+        UPDATE_URLS = new HashMap<OperatingSystem, URL>();
+        String base = "http://www.codewave.de/download/versions/mytunesrss_";
+        try {
+            UPDATE_URLS.put(OperatingSystem.MacOSX, new URL(base + "macosx.txt"));
+            UPDATE_URLS.put(OperatingSystem.Windows, new URL(base + "windows.txt"));
+            UPDATE_URLS.put(OperatingSystem.Unknown, new URL(base + "generic.txt"));
+        } catch (MalformedURLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not create update url.", e);
+            }
+        }
+    }
 
     public static void main(String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
             ClassNotFoundException, IOException {
@@ -33,14 +51,14 @@ public class MyTunesRss {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         ResourceBundle mainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
-        String version = modulesInfo != null ? modulesInfo.getVersion() : "";
-        System.setProperty("mytunesrss.version", version);
-        final JFrame frame = new JFrame(mainBundle.getString("gui.title") + " v" + version);
+        VERSION = modulesInfo != null ? modulesInfo.getVersion() : "0.0.0";
+        System.setProperty("mytunesrss.version", VERSION);
+        final JFrame frame = new JFrame(mainBundle.getString("gui.title") + " v" + VERSION);
         frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        Settings settingsForm = new Settings(frame);
-        frame.addWindowListener(new MyTunesRssMainWindowListener(settingsForm));
-        frame.getContentPane().add(settingsForm.getRootPanel());
+        final Settings settings = new Settings(frame);
+        frame.addWindowListener(new MyTunesRssMainWindowListener(settings));
+        frame.getContentPane().add(settings.getRootPanel());
         frame.setResizable(false);
         int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", frame.getLocation().x);
         int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", frame.getLocation().y);
@@ -49,24 +67,11 @@ public class MyTunesRss {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 frame.pack();
-            }
-        });
-    }
-
-    public static String[] getLocalAddresses() throws IOException {
-        List<String> localAddresses = new ArrayList<String>();
-        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-        while (interfaces.hasMoreElements()) {
-            NetworkInterface intFace = interfaces.nextElement();
-            Enumeration<InetAddress> addresses = intFace.getInetAddresses();
-            while (addresses.hasMoreElements()) {
-                InetAddress address = addresses.nextElement();
-                if (address.isSiteLocalAddress()) {
-                    localAddresses.add(address.getHostAddress());
+                if (settings.isUpdateCheckOnStartup()) {
+                    settings.checkForUpdate(true);
                 }
             }
-        }
-        return localAddresses.toArray(new String[localAddresses.size()]);
+        });
     }
 
     public static class MyTunesRssMainWindowListener extends WindowAdapter {
