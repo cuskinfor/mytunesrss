@@ -35,6 +35,9 @@ public class ITunesLibraryContextListener implements ServletContextListener {
             library = new ITunesLibrary(); // empty library if any error occured
         }
         servletContextEvent.getServletContext().setAttribute(LIBRARY_KEY, library);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("iTunes Library context listiner finished execution.");
+        }
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
