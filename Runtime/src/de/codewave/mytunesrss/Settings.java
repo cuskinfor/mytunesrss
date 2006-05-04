@@ -315,11 +315,32 @@ public class Settings {
         HttpURLConnection connection = null;
         try {
             URL targetUrl = new URL("http://127.0.0.1:" + port + "/health");
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
+            }
             connection = (HttpURLConnection)targetUrl.openConnection();
             int responseCode = connection.getResponseCode();
+            if (LOG.isInfoEnabled()) {
+                LOG.info("HTTP response code is " + responseCode);
+            }
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
-                int result = inputStream.read();
+                int result = -1;
+                int trial = 0;
+                while (result == -1 && trial < 10) {
+                    result = inputStream.read();
+                    trial++;
+                    if (result == -1) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            // intentionally left blank
+                        }
+                    }
+                }
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Health servlet response code is " + result + " after " + trial + " trials.");
+                }
                 return result != -1 ? (byte)result : CheckHealthResult.EOF;
             } else {
                 return CheckHealthResult.INVALID_HTTP_RESPONSE;
