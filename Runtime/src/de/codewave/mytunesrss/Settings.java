@@ -544,7 +544,11 @@ public class Settings {
                         downloadUpdate(updateInfo.getUrl(), fileChooser.getSelectedFile(), updateInfo.getVersion());
                     }
                 }
+            } else if (!autoCheck) {
+                showInfoMessage(myMainBundle.getString("info.noUpdateAvailable"));
             }
+        } else if (!autoCheck) {
+            showErrorMessage(myMainBundle.getString("error.noUpdateInfo"));
         }
     }
 
