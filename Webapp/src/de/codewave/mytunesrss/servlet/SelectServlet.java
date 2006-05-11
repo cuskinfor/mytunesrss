@@ -70,14 +70,16 @@ public class SelectServlet extends BaseServlet {
                         channel = MessageFormat.format(channelPattern, System.getProperty("mytunesrss.version"));
                     }
                     Map<String, String> urls = (Map<String, String>)request.getSession().getAttribute("urlMap");
-                    StringBuffer url = new StringBuffer(urls.get("rss")).append("/ch=").append(channel);
+                    String feedType = request.getParameter("feedType");
+                    StringBuffer url = new StringBuffer(urls.get(feedType)).append("/ch=").append(channel);
                     for (MusicFile musicFile : playlist) {
                         url.append("/id=").append(musicFile.getId());
                     }
                     if (StringUtils.isNotEmpty((String)request.getSession().getAttribute("authHash"))) {
                         url.append("/au=").append(request.getSession().getAttribute("authHash"));
                     }
-                    response.sendRedirect(url.toString());
+                    String filename ="m3u".equals(feedType) ? "/" + channel + ".m3u" : "";
+                    response.sendRedirect(url.toString() + filename);
                 } else {
                     request.getRequestDispatcher("/search.jsp").forward(request, response);
                 }

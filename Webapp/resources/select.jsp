@@ -71,7 +71,8 @@
 
         <input type="hidden" name="sortOrder" value="${sortOrder}" />
         <input type="hidden" name="final" value="true" />
-
+        <input type="hidden" name="feedType" value="rss" />
+          
         <div class="head">
 
           <h1><fmt:message key="select.channel"/></h1>
@@ -136,7 +137,8 @@
         <div class="buttons">
           <input type="button" onClick="document.location.href='${urlMap.newSearch}'" value="<fmt:message key="select.new_search"/>"/>
             <input type="button" onClick="keepAndSearchMore()" value="<fmt:message key="select.keep_and_search_more"/>"/>
-          <input type="submit" value="<fmt:message key="select.createfeed"/>" />
+          <input type="submit" value="<fmt:message key="select.create.rss"/>" />
+          <input type="submit" value="<fmt:message key="select.create.m3u"/>" onclick="document.forms['select'].elements['feedType'].value = 'm3u'" />
         </div>
 
       </form>

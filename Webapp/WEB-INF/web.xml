@@ -4,6 +4,7 @@
          xmlns="http://java.sun.com/xml/ns/j2ee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+    <description>MyTunesRSS web application</description>
     <display-name>MyTunesRSS</display-name>
     <filter>
         <description>Filter for trimming all parameter strings.</description>
@@ -11,154 +12,18 @@
         <filter-name>ParameterTrimmerFilter</filter-name>
         <filter-class>de.codewave.utils.servlet.ServletRequestParameterTrimmer</filter-class>
     </filter>
-    <filter>
-        <description>Filter for putting the servlet urls into a session attribute.</description>
-        <display-name>MyTunesRssServletFilter</display-name>
-        <filter-name>MyTunesRssServletFilter</filter-name>
-        <filter-class>de.codewave.mytunesrss.servlet.MyTunesRssServletFilter</filter-class>
-    </filter>
-    <filter>
-        <description>Filter for authentication checking.</description>
-        <display-name>AuthFilter</display-name>
-        <filter-name>AuthFilter</filter-name>
-        <filter-class>de.codewave.mytunesrss.servlet.AuthFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>MyTunesRssServletFilter</filter-name>
-        <url-pattern>/</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>MyTunesRssServletFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
     <filter-mapping>
         <filter-name>ParameterTrimmerFilter</filter-name>
+        <servlet-name>CommandServlet</servlet-name>
+    </filter-mapping>
+    <servlet>
+        <description>Command dispatcher servlet</description>
+        <display-name>CommandServlet</display-name>
+        <servlet-name>CommandServlet</servlet-name>
+        <servlet-class>de.codewave.utils.servlet.CommandServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CommandServlet</servlet-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <url-pattern>/</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <url-pattern>*.jsp</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <servlet-name>Search</servlet-name>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <servlet-name>NewSearch</servlet-name>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <servlet-name>Sort</servlet-name>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <servlet-name>Select</servlet-name>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <servlet-name>PlayListFeed</servlet-name>
-    </filter-mapping>
-    <listener>
-        <description>Servlet context listener for loading the iTunes library.</description>
-        <display-name>iTunesLibraryListener</display-name>
-        <listener-class>de.codewave.mytunesrss.itunes.ITunesLibraryContextListener</listener-class>
-    </listener>
-    <servlet>
-        <description>Servlet for searching the library.</description>
-        <display-name>Search</display-name>
-        <servlet-name>Search</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.SearchServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <description>Servlet for sorting results.</description>
-        <display-name>Sort</display-name>
-        <servlet-name>Sort</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.SortServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <description>Servlet for selecting results.</description>
-        <display-name>Select</display-name>
-        <servlet-name>Select</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.SelectServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <description>Servlet for creating the RSS feed.</description>
-        <display-name>RSSFeed</display-name>
-        <servlet-name>RSSFeed</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.RSSFeedServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <description>Servlet for delivering content.</description>
-        <display-name>MusicDelivery</display-name>
-        <servlet-name>MusicDelivery</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.MusicDeliveryServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <description>Servlet for logging into the application.</description>
-        <display-name>Login</display-name>
-        <servlet-name>Login</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.LoginServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <description>Servlet for creating an RSS feed for a playlist.</description>
-        <display-name>PlayListFeed</display-name>
-        <servlet-name>PlayListFeed</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.PlayListFeedServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <description>Servlet to check the health of the application.</description>
-        <display-name>Check Health</display-name>
-        <servlet-name>CheckHealth</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.CheckHealthServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <description>Servlet for starting a new search</description>
-        <display-name>New Search</display-name>
-        <servlet-name>NewSearch</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.NewSearchServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Search</servlet-name>
-        <url-pattern>/search</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Sort</servlet-name>
-        <url-pattern>/sort</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Select</servlet-name>
-        <url-pattern>/select</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Login</servlet-name>
-        <url-pattern>/login</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>MusicDelivery</servlet-name>
-        <url-pattern>/get/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RSSFeed</servlet-name>
-        <url-pattern>/rss/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PlayListFeed</servlet-name>
-        <url-pattern>/playlist</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CheckHealth</servlet-name>
-        <url-pattern>/health</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>NewSearch</servlet-name>
-        <url-pattern>/newSearch</url-pattern>
-    </servlet-mapping>
-    <welcome-file-list>
-        <welcome-file>/search.jsp</welcome-file>
-    </welcome-file-list>
 </web-app>

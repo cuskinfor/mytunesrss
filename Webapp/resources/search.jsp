@@ -55,7 +55,8 @@
 						<td class="spacer">&nbsp;</td>
 						<td class="artist">Playlists</td>
                         <form id="playlist" action="${urlMap.playlist}" method="post">
-						<td class="input">
+                        <input type="hidden" name="feedType" value="rss" />
+                        <td class="input">
 							<select class="text" name="playlist">
 								<c:forEach items="${playlists}" var="playlist">
 									<option value="${playlist.id}">${playlist.name}</option>
@@ -63,7 +64,8 @@
 							</select>
 						</td>
 						<td class="button">
-							<input class="button" type="submit" value="<fmt:message key="playlist.use"/>" />
+							<input class="button" type="submit" value="<fmt:message key="playlist.rss"/>" />
+							<input class="button" type="submit" value="<fmt:message key="playlist.m3u"/>" onclick="document.forms['playlist'].elements['feedType'].value = 'm3u'"/>
 						</td>
                         </form>
 						<td class="spacer">&nbsp;</td>

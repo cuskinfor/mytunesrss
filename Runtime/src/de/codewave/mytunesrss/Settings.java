@@ -18,8 +18,6 @@ import java.text.*;
 import java.util.*;
 import java.util.prefs.*;
 
-import com.sun.java_cup.internal.*;
-
 /**
  * de.codewave.mytunesrss.Settings
  */
@@ -256,22 +254,28 @@ public class Settings {
                 public void run() {
                     try {
                         myServer = createServer("mytunesrss", null, serverPort, new File("."), "ROOT", "");
-                        myServer.start();
-                        byte health = checkServerHealth(serverPort);
-                        if (health == CheckHealthResult.OK) {
-                            myStartStopButton.setText(myMainBundle.getString("gui.settings.button.stopServer"));
-                            myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.stopServer"));
-                            setServerRunningStatus(serverPort);
-                        } else {
-                            myServer.stop();
-                            myServer = null;
-                            if (myLogDisplay.isOutOfMemoryError()) {
-                                showErrorMessage(myMainBundle.getString("error.server.startFailureOutOfMemory"));
-                            } else if (health == CheckHealthResult.EMPTY_LIBRARY) {
-                                showErrorMessage(myMainBundle.getString("error.server.startFailureEmptyLibrary"));
+                        if (myServer != null) {
+                            myServer.start();
+                            byte health = checkServerHealth(serverPort);
+                            if (health == CheckHealthResult.OK) {
+                                myStartStopButton.setText(myMainBundle.getString("gui.settings.button.stopServer"));
+                                myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.stopServer"));
+                                setServerRunningStatus(serverPort);
                             } else {
-                                showErrorMessage(myMainBundle.getString("error.server.startFailureHealth"));
+                                myServer.stop();
+                                myServer = null;
+                                if (myLogDisplay.isOutOfMemoryError()) {
+                                    showErrorMessage(myMainBundle.getString("error.server.startFailureOutOfMemory"));
+                                } else if (health == CheckHealthResult.EMPTY_LIBRARY) {
+                                    showErrorMessage(myMainBundle.getString("error.server.startFailureEmptyLibrary"));
+                                } else {
+                                    showErrorMessage(myMainBundle.getString("error.server.startFailureHealth"));
+                                }
+                                setStatus(myMainBundle.getString("info.server.idle"));
+                                enableConfig(true);
                             }
+                        } else {
+                            showErrorMessage(myMainBundle.getString("error.server.startFailureHealth"));
                             setStatus(myMainBundle.getString("info.server.idle"));
                             enableConfig(true);
                         }
@@ -359,23 +363,29 @@ public class Settings {
 
     private Embedded createServer(String name, InetAddress listenAddress, int listenPort, File catalinaBasePath, String webAppName,
             String webAppContext) throws IOException {
-        Embedded server = new Embedded();
-        server.setCatalinaBase(catalinaBasePath.getCanonicalPath());
-        Engine engine = server.createEngine();
-        engine.setName("engine." + name);
-        engine.setDefaultHost("host." + name);
-        Host host = server.createHost("host." + name, new File(catalinaBasePath, "webapps").getCanonicalPath());
-        engine.addChild(host);
-        Context context = server.createContext(webAppContext, webAppName);
-        StandardManager sessionManager = new StandardManager();
-        sessionManager.setPathname("");
-        context.setManager(sessionManager);
-        host.addChild(context);
-        server.addEngine(engine);
-        server.addConnector(server.createConnector(listenAddress, listenPort, false));
-        MyTunesRssConfig config = createPrefDataFromGUI();
-        context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
-        return server;
+        de.codewave.mytunesrss.datastore.Store store = new de.codewave.mytunesrss.datastore.Store();
+        if (store.init()) {
+            MyTunesRssConfig config = createPrefDataFromGUI();
+            store.loadFromITunes(new File(config.getLibraryXml()).toURL());
+            Embedded server = new Embedded();
+            server.setCatalinaBase(catalinaBasePath.getCanonicalPath());
+            Engine engine = server.createEngine();
+            engine.setName("engine." + name);
+            engine.setDefaultHost("host." + name);
+            Host host = server.createHost("host." + name, new File(catalinaBasePath, "webapps").getCanonicalPath());
+            engine.addChild(host);
+            Context context = server.createContext(webAppContext, webAppName);
+            StandardManager sessionManager = new StandardManager();
+            sessionManager.setPathname("");
+            context.setManager(sessionManager);
+            host.addChild(context);
+            server.addEngine(engine);
+            server.addConnector(server.createConnector(listenAddress, listenPort, false));
+            context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
+            context.getServletContext().setAttribute(Store.class.getName(), store);
+            return server;
+        }
+        return null;
     }
 
     public void doStopServer() {
