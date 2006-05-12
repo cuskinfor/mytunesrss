@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.utils.servlet.*;
 import org.apache.commons.lang.*;
@@ -39,6 +40,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected void setError(String error) {
         getRequest().setAttribute("error", error);
+    }
+
+    protected DataStore getDataStore() {
+        return (DataStore)getContext().getAttribute(DataStore.class.getName());        
     }
 
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {

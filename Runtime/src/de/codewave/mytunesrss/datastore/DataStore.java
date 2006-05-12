@@ -31,6 +31,9 @@ public class DataStore {
         }
     }
 
+    private TrackResultBuilder myTrackResultBuilder = new TrackResultBuilder();
+    private PlaylistResultBuilder myPlaylistResultBuilder = new PlaylistResultBuilder();
+
     private Connection myConnection;
 
     private PreparedStatement myInsertTrack;
@@ -42,6 +45,7 @@ public class DataStore {
     private PreparedStatement myFindTracks;
     private PreparedStatement myFindAlbumsByArtist;
     private PreparedStatement myFindArtistsByAlbum;
+    private PreparedStatement myFindPlaylists;
 
     public synchronized boolean init() {
         if (myConnection == null) {
@@ -63,6 +67,8 @@ public class DataStore {
                         "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist LIKE ? ORDER BY album, track_number, name");
                 myFindAlbumsByArtist = myConnection.prepareStatement("SELECT DISTINCT(album) FROM track WHERE artist LIKE ? ORDER BY album");
                 myFindArtistsByAlbum = myConnection.prepareStatement("SELECT DISTINCT(artist) FROM track WHERE album LIKE ? ORDER BY artist");
+                myFindPlaylists = myConnection.prepareStatement(
+                        "SELECT p.id AS id, p.name AS name, count(ltp.track_id) AS track_count FROM playlist p, link_track_playlist ltp WHERE ltp.playlist_id = p.id GROUP BY p.id, p.name ORDER BY p.name");
                 return true;
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
@@ -214,16 +220,18 @@ public class DataStore {
         }
     }
 
-    private List<Map<String, Object>> executeQuery(PreparedStatement statement, Object... parameter) {
+    private <T> List<T> executeQuery(PreparedStatement statement, ResultBuilder<T> builder, Object... parameter) {
         try {
             statement.clearParameters();
-            for (int i = 0; i < parameter.length; i++) {
-                statement.setObject(i + 1, parameter[i]);
+            if (parameter != null && parameter.length > 0) {
+                for (int i = 0; i < parameter.length; i++) {
+                    statement.setObject(i + 1, parameter[i]);
+                }
             }
             ResultSet resultSet = statement.executeQuery();
-            List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+            List<T> results = new ArrayList<T>();
             while (resultSet.next()) {
-                results.add(createMapFromResultSet(resultSet));
+                results.add(builder.create(resultSet));
             }
             return results;
         } catch (SQLException e) {
@@ -234,48 +242,40 @@ public class DataStore {
         return Collections.emptyList();
     }
 
-    private Map<String, Object> createMapFromResultSet(ResultSet resultSet) {
-        try {
-            Map<String, Object> map = new HashMap<String, Object>();
-            ResultSetMetaData meta = resultSet.getMetaData();
-            for (int i = 1; i <= meta.getColumnCount(); i++) {
-                map.put(meta.getColumnName(i), resultSet.getObject(i));
-            }
-            return map;
-        } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create map from result set.", e);
-            }
-        }
-        return null;
-    }
-
     private String getWildcardString(String string) {
         return StringUtils.isNotEmpty(string.trim()) ? "%" + string.trim() + "%" : "%";
     }
 
-    public synchronized Map<String, Object> findTrackById(String id) {
-        List<Map<String, Object>> results = executeQuery(myFindTrackById, id);
+    public synchronized Track findTrackById(String id) {
+        List<Track> results = executeQuery(myFindTrackById, myTrackResultBuilder, id);
         return results != null && results.size() == 1 ? results.get(0) : null;
     }
 
-    public synchronized Collection<Map<String, Object>> findTracksByAlbum(String album) {
-        return executeQuery(myFindTracksByAlbum, getWildcardString(album));
+    public synchronized Collection<Track> findTracksByAlbum(String album) {
+        return executeQuery(myFindTracksByAlbum, myTrackResultBuilder, getWildcardString(album));
     }
 
-    public synchronized Collection<Map<String, Object>> findTracksByArtist(String artist) {
-        return executeQuery(myFindTracksByArtist, getWildcardString(artist));
+    public synchronized Collection<Track> findTracksByArtist(String artist) {
+        return executeQuery(myFindTracksByArtist, myTrackResultBuilder, getWildcardString(artist));
     }
 
-    public synchronized Collection<Map<String, Object>> findTracks(String search) {
-        return executeQuery(myFindTracks, getWildcardString(search), getWildcardString(search), getWildcardString(search));
+    public synchronized Collection<Track> findTracks(String search) {
+        return executeQuery(myFindTracks, myTrackResultBuilder, getWildcardString(search), getWildcardString(search), getWildcardString(search));
     }
 
-    public synchronized Collection<Map<String, Object>> findAlbumsByArtist(String artist) {
-        return executeQuery(myFindAlbumsByArtist, getWildcardString(artist));
+    public synchronized Collection<Track> findAlbumsByArtist(String artist) {
+        return executeQuery(myFindAlbumsByArtist, myTrackResultBuilder, getWildcardString(artist));
     }
 
-    public synchronized Collection<Map<String, Object>> findArtistsByAlbum(String album) {
-        return executeQuery(myFindArtistsByAlbum, getWildcardString(album));
+    public synchronized Collection<String> findArtistsByAlbum(String album) {
+        return executeQuery(myFindArtistsByAlbum, new ResultBuilder<String>() {
+            public String create(ResultSet resultSet) throws SQLException {
+                return resultSet.getString("ARTIST");
+            }
+        }, getWildcardString(album));
+    }
+
+    public synchronized Collection<Playlist> findPlaylists() {
+        return executeQuery(myFindPlaylists, myPlaylistResultBuilder);
     }
 }

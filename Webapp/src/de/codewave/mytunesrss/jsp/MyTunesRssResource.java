@@ -5,16 +5,16 @@
 package de.codewave.mytunesrss.jsp;
 
 public enum MyTunesRssResource {
-    Login,Portal;
+    Login("/login.jsp"),
+    Portal("/portal.jsp");
+
+    private String myValue;
+
+    MyTunesRssResource(String value) {
+        myValue = value;
+    }
 
     public String getValue() {
-        switch (this) {
-            case Login:
-                return "/login.jsp";
-            case Portal:
-                return "/portal.jsp";
-            default:
-                throw new IllegalArgumentException("Illegal resource!");
-        }
+        return myValue;
     }
 }

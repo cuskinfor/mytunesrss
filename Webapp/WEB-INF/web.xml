@@ -27,10 +27,10 @@
         <servlet-name>CommandServlet</servlet-name>
         <servlet-class>de.codewave.utils.servlet.CommandServlet</servlet-class>
     </servlet>
-    <servlet-mapping>
+    <!--servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
         <url-pattern>/</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping-->
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
         <url-pattern>/exec/*</url-pattern>
