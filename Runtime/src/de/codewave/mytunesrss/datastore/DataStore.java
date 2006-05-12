@@ -16,10 +16,10 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * de.codewave.mytunesrss.datastore.Store
+ * de.codewave.mytunesrss.datastore.DataStore
  */
-public class Store {
-    private static final Log LOG = LogFactory.getLog(Store.class);
+public class DataStore {
+    private static final Log LOG = LogFactory.getLog(DataStore.class);
 
     static {
         try {
@@ -60,7 +60,7 @@ public class Store {
                 myFindTracksByAlbum = myConnection.prepareStatement(
                         "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album LIKE ? ORDER BY track_number, name");
                 myFindTracksByArtist = myConnection.prepareStatement(
-                        "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist LIKE ? ORER BY album, track_number, name");
+                        "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist LIKE ? ORDER BY album, track_number, name");
                 myFindAlbumsByArtist = myConnection.prepareStatement("SELECT DISTINCT(album) FROM track WHERE artist LIKE ? ORDER BY album");
                 myFindArtistsByAlbum = myConnection.prepareStatement("SELECT DISTINCT(artist) FROM track WHERE album LIKE ? ORDER BY artist");
                 return true;
@@ -250,6 +250,9 @@ public class Store {
         return null;
     }
 
+    private String getWildcardString(String string) {
+        return StringUtils.isNotEmpty(string.trim()) ? "%" + string.trim() + "%" : "%";
+    }
 
     public synchronized Map<String, Object> findTrackById(String id) {
         List<Map<String, Object>> results = executeQuery(myFindTrackById, id);
@@ -257,22 +260,22 @@ public class Store {
     }
 
     public synchronized Collection<Map<String, Object>> findTracksByAlbum(String album) {
-        return executeQuery(myFindTracksByAlbum, "%" + album + "%");
+        return executeQuery(myFindTracksByAlbum, getWildcardString(album));
     }
 
     public synchronized Collection<Map<String, Object>> findTracksByArtist(String artist) {
-        return executeQuery(myFindTracksByArtist, "%" + artist + "%");
+        return executeQuery(myFindTracksByArtist, getWildcardString(artist));
     }
 
     public synchronized Collection<Map<String, Object>> findTracks(String search) {
-        return executeQuery(myFindTracks, "%" + search + "%", "%" + search + "%", "%" + search + "%");
+        return executeQuery(myFindTracks, getWildcardString(search), getWildcardString(search), getWildcardString(search));
     }
 
     public synchronized Collection<Map<String, Object>> findAlbumsByArtist(String artist) {
-        return executeQuery(myFindAlbumsByArtist, "%" + artist + "%");
+        return executeQuery(myFindAlbumsByArtist, getWildcardString(artist));
     }
 
     public synchronized Collection<Map<String, Object>> findArtistsByAlbum(String album) {
-        return executeQuery(myFindArtistsByAlbum, "%" + album + "%");
+        return executeQuery(myFindArtistsByAlbum, getWildcardString(album));
     }
 }

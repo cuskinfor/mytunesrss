@@ -14,7 +14,7 @@
 
     <title><fmt:message key="title"/> v${cwfn:sysprop('mytunesrss.version')}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="styles/mytunesrss.css" />
+    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
     <!--[if IE]>
       <link rel="stylesheet" type="text/css" href="styles/ie.css" />
     <![endif]-->
@@ -29,7 +29,7 @@
 
       <jsp:include page="/error.jsp" />
 
-      <form id="login" action="${urlMap.login}" method="post">
+      <form id="login" action="${servletUrl}/login" method="post">
 
         <table class="search" cellspacing="0">
           <tr>

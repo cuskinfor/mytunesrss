@@ -22,15 +22,15 @@ public class CheckHealthCommandHandler extends MyTunesRssCommandHandler {
         if (LOG.isInfoEnabled()) {
             LOG.info("Health check servlet called.");
         }
-        Store store = (Store)getContext().getAttribute(Store.class.getName());
-        if (store == null || store.findTracks("").isEmpty()) {
+        DataStore dataStore = (DataStore)getContext().getAttribute(DataStore.class.getName());
+        if (dataStore == null || dataStore.findTracks("").isEmpty()) {
             if (LOG.isInfoEnabled()) {
-                LOG.info("Store is NULL or empty!");
+                LOG.info("Data store is null or empty!");
             }
             getResponse().getOutputStream().write(CheckHealthResult.EMPTY_LIBRARY);
         } else {
             if (LOG.isInfoEnabled()) {
-                LOG.info("Store is up and running.");
+                LOG.info("Data store is up and running.");
             }
             getResponse().getOutputStream().write(CheckHealthResult.OK);
         }

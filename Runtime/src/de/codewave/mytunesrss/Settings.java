@@ -3,6 +3,7 @@ package de.codewave.mytunesrss;
 import de.codewave.utils.*;
 import de.codewave.utils.network.*;
 import de.codewave.utils.serialnumber.*;
+import de.codewave.mytunesrss.datastore.*;
 import org.apache.catalina.*;
 import org.apache.catalina.session.*;
 import org.apache.catalina.startup.*;
@@ -318,7 +319,7 @@ public class Settings {
     private byte checkServerHealth(int port) {
         HttpURLConnection connection = null;
         try {
-            URL targetUrl = new URL("http://127.0.0.1:" + port + "/health");
+            URL targetUrl = new URL("http://127.0.0.1:" + port + "/exec/checkHealth");
             if (LOG.isInfoEnabled()) {
                 LOG.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             }
@@ -363,10 +364,10 @@ public class Settings {
 
     private Embedded createServer(String name, InetAddress listenAddress, int listenPort, File catalinaBasePath, String webAppName,
             String webAppContext) throws IOException {
-        de.codewave.mytunesrss.datastore.Store store = new de.codewave.mytunesrss.datastore.Store();
-        if (store.init()) {
+        DataStore dataStore = new de.codewave.mytunesrss.datastore.DataStore();
+        if (dataStore.init()) {
             MyTunesRssConfig config = createPrefDataFromGUI();
-            store.loadFromITunes(new File(config.getLibraryXml()).toURL());
+            dataStore.loadFromITunes(new File(config.getLibraryXml()).toURL());
             Embedded server = new Embedded();
             server.setCatalinaBase(catalinaBasePath.getCanonicalPath());
             Engine engine = server.createEngine();
@@ -382,7 +383,7 @@ public class Settings {
             server.addEngine(engine);
             server.addConnector(server.createConnector(listenAddress, listenPort, false));
             context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
-            context.getServletContext().setAttribute(Store.class.getName(), store);
+            context.getServletContext().setAttribute(DataStore.class.getName(), dataStore);
             return server;
         }
         return null;

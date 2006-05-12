@@ -6,6 +6,11 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <description>MyTunesRSS web application</description>
     <display-name>MyTunesRSS</display-name>
+    <listener>
+        <description>Command handler registry listener</description>
+        <display-name>CommandHandlerRegistry</display-name>
+        <listener-class>de.codewave.mytunesrss.command.MyTunesRssCommandHandlerRegistry</listener-class>
+    </listener>
     <filter>
         <description>Filter for trimming all parameter strings.</description>
         <display-name>ParameterTrimmerFilter</display-name>
@@ -24,6 +29,10 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CommandServlet</servlet-name>
+        <url-pattern>/exec/*</url-pattern>
     </servlet-mapping>
 </web-app>

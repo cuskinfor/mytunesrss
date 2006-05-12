@@ -20,3 +20,4 @@ public class StartCommandHandler extends MyTunesRssCommandHandler {
             forward(MyTunesRssCommand.ShowPortal);
         }
     }
+}

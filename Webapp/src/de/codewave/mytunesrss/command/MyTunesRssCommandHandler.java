@@ -42,10 +42,12 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
+        getRequest().setAttribute("servletUrl", ServletUtils.getApplicationUrl(getRequest()) + "/exec");
+        getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
         forward(resource.getValue());
     }
 
     protected void forward(MyTunesRssCommand command) throws IOException, ServletException {
-        forward("/" + ServletUtils.getServletMapping(getContext(), CommandServlet.class) + "/" + command.getName());
+        forward("/exec/" + command.getName());
     }
 }

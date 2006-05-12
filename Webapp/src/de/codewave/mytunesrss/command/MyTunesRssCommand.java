@@ -7,27 +7,23 @@ package de.codewave.mytunesrss.command;
 import de.codewave.utils.servlet.*;
 
 public enum MyTunesRssCommand implements Command {
-    DoLogin, ShowPortal;
+    DoLogin("login", DoLoginCommandHandler.class),
+    ShowPortal("showPortal", ShowPortalCommandHandler.class),
+    CheckHealth("checkHealth", CheckHealthCommandHandler.class);
+
+    private String myName;
+    private Class<? extends CommandHandler> myCommandHandlerClass;
+
+    MyTunesRssCommand(String name, Class<? extends CommandHandler> commandHandlerClass) {
+        myName = name;
+        myCommandHandlerClass = commandHandlerClass;
+    }
 
     public String getName() {
-        switch (this) {
-            case DoLogin:
-                return "doLogin";
-            case ShowPortal:
-                return "showPortal";
-            default:
-                throw new IllegalArgumentException("Illegal command!");
-        }
+        return myName;
     }
 
     public Class<? extends CommandHandler> getCommandHandlerClass() {
-        switch (this) {
-            case DoLogin:
-                return DoLoginCommandHandler.class;
-            case ShowPortal:
-                return ShowPortalCommandHandler.class;
-            default:
-                throw new IllegalArgumentException("Illegal command!");
-        }
+        return myCommandHandlerClass;
     }
 }
