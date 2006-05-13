@@ -4,9 +4,11 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.datastore.*;
 import de.codewave.utils.*;
 import de.codewave.utils.moduleinfo.*;
 import org.apache.catalina.*;
+import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 import org.apache.log4j.*;
 
@@ -14,11 +16,10 @@ import javax.imageio.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.*;
+import java.sql.*;
 import java.util.*;
 import java.util.prefs.*;
-import java.net.*;
-
-import com.sun.java_cup.internal.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -28,6 +29,7 @@ public class MyTunesRss {
     public static boolean REGISTERED;
     public static String VERSION;
     public static Map<OperatingSystem, URL> UPDATE_URLS;
+    public static DataStore STORE = new DataStore();
 
     static {
         UPDATE_URLS = new HashMap<OperatingSystem, URL>();
@@ -44,9 +46,14 @@ public class MyTunesRss {
     }
 
     public static void main(String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
-            ClassNotFoundException, IOException {
+            ClassNotFoundException, IOException, SQLException {
         if (ProgramUtils.getCommandLineArguments(args).containsKey("debug")) {
             Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
+        }
+        final DatabaseBuilder builder = new DatabaseBuilder();
+        final boolean databaseCreated = builder.needsCreation();
+        if (databaseCreated) {
+            builder.createDatabase();
         }
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         ResourceBundle mainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
@@ -56,7 +63,7 @@ public class MyTunesRss {
         final JFrame frame = new JFrame(mainBundle.getString("gui.title") + " v" + VERSION);
         frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        final Settings settings = new Settings(frame);
+        final Settings settings = new Settings(frame, builder);
         frame.addWindowListener(new MyTunesRssMainWindowListener(settings));
         frame.getContentPane().add(settings.getRootPanel());
         frame.setResizable(false);
@@ -69,6 +76,17 @@ public class MyTunesRss {
                 frame.pack();
                 if (settings.isUpdateCheckOnStartup()) {
                     settings.checkForUpdate(true);
+                }
+                MyTunesRssConfig data = new MyTunesRssConfig();
+                data.load();
+                try {
+                    if (StringUtils.isNotEmpty(data.getLibraryXml()) && builder.needsUpdate(new File(data.getLibraryXml()).toURL())) {
+                        builder.loadFromITunes(frame, new File(data.getLibraryXml()).toURL());
+                    }
+                } catch (Exception e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not load iTunes library.", e);
+                    }
                 }
             }
         });

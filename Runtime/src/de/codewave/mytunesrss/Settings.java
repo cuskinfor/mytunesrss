@@ -60,9 +60,8 @@ public class Settings {
     private JButton myUpdateButton;
     private Embedded myServer;
     private LogDisplay myLogDisplay = new LogDisplay();
-    private DataStore myStore;
 
-    public Settings(final JFrame frame) throws UnsupportedEncodingException {
+    public Settings(final JFrame frame, final DatabaseBuilder builder) throws UnsupportedEncodingException {
         Logger.getRootLogger().removeAllAppenders();
         Logger.getLogger("de.codewave").removeAllAppenders();
         Logger.getRootLogger().addAppender(myLogDisplay);
@@ -113,7 +112,7 @@ public class Settings {
         });
         myStartStopButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                doStartStopServer();
+                doStartStopServer(builder);
             }
         });
         myQuitButton.addActionListener(new ActionListener() {
@@ -217,15 +216,15 @@ public class Settings {
         }
     }
 
-    public void doStartStopServer() {
+    public void doStartStopServer(DatabaseBuilder builder) {
         if (myServer == null) {
-            doStartServer();
+            doStartServer(builder);
         } else {
             doStopServer();
         }
     }
 
-    public void doStartServer() {
+    public void doStartServer(final DatabaseBuilder builder) {
         int port;
         try {
             port = Integer.parseInt(myPort.getText().trim());
@@ -257,6 +256,9 @@ public class Settings {
             new Thread(new Runnable() {
                 public void run() {
                     try {
+                        if (builder.needsUpdate(library.toURL())) {
+                            builder.loadFromITunes(myFrame, library.toURL());
+                        }
                         myServer = createServer("mytunesrss", null, serverPort, new File("."), "ROOT", "");
                         if (myServer != null) {
                             myServer.start();
@@ -372,9 +374,6 @@ public class Settings {
     private Embedded createServer(String name, InetAddress listenAddress, int listenPort, File catalinaBasePath, String webAppName,
             String webAppContext) throws IOException, SQLException {
         MyTunesRssConfig config = createPrefDataFromGUI();
-        if (myStore == null) {
-            createStore(new File(config.getLibraryXml()).toURL());
-        }
         Embedded server = new Embedded();
         server.setCatalinaBase(catalinaBasePath.getCanonicalPath());
         Engine engine = server.createEngine();
@@ -390,25 +389,8 @@ public class Settings {
         server.addEngine(engine);
         server.addConnector(server.createConnector(listenAddress, listenPort, false));
         context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
-        context.getServletContext().setAttribute(DataStore.class.getName(), myStore);
+        context.getServletContext().setAttribute(DataStore.class.getName(), MyTunesRss.STORE);
         return server;
-    }
-
-    private void createStore(URL iTunesXmlUrl) throws MalformedURLException, SQLException {
-        myStore = new DataStore();
-        DataStoreSession storeSession = myStore.getTransaction();
-        storeSession.begin();
-        try {
-            storeSession.executeStatement(new CreateAllTablesStatement());
-            ITunesUtils.loadFromITunes(iTunesXmlUrl, storeSession);
-            storeSession.commit();
-        } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not load iTunes library into database.", e);
-            }
-            storeSession.rollback();
-            throw e;
-        }
     }
 
     public void doStopServer() {
