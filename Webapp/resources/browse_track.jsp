@@ -24,9 +24,9 @@
     <script type="text/javascript">
 
         function sort(sortOrder) {
-            document.forms["select"].action = "${servletUrl}/sortTracks";
-            document.forms["select"].elements["sortOrder"].value = sortOrder;
-            document.forms["select"].submit();
+            document.forms["browse"].action = "${servletUrl}/browseTrack";
+            document.forms["browse"].elements["sortOrder"].value = sortOrder;
+            document.forms["browse"].submit();
         }
 
         function selectAll(ids, checkbox) {
@@ -61,39 +61,30 @@
             checkbox.checked = ( checkbox.checked == true ) ? false : true;
         }
 
-        function keepAndSearchMore() {
-            document.forms["select"].elements["final"].value = 'false';
-            document.forms["select"].submit();
-        }
-
     </script>
 
 </head>
 
-<body onLoad="document.forms['select'].elements['channel'].focus(); registerTR();">
+<body onload="registerTR()">
 
 <div class="body">
 
-    <form id="select" action="${servletUrl}/addTracks" method="post">
+    <h1 class="search"><span>MyTunesRSS</span></h1>
+
+    <jsp:include page="/error.jsp" />
+
+    <div class="link">
+        <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album" /></a></c:if>
+        <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist" /></a></c:if>
+    </div>
+
+    <form id="browse" action="${servletUrl}/addTracks" method="post">
 
         <input type="hidden" name="sortOrder" value="${sortOrder}" />
-        <input type="hidden" name="final" value="true" />
-        <input type="hidden" name="feedType" value="rss" />
-
-        <div class="head">
-
-            <h1><fmt:message key="select.channel" /></h1>
-
-            <div class="input"><input type="text" name="channel" value="<c:out value="${param.channel}"/>" /></div>
-
-            <jsp:include page="/error.jsp" />
-
-            <div class="link">
-                <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album" /></a></c:if>
-                <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist" /></a></c:if>
-            </div>
-
-        </div>
+        <input type="hidden" name="searchTerm" value="${param.searchTerm}" />
+        <input type="hidden" name="album" value="${param.album}" />
+        <input type="hidden" name="artist" value="${param.artist}" />
+        <input type="hidden" name="backUrl" value="${param.backUrl}" />
 
         <table class="select" cellspacing="0">
             <c:forEach items="${tracks}" var="track">
@@ -105,53 +96,51 @@
                             <c:choose>
                                 <c:when test="${sortOrder == 'Album'}">
                                     <c:if test="${track.simple}">
-                                        <c:out value="${track.artist}"/> -
-                                    </c:if>
-                                    <c:out value="${track.album}"/>
+                                        <c:out value="${track.artist}" /> - </c:if>
+                                    <c:out value="${track.album}" />
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${track.artist}"/>
+                                    <c:out value="${track.artist}" />
                                     <c:if test="${track.simple}">
-                                        - <c:out value="${track.album}"/>
+                                        - <c:out value="${track.album}" />
                                     </c:if>
                                 </c:otherwise>
                             </c:choose>
                         </th>
                     </tr>
                 </c:if>
-                <tr <c:if test="${count % 2 == 0}">class="odd"</c:if>>
-                    <td class="check"><input type="checkbox" id="item${track.id}" name="id" value="${track.id}"<c:if test="${selectedTracks[track.id]}">
-                        checked="checked"</c:if> /></td>
+                <tr class="${cwfn:choose(count % 2 == 0, '', 'odd')}">
+                    <td class="check"><input type="checkbox" id="item${track.id}" name="track" value="${track.id}"
+                            <c:if test="${selectedTracks[track.id]}">
+                                checked="checked"</c:if> /></td>
                     <td>
                         <c:choose>
                             <c:when test="${sortOrder == 'Album'}">
-                                <c:out value="${track.trackNumber}"/> -
-                                <c:if test="${!track.simple}"><c:out value="${track.artist}"/> -</c:if>
+                                <c:out value="${track.trackNumber}" /> -
+                                <c:if test="${!track.simple}"><c:out value="${track.artist}" /> -</c:if>
                                 <c:out value="${track.name}" />
                             </c:when>
                             <c:otherwise>
-                                <c:if test="${!track.simple}"><c:out value="${track.album}"/> -</c:if>
-                                <c:out value="${track.trackNumber}"/> -
+                                <c:if test="${!track.simple}"><c:out value="${track.album}" /> -</c:if>
+                                <c:out value="${track.trackNumber}" /> -
                                 <c:out value="${track.name}" />
                             </c:otherwise>
                         </c:choose>
                     </td>
                     <td class="play">
-                        <a href="${servletUrl}/playTrack/track=${track.id}/authHash=${authHash}/${cwfn:urlEncode(mtfn:virtualName(track.file), 'UTF-8')}"><img
+                        <a href="${servletUrl}/playTrack/track=${track.id}/${cwfn:urlEncode(mtfn:virtualName(track.file), 'UTF-8')}"><img
                                 src="${appUrl}/images/play.png"
                                 alt="<fmt:message key="select.play"/>" /></a>
                     </td>
                 </tr>
+                <c:set var="count" value="${count + 1}"/>
             </c:forEach>
         </table>
 
         <div class="buttons">
-            <input type="button" onClick="document.location.href='${urlMap.newSearch}'" value="<fmt:message key="select.new_search"/>" />
-            <input type="button" onClick="keepAndSearchMore()" value="<fmt:message key="select.keep_and_search_more"/>" />
-            <input type="submit" value="<fmt:message key="select.create.rss"/>" />
-            <input type="submit"
-                   value="<fmt:message key="select.create.m3u"/>"
-                   onclick="document.forms['select'].elements['feedType'].value = 'm3u'" />
+            <input type="button" onClick="document.location.href='${param.backUrl}'" value="back" />
+            <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS/mytunesrss.xml'" value="RSS" />
+            <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
         </div>
 
     </form>

@@ -24,30 +24,28 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         String searchTerm = getRequestParameter("searchTerm", null);
         String album = getRequestParameter("album", null);
         String artist = getRequestParameter("artist", null);
-        String trackId = getRequestParameter("track", null);
         FindTrackQuery query = null;
-        if (StringUtils.isNotEmpty(trackId)) {
-            query = new FindTrackQuery(trackId);
-        } else if (StringUtils.isNotEmpty(searchTerm)) {
+        if (StringUtils.isNotEmpty(searchTerm)) {
             query = new FindTrackQuery("%" + searchTerm + "%", FindTrackQuery.Operation.Or);
         } else {
             query = new FindTrackQuery(album, artist);
         }
-        getRequest().setAttribute("sortOrder", SortOrder.Album.name());
-        getRequest().setAttribute("tracks", getTracks(getDataStore().executeQuery(query), SortOrder.Album));
+        String sortOrder = getRequestParameter("sortOrder", SortOrder.Album.name());
+        getRequest().setAttribute("sortOrder", sortOrder);
+        getRequest().setAttribute("tracks", getTracks(getDataStore().executeQuery(query), SortOrder.valueOf(sortOrder)));
         forward(MyTunesRssResource.BrowseTrack);
     }
 
     private Collection<EnhancedTrack> getTracks(Collection<Track> tracks, SortOrder sortOrder) {
         List<EnhancedTrack> enhancedTracks = new ArrayList<EnhancedTrack>(tracks.size());
-        String album = getClass().getName();
-        String artist = getClass().getName();
+        String lastAlbum = getClass().getName();
+        String lastArtist = getClass().getName();
         List<EnhancedTrack> sectionTracks = new ArrayList<EnhancedTrack>();
         boolean variousPerSection = false;
         for (Track track : tracks) {
             EnhancedTrack enhancedTrack = new EnhancedTrack(track);
-            boolean newAlbum = !album.equals(track.getAlbum());
-            boolean newArtist = !artist.equals(track.getArtist());
+            boolean newAlbum = !lastAlbum.equals(track.getAlbum());
+            boolean newArtist = !lastArtist.equals(track.getArtist());
             if ((sortOrder == SortOrder.Album && newAlbum) || (sortOrder == SortOrder.Artist && newArtist)) { // new section begins
                 enhancedTrack.setNewSection(true);
                 if (!sectionTracks.isEmpty() && !variousPerSection) { // previous section was simple
@@ -64,6 +62,8 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             }
             enhancedTracks.add(enhancedTrack);
             sectionTracks.add(enhancedTrack);
+            lastAlbum = track.getAlbum();
+            lastArtist = track.getArtist();
         }
         if (!sectionTracks.isEmpty() && !variousPerSection) { // last section was simple
             for (EnhancedTrack rememberedTrack : sectionTracks) {

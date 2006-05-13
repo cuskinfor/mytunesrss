@@ -42,6 +42,7 @@
                     <c:if test="${!empty param.album}"> on "<c:out value="${param.album}" />"</c:if>
                 </th>
             </tr>
+            <c:set var="backUrl">${servletUrl}/browseArtist?album=${param.album}</c:set>
             <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
                 <tr class="${cwfn:choose(loopStatus.index % 2 == 0, '', 'odd')}">
                     <td class="check"><input type="checkbox" name="artist" value="<c:out value="${artist.name}"/>" /></td>
@@ -50,10 +51,10 @@
                         <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>">${artist.albumCount}&nbsp;album${cwfn:choose(artist.albumCount > 1, 's', '')}</a>
                     </td>
                     <td class="tracks">
-                        <a href="${servletUrl}/browseTrack?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>">${artist.trackCount}&nbsp;track${cwfn:choose(artist.trackCount > 1, 's', '')}</a>
+                        <a href="${servletUrl}/browseTrack?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${artist.trackCount}&nbsp;track${cwfn:choose(artist.trackCount > 1, 's', '')}</a>
                     </td>
                     <td class="icon">
-                        <a href="${servletUrl}/createRSS?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>"><img src="${appUrl}/images/rss.gif"
+                        <a href="${servletUrl}/createRSS/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/mytunesrss.xml"><img src="${appUrl}/images/rss.gif"
                                                                                                                                alt="rss" /></a>
                     </td>
                     <td class="icon">
@@ -66,7 +67,7 @@
 
         <div class="buttons">
             <input type="button" onClick="document.location.href='${servletUrl}/showPortal'" value="back to portal" />
-            <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS'" value="RSS" />
+            <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS/mytunesrss.xml'" value="RSS" />
             <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
         </div>
     </form>
