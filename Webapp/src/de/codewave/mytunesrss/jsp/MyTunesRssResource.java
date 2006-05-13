@@ -6,7 +6,9 @@ package de.codewave.mytunesrss.jsp;
 
 public enum MyTunesRssResource {
     Login("/login.jsp"),
-    Portal("/portal.jsp");
+    Portal("/portal.jsp"),
+    BrowseArtist("/browse_artist.jsp"),
+    BrowseAlbum("/browse_album.jsp");
 
     private String myValue;
 

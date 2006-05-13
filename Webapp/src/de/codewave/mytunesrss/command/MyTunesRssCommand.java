@@ -7,9 +7,11 @@ package de.codewave.mytunesrss.command;
 import de.codewave.utils.servlet.*;
 
 public enum MyTunesRssCommand implements Command {
-    DoLogin("login", DoLoginCommandHandler.class),
+    Login("login", DoLoginCommandHandler.class),
     ShowPortal("showPortal", ShowPortalCommandHandler.class),
-    CheckHealth("checkHealth", CheckHealthCommandHandler.class);
+    CheckHealth("checkHealth", CheckHealthCommandHandler.class),
+    BrowseAlbum("browseAlbum", BrowseAlbumCommandHandler.class),
+    BrowseArtist("browseArtist", BrowseArtistCommandHandler.class);
 
     private String myName;
     private Class<? extends CommandHandler> myCommandHandlerClass;

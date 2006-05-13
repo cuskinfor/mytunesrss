@@ -33,6 +33,8 @@ public class DataStore {
 
     private TrackResultBuilder myTrackResultBuilder = new TrackResultBuilder();
     private PlaylistResultBuilder myPlaylistResultBuilder = new PlaylistResultBuilder();
+    private AlbumResultBuilder myAlbumResultBuilder = new AlbumResultBuilder();
+    private ArtistResultBuilder myArtistResultBuilder = new ArtistResultBuilder();
 
     private Connection myConnection;
 
@@ -42,7 +44,8 @@ public class DataStore {
     private PreparedStatement myFindTrackById;
     private PreparedStatement myFindTracksByAlbum;
     private PreparedStatement myFindTracksByArtist;
-    private PreparedStatement myFindTracks;
+    private PreparedStatement myFindTracksAnd;
+    private PreparedStatement myFindTracksOr;
     private PreparedStatement myFindAlbumsByArtist;
     private PreparedStatement myFindArtistsByAlbum;
     private PreparedStatement myFindPlaylists;
@@ -59,16 +62,18 @@ public class DataStore {
                 myInsertPlaylist = myConnection.prepareStatement("INSERT INTO playlist VALUES ( ?, ? )");
                 myInsertLinkTrackPlaylist = myConnection.prepareStatement("INSERT INTO link_track_playlist VALUES ( ?, ? )");
                 myFindTrackById = myConnection.prepareStatement("SELECT id, name, artist, album, time, track_number, file FROM track WHERE id = ?");
-                myFindTracks = myConnection.prepareStatement(
+                myFindTracksAnd = myConnection.prepareStatement(
+                        "SELECT id, name, artist, album, time, track_number, file FROM track WHERE name LIKE ? AND album LIKE ? AND artist LIKE ? ORDER BY album, track_number, name");
+                myFindTracksOr = myConnection.prepareStatement(
                         "SELECT id, name, artist, album, time, track_number, file FROM track WHERE name LIKE ? OR album LIKE ? OR artist LIKE ? ORDER BY album, track_number, name");
                 myFindTracksByAlbum = myConnection.prepareStatement(
                         "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album LIKE ? ORDER BY track_number, name");
                 myFindTracksByArtist = myConnection.prepareStatement(
                         "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist LIKE ? ORDER BY album, track_number, name");
-                myFindAlbumsByArtist = myConnection.prepareStatement("SELECT DISTINCT(album) FROM track WHERE artist LIKE ? ORDER BY album");
-                myFindArtistsByAlbum = myConnection.prepareStatement("SELECT DISTINCT(artist) FROM track WHERE album LIKE ? ORDER BY artist");
+                myFindAlbumsByArtist = myConnection.prepareStatement("SELECT DISTINCT(t1.album) AS album, COUNT(DISTINCT(t2.artist)) AS artist_count, COUNT(DISTINCT(t2.id)) AS track_count FROM track t1, track t2 WHERE t1.artist LIKE ? AND t1.album = t2.album GROUP BY album ORDER BY album");
+                myFindArtistsByAlbum = myConnection.prepareStatement("SELECT DISTINCT(t1.artist) AS artist, COUNT(DISTINCT(t2.album)) AS album_count, COUNT(DISTINCT(t2.id)) AS track_count FROM track t1, track t2 WHERE t1.album LIKE ? AND t1.artist = t2.artist GROUP BY artist ORDER BY artist");
                 myFindPlaylists = myConnection.prepareStatement(
-                        "SELECT p.id AS id, p.name AS name, count(ltp.track_id) AS track_count FROM playlist p, link_track_playlist ltp WHERE ltp.playlist_id = p.id GROUP BY p.id, p.name ORDER BY p.name");
+                        "SELECT p.id AS id, p.name AS name, COUNT(ltp.track_id) AS track_count FROM playlist p, link_track_playlist ltp WHERE ltp.playlist_id = p.id GROUP BY p.id, p.name ORDER BY p.name");
                 return true;
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
@@ -243,7 +248,7 @@ public class DataStore {
     }
 
     private String getWildcardString(String string) {
-        return StringUtils.isNotEmpty(string.trim()) ? "%" + string.trim() + "%" : "%";
+        return StringUtils.isNotEmpty(string) ? "%" + string + "%" : "%";
     }
 
     public synchronized Track findTrackById(String id) {
@@ -252,27 +257,23 @@ public class DataStore {
     }
 
     public synchronized Collection<Track> findTracksByAlbum(String album) {
-        return executeQuery(myFindTracksByAlbum, myTrackResultBuilder, getWildcardString(album));
+        return executeQuery(myFindTracksByAlbum, myTrackResultBuilder, album);
     }
 
     public synchronized Collection<Track> findTracksByArtist(String artist) {
-        return executeQuery(myFindTracksByArtist, myTrackResultBuilder, getWildcardString(artist));
+        return executeQuery(myFindTracksByArtist, myTrackResultBuilder, artist);
     }
 
-    public synchronized Collection<Track> findTracks(String search) {
-        return executeQuery(myFindTracks, myTrackResultBuilder, getWildcardString(search), getWildcardString(search), getWildcardString(search));
+    public synchronized Collection<Track> findTracks(String track, String album, String artist, boolean useAnd) {
+        return executeQuery(useAnd ? myFindTracksAnd : myFindTracksOr, myTrackResultBuilder, track, album, artist);
     }
 
-    public synchronized Collection<Track> findAlbumsByArtist(String artist) {
-        return executeQuery(myFindAlbumsByArtist, myTrackResultBuilder, getWildcardString(artist));
+    public synchronized Collection<Album> findAlbumsByArtist(String artist) {
+        return executeQuery(myFindAlbumsByArtist, myAlbumResultBuilder, artist);
     }
 
-    public synchronized Collection<String> findArtistsByAlbum(String album) {
-        return executeQuery(myFindArtistsByAlbum, new ResultBuilder<String>() {
-            public String create(ResultSet resultSet) throws SQLException {
-                return resultSet.getString("ARTIST");
-            }
-        }, getWildcardString(album));
+    public synchronized Collection<Artist> findArtistsByAlbum(String album) {
+        return executeQuery(myFindArtistsByAlbum, myArtistResultBuilder, album);
     }
 
     public synchronized Collection<Playlist> findPlaylists() {

@@ -15,7 +15,7 @@ import java.util.*;
  * de.codewave.mytunesrss.command.ShowPortalCommandHandler
  */
 public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
-    public void execute() throws IOException, ServletException {
+    public void executeAuthenticated() throws IOException, ServletException {
         List<Playlist> playlists = new ArrayList<Playlist>();
         for (Playlist playlist : getDataStore().findPlaylists()) {
             playlists.add(playlist);

@@ -43,7 +43,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected DataStore getDataStore() {
-        return (DataStore)getContext().getAttribute(DataStore.class.getName());        
+        return (DataStore)getContext().getAttribute(DataStore.class.getName());
     }
 
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
@@ -54,5 +54,22 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected void forward(MyTunesRssCommand command) throws IOException, ServletException {
         forward("/exec/" + command.getName());
+    }
+
+    public void execute() throws IOException, ServletException {
+        if (needsAuthorization()) {
+            forward(MyTunesRssResource.Login);
+        } else {
+            executeAuthenticated();
+        }
+    }
+
+    public void executeAuthenticated() throws IOException, ServletException {
+        // intentionally left blank
+    }
+
+    protected String getRequestParameter(String key, String defaultValue) {
+        String value = getRequest().getParameter(key);
+        return StringUtils.isNotEmpty(value) ? value : defaultValue;
     }
 }

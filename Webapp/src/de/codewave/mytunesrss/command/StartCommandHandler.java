@@ -13,11 +13,7 @@ import java.io.*;
  * de.codewave.mytunesrss.command.StartCommandHandler
  */
 public class StartCommandHandler extends MyTunesRssCommandHandler {
-    public void execute() throws IOException, ServletException {
-        if (needsAuthorization()) {
-            forward(MyTunesRssResource.Login);
-        } else {
-            forward(MyTunesRssCommand.ShowPortal);
-        }
+    public void executeAuthenticated() throws IOException, ServletException {
+        forward(MyTunesRssCommand.ShowPortal);
     }
 }

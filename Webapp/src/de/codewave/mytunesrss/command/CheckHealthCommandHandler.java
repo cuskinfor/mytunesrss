@@ -23,7 +23,7 @@ public class CheckHealthCommandHandler extends MyTunesRssCommandHandler {
             LOG.info("Health check servlet called.");
         }
         DataStore dataStore = getDataStore();
-        if (dataStore == null || dataStore.findTracks("").isEmpty()) {
+        if (dataStore == null || dataStore.findTracks("%", "%", "%", false).isEmpty()) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Data store is null or empty!");
             }

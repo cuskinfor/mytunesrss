@@ -33,7 +33,7 @@
         <tr>
             <td>&nbsp;</td>
             <td><a href="#" style="background-image:url('${appUrl}/images/search.gif');">Search</a></td>
-            <td><a href="browse.html" style="background-image:url('${appUrl}/images/library.gif');">Browse library</a></td>
+            <td><a href="${servletUrl}/browseArtist" style="background-image:url('${appUrl}/images/library.gif');">Browse library</a></td>
             <td><a href="#" style="background-image:url('${appUrl}/images/feeds.gif');">Manage Feeds</a></td>
             <td>&nbsp;</td>
         </tr>
@@ -48,8 +48,8 @@
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, '', 'odd')}">
                 <td class="check"><input type="checkbox" /></td>
                 <td><c:out value="${playlist.name}" /></td>
-                <td class="icon"><a href="${servletUrl}/createRSS?id=${playlist.id}"><img src="${appUrl}/images/rss.gif" alt="rss" /></a></td>
-                <td class="icon"><a href="${servletUrl}/createM3U?id=${playlist.id}"><img src="${appUrl}/images/m3u.gif" alt="m3u" /></a></td>
+                <td class="icon"><a href="${servletUrl}/createRSS?playlist=${playlist.id}"><img src="${appUrl}/images/rss.gif" alt="rss" /></a></td>
+                <td class="icon"><a href="${servletUrl}/createM3U?playlist=${playlist.id}"><img src="${appUrl}/images/m3u.gif" alt="m3u" /></a></td>
             </tr>
         </c:forEach>
     </table>
