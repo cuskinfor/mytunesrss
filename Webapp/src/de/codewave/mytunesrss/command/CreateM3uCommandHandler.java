@@ -19,7 +19,7 @@ import java.util.*;
 public class CreateM3uCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
-    public void executeAuthenticated() throws SQLException, IOException, ServletException {
+    public void executeAuthorized() throws SQLException, IOException, ServletException {
         String playlistId = getRequest().getParameter("playlist");
         String album = getRequest().getParameter("album");
         String artist = getRequest().getParameter("artist");

@@ -9,6 +9,7 @@ public enum MyTunesRssResource {
     Portal("/portal.jsp"),
     BrowseArtist("/browse_artist.jsp"),
     BrowseAlbum("/browse_album.jsp"),
+    BrowseTrack("/browse_track.jsp"),
     TemplateM3u("/m3u.jsp");
 
     private String myValue;

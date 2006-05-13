@@ -31,7 +31,8 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected int getAuthHash() {
-        return (Integer)getSession().getAttribute("authHash");
+        Integer hash = (Integer)getSession().getAttribute("authHash");
+        return hash != null ? hash.intValue() : 0;
     }
 
     protected boolean needsAuthorization() {
@@ -72,11 +73,11 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         if (needsAuthorization()) {
             forward(MyTunesRssResource.Login);
         } else {
-            executeAuthenticated();
+            executeAuthorized();
         }
     }
 
-    public void executeAuthenticated() throws Exception {
+    public void executeAuthorized() throws Exception {
         // intentionally left blank
     }
 }

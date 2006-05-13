@@ -49,7 +49,7 @@
                     <td class="artist2">(<a href="${servletUrl}/browseArtist?album=${cwfn:urlEncode(album.name, 'UTF-8')}">${album.artistCount}&nbsp;artist${cwfn:choose(album.artistCount > 1, 's', '')}</a>)
                     </td>
                     <td class="tracks">
-                        <a href="${servletUrl}/findTracks?album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>">${album.trackCount}&nbsp;track${cwfn:choose(album.trackCount > 1, 's', '')}</a>
+                        <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>">${album.trackCount}&nbsp;track${cwfn:choose(album.trackCount > 1, 's', '')}</a>
                     </td>
                     <td class="icon">
                         <a href="${servletUrl}/createRSS?album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>"><img src="${appUrl}/images/rss.gif"

@@ -16,7 +16,7 @@ import java.sql.*;
  * de.codewave.mytunesrss.command.ShowPortalCommandHandler
  */
 public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
-    public void executeAuthenticated() throws SQLException, IOException, ServletException {
+    public void executeAuthorized() throws SQLException, IOException, ServletException {
             List<Playlist> playlists = new ArrayList<Playlist>();
             for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistsQuery())) {
                 playlists.add(playlist);

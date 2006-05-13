@@ -8,8 +8,8 @@
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib/codewave-utils-1.2.1.jar" />
-        <url>jar://$MODULE_DIR$/../lib/codewave-utils-1.2.1.jar!/</url>
+        <attribute name="URI" value="/lib/codewave-utils-1.3.jar" />
+        <url>jar://$MODULE_DIR$/../lib/codewave-utils-1.3.jar!/</url>
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
@@ -25,6 +25,16 @@
         <attribute name="method" value="2" />
         <attribute name="URI" value="/lib/commons-logging.jar" />
         <url>jar://$MODULE_DIR$/lib/commons-logging.jar!/</url>
+      </containerElement>
+      <containerElement type="library" level="module">
+        <attribute name="method" value="2" />
+        <attribute name="URI" value="/lib/commons-pool-1.3.jar" />
+        <url>jar://$MODULE_DIR$/lib/commons-pool-1.3.jar!/</url>
+      </containerElement>
+      <containerElement type="library" level="module">
+        <attribute name="method" value="2" />
+        <attribute name="URI" value="/lib/hsqldb.jar" />
+        <url>jar://$MODULE_DIR$/lib/hsqldb.jar!/</url>
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />

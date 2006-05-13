@@ -15,7 +15,7 @@ import java.sql.*;
  * de.codewave.mytunesrss.command.BrowseArtistCommandHandler
  */
 public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
-    public void executeAuthenticated() throws SQLException, IOException, ServletException {
+    public void executeAuthorized() throws SQLException, IOException, ServletException {
         String album = getRequestParameter("album", "%");
         getRequest().setAttribute("artists", getDataStore().executeQuery(new FindArtistQuery(album)));
         forward(MyTunesRssResource.BrowseArtist);

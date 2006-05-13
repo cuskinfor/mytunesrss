@@ -4,8 +4,6 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.jsp.*;
-
 import javax.servlet.*;
 import java.io.*;
 
@@ -13,7 +11,7 @@ import java.io.*;
  * de.codewave.mytunesrss.command.StartCommandHandler
  */
 public class StartCommandHandler extends MyTunesRssCommandHandler {
-    public void executeAuthenticated() throws IOException, ServletException {
+    public void executeAuthorized() throws IOException, ServletException {
         forward(MyTunesRssCommand.ShowPortal);
     }
 }
