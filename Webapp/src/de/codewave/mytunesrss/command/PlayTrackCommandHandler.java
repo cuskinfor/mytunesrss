@@ -11,14 +11,21 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
 import java.net.*;
+import java.sql.*;
+
+import org.apache.commons.logging.*;
 
 /**
  * de.codewave.mytunesrss.command.PlayTrackCommandHandler
  */
 public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
+    private static final Log LOG = LogFactory.getLog(PlayTrackCommandHandler.class);
 
     @Override
-    public void execute() throws Exception {
+    public void execute() throws SQLException, IOException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(ServletUtils.getRequestInfo(getRequest()));
+        }
         FileSender fileSender;
         if (needsAuthorization()) {
             fileSender = new StatusCodeFileSender(HttpServletResponse.SC_UNAUTHORIZED);
@@ -35,7 +42,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
         if ("head".equalsIgnoreCase(getRequest().getMethod())) {
             fileSender.sendHeadResponse(getRequest(), getResponse());
         } else {
-            fileSender.sendGetResponse(getRequest(), getResponse());
+            fileSender.sendGetResponse(getRequest(), getResponse(), false);
         }
     }
 
@@ -58,7 +65,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
         }
 
         @Override
-        public void sendGetResponse(HttpServletRequest servletRequest, HttpServletResponse httpServletResponse) throws IOException {
+        public void sendGetResponse(HttpServletRequest servletRequest, HttpServletResponse httpServletResponse, boolean throwException) throws IOException {
             httpServletResponse.setStatus(myStatusCode);
         }
 
