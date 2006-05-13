@@ -4,25 +4,26 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.datastore.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
 
 import javax.servlet.*;
 import java.io.*;
 import java.util.*;
+import java.sql.*;
 
 /**
  * de.codewave.mytunesrss.command.ShowPortalCommandHandler
  */
 public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
-    public void executeAuthenticated() throws IOException, ServletException {
-        List<Playlist> playlists = new ArrayList<Playlist>();
-        for (Playlist playlist : getDataStore().findPlaylists()) {
-            playlists.add(playlist);
-            playlists.addAll(createSplittedPlaylists(playlist));
-        }
-        getRequest().setAttribute("playlists", playlists);
-        forward(MyTunesRssResource.Portal);
+    public void executeAuthenticated() throws SQLException, IOException, ServletException {
+            List<Playlist> playlists = new ArrayList<Playlist>();
+            for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistsQuery())) {
+                playlists.add(playlist);
+                playlists.addAll(createSplittedPlaylists(playlist));
+            }
+            getRequest().setAttribute("playlists", playlists);
+            forward(MyTunesRssResource.Portal);
     }
 
     private List<Playlist> createSplittedPlaylists(Playlist playlist) {

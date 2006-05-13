@@ -2,22 +2,22 @@
  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
  */
 
-package de.codewave.mytunesrss.datastore;
+package de.codewave.mytunesrss.datastore.statement;
 
 /**
- * de.codewave.mytunesrss.datastore.Playlist
+ * de.codewave.mytunesrss.datastore.statement.Artist
  */
-public class Playlist {
-    private String myId;
+public class Artist {
     private String myName;
+    private int myAlbumCount;
     private int myTrackCount;
 
-    public String getId() {
-        return myId;
+    public int getAlbumCount() {
+        return myAlbumCount;
     }
 
-    public void setId(String id) {
-        myId = id;
+    public void setAlbumCount(int albumCount) {
+        myAlbumCount = albumCount;
     }
 
     public String getName() {

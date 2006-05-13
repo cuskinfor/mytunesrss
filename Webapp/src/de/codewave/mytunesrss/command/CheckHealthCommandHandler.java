@@ -6,9 +6,11 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 
 import javax.servlet.*;
 import java.io.*;
+import java.sql.*;
 
 import org.apache.commons.logging.*;
 
@@ -18,12 +20,12 @@ import org.apache.commons.logging.*;
 public class CheckHealthCommandHandler extends MyTunesRssCommandHandler {
     private static final Log LOG = LogFactory.getLog(CheckHealthCommandHandler.class);
 
-    public void execute() throws IOException, ServletException {
+    public void execute() throws SQLException, IOException {
         if (LOG.isInfoEnabled()) {
             LOG.info("Health check servlet called.");
         }
         DataStore dataStore = getDataStore();
-        if (dataStore == null || dataStore.findTracks("%", "%", "%", false).isEmpty()) {
+        if (dataStore == null || dataStore.executeQuery(new FindTrackQuery("%", FindTrackQuery.Operation.Or)).isEmpty()) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Data store is null or empty!");
             }

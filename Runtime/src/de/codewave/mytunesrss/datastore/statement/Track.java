@@ -2,12 +2,12 @@
  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
  */
 
-package de.codewave.mytunesrss.datastore;
+package de.codewave.mytunesrss.datastore.statement;
 
 import java.io.*;
 
 /**
- * de.codewave.mytunesrss.datastore.Track
+ * de.codewave.mytunesrss.datastore.statement.Track
  */
 public class Track {
     private String myId;

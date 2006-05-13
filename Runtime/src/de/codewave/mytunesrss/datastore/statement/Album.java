@@ -2,10 +2,10 @@
  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
  */
 
-package de.codewave.mytunesrss.datastore;
+package de.codewave.mytunesrss.datastore.statement;
 
 /**
- * de.codewave.mytunesrss.datastore.Album
+ * de.codewave.mytunesrss.datastore.statement.Album
  */
 public class Album {
     private String myName;

@@ -49,7 +49,7 @@
                 <td class="check"><input type="checkbox" /></td>
                 <td><c:out value="${playlist.name}" /></td>
                 <td class="icon"><a href="${servletUrl}/createRSS?playlist=${playlist.id}"><img src="${appUrl}/images/rss.gif" alt="rss" /></a></td>
-                <td class="icon"><a href="${servletUrl}/createM3U?playlist=${playlist.id}"><img src="${appUrl}/images/m3u.gif" alt="m3u" /></a></td>
+                <td class="icon"><a href="${servletUrl}/createM3U/playlist=${playlist.id}/mytunesrss.m3u"><img src="${appUrl}/images/m3u.gif" alt="m3u" /></a></td>
             </tr>
         </c:forEach>
     </table>

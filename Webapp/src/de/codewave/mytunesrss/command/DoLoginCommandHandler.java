@@ -16,7 +16,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
     public void execute() throws IOException, ServletException {
         String password = getRequest().getParameter("password");
         if (password != null && needsAuthorization()) {
-            if (isAuthorized("" + password.hashCode())) {
+            if (isAuthorized(password.hashCode())) {
                 authorize();
                 forward(MyTunesRssCommand.ShowPortal);
             } else {

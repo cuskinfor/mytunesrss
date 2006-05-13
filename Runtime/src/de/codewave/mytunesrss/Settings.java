@@ -1,9 +1,10 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.datastore.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.*;
 import de.codewave.utils.network.*;
 import de.codewave.utils.serialnumber.*;
-import de.codewave.mytunesrss.datastore.*;
 import org.apache.catalina.*;
 import org.apache.catalina.session.*;
 import org.apache.catalina.startup.*;
@@ -15,6 +16,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.sql.*;
 import java.text.*;
 import java.util.*;
 import java.util.prefs.*;
@@ -58,6 +60,7 @@ public class Settings {
     private JButton myUpdateButton;
     private Embedded myServer;
     private LogDisplay myLogDisplay = new LogDisplay();
+    private DataStore myStore;
 
     public Settings(final JFrame frame) throws UnsupportedEncodingException {
         Logger.getRootLogger().removeAllAppenders();
@@ -292,6 +295,10 @@ public class Settings {
                         showErrorMessage(myMainBundle.getString("error.server.startFailure") + e.getMessage());
                         setStatus(myMainBundle.getString("info.server.idle"));
                         enableConfig(true);
+                    } catch (SQLException e) {
+                        showErrorMessage(myMainBundle.getString("error.server.startFailure") + e.getMessage());
+                        setStatus(myMainBundle.getString("info.server.idle"));
+                        enableConfig(true);
                     }
                     enableButtons(true);
                     myRootPanel.validate();
@@ -363,30 +370,45 @@ public class Settings {
     }
 
     private Embedded createServer(String name, InetAddress listenAddress, int listenPort, File catalinaBasePath, String webAppName,
-            String webAppContext) throws IOException {
-        DataStore dataStore = new de.codewave.mytunesrss.datastore.DataStore();
-        if (dataStore.init()) {
-            MyTunesRssConfig config = createPrefDataFromGUI();
-            dataStore.loadFromITunes(new File(config.getLibraryXml()).toURL());
-            Embedded server = new Embedded();
-            server.setCatalinaBase(catalinaBasePath.getCanonicalPath());
-            Engine engine = server.createEngine();
-            engine.setName("engine." + name);
-            engine.setDefaultHost("host." + name);
-            Host host = server.createHost("host." + name, new File(catalinaBasePath, "webapps").getCanonicalPath());
-            engine.addChild(host);
-            Context context = server.createContext(webAppContext, webAppName);
-            StandardManager sessionManager = new StandardManager();
-            sessionManager.setPathname("");
-            context.setManager(sessionManager);
-            host.addChild(context);
-            server.addEngine(engine);
-            server.addConnector(server.createConnector(listenAddress, listenPort, false));
-            context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
-            context.getServletContext().setAttribute(DataStore.class.getName(), dataStore);
-            return server;
+            String webAppContext) throws IOException, SQLException {
+        MyTunesRssConfig config = createPrefDataFromGUI();
+        if (myStore == null) {
+            createStore(new File(config.getLibraryXml()).toURL());
         }
-        return null;
+        Embedded server = new Embedded();
+        server.setCatalinaBase(catalinaBasePath.getCanonicalPath());
+        Engine engine = server.createEngine();
+        engine.setName("engine." + name);
+        engine.setDefaultHost("host." + name);
+        Host host = server.createHost("host." + name, new File(catalinaBasePath, "webapps").getCanonicalPath());
+        engine.addChild(host);
+        Context context = server.createContext(webAppContext, webAppName);
+        StandardManager sessionManager = new StandardManager();
+        sessionManager.setPathname("");
+        context.setManager(sessionManager);
+        host.addChild(context);
+        server.addEngine(engine);
+        server.addConnector(server.createConnector(listenAddress, listenPort, false));
+        context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
+        context.getServletContext().setAttribute(DataStore.class.getName(), myStore);
+        return server;
+    }
+
+    private void createStore(URL iTunesXmlUrl) throws MalformedURLException, SQLException {
+        myStore = new DataStore();
+        DataStoreSession storeSession = myStore.getTransaction();
+        storeSession.begin();
+        try {
+            storeSession.executeStatement(new CreateAllTablesStatement());
+            ITunesUtils.loadFromITunes(iTunesXmlUrl, storeSession);
+            storeSession.commit();
+        } catch (SQLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not load iTunes library into database.", e);
+            }
+            storeSession.rollback();
+            throw e;
+        }
     }
 
     public void doStopServer() {

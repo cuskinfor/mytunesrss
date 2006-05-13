@@ -11,7 +11,9 @@ public enum MyTunesRssCommand implements Command {
     ShowPortal("showPortal", ShowPortalCommandHandler.class),
     CheckHealth("checkHealth", CheckHealthCommandHandler.class),
     BrowseAlbum("browseAlbum", BrowseAlbumCommandHandler.class),
-    BrowseArtist("browseArtist", BrowseArtistCommandHandler.class);
+    BrowseArtist("browseArtist", BrowseArtistCommandHandler.class),
+    CreateM3u("createM3U", CreateM3uCommandHandler.class),
+    PlayTrack("playTrack", PlayTrackCommandHandler.class);
 
     private String myName;
     private Class<? extends CommandHandler> myCommandHandlerClass;

@@ -21,19 +21,31 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         return (MyTunesRssConfig)getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
     }
 
-    protected boolean isAuthorized(String authHash) {
+    protected boolean isAuthorized(int authHash) {
         MyTunesRssConfig config = getMyTunesRssConfig();
-        return !config.isAuth() || ("" + config.getPasswordHash()).equals(authHash);
+        return !config.isAuth() || (config.getPasswordHash() == authHash);
     }
 
     protected void authorize() {
-        getSession().setAttribute("authHash", "" + getMyTunesRssConfig().getPasswordHash());
+        getSession().setAttribute("authHash", getMyTunesRssConfig().getPasswordHash());
+    }
+
+    protected int getAuthHash() {
+        return (Integer)getSession().getAttribute("authHash");
     }
 
     protected boolean needsAuthorization() {
-        if (!getMyTunesRssConfig().isAuth() || StringUtils.isNotEmpty((String)getSession().getAttribute("authHash"))) {
+        if (!getMyTunesRssConfig().isAuth() || getSession().getAttribute("authHash") != null) {
             return false;
         } else {
+            if (StringUtils.isNotEmpty(getRequest().getParameter("authHash"))) {
+                try {
+                    int requestAuthHash = Integer.parseInt(getRequest().getParameter("authHash"));
+                    return !isAuthorized(requestAuthHash);
+                } catch (NumberFormatException e) {
+                    // intentionally left blank
+                }
+            }
             return true;
         }
     }
@@ -56,7 +68,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         forward("/exec/" + command.getName());
     }
 
-    public void execute() throws IOException, ServletException {
+    public void execute() throws Exception {
         if (needsAuthorization()) {
             forward(MyTunesRssResource.Login);
         } else {
@@ -64,12 +76,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         }
     }
 
-    public void executeAuthenticated() throws IOException, ServletException {
+    public void executeAuthenticated() throws Exception {
         // intentionally left blank
-    }
-
-    protected String getRequestParameter(String key, String defaultValue) {
-        String value = getRequest().getParameter(key);
-        return StringUtils.isNotEmpty(value) ? value : defaultValue;
     }
 }

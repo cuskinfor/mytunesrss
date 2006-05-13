@@ -56,7 +56,7 @@
                                                                                                                              alt="rss" /></a>
                     </td>
                     <td class="icon">
-                        <a href="${servletUrl}/createRSS?album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>"><img src="${appUrl}/images/m3u.gif"
+                        <a href="${servletUrl}/createM3U/album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>/mytunesrss.m3u"><img src="${appUrl}/images/m3u.gif"
                                                                                                                              alt="m3u" /></a>
                     </td>
                 </tr>
@@ -66,7 +66,7 @@
         <div class="buttons">
             <input type="button" onClick="document.location.href='${servletUrl}/showPortal'" value="back to portal" />
             <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS'" value="RSS" />
-            <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U'" value="M3U" />
+            <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
         </div>
     </form>
 </div>

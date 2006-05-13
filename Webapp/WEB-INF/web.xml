@@ -12,13 +12,23 @@
         <listener-class>de.codewave.mytunesrss.command.MyTunesRssCommandHandlerRegistry</listener-class>
     </listener>
     <filter>
+        <description>Filter for adding path info key/value pairs to the request parameters.</description>
+        <display-name>PathInfoRequestParameterFilter</display-name>
+        <filter-name>PathInfoRequestParameterFilter</filter-name>
+        <filter-class>de.codewave.utils.servlet.PathInfoRequestParameterFilter</filter-class>
+    </filter>
+    <filter>
         <description>Filter for trimming all parameter strings.</description>
-        <display-name>ParameterTrimmerFilter</display-name>
-        <filter-name>ParameterTrimmerFilter</filter-name>
+        <display-name>ServletRequestParameterTrimmer</display-name>
+        <filter-name>ServletRequestParameterTrimmer</filter-name>
         <filter-class>de.codewave.utils.servlet.ServletRequestParameterTrimmer</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>ParameterTrimmerFilter</filter-name>
+        <filter-name>PathInfoRequestParameterFilter</filter-name>
+        <servlet-name>CommandServlet</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ServletRequestParameterTrimmer</filter-name>
         <servlet-name>CommandServlet</servlet-name>
     </filter-mapping>
     <servlet>
@@ -27,12 +37,14 @@
         <servlet-name>CommandServlet</servlet-name>
         <servlet-class>de.codewave.utils.servlet.CommandServlet</servlet-class>
     </servlet>
-    <!--servlet-mapping>
-        <servlet-name>CommandServlet</servlet-name>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping-->
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
         <url-pattern>/exec/*</url-pattern>
     </servlet-mapping>
+    <jsp-config>
+        <taglib>
+            <taglib-uri>http://www.codewave.de/mytunesrss/jsp/functions</taglib-uri>
+            <taglib-location>/WEB-INF/mytunes-functions.tld</taglib-location>
+        </taglib>
+    </jsp-config>
 </web-app>

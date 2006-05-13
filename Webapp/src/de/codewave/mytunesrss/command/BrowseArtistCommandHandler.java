@@ -5,17 +5,19 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 
 import javax.servlet.*;
 import java.io.*;
+import java.sql.*;
 
 /**
  * de.codewave.mytunesrss.command.BrowseArtistCommandHandler
  */
 public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
-    public void executeAuthenticated() throws IOException, ServletException {
+    public void executeAuthenticated() throws SQLException, IOException, ServletException {
         String album = getRequestParameter("album", "%");
-        getRequest().setAttribute("artists", getDataStore().findArtistsByAlbum(album));
+        getRequest().setAttribute("artists", getDataStore().executeQuery(new FindArtistQuery(album)));
         forward(MyTunesRssResource.BrowseArtist);
     }
 }
