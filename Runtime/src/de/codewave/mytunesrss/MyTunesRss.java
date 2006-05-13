@@ -47,14 +47,11 @@ public class MyTunesRss {
 
     public static void main(String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
             ClassNotFoundException, IOException, SQLException {
+        STORE.init();
         if (ProgramUtils.getCommandLineArguments(args).containsKey("debug")) {
             Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
         }
         final DatabaseBuilder builder = new DatabaseBuilder();
-        final boolean databaseCreated = builder.needsCreation();
-        if (databaseCreated) {
-            builder.createDatabase();
-        }
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         ResourceBundle mainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");

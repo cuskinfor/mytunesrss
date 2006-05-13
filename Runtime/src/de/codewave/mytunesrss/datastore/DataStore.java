@@ -28,11 +28,23 @@ public class DataStore {
         }
     }
 
-    private GenericObjectPool myConnectionPool = new GenericObjectPool(new BasePoolableObjectFactory() {
-        public Object makeObject() throws Exception {
-            return DriverManager.getConnection("jdbc:hsqldb:file:data/hsqldb/MyTunesRSS", "sa", "");
+    private GenericObjectPool myConnectionPool;
+    
+    public void init() {
+        myConnectionPool = new GenericObjectPool(new BasePoolableObjectFactory() {
+            public Object makeObject() throws Exception {
+                return DriverManager.getConnection("jdbc:hsqldb:file:data/hsqldb/MyTunesRSS", "sa", "");
+            }
+        }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 5, false, false, 10000, 2, 20000, false, 20000);
+    }
+
+    public void destroy() throws Exception {
+        try {
+            aquireConnection().createStatement().execute("SHUTDOWN COMPACT");
+        } finally {
+            myConnectionPool.close();
         }
-    }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 5, false, false, 10000, 2, 20000, false, 20000);
+    }
 
     Connection aquireConnection() {
         try {

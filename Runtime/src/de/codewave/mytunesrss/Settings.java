@@ -441,6 +441,13 @@ public class Settings {
                     config.save();
                 }
             }
+            try {
+                MyTunesRss.STORE.destroy();
+            } catch (Exception e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not destroy the store.", e);
+                }
+            }
             System.exit(0);
         } else {
             showErrorMessage(myMainBundle.getString("error.quitWhileStartingOrStopping"));

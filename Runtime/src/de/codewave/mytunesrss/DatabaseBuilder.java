@@ -43,7 +43,7 @@ public class DatabaseBuilder {
             if (myLibraryXml == null) {
                 myLibraryXml = iTunesLibraryXml.getPath();
             }
-            if (!myLibraryXml.equals(iTunesLibraryXml.getPath())) {
+            if (needsCreation() || !myLibraryXml.equals(iTunesLibraryXml.getPath())) {
                 return true;
             }
             Collection<Long> lastUpdate = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Long>() {
@@ -86,6 +86,9 @@ public class DatabaseBuilder {
                 DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
                 storeSession.begin();
                 try {
+                    if (needsCreation()) {
+                        createDatabase();
+                    }
                     storeSession.executeStatement(new ClearAllTablesStatement());
                     final long updateTime = System.currentTimeMillis();
                     ITunesUtils.loadFromITunes(iTunesLibraryXml, storeSession, myProgress);
