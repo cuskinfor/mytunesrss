@@ -37,10 +37,13 @@
         <table class="select" cellspacing="0">
             <tr>
                 <th>&nbsp;</th>
-                <th colspan="5">
+                <th>
                     Artists
                     <c:if test="${!empty param.album}"> on "<c:out value="${param.album}" />"</c:if>
                 </th>
+				<th>Album</th>
+				<th>Tracks</th>
+				<th colspan="2">&nbsp;</th>
             </tr>
             <c:set var="backUrl">${servletUrl}/browseArtist?album=${param.album}</c:set>
             <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
@@ -48,18 +51,16 @@
                     <td class="check"><input type="checkbox" name="artist" value="<c:out value="${artist.name}"/>" /></td>
                     <td class="artist2"><c:out value="${artist.name}" /></td>
                     <td class="album">
-                        <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>">${artist.albumCount}&nbsp;album${cwfn:choose(artist.albumCount > 1, 's', '')}</a>
+                        <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>">(${artist.albumCount})</a>
                     </td>
                     <td class="tracks">
-                        <a href="${servletUrl}/browseTrack?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${artist.trackCount}&nbsp;track${cwfn:choose(artist.trackCount > 1, 's', '')}</a>
+                        <a href="${servletUrl}/browseTrack?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">(${artist.trackCount})</a>
                     </td>
                     <td class="icon">
-                        <a href="${servletUrl}/createRSS/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/mytunesrss.xml"><img src="${appUrl}/images/rss.gif"
-                                                                                                                               alt="rss" /></a>
+                        <a class="rss" href="${servletUrl}/createRSS/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/mytunesrss.xml">&nbsp;</a>
                     </td>
                     <td class="icon">
-                        <a href="${servletUrl}/createM3U/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/mytunesrss.m3u"><img src="${appUrl}/images/m3u.gif"
-                                                                                                                               alt="m3u" /></a>
+                        <a class="m3u" href="${servletUrl}/createM3U/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/mytunesrss.m3u">&nbsp;</a>
                     </td>
                 </tr>
             </c:forEach>

@@ -408,19 +408,28 @@ td.artist2 {
 td.album, td.tracks {
 	padding: 0;
 	border-left: none;
-	width: 100px;
 }
 
 td.album a {
 	display: block;
-	padding: 5px 10px 5px 24px;
-	background: url("../images/albums.gif") 0 4px no-repeat;
+	padding: 5px 10px 5px 30px;
+	background: url("../images/albums.gif") 10px 5px no-repeat;
+	text-decoration: none;
+}
+
+tr.odd td.album a {
+	background-position: 10px -79px;
 }
 
 td.tracks a {
 	display: block;
-	padding: 5px 10px 5px 24px;
-	background: url("../images/tracks.gif") 0 4px no-repeat;
+	padding: 5px 10px 5px 30px;
+	background: url("../images/tracks.gif") 10px 5px no-repeat;
+	text-decoration: none;
+}
+
+tr.odd td.tracks a {
+	background-position: 10px -79px;
 }
 
 td.icon {
@@ -428,4 +437,30 @@ td.icon {
 	padding: 0;
 	border-left: none;
 	text-align: center;
+}
+
+a.rss {
+	display: block;
+	height: 18px;
+	width: 16px;
+	overflow: hidden;
+	background: url("../images/rss.gif") 0 2px no-repeat;
+	text-decoration: none;
+}
+
+tr.odd a.rss {
+	background-position: 0 -83px;
+}
+
+a.m3u {
+	display: block;
+	height: 18px;
+	width: 16px;
+	overflow: hidden;
+	background: url("../images/m3u.gif") 0 2px no-repeat;
+	text-decoration: none;
+}
+
+tr.odd a.m3u {
+	background-position: 0 -83px;
 }
