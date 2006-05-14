@@ -26,9 +26,11 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         String artist = getRequestParameter("artist", null);
         FindTrackQuery query = null;
         if (StringUtils.isNotEmpty(searchTerm)) {
-            query = new FindTrackQuery("%" + searchTerm + "%", FindTrackQuery.Operation.Or);
+            query = FindTrackQuery.getForSearchTerm(searchTerm);
+        } else if (StringUtils.isNotEmpty(album)) {
+            query = FindTrackQuery.getForAlbum(album);
         } else {
-            query = new FindTrackQuery(album, artist);
+            query = FindTrackQuery.getForArtist(artist);
         }
         String sortOrder = getRequestParameter("sortOrder", SortOrder.Album.name());
         getRequest().setAttribute("sortOrder", sortOrder);

@@ -16,7 +16,7 @@ import java.sql.*;
  */
 public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws IOException, ServletException, SQLException {
-        String artist = getRequestParameter("artist", "%");
+        String artist = getRequest().getParameter("artist");
         getRequest().setAttribute("albums", getDataStore().executeQuery(new FindAlbumQuery(artist)));
         forward(MyTunesRssResource.BrowseAlbum);
     }

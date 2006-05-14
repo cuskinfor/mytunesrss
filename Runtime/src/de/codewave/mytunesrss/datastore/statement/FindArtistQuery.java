@@ -19,8 +19,14 @@ public class FindArtistQuery extends DataStoreQuery<Artist> {
     }
 
     public Collection<Artist> execute(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(
-                "SELECT DISTINCT(t1.artist) AS artist, COUNT(DISTINCT(t2.album)) AS album_count, COUNT(DISTINCT(t2.id)) AS track_count FROM track t1, track t2 WHERE t1.album LIKE ? AND t1.artist = t2.artist GROUP BY artist ORDER BY artist");
+        PreparedStatement statement = null;
+        if (myAlbum != null) {
+            statement = connection.prepareStatement(
+                "SELECT DISTINCT(t1.artist) AS artist, COUNT(DISTINCT(t2.album)) AS album_count, COUNT(DISTINCT(t2.id)) AS track_count FROM track t1, track t2 WHERE t1.album = ? AND t1.artist = t2.artist GROUP BY artist ORDER BY artist");
+        } else {
+            statement = connection.prepareStatement(
+                    "SELECT DISTINCT(t1.artist) AS artist, COUNT(DISTINCT(t2.album)) AS album_count, COUNT(DISTINCT(t2.id)) AS track_count FROM track t1, track t2 WHERE t1.artist = t2.artist GROUP BY artist ORDER BY artist");
+        }
         return execute(statement, myBuilder, myAlbum);
     }
 

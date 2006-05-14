@@ -14,43 +14,41 @@ import java.io.*;
  de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
  */
 public class FindTrackQuery extends DataStoreQuery<Track> {
-    public static enum Operation {
-        And(), Or();
+    public static FindTrackQuery getForId(String id) {
+        FindTrackQuery query = new FindTrackQuery();
+        query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE id = ?";
+        query.myParameters = new String[] {id};
+        return query;
+    }
+
+    public static FindTrackQuery getForSearchTerm(String searchTerm) {
+        FindTrackQuery query = new FindTrackQuery();
+        query.myQuery =
+                "SELECT id, name, artist, album, time, track_number, file FROM track WHERE name LIKE ? OR album LIKE ? OR artist LIKE ? ORDER BY album, track_number, name";
+        query.myParameters = new String[] {searchTerm, searchTerm, searchTerm};
+        return query;
+    }
+
+    public static FindTrackQuery getForAlbum(String album) {
+        FindTrackQuery query = new FindTrackQuery();
+        query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album = ? ORDER BY track_number, name";
+        query.myParameters = new String[] {album};
+        return query;
+    }
+
+    public static FindTrackQuery getForArtist(String artist) {
+        FindTrackQuery query = new FindTrackQuery();
+        query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist = ? ORDER BY album, track_number, name";
+        query.myParameters = new String[] {artist};
+        return query;
     }
 
     private TrackResultBuilder myBuilder = new TrackResultBuilder();
     private String myQuery;
     private Object[] myParameters;
 
-    public FindTrackQuery(String id) {
-        myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE id = ?";
-        myParameters = new String[] {id};
-    }
-
-    public FindTrackQuery(String searchTerm, Operation operation) {
-        if (operation == Operation.And) {
-            myQuery =
-                    "SELECT id, name, artist, album, time, track_number, file FROM track WHERE name LIKE ? AND album LIKE ? AND artist LIKE ? ORDER BY album, track_number, name";
-        } else {
-            myQuery =
-                    "SELECT id, name, artist, album, time, track_number, file FROM track WHERE name LIKE ? OR album LIKE ? OR artist LIKE ? ORDER BY album, track_number, name";
-        }
-        myParameters = new String[] {searchTerm, searchTerm, searchTerm};
-    }
-
-    public FindTrackQuery(String album, String artist) {
-        if (StringUtils.isEmpty(album) && StringUtils.isEmpty(artist)) {
-            throw new IllegalArgumentException("Either album or artist must be specified.");
-        } else if (StringUtils.isNotEmpty(album) && StringUtils.isNotEmpty(artist)) {
-            myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album LIKE ? AND artist LIKE ? ORDER BY album, track_number, name";
-            myParameters = new String[] {album, artist};
-        } else if (StringUtils.isNotEmpty(album)) {
-            myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album LIKE ? ORDER BY track_number, name";
-            myParameters = new String[] {album};
-        } else {
-            myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist LIKE ? ORDER BY album, track_number, name";
-            myParameters = new String[] {artist};
-        }
+    private FindTrackQuery() {
+        // intentionally left blank
     }
 
     public Collection<Track> execute(Connection connection) throws SQLException {
