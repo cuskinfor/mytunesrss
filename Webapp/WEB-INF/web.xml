@@ -23,6 +23,21 @@
         <filter-name>ServletRequestParameterTrimmer</filter-name>
         <filter-class>de.codewave.utils.servlet.ServletRequestParameterTrimmer</filter-class>
     </filter>
+    <filter>
+        <description>Filter for setting the request encoding.</description>
+        <display-name>EncodingFilter</display-name>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.servlet.EncodingFilter</filter-class>
+        <init-param>
+            <description>Character encoding</description>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <servlet-name>CommandServlet</servlet-name>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>PathInfoRequestParameterFilter</filter-name>
         <servlet-name>CommandServlet</servlet-name>
@@ -39,7 +54,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
-        <url-pattern>/exec/*</url-pattern>
+        <url-pattern>/mytunes/*</url-pattern>
     </servlet-mapping>
     <jsp-config>
         <taglib>

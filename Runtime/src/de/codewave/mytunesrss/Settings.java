@@ -6,6 +6,7 @@ import de.codewave.utils.*;
 import de.codewave.utils.network.*;
 import de.codewave.utils.serialnumber.*;
 import org.apache.catalina.*;
+import org.apache.catalina.connector.*;
 import org.apache.catalina.session.*;
 import org.apache.catalina.startup.*;
 import org.apache.commons.logging.*;
@@ -328,7 +329,7 @@ public class Settings {
     private byte checkServerHealth(int port) {
         HttpURLConnection connection = null;
         try {
-            URL targetUrl = new URL("http://127.0.0.1:" + port + "/exec/checkHealth");
+            URL targetUrl = new URL("http://127.0.0.1:" + port + "/mytunes/checkHealth");
             if (LOG.isInfoEnabled()) {
                 LOG.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             }
@@ -387,7 +388,9 @@ public class Settings {
         context.setManager(sessionManager);
         host.addChild(context);
         server.addEngine(engine);
-        server.addConnector(server.createConnector(listenAddress, listenPort, false));
+        Connector connector = server.createConnector(listenAddress, listenPort, false);
+        connector.setUseBodyEncodingForURI(true);
+        server.addConnector(connector);
         context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
         context.getServletContext().setAttribute(DataStore.class.getName(), MyTunesRss.STORE);
         return server;

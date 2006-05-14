@@ -12,7 +12,7 @@
 <head>
     <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="refresh" content="1; URL=/exec/" />
+    <meta http-equiv="refresh" content="0; URL=/mytunes/" />
 </head>
 
 <body>

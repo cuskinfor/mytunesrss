@@ -60,13 +60,13 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
-        getRequest().setAttribute("servletUrl", ServletUtils.getApplicationUrl(getRequest()) + "/exec");
+        getRequest().setAttribute("servletUrl", ServletUtils.getApplicationUrl(getRequest()) + "/mytunes");
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
         forward(resource.getValue());
     }
 
     protected void forward(MyTunesRssCommand command) throws IOException, ServletException {
-        forward("/exec/" + command.getName());
+        forward("/mytunes/" + command.getName());
     }
 
     public void execute() throws Exception {
