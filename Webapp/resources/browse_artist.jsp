@@ -14,7 +14,7 @@
 
     <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" /> <!--[if IE]>
       <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
     <![endif]-->
 </head>
@@ -28,15 +28,15 @@
     <jsp:include page="/error.jsp" />
 
     <ul class="links">
-      <li>
-				<a href="${servletUrl}/browseAlbum">by album</a>
-			</li>
-      <li>
-				<a href="#">new playlist</a>
-			</li>
-      <li style="float:right;">
-				<a href="${servletUrl}/showPortal">back</a>
-			</li>
+        <li>
+            <a href="${servletUrl}/browseAlbum">by album</a>
+        </li>
+        <li>
+            <a href="#">new playlist</a>
+        </li>
+        <li style="float:right;">
+            <a href="${servletUrl}/showPortal">Portal</a>
+        </li>
     </ul>
 
     <form name="browse" action="" method="post">
@@ -47,9 +47,9 @@
                     Artists
                     <c:if test="${!empty param.album}"> on "<c:out value="${param.album}" />"</c:if>
                 </th>
-				<th>Album</th>
-				<th>Tracks</th>
-				<th colspan="2">&nbsp;</th>
+                <th>Album</th>
+                <th>Tracks</th>
+                <th colspan="2">&nbsp;</th>
             </tr>
             <c:set var="backUrl">${servletUrl}/browseArtist?album=${param.album}</c:set>
             <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
@@ -63,17 +63,18 @@
                         <a href="${servletUrl}/browseTrack?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">(${artist.trackCount})</a>
                     </td>
                     <td class="icon">
-                        <a href="${servletUrl}/createRSS/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/mytunesrss.xml"><img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="RSS"/></a>
+                        <a href="${servletUrl}/createRSS/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/mytunesrss.xml"><img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                                                                                                                              alt="RSS" /></a>
                     </td>
                     <td class="icon">
-                        <a href="${servletUrl}/createM3U/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/mytunesrss.m3u"><img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="M3U"/></a>
+                        <a href="${servletUrl}/createM3U/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/mytunesrss.m3u"><img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                                                                                                                              alt="M3U" /></a>
                     </td>
                 </tr>
             </c:forEach>
         </table>
 
         <div class="buttons">
-            <input type="button" onClick="document.location.href='${servletUrl}/showPortal'" value="back to portal" />
             <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS/mytunesrss.xml'" value="RSS" />
             <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
         </div>

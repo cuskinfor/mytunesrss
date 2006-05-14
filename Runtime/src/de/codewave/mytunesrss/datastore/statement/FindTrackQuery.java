@@ -35,7 +35,7 @@ public class FindTrackQuery extends DataStoreQuery<Track> {
             myQuery =
                     "SELECT id, name, artist, album, time, track_number, file FROM track WHERE name LIKE ? OR album LIKE ? OR artist LIKE ? ORDER BY album, track_number, name";
         }
-        myParameters = new String[] {searchTerm};
+        myParameters = new String[] {searchTerm, searchTerm, searchTerm};
     }
 
     public FindTrackQuery(String album, String artist) {

@@ -329,7 +329,7 @@ public class Settings {
     private byte checkServerHealth(int port) {
         HttpURLConnection connection = null;
         try {
-            URL targetUrl = new URL("http://127.0.0.1:" + port + "/mytunes/checkHealth");
+            URL targetUrl = new URL("http://127.0.0.1:" + port + "/mytunesrss/checkHealth");
             if (LOG.isInfoEnabled()) {
                 LOG.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             }
@@ -389,7 +389,7 @@ public class Settings {
         host.addChild(context);
         server.addEngine(engine);
         Connector connector = server.createConnector(listenAddress, listenPort, false);
-        connector.setUseBodyEncodingForURI(true);
+        connector.setURIEncoding("UTF-8");
         server.addConnector(connector);
         context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
         context.getServletContext().setAttribute(DataStore.class.getName(), MyTunesRss.STORE);

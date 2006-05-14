@@ -16,10 +16,10 @@
 
     <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" /> <!--[if IE]>
       <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
     <![endif]-->
-<script type="text/javascript">
+    <script type="text/javascript">
 
         function sort(sortOrder) {
             document.forms["browse"].action = "${servletUrl}/browseTrack";
@@ -66,16 +66,16 @@
     <jsp:include page="/error.jsp" />
 
     <ul class="links">
-      <li>
-        <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album" /></a></c:if>
-        <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist" /></a></c:if>
-			</li>
-      <li>
-				<a href="#">new playlist</a>
-			</li>
-      <li style="float:right;">
-				<a href="${servletUrl}/showPortal">back</a>
-			</li>
+        <li>
+            <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album" /></a></c:if>
+            <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist" /></a></c:if>
+        </li>
+        <li>
+            <a href="#">new playlist</a>
+        </li>
+        <li style="float:right;">
+            <a href="${param.backUrl}">back</a>
+        </li>
     </ul>
 
     <form id="browse" action="${servletUrl}/addTracks" method="post">
@@ -116,29 +116,27 @@
                     <td>
                         <c:choose>
                             <c:when test="${sortOrder == 'Album'}">
-                                <c:out value="${track.trackNumber}" /> -
+                                <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
                                 <c:if test="${!track.simple}"><c:out value="${track.artist}" /> -</c:if>
                                 <c:out value="${track.name}" />
                             </c:when>
                             <c:otherwise>
                                 <c:if test="${!track.simple}"><c:out value="${track.album}" /> -</c:if>
-                                <c:out value="${track.trackNumber}" /> -
+                                <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
                                 <c:out value="${track.name}" />
                             </c:otherwise>
                         </c:choose>
                     </td>
                     <td class="icon">
-                        <a href="${servletUrl}/playTrack/track=${track.id}/${cwfn:urlEncode(mtfn:virtualName(track.file), 'UTF-8')}"><img
-                                src="${appUrl}/images/play${cwfn:choose(count % 2 == 0, '', '_odd')}.gif"
-                                alt="<fmt:message key="select.play"/>" /></a>
+                        <a href="${servletUrl}/playTrack/track=${track.id}/${cwfn:urlEncode(mtfn:virtualName(track.file), 'UTF-8')}"><img src="${appUrl}/images/play${cwfn:choose(count % 2 == 0, '', '_odd')}.gif"
+                                                                                                                                          alt="<fmt:message key="select.play"/>" /></a>
                     </td>
                 </tr>
-                <c:set var="count" value="${count + 1}"/>
+                <c:set var="count" value="${count + 1}" />
             </c:forEach>
         </table>
 
         <div class="buttons">
-            <input type="button" onClick="document.location.href='${param.backUrl}'" value="back" />
             <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS/mytunesrss.xml'" value="RSS" />
             <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
         </div>

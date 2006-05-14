@@ -54,7 +54,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
-        <url-pattern>/mytunes/*</url-pattern>
+        <url-pattern>/mytunesrss/*</url-pattern>
     </servlet-mapping>
     <jsp-config>
         <taglib>
