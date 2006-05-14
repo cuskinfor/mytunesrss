@@ -16,7 +16,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
     <!--[if IE]>
-      <link rel="stylesheet" type="text/css" href="styles/ie.css" />
+      <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
     <![endif]-->
 
 </head>
@@ -27,16 +27,25 @@
 
     <h1 class="search"><span>MyTunesRSS</span></h1>
 
+    <div class="link">
+        <a href="#">Settings</a> - 
+		<a href="#">log out</a>
+    </div>
+
     <jsp:include page="/error.jsp" />
 
     <table class="start" cellspacing="0">
         <tr>
-            <td>&nbsp;</td>
-            <td><a href="#" style="background-image:url('${appUrl}/images/search.gif');">Search</a></td>
-            <td><a href="${servletUrl}/browseArtist" style="background-image:url('${appUrl}/images/library.gif');">Browse library</a></td>
-            <td><a href="#" style="background-image:url('${appUrl}/images/feeds.gif');">Manage Feeds</a></td>
-            <td>&nbsp;</td>
-        </tr>
+            <td rowspan="3" class="first">
+				Search
+                <input class="text" type="text" name="album" value="<c:out value="${param.album}"/>" style="width:140px;"/>
+                <input class="button" type="submit" value="search"/>			
+			</td>
+            <td><a href="${servletUrl}/browseArtist" style="background-image:url('${appUrl}/images/library_small.gif');">Browse library</a></td>
+		</tr>
+		<tr>
+            <td><a href="#" style="background-image:url('${appUrl}/images/feeds_small.gif');">Manage Playlists</a></td>
+		</tr>
     </table>
 
     <table class="select" cellspacing="0">
@@ -48,8 +57,8 @@
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, '', 'odd')}">
                 <td class="check"><input type="checkbox" /></td>
                 <td><c:out value="${playlist.name}" /></td>
-                <td class="icon"><a class="rss" href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml">&nbsp;</a></td>
-                <td class="icon"><a class="m3u" href="${servletUrl}/createM3U/playlist=${playlist.id}/mytunesrss.m3u">&nbsp;</a></td>
+                <td class="icon"><a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml"><img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="RSS"/></a></td>
+                <td class="icon"><a href="${servletUrl}/createM3U/playlist=${playlist.id}/mytunesrss.m3u"><img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="M3U"/></a></td>
             </tr>
         </c:forEach>
     </table>

@@ -16,12 +16,10 @@
 
     <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
-    <!--[if IE]>
-      <link rel="stylesheet" type="text/css" href="styles/ie.css" />
+    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />    <!--[if IE]>
+      <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
     <![endif]-->
-
-    <script type="text/javascript">
+<script type="text/javascript">
 
         function sort(sortOrder) {
             document.forms["browse"].action = "${servletUrl}/browseTrack";
@@ -45,12 +43,6 @@
                     };
                 }
                 if (trs[i].getElementsByTagName("TH").length == 0) {
-                    trs[i].onmouseover = function() {
-                        this.className = this.className + " over"
-                    };
-                    trs[i].onmouseout = function() {
-                        this.className = this.className.replace(/over/, "")
-                    };
                     trs[i].getElementsByTagName("TD")[1].onclick = selectTrack;
                 }
             }
@@ -65,7 +57,7 @@
 
 </head>
 
-<body onload="registerTR()">
+<body onLoad="registerTR()">
 
 <div class="body">
 
@@ -127,9 +119,9 @@
                             </c:otherwise>
                         </c:choose>
                     </td>
-                    <td class="play">
+                    <td class="icon">
                         <a href="${servletUrl}/playTrack/track=${track.id}/${cwfn:urlEncode(mtfn:virtualName(track.file), 'UTF-8')}"><img
-                                src="${appUrl}/images/play.png"
+                                src="${appUrl}/images/play${cwfn:choose(count % 2 == 0, '', '_odd')}.gif"
                                 alt="<fmt:message key="select.play"/>" /></a>
                     </td>
                 </tr>

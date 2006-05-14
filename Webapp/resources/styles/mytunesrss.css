@@ -390,15 +390,32 @@ table.start {
 
 table.start td {
 	border: none;
-	padding: 15px 10px;
+	padding: 0 10px;
+	border-left: 1px solid #666;
+	background: #5898e5;
 }
 
 table.start a {
 	display: block;
-	padding: 5px 10px 5px 25px;
-	background: url("../images/playlist.gif") 0 2px no-repeat;
-	color: #000;
+	padding: 5px 0 5px 20px;
+	background: url("../images/playlist.gif") 0 5px no-repeat;
+	color: #fff;
 	text-decoration: none;
+}
+
+table.start a:HOVER {
+	text-decoration: underline;
+}
+
+table.start td.first {
+	background: #e7edf6 url("../images/search.gif") 5px center no-repeat;
+	padding: 0 0 0 40px;
+	border: none;
+}
+
+table.start td.first input {
+	vertical-align: middle;
+	margin-left: 5px;
 }
 
 td.artist2 {
@@ -412,29 +429,29 @@ td.album, td.tracks {
 
 td.album a {
 	display: block;
-	padding: 5px 10px 5px 30px;
-	background: url("../images/albums.gif") 10px 5px no-repeat;
+	padding: 2px 10px 2px 30px;
+	background: url("../images/albums.gif") 10px 2px no-repeat;
 	text-decoration: none;
 }
 
 tr.odd td.album a {
-	background-position: 10px -79px;
+	background-position: 10px -82px;
 }
 
 td.tracks a {
 	display: block;
-	padding: 5px 10px 5px 30px;
-	background: url("../images/tracks.gif") 10px 5px no-repeat;
+	padding: 2px 10px 2px 30px;
+	background: url("../images/tracks.gif") 10px 2px no-repeat;
 	text-decoration: none;
 }
 
 tr.odd td.tracks a {
-	background-position: 10px -79px;
+	background-position: 10px -82px;
 }
 
 td.icon {
-	width: 25px;
-	padding: 0;
+	width: 1%;
+	padding: 0 5px 0 0;
 	border-left: none;
 	text-align: center;
 }
