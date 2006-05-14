@@ -27,9 +27,17 @@
 
     <jsp:include page="/error.jsp" />
 
-    <div class="link">
-        <a href="${servletUrl}/browseArtist">Browse by artist</a>
-    </div>
+    <ul class="links">
+      <li>
+        <a href="${servletUrl}/browseArtist">by artist</a>
+			</li>
+      <li>
+				<a href="#">new playlist</a>
+			</li>
+      <li style="float:right;">
+				<a href="${servletUrl}/showPortal">back</a>
+			</li>
+    </ul>
 
     <form name="browse" action="" method="post">
         <table class="select" cellspacing="0">

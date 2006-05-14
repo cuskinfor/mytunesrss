@@ -39,7 +39,7 @@
         <td><a href="${servletUrl}/browseArtist" style="background-image:url('${appUrl}/images/library_small.gif');">Browse library</a></td>
       </tr>
       <tr>
-        <td><a href="manager.jsp" style="background-image:url('${appUrl}/images/feeds_small.gif');">Manage Playlists</a></td>
+        <td><a href="/manager.jsp" style="background-image:url('${appUrl}/images/feeds_small.gif');">Manage Playlists</a></td>
       </tr>
     </table>
     

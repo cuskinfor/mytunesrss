@@ -27,9 +27,10 @@
   
     <h1 class="search"><span>MyTunesRSS</span></h1>
     
-    <div class="link">
-      <a href="#">back to portal</a>
-    </div>
+    <ul class="links">
+      <li><a href="#">back to portal</a></li>
+      <li style="float:right;"><a href="#">test link</a></li>
+    </ul>
 
     <jsp:include page="/error.jsp" />
     

@@ -65,10 +65,18 @@
 
     <jsp:include page="/error.jsp" />
 
-    <div class="link">
+    <ul class="links">
+      <li>
         <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album" /></a></c:if>
         <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist" /></a></c:if>
-    </div>
+			</li>
+      <li>
+				<a href="#">new playlist</a>
+			</li>
+      <li style="float:right;">
+				<a href="${servletUrl}/showPortal">back</a>
+			</li>
+    </ul>
 
     <form id="browse" action="${servletUrl}/addTracks" method="post">
 
