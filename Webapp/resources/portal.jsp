@@ -12,63 +12,51 @@
 
 <head>
 
-    <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
-    <!--[if IE]>
-      <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
-    <![endif]-->
+  <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
+  <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
+  <![endif]-->
 
 </head>
 
 <body>
 
-<div class="body">
-
+  <div class="body">
+  
     <h1 class="search"><span>MyTunesRSS</span></h1>
-
-    <div class="link">
-        <a href="#">Settings</a> - 
-		<a href="#">log out</a>
-    </div>
-
+    
     <jsp:include page="/error.jsp" />
-
+    
     <table class="start" cellspacing="0">
-        <tr>
-            <td rowspan="3" class="first">
-				Search
-                <input class="text" type="text" name="album" value="<c:out value="${param.album}"/>" style="width:140px;"/>
-                <input class="button" type="submit" value="search"/>			
-			</td>
-            <td><a href="${servletUrl}/browseArtist" style="background-image:url('${appUrl}/images/library_small.gif');">Browse library</a></td>
-		</tr>
-		<tr>
-            <td><a href="#" style="background-image:url('${appUrl}/images/feeds_small.gif');">Manage Playlists</a></td>
-		</tr>
+      <tr>
+        <td rowspan="2" class="first">
+          Search
+          <input class="text" type="text" name="album" value="<c:out value="${param.album}"/>" style="width:140px;"/>
+          <input class="button" type="submit" value="search"/>      
+        </td>
+        <td><a href="${servletUrl}/browseArtist" style="background-image:url('${appUrl}/images/library_small.gif');">Browse library</a></td>
+      </tr>
+      <tr>
+        <td><a href="manager.jsp" style="background-image:url('${appUrl}/images/feeds_small.gif');">Manage Playlists</a></td>
+      </tr>
     </table>
-
+    
     <table class="select" cellspacing="0">
-        <tr>
-            <th>&nbsp;</th>
-            <th colspan="3">MyTunesRSS Playlists</th>
+      <tr>
+        <th colspan="3">MyTunesRSS Playlists</th>
+      </tr>
+      <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
+        <tr class="${cwfn:choose(loopStatus.index % 2 == 0, '', 'odd')}">
+          <td><c:out value="${playlist.name}" /></td>
+          <td class="icon"><a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml"><img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="RSS"/></a></td>
+          <td class="icon"><a href="${servletUrl}/createM3U/playlist=${playlist.id}/mytunesrss.m3u"><img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="M3U"/></a></td>
         </tr>
-        <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
-            <tr class="${cwfn:choose(loopStatus.index % 2 == 0, '', 'odd')}">
-                <td class="check"><input type="checkbox" /></td>
-                <td><c:out value="${playlist.name}" /></td>
-                <td class="icon"><a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml"><img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="RSS"/></a></td>
-                <td class="icon"><a href="${servletUrl}/createM3U/playlist=${playlist.id}/mytunesrss.m3u"><img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="M3U"/></a></td>
-            </tr>
-        </c:forEach>
+      </c:forEach>
     </table>
-
-    <div class="buttons">
-        <input type="submit" value="RSS" />
-        <input type="submit" value="M3U" />
-    </div>
-
-</div>
+  
+  </div>
 
 </body>
 

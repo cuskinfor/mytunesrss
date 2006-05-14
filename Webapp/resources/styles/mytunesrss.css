@@ -34,6 +34,7 @@ table {
 	width: 100%;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 12px;
+	border-bottom: 1px solid #666;
 }
 
 th {
@@ -68,6 +69,7 @@ h1.search {
 	height: 60px;
 	padding: 0;
 	margin: 0;
+	border-bottom: 1px solid #666;
 }
 
 h1.search span {
@@ -135,6 +137,7 @@ div.input input {
 div.link {
 	background: url("../images/link.gif") top left no-repeat;
 	padding: 5px 0 7px 20px;
+	border-bottom: 1px solid #666;
 }
 
 div.link a {
@@ -385,7 +388,7 @@ div.buttons {
 }
 
 table.start {
-	border-top: 1px solid #666;
+	border-bottom: none;
 }
 
 table.start td {
@@ -409,8 +412,17 @@ table.start a:HOVER {
 
 table.start td.first {
 	background: #e7edf6 url("../images/search.gif") 5px center no-repeat;
-	padding: 0 0 0 40px;
+	padding: 15px 0 15px 40px;
 	border: none;
+}
+
+table.start td.first a {
+	display: inline;
+	background: none;
+	padding: 0;
+	margin:;
+	color: blue;
+	text-decoration: underline;
 }
 
 table.start td.first input {
@@ -425,6 +437,7 @@ td.artist2 {
 td.album, td.tracks {
 	padding: 0;
 	border-left: none;
+	width: 1%;
 }
 
 td.album a {
