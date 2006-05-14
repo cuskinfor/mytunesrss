@@ -86,13 +86,13 @@
         <input type="hidden" name="artist" value="${param.artist}" />
         <input type="hidden" name="backUrl" value="${param.backUrl}" />
 
-        <table class="select" cellspacing="0">
+        <table cellspacing="0">
             <c:forEach items="${tracks}" var="track">
                 <c:if test="${track.newSection}">
                     <c:set var="count" value="0" />
                     <tr>
                         <th class="check"><input type="checkbox" name="none" value="none" onClick="selectAll('${section.sectionIds}',this)" /></th>
-                        <th colspan="2">
+                        <th class="active" colspan="2">
                             <c:choose>
                                 <c:when test="${sortOrder == 'Album'}">
                                     <c:if test="${track.simple}">
@@ -113,7 +113,7 @@
                     <td class="check"><input type="checkbox" id="item${track.id}" name="track" value="${track.id}"
                             <c:if test="${selectedTracks[track.id]}">
                                 checked="checked"</c:if> /></td>
-                    <td>
+                    <td class="artist">
                         <c:choose>
                             <c:when test="${sortOrder == 'Album'}">
                                 <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>

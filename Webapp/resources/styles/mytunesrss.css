@@ -38,20 +38,34 @@ table {
 }
 
 th {
-	text-align: center;
-	background: url("../images/th.gif");
+	text-align: left;
+	background: url("../images/th.gif") repeat-x;
 	border-top: 1px solid #666;
 	border-bottom: 1px solid #666;
-	padding: 5px;
+	padding: 5px 0 5px 10px;
 	color: #000;
+	font-weight: normal;
 	cursor: default;
+}
+
+th.active {
+	font-weight: bold;
+}
+
+th.check {
+	padding: 0;
+	text-align: center;
 }
 
 td {
 	padding: 5px 10px;
-	border-left: 1px solid #d9d9d9;
-	cursor: default;
+	background: #edf3fe;
 }
+
+tr.odd td {
+	background: #fff;
+}
+
 
 div.error {
 	color: #f00;
@@ -74,13 +88,6 @@ h1.search {
 
 h1.search span {
 	visibility: hidden;
-}
-
-td.artist {
-	padding: 19px 0 0 0;
-	border: none;
-	text-align: right;
-	vertical-align: top;
 }
 
 td.input {
@@ -150,21 +157,12 @@ table.select {
 	background: #fff;
 }
 
-table.select th {
-	text-align: left;
-	padding-left: 10px;
-}
-
 table.select th.check {
 	text-align: center;
 	vertical-align: middle;
 	padding: 0;
 }
 
-
-tr.odd td {
-	background: #edf3fe;
-}
 
 tr.over td {
 	background: #9ec0ef;
@@ -237,41 +235,35 @@ table.start td.first input {
 	margin-left: 5px;
 }
 
-td.artist2 {
-	border: none;
+td.artist {
+	border-left: 1px solid #ccc;
 }
 
 td.album, td.tracks {
-	padding: 0;
 	border-left: none;
-	width: 1%;
 }
 
 td.album a {
 	display: block;
-	padding: 2px 10px 2px 30px;
-	background: url("../images/albums.gif") 10px 2px no-repeat;
+	padding: 0 0 2px 20px;
+	background: url("../images/albums.gif") 0 -84px no-repeat;
 	text-decoration: none;
-}
-
-tr.odd td.album a {
-	background-position: 10px -82px;
 }
 
 td.tracks a {
 	display: block;
-	padding: 2px 10px 2px 30px;
-	background: url("../images/tracks.gif") 10px 2px no-repeat;
+	padding: 0 0 2px 20px;
+	background: url("../images/tracks.gif") 0 -84px no-repeat;
 	text-decoration: none;
 }
 
-tr.odd td.tracks a {
-	background-position: 10px -82px;
+tr.odd td.album a, tr.odd td.tracks a {
+	background-position: 0 0;
 }
 
 td.icon {
-	width: 21px;
-	padding: 0 5px 0 0;
+	width: 16px;
+	padding: 0 10px 0 0;
 	border-left: none;
 	text-align: center;
 }
