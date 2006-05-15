@@ -26,7 +26,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         String artist = getRequestParameter("artist", null);
         FindTrackQuery query = null;
         if (StringUtils.isNotEmpty(searchTerm)) {
-            query = FindTrackQuery.getForSearchTerm(searchTerm);
+            query = FindTrackQuery.getForSearchTerm("%" + searchTerm + "%");
         } else if (StringUtils.isNotEmpty(album)) {
             query = FindTrackQuery.getForAlbum(album);
         } else {

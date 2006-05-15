@@ -31,7 +31,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             fileSender = new StatusCodeFileSender(HttpServletResponse.SC_UNAUTHORIZED);
         } else {
             String trackId = getRequest().getParameter("track");
-            Collection<Track> tracks = getDataStore().executeQuery(new FindTrackQuery(trackId));
+            Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(trackId));
             if (!tracks.isEmpty()) {
                 Track track = tracks.iterator().next();
                 fileSender = new FileSender(track.getFile(), getContentType(track));
