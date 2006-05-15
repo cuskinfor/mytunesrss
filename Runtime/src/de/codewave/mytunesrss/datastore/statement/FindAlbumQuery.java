@@ -23,11 +23,12 @@ public class FindAlbumQuery extends DataStoreQuery<Album> {
         if (myArtist != null) {
         statement = connection.prepareStatement(
                 "SELECT DISTINCT(t1.album) AS album, COUNT(DISTINCT(t2.artist)) AS artist_count, COUNT(DISTINCT(t2.id)) AS track_count FROM track t1, track t2 WHERE t1.artist = ? AND t1.album = t2.album GROUP BY album ORDER BY album");
+            return execute(statement, myBuilder, myArtist);
         } else {
             statement = connection.prepareStatement(
                     "SELECT DISTINCT(t1.album) AS album, COUNT(DISTINCT(t2.artist)) AS artist_count, COUNT(DISTINCT(t2.id)) AS track_count FROM track t1, track t2 WHERE t1.album = t2.album GROUP BY album ORDER BY album");
+            return execute(statement, myBuilder);
         }
-        return execute(statement, myBuilder, myArtist);
     }
 
     public static class AlbumResultBuilder implements ResultBuilder<Album> {

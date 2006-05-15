@@ -36,7 +36,7 @@
                 <td rowspan="2" class="first">
                     Search
                     <input class="text" type="text" name="searchTerm" value="<c:out value="${param.searchTerm}"/>" style="width:140px;" />
-                    <input type="hidden" name="backUrl" value="${servletUrl}/>/showPortal" />
+                    <input type="hidden" name="backUrl" value="${servletUrl}/showPortal" />
                     <input class="button" type="submit" value="search" />
                 </td>
                 <td>
