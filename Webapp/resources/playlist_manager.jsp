@@ -12,10 +12,10 @@
 
 <head>
 
-    <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
-    <!--[if IE]>
+  <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
+  <!--[if IE]>
     <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
   <![endif]-->
 
@@ -23,58 +23,60 @@
 
 <body>
 
-<div class="body">
-
+  <div class="body">
+  
     <h1 class="search"><span>MyTunesRSS</span></h1>
-
+    
     <ul class="links">
-        <li><a href="#">back to portal</a></li>
-        <li style="float:right;"><a href="#">test link</a></li>
+      <li><a href="${servletUrl}/showPortal">back to portal</a></li>
     </ul>
-
+    
     <jsp:include page="/error.jsp" />
-
-    <table class="start" cellspacing="0">
-        <tr>
-            <td class="first" style="background-image:url('images/feeds.gif');">
-                Manager: <a href="#">create new playlist</a>
-            </td>
-        </tr>
+    
+    <table class="portal" cellspacing="0">
+			<tr>
+				<td class="search" style="background-image:url('../images/feeds.gif');">
+					Playlist Manager: <a href="#">create new playlist</a>
+				</td>
+			</tr>
     </table>
-
-    <table class="select" cellspacing="0">
-        <tr>
-            <th colspan="5">MyTunesRSS Playlists</th>
-        </tr>
-        <tr>
-            <td>Playlist 1</td>
-            <td class="tracks"><a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml">(21&nbsp;Tracks)</a></td>
-            <td class="icon">
-                <a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml"><img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                                                                              alt="add" /></a></td>
-            <td class="icon">
-                <a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml"><img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                                                                              alt="add" /></a></td>
-            <td class="icon">
-                <a href="${servletUrl}/createM3U/playlist=${playlist.id}/mytunesrss.m3u"><img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                                                                              alt="delete" /></a></td>
-        </tr>
-        <tr class="odd">
-            <td>Playlist 2</td>
-            <td class="tracks"><a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml">(33&nbsp;Tracks)</a></td>
-            <td class="icon">
-                <a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml"><img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                                                                              alt="add" /></a></td>
-            <td class="icon">
-                <a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml"><img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                                                                              alt="add" /></a></td>
-            <td class="icon">
-                <a href="${servletUrl}/createM3U/playlist=${playlist.id}/mytunesrss.m3u"><img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                                                                              alt="delete" /></a></td>
-        </tr>
+    
+    <table cellspacing="0">
+      <tr>
+        <th class="active">MyTunesRSS Playlists</th>
+				<th colspan="4">Tracks</th>
+      </tr>
+      <tr>
+        <td class="mytunes">
+					Playlist 1
+				</td>
+        <td class="tracks"><a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml">(21&nbsp;Tracks)</a></td>
+        <td class="icon">
+          <a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml">
+            <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" />
+          </a>
+        </td>
+        <td class="icon">
+          <a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml">
+            <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" />
+          </a>
+        </td>
+        <td class="icon">
+          <a href="${servletUrl}/createM3U/playlist=${playlist.id}/mytunesrss.m3u">
+            <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" />
+          </a>
+        </td>
+      </tr>
+      <tr class="odd">
+        <td class="itunes">
+					Playlist 2
+				</td>
+        <td class="tracks"><a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml">(21&nbsp;Tracks)</a></td>
+        <td colspan="3">&nbsp;</td>
+      </tr>
     </table>
-
-</div>
+  
+  </div>
 
 </body>
 

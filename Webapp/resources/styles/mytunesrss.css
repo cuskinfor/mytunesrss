@@ -56,7 +56,6 @@ th {
 	padding: 5px 0 5px 10px;
 	color: #000;
 	font-weight: normal;
-	cursor: default;
 }
 
 th.active {
@@ -94,35 +93,10 @@ h1.search {
 	height: 60px;
 	padding: 0;
 	margin: 0;
-	border-bottom: 1px solid #666;
 }
 
 h1.search span {
 	visibility: hidden;
-}
-
-td.input {
-	padding: 15px 10px 0 10px;
-	border: none;
-	text-align: left;
-	vertical-align: top;
-}
-
-td.button {
-	padding: 15px 0 20px 0;
-	border: none;
-	text-align: left;
-	vertical-align: top;
-}
-
-td.input input, td.input select {
-	width: 150px;
-}
-
-td.spacer {
-	width: 50%;
-	padding: 0;
-	border: none;
 }
 
 
@@ -164,35 +138,12 @@ div.link a {
 	color: #fff;
 }
 
-table.select {
-	background: #fff;
-}
-
-table.select th.check {
-	text-align: center;
-	vertical-align: middle;
-	padding: 0;
-}
-
-
-tr.over td {
-	background: #9ec0ef;
-	color: #fff;
-}
-
 td.check {
 	text-align: center;
 	vertical-align: middle;
 	padding: 0;
 	border: none;
 	width: 35px;
-}
-
-td.play {
-	text-align: right;
-	vertical-align: middle;
-	padding: 0 10px 0 0;
-	border: none;
 }
 
 div.buttons {
@@ -205,28 +156,31 @@ div.buttons {
 
 table.portal {
 	border-bottom: none;
+	border-top: 1px solid #666;
 }
 
 table.portal td.search {
-	padding: 10px 10px 10px 48px;
+	padding: 15px 10px 15px 48px;
 	background: url("../images/search.gif") 10px center no-repeat;
 }
 
 table.portal td.links {
-	padding: 5px 10px;
+	width: 130px;
+	padding: 5px 10px 0 10px;
 	border-left: 1px solid #666;
 	background: #5898e5;
 }
 
-table.portal a {
+table.portal td.links a {
 	display: block;
-	padding: 5px 0 5px 20px;
-	background: url("../images/playlist.gif") 0 5px no-repeat;
+	margin: 0 0 5px 0;
+	padding: 2px 0 2px 20px;
+	background: url("../images/playlist.gif") 0 2px no-repeat;
 	color: #fff;
 	text-decoration: none;
 }
 
-table.portal a:HOVER {
+table.portal td.links a:HOVER {
 	text-decoration: underline;
 }
 
@@ -295,11 +249,12 @@ tr.odd a.m3u {
 }
 
 ul.links {
+	height: 26px;
 	margin: 0;
 	padding: 0 0 0 10px;
-	list-style: none;
-	height: 26px;
 	background: url("../images/links_background.gif") top left repeat-x;
+	border-top: 1px solid #666;
+	list-style: none;
 }
 
 ul.links li {
@@ -332,4 +287,18 @@ div.login {
 div.login input {
 	vertical-align: middle;
 	margin: 0 0 0 10px;
+}
+
+td.mytunes, tr.odd td.mytunes {
+	padding-left: 32px;
+	background-image: url("../images/mytunesrss_playlist.gif");
+	background-position: 10px center;
+	background-repeat: no-repeat;
+}
+
+td.itunes, tr.odd td.itunes {
+	padding-left: 32px;
+	background-image: url("../images/itunes_playlist.gif");
+	background-position: 10px center;
+	background-repeat: no-repeat;
 }
