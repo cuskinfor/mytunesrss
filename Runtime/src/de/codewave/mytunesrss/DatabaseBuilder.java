@@ -7,7 +7,6 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import org.apache.commons.logging.*;
-import org.apache.commons.lang.*;
 
 import javax.swing.*;
 import java.net.*;
@@ -23,6 +22,7 @@ public class DatabaseBuilder {
 
     private JPanel myRootPanel;
     private JProgressBar myProgress;
+    private JLabel myMessage;
     private String myLibraryXml;
 
     public boolean needsCreation() {
@@ -87,16 +87,28 @@ public class DatabaseBuilder {
                 storeSession.begin();
                 try {
                     if (needsCreation()) {
+                        myMessage.setText("Creating database tables.");
+                        myMessage.validate();
                         createDatabase();
+                    } else {
+                        myMessage.setText("Clearing all database tables.");
+                        myMessage.validate();
+                        storeSession.executeStatement(new ClearAllTablesStatement());
                     }
-                    storeSession.executeStatement(new ClearAllTablesStatement());
                     final long updateTime = System.currentTimeMillis();
+                    myMessage.setText("Loading iTunes library into database.");
+                    myMessage.validate();
                     ITunesUtils.loadFromITunes(iTunesLibraryXml, storeSession, myProgress);
+                    myMessage.setText("Updating help tables in database.");
+                    myMessage.validate();
+                    storeSession.executeStatement(new UpdateHelpTablesStatement());
                     storeSession.executeStatement(new DataStoreStatement() {
                         public void execute(Connection connection) throws SQLException {
                             connection.createStatement().execute("UPDATE itunes SET lastupdate = " + updateTime);
                         }
                     });
+                    myMessage.setText("Finalizing database.");
+                    myMessage.validate();
                     storeSession.commit();
                     myLibraryXml = iTunesLibraryXml.getPath();
                 } catch (SQLException e) {

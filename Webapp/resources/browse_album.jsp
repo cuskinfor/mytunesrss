@@ -18,17 +18,17 @@
     <!--[if IE]>
       <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
     <![endif]-->
-    
+
 </head>
 
 <body>
 
   <div class="body">
-  
+
   <h1 class="search"><span>MyTunesRSS</span></h1>
-  
+
   <jsp:include page="/error.jsp" />
-  
+
   <ul class="links">
     <li>
       <a href="${servletUrl}/browseArtist">by artist</a>
@@ -40,9 +40,9 @@
       <a href="${servletUrl}/showPortal">Portal</a>
     </li>
   </ul>
-  
+
   <form name="browse" action="" method="post">
-  
+
     <table class="select" cellspacing="0">
       <tr>
         <th>&nbsp;</th>
@@ -63,11 +63,15 @@
             <c:out value="${album.name}" />
           </td>
           <td>
-            (by&nbsp;<a href="${servletUrl}/browseArtist?album=${cwfn:urlEncode(album.name, 'UTF-8')}">${album.artistCount}&nbsp;artist${cwfn:choose(album.artistCount > 1, 's', '')}</a>)
+              <c:choose>
+                  <c:when test="${!album.various}"><a href="${servletUrl}/browseAlbum?artist=${cwfn:urlEncode(album.artist, 'UTF-8')}">${album.artist}</a></c:when>
+                  <c:otherwise><a href="${servletUrl}/browseArtist?album=${cwfn:urlEncode(album.name, 'UTF-8')}">various</a></c:otherwise>
+              </c:choose>
+
           </td>
           <td class="tracks">
             <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
-              (${album.trackCount})
+              ${album.trackCount}
             </a>
           </td>
           <td class="icon">
@@ -83,14 +87,14 @@
         </tr>
       </c:forEach>
     </table>
-  
+
     <div class="buttons">
       <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS/mytunesrss.xml'" value="RSS" />
       <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
     </div>
-  
+
   </form>
-  
+
   </div>
 
 </body>

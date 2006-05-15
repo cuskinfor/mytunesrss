@@ -18,7 +18,7 @@
     <!--[if IE]>
       <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
     <![endif]-->
-    
+
 </head>
 
 <body>
@@ -26,9 +26,9 @@
   <div class="body">
 
     <h1 class="search"><span>MyTunesRSS</span></h1>
-    
+
     <jsp:include page="/error.jsp" />
-  
+
     <ul class="links">
       <li>
         <a href="${servletUrl}/browseAlbum">by album</a>
@@ -40,9 +40,9 @@
         <a href="${servletUrl}/showPortal">Portal</a>
       </li>
     </ul>
-  
+
     <form name="browse" action="" method="post">
-      
+
       <table class="select" cellspacing="0">
         <tr>
           <th>&nbsp;</th>
@@ -62,12 +62,12 @@
             </td>
             <td class="album">
               <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>">
-                (${artist.albumCount})
+                ${artist.albumCount}
               </a>
             </td>
             <td class="tracks">
               <a href="${servletUrl}/browseTrack?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
-                (${artist.trackCount})
+                ${artist.trackCount}
               </a>
             </td>
             <td class="icon">
@@ -83,12 +83,12 @@
           </tr>
         </c:forEach>
       </table>
-      
+
       <div class="buttons">
         <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS/mytunesrss.xml'" value="RSS" />
         <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
       </div>
-      
+
     </form>
 
   </div>

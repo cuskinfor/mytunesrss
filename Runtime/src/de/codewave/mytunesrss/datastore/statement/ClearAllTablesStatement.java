@@ -14,5 +14,7 @@ public class ClearAllTablesStatement implements DataStoreStatement {
         connection.createStatement().execute("DELETE FROM link_track_playlist");
         connection.createStatement().execute("DELETE FROM track");
         connection.createStatement().execute("DELETE FROM playlist");
+        connection.createStatement().execute("DELETE FROM album");
+        connection.createStatement().execute("DELETE FROM artist");
     }
 }
