@@ -12,39 +12,36 @@
 
 <head>
 
-    <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />    <!--[if IE]>
-      <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
-    <![endif]-->
+	<title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
+	<!--[if IE]>
+		<link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
+	<![endif]-->
+		
 </head>
 
-<body>
+<body onload="document.forms[0].elements['password'].focus()">
 
-<div class="body">
+	<div class="body">
 
-    <h1 class="search"><span>MyTunesRSS</span></h1>
+		<h1 class="search"><span>MyTunesRSS</span></h1>
+		
+		<jsp:include page="/error.jsp" />
+		
+		<form id="login" action="${servletUrl}/login" method="post">
+		
+			<h2><fmt:message key="login.caption" /></h2>
 
-    <jsp:include page="/error.jsp" />
-
-    <form id="login" action="${servletUrl}/login" method="post">
-
-        <table class="search" cellspacing="0">
-            <tr>
-                <th colspan="5"><fmt:message key="login.caption" /></th>
-            </tr>
-            <tr>
-                <td class="spacer">&nbsp;</td>
-                <td class="artist"><fmt:message key="login.password" /></td>
-                <td class="input"><input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" /></td>
-                <td class="button"><input class="button" type="submit" value="<fmt:message key="login.login"/>" /></td>
-                <td class="spacer">&nbsp;</td>
-            </tr>
-        </table>
-
-    </form>
-
-</div>
+			<div class="login">
+				<fmt:message key="login.password" />
+				<input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" />
+				<input class="button" type="submit" value="<fmt:message key="login.login"/>" />
+			</div>
+		
+		</form>
+	
+	</div>
 
 </body>
 
