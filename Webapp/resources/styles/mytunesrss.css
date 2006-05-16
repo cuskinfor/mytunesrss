@@ -108,6 +108,17 @@ h1.search span {
 	visibility: hidden;
 }
 
+h1.browse {
+	background: url("../images/browse_library.gif") center center no-repeat;
+	height: 30px;
+	padding: 0;
+	margin: 0;
+}
+
+h1.browse span {
+	visibility: hidden;
+}
+
 
 /* Result Page */
 
@@ -257,7 +268,7 @@ tr.odd a.m3u {
 ul.links {
 	height: 26px;
 	margin: 0;
-	padding: 0 0 0 10px;
+	padding: 0 0 0 7px;
 	background: url("../images/links_background.gif") top left repeat-x;
 	border-top: 1px solid #666;
 	list-style: none;
@@ -265,7 +276,7 @@ ul.links {
 
 ul.links li {
 	float: left;
-	margin: 4px 10px 0 0;
+	margin: 4px 7px 0 0;
 	padding: 0 0 0 15px;
 	height: 18px;
 	background: url("../images/link.gif") top left repeat-x;

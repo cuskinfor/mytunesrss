@@ -25,19 +25,19 @@
 
   <div class="body">
 
-    <h1 class="search"><span>MyTunesRSS</span></h1>
+    <h1 class="browse"><span>MyTunesRSS</span></h1>
 
     <jsp:include page="/error.jsp" />
 
     <ul class="links">
       <li>
-        <a href="${servletUrl}/browseAlbum">by album</a>
+        <a href="${servletUrl}/showPortal">back to portal</a>
       </li>
       <li>
         <a href="#">new playlist</a>
       </li>
       <li style="float:right;">
-        <a href="${servletUrl}/showPortal">Portal</a>
+        <a href="${servletUrl}/browseAlbum">sort by album</a>
       </li>
     </ul>
 
@@ -45,7 +45,7 @@
 
       <table class="select" cellspacing="0">
         <tr>
-          <th>&nbsp;</th>
+					<c:if test="${playlist}"><th>&nbsp;</th></c:if>
           <th class="active">
             Artists
             <c:if test="${!empty param.album}"> on "<c:out value="${param.album}" />"</c:if>
@@ -56,7 +56,9 @@
         <c:set var="backUrl">${servletUrl}/browseArtist?album=${param.album}</c:set>
         <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
           <tr class="${cwfn:choose(loopStatus.index % 2 == 0, '', 'odd')}">
-            <td class="check"><input type="checkbox" name="artist" value="<c:out value="${artist.name}"/>" /></td>
+						<c:if test="${playlist}">
+							<td class="check"><input type="checkbox" name="artist" value="<c:out value="${artist.name}"/>" /></td>
+						</c:if>
             <td class="artist">
               <c:out value="${artist.name}" />
             </td>
@@ -84,10 +86,12 @@
         </c:forEach>
       </table>
 
-      <div class="buttons">
-        <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS/mytunesrss.xml'" value="RSS" />
-        <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
-      </div>
+	    <c:if test="${playlist}">
+  	    <div class="buttons">
+    	    <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS/mytunesrss.xml'" value="RSS" />
+      	  <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
+	      </div>
+			</c:if>
 
     </form>
 

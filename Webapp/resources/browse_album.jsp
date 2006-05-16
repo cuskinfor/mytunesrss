@@ -25,19 +25,19 @@
 
   <div class="body">
 
-  <h1 class="search"><span>MyTunesRSS</span></h1>
+  <h1 class="browse"><span>MyTunesRSS</span></h1>
 
   <jsp:include page="/error.jsp" />
 
   <ul class="links">
     <li>
-      <a href="${servletUrl}/browseArtist">by artist</a>
+      <a href="${servletUrl}/showPortal">back to portal</a>
     </li>
     <li>
       <a href="#">new playlist</a>
     </li>
     <li style="float:right;">
-      <a href="${servletUrl}/showPortal">Portal</a>
+      <a href="${servletUrl}/browseArtist">sort by artist</a>
     </li>
   </ul>
 
@@ -45,7 +45,7 @@
 
     <table class="select" cellspacing="0">
       <tr>
-        <th>&nbsp;</th>
+        <c:if test="${playlist}"><th>&nbsp;</th></c:if>
         <th class="active">
           Albums
           <c:if test="${!empty param.artist}"> with "<c:out value="${param.artist}" />"</c:if>
@@ -56,16 +56,18 @@
       <c:set var="backUrl">${servletUrl}/browseAlbum?artist=${param.artist}</c:set>
       <c:forEach items="${albums}" var="album" varStatus="loopStatus">
         <tr class="${cwfn:choose(loopStatus.index % 2 == 0, '', 'odd')}">
-          <td class="check">
-            <input type="checkbox" name="album" value="<c:out value="${album.name}"/>" />
-          </td>
+					<c:if test="${playlist}">
+  	        <td class="check">
+    	        <input type="checkbox" name="album" value="<c:out value="${album.name}"/>" />
+      	    </td>
+					</c:if>
           <td class="artist">
             <c:out value="${album.name}" />
           </td>
           <td>
               <c:choose>
-                  <c:when test="${!album.various}"><a href="${servletUrl}/browseAlbum?artist=${cwfn:urlEncode(album.artist, 'UTF-8')}">${album.artist}</a></c:when>
-                  <c:otherwise><a href="${servletUrl}/browseArtist?album=${cwfn:urlEncode(album.name, 'UTF-8')}">various</a></c:otherwise>
+                  <c:when test="${!album.various}"><a href="${servletUrl}/browseTrack?artist=${cwfn:urlEncode(album.artist, 'UTF-8')}">${album.artist}</a></c:when>
+                  <c:otherwise>various</c:otherwise>
               </c:choose>
 
           </td>
@@ -88,10 +90,12 @@
       </c:forEach>
     </table>
 
-    <div class="buttons">
-      <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS/mytunesrss.xml'" value="RSS" />
-      <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
-    </div>
+    <c:if test="${playlist}">
+			<div class="buttons">
+  	    <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS/mytunesrss.xml'" value="RSS" />
+    	  <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
+	    </div>
+		</c:if>
 
   </form>
 
