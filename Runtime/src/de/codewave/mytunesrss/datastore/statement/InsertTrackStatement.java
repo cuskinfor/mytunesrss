@@ -4,7 +4,7 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import java.sql.*;
+import org.apache.commons.lang.*;import java.sql.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackStatement
@@ -50,9 +50,9 @@ public class InsertTrackStatement implements DataStoreStatement {
         PreparedStatement statement = connection.prepareStatement("INSERT INTO track VALUES ( ?, ?, ?, ?, ?, ?, ? )");
         statement.clearParameters();
         statement.setString(1, myId);
-        statement.setString(2, myName);
-        statement.setString(3, myArtist);
-        statement.setString(4, myAlbum);
+        statement.setString(2, StringUtils.isNotEmpty(myName) ? myName : "n/a");
+        statement.setString(3, StringUtils.isNotEmpty(myArtist) ? myArtist : "n/a");
+        statement.setString(4, StringUtils.isNotEmpty(myAlbum) ? myAlbum : "n/a");
         statement.setInt(5, myTime);
         statement.setInt(6, myTrackNumber);
         statement.setString(7, myFileName);

@@ -59,6 +59,7 @@ public class Settings {
     private JCheckBox myLimitRssItemsCheckbox;
     private JCheckBox myUpdateOnStartCheckbox;
     private JButton myUpdateButton;
+    private JButton myRebuildDatabase;
     private Embedded myServer;
     private LogDisplay myLogDisplay = new LogDisplay();
 
@@ -170,6 +171,22 @@ public class Settings {
                         checkForUpdate(false);
                     }
                 });
+            }
+        });
+        myRebuildDatabase.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    builder.loadFromITunes(frame, new File(myTunesXmlPath.getText()).toURL());
+                } catch (SQLException e1) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not load iTunes library.", e1);
+                    }
+                } catch (MalformedURLException e1) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error(null, e1);
+                    }
+
+                }
             }
         });
     }

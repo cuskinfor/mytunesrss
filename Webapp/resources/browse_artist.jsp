@@ -60,7 +60,7 @@
 							<td class="check"><input type="checkbox" name="artist" value="<c:out value="${artist.name}"/>" /></td>
 						</c:if>
             <td class="artist">
-              <c:out value="${artist.name}" />
+              <c:out value="${artist.displayName}" />
             </td>
             <td class="album">
               <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>">

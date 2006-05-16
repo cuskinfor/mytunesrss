@@ -20,7 +20,7 @@
     <!--[if IE]>
       <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
     <![endif]-->
-    
+
     <script type="text/javascript">
 
         function sort(sortOrder) {
@@ -62,11 +62,11 @@
 <body onLoad="registerTR()">
 
   <div class="body">
-  
+
     <h1 class="searchResult"><span>MyTunesRSS</span></h1>
-    
+
     <jsp:include page="/error.jsp" />
-  
+
     <ul class="links">
       <li>
         <a href="${param.backUrl}">back</a>
@@ -79,15 +79,15 @@
         <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist" /></a></c:if>
       </li>
     </ul>
-  
+
     <form id="browse" action="${servletUrl}/addTracks" method="post">
-  
+
       <input type="hidden" name="sortOrder" value="${sortOrder}" />
       <input type="hidden" name="searchTerm" value="${param.searchTerm}" />
       <input type="hidden" name="album" value="${param.album}" />
       <input type="hidden" name="artist" value="${param.artist}" />
       <input type="hidden" name="backUrl" value="${param.backUrl}" />
-  
+
       <table cellspacing="0">
         <c:forEach items="${tracks}" var="track">
           <c:if test="${track.newSection}">
@@ -100,14 +100,14 @@
                 <c:choose>
                   <c:when test="${sortOrder == 'Album'}">
                     <c:if test="${track.simple}">
-                      <c:out value="${track.artist}" /> -
+                      <c:out value="${track.displayArtist}" /> -
                     </c:if>
-                    <c:out value="${track.album}" />
+                    <c:out value="${track.displayAlbum}" />
                   </c:when>
                   <c:otherwise>
-                    <c:out value="${track.artist}" />
+                    <c:out value="${track.displayArtist}" />
                     <c:if test="${track.simple}">
-                    - <c:out value="${track.album}" />
+                    - <c:out value="${track.displayAlbum}" />
                     </c:if>
                   </c:otherwise>
                 </c:choose>
@@ -125,13 +125,13 @@
               <c:choose>
                 <c:when test="${sortOrder == 'Album'}">
                   <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
-                  <c:if test="${!track.simple}"><c:out value="${track.artist}" /> -</c:if>
-                  <c:out value="${track.name}" />
+                  <c:if test="${!track.simple}"><c:out value="${track.displayArtist}" /> -</c:if>
+                  <c:out value="${track.displayName}" />
                 </c:when>
                 <c:otherwise>
-                  <c:if test="${!track.simple}"><c:out value="${track.album}" /> -</c:if>
+                  <c:if test="${!track.simple}"><c:out value="${track.displayAlbum}" /> -</c:if>
                   <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
-                  <c:out value="${track.name}" />
+                  <c:out value="${track.displayName}" />
                 </c:otherwise>
               </c:choose>
             </td>
@@ -144,14 +144,14 @@
           <c:set var="count" value="${count + 1}" />
         </c:forEach>
       </table>
-      
+
       <div class="buttons">
         <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS/mytunesrss.xml'" value="RSS" />
         <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
       </div>
-    
+
     </form>
-  
+
   </div>
 
 </body>

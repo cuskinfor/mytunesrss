@@ -4,8 +4,12 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import org.hsqldb.lib.*;import org.apache.commons.lang.*;import java.sql.*;
-import java.util.*;import java.util.Collection;
+import org.hsqldb.lib.*;
+import org.apache.commons.lang.*;
+
+import java.sql.*;
+import java.util.*;
+import java.util.Collection;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
