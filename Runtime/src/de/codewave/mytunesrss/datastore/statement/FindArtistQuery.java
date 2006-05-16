@@ -4,8 +4,8 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import java.sql.*;
-import java.util.*;
+import org.hsqldb.lib.*;import org.apache.commons.lang.*;import java.sql.*;
+import java.util.*;import java.util.Collection;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
@@ -20,7 +20,7 @@ public class FindArtistQuery extends DataStoreQuery<Artist> {
 
     public Collection<Artist> execute(Connection connection) throws SQLException {
         PreparedStatement statement = null;
-        if (myAlbum != null) {
+        if (StringUtils.isNotEmpty(myAlbum)) {
             statement = connection.prepareStatement("SELECT name, track_count, album_count FROM artist WHERE name IN ( SELECT DISTINCT(artist) FROM track WHERE album = ? ) ORDER BY name");
             return execute(statement, myBuilder, myAlbum);
         } else {

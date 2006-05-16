@@ -9,7 +9,7 @@ package de.codewave.mytunesrss.datastore.statement;
  */
 public class Album {
     private String myName;
-    private boolean myVarious;
+    private int myArtistCount;
     private int myTrackCount;
     private String myArtist;
 
@@ -21,12 +21,12 @@ public class Album {
         myName = name;
     }
 
-    public boolean isVarious() {
-        return myVarious;
+    public int getArtistCount() {
+        return myArtistCount;
     }
 
-    public void setVarious(boolean various) {
-        myVarious = various;
+    public void setArtistCount(int artistCount) {
+        myArtistCount = artistCount;
     }
 
     public int getTrackCount() {

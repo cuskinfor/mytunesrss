@@ -66,7 +66,7 @@
           </td>
           <td>
               <c:choose>
-                  <c:when test="${!album.various}"><a href="${servletUrl}/browseTrack?artist=${cwfn:urlEncode(album.artist, 'UTF-8')}">${album.artist}</a></c:when>
+                  <c:when test="${album.artistCount == 1}"><a href="${servletUrl}/browseTrack?artist=${cwfn:urlEncode(album.artist, 'UTF-8')}&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${album.artist}</a></c:when>
                   <c:otherwise>various</c:otherwise>
               </c:choose>
 
