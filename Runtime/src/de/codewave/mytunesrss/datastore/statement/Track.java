@@ -22,20 +22,12 @@ public class Track {
         return myAlbum;
     }
 
-    public String getDisplayAlbum() {
-        return "n/a".equals(myAlbum) ? "(unknown)" : myAlbum;
-    }
-
     public void setAlbum(String album) {
         myAlbum = album;
     }
 
     public String getArtist() {
         return myArtist;
-    }
-
-    public String getDisplayArtist() {
-        return "n/a".equals(myArtist) ? "(unknown)" : myArtist;
     }
 
     public void setArtist(String artist) {
@@ -60,10 +52,6 @@ public class Track {
 
     public String getName() {
         return myName;
-    }
-
-    public String getDisplayName() {
-        return "n/a".equals(myName) ? "(unknown)" : myName;
     }
 
     public void setName(String name) {

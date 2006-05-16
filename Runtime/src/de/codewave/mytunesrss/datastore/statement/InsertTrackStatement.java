@@ -17,6 +17,7 @@ public class InsertTrackStatement implements DataStoreStatement {
     private int myTime;
     private int myTrackNumber;
     private String myFileName;
+    public static final String UNKNOWN = "_";
 
     public void setAlbum(String album) {
         myAlbum = album;
@@ -50,9 +51,9 @@ public class InsertTrackStatement implements DataStoreStatement {
         PreparedStatement statement = connection.prepareStatement("INSERT INTO track VALUES ( ?, ?, ?, ?, ?, ?, ? )");
         statement.clearParameters();
         statement.setString(1, myId);
-        statement.setString(2, StringUtils.isNotEmpty(myName) ? myName : "n/a");
-        statement.setString(3, StringUtils.isNotEmpty(myArtist) ? myArtist : "n/a");
-        statement.setString(4, StringUtils.isNotEmpty(myAlbum) ? myAlbum : "n/a");
+        statement.setString(2, StringUtils.isNotEmpty(myName) ? myName : UNKNOWN);
+        statement.setString(3, StringUtils.isNotEmpty(myArtist) ? myArtist : UNKNOWN);
+        statement.setString(4, StringUtils.isNotEmpty(myAlbum) ? myAlbum : UNKNOWN);
         statement.setInt(5, myTime);
         statement.setInt(6, myTrackNumber);
         statement.setString(7, myFileName);

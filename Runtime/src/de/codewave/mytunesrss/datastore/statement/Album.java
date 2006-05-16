@@ -17,10 +17,6 @@ public class Album {
         return myName;
     }
 
-    public String getDisplayName() {
-        return "n/a".equals(myName) ? "(unknown)" : myName;
-    }
-
     public void setName(String name) {
         myName = name;
     }
@@ -43,10 +39,6 @@ public class Album {
 
     public String getArtist() {
         return myArtist;
-    }
-
-    public String getDisplayArtist() {
-        return "n/a".equals(myArtist) ? "(unknown)" : myArtist;
     }
 
     public void setArtist(String artist) {

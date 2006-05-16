@@ -9,14 +9,27 @@
 
 <rss version="2.0">
     <channel>
-        <title><c:out value="${channel}"/></title>
+        <title>
+            <c:out value="${channel}"/>
+        </title>
         <link>${feedUrl}</link>
-        <description><fmt:message key="rss.channel.description"/></description>
+        <description>
+            <fmt:message key="rss.channel.description"/>
+        </description>
         <c:forEach items="${musicFiles}" var="item">
             <item>
-                <title><c:if test="{item.trackNumber != 0}">${item.textualTrackNumber} - </c:if><c:out value="${item.name}"/></title>
-                <description><c:out value="${item.album}"/> - <c:out value="${item.artist}"/></description>
-                <author><c:out value="${item.artist}"/></author>
+                <title>
+                    <c:if test="{item.trackNumber != 0}">${item.textualTrackNumber} -</c:if>
+                    <c:out value="${item.name}"/>
+                </title>
+                <description>
+                    <c:out value="${item.album}"/>
+                    -
+                    <c:out value="${item.artist}"/>
+                </description>
+                <author>
+                    <c:out value="${item.artist}"/>
+                </author>
                 <link>${urlMap.rss}/id=${item.id}${authInfo}</link>
                 <guid>${urlMap.rss}/id=${item.id}${authInfo}</guid>
                 <pubDate>${pubDate}</pubDate>

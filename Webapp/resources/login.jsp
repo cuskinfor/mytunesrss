@@ -12,36 +12,36 @@
 
 <head>
 
-	<title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
-	<!--[if IE]>
+    <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
+    <!--[if IE]>
 		<link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
 	<![endif]-->
-		
+
 </head>
 
 <body onload="document.forms[0].elements['password'].focus()">
 
-	<div class="body">
+<div class="body">
 
-		<h1 class="search"><span>MyTunesRSS</span></h1>
-		
-		<jsp:include page="/error.jsp" />
-		
-		<form id="login" action="${servletUrl}/login" method="post">
-		
-			<h2><fmt:message key="login.caption" /></h2>
+    <h1 class="search"><span>MyTunesRSS</span></h1>
 
-			<div class="login">
-				<fmt:message key="login.password" />
-				<input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" />
-				<input class="button" type="submit" value="<fmt:message key="login.login"/>" />
-			</div>
-		
-		</form>
-	
-	</div>
+    <jsp:include page="/error.jsp" />
+
+    <form id="login" action="${servletUrl}/login" method="post">
+
+        <h2><fmt:message key="login.caption" /></h2>
+
+        <div class="login">
+            <fmt:message key="login.password" />
+            <input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" />
+            <input class="button" type="submit" value="<fmt:message key="login.login"/>" />
+        </div>
+
+    </form>
+
+</div>
 
 </body>
 

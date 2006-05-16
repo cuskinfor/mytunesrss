@@ -24,10 +24,6 @@ public class Artist {
         return myName;
     }
 
-    public String getDisplayName() {
-        return "n/a".equals(myName) ? "(unknown)" : myName;
-    }
-
     public void setName(String name) {
         myName = name;
     }
