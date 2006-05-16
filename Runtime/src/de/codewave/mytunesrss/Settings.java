@@ -270,7 +270,6 @@ public class Settings {
             enableConfig(false);
             myRootPanel.validate();
             setStatus(myMainBundle.getString("info.server.starting"));
-            myLogDisplay.restartLog();
             new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -513,6 +512,7 @@ public class Settings {
     private void enableButtons(boolean enabled) {
         myStartStopButton.setEnabled(enabled);
         myQuitButton.setEnabled(enabled);
+        myRebuildDatabase.setEnabled(enabled);
     }
 
     private void enableConfig(boolean enabled) {

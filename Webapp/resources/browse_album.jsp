@@ -35,18 +35,32 @@
             <a href="${servletUrl}/showPortal">back to portal</a>
         </li>
         <li>
-            <a href="#">new playlist</a>
+            <a href="${servletUrl}/startNewPlaylist">new playlist</a>
         </li>
         <li style="float:right;">
             <a href="${servletUrl}/browseArtist">sort by artist</a>
         </li>
     </ul>
 
+    <c:if test="${!empty sessionScope.playlist}">
+        <ul class="links">
+            <li>
+                Playlist: ${sessionScope.playlist.trackCount}
+            </li>
+            <li>
+                <a href="${servletUrl}/editPlaylist">finish</a>
+            </li>
+            <li style="float:right;">
+                <a href="${servletUrl}/cancelCreatePlaylist">cancel</a>
+            </li>
+        </ul>
+    </c:if>
+
     <form name="browse" action="" method="post">
 
         <table class="select" cellspacing="0">
             <tr>
-                <c:if test="${playlist}"><th>&nbsp;</th></c:if>
+                <c:if test="${!empty sessionScope.playlist}"><th>&nbsp;</th></c:if>
                 <th class="active">
                     Albums
                     <c:if test="${!empty param.artist}"> with "<c:out value="${param.artist}" />"</c:if>
@@ -57,7 +71,7 @@
             <c:set var="backUrl">${servletUrl}/browseAlbum?artist=${param.artist}</c:set>
             <c:forEach items="${albums}" var="album" varStatus="loopStatus">
                 <tr class="${cwfn:choose(loopStatus.index % 2 == 0, '', 'odd')}">
-                    <c:if test="${playlist}">
+                    <c:if test="${!empty sessionScope.playlist}">
                         <td class="check">
                             <input type="checkbox" name="album" value="<c:out value="${album.name}"/>" />
                         </td>
@@ -76,22 +90,31 @@
                     <td class="tracks">
                         <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"> ${album.trackCount} </a>
                     </td>
-                    <td class="icon">
-                        <a href="${servletUrl}/createRSS/album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>/${mtfn:virtualAlbumName(album)}.xml">
-                            <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="RSS" /> </a>
-                    </td>
-                    <td class="icon">
-                        <a href="${servletUrl}/createM3U/album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>/${mtfn:virtualAlbumName(album)}.m3u">
-                            <img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="M3U" /> </a>
-                    </td>
+                    <c:choose>
+                        <c:when test="${empty sessionScope.playlist}">
+                            <td class="icon">
+                                <a href="${servletUrl}/createRSS/album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>/${mtfn:virtualAlbumName(album)}.xml">
+                                    <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="RSS" /> </a>
+                            </td>
+                            <td class="icon">
+                                <a href="${servletUrl}/createM3U/album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>/${mtfn:virtualAlbumName(album)}.m3u">
+                                    <img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="M3U" /> </a>
+                            </td>
+                        </c:when>
+                        <c:otherwise>
+                            <td class="icon">
+                                <a href="${servletUrl}/addToPlaylist?album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                                    <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                            </td>
+                        </c:otherwise>
+                    </c:choose>
                 </tr>
             </c:forEach>
         </table>
 
-        <c:if test="${playlist}">
+        <c:if test="${!empty sessionScope.playlist}">
             <div class="buttons">
-                <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createRSS/mytunesrss.xml'" value="RSS" />
-                <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/createM3U/mytunesrss.m3u'" value="M3U" />
+                <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/addToPlaylist'" value="add selected" />
             </div>
         </c:if>
 

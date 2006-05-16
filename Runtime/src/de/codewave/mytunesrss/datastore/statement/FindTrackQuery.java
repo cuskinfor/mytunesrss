@@ -21,24 +21,28 @@ public class FindTrackQuery extends DataStoreQuery<Track> {
         return query;
     }
 
-    public static FindTrackQuery getForSearchTerm(String searchTerm) {
+    public static FindTrackQuery getForSearchTerm(String searchTerm, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
+        String artistSort = sortByArtistFirst ? "artist, " : "";
         query.myQuery =
-                "SELECT id, name, artist, album, time, track_number, file FROM track WHERE name LIKE ? OR album LIKE ? OR artist LIKE ? ORDER BY album, track_number, name";
+                "SELECT id, name, artist, album, time, track_number, file FROM track WHERE name LIKE ? OR album LIKE ? OR artist LIKE ? ORDER BY " +
+                        artistSort + "album, track_number, name";
         query.myParameters = new String[] {searchTerm, searchTerm, searchTerm};
         return query;
     }
 
-    public static FindTrackQuery getForAlbum(String album) {
+    public static FindTrackQuery getForAlbum(String album, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
-        query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album = ? ORDER BY track_number, name";
+        String artistSort = sortByArtistFirst ? "artist, " : "";
+        query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album = ? ORDER BY " + artistSort + "track_number, name";
         query.myParameters = new String[] {album};
         return query;
     }
 
-    public static FindTrackQuery getForArtist(String artist) {
+    public static FindTrackQuery getForArtist(String artist, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
-        query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist = ? ORDER BY album, track_number, name";
+        String artistSort = sortByArtistFirst ? "artist, " : "";
+        query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist = ? ORDER BY " + artistSort + "album, track_number, name";
         query.myParameters = new String[] {artist};
         return query;
     }

@@ -24,17 +24,19 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         String searchTerm = getRequestParameter("searchTerm", null);
         String album = getRequestParameter("album", null);
         String artist = getRequestParameter("artist", null);
+        String sortOrderName = getRequestParameter("sortOrder", SortOrder.Album.name());
+        SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);
+
         FindTrackQuery query = null;
         if (StringUtils.isNotEmpty(searchTerm)) {
-            query = FindTrackQuery.getForSearchTerm("%" + searchTerm + "%");
+            query = FindTrackQuery.getForSearchTerm("%" + searchTerm + "%", sortOrderValue == SortOrder.Artist);
         } else if (StringUtils.isNotEmpty(album)) {
-            query = FindTrackQuery.getForAlbum(album);
+            query = FindTrackQuery.getForAlbum(album, sortOrderValue == SortOrder.Artist);
         } else {
-            query = FindTrackQuery.getForArtist(artist);
+            query = FindTrackQuery.getForArtist(artist, sortOrderValue == SortOrder.Artist);
         }
-        String sortOrder = getRequestParameter("sortOrder", SortOrder.Album.name());
-        getRequest().setAttribute("sortOrder", sortOrder);
-        getRequest().setAttribute("tracks", getTracks(getDataStore().executeQuery(query), SortOrder.valueOf(sortOrder)));
+        getRequest().setAttribute("sortOrder", sortOrderName);
+        getRequest().setAttribute("tracks", getTracks(getDataStore().executeQuery(query), sortOrderValue));
         forward(MyTunesRssResource.BrowseTrack);
     }
 
