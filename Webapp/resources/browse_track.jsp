@@ -69,14 +69,14 @@
   
     <ul class="links">
       <li>
-        <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album" /></a></c:if>
-        <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist" /></a></c:if>
+        <a href="${param.backUrl}">back</a>
       </li>
       <li>
         <a href="#">new playlist</a>
       </li>
       <li style="float:right;">
-        <a href="${param.backUrl}">back</a>
+        <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album" /></a></c:if>
+        <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist" /></a></c:if>
       </li>
     </ul>
   
