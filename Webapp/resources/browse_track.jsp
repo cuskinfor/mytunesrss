@@ -63,7 +63,7 @@
 
   <div class="body">
   
-    <h1 class="search"><span>MyTunesRSS</span></h1>
+    <h1 class="searchResult"><span>MyTunesRSS</span></h1>
     
     <jsp:include page="/error.jsp" />
   

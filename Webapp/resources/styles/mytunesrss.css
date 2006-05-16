@@ -119,6 +119,28 @@ h1.browse span {
 	visibility: hidden;
 }
 
+h1.manager {
+	background: url("../images/manage_playlists.gif") center center no-repeat;
+	height: 30px;
+	padding: 0;
+	margin: 0;
+}
+
+h1.manager span {
+	visibility: hidden;
+}
+
+h1.searchResult {
+	background: url("../images/search_result.gif") center center no-repeat;
+	height: 30px;
+	padding: 0;
+	margin: 0;
+}
+
+h1.searchResult span {
+	visibility: hidden;
+}
+
 
 /* Result Page */
 

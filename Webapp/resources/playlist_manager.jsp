@@ -25,25 +25,18 @@
 
   <div class="body">
   
-    <h1 class="search"><span>MyTunesRSS</span></h1>
+    <h1 class="manager"><span>MyTunesRSS</span></h1>
     
     <ul class="links">
       <li><a href="${servletUrl}/showPortal">back to portal</a></li>
+      <li><a href="#">new playlist</a></li>
     </ul>
     
     <jsp:include page="/error.jsp" />
-    
-    <table class="portal" cellspacing="0">
-			<tr>
-				<td class="search" style="background-image:url('../images/feeds.gif');">
-					Playlist Manager: <a href="#">create new playlist</a>
-				</td>
-			</tr>
-    </table>
-    
+       
     <table cellspacing="0">
       <tr>
-        <th class="active">MyTunesRSS Playlists</th>
+        <th class="active">Playlists</th>
 				<th colspan="4">Tracks</th>
       </tr>
       <tr>
