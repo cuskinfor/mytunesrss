@@ -29,7 +29,7 @@
 
     <ul class="links">
         <li><a href="${servletUrl}/showPortal">back to portal</a></li>
-        <li><a href="${servletUrl}/startNewPlaylist">new playlist</a></li>
+        <li><a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">new playlist</a></li>
     </ul>
 
     <jsp:include page="/error.jsp" />

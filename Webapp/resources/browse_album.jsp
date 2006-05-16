@@ -7,6 +7,8 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
+<c:set var="backUrl">${servletUrl}/browseAlbum?artist=${param.artist}</c:set>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -35,7 +37,7 @@
             <a href="${servletUrl}/showPortal">back to portal</a>
         </li>
         <li>
-            <a href="${servletUrl}/startNewPlaylist">new playlist</a>
+            <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">new playlist</a>
         </li>
         <li style="float:right;">
             <a href="${servletUrl}/browseArtist">sort by artist</a>
@@ -57,6 +59,7 @@
     </c:if>
 
     <form name="browse" action="" method="post">
+        <input type="hidden" name="backUrl" value="${backUrl}" />
 
         <table class="select" cellspacing="0">
             <tr>
@@ -68,7 +71,6 @@
                 <th>Artist</th>
                 <th colspan="3">Tracks</th>
             </tr>
-            <c:set var="backUrl">${servletUrl}/browseAlbum?artist=${param.artist}</c:set>
             <c:forEach items="${albums}" var="album" varStatus="loopStatus">
                 <tr class="${cwfn:choose(loopStatus.index % 2 == 0, '', 'odd')}">
                     <c:if test="${!empty sessionScope.playlist}">

@@ -72,7 +72,9 @@
         <a href="${param.backUrl}">back</a>
     </li>
     <li>
-        <a href="${servletUrl}/startNewPlaylist">new playlist</a>
+        <c:set var="playlistBackUrl">${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}
+                                                  &backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}</c:set>
+        <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(playlistBackUrl, 'UTF-8')}">new playlist</a>
     </li>
     <li style="float:right;">
         <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album" /></a></c:if>
