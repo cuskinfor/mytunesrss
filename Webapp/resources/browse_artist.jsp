@@ -45,17 +45,11 @@
     </ul>
 
     <c:if test="${!empty sessionScope.playlist}">
-        <ul class="links">
-            <li>
-                Playlist: ${sessionScope.playlist.trackCount}
-            </li>
-            <li>
-                <a href="${servletUrl}/editPlaylist">finish</a>
-            </li>
-            <li style="float:right;">
-                <a href="${servletUrl}/cancelCreatePlaylist">cancel</a>
-            </li>
-        </ul>
+        <div class="playlist">
+					Playlist: ${sessionScope.playlist.trackCount}
+					<a href="${servletUrl}/editPlaylist">finish</a>
+					<a class="close" href="${servletUrl}/cancelCreatePlaylist"><img src="${servletUrl}/images/playlist_close.gif"/></a>
+        </div>
     </c:if>
 
     <form name="browse" action="" method="post">

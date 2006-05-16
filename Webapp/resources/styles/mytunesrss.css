@@ -336,3 +336,18 @@ td.itunes, tr.odd td.itunes {
     background-position: 10px center;
     background-repeat: no-repeat;
 }
+
+div.playlist {
+	position: relative;
+	height: 30px;
+	overflow: hidden;
+	padding: 10px;
+	background: url("../images/playlist_include.gif");
+	border-top: 1px solid #666;
+}
+
+div.playlist a.close {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
