@@ -54,10 +54,10 @@
     
     <table cellspacing="0">
       <tr>
-        <th class="active" colspan="3">MyTunesRSS Playlists</th>
+        <th class="active" colspan="3">Playlists</th>
       </tr>
       <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
-        <tr class="${cwfn:choose(loopStatus.index % 2 == 0, '', 'odd')}">
+        <tr class="${cwfn:choose(loopStatus.index % 2 == 1, '', 'odd')}">
           <td>
             <c:out value="${playlist.name}" />
           </td>

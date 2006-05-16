@@ -93,7 +93,9 @@
           <c:if test="${track.newSection}">
             <c:set var="count" value="0" />
             <tr>
-              <th class="check"><input type="checkbox" name="none" value="none" onClick="selectAll('${section.sectionIds}',this)" /></th>
+							<c:if test="${false}">
+								<th class="check"><input type="checkbox" name="none" value="none" onClick="selectAll('${section.sectionIds}',this)" /></th>
+							</c:if>
               <th class="active" colspan="2">
                 <c:choose>
                   <c:when test="${sortOrder == 'Album'}">
@@ -112,11 +114,13 @@
               </th>
             </tr>
           </c:if>
-          <tr class="${cwfn:choose(count % 2 == 0, '', 'odd')}">
-            <td class="check">
-              <input type="checkbox" id="item${track.id}" name="track" value="${track.id}"
-                <c:if test="${selectedTracks[track.id]}">checked="checked"</c:if> />
-            </td>
+          <tr class="${cwfn:choose(count % 2 == 1, '', 'odd')}">
+						<c:if test="${false}">
+							<td class="check">
+								<input type="checkbox" id="item${track.id}" name="track" value="${track.id}"
+									<c:if test="${selectedTracks[track.id]}">checked="checked"</c:if> />
+							</td>
+						</c:if>
             <td class="artist">
               <c:choose>
                 <c:when test="${sortOrder == 'Album'}">

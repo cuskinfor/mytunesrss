@@ -76,11 +76,20 @@ tr.odd td {
 	background: #fff;
 }
 
+td a {
+	color: #00f;
+	text-decoration: none;
+}
+
+td a:HOVER {
+	text-decoration: underline;
+}
+
 
 div.error {
 	color: #f00;
 	padding: 10px;
-	border-bottom: 1px solid #666;
+	border-top: 1px solid #666;
 	background: #fee;
 	font-weight: bold;
 }
@@ -190,7 +199,6 @@ table.portal input {
 }
 
 td.artist {
-	border-left: 1px solid #ccc;
 }
 
 td.album, td.tracks {
@@ -201,14 +209,12 @@ td.album a {
 	display: block;
 	padding: 0 0 2px 20px;
 	background: url("../images/albums.gif") 0 -84px no-repeat;
-	text-decoration: none;
 }
 
 td.tracks a {
 	display: block;
 	padding: 0 0 2px 20px;
 	background: url("../images/tracks.gif") 0 -84px no-repeat;
-	text-decoration: none;
 }
 
 tr.odd td.album a, tr.odd td.tracks a {
