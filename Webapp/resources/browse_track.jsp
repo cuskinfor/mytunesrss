@@ -66,7 +66,10 @@
 
 <div class="body">
 
-<h1 class="searchResult"><span>MyTunesRSS</span></h1>
+<h1 class="searchResult">
+	<a class="portal" href="${servletUrl}/showPortal"><span>portal</span></a>
+	<span>MyTunesRSS</span>
+</h1>
 
 <jsp:include page="/incl_error.jsp" />
 
@@ -104,21 +107,37 @@
                         <th class="check"><input type="checkbox" name="none" value="none" onClick="selectAll('${section.sectionIds}',this)" />
                         </th>
                     </c:if>
-                    <th class="active" colspan="2">
+                    <th class="active">
                         <c:choose>
                             <c:when test="${sortOrder == 'Album'}">
                                 <c:if test="${track.simple}">
-                                    <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" /> - </c:if>
+																<a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(track.artist, 'UTF-8')}"/>">
+                                    <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
+																	</a> - </c:if>
+																<a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>">
                                 <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
+																</a>
                             </c:when>
                             <c:otherwise>
+																<a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(track.artist, 'UTF-8')}"/>">
                                 <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
+																</a>
                                 <c:if test="${track.simple}">
-                                    - <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
+                                    -
+																		<a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>">
+																		<c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" /></a>
                                 </c:if>
                             </c:otherwise>
                         </c:choose>
                     </th>
+										<th class="icon">
+												<a href="${servletUrl}/createRSS/album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>/test.xml">
+														<img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="RSS" /> </a>
+										</th>
+										<th class="icon">
+												<a href="${servletUrl}/createM3U/album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>/test.m3u">
+														<img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="M3U" /> </a>
+										</th>
                 </tr>
             </c:if>
             <tr class="${cwfn:choose(count % 2 == 1, '', 'odd')}">

@@ -28,14 +28,14 @@
 
 <div class="body">
 
-    <h1 class="browse"><span>MyTunesRSS</span></h1>
+    <h1 class="browse">
+			<a class="portal" href="${servletUrl}/showPortal"><span>portal</span></a>
+			<span>MyTunesRSS</span>
+		</h1>
 
     <jsp:include page="/imcl_error.jsp" />
 
     <ul class="links">
-        <li>
-            <a href="${servletUrl}/showPortal">back to portal</a>
-        </li>
         <c:if test="${empty sessionScope.playlist}">
             <li>
                 <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">new playlist</a>

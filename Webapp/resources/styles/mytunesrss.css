@@ -351,3 +351,39 @@ div.playlist a.close {
 	top: 5px;
 	right: 5px;
 }
+
+th a {
+	color: #000;
+	text-decoration: none;
+}
+
+th a:HOVER {
+	text-decoration: underline;
+}
+
+th.icon {
+    width: 16px;
+    padding: 0 10px 0 0;
+    border-left: none;
+    text-align: center;
+}
+
+h1 a.portal {
+	float: right;
+	display: block;
+	width: 58px;
+	height: 20px;
+	margin: 5px 10px 0 0;
+	background: url("../images/portal.gif");
+	text-decoration: none;
+	border: none;
+}
+
+h1 a.portal:HOVER {
+	background-position: bottom left;
+}
+
+h1 a.portal span {
+	visibility: hidden;
+	font-size: 1px;
+}
