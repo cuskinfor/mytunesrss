@@ -23,7 +23,7 @@ public class StartNewPlaylistCommandHandler extends MyTunesRssCommandHandler {
         if (StringUtils.isNotEmpty(backUrl)) {
             getResponse().sendRedirect(backUrl);
         } else {
-            forward(MyTunesRssCommand.BrowseArtist);
+            forward(MyTunesRssCommand.ShowPortal);
         }
     }
 }

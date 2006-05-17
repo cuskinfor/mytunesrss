@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss.command;
 
+import org.apache.commons.lang.*;
+
 /**
  * de.codewave.mytunesrss.command.CancelCreatePlaylistCommandHandler
  */
@@ -12,6 +14,11 @@ public class CancelCreatePlaylistCommandHandler extends MyTunesRssCommandHandler
     public void executeAuthorized() throws Exception {
         getSession().removeAttribute("playlist");
         getSession().removeAttribute("playlistContent");
-        forward(MyTunesRssCommand.ShowPortal);
+        String backUrl = getRequestParameter("backUrl", null);
+        if (StringUtils.isNotEmpty(backUrl)) {
+            getResponse().sendRedirect(backUrl);
+        } else {
+            forward(MyTunesRssCommand.ShowPortal);
+        }
     }
 }

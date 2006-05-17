@@ -63,6 +63,7 @@ public class Settings {
     private JCheckBox myAutoStartServer;
     private Embedded myServer;
     private LogDisplay myLogDisplay = new LogDisplay();
+    private boolean myRememberedUpdateOnStart;
 
     public Settings(final JFrame frame, final DatabaseBuilder builder) throws UnsupportedEncodingException {
         Logger.getRootLogger().removeAllAppenders();
@@ -108,6 +109,10 @@ public class Settings {
         }
         myUpdateOnStartCheckbox.setSelected(data.isCheckUpdateOnStart());
         myAutoStartServer.setSelected(data.isAutoStartServer());
+        if (myAutoStartServer.isSelected()) {
+            myUpdateOnStartCheckbox.setSelected(false);
+            myUpdateOnStartCheckbox.setEnabled(false);
+        }
         enableConfig(true);
         myRegisterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -188,6 +193,18 @@ public class Settings {
                         LOG.error(null, e1);
                     }
 
+                }
+            }
+        });
+        myAutoStartServer.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (myAutoStartServer.isSelected()) {
+                    myRememberedUpdateOnStart = myUpdateOnStartCheckbox.isSelected();
+                    myUpdateOnStartCheckbox.setSelected(false);
+                    myUpdateOnStartCheckbox.setEnabled(false);
+                } else {
+                    myUpdateOnStartCheckbox.setSelected(myRememberedUpdateOnStart);
+                    myUpdateOnStartCheckbox.setEnabled(true);
                 }
             }
         });
@@ -533,7 +550,7 @@ public class Settings {
         enableElementAndLabel(myMaxMemSpinner, enabled);
         myLimitRssItemsCheckbox.setEnabled(enabled);
         enableElementAndLabel(myMaxRssEntries, enabled && myLimitRssItemsCheckbox.isSelected());
-        myUpdateOnStartCheckbox.setEnabled(enabled);
+        myUpdateOnStartCheckbox.setEnabled(enabled && !myAutoStartServer.isSelected());
         myUpdateButton.setEnabled(enabled);
         myAutoStartServer.setEnabled(enabled);
     }

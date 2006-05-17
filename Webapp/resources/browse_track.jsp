@@ -128,14 +128,24 @@
                         </c:otherwise>
                     </c:choose>
                 </th>
-                <th class="icon">
-                    <a href="${servletUrl}/createRSS/album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>/test.xml">
-                        <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="RSS" /> </a>
-                </th>
-                <th class="icon">
-                    <a href="${servletUrl}/createM3U/album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>/test.m3u">
-                        <img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="M3U" /> </a>
-                </th>
+                <c:choose>
+                    <c:when test="${empty sessionScope.playlist}">
+                        <th class="icon">
+                            <a href="${servletUrl}/createRSS/?????">
+                                <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="RSS" /> </a>
+                        </th>
+                        <th class="icon">
+                            <a href="${servletUrl}/createM3U/?????">
+                                <img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="M3U" /> </a>
+                        </th>
+                    </c:when>
+                    <c:otherwise>
+                        <th class="icon">
+                            <a href="${servletUrl}/addToPlaylist/?????">
+                                <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                        </th>
+                    </c:otherwise>
+                </c:choose>
             </tr>
         </c:if>
         <tr class="${cwfn:choose(count % 2 == 1, '', 'odd')}">
