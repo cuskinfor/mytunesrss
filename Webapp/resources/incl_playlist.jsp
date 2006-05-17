@@ -4,9 +4,12 @@
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
 <c:if test="${!empty sessionScope.playlist}">
-    <div class="playlist">
-        Playlist: ${sessionScope.playlist.trackCount} <a href="${servletUrl}/editPlaylist">finish</a> <a class="close"
-                                                                                                         href="${servletUrl}/cancelCreatePlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"><img
-            src="${servletUrl}/images/playlist_close.gif" /></a>
-    </div>
+	<div class="playlist">
+		<a class="close" href="${servletUrl}/cancelCreatePlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+			<img src="${appUrl}/images/cancel.gif" />
+		</a>
+		<strong>New playlist</strong>
+		- track count: ${sessionScope.playlist.trackCount}
+		<a class="finish" href="${servletUrl}/editPlaylist"><img src="${appUrl}/images/finish.gif" /></a>
+	</div>
 </c:if>
