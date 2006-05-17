@@ -5,11 +5,9 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.utils.servlet.*;
+import org.apache.commons.lang.*;
 
 import java.util.*;
-
-import org.apache.commons.lang.*;
 
 /**
  * de.codewave.mytunesrss.command.AddToPlaylistCommandHandler
@@ -18,19 +16,21 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         Collection<Track> playlist = (Collection<Track>)getSession().getAttribute("playlistContent");
-        String trackId = getRequestParameter("track", null);
-        String album = getRequestParameter("album", null);
-        String artist = getRequestParameter("artist", null);
-        DataStoreQuery query;
-        if (StringUtils.isNotEmpty(trackId)) {
-            query = FindTrackQuery.getForId(trackId);
-        } else if (StringUtils.isNotEmpty(album)) {
-            query = FindTrackQuery.getForAlbum(album, false);
-        } else {
-            query = FindTrackQuery.getForArtist(artist, false);
+        String[] trackIds = getNonEmptyParameterValues("track");
+        String[] albums = getNonEmptyParameterValues("album");
+        String[] artists = getNonEmptyParameterValues("artist");
+        DataStoreQuery query = null;
+        if (trackIds != null && trackIds.length > 0) {
+            query = FindTrackQuery.getForId(trackIds);
+        } else if (albums != null && albums.length > 0) {
+            query = FindTrackQuery.getForAlbum(albums, false);
+        } else if (artists != null && artists.length > 0) {
+            query = FindTrackQuery.getForArtist(artists, false);
         }
-        playlist.addAll(getDataStore().executeQuery(query));
-        ((Playlist)getSession().getAttribute("playlist")).setTrackCount(playlist.size());
+        if (query != null) {
+            playlist.addAll(getDataStore().executeQuery(query));
+            ((Playlist)getSession().getAttribute("playlist")).setTrackCount(playlist.size());
+        }
         String backUrl = getRequestParameter("backUrl", null);
         if (StringUtils.isNotEmpty(backUrl)) {
             getResponse().sendRedirect(backUrl);

@@ -12,6 +12,7 @@ import org.apache.commons.lang.*;
 
 import javax.servlet.*;
 import java.io.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
@@ -79,5 +80,19 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     public void executeAuthorized() throws Exception {
         // intentionally left blank
+    }
+
+    protected String[] getNonEmptyParameterValues(String name) {
+        String[] values = getRequest().getParameterValues(name);
+        if (values != null && values.length > 0) {
+            List<String> nonEmptyValues = new ArrayList<String>();
+            for (String value : values) {
+                if (StringUtils.isNotEmpty(value)) {
+                    nonEmptyValues.add(value);
+                }
+            }
+            return nonEmptyValues.toArray(new String[nonEmptyValues.size()]);
+        }
+        return null;
     }
 }

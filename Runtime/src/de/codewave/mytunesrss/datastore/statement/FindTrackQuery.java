@@ -6,20 +6,27 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import org.apache.commons.lang.*;
 
+import java.io.*;
 import java.sql.*;
 import java.util.*;
-import java.io.*;
 
 /**
- de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
+ * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
  */
 public class FindTrackQuery extends DataStoreQuery<Track> {
-    public static FindTrackQuery getForId(String id) {
+    public static FindTrackQuery getForId(String[] trackIds) {
         FindTrackQuery query = new FindTrackQuery();
-        query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE id = ?";
-        query.myParameters = new String[] {id};
+        if (trackIds.length > 1) {
+            query.myQuery =
+                    "SELECT id, name, artist, album, time, track_number, file FROM track WHERE id IN (" + SQLUtils.createParameters(
+                            trackIds.length) + ")";
+        } else {
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE id = ?";
+        }
+        query.myParameters = trackIds;
         return query;
     }
+
 
     public static FindTrackQuery getForSearchTerm(String searchTerm, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
@@ -29,7 +36,7 @@ public class FindTrackQuery extends DataStoreQuery<Track> {
                         artistSort + "album, track_number, name";
         String sqlTerm = null;
         if (StringUtils.isNotEmpty(searchTerm)) {
-            sqlTerm = "%" + searchTerm.toLowerCase().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%";
+            sqlTerm = "%" + SQLUtils.escapeLikeString(searchTerm.toLowerCase()) + "%";
         } else {
             sqlTerm = "%";
         }
@@ -37,19 +44,31 @@ public class FindTrackQuery extends DataStoreQuery<Track> {
         return query;
     }
 
-    public static FindTrackQuery getForAlbum(String album, boolean sortByArtistFirst) {
+    public static FindTrackQuery getForAlbum(String[] albums, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
         String artistSort = sortByArtistFirst ? "artist, " : "";
-        query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album = ? ORDER BY " + artistSort + "track_number, name";
-        query.myParameters = new String[] {album};
+        if (albums.length > 1) {
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album IN (" +
+                    SQLUtils.createParameters(albums.length) + ") ORDER BY " + artistSort + "track_number, name";
+        } else {
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album = ? ORDER BY " + artistSort +
+                    "track_number, name";
+        }
+        query.myParameters = albums;
         return query;
     }
 
-    public static FindTrackQuery getForArtist(String artist, boolean sortByArtistFirst) {
+    public static FindTrackQuery getForArtist(String[] artists, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
         String artistSort = sortByArtistFirst ? "artist, " : "";
-        query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist = ? ORDER BY " + artistSort + "album, track_number, name";
-        query.myParameters = new String[] {artist};
+        if (artists.length > 1) {
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist IN (" +
+                    SQLUtils.createParameters(artists.length) + ") ORDER BY " + artistSort + "album, track_number, name";
+        } else {
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist = ? ORDER BY " + artistSort +
+                    "album, track_number, name";
+        }
+        query.myParameters = artists;
         return query;
     }
 

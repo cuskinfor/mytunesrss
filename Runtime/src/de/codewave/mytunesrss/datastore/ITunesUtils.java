@@ -133,7 +133,7 @@ public class ITunesUtils {
         if (items != null && !items.isEmpty()) {
             for (Iterator<Map<String, String>> itemIterator = items.iterator(); itemIterator.hasNext();) {
                 Map<String, String> item = itemIterator.next();
-                FindTrackQuery findTrackQuery = FindTrackQuery.getForId(item.get("Track ID"));
+                FindTrackQuery findTrackQuery = FindTrackQuery.getForId(new String[] {item.get("Track ID")});
                 Collection<Track> trackForId = storeSession.executeQuery(findTrackQuery);
                 if (!trackForId.isEmpty()) {
                     tracks.add(trackForId.iterator().next().getId());

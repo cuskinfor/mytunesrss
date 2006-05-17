@@ -21,15 +21,20 @@ public class CreateM3uCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws SQLException, IOException, ServletException {
         String playlistId = getRequest().getParameter("playlist");
-        String album = getRequest().getParameter("album");
-        String artist = getRequest().getParameter("artist");
+        String[] albums = getNonEmptyParameterValues("album");
+        String[] artists = getNonEmptyParameterValues("artist");
+        String[] trackIds = getNonEmptyParameterValues("track");
         Collection<Track> tracks;
         if (StringUtils.isNotEmpty(playlistId)) {
             tracks = getDataStore().executeQuery(new FindPlaylistTracksQuery(playlistId));
-        } else if (StringUtils.isNotEmpty(album)) {
-            tracks = getDataStore().executeQuery(FindTrackQuery.getForAlbum(album, false));
+        } else if (trackIds != null & trackIds.length > 0) {
+            tracks = getDataStore().executeQuery(FindTrackQuery.getForId(trackIds));
+        } else if (albums != null && albums.length > 0) {
+            tracks = getDataStore().executeQuery(FindTrackQuery.getForAlbum(albums, false));
+        } else if (artists != null && artists.length > 0) {
+            tracks = getDataStore().executeQuery(FindTrackQuery.getForArtist(artists, false));
         } else {
-            tracks = getDataStore().executeQuery(FindTrackQuery.getForArtist(artist, false));
+            tracks = Collections.emptyList();
         }
         if (!tracks.isEmpty()) {
             getRequest().setAttribute("tracks", tracks);
@@ -37,7 +42,7 @@ public class CreateM3uCommandHandler extends MyTunesRssCommandHandler {
             forward(MyTunesRssResource.TemplateM3u);
         } else {
             setError("error.emptyFeed");
-            forward(MyTunesRssResource.Portal);
+            forward(MyTunesRssResource.Portal); // todo: redirect to backUrl
         }
     }
 
