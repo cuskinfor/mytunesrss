@@ -17,16 +17,11 @@ import org.apache.commons.lang.*;
 public class StartNewPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        List<Track> playlist = new ArrayList<Track>();
         getSession().setAttribute("playlist", new Playlist());
-        getSession().setAttribute("playlistContent", playlist);
+        getSession().setAttribute("playlistContent", new LinkedHashSet<Track>());
         String backUrl = getRequestParameter("backUrl", null);
         if (StringUtils.isNotEmpty(backUrl)) {
-            String applicationUrl = ServletUtils.getApplicationUrl(getRequest());
-            if (backUrl.toLowerCase().startsWith(applicationUrl.toLowerCase())) {
-                backUrl = backUrl.substring(applicationUrl.length());
-            }
-            forward(backUrl);
+            getResponse().sendRedirect(backUrl);
         } else {
             forward(MyTunesRssCommand.BrowseArtist);
         }

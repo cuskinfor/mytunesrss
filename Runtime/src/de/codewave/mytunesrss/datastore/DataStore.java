@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.pool.*;
 import org.apache.commons.pool.impl.*;
@@ -29,11 +30,11 @@ public class DataStore {
     }
 
     private GenericObjectPool myConnectionPool;
-    
+
     public void init() {
         myConnectionPool = new GenericObjectPool(new BasePoolableObjectFactory() {
             public Object makeObject() throws Exception {
-                return DriverManager.getConnection("jdbc:hsqldb:file:data/hsqldb/MyTunesRSS", "sa", "");
+                return DriverManager.getConnection("jdbc:hsqldb:file:hsqldb/MyTunesRSS-" + MyTunesRss.VERSION, "sa", "");
             }
         }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 5, false, false, 10000, 2, 20000, false, 20000);
     }

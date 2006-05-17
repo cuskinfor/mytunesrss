@@ -25,9 +25,15 @@ public class FindTrackQuery extends DataStoreQuery<Track> {
         FindTrackQuery query = new FindTrackQuery();
         String artistSort = sortByArtistFirst ? "artist, " : "";
         query.myQuery =
-                "SELECT id, name, artist, album, time, track_number, file FROM track WHERE name LIKE ? OR album LIKE ? OR artist LIKE ? ORDER BY " +
+                "SELECT id, name, artist, album, time, track_number, file FROM track WHERE LCASE(name) LIKE ? ESCAPE '\\' OR LCASE(album) LIKE ? ESCAPE '\\' OR LCASE(artist) LIKE ? ESCAPE '\\' ORDER BY " +
                         artistSort + "album, track_number, name";
-        query.myParameters = new String[] {searchTerm, searchTerm, searchTerm};
+        String sqlTerm = null;
+        if (StringUtils.isNotEmpty(searchTerm)) {
+            sqlTerm = "%" + searchTerm.toLowerCase().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%";
+        } else {
+            sqlTerm = "%";
+        }
+        query.myParameters = new String[] {sqlTerm, sqlTerm, sqlTerm};
         return query;
     }
 

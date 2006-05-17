@@ -10,6 +10,9 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
+<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}
+                                          &backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}</c:set>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -65,30 +68,24 @@
 
 <h1 class="searchResult"><span>MyTunesRSS</span></h1>
 
-<jsp:include page="/error.jsp" />
+<jsp:include page="/incl_error.jsp" />
 
 <ul class="links">
     <li>
         <a href="${param.backUrl}">back</a>
     </li>
-    <li>
-        <c:set var="playlistBackUrl">${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}
-                                                  &backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}</c:set>
-        <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(playlistBackUrl, 'UTF-8')}">new playlist</a>
-    </li>
+    <c:if test="${empty sessionScope.playlist}">
+        <li>
+            <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">new playlist</a>
+        </li>
+    </c:if>
     <li style="float:right;">
         <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album" /></a></c:if>
         <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist" /></a></c:if>
     </li>
 </ul>
 
-<c:if test="${!empty sessionScope.playlist}">
-        <div class="playlist">
-					Playlist: ${sessionScope.playlist.trackCount}
-					<a href="${servletUrl}/editPlaylist">finish</a>
-					<a class="close" href="${servletUrl}/cancelCreatePlaylist"><img src="${servletUrl}/images/playlist_close.gif"/></a>
-        </div>
-</c:if>
+<jsp:include page="incl_playlist.jsp" />
 
 <form id="browse" action="${servletUrl}/addTracks" method="post">
 
@@ -150,14 +147,17 @@
                 <c:choose>
                     <c:when test="${empty sessionScope.playlist}">
                         <td class="icon">
-                            <a href="${servletUrl}/playTrack/track=${track.id}/${cwfn:urlEncode(mtfn:virtualName(track.file), 'UTF-8')}">
-                                <img src="${appUrl}/images/play${cwfn:choose(count % 2 == 0, '', '_odd')}.gif"
-                                     alt="<fmt:message key="select.play"/>" /> </a>
+                            <a href="${servletUrl}/createRSS/track=<c:out value="${cwfn:urlEncode(track.id, 'UTF-8')}"/>/${mtfn:virtualName(track.file)}.xml">
+                                <img src="${appUrl}/images/rss${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="RSS" /> </a>
+                        </td>
+                        <td class="icon">
+                            <a href="${servletUrl}/createM3U/track=<c:out value="${cwfn:urlEncode(track.id, 'UTF-8')}"/>/${mtfn:virtualName(track.file)}.m3u">
+                                <img src="${appUrl}/images/m3u${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="M3U" /> </a>
                         </td>
                     </c:when>
                     <c:otherwise>
                         <td class="icon">
-                            <a href="${servletUrl}/addToPlaylist?track=${track.id}">
+                            <a href="${servletUrl}/addToPlaylist?track=${track.id}&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
                                 <img src="${appUrl}/images/add${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                         </td>
                     </c:otherwise>

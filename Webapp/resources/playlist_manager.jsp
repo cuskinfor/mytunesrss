@@ -6,6 +6,8 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
+<c:set var="backUrl" scope="request">${servletUrl}/showPlaylistManager</c:set>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -32,7 +34,7 @@
         <li><a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">new playlist</a></li>
     </ul>
 
-    <jsp:include page="/error.jsp" />
+    <jsp:include page="/incl_error.jsp" />
 
     <table cellspacing="0">
         <tr>

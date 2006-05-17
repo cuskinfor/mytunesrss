@@ -25,7 +25,7 @@
 
     <h1 class="search"><span>MyTunesRSS</span></h1>
 
-    <jsp:include page="/error.jsp" />
+    <jsp:include page="/incl_error.jsp" />
 
     <table class="search" cellspacing="0">
         <form id="search" action="${servletUrl}/>searchTracks" method="post">

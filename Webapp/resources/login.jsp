@@ -27,7 +27,7 @@
 
     <h1 class="search"><span>MyTunesRSS</span></h1>
 
-    <jsp:include page="/error.jsp" />
+    <jsp:include page="/incl_error.jsp" />
 
     <form id="login" action="${servletUrl}/login" method="post">
 

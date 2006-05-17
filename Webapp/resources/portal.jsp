@@ -6,6 +6,8 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
+<c:set var="backUrl" scope="request">${servletUrl}/showPortal</c:set>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -27,7 +29,7 @@
 
     <h1 class="search"><span>MyTunesRSS</span></h1>
 
-    <jsp:include page="/error.jsp" />
+    <jsp:include page="/incl_error.jsp" />
 
     <form name="search" action="${servletUrl}/browseTrack" method="post">
 
@@ -36,13 +38,15 @@
                 <td class="search">
                     Search
                     <input class="text" type="text" name="searchTerm" value="<c:out value="${param.searchTerm}"/>" style="width:120px;" />
-                    <input type="hidden" name="backUrl" value="${servletUrl}/showPortal" />
+                    <input type="hidden" name="backUrl" value="${backUrl}" />
                     <input class="button" type="submit" value="search" />
                 </td>
                 <td class="links">
-                    <a href="${servletUrl}/browseArtist" style="background-image:url('${appUrl}/images/library_small.gif');"> Browse library </a> <a
-                        href="${servletUrl}/showPlaylistManager"
-                        style="background-image:url('${appUrl}/images/feeds_small.gif');"> Manage Playlists </a>
+                    <a href="${servletUrl}/browseArtist" style="background-image:url('${appUrl}/images/library_small.gif');"> Browse library </a>
+                    <c:if test="${empty sessionScope.playlist}">
+                        <a href="${servletUrl}/showPlaylistManager" style="background-image:url('${appUrl}/images/feeds_small.gif');"> Manage
+                                                                                                                                       Playlists </a>
+                    </c:if>
                 </td>
             </tr>
         </table>

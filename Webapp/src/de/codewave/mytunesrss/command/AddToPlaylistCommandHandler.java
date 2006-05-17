@@ -17,7 +17,7 @@ import org.apache.commons.lang.*;
 public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        List<Track> playlist = (List<Track>)getSession().getAttribute("playlistContent");
+        Collection<Track> playlist = (Collection<Track>)getSession().getAttribute("playlistContent");
         String trackId = getRequestParameter("track", null);
         String album = getRequestParameter("album", null);
         String artist = getRequestParameter("artist", null);
@@ -33,11 +33,7 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
         ((Playlist)getSession().getAttribute("playlist")).setTrackCount(playlist.size());
         String backUrl = getRequestParameter("backUrl", null);
         if (StringUtils.isNotEmpty(backUrl)) {
-            String applicationUrl = ServletUtils.getApplicationUrl(getRequest());
-            if (backUrl.toLowerCase().startsWith(applicationUrl.toLowerCase())) {
-                backUrl = backUrl.substring(applicationUrl.length());
-            }
-            forward(backUrl);
+            getResponse().sendRedirect(backUrl);
         } else {
             forward(MyTunesRssCommand.ShowPortal);
         }

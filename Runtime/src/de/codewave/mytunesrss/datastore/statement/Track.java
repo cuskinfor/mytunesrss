@@ -73,4 +73,17 @@ public class Track {
     public void setTrackNumber(int trackNumber) {
         myTrackNumber = trackNumber;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (getId() == null) {
+            return ((Track)other).getId() == null;
+        }
+        return getId().equals(((Track)other).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId() != null ? 0 : getId().hashCode();
+    }
 }
