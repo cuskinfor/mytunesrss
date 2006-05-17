@@ -60,6 +60,7 @@ public class Settings {
     private JCheckBox myUpdateOnStartCheckbox;
     private JButton myUpdateButton;
     private JButton myRebuildDatabase;
+    private JCheckBox myAutoStartServer;
     private Embedded myServer;
     private LogDisplay myLogDisplay = new LogDisplay();
 
@@ -106,6 +107,7 @@ public class Settings {
             myMaxMemSaveButton.setVisible(false);
         }
         myUpdateOnStartCheckbox.setSelected(data.isCheckUpdateOnStart());
+        myAutoStartServer.setSelected(data.isAutoStartServer());
         enableConfig(true);
         myRegisterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -448,17 +450,17 @@ public class Settings {
             Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_x", myFrame.getLocation().x);
             Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", myFrame.getLocation().y);
             MyTunesRssConfig config = createPrefDataFromGUI();
-            if (config.isDiffenrentFromSaved()) {
-                if (JOptionPane.showOptionDialog(myRootPanel.getTopLevelAncestor(),
-                                                 myMainBundle.getString("dialog.saveSettingsQuestion.message"),
-                                                 myMainBundle.getString("dialog.saveSettingsQuestion.title"),
-                                                 JOptionPane.YES_NO_OPTION,
-                                                 JOptionPane.QUESTION_MESSAGE,
-                                                 null,
-                                                 null,
-                                                 null) == JOptionPane.YES_OPTION) {
+            if (true) { // config.isDiffenrentFromSaved()
+//                if (JOptionPane.showOptionDialog(myRootPanel.getTopLevelAncestor(),
+//                                                 myMainBundle.getString("dialog.saveSettingsQuestion.message"),
+//                                                 myMainBundle.getString("dialog.saveSettingsQuestion.title"),
+//                                                 JOptionPane.YES_NO_OPTION,
+//                                                 JOptionPane.QUESTION_MESSAGE,
+//                                                 null,
+//                                                 null,
+//                                                 null) == JOptionPane.YES_OPTION) {
                     config.save();
-                }
+//                }
             }
             try {
                 MyTunesRss.STORE.destroy();
@@ -485,6 +487,7 @@ public class Settings {
         config.setLimitRss(myLimitRssItemsCheckbox.isSelected());
         config.setMaxRssItems(myMaxRssEntries.getText());
         config.setCheckUpdateOnStart(myUpdateOnStartCheckbox.isSelected());
+        config.setAutoStartServer(myAutoStartServer.isSelected());
         return config;
     }
 
@@ -532,6 +535,7 @@ public class Settings {
         enableElementAndLabel(myMaxRssEntries, enabled && myLimitRssItemsCheckbox.isSelected());
         myUpdateOnStartCheckbox.setEnabled(enabled);
         myUpdateButton.setEnabled(enabled);
+        myAutoStartServer.setEnabled(enabled);
     }
 
     private void enableElementAndLabel(JComponent element, boolean enabled) {

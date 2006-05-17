@@ -27,7 +27,7 @@ public class CreateM3uCommandHandler extends MyTunesRssCommandHandler {
         Collection<Track> tracks;
         if (StringUtils.isNotEmpty(playlistId)) {
             tracks = getDataStore().executeQuery(new FindPlaylistTracksQuery(playlistId));
-        } else if (trackIds != null & trackIds.length > 0) {
+        } else if (trackIds != null && trackIds.length > 0) {
             tracks = getDataStore().executeQuery(FindTrackQuery.getForId(trackIds));
         } else if (albums != null && albums.length > 0) {
             tracks = getDataStore().executeQuery(FindTrackQuery.getForAlbum(albums, false));

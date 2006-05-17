@@ -29,9 +29,8 @@
 <div class="body">
 
     <h1 class="browse">
-			<a class="portal" href="${servletUrl}/showPortal"><span>portal</span></a>
-			<span>MyTunesRSS</span>
-		</h1>
+        <a class="portal" href="${servletUrl}/showPortal"><span>portal</span></a> <span>MyTunesRSS</span>
+    </h1>
 
     <jsp:include page="/incl_error.jsp" />
 
@@ -46,7 +45,7 @@
         </li>
     </ul>
 
-    <jsp:include page="incl_playlist.jsp"/>
+    <jsp:include page="incl_playlist.jsp" />
 
     <form name="browse" action="" method="post">
         <input type="hidden" name="backUrl" value="${backUrl}" />
@@ -74,7 +73,15 @@
                     <td>
                         <c:choose>
                             <c:when test="${album.artistCount == 1}">
-                                <a href="${servletUrl}/browseTrack?artist=${cwfn:urlEncode(album.artist, 'UTF-8')}&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${cwfn:choose(mtfn:unknown(album.artist), '(unknown)', album.artist)}</a></c:when>
+                                <c:choose>
+                                    <c:when test="${!empty param.artist}">
+                                        <c:out value="${cwfn:choose(mtfn:unknown(album.artist), '(unknown)', album.artist)}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="${servletUrl}/browseAlbum?artist=${cwfn:urlEncode(album.artist, 'UTF-8')}"><c:out value="${cwfn:choose(mtfn:unknown(album.artist), '(unknown)', album.artist)}"/></a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:when>
                             <c:otherwise>various</c:otherwise>
                         </c:choose>
 

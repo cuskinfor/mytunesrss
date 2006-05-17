@@ -28,6 +28,7 @@ public class MyTunesRssConfig {
     private boolean myLimitRss;
     private String myMaxRssItems;
     private boolean myCheckUpdateOnStart;
+    private boolean myAutoStartServer;
 
     public boolean isAuth() {
         return myAuth;
@@ -113,6 +114,14 @@ public class MyTunesRssConfig {
         myCheckUpdateOnStart = checkUpdateOnStart;
     }
 
+    public boolean isAutoStartServer() {
+        return myAutoStartServer;
+    }
+
+    public void setAutoStartServer(boolean autoStartServer) {
+        myAutoStartServer = autoStartServer;
+    }
+
     public void load() {
         myPort = Preferences.userRoot().node("/de/codewave/mytunesrss").get("port", "8080");
         myLibraryXml = Preferences.userRoot().node("/de/codewave/mytunesrss").get("library", "");
@@ -124,6 +133,7 @@ public class MyTunesRssConfig {
         myLimitRss = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("limitRss", true);
         myMaxRssItems = Preferences.userRoot().node("/de/codewave/mytunesrss").get("maxRssItems", "100");
         myCheckUpdateOnStart = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("checkUpdateOnStart", true);
+        myAutoStartServer = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("autoStartServer", false);
     }
 
     public void save() {
@@ -137,6 +147,7 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("limitRss", myLimitRss);
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("maxRssItems", myMaxRssItems);
         Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("checkUpdateOnStart", myCheckUpdateOnStart);
+        Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("autoStartServer", myAutoStartServer);
     }
 
     public boolean isDiffenrentFromSaved() {
@@ -155,6 +166,7 @@ public class MyTunesRssConfig {
         hash |= Boolean.valueOf(isLimitRss()).hashCode();
         hash |= getMaxRssItems() != null ? getMaxRssItems().hashCode() : 0;
         hash |= Boolean.valueOf(isCheckUpdateOnStart()).hashCode();
+        hash |= Boolean.valueOf(isAutoStartServer()).hashCode();
         return hash;
     }
 
@@ -172,6 +184,7 @@ public class MyTunesRssConfig {
             result &= StringUtils.equals(getMaxRssItems(), other.getMaxRssItems());
             result &= isLimitRss() == other.isLimitRss();
             result &= isCheckUpdateOnStart() == other.isCheckUpdateOnStart();
+            result &= isAutoStartServer() == other.isAutoStartServer();
             return result;
         }
         return false;

@@ -85,6 +85,9 @@ public class MyTunesRss {
                         LOG.error("Could not load iTunes library.", e);
                     }
                 }
+                if (data.isAutoStartServer()) {
+                    settings.doStartServer(builder);
+                }
             }
         });
     }
