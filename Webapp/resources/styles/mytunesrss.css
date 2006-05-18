@@ -340,7 +340,7 @@ td.itunes, tr.odd td.itunes {
 div.playlist {
 	position: relative;
 	overflow: hidden;
-	padding: 10px;
+	padding: 10px 10px 10px 30px;
 	background: url("../images/playlist_include.gif");
 	border-top: 1px solid #666;
 }
