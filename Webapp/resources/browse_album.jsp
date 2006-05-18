@@ -29,7 +29,8 @@
 <div class="body">
 
     <h1 class="browse">
-        <a class="portal" href="${servletUrl}/showPortal"><span>portal</span></a> <span>MyTunesRSS</span>
+        <a class="portal" href="${servletUrl}/showPortal">Portal</a>
+				<span>MyTunesRSS</span>
     </h1>
 
     <jsp:include page="/incl_error.jsp" />

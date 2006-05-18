@@ -29,7 +29,7 @@
 <div class="body">
 
     <h1 class="browse">
-			<a class="portal" href="${servletUrl}/showPortal"><span>portal</span></a>
+        <a class="portal" href="${servletUrl}/showPortal">Portal</a>
 			<span>MyTunesRSS</span>
 		</h1>
 

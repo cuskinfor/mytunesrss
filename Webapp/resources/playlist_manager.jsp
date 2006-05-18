@@ -27,10 +27,12 @@
 
 <div class="body">
 
-    <h1 class="manager"><span>MyTunesRSS</span></h1>
+    <h1 class="manager">
+      <a class="portal" href="${servletUrl}/showPortal">Portal</a>
+			<span>MyTunesRSS</span>
+		</h1>
 
     <ul class="links">
-        <li><a href="${servletUrl}/showPortal">back to portal</a></li>
         <li><a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">new playlist</a></li>
     </ul>
 

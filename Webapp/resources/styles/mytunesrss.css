@@ -325,14 +325,14 @@ div.login input {
 
 td.mytunes, tr.odd td.mytunes {
     padding-left: 32px;
-    background-image: url( "../images/mytunesrss_playlist.gif" );
+    background-image: url( "../images/playlist_mt.gif" );
     background-position: 10px center;
     background-repeat: no-repeat;
 }
 
 td.itunes, tr.odd td.itunes {
     padding-left: 32px;
-    background-image: url( "../images/itunes_playlist.gif" );
+    background-image: url( "../images/playlist_it.gif" );
     background-position: 10px center;
     background-repeat: no-repeat;
 }
@@ -376,22 +376,18 @@ th.icon {
 h1 a.portal {
 	float: right;
 	display: block;
-	width: 60px;
-	height: 20px;
 	margin: 5px 10px 0 0;
-	background: url("../images/portal.gif");
+	padding: 3px 22px 3px 0;
+	background: url("../images/portal.gif") 100% 1px no-repeat;
 	text-decoration: none;
+	font-size: 11px;
+	color: #666;
 	border: none;
-	padding: 0;
 }
 
 h1 a.portal:HOVER {
-	background-position: bottom left;
-}
-
-h1 a.portal span {
-	visibility: hidden;
-	font-size: 1px;
+	background-position: 100% -81px;
+	text-decoration: underline;
 }
 
 table.pager {
