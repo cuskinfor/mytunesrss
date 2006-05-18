@@ -10,6 +10,9 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import javax.servlet.*;
 import java.io.*;
 import java.sql.*;
+import java.util.*;
+
+import org.apache.commons.lang.*;
 
 /**
  * de.codewave.mytunesrss.command.BrowseArtistCommandHandler
@@ -17,7 +20,19 @@ import java.sql.*;
 public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws SQLException, IOException, ServletException {
         String album = getRequest().getParameter("album");
-        getRequest().setAttribute("artists", getDataStore().executeQuery(new FindArtistQuery(album)));
+        String page = getRequest().getParameter("page");
+        Collection<Artist> artists;
+        if (StringUtils.isNotEmpty(page)) {
+            List<String> startPatterns = new ArrayList<String>();
+            for (StringTokenizer tokenizer = new StringTokenizer(page, "_"); tokenizer.hasMoreTokens();) {
+                startPatterns.add(tokenizer.nextToken().toLowerCase() + "%");
+            }
+            artists = getDataStore().executeQuery(new FindArtistQuery(startPatterns.toArray(new String[startPatterns.size()])));
+        } else {
+            artists = getDataStore().executeQuery(new FindArtistQuery(album));
+        }
+        getRequest().setAttribute("artists", artists);
+        createPager();
         forward(MyTunesRssResource.BrowseArtist);
     }
 }

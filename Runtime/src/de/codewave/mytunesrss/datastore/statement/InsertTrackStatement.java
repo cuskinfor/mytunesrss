@@ -17,7 +17,7 @@ public class InsertTrackStatement implements DataStoreStatement {
     private int myTime;
     private int myTrackNumber;
     private String myFileName;
-    public static final String UNKNOWN = "_";
+    public static final String UNKNOWN = new String(new byte[]{0});
 
     public void setAlbum(String album) {
         myAlbum = album;

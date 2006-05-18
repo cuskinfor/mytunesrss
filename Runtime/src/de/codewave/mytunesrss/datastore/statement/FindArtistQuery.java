@@ -16,10 +16,15 @@ import java.util.Collection;
  */
 public class FindArtistQuery extends DataStoreQuery<Artist> {
     private String myAlbum;
+    private String[] myStartPatterns;
     private ArtistResultBuilder myBuilder = new ArtistResultBuilder();
 
     public FindArtistQuery(String album) {
         myAlbum = album;
+    }
+
+    public FindArtistQuery(String[] startPatterns) {
+        myStartPatterns = startPatterns;
     }
 
     public Collection<Artist> execute(Connection connection) throws SQLException {
@@ -27,6 +32,12 @@ public class FindArtistQuery extends DataStoreQuery<Artist> {
         if (StringUtils.isNotEmpty(myAlbum)) {
             statement = connection.prepareStatement("SELECT name, track_count, album_count FROM artist WHERE name IN ( SELECT DISTINCT(artist) FROM track WHERE album = ? ) ORDER BY name");
             return execute(statement, myBuilder, myAlbum);
+        } else if (myStartPatterns != null && myStartPatterns.length > 0) {
+            statement = connection.prepareStatement("SELECT name, track_count, album_count FROM artist WHERE " + SQLUtils.createChain(
+                    "LCASE(name) LIKE ?",
+                    " OR ",
+                    myStartPatterns.length) + " ORDER BY name");
+            return execute(statement, myBuilder, myStartPatterns);
         } else {
             statement = connection.prepareStatement("SELECT name, track_count, album_count FROM artist ORDER BY name");
             return execute(statement, myBuilder);

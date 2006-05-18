@@ -11,6 +11,7 @@ import java.sql.*;
  */
 public class CreateAllTablesStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
+        connection.createStatement().execute("SET DATABASE COLLATION \"Latin1_General\"");
         connection.createStatement().execute(
                 "CREATE TABLE track ( id varchar, name VARCHAR, artist VARCHAR, album VARCHAR, time INTEGER, track_number INTEGER, file VARCHAR )");
         connection.createStatement().execute("CREATE TABLE playlist ( id VARCHAR, name VARCHAR )");

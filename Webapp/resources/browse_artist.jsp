@@ -48,6 +48,10 @@
 
     <jsp:include page="incl_playlist.jsp"/>
 
+    <c:set var="pagerCommand" scope="request" value="browseArtist"/>
+    <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(empty param.page, cwfn:choose(empty param.artist, 'all', ''), param.page)}"/>
+    <jsp:include page="incl_pager.jsp"/>
+
     <form name="browse" action="" method="post">
         <input type="hidden" name="backUrl" value="${backUrl}" />
 

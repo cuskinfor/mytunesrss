@@ -8,7 +8,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseAlbum?artist=${param.artist}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseAlbum?artist=${param.artist}&page=${param.page}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -48,20 +48,9 @@
 
 <jsp:include page="incl_playlist.jsp" />
 
-<table class="pager" cellspacing="0">
-    <tr>
-        <td><a href="#">A - C</a></td>
-        <td><a href="#">D - F</a></td>
-        <td><a href="#">G - I</a></td>
-        <td><a href="#">J - L</a></td>
-        <td><a href="#">M - O</a></td>
-        <td><a href="#">P - R</a></td>
-        <td><a href="#">S - U</a></td>
-        <td><a href="#">V - X</a></td>
-        <td><a href="#">Y - Z</a></td>
-        <td><a href="#" class="active">Alle</a></td>
-    </tr>
-</table>
+<c:set var="pagerCommand" scope="request" value="browseAlbum"/>
+<c:set var="pagerCurrent" scope="request" value="${cwfn:choose(empty param.page, cwfn:choose(empty param.artist, 'all', ''), param.page)}"/>
+<jsp:include page="incl_pager.jsp"/>
 
 <form name="browse" action="" method="post">
     <input type="hidden" name="backUrl" value="${backUrl}" />
@@ -126,7 +115,7 @@
                 </c:choose>
             </tr>
         </c:forEach>
-        <c:if test="${singleArtist}">
+        <c:if test="${singleArtist && fn:length(albums) > 1}">
             <tr class="${cwfn:choose(fn:length(albums) % 2 == 1, '', 'odd')}">
                 <c:if test="${!empty sessionScope.playlist}">
                     <td class="check">&nbsp;</td>

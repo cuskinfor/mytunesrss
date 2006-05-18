@@ -20,7 +20,17 @@ import org.apache.commons.lang.*;
 public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws IOException, ServletException, SQLException {
         String artist = getRequest().getParameter("artist");
-        Collection<Album> albums = getDataStore().executeQuery(new FindAlbumQuery(artist));
+        String page = getRequest().getParameter("page");
+        Collection<Album> albums;
+        if (StringUtils.isNotEmpty(page)) {
+            List<String> startPatterns = new ArrayList<String>();
+            for (StringTokenizer tokenizer = new StringTokenizer(page, "_"); tokenizer.hasMoreTokens();) {
+                startPatterns.add(tokenizer.nextToken().toLowerCase() + "%");
+            }
+            albums = getDataStore().executeQuery(new FindAlbumQuery(startPatterns.toArray(new String[startPatterns.size()])));
+        } else {
+            albums = getDataStore().executeQuery(new FindAlbumQuery(artist));
+        }
         getRequest().setAttribute("albums", albums);
         Boolean singleArtist = Boolean.valueOf(StringUtils.isNotEmpty(artist));
         getRequest().setAttribute("singleArtist", singleArtist);
@@ -31,6 +41,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
             }
             getRequest().setAttribute("singleArtistTrackCount", singleArtistTrackCount);
         }
+        createPager();
         forward(MyTunesRssResource.BrowseAlbum);
     }
 }

@@ -22,4 +22,15 @@ public class SQLUtils {
         }
         return buffer.toString();
     }
+
+    public static String createChain(String token, String operation, int count) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < count; i++) {
+            buffer.append(token);
+            if (i + 1 < count) {
+                buffer.append(operation);
+            }
+        }
+        return buffer.toString();
+    }
 }

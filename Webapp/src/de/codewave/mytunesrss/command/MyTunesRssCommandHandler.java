@@ -95,4 +95,18 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         }
         return null;
     }
+
+    protected void createPager() {
+        List<PagerItem> pagerItems = new ArrayList<PagerItem>();
+        pagerItems.add(new PagerItem("0_1_2_3_4_5_6_7_8_9", "0 - 9"));
+        pagerItems.add(new PagerItem("a_b_c", "A - C"));
+        pagerItems.add(new PagerItem("d_e_f", "D - F"));
+        pagerItems.add(new PagerItem("g_h_i", "G - I"));
+        pagerItems.add(new PagerItem("j_k_l", "J - L"));
+        pagerItems.add(new PagerItem("m_n_o", "M - O"));
+        pagerItems.add(new PagerItem("p_q_r_s", "P - S"));
+        pagerItems.add(new PagerItem("t_u_v", "T - V"));
+        pagerItems.add(new PagerItem("w_x_y_z", "W - Z"));
+        getRequest().setAttribute("pagerItems", pagerItems);
+    }
 }
