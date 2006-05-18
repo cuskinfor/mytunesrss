@@ -66,8 +66,9 @@
 
 <div class="body">
 
-<h1 class="searchResult">
-    <a class="portal" href="${servletUrl}/showPortal"><span>portal</span></a> <span>MyTunesRSS</span>
+<h1 class="<c:choose><c:when test="${!empty param.searchTerm}">searchResult</c:when><c:otherwise>browse</c:otherwise></c:choose>">
+		<a class="portal" href="${servletUrl}/showPortal">Portal</a>
+		</a> <span>MyTunesRSS</span>
 </h1>
 
 <jsp:include page="/incl_error.jsp" />
@@ -111,6 +112,10 @@
         <th class="active">
             <c:choose>
                 <c:when test="${sortOrder == 'Album'}">
+                    <c:if test="${track.simple}">
+                        <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(track.artist, 'UTF-8')}"/>">
+                            <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
+                        </a> -</c:if>
                     <c:choose>
                         <c:when test="${empty param.album}">
                             <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
@@ -121,10 +126,6 @@
                             <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
                         </c:otherwise>
                     </c:choose>
-                    <c:if test="${track.simple}">
-                        - <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(track.artist, 'UTF-8')}"/>">
-                            <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
-                        </a></c:if>
                 </c:when>
                 <c:otherwise>
                     <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(track.artist, 'UTF-8')}"/>">
