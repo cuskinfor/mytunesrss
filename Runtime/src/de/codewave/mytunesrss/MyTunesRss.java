@@ -51,8 +51,8 @@ public class MyTunesRss {
         if (ProgramUtils.getCommandLineArguments(args).containsKey("debug")) {
             Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
         }
-        final DatabaseBuilder builder = new DatabaseBuilder();
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        final DatabaseBuilder builder = new DatabaseBuilder();
         ResourceBundle mainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
         VERSION = modulesInfo != null ? modulesInfo.getVersion() : "0.0.0";
