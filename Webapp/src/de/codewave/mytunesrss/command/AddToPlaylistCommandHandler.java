@@ -17,6 +17,10 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws Exception {
         Collection<Track> playlist = (Collection<Track>)getSession().getAttribute("playlistContent");
         String[] trackIds = getNonEmptyParameterValues("track");
+        String trackList = getRequestParameter("tracklist", null);
+        if ((trackIds == null || trackIds.length == 0) && StringUtils.isNotEmpty(trackList)) {
+            trackIds = StringUtils.split(trackList, ';');
+        }
         String[] albums = getNonEmptyParameterValues("album");
         String[] artists = getNonEmptyParameterValues("artist");
         DataStoreQuery query = null;

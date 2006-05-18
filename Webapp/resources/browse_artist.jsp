@@ -37,7 +37,7 @@
 
     <ul class="links">
         <li>
-            <a href="${servletUrl}/browseAlbum">browse albums</a>
+            <a href="${servletUrl}/browseAlbum?page=${cwfn:choose(empty param.page && empty param.album, '', pagerInitialPage)}">browse albums</a>
         </li>
         <c:if test="${empty sessionScope.playlist}">
             <li>
@@ -49,7 +49,7 @@
     <jsp:include page="incl_playlist.jsp"/>
 
     <c:set var="pagerCommand" scope="request" value="browseArtist"/>
-    <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(empty param.page, cwfn:choose(empty param.artist, 'all', ''), param.page)}"/>
+    <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(empty param.page && empty param.album, 'all', param.page)}"/>
     <jsp:include page="incl_pager.jsp"/>
 
     <form name="browse" action="" method="post">

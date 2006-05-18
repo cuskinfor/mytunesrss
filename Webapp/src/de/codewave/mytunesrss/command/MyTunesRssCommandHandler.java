@@ -63,6 +63,8 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
         getRequest().setAttribute("servletUrl", ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss");
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
+        getRequest().setAttribute("pagerInitialPage", "a_b_c");
+        createPager();
         forward(resource.getValue());
     }
 

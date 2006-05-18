@@ -41,7 +41,6 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
             }
             getRequest().setAttribute("singleArtistTrackCount", singleArtistTrackCount);
         }
-        createPager();
         forward(MyTunesRssResource.BrowseAlbum);
     }
 }

@@ -10,8 +10,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}
-                                                  &backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}</c:set>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -92,7 +91,7 @@
 
 <jsp:include page="incl_playlist.jsp" />
 
-<form id="browse" action="${servletUrl}/addTracks" method="post">
+<form id="browse" action="${servletUrl}/addToPlaylist" method="post">
 
 <input type="hidden" name="sortOrder" value="${sortOrder}" />
 <input type="hidden" name="searchTerm" value="${param.searchTerm}" />
@@ -106,7 +105,7 @@
     <c:set var="count" value="0" />
     <tr>
         <c:if test="${!empty sessionScope.playlist}">
-            <th class="check"><input type="checkbox" name="none" value="none" onClick="selectAll('${section.sectionIds}',this)" />
+            <th class="check"><input type="checkbox" name="none" value="none" onClick="selectAll('${track.sectionIds}',this)" />
             </th>
         </c:if>
         <th class="active">
@@ -150,15 +149,15 @@
         <c:choose>
             <c:when test="${empty sessionScope.playlist}">
                 <th class="icon">
-                    <a href="${servletUrl}/createRSS/?????"> <img src="${appUrl}/images/rss_th.gif" alt="RSS" /> </a>
+                    <a href="${servletUrl}/createRSS?tracklist=${track.sectionIds}"> <img src="${appUrl}/images/rss_th.gif" alt="RSS" /> </a>
                 </th>
                 <th class="icon">
-                    <a href="${servletUrl}/createM3U/?????"> <img src="${appUrl}/images/m3u_th.gif" alt="M3U" /> </a>
+                    <a href="${servletUrl}/createM3U?tracklist=${track.sectionIds}"> <img src="${appUrl}/images/m3u_th.gif" alt="M3U" /> </a>
                 </th>
             </c:when>
             <c:otherwise>
                 <th class="icon">
-                    <a href="${servletUrl}/addToPlaylist/?????"> <img src="${appUrl}/images/add_th.gif" alt="add" /> </a>
+                    <a href="${servletUrl}/addToPlaylist?tracklist=${track.sectionIds}&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"> <img src="${appUrl}/images/add_th.gif" alt="add" /> </a>
                 </th>
             </c:otherwise>
         </c:choose>
@@ -211,7 +210,7 @@
 
 <c:if test="${!empty sessionScope.playlist}">
     <div class="buttons">
-        <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/addToPlaylist'" value="add selected" />
+        <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/addToPlaylist';document.forms['browse'].elements['backUrl'].value = '${backUrl}'" value="add selected" />
     </div>
 </c:if>
 

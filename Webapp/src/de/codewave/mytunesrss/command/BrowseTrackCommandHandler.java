@@ -6,17 +6,16 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import org.apache.commons.lang.*;
 
 import java.util.*;
-
-import org.apache.commons.lang.*;
 
 /**
  * de.codewave.mytunesrss.command.BrowseTrackCommandHandler
  */
 public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
     public static enum SortOrder {
-        Album(), Artist();
+        Album(),Artist();
     }
 
     @Override
@@ -56,14 +55,10 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             EnhancedTrack enhancedTrack = new EnhancedTrack(track);
             boolean newAlbum = !lastAlbum.equals(track.getAlbum());
             boolean newArtist = !lastArtist.equals(track.getArtist());
-            if ((sortOrder == SortOrder.Album && newAlbum) || (sortOrder == SortOrder.Artist && newArtist)) { // new section begins
+            if ((sortOrder == SortOrder.Album && newAlbum) || (sortOrder == SortOrder.Artist && newArtist)) {// new section begins
                 sectionCount++;
                 enhancedTrack.setNewSection(true);
-                if (!sectionTracks.isEmpty() && !variousPerSection) { // previous section was simple
-                    for (EnhancedTrack rememberedTrack : sectionTracks) {
-                        rememberedTrack.setSimple(true);
-                    }
-                }
+                finishSection(sectionTracks, variousPerSection);
                 sectionTracks.clear();
                 variousPerSection = false;
             } else {
@@ -76,13 +71,28 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             lastAlbum = track.getAlbum();
             lastArtist = track.getArtist();
         }
-        if (!sectionTracks.isEmpty() && !variousPerSection) { // last section was simple
-            for (EnhancedTrack rememberedTrack : sectionTracks) {
-                rememberedTrack.setSimple(true);
-            }
-        }
+        finishSection(sectionTracks, variousPerSection);
         enhancedTracks.setSimpleResult(sectionCount == 1 && !variousPerSection);
         return enhancedTracks;
+    }
+
+    private void finishSection(List<EnhancedTrack> sectionTracks, boolean variousInSection) {
+        StringBuffer sectionIds = new StringBuffer();
+        for (Iterator<EnhancedTrack> iterator = sectionTracks.iterator(); iterator.hasNext();) {
+            EnhancedTrack enhancedTrack = iterator.next();
+            sectionIds.append(enhancedTrack.getId());
+            if (iterator.hasNext()) {
+                sectionIds.append(";");
+            }
+        }
+        if (!sectionTracks.isEmpty()) {
+            for (EnhancedTrack rememberedTrack : sectionTracks) {
+                rememberedTrack.setSectionIds(sectionIds.toString());
+                if (!variousInSection) {
+                    rememberedTrack.setSimple(true);
+                }
+            }
+        }
     }
 
     public static class EnhancedTracks {
@@ -109,6 +119,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
     public static class EnhancedTrack extends Track {
         private boolean myNewSection;
         private boolean mySimple;
+        private String mySectionIds;
 
         private EnhancedTrack(Track track) {
             setId(track.getId());
@@ -134,6 +145,14 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
 
         private void setSimple(boolean simple) {
             mySimple = simple;
+        }
+
+        public String getSectionIds() {
+            return mySectionIds;
+        }
+
+        private void setSectionIds(String sectionIds) {
+            mySectionIds = sectionIds;
         }
     }
 }

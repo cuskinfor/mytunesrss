@@ -32,7 +32,6 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
             artists = getDataStore().executeQuery(new FindArtistQuery(album));
         }
         getRequest().setAttribute("artists", artists);
-        createPager();
         forward(MyTunesRssResource.BrowseArtist);
     }
 }

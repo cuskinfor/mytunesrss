@@ -30,7 +30,7 @@
     <h1 class="search"><span>MyTunesRSS</span></h1>
 
     <jsp:include page="/incl_error.jsp" />
-		
+
 		<ul class="links">
 			<li><a href="${appUrl}/settings.jsp">settings</a></li>
 		</ul>
@@ -46,7 +46,7 @@
                     <input class="button" type="submit" value="search" />
                 </td>
                 <td class="links">
-                    <a href="${servletUrl}/browseArtist" style="background-image:url('${appUrl}/images/library_small.gif');"> browse library </a>
+                    <a href="${servletUrl}/browseArtist?page=${pagerInitialPage}" style="background-image:url('${appUrl}/images/library_small.gif');"> browse library </a>
                     <c:choose>
                     <c:when test="${empty sessionScope.playlist}">
                         <a href="${servletUrl}/showPlaylistManager" style="background-image:url('${appUrl}/images/feeds_small.gif');"> manage
