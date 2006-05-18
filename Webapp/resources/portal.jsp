@@ -30,6 +30,10 @@
     <h1 class="search"><span>MyTunesRSS</span></h1>
 
     <jsp:include page="/incl_error.jsp" />
+		
+		<ul class="links">
+			<li><a href="${appUrl}/settings.jsp">settings</a></li>
+		</ul>
 
     <form name="search" action="${servletUrl}/browseTrack" method="post">
 

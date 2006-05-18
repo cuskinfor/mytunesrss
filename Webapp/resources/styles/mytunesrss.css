@@ -84,6 +84,10 @@ td a:HOVER {
     text-decoration: underline;
 }
 
+input {
+	vertical-align: middle;
+}
+
 div.error {
     color: #f00;
     padding: 10px;
@@ -113,6 +117,17 @@ h1.browse {
 }
 
 h1.browse span {
+    visibility: hidden;
+}
+
+h1.settings {
+    background: url( "../images/settings.gif" ) center center no-repeat;
+    height: 30px;
+    padding: 0;
+    margin: 0;
+}
+
+h1.settings span {
     visibility: hidden;
 }
 
