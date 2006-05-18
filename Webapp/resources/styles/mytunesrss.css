@@ -49,7 +49,7 @@ table {
 
 th {
     text-align: left;
-    background: url( "../images/th.gif" ) repeat-x;
+    background: #baeafa url( "../images/th.gif" );
     border-top: 1px solid #666;
     border-bottom: 1px solid #666;
     padding: 5px 0 5px 10px;
@@ -376,12 +376,13 @@ th.icon {
 h1 a.portal {
 	float: right;
 	display: block;
-	width: 58px;
+	width: 60px;
 	height: 20px;
 	margin: 5px 10px 0 0;
 	background: url("../images/portal.gif");
 	text-decoration: none;
 	border: none;
+	padding: 0;
 }
 
 h1 a.portal:HOVER {
@@ -391,4 +392,27 @@ h1 a.portal:HOVER {
 h1 a.portal span {
 	visibility: hidden;
 	font-size: 1px;
+}
+
+table.pager {
+	border-top: 1px solid #666;
+	border-bottom: none;
+}
+
+table.pager td {
+	border: none;
+	background: #999;
+	padding: 3px 10px;
+	text-align: center;
+}
+
+table.pager td a {
+	color: #fff;
+	font-weight: bold;
+	font-size: 10px;
+}
+
+table.pager td a.active {
+	cursor: default;
+	color: #000;
 }

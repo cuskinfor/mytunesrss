@@ -33,17 +33,17 @@
 			<span>MyTunesRSS</span>
 		</h1>
 
-    <jsp:include page="/imcl_error.jsp" />
+    <jsp:include page="/incl_error.jsp" />
 
     <ul class="links">
+        <li>
+            <a href="${servletUrl}/browseAlbum">browse by albums</a>
+        </li>
         <c:if test="${empty sessionScope.playlist}">
             <li>
                 <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">new playlist</a>
             </li>
         </c:if>
-        <li style="float:right;">
-            <a href="${servletUrl}/browseAlbum">sort by album</a>
-        </li>
     </ul>
 
     <jsp:include page="incl_playlist.jsp"/>
@@ -62,7 +62,7 @@
                 <th colspan="3">Tracks</th>
             </tr>
             <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
-                <tr class="${cwfn:choose(loopStatus.index % 2 == 0, '', 'odd')}">
+                <tr class="${cwfn:choose(loopStatus.index % 2 == 1, '', 'odd')}">
                     <c:if test="${!empty sessionScope.playlist}">
                         <td class="check"><input type="checkbox" name="artist" value="<c:out value="${artist.name}"/>" /></td>
                     </c:if>

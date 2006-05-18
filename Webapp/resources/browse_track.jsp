@@ -73,17 +73,19 @@
 <jsp:include page="/incl_error.jsp" />
 
 <ul class="links">
-    <li>
-        <a href="${param.backUrl}">back</a>
-    </li>
+		<c:if test="${true}">
+			<li>
+					<c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album" /></a></c:if>
+					<c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist" /></a></c:if>
+			</li>
+		</c:if>
     <c:if test="${empty sessionScope.playlist}">
         <li>
             <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">new playlist</a>
         </li>
     </c:if>
     <li style="float:right;">
-        <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album" /></a></c:if>
-        <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist" /></a></c:if>
+        <a href="${param.backUrl}">back</a>
     </li>
 </ul>
 
@@ -110,19 +112,19 @@
                     <c:choose>
                         <c:when test="${sortOrder == 'Album'}">
                             <c:if test="${track.simple}">
-                                <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(track.artist, 'UTF-8')}"/>">
+                                <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(track.artist, 'UTF-8')}"/>&backUrl=${param.backUrl}">
                                     <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                                 </a> - </c:if>
-                            <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>">
+                            <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>&backUrl=${param.backUrl}">
                                 <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
                             </a>
                         </c:when>
                         <c:otherwise>
-                            <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(track.artist, 'UTF-8')}"/>">
+                            <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(track.artist, 'UTF-8')}"/>&backUrl=${param.backUrl}">
                                 <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                             </a>
                             <c:if test="${track.simple}">
-                                - <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>">
+                                - <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>&backUrl=${param.backUrl}">
                                 <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" /></a>
                             </c:if>
                         </c:otherwise>
@@ -132,17 +134,17 @@
                     <c:when test="${empty sessionScope.playlist}">
                         <th class="icon">
                             <a href="${servletUrl}/createRSS/?????">
-                                <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="RSS" /> </a>
+                                <img src="${appUrl}/images/rss_th.gif" alt="RSS" /> </a>
                         </th>
                         <th class="icon">
                             <a href="${servletUrl}/createM3U/?????">
-                                <img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="M3U" /> </a>
+                                <img src="${appUrl}/images/m3u_th.gif" alt="M3U" /> </a>
                         </th>
                     </c:when>
                     <c:otherwise>
                         <th class="icon">
                             <a href="${servletUrl}/addToPlaylist/?????">
-                                <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                                <img src="${appUrl}/images/add_th.gif" alt="add" /> </a>
                         </th>
                     </c:otherwise>
                 </c:choose>
