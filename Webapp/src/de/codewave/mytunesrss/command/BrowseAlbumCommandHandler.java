@@ -10,6 +10,9 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import javax.servlet.*;
 import java.io.*;
 import java.sql.*;
+import java.util.*;
+
+import org.apache.commons.lang.*;
 
 /**
  * de.codewave.mytunesrss.command.BrowseAlbumCommandHandler
@@ -17,7 +20,17 @@ import java.sql.*;
 public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws IOException, ServletException, SQLException {
         String artist = getRequest().getParameter("artist");
-        getRequest().setAttribute("albums", getDataStore().executeQuery(new FindAlbumQuery(artist)));
+        Collection<Album> albums = getDataStore().executeQuery(new FindAlbumQuery(artist));
+        getRequest().setAttribute("albums", albums);
+        Boolean singleArtist = Boolean.valueOf(StringUtils.isNotEmpty(artist));
+        getRequest().setAttribute("singleArtist", singleArtist);
+        if (singleArtist) {
+            int singleArtistTrackCount = 0;
+            for (Album album : albums) {
+                singleArtistTrackCount += album.getTrackCount();
+            }
+            getRequest().setAttribute("singleArtistTrackCount", singleArtistTrackCount);
+        }
         forward(MyTunesRssResource.BrowseAlbum);
     }
 }

@@ -37,7 +37,7 @@
 
     <ul class="links">
         <li>
-            <a href="${servletUrl}/browseAlbum">browse by albums</a>
+            <a href="${servletUrl}/browseAlbum">browse albums</a>
         </li>
         <c:if test="${empty sessionScope.playlist}">
             <li>

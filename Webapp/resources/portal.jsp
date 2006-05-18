@@ -42,16 +42,23 @@
                     <input class="button" type="submit" value="search" />
                 </td>
                 <td class="links">
-                    <a href="${servletUrl}/browseArtist" style="background-image:url('${appUrl}/images/library_small.gif');"> Browse library </a>
-                    <c:if test="${empty sessionScope.playlist}">
-                        <a href="${servletUrl}/showPlaylistManager" style="background-image:url('${appUrl}/images/feeds_small.gif');"> Manage
-                                                                                                                                       Playlists </a>
-                    </c:if>
+                    <a href="${servletUrl}/browseArtist" style="background-image:url('${appUrl}/images/library_small.gif');"> browse library </a>
+                    <c:choose>
+                    <c:when test="${empty sessionScope.playlist}">
+                        <a href="${servletUrl}/showPlaylistManager" style="background-image:url('${appUrl}/images/feeds_small.gif');"> manage
+                                                                                                                                       playlists </a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${servletUrl}/editPlaylist" style="background-image:url('${appUrl}/images/feeds_small.gif');"> finish playlist </a>
+                    </c:otherwise>
+                        </c:choose>
                 </td>
             </tr>
         </table>
 
     </form>
+
+    <jsp:include page="incl_playlist.jsp" />
 
     <table cellspacing="0">
         <tr>
