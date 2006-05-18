@@ -128,9 +128,7 @@
 						<c:if test="${!empty param.artist}">
 							<tr class="${cwfn:choose(loopStatus.index % 2 == 0, '', 'odd')}">
 								<c:if test="${!empty sessionScope.playlist}">
-										<td class="check">
-												<input type="checkbox" name="album" value="<c:out value="${param.artist}"/>" />
-										</td>
+										<td class="check">&nbsp;</td>
 								</c:if>
 								<td colspan="2"><em>All tracks by &quot;<c:out value="${param.artist}" />&quot;</em></td>
 								<td class="tracks"><a href="${servletUrl}/browseTrack?artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">X ${artist.trackCount} </a></td>
