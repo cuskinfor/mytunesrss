@@ -46,7 +46,7 @@ public class CreatePlaylistCommandHandler extends MyTunesRssCommandHandler {
             forward(playlistResource);
         } else {
             setError("error.emptyFeed");
-            forward(MyTunesRssResource.Portal); // todo: redirect to backUrl
+            forward(MyTunesRssCommand.ShowPortal); // todo: redirect to backUrl
         }
     }
 

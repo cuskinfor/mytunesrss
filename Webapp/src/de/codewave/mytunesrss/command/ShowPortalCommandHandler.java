@@ -28,8 +28,8 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
 
     private List<Playlist> createSplittedPlaylists(Playlist playlist) {
         List<Playlist> splittedPlaylists = new ArrayList<Playlist>();
-        if (getMyTunesRssConfig().isLimitRss() && playlist.getTrackCount() > Integer.parseInt(getMyTunesRssConfig().getMaxRssItems())) {
-            int maxCount = Integer.parseInt(getMyTunesRssConfig().getMaxRssItems());
+        int maxCount = getWebConfig().getRssFeedLimit();
+        if (maxCount > 0 && playlist.getTrackCount() > maxCount) {
             int startIndex = 0;
             while (startIndex < playlist.getTrackCount()) {
                 int endIndex = Math.min(startIndex + maxCount - 1, playlist.getTrackCount() - 1);

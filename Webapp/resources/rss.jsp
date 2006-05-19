@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb"/>
 
@@ -16,26 +17,24 @@
         <description>
             <fmt:message key="rss.channel.description"/>
         </description>
-        <c:forEach items="${musicFiles}" var="item">
+        <c:forEach items="${tracks}" var="track">
+            <c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:virtualSuffix(config, track)}</c:set>
             <item>
                 <title>
-                    <c:if test="{item.trackNumber != 0}">${item.textualTrackNumber} -</c:if>
-                    <c:out value="${item.name}"/>
+                    <c:out value="${track.name}"/>
                 </title>
                 <description>
-                    <c:out value="${item.album}"/>
-                    -
-                    <c:out value="${item.artist}"/>
+                    <c:if test="${!empty track.artist && !mtfn:unknown(artist)}"><c:out value="${track.artist}"/> - </c:if><c:out value="${track.album}"/>
                 </description>
                 <author>
-                    <c:out value="${item.artist}"/>
+                    <c:out value="${track.artist}"/>
                 </author>
-                <link>${urlMap.rss}/id=${item.id}${authInfo}</link>
-                <guid>${urlMap.rss}/id=${item.id}${authInfo}</guid>
+                <link>${servletUrl}/createRSS/track=${track.id}/authHash=${authHash}</link>
+                <guid>${servletUrl}/createRSS/track=${track.id}</guid>
                 <pubDate>${pubDate}</pubDate>
-                <enclosure url="${urlMap.mp3}/id=${item.id}${authInfo}/${cwfn:urlEncode(item.virtualFileName, 'UTF-8')}"
-                           type="${item.contentType}"
-                           length="${item.fileLength}"/>
+                <enclosure url="${servletUrl}/playTrack/track=${track.id}/authHash=${authHash}/${cwfn:urlEncode(virtualFileName, 'UTF-8')}"
+                           type="${track.contentType}"
+                           length="${track.contentLength}"/>
             </item>
         </c:forEach>
     </channel>

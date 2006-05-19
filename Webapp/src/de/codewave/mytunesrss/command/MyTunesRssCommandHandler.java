@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.utils.servlet.*;
@@ -61,14 +62,26 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
-        getRequest().setAttribute("servletUrl", ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss");
-        getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
-        getRequest().setAttribute("pagerInitialPage", "a_b_c");
-        createPager();
+        prepareRequestForResource();
         forward(resource.getValue());
     }
 
+    private void prepareRequestForResource() {
+        getRequest().setAttribute("servletUrl", ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss");
+        getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
+        getRequest().setAttribute("pagerInitialPage", "a_b_c");
+        getRequest().setAttribute("config", getWebConfig());
+        createPager();
+    }
+
+    protected WebConfig getWebConfig() {
+        WebConfig webConfig = new WebConfig();
+        webConfig.load(getRequest());
+        return webConfig;
+    }
+
     protected void forward(MyTunesRssCommand command) throws IOException, ServletException {
+        prepareRequestForResource();
         forward("/mytunesrss/" + command.getName());
     }
 

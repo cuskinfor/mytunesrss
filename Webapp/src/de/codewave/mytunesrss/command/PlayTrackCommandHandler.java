@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.jsp.*;
 import de.codewave.utils.servlet.*;
 
 import javax.servlet.http.*;
@@ -34,7 +35,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
             if (!tracks.isEmpty()) {
                 Track track = tracks.iterator().next();
-                fileSender = new FileSender(track.getFile(), getContentType(track));
+                fileSender = new FileSender(track.getFile(), track.getContentType());
             } else {
                 fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
             }
@@ -44,16 +45,6 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
         } else {
             fileSender.sendGetResponse(getRequest(), getResponse(), false);
         }
-    }
-
-    private String getContentType(Track track) {
-        String name = track.getFile().getName().toLowerCase();
-        if (name.endsWith(".mp3")) {
-            return "audio/mp3";
-        } else if (name.endsWith(".m4p") || name.endsWith(".m4a") || name.endsWith(".mp4")) {
-            return "audio/mp4";
-        }
-        return URLConnection.guessContentTypeFromName(name);
     }
 
     private static class StatusCodeFileSender extends FileSender {

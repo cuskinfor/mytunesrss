@@ -5,8 +5,10 @@
 package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.servlet.*;
 
-import java.io.*;
+import javax.servlet.http.*;
+import java.net.*;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
@@ -14,13 +16,7 @@ import java.io.*;
 public class MyTunesFunctions {
     private static final String DEFAULT_NAME = "MyTunesRSS";
 
-    public static String virtualName(File file) {
-        String name = file.getName();
-        name = createCleanFileName(name);
-        return name;
-    }
-
-    private static String createCleanFileName(String name) {
+    public static String cleanFileName(String name) {
         return name.replace(' ', '_');
     }
 
@@ -28,12 +24,31 @@ public class MyTunesFunctions {
         return InsertTrackStatement.UNKNOWN.equals(trackAlbumOrArtist);
     }
 
+    public static String virtualTrackName(Track track) {
+        if (unknown(track.getArtist())) {
+            return cleanFileName(track.getName());
+        }
+        return cleanFileName(track.getArtist() + " - " + track.getName());
+    }
+
+
     public static String virtualAlbumName(Album album) {
         if (unknown(album.getArtist()) && unknown(album.getName())) {
             return DEFAULT_NAME;
         } else if (unknown(album.getArtist())) {
-            return createCleanFileName(album.getName());
+            return cleanFileName(album.getName());
         }
-        return createCleanFileName(album.getArtist() + " - " + album.getName());
+        return cleanFileName(album.getArtist() + " - " + album.getName());
+    }
+
+    public static String virtualArtistName(Artist artist) {
+        if (unknown(artist.getName())) {
+            return DEFAULT_NAME;
+        }
+        return cleanFileName(artist.getName());
+    }
+
+    public static String virtualSuffix(WebConfig webConfig, Track track) {
+        return webConfig.getSuffix(track.getFile());
     }
 }

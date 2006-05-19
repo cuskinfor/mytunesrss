@@ -19,6 +19,9 @@ public enum MyTunesRssCommand implements Command {
     EditPlaylist("editPlaylist", EditPlaylistCommandHandler.class),
     ShowPlaylistManager("showPlaylistManager", ShowPlaylistManagerCommandHandler.class),
     CreateM3u("createM3U", CreateM3uCommandHandler.class),
+    CreateRss("createRSS", CreateRssCommandHandler.class),
+    ShowSettings("showSettings", ShowSettingsCommandHandler.class),
+    SaveSettings("saveSettings", SaveSettingsCommandHandler.class),
     PlayTrack("playTrack", PlayTrackCommandHandler.class);
 
     private String myName;

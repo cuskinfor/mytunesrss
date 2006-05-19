@@ -2,7 +2,9 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
@@ -31,9 +33,9 @@
 
     <jsp:include page="/incl_error.jsp" />
 
-		<ul class="links">
-			<li><a href="${appUrl}/settings.jsp">settings</a></li>
-		</ul>
+    <ul class="links">
+        <li><a href="${servletUrl}/showSettings">settings</a></li>
+    </ul>
 
     <form name="search" action="${servletUrl}/browseTrack" method="post">
 
@@ -46,16 +48,18 @@
                     <input class="button" type="submit" value="search" />
                 </td>
                 <td class="links">
-                    <a href="${servletUrl}/browseArtist?page=${pagerInitialPage}" style="background-image:url('${appUrl}/images/library_small.gif');"> browse library </a>
+                    <a href="${servletUrl}/browseArtist?page=${pagerInitialPage}" style="background-image:url('${appUrl}/images/library_small.gif');">
+                        browse library </a>
                     <c:choose>
-                    <c:when test="${empty sessionScope.playlist}">
-                        <a href="${servletUrl}/showPlaylistManager" style="background-image:url('${appUrl}/images/feeds_small.gif');"> manage
-                                                                                                                                       playlists </a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="${servletUrl}/editPlaylist" style="background-image:url('${appUrl}/images/feeds_small.gif');"> finish playlist </a>
-                    </c:otherwise>
-                        </c:choose>
+                        <c:when test="${empty sessionScope.playlist}">
+                            <a href="${servletUrl}/showPlaylistManager" style="background-image:url('${appUrl}/images/feeds_small.gif');"> manage
+                                                                                                                                           playlists </a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${servletUrl}/editPlaylist" style="background-image:url('${appUrl}/images/feeds_small.gif');"> finish
+                                                                                                                                    playlist </a>
+                        </c:otherwise>
+                    </c:choose>
                 </td>
             </tr>
         </table>
@@ -66,21 +70,19 @@
 
     <table cellspacing="0">
         <tr>
-            <th class="active" colspan="3">Playlists</th>
+            <th class="active" colspan="${1 + fn:length(config.feedTypes)}">Playlists</th>
         </tr>
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 1, '', 'odd')}">
                 <td>
                     <c:out value="${playlist.name}" />
                 </td>
-                <td class="icon">
-                    <a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml">
-                        <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="RSS" /> </a>
-                </td>
-                <td class="icon">
-                    <a href="${servletUrl}/createM3U/playlist=${playlist.id}/mytunesrss.m3u">
-                        <img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="M3U" /> </a>
-                </td>
+                <c:forEach items="${config.feedTypes}" var="feedType">
+                    <td class="icon">
+                        <a href="${servletUrl}/create${fn:toUpperCase(feedType)}?playlist=${playlist.id}/${mtfn:cleanFileName(playlist.name)}.${config.feedFileSuffix[feedType]}">
+                            <img src="${appUrl}/images/${feedType}${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="${feedType}" /> </a>
+                    </td>
+                </c:forEach>
             </tr>
         </c:forEach>
     </table>

@@ -11,7 +11,9 @@ public enum MyTunesRssResource {
     BrowseAlbum("/browse_album.jsp"),
     BrowseTrack("/browse_track.jsp"),
     PlaylistManager("/playlist_manager.jsp"),
-    TemplateM3u("/m3u.jsp");
+    Settings("/settings.jsp"),
+    TemplateM3u("/m3u.jsp"),
+    TemplateRss("/rss.jsp");
 
     private String myValue;
 

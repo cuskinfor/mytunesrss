@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import java.io.*;
+import java.net.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.Track
@@ -72,6 +73,20 @@ public class Track {
 
     public void setTrackNumber(int trackNumber) {
         myTrackNumber = trackNumber;
+    }
+
+    public String getContentType() {
+        String name = getFile().getName().toLowerCase();
+        if (name.endsWith(".mp3")) {
+            return "audio/mp3";
+        } else if (name.endsWith(".m4p") || name.endsWith(".m4a") || name.endsWith(".mp4")) {
+            return "audio/mp4";
+        }
+        return URLConnection.guessContentTypeFromName(name);
+    }
+
+    public long getContentLength() {
+        return getFile().length();
     }
 
     @Override

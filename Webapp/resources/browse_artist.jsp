@@ -2,6 +2,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
@@ -29,9 +30,8 @@
 <div class="body">
 
     <h1 class="browse">
-        <a class="portal" href="${servletUrl}/showPortal">Portal</a>
-			<span>MyTunesRSS</span>
-		</h1>
+        <a class="portal" href="${servletUrl}/showPortal">Portal</a> <span>MyTunesRSS</span>
+    </h1>
 
     <jsp:include page="/incl_error.jsp" />
 
@@ -46,11 +46,11 @@
         </c:if>
     </ul>
 
-    <jsp:include page="incl_playlist.jsp"/>
+    <jsp:include page="incl_playlist.jsp" />
 
-    <c:set var="pagerCommand" scope="request" value="browseArtist"/>
-    <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(empty param.page && empty param.album, 'all', param.page)}"/>
-    <jsp:include page="incl_pager.jsp"/>
+    <c:set var="pagerCommand" scope="request" value="browseArtist" />
+    <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(empty param.page && empty param.album, 'all', param.page)}" />
+    <jsp:include page="incl_pager.jsp" />
 
     <form name="browse" action="" method="post">
         <input type="hidden" name="backUrl" value="${backUrl}" />
@@ -81,16 +81,13 @@
                     </td>
                     <c:choose>
                         <c:when test="${empty sessionScope.playlist}">
-                            <td class="icon">
-                                <a href="${servletUrl}/createRSS/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/mytunesrss.xml"> <img
-                                        src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                        alt="RSS" /> </a>
-                            </td>
-                            <td class="icon">
-                                <a href="${servletUrl}/createM3U/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/mytunesrss.m3u"> <img
-                                        src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                        alt="M3U" /> </a>
-                            </td>
+                            <c:forEach items="${config.feedTypes}" var="feedType">
+                                <td class="icon">
+                                    <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/${mtfn:virtualArtistName(artist)}.${config.feedFileSuffix[feedType]}">
+                                        <img src="${appUrl}/images/${feedType}${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                             alt="${feedType}" /> </a>
+                                </td>
+                            </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <td class="icon">
