@@ -330,8 +330,10 @@ ul.links a:HOVER {
 }
 
 div.login {
-    margin-top: 20px;
+    padding: 40px 0;
     text-align: center;
+		border-bottom: 1px solid #666;
+		background: #E7EDF6;
 }
 
 div.login input {
