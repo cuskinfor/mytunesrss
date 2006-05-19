@@ -14,6 +14,7 @@ div.body {
     max-width: 480px;
     min-width: 250px;
     margin: 0 auto;
+		padding: 0 0 15px 0;
 }
 
 /* Common Definitions */
@@ -117,7 +118,7 @@ h1.browse {
 }
 
 h1.browse span {
-    visibility: hidden;
+    display: none;
 }
 
 h1.settings {
@@ -128,7 +129,7 @@ h1.settings {
 }
 
 h1.settings span {
-    visibility: hidden;
+    display: none;
 }
 
 h1.manager {
@@ -139,7 +140,7 @@ h1.manager {
 }
 
 h1.manager span {
-    visibility: hidden;
+    display: none;
 }
 
 h1.searchResult {
@@ -150,7 +151,7 @@ h1.searchResult {
 }
 
 h1.searchResult span {
-    visibility: hidden;
+    display: none;
 }
 
 /* Result Page */
@@ -213,7 +214,7 @@ table.portal {
 
 table.portal td.search {
     padding: 15px 10px 15px 48px;
-    background: url( "../images/search.gif" ) 10px center no-repeat;
+    background: #E7EDF6 url("../images/search.gif") 10px center no-repeat;
 }
 
 table.portal td.links {
@@ -355,20 +356,19 @@ td.itunes, tr.odd td.itunes {
 div.playlist {
 	position: relative;
 	overflow: hidden;
-	padding: 10px 10px 10px 30px;
-	background: url("../images/playlist_include.gif");
-	border-top: 1px solid #666;
+	padding: 11px 10px 10px 30px;
+	background: #666 url("../images/playlist_include.gif") 0 1px no-repeat;
 }
 
 div.playlist a.close {
 	position: absolute;
-	top: 8px;
+	top: 9px;
 	right: 10px;
 }
 
 div.playlist a.finish {
 	position: absolute;
-	top: 8px;
+	top: 9px;
 	right: 36px;
 }
 
@@ -389,8 +389,7 @@ th.icon {
 }
 
 h1 a.portal {
-	float: right;
-	display: block;
+	float:right;
 	margin: 5px 10px 0 0;
 	padding: 3px 22px 3px 0;
 	background: url("../images/portal.gif") 100% 1px no-repeat;
