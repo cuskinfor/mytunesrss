@@ -24,6 +24,7 @@ public class FindTrackQuery extends DataStoreQuery<Track> {
             query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE id = ?";
         }
         query.myParameters = trackIds;
+        query.myIdSortOrder = trackIds;
         return query;
     }
 
@@ -75,6 +76,7 @@ public class FindTrackQuery extends DataStoreQuery<Track> {
     private TrackResultBuilder myBuilder = new TrackResultBuilder();
     private String myQuery;
     private Object[] myParameters;
+    private String[] myIdSortOrder;
 
     private FindTrackQuery() {
         // intentionally left blank
@@ -82,7 +84,18 @@ public class FindTrackQuery extends DataStoreQuery<Track> {
 
     public Collection<Track> execute(Connection connection) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(myQuery);
-        return execute(statement, myBuilder, myParameters);
+        Collection<Track> tracks = execute(statement, myBuilder, myParameters);
+        if (myIdSortOrder != null && myIdSortOrder.length > 1) {
+            Map<String, Track> idToTrack = new HashMap<String, Track>(tracks.size());
+            for (Track track : tracks) {
+                idToTrack.put(track.getId(), track);
+            }
+            tracks.clear();
+            for (int i = 0; i < myIdSortOrder.length; i++) {
+                tracks.add(idToTrack.get(myIdSortOrder[i]));
+            }
+        }
+        return tracks;
     }
 
     public static class TrackResultBuilder implements ResultBuilder<Track> {
