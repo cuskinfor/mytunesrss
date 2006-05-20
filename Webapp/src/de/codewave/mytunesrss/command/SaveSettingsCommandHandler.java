@@ -17,7 +17,9 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         WebConfig webConfig = getWebConfig();
+        boolean rememberLogin = webConfig.isRememberLogin();
         webConfig.clear();
+        webConfig.setRememberLogin(rememberLogin);
         webConfig.setPageSize(Integer.parseInt(getRequestParameter("pageSize", "0")));
         webConfig.setRssFeedLimit(Integer.parseInt(getRequestParameter("rssFeedLimit", "0")));
         for (String parameterName : Collections.list((Enumeration<String>)getRequest().getParameterNames())) {

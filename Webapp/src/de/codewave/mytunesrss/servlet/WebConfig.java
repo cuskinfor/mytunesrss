@@ -74,7 +74,7 @@ public class WebConfig {
         }
         Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, encode(value.substring(1)));
         cookie.setComment("MyTunesRSS settings cookie");
-        cookie.setMaxAge(Integer.MAX_VALUE);
+        cookie.setMaxAge(3600 * 24 * 365); // one year
         response.addCookie(cookie);
     }
 
@@ -100,7 +100,7 @@ public class WebConfig {
         if (suffixSeparatorIndex > -1 && suffixSeparatorIndex + 1 < name.length()) {
             String suffix = name.substring(suffixSeparatorIndex + 1);
             String pseudoSuffix = myConfigValues.get(CFG_SUFFIX + suffix.toLowerCase());
-            return pseudoSuffix != null ? pseudoSuffix : suffix;
+            return StringUtils.isNotEmpty(pseudoSuffix) ? pseudoSuffix : suffix;
         }
         return null;
     }
