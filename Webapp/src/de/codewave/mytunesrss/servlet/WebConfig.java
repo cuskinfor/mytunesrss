@@ -18,7 +18,7 @@ public class WebConfig {
     private static final Log LOG = LogFactory.getLog(WebConfig.class);
 
     private static final String CONFIG_COOKIE_NAME = "MyTunesRSSConfig";
-    private static final String CFG_LOGIN_COOKIE = "loginCookie";
+    private static final String CFG_LOGIN_COOKIE = "rememberLogin";
     private static final String CFG_FEED_TYPES = "feedTypes";
     private static final String CFG_SUFFIX = "suffix.";
     private static final String CFG_RSS_LIMIT = "rssLimit";
@@ -31,14 +31,18 @@ public class WebConfig {
 
     Map<String, String> myConfigValues = new HashMap<String, String>();
 
+    public void clear() {
+        myConfigValues.clear();
+    }
+
     private void initWithDefaults() {
         myConfigValues.put(CFG_FEED_TYPES, "rss,m3u");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
         myConfigValues.put(CFG_LOGIN_COOKIE, "false");
-        myConfigValues.put(CFG_SUFFIX + "m4a", "mp4");
     }
 
     public void load(HttpServletRequest request) {
+        clear();
         initWithDefaults();
         Cookie[] cookies = request.getCookies();
         for (int i = 0; i < cookies.length; i++) {
@@ -63,11 +67,10 @@ public class WebConfig {
         for (Map.Entry<String, String> entry : myConfigValues.entrySet()) {
             value.append(";").append(entry.getKey()).append("=").append(entry.getValue());
         }
-        response.addCookie(new Cookie(CONFIG_COOKIE_NAME, value.substring(1)));
-    }
-
-    public Map<String, String> getMap() {
-        return Collections.unmodifiableMap(myConfigValues);
+        Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, value.substring(1));
+        cookie.setComment("MyTunesRSS settings cookie");
+        cookie.setMaxAge(Integer.MAX_VALUE);
+        response.addCookie(cookie);
     }
 
     public String getSuffix(File file) {
@@ -85,13 +88,13 @@ public class WebConfig {
         myConfigValues.put(CFG_SUFFIX + originalSuffix.toLowerCase(), fakeSuffix.toLowerCase());
     }
 
-    public boolean isLoginCookie() {
-        String loginCookie = myConfigValues.get(CFG_LOGIN_COOKIE);
-        return Boolean.valueOf(loginCookie);
+    public boolean isRememberLogin() {
+        String rememberLogin = myConfigValues.get(CFG_LOGIN_COOKIE);
+        return Boolean.valueOf(rememberLogin);
     }
 
-    public void setLoginCookie(boolean loginCookie) {
-        myConfigValues.put(CFG_LOGIN_COOKIE, Boolean.toString(loginCookie));
+    public void setRememberLogin(boolean rememberLogin) {
+        myConfigValues.put(CFG_LOGIN_COOKIE, Boolean.toString(rememberLogin));
     }
 
     public String[] getFeedTypes() {

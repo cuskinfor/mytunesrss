@@ -40,29 +40,29 @@
             </tr>
             <tr>
                 <td>Fake MP3 suffix</td>
-                <td><input type="text" name="suffix.mp3" value="<c:out value="${config.map['suffix.mp3']}"/>" /></td>
+                <td><input type="text" name="suffix.mp3" value="<c:out value="${config.feedFileSuffix['mp3']}"/>" /></td>
             </tr>
             <tr class="odd">
                 <td>Fake M4A suffix</td>
-                <td><input type="text" name="suffix.m4a" value="<c:out value="${config.map['suffix.m4a']}"/>" /></td>
+                <td><input type="text" name="suffix.m4a" value="<c:out value="${config.feedFileSuffix['m4a']}"/>" /></td>
             </tr>
             <tr>
                 <td>Limit RSS feed items (0 = no limit)</td>
                 <td>
-                    <input type="text" name="rssFeedLimit" value="<c:out value="${config.map['rssLimit']}"/>" style="width: 50px;" />
+                    <input type="text" name="rssFeedLimit" value="<c:out value="${config.rssFeedLimit}"/>" style="width: 50px;" />
                 </td>
             </tr>
             <tr class="odd">
                 <td>Playlist types</td>
                 <td>
-                    <input type="checkbox" name="feedType" value="rss" <c:if test="${fn:contains(config.map['feedTypes'], 'rss')}">
+                    <input type="checkbox" name="feedType" value="rss" <c:if test="${fn:contains(fn:join(config.feedTypes, ';'), 'rss')}">
                         checked="checked"</c:if> /> RSS
-                    <input type="checkbox" name="feedType" value="m3u" <c:if test="${fn:contains(config.map['feedTypes'], 'm3u')}">
+                    <input type="checkbox" name="feedType" value="m3u" <c:if test="${fn:contains(fn:join(config.feedTypes, ';'), 'm3u')}">
                         checked="checked"</c:if> style="margin-left: 15px;" /> M3U </td>
             </tr>
             <tr>
-                <td>Remember password</td>
-                <td><input type="checkbox" name="loginCookie" value="true" <c:if test="${config.map['loginCookie']}">checked="checked"</c:if> /></td>
+                <td>Remember login</td>
+                <td><input type="checkbox" name="rememberLogin" value="true" <c:if test="${config.rememberLogin}">checked="checked"</c:if> /></td>
             </tr>
         </table>
 

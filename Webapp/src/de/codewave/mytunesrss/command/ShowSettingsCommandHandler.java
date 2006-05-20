@@ -4,7 +4,6 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.jsp.*;
 
 /**
@@ -14,9 +13,6 @@ public class ShowSettingsCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        WebConfig webConfig = new WebConfig();
-        webConfig.load(getRequest());
-        getRequest().setAttribute("config", webConfig);
         forward(MyTunesRssResource.Settings);
     }
 }

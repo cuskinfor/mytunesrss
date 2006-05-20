@@ -25,7 +25,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected boolean isAuthorized(int authHash) {
         MyTunesRssConfig config = getMyTunesRssConfig();
-        return !config.isAuth() || (config.getPasswordHash() == authHash);
+        return !config.isAuth() || config.getPasswordHash() == authHash;
     }
 
     protected void authorize() {
@@ -70,13 +70,17 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("servletUrl", ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss");
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
         getRequest().setAttribute("pagerInitialPage", "a_b_c");
-        getRequest().setAttribute("config", getWebConfig());
+        getWebConfig(); // result not needed, method also fills the request attribute "config"
         createPager();
     }
 
     protected WebConfig getWebConfig() {
-        WebConfig webConfig = new WebConfig();
-        webConfig.load(getRequest());
+        WebConfig webConfig = (WebConfig)getRequest().getAttribute("config");
+        if (webConfig == null) {
+            webConfig = new WebConfig();
+            webConfig.load(getRequest());
+            getRequest().setAttribute("config", webConfig);
+        }
         return webConfig;
     }
 
@@ -86,7 +90,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     public void execute() throws Exception {
-        if (needsAuthorization()) {
+        if (needsAuthorization() && getWebConfig().isRememberLogin()) {
+            authorize();
+            executeAuthorized();
+        } else if (needsAuthorization()) {
             forward(MyTunesRssResource.Login);
         } else {
             executeAuthorized();
