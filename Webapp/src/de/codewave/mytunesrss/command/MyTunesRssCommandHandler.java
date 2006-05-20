@@ -74,7 +74,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private void prepareRequestForResource() {
         getRequest().setAttribute("servletUrl", ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss");
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
-        getRequest().setAttribute("pagerInitialPage", "a_b_c");
         getWebConfig(); // result not needed, method also fills the request attribute "config"
     }
 
@@ -129,20 +128,32 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         List<Pager.Page> pages = null;
         if (getSession().getAttribute("albumPager") == null) {
             pages = createAlphabetPagerItems();
+            String initialPager = null;
             for (Pager.Page item : pages) {
                 int albumCount = getAlbumCount(item.getKey().replace("_", "% ") + "%");
-                item.getUserData().put("active", albumCount > 0);
+                boolean active = albumCount > 0;
+                if (active && initialPager == null && !"0_1_2_3_4_5_6_7_8_9".equals(item.getKey())) {
+                    initialPager = item.getKey();
+                }
+                item.getUserData().put("active", active);
             }
             getSession().setAttribute("albumPager", new Pager(pages, pages.size()));
+            getSession().setAttribute("albumInitialPager", initialPager);
         }
         // artist pager
         if (getSession().getAttribute("artistPager") == null) {
             pages = createAlphabetPagerItems();
+            String initialPager = null;
             for (Pager.Page item : pages) {
                 int artistCount = getArtistCount(item.getKey().replace("_", "% ") + "%");
-                item.getUserData().put("active", artistCount > 0);
+                boolean active = artistCount > 0;
+                if (active && initialPager == null && !"0_1_2_3_4_5_6_7_8_9".equals(item.getKey())) {
+                    initialPager = item.getKey();
+                }
+                item.getUserData().put("active", active);
             }
             getSession().setAttribute("artistPager", new Pager(pages, pages.size()));
+            getSession().setAttribute("artistInitialPager", initialPager);
         }
     }
 
