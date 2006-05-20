@@ -245,12 +245,8 @@ table.portal input {
 td.artist {
 }
 
-td.album {
-	width: 40px;
-}
-
-td.tracks {
-		width: 50px;
+td.album, td.tracks {
+    border-left: none;
 }
 
 td.album a {
@@ -429,4 +425,34 @@ table.pager td a {
 table.pager td a.active {
 	cursor: default;
 	color: #000;
+}
+
+div.pager {
+	background: #999;
+	border-bottom: 1px solid #666;
+	padding: 3px 10px;
+	text-align: center;
+}
+
+div.pager a {
+	color: #fff;
+	text-decoration: none;
+	margin-right: 5px;
+	font-size: 10px;
+	font-weight: bold;
+}
+
+div.pager a:HOVER {
+	text-decoration: underline;
+}
+
+div.pager a.active {
+	color: #000;
+	cursor: default;
+}
+
+div.pager a.active:HOVER {
+	color: #000;
+	cursor: default;
+	text-decoration: none;
 }

@@ -105,7 +105,7 @@
             <c:set var="pager" scope="request" value="${indexPager}" />
             <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseArtist?page=${param.page}&album=${param.album}&index={index}" />
             <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
-            <jsp:include page="incl_pager.jsp" />
+            <jsp:include page="incl_bottomPager.jsp" />
         </c:if>
 
         <c:if test="${!empty sessionScope.playlist}">
