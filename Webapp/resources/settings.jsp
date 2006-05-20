@@ -64,10 +64,6 @@
                     <input type="checkbox" name="feedType" value="m3u" <c:if test="${fn:contains(fn:join(config.feedTypes, ';'), 'm3u')}">
                         checked="checked"</c:if> style="margin-left: 15px;" /> M3U </td>
             </tr>
-            <tr>
-                <td>Remember login</td>
-                <td><input type="checkbox" name="rememberLogin" value="true" <c:if test="${config.rememberLogin}">checked="checked"</c:if> /></td>
-            </tr>
         </table>
 
         <div class="buttons">

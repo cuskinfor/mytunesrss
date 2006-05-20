@@ -38,6 +38,8 @@
             <input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" />
             <input class="button" type="submit" value="<fmt:message key="login.login"/>" />
         </div>
+            Remember login
+            <input type="checkbox" name="rememberLogin" value="true" />
 
     </form>
 
