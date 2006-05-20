@@ -21,7 +21,7 @@
 
 </head>
 
-<body onload="document.forms[0].elements['password'].focus()">
+<body onLoad="document.forms[0].elements['password'].focus()">
 
 <div class="body">
 
@@ -33,13 +33,25 @@
 
         <h2><fmt:message key="login.caption" /></h2>
 
-        <div class="login">
-            <fmt:message key="login.password" />
-            <input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" />
-            <input class="button" type="submit" value="<fmt:message key="login.login"/>" />
-        </div>
-            Remember login
-            <input type="checkbox" name="rememberLogin" value="true" />
+        <table class="login" cellspacing="0">
+					<tr>
+						<td><fmt:message key="login.password" /></td>
+						<td>
+	            <input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" />
+						</td>
+						<td>
+  	          <input class="button" type="submit" value="<fmt:message key="login.login"/>" />
+    		    </td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>
+							<input type="checkbox" name="rememberLogin" value="true" />
+							Remember login
+						</td>
+						<td>&nbsp;</td>
+					</tr>
+				</table>
 
     </form>
 

@@ -330,7 +330,7 @@ ul.links a:HOVER {
 }
 
 div.login {
-    margin-top: 20px;
+    padding: 25px;
     text-align: center;
 }
 
@@ -417,7 +417,7 @@ table.pager td {
 }
 
 table.pager td span {
-	color: #ccc;
+	color: #bbb;
 	font-weight: normal;
 	font-size: 10px;
 }
@@ -461,4 +461,24 @@ div.pager a.active:HOVER {
 	color: #000;
 	cursor: default;
 	text-decoration: none;
+}
+
+div.pager a img {
+	background: #fff;
+	vertical-align: text-top;
+	margin-top: 3px;
+}
+
+table.login {
+	border: none;
+	width: auto;
+	margin: 25px auto 25px auto;
+	font-size: 12px;
+}
+
+table.login td {
+	padding: 5px 10px;
+	text-align: left;
+	background: none;
+	border: none;
 }

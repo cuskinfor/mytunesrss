@@ -7,16 +7,16 @@
 	<div class="pager">
 
 		<c:if test="${!pager.first}">
-				<a href="${mtfn:replace(pagerCommand, '{index}', pager.firstPage.key)}">&lt;&lt;</a>
-				<a href="${mtfn:replace(pagerCommand, '{index}', pager.previousPage.key)}">&lt;</a>
+				<a href="${mtfn:replace(pagerCommand, '{index}', pager.firstPage.key)}"><img src="${appUrl}/images/pager_first.gif" alt="first"/></a>
+				<a href="${mtfn:replace(pagerCommand, '{index}', pager.previousPage.key)}"><img src="${appUrl}/images/pager_previous.gif" alt="previous"/></a>
 		</c:if>
 		<c:forEach items="${pager.currentPages}" var="page">
 				<a href="${cwfn:choose(pagerCurrent == page.key, '#', mtfn:replace(pagerCommand, '{index}', page.key))}" <c:if test="${pagerCurrent == page.key}">class="active"</c:if>>
 						<c:out value="${page.value}" /></a>
 		</c:forEach>
 		<c:if test="${!pager.last}">
-				<a href="${mtfn:replace(pagerCommand, '{index}', pager.nextPage.key)}">&gt;</a>
-				<a href="${mtfn:replace(pagerCommand, '{index}', pager.lastPage.key)}">&gt;&gt;</a>
+				<a href="${mtfn:replace(pagerCommand, '{index}', pager.nextPage.key)}"><img src="${appUrl}/images/pager_next.gif" alt="next"/></a>
+				<a href="${mtfn:replace(pagerCommand, '{index}', pager.lastPage.key)}"><img src="${appUrl}/images/pager_last.gif" alt="last"/></a>
 		</c:if>
 
 	</div>

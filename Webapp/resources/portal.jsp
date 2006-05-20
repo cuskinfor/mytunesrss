@@ -35,6 +35,7 @@
 
     <ul class="links">
         <li><a href="${servletUrl}/showSettings">settings</a></li>
+        <li style="float:right"><a href="${servletUrl}/logout">logout</a></li>
     </ul>
 
     <form name="search" action="${servletUrl}/browseTrack" method="post">
