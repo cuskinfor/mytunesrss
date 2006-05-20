@@ -37,7 +37,7 @@ public class FindArtistQuery extends DataStoreQuery<Artist> {
                     "LCASE(name) LIKE ?",
                     " OR ",
                     myStartPatterns.length) + " ORDER BY name");
-            return execute(statement, myBuilder, myStartPatterns);
+            return execute(statement, myBuilder, (Object[])myStartPatterns);
         } else {
             statement = connection.prepareStatement("SELECT name, track_count, album_count FROM artist ORDER BY name");
             return execute(statement, myBuilder);
