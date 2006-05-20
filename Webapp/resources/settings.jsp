@@ -44,11 +44,11 @@
             </tr>
             <tr>
                 <td>Fake MP3 suffix</td>
-                <td><input type="text" name="suffix.mp3" value="<c:out value="${config.feedFileSuffix['mp3']}"/>" style="width: 50px;" /></td>
+                <td><input type="text" name="suffix.mp3" value="<c:out value="${config.map['suffix.mp3']}"/>" style="width: 50px;" /></td>
             </tr>
             <tr class="odd">
                 <td>Fake M4A suffix</td>
-                <td><input type="text" name="suffix.m4a" value="<c:out value="${config.feedFileSuffix['m4a']}"/>" style="width: 50px;" /></td>
+                <td><input type="text" name="suffix.m4a" value="<c:out value="${config.map['suffix.m4a']}"/>" style="width: 50px;" /></td>
             </tr>
             <tr>
                 <td>Limit RSS feed items (0 = no limit)</td>

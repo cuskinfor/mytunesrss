@@ -105,6 +105,10 @@ public class WebConfig {
         return null;
     }
 
+    public Map<String, String> getMap() {
+        return Collections.unmodifiableMap(myConfigValues);
+    }
+
     public void addFileSuffix(String originalSuffix, String fakeSuffix) {
         myConfigValues.put(CFG_SUFFIX + originalSuffix.toLowerCase(), fakeSuffix.toLowerCase());
     }
