@@ -32,26 +32,30 @@
     <form id="login" action="${servletUrl}/login" method="post">
 
         <h2><fmt:message key="login.caption" /></h2>
+				
+				<div class="login">
 
-        <table class="login" cellspacing="0">
-					<tr>
-						<td><fmt:message key="login.password" /></td>
-						<td>
-	            <input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" />
-						</td>
-						<td>
-  	          <input class="button" type="submit" value="<fmt:message key="login.login"/>" />
-    		    </td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-						<td>
-							<input type="checkbox" name="rememberLogin" value="true" />
-							Remember login
-						</td>
-						<td>&nbsp;</td>
-					</tr>
-				</table>
+					<table class="login" cellspacing="0">
+						<tr>
+							<td><fmt:message key="login.password" /></td>
+							<td>
+								<input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" />
+							</td>
+							<td>
+								<input class="button" type="submit" value="<fmt:message key="login.login"/>" />
+							</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>
+								<input type="checkbox" name="rememberLogin" value="true" />
+								Remember login
+							</td>
+							<td>&nbsp;</td>
+						</tr>
+					</table>
+					
+				</div>
 
     </form>
 
