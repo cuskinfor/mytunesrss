@@ -26,7 +26,7 @@ public class CreatePlaylistCommandHandler extends MyTunesRssCommandHandler {
         String[] trackIds = getNonEmptyParameterValues("track");
         String trackList = getRequestParameter("tracklist", null);
         if ((trackIds == null || trackIds.length == 0) && StringUtils.isNotEmpty(trackList)) {
-            trackIds = StringUtils.split(trackList, ';');
+            trackIds = StringUtils.split(trackList, ',');
         }
         Collection<Track> tracks;
         if (StringUtils.isNotEmpty(playlistId)) {

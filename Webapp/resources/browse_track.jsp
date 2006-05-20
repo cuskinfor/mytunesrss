@@ -153,14 +153,14 @@
             <c:when test="${empty sessionScope.playlist}">
                 <c:forEach items="${config.feedTypes}" var="feedType">
                     <th class="icon">
-                        <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/tracklist=${track.sectionIds}/${mtfn:cleanFileName(sectionFileName)}.${config.feedFileSuffix[feedType]}">
+                        <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/tracklist=${cwfn:urlEncode(track.sectionIds, 'UTF-8')}/${mtfn:cleanFileName(sectionFileName)}.${config.feedFileSuffix[feedType]}">
                             <img src="${appUrl}/images/${feedType}_th.gif" alt="${feedType}" /> </a>
                     </th>
                 </c:forEach>
             </c:when>
             <c:otherwise>
                 <th class="icon">
-                    <a href="${servletUrl}/addToPlaylist?tracklist=${track.sectionIds}&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                    <a href="${servletUrl}/addToPlaylist/tracklist=${cwfn:urlEncode(track.sectionIds, 'UTF-8')}&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
                         <img src="${appUrl}/images/add_th.gif" alt="add" /> </a>
                 </th>
             </c:otherwise>

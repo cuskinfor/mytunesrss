@@ -98,10 +98,10 @@ public class ITunesUtils {
         if (StringUtils.isNotEmpty(trackId) && StringUtils.isNotEmpty(name) && file != null) {
             try {
                 InsertTrackStatement statement = new InsertTrackStatement();
-                statement.setId(trackId);
-                statement.setName(name);
-                statement.setArtist(track.get("Artist"));
-                statement.setAlbum(track.get("Album"));
+                statement.setId(trackId.trim());
+                statement.setName(name.trim());
+                statement.setArtist(StringUtils.trimToNull(track.get("Artist")));
+                statement.setAlbum(StringUtils.trimToNull(track.get("Album")));
                 statement.setTime(StringUtils.isNotEmpty(track.get("Total Time")) ? Integer.parseInt(track.get("Total Time")) / 1000 : 0);
                 statement.setTrackNumber(StringUtils.isNotEmpty(track.get("Track Number")) ? Integer.parseInt(track.get("Track Number")) : 0);
                 statement.setFileName(file.getAbsolutePath());

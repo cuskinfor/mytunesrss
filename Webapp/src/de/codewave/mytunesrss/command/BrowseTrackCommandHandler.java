@@ -82,7 +82,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             EnhancedTrack enhancedTrack = iterator.next();
             sectionIds.append(enhancedTrack.getId());
             if (iterator.hasNext()) {
-                sectionIds.append(";");
+                sectionIds.append(",");
             }
         }
         if (!sectionTracks.isEmpty()) {
