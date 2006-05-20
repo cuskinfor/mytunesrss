@@ -6,24 +6,33 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import org.apache.commons.lang.*;
 
-import java.util.*;
-import java.sql.*;
 import java.io.*;
+import java.sql.*;
+import java.util.*;
 
 /**
- de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
+ * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
  */
 public class FindPlaylistTracksQuery extends DataStoreQuery<Track> {
     private FindPlaylistTracksQuery.TrackResultBuilder myBuilder = new FindPlaylistTracksQuery.TrackResultBuilder();
-private String myId;
+    private String myId;
+    private int myFirst = -1;
+    private int myLast = -1;
 
     public FindPlaylistTracksQuery(String id) {
-        myId = id;
+        String[] parts = StringUtils.split(id, "_");
+        myId = parts[0];
+        if (parts.length == 3) {
+            myFirst = Integer.parseInt(parts[1]);
+            myLast = Integer.parseInt(parts[2]);
+        }
     }
 
     public Collection<Track> execute(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("SELECT t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file FROM track t, link_track_playlist ltp WHERE t.id = ltp.track_id AND ltp.playlist_id = ?");
-        return execute(statement, myBuilder, myId);
+        PreparedStatement statement = connection.prepareStatement(
+                "SELECT t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file FROM track t, link_track_playlist ltp WHERE t.id = ltp.track_id AND ltp.playlist_id = ?");
+        List<Track> tracks = (List<Track>)execute(statement, myBuilder, myId);
+        return myFirst == -1 ? tracks : tracks.subList(myFirst, myLast + 1);
     }
 
     public static class TrackResultBuilder implements ResultBuilder<Track> {
