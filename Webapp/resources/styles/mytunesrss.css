@@ -473,13 +473,13 @@ div.pager a img {
 table.login {
 	border: none;
 	width: auto;
-	margin: 25px auto 25px auto;
+	margin: 20px auto 20px auto;
 	font-size: 12px;
 }
 
 table.login td {
-	padding: 5px 10px;
-	text-align: left;
+	padding: 5px;
+	text-align: center;
 	background: none;
 	border: none;
 }
