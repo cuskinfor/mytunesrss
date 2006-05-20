@@ -245,8 +245,12 @@ table.portal input {
 td.artist {
 }
 
-td.album, td.tracks {
-    border-left: none;
+td.album {
+	width: 40px;
+}
+
+td.tracks {
+		width: 50px;
 }
 
 td.album a {
@@ -330,10 +334,8 @@ ul.links a:HOVER {
 }
 
 div.login {
-    padding: 40px 0;
+    margin-top: 20px;
     text-align: center;
-		border-bottom: 1px solid #666;
-		background: #E7EDF6;
 }
 
 div.login input {
