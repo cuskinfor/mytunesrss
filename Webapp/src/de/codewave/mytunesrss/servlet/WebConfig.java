@@ -47,16 +47,19 @@ public class WebConfig {
         clear();
         initWithDefaults();
         Cookie[] cookies = request.getCookies();
-        for (int i = 0; i < cookies.length; i++) {
-            Cookie cookie = cookies[i];
-            if (CONFIG_COOKIE_NAME.equals(cookie.getName())) {
-                for (String keyValueToken : StringUtils.split(cookie.getValue(), ';')) {
-                    String[] keyValuePair = StringUtils.split(keyValueToken, '=');
-                    if (keyValuePair.length > 0) {
-                        myConfigValues.put(keyValuePair[0], keyValuePair.length > 1 ? keyValuePair[1] : "");
-                    } else {
-                        if (LOG.isWarnEnabled()) {
-                            LOG.warn("Illegal configuration token found in cookie: \"" + keyValueToken + "\".");
+        if (cookies != null) {
+            for (int i = 0; i < cookies.length; i++) {
+                Cookie cookie = cookies[i];
+                if (CONFIG_COOKIE_NAME.equals(cookie.getName())) {
+                    String cookieValue = decode(cookie.getValue());
+                    for (String keyValueToken : StringUtils.split(cookieValue, ';')) {
+                        String[] keyValuePair = StringUtils.split(keyValueToken, '=');
+                        if (keyValuePair.length > 0) {
+                            myConfigValues.put(keyValuePair[0], keyValuePair.length > 1 ? keyValuePair[1] : "");
+                        } else {
+                            if (LOG.isWarnEnabled()) {
+                                LOG.warn("Illegal configuration token found in cookie: \"" + keyValueToken + "\".");
+                            }
                         }
                     }
                 }
@@ -69,10 +72,26 @@ public class WebConfig {
         for (Map.Entry<String, String> entry : myConfigValues.entrySet()) {
             value.append(";").append(entry.getKey()).append("=").append(entry.getValue());
         }
-        Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, value.substring(1));
+        Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, encode(value.substring(1)));
         cookie.setComment("MyTunesRSS settings cookie");
         cookie.setMaxAge(Integer.MAX_VALUE);
         response.addCookie(cookie);
+    }
+
+    private String encode(String text) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < text.length(); i++) {
+            buffer.append(Integer.toHexString(text.charAt(i)));
+        }
+        return buffer.toString().toUpperCase();
+    }
+
+    private String decode(String text) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < text.length(); i+= 2) {
+            buffer.append((char)Integer.parseInt(text.substring(i, i + 2), 16));
+        }
+        return buffer.toString();
     }
 
     public String getSuffix(File file) {

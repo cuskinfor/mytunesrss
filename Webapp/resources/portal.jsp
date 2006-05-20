@@ -80,7 +80,7 @@
                 </td>
                 <c:forEach items="${config.feedTypes}" var="feedType">
                     <td class="icon">
-                        <a href="${servletUrl}/create${fn:toUpperCase(feedType)}?playlist=${playlist.id}/${mtfn:cleanFileName(playlist.name)}.${config.feedFileSuffix[feedType]}">
+                        <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/playlist=${playlist.id}/${mtfn:cleanFileName(playlist.name)}.${config.feedFileSuffix[feedType]}">
                             <img src="${appUrl}/images/${feedType}${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="${feedType}" /> </a>
                     </td>
                 </c:forEach>

@@ -46,7 +46,7 @@
 					<tr>
 						<td>&nbsp;</td>
 						<td>
-							<input type="checkbox" name="rememberLogin" value="true" />
+							<input type="checkbox" name="rememberLogin" value="true" <c:if test="${config.rememberLogin}">checked="checked"</c:if> />
 							Remember login
 						</td>
 						<td>&nbsp;</td>
