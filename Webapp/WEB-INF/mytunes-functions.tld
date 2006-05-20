@@ -83,4 +83,17 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Replace all target strings in a string with a replacement string.
+        </description>
+        <name>replace</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String replace(java.lang.String, java.lang.String, java.lang.String)
+        </function-signature>
+        <example>
+            &lt;c:out value="${mtfn:replace('Your name is {name}. Hello {name}!' '{name}', 'James')}"/&gt;
+        </example>
+    </function>
+
 </taglib>

@@ -19,6 +19,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         WebConfig webConfig = getWebConfig();
         webConfig.clear();
         webConfig.setRememberLogin(Boolean.valueOf(getRequestParameter("rememberLogin", "false")));
+        webConfig.setPageSize(Integer.parseInt(getRequestParameter("pageSize", "0")));
         webConfig.setRssFeedLimit(Integer.parseInt(getRequestParameter("rssFeedLimit", "0")));
         for (String parameterName : Collections.list((Enumeration<String>)getRequest().getParameterNames())) {
             if (parameterName.startsWith("suffix.")) {

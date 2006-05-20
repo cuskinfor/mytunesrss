@@ -51,4 +51,8 @@ public class MyTunesFunctions {
     public static String virtualSuffix(WebConfig webConfig, Track track) {
         return webConfig.getSuffix(track.getFile());
     }
+
+    public static String replace(String string, String target, String replacement) {
+        return string.replace(target, replacement);
+    }
 }

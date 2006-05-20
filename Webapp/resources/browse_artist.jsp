@@ -8,7 +8,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseArtist?album=${param.album}&page=${param.page}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseArtist?album=${param.album}&page=${param.page}&index=${param.index}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -48,8 +48,9 @@
 
     <jsp:include page="incl_playlist.jsp" />
 
-    <c:set var="pagerCommand" scope="request" value="browseArtist" />
-    <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(empty param.page && empty param.album, 'all', param.page)}" />
+    <c:set var="pager" scope="request" value="${artistPager}" />
+    <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseArtist?page={index}" />
+    <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.album, '*', param.page)}" />
     <jsp:include page="incl_pager.jsp" />
 
     <form name="browse" action="" method="post">
@@ -99,6 +100,13 @@
                 </tr>
             </c:forEach>
         </table>
+
+        <c:if test="${!empty indexPager}">
+            <c:set var="pager" scope="request" value="${indexPager}" />
+            <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseArtist?page=${param.page}&album=${param.album}&index={index}" />
+            <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
+            <jsp:include page="incl_pager.jsp" />
+        </c:if>
 
         <c:if test="${!empty sessionScope.playlist}">
             <div class="buttons">

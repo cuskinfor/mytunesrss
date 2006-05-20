@@ -22,6 +22,7 @@ public class WebConfig {
     private static final String CFG_FEED_TYPES = "feedTypes";
     private static final String CFG_SUFFIX = "suffix.";
     private static final String CFG_RSS_LIMIT = "rssLimit";
+    private static final String CFG_PAGE_SIZE = "pageSize";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     static {
@@ -39,6 +40,7 @@ public class WebConfig {
         myConfigValues.put(CFG_FEED_TYPES, "rss,m3u");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
         myConfigValues.put(CFG_LOGIN_COOKIE, "false");
+        myConfigValues.put(CFG_PAGE_SIZE, "0");
     }
 
     public void load(HttpServletRequest request) {
@@ -121,5 +123,13 @@ public class WebConfig {
 
     public Map<String, String> getFeedFileSuffix() {
         return FEED_FILE_SUFFIXES;
+    }
+
+    public int getPageSize() {
+        return Integer.parseInt(myConfigValues.get(CFG_PAGE_SIZE));
+    }
+
+    public void setPageSize(int pageSize) {
+        myConfigValues.put(CFG_PAGE_SIZE, Integer.toString(pageSize));
     }
 }

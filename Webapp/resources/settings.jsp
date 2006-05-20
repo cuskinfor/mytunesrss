@@ -39,20 +39,24 @@
                 <th>&nbsp;</th>
             </tr>
             <tr>
+                <td>Items per page (0 = no limit)</td>
+                <td><input type="text" name="pageSize" value="<c:out value="${config.pageSize}"/>" /></td>
+            </tr>
+            <tr class="odd">
                 <td>Fake MP3 suffix</td>
                 <td><input type="text" name="suffix.mp3" value="<c:out value="${config.feedFileSuffix['mp3']}"/>" /></td>
             </tr>
-            <tr class="odd">
+            <tr>
                 <td>Fake M4A suffix</td>
                 <td><input type="text" name="suffix.m4a" value="<c:out value="${config.feedFileSuffix['m4a']}"/>" /></td>
             </tr>
-            <tr>
+            <tr class="odd">
                 <td>Limit RSS feed items (0 = no limit)</td>
                 <td>
                     <input type="text" name="rssFeedLimit" value="<c:out value="${config.rssFeedLimit}"/>" style="width: 50px;" />
                 </td>
             </tr>
-            <tr class="odd">
+            <tr>
                 <td>Playlist types</td>
                 <td>
                     <input type="checkbox" name="feedType" value="rss" <c:if test="${fn:contains(fn:join(config.feedTypes, ';'), 'rss')}">
@@ -60,7 +64,7 @@
                     <input type="checkbox" name="feedType" value="m3u" <c:if test="${fn:contains(fn:join(config.feedTypes, ';'), 'm3u')}">
                         checked="checked"</c:if> style="margin-left: 15px;" /> M3U </td>
             </tr>
-            <tr>
+            <tr class="odd">
                 <td>Remember login</td>
                 <td><input type="checkbox" name="rememberLogin" value="true" <c:if test="${config.rememberLogin}">checked="checked"</c:if> /></td>
             </tr>

@@ -7,18 +7,23 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.datastore.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.utils.servlet.*;
 import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 
 import javax.servlet.*;
 import java.io.*;
 import java.util.*;
+import java.sql.*;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
  */
 public abstract class MyTunesRssCommandHandler extends CommandHandler {
+    private static final Log LOG = LogFactory.getLog(MyTunesRssCommandHandler.class);
+
     protected MyTunesRssConfig getMyTunesRssConfig() {
         return (MyTunesRssConfig)getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
     }
@@ -71,7 +76,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
         getRequest().setAttribute("pagerInitialPage", "a_b_c");
         getWebConfig(); // result not needed, method also fills the request attribute "config"
-        createPager();
     }
 
     protected WebConfig getWebConfig() {
@@ -90,6 +94,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     public void execute() throws Exception {
+        createSessionPagers();
         if (needsAuthorization() && getWebConfig().isRememberLogin()) {
             authorize();
             executeAuthorized();
@@ -118,17 +123,84 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         return null;
     }
 
-    protected void createPager() {
-        List<PagerItem> pagerItems = new ArrayList<PagerItem>();
-        pagerItems.add(new PagerItem("0_1_2_3_4_5_6_7_8_9", "0 - 9"));
-        pagerItems.add(new PagerItem("a_b_c", "A - C"));
-        pagerItems.add(new PagerItem("d_e_f", "D - F"));
-        pagerItems.add(new PagerItem("g_h_i", "G - I"));
-        pagerItems.add(new PagerItem("j_k_l", "J - L"));
-        pagerItems.add(new PagerItem("m_n_o", "M - O"));
-        pagerItems.add(new PagerItem("p_q_r_s", "P - S"));
-        pagerItems.add(new PagerItem("t_u_v", "T - V"));
-        pagerItems.add(new PagerItem("w_x_y_z", "W - Z"));
-        getRequest().setAttribute("pagerItems", pagerItems);
+    public void createSessionPagers() {
+        int pageSize = getWebConfig().getPageSize();
+        // album pager
+        List<Pager.PagerItem> pagerItems = null;
+        if (getSession().getAttribute("albumPager") == null) {
+            pagerItems = createAlphabetPagerItems();
+            for (Pager.PagerItem item : pagerItems) {
+                int albumCount = getAlbumCount(item.getKey().replace("_", "% ") + "%");
+                item.getUserData().put("active", albumCount > 0);
+            }
+            getSession().setAttribute("albumPager", new Pager(pagerItems, pagerItems.size()));
+        }
+        // artist pager
+        if (getSession().getAttribute("artistPager") == null) {
+            pagerItems = createAlphabetPagerItems();
+            for (Pager.PagerItem item : pagerItems) {
+                int artistCount = getArtistCount(item.getKey().replace("_", "% ") + "%");
+                item.getUserData().put("active", artistCount > 0);
+            }
+            getSession().setAttribute("artistPager", new Pager(pagerItems, pagerItems.size()));
+        }
     }
+
+    protected Pager createPager(int itemCount, int current) {
+        int pageSize = getWebConfig().getPageSize();
+        if (pageSize > 0) {
+            List<Pager.PagerItem> pagerItems = new ArrayList<Pager.PagerItem>();
+            int page = 0;
+            for (int index = 0; index < itemCount; index += pageSize) {
+                pagerItems.add(new Pager.PagerItem(Integer.toString(page), Integer.toString(page + 1)));
+                page++;
+            }
+            Pager pager = new Pager(pagerItems, 10);
+            pager.moveTo(current);
+            return pager;
+        }
+        return null;
+    }
+
+    private List<Pager.PagerItem> createAlphabetPagerItems() {
+        List<Pager.PagerItem> pagerItems = new ArrayList<Pager.PagerItem>();
+        pagerItems.add(new Pager.PagerItem("0_1_2_3_4_5_6_7_8_9", "0 - 9"));
+        pagerItems.add(new Pager.PagerItem("a_b_c", "A - C"));
+        pagerItems.add(new Pager.PagerItem("d_e_f", "D - F"));
+        pagerItems.add(new Pager.PagerItem("g_h_i", "G - I"));
+        pagerItems.add(new Pager.PagerItem("j_k_l", "J - L"));
+        pagerItems.add(new Pager.PagerItem("m_n_o", "M - O"));
+        pagerItems.add(new Pager.PagerItem("p_q_r_s", "P - S"));
+        pagerItems.add(new Pager.PagerItem("t_u_v", "T - V"));
+        pagerItems.add(new Pager.PagerItem("w_x_y_z", "W - Z"));
+        pagerItems.add(new Pager.PagerItem("", "all"));
+        return pagerItems;
+    }
+
+    private int getAlbumCount(String startPatterns) {
+        try {
+            return getCount(getDataStore().executeQuery(new FindAlbumQuery(StringUtils.split(startPatterns, " "))));
+        } catch (SQLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.warn("Could not get album count.", e);
+            }
+        }
+        return 0;
+    }
+
+    private int getArtistCount(String startPatterns) {
+        try {
+            return getCount(getDataStore().executeQuery(new FindArtistQuery(StringUtils.split(startPatterns, " "))));
+        } catch (SQLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.warn("Could not get album count.", e);
+            }
+        }
+        return 0;
+    }
+
+    private int getCount(Collection result) {
+        return result != null ? result.size() : 0;
+    }
+
 }
