@@ -160,7 +160,7 @@
             </c:when>
             <c:otherwise>
                 <th class="icon">
-                    <a href="${servletUrl}/addToPlaylist/tracklist=${cwfn:urlEncode(track.sectionIds, 'UTF-8')}&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                    <a href="${servletUrl}/addToPlaylist?tracklist=${cwfn:urlEncode(track.sectionIds, 'UTF-8')}&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
                         <img src="${appUrl}/images/add_th.gif" alt="add" /> </a>
                 </th>
             </c:otherwise>
