@@ -6,17 +6,19 @@
 
 <table class="pager" cellspacing="0">
     <tr>
-        <c:if test="${!pager.first}">
-            <td><a href="${mtfn:replace(pagerCommand, '{index}', pager.firstPage.key)}">&lt;&lt;</a></td>
-            <td><a href="${mtfn:replace(pagerCommand, '{index}', pager.previousPage.key)}">&lt;</a></td>
-        </c:if>
-        <c:forEach items="${pager.currentPages}" var="page">
-            <td><a href="${cwfn:choose(pagerCurrent == page.key, '#', mtfn:replace(pagerCommand, '{index}', page.key))}" <c:if test="${pagerCurrent == page.key}">class="active"</c:if>>
-                <c:out value="${page.value}" /></a></td>
-        </c:forEach>
-        <c:if test="${!pager.last}">
-            <td><a href="${mtfn:replace(pagerCommand, '{index}', pager.nextPage.key)}">&gt;</a></td>
-            <td><a href="${mtfn:replace(pagerCommand, '{index}', pager.lastPage.key)}">&gt;&gt;</a></td>
-        </c:if>
+			<c:forEach items="${pager.currentPages}" var="page">
+				<td>
+					<c:choose>
+						<c:when test="${page.userData.active}">
+							<a href="${cwfn:choose(pagerCurrent == page.key, '#', mtfn:replace(pagerCommand, '{index}', page.key))}" <c:if test="${pagerCurrent == page.key}">class="active"</c:if>>
+								<c:out value="${page.value}" />
+							</a>
+						</c:when>
+						<c:otherwise>
+							<span><c:out value="${page.value}" /></span>
+						</c:otherwise>
+					</c:choose>
+				</td>
+			</c:forEach>
     </tr>
 </table>
