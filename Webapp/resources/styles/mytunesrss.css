@@ -416,6 +416,12 @@ table.pager td {
 	text-align: center;
 }
 
+table.pager td span {
+	color: #ccc;
+	font-weight: normal;
+	font-size: 10px;
+}
+
 table.pager td a {
 	color: #fff;
 	font-weight: bold;
