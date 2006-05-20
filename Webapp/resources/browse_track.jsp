@@ -10,7 +10,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}&index=${param.index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}</c:set>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -209,6 +209,12 @@
 <c:set var="count" value="${count + 1}" />
 </c:forEach>
 </table>
+
+<c:if test="${!empty pager}">
+    <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}&index={index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}" />
+    <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
+    <jsp:include page="incl_bottomPager.jsp" />
+</c:if>
 
 <c:if test="${!empty sessionScope.playlist}">
     <div class="buttons">

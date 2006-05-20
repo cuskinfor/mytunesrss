@@ -38,7 +38,17 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         if (query != null) {
             EnhancedTracks enhancedTracks = getTracks(getDataStore().executeQuery(query), sortOrderValue);
             getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()));
-            getRequest().setAttribute("tracks", enhancedTracks.getTracks());
+            int pageSize = getWebConfig().getPageSize();
+            List<EnhancedTrack> tracks = (List<EnhancedTrack>)enhancedTracks.getTracks();
+            if (pageSize > 0 && tracks.size() > pageSize) {
+                int current = Integer.parseInt(getRequestParameter("index", "0"));
+                Pager pager = createPager(tracks.size(), current);
+                getRequest().setAttribute("pager", pager);
+                tracks = tracks.subList(current * pageSize, Math.min((current * pageSize) + pageSize, tracks.size()));
+                tracks.get(0).setContinuation(!tracks.get(0).isNewSection());
+                tracks.get(0).setNewSection(true);
+            }
+            getRequest().setAttribute("tracks", tracks);
         }
         forward(MyTunesRssResource.BrowseTrack);
     }
@@ -118,6 +128,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
 
     public static class EnhancedTrack extends Track {
         private boolean myNewSection;
+        private boolean myContinuation;
         private boolean mySimple;
         private String mySectionIds;
 
@@ -137,6 +148,14 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
 
         private void setNewSection(boolean newSection) {
             myNewSection = newSection;
+        }
+
+        public boolean isContinuation() {
+            return myContinuation;
+        }
+
+        public void setContinuation(boolean continuation) {
+            myContinuation = continuation;
         }
 
         public boolean isSimple() {
