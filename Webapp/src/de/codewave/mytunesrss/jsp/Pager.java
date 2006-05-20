@@ -10,80 +10,77 @@ import java.util.*;
  * de.codewave.mytunesrss.jsp.Pager
  */
 public class Pager {
-    private List<PagerItem> myItems;
-    private List<PagerItem> myCurrentItems;
-    private int myItemCountInBar;
-    private int myFirstItemInBar;
+    private List<Page> myPages;
+    private List<Page> myCurrentPages;
+    private int myPageCountInBar;
+    private int myFirstPageInBar;
 
-    public Pager(List<PagerItem> items, int itemCountInBar) {
-        myItems = items != null ? new ArrayList<PagerItem>(items) : new ArrayList<PagerItem>();
-        myCurrentItems = new ArrayList<PagerItem>(myItemCountInBar);
-        myItemCountInBar = itemCountInBar;
-        myFirstItemInBar = 0;
-        updateCurrentItems();
+    public Pager(List<Page> pages, int pageCountInBar) {
+        myPages = pages != null ? new ArrayList<Page>(pages) : new ArrayList<Page>();
+        myCurrentPages = new ArrayList<Page>(myPageCountInBar);
+        myPageCountInBar = pageCountInBar;
+        myFirstPageInBar = 0;
+        updateCurrentPages();
     }
 
-    private void updateCurrentItems() {
-        myCurrentItems.clear();
-        for (ListIterator<PagerItem> iterator = myItems.listIterator(myFirstItemInBar);
-                iterator.hasNext() && myCurrentItems.size() < myItemCountInBar;) {
-            myCurrentItems.add(iterator.next());
+    private void updateCurrentPages() {
+        myCurrentPages.clear();
+        for (ListIterator<Page> iterator = myPages.listIterator(myFirstPageInBar);
+                iterator.hasNext() && myCurrentPages.size() < myPageCountInBar;) {
+            myCurrentPages.add(iterator.next());
         }
     }
 
-    public void addItem(PagerItem item) {
-        myItems.add(item);
-    }
-
-    public List<PagerItem> getCurrentItems() {
-        return Collections.unmodifiableList(myCurrentItems);
+    public List<Page> getCurrentPages() {
+        return Collections.unmodifiableList(myCurrentPages);
     }
 
     public boolean isFirst() {
-        return myFirstItemInBar == 0;
+        return myFirstPageInBar == 0;
+    }
+
+    public Page getFirstPage() {
+        return myPages.get(0);
+    }
+
+    public Page getPreviousPage() {
+        if (!isFirst()) {
+            return myPages.get(myFirstPageInBar - 1);
+        }
+        return getFirstPage();
     }
 
     public boolean isLast() {
-        return myFirstItemInBar + myItemCountInBar >= myItems.size();
+        return myFirstPageInBar + myPageCountInBar >= myPages.size();
     }
 
-    public void moveToBegin() {
-        if (!isFirst()) {
-            myFirstItemInBar = 0;
-            updateCurrentItems();
-        }
+    public Page getLastPage() {
+        return myPages.get(myPages.size() - 1);
     }
 
-    public void moveBackward() {
-        if (!isFirst()) {
-            myFirstItemInBar = Math.max(0, myFirstItemInBar - myItemCountInBar);
-            updateCurrentItems();
-        }
-    }
-
-    public void moveForward() {
+    public Page getNextPage() {
         if (!isLast()) {
-            myFirstItemInBar += myItemCountInBar;
-            updateCurrentItems();
+            return myPages.get(myFirstPageInBar + myPageCountInBar);
         }
+        return getLastPage();
     }
 
-    public void moveTo(int index) {
-        myFirstItemInBar = myItemCountInBar * (index / myItemCountInBar);
-        updateCurrentItems();
+    public void moveToPage(int page) {
+        myFirstPageInBar = myPageCountInBar * (page / myPageCountInBar);
+        updateCurrentPages();
     }
 
-    public static class PagerItem {
+    public static class Page {
         private String myKey;
         private String myValue;
         private Map<String, Object> myUserData = new HashMap<String, Object>();
 
-        public PagerItem(String key, String value) {
+        public Page(String key, String value) {
             myKey = key;
             myValue = value;
         }
 
-        public PagerItem(String key, String value, Map<String, Object> userData) {
+        public Page(String key, String value, Map<String, Object> userData) {
             this(key, value);
             myUserData = new HashMap<String, Object>(userData);
         }

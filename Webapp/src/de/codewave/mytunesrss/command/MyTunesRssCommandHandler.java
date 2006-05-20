@@ -126,55 +126,55 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     public void createSessionPagers() {
         int pageSize = getWebConfig().getPageSize();
         // album pager
-        List<Pager.PagerItem> pagerItems = null;
+        List<Pager.Page> pages = null;
         if (getSession().getAttribute("albumPager") == null) {
-            pagerItems = createAlphabetPagerItems();
-            for (Pager.PagerItem item : pagerItems) {
+            pages = createAlphabetPagerItems();
+            for (Pager.Page item : pages) {
                 int albumCount = getAlbumCount(item.getKey().replace("_", "% ") + "%");
                 item.getUserData().put("active", albumCount > 0);
             }
-            getSession().setAttribute("albumPager", new Pager(pagerItems, pagerItems.size()));
+            getSession().setAttribute("albumPager", new Pager(pages, pages.size()));
         }
         // artist pager
         if (getSession().getAttribute("artistPager") == null) {
-            pagerItems = createAlphabetPagerItems();
-            for (Pager.PagerItem item : pagerItems) {
+            pages = createAlphabetPagerItems();
+            for (Pager.Page item : pages) {
                 int artistCount = getArtistCount(item.getKey().replace("_", "% ") + "%");
                 item.getUserData().put("active", artistCount > 0);
             }
-            getSession().setAttribute("artistPager", new Pager(pagerItems, pagerItems.size()));
+            getSession().setAttribute("artistPager", new Pager(pages, pages.size()));
         }
     }
 
     protected Pager createPager(int itemCount, int current) {
         int pageSize = getWebConfig().getPageSize();
         if (pageSize > 0) {
-            List<Pager.PagerItem> pagerItems = new ArrayList<Pager.PagerItem>();
+            List<Pager.Page> pages = new ArrayList<Pager.Page>();
             int page = 0;
             for (int index = 0; index < itemCount; index += pageSize) {
-                pagerItems.add(new Pager.PagerItem(Integer.toString(page), Integer.toString(page + 1)));
+                pages.add(new Pager.Page(Integer.toString(page), Integer.toString(page + 1)));
                 page++;
             }
-            Pager pager = new Pager(pagerItems, 10);
-            pager.moveTo(current);
+            Pager pager = new Pager(pages, 10);
+            pager.moveToPage(current);
             return pager;
         }
         return null;
     }
 
-    private List<Pager.PagerItem> createAlphabetPagerItems() {
-        List<Pager.PagerItem> pagerItems = new ArrayList<Pager.PagerItem>();
-        pagerItems.add(new Pager.PagerItem("0_1_2_3_4_5_6_7_8_9", "0 - 9"));
-        pagerItems.add(new Pager.PagerItem("a_b_c", "A - C"));
-        pagerItems.add(new Pager.PagerItem("d_e_f", "D - F"));
-        pagerItems.add(new Pager.PagerItem("g_h_i", "G - I"));
-        pagerItems.add(new Pager.PagerItem("j_k_l", "J - L"));
-        pagerItems.add(new Pager.PagerItem("m_n_o", "M - O"));
-        pagerItems.add(new Pager.PagerItem("p_q_r_s", "P - S"));
-        pagerItems.add(new Pager.PagerItem("t_u_v", "T - V"));
-        pagerItems.add(new Pager.PagerItem("w_x_y_z", "W - Z"));
-        pagerItems.add(new Pager.PagerItem("", "all"));
-        return pagerItems;
+    private List<Pager.Page> createAlphabetPagerItems() {
+        List<Pager.Page> pages = new ArrayList<Pager.Page>();
+        pages.add(new Pager.Page("0_1_2_3_4_5_6_7_8_9", "0 - 9"));
+        pages.add(new Pager.Page("a_b_c", "A - C"));
+        pages.add(new Pager.Page("d_e_f", "D - F"));
+        pages.add(new Pager.Page("g_h_i", "G - I"));
+        pages.add(new Pager.Page("j_k_l", "J - L"));
+        pages.add(new Pager.Page("m_n_o", "M - O"));
+        pages.add(new Pager.Page("p_q_r_s", "P - S"));
+        pages.add(new Pager.Page("t_u_v", "T - V"));
+        pages.add(new Pager.Page("w_x_y_z", "W - Z"));
+        pages.add(new Pager.Page("", "all"));
+        return pages;
     }
 
     private int getAlbumCount(String startPatterns) {
