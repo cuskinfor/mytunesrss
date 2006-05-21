@@ -40,20 +40,20 @@
             </tr>
             <tr class="odd">
                 <td>Items per page (0 = no limit)</td>
-                <td><input type="text" name="pageSize" value="<c:out value="${config.pageSize}"/>" style="width: 50px;" /></td>
+                <td><input type="text" name="pageSize" maxlength="3" value="<c:out value="${config.pageSize}"/>" style="width: 50px;" /></td>
             </tr>
             <tr>
                 <td>Fake MP3 suffix</td>
-                <td><input type="text" name="suffix.mp3" value="<c:out value="${config.map['suffix.mp3']}"/>" style="width: 50px;" /></td>
+                <td><input type="text" name="suffix.mp3" maxlength="20" value="<c:out value="${config.map['suffix.mp3']}"/>" style="width: 50px;" /></td>
             </tr>
             <tr class="odd">
                 <td>Fake M4A suffix</td>
-                <td><input type="text" name="suffix.m4a" value="<c:out value="${config.map['suffix.m4a']}"/>" style="width: 50px;" /></td>
+                <td><input type="text" name="suffix.m4a" maxlength="20" value="<c:out value="${config.map['suffix.m4a']}"/>" style="width: 50px;" /></td>
             </tr>
             <tr>
                 <td>Limit RSS feed items (0 = no limit)</td>
                 <td>
-                    <input type="text" name="rssFeedLimit" value="<c:out value="${config.rssFeedLimit}"/>" style="width: 50px;" />
+                    <input type="text" name="rssFeedLimit" maxlength="3" value="<c:out value="${config.rssFeedLimit}"/>" style="width: 50px;" />
                 </td>
             </tr>
             <tr class="odd">
