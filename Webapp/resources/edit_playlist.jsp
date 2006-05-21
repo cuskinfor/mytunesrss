@@ -34,27 +34,38 @@
     <jsp:include page="/incl_error.jsp" />
 
     <ul class="links">
-        <li>
-            <a href="${servletUrl}/savePlaylist">save</a>
-        </li>
         <li style="float:right;">
             <a href="${param.backUrl}">back</a>
         </li>
     </ul>
+		
+		<table class="portal" cellspacing="0">
+			<tr>
+				<td class="playlistManager">
+					Name <input type="text" value=""/>
+				</td>
+				<td class="links">
+					<a class="add" href="#" style="background-image:url('${appUrl}/images/add.gif');">add more songs</a>
+				</td>
+		</table>
 
     <form id="playlist" action="${servletUrl}/removeFromPlaylist" method="post">
         <input type="hidden" name="backUrl" value="${param.backUrl}" />
         <table cellspacing="0">
+					<tr>
+						<th class="active" colspan="4">New Playlist</th>
+					</tr>
             <c:forEach items="${tracks}" var="track" varStatus="trackLoop">
                 <tr class="${cwfn:choose(trackLoop.index % 2 == 1, 'even', 'odd')}">
                     <td class="check">
                         <input type="checkbox" id="item${track.id}" name="track" value="${track.id}" />
                     </td>
-                    <td class="artist">
-                        <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
-                        -
+											<td>
                         <c:out value="${cwfn:choose(mtfn:unknown(track.name), '(unknown)', track.name)}" />
                     </td>
+                    <td>
+                        <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
+											</td>
                     <td class="icon">
                         <a href="${servletUrl}/removeFromPlaylist?track=${track.id}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}">
                             <img src="${appUrl}/images/delete${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
@@ -72,6 +83,7 @@
 
         <div class="buttons">
             <input type="submit" onClick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist'" value="remove selected" />
+            <input type="button" value="save playlist" onclick="document.location.href='${servletUrl}/savePlaylist'"/>
         </div>
     </form>
 

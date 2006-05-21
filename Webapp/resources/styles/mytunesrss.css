@@ -483,3 +483,13 @@ table.login td {
 	background: none;
 	border: none;
 }
+
+table.portal td.playlistManager {
+	background: #E7EDF6 url("../images/feeds.gif") 10px center no-repeat;
+	padding: 15px 10px 15px 48px;
+}
+
+table.portal td.playlistManager input {
+	margin-left: 10px;
+	width: 200px;
+}
