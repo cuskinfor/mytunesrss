@@ -1,0 +1,82 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
+
+<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+    <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
+    <!--[if IE]>
+      <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
+    <![endif]-->
+
+</head>
+
+<body>
+
+<div class="body">
+
+    <h1 class="browse">
+        <a class="portal" href="${servletUrl}/showPortal">Portal</a> <span>MyTunesRSS</span>
+    </h1>
+
+    <jsp:include page="/incl_error.jsp" />
+
+    <ul class="links">
+        <li>
+            <a href="${servletUrl}/savePlaylist">save</a>
+        </li>
+        <li style="float:right;">
+            <a href="${param.backUrl}">back</a>
+        </li>
+    </ul>
+
+    <form id="playlist" action="${servletUrl}/removeFromPlaylist" method="post">
+        <input type="hidden" name="backUrl" value="${param.backUrl}" />
+        <table cellspacing="0">
+            <c:forEach items="${tracks}" var="track" varStatus="trackLoop">
+                <tr class="${cwfn:choose(trackLoop.index % 2 == 1, 'even', 'odd')}">
+                    <td class="check">
+                        <input type="checkbox" id="item${track.id}" name="track" value="${track.id}" />
+                    </td>
+                    <td class="artist">
+                        <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
+                        -
+                        <c:out value="${cwfn:choose(mtfn:unknown(track.name), '(unknown)', track.name)}" />
+                    </td>
+                    <td class="icon">
+                        <a href="${servletUrl}/removeFromPlaylist?track=${track.id}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}">
+                            <img src="${appUrl}/images/delete${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
+        <c:if test="${!empty pager}">
+            <c:set var="pagerCommand"
+                   scope="request"
+                   value="${servletUrl}/editPlaylist?index={index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}" />
+            <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
+            <jsp:include page="incl_bottomPager.jsp" />
+        </c:if>
+
+        <div class="buttons">
+            <input type="submit" onClick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist'" value="remove selected" />
+        </div>
+    </form>
+
+</div>
+
+</body>
+
+</html>

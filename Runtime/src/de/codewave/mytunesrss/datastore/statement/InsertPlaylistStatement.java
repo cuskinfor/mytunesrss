@@ -13,6 +13,7 @@ import java.util.*;
 public class InsertPlaylistStatement implements DataStoreStatement {
     private String myId;
     private String myName;
+    private PlaylistType myType;
     private List<String> myTrackIds;
 
     public void setId(String id) {
@@ -23,15 +24,20 @@ public class InsertPlaylistStatement implements DataStoreStatement {
         myName = name;
     }
 
+    public void setType(PlaylistType type) {
+        myType = type;
+    }
+
     public void setTrackIds(List<String> trackIds) {
         myTrackIds = trackIds;
     }
 
     public void execute(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO playlist VALUES ( ?, ? )");
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO playlist VALUES ( ?, ?, ? )");
         statement.clearParameters();
         statement.setString(1, myId);
         statement.setString(2, myName);
+        statement.setString(3, myType.name());
         statement.executeUpdate();
         statement = connection.prepareStatement("INSERT INTO link_track_playlist VALUES ( ?, ? )");
         statement.setString(2, myId);

@@ -145,6 +145,7 @@ public class ITunesUtils {
             InsertPlaylistStatement statement = new InsertPlaylistStatement();
             statement.setId(id);
             statement.setName(name);
+            statement.setType(PlaylistType.ITunes);
             statement.setTrackIds(tracks);
             storeSession.executeStatement(statement);
         }

@@ -57,7 +57,7 @@
                                                                                                                                            playlists </a>
                         </c:when>
                         <c:otherwise>
-                            <a href="${servletUrl}/editPlaylist" style="background-image:url('${appUrl}/images/feeds_small.gif');"> finish
+                            <a href="${servletUrl}/editPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}" style="background-image:url('${appUrl}/images/feeds_small.gif');"> finish
                                                                                                                                     playlist </a>
                         </c:otherwise>
                     </c:choose>

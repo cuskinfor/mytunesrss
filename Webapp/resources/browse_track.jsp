@@ -10,7 +10,9 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}&index=${param.index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}
+                                                  &index=${param.index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}
+                                                  &sortOrder=${sortOrder}</c:set>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -32,9 +34,12 @@
         }
 
         function selectAll(ids, checkbox) {
-            var idArray = ids.split(";");
+            var idArray = ids.split(",");
             for (var i = 0; i < idArray.length; i++) {
-                document.getElementById("item" + idArray[i]).checked = checkbox.checked == true ? true : false;
+                var element = document.getElementById("item" + idArray[i]);
+                if (element) {
+                    element.checked = checkbox.checked == true ? true : false;
+                }
             }
         }
 
@@ -170,8 +175,7 @@
 <tr class="${cwfn:choose(count % 2 == 1, 'even', 'odd')}">
     <c:if test="${!empty sessionScope.playlist}">
         <td class="check">
-            <input type="checkbox" id="item${track.id}" name="track" value="${track.id}"<c:if test="${selectedTracks[track.id]}">
-                checked="checked"</c:if> />
+            <input type="checkbox" id="item${track.id}" name="track" value="${track.id}" />
         </td>
     </c:if>
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
@@ -187,13 +191,13 @@
             </c:otherwise>
         </c:choose>
     </td>
-		<c:if test="${sortOrder == 'Album' && !track.simple}">
-			<td>
-				<a href="${servletUrl}/browseAlbum?artist=${cwfn:urlEncode(track.artist, 'UTF-8')}">
-					<c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
-				</a>
-			</td>
-		</c:if>
+    <c:if test="${sortOrder == 'Album' && !track.simple}">
+        <td>
+            <a href="${servletUrl}/browseAlbum?artist=${cwfn:urlEncode(track.artist, 'UTF-8')}">
+                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
+            </a>
+        </td>
+    </c:if>
     <c:choose>
         <c:when test="${empty sessionScope.playlist}">
             <c:forEach items="${config.feedTypes}" var="feedType">
@@ -216,7 +220,9 @@
 </table>
 
 <c:if test="${!empty pager}">
-    <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}&index={index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}" />
+    <c:set var="pagerCommand"
+           scope="request"
+           value="${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}&index={index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}" />
     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
     <jsp:include page="incl_bottomPager.jsp" />
 </c:if>

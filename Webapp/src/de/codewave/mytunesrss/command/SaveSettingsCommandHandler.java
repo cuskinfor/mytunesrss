@@ -41,7 +41,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
     private String transferAndValidatePageSize(WebConfig webConfig) {
         try {
             webConfig.setPageSize(Integer.parseInt(getRequestParameter("pageSize", "0")));
-            if (webConfig.getPageSize() < 0 || webConfig.getPageSize() > 1000) {
+            if (webConfig.getPageSize() < 0 || webConfig.getPageSize() > 999) {
                 return "page size range error.";
             }
         } catch (NumberFormatException e) {
@@ -53,7 +53,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
     private String transferAndValidateRssFeedLimit(WebConfig webConfig) {
         try {
             webConfig.setRssFeedLimit(Integer.parseInt(getRequestParameter("rssFeedLimit", "0")));
-            if (webConfig.getRssFeedLimit() < 0 || webConfig.getRssFeedLimit() > 1000) {
+            if (webConfig.getRssFeedLimit() < 0 || webConfig.getRssFeedLimit() > 999) {
                 return "feed limit range error.";
             }
         } catch (NumberFormatException e) {
