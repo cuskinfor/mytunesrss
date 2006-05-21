@@ -30,6 +30,9 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
             statement.setTrackIds(getTrackIds(playlistContent));
             session.executeStatement(statement);
             session.commit();
+            getSession().removeAttribute("playlist");
+            getSession().removeAttribute("playlistContent");
+            forward(MyTunesRssCommand.ShowPortal);
         } else {
             setError("missing playlist name!");
             getResponse().sendRedirect(getRequestParameter("backUrl", null));

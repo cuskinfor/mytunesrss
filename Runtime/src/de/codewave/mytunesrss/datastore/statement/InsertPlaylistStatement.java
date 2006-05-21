@@ -39,10 +39,12 @@ public abstract class InsertPlaylistStatement implements DataStoreStatement {
         statement.setString(2, myName);
         statement.setString(3, myType.name());
         statement.executeUpdate();
-        statement = connection.prepareStatement("INSERT INTO link_track_playlist VALUES ( ?, ? )");
-        statement.setString(2, myId);
+        statement = connection.prepareStatement("INSERT INTO link_track_playlist VALUES ( ?, ?, ? )");
+        statement.setString(3, myId);
+        int index = 0;
         for (Iterator<String> iterator = myTrackIds.iterator(); iterator.hasNext();) {
-            statement.setString(1, iterator.next());
+            statement.setInt(1, index++);
+            statement.setString(2, iterator.next());
             statement.executeUpdate();
         }
     }

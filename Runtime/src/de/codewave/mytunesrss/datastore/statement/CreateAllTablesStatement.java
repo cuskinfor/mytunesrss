@@ -15,7 +15,7 @@ public class CreateAllTablesStatement implements DataStoreStatement {
         connection.createStatement().execute(
                 "CREATE TABLE track ( id varchar, name VARCHAR, artist VARCHAR, album VARCHAR, time INTEGER, track_number INTEGER, file VARCHAR, UNIQUE ( id ) )");
         connection.createStatement().execute("CREATE TABLE playlist ( id VARCHAR, name VARCHAR, type VARCHAR, UNIQUE ( id ) )");
-        connection.createStatement().execute("CREATE TABLE link_track_playlist ( track_id VARCHAR, playlist_id VARCHAR )");
+        connection.createStatement().execute("CREATE TABLE link_track_playlist ( index INTEGER, track_id VARCHAR, playlist_id VARCHAR )");
         connection.createStatement().execute("CREATE TABLE itunes ( lastupdate BIGINT )");
         connection.createStatement().execute("INSERT INTO itunes VALUES ( 0 )");
         connection.createStatement().execute("CREATE TABLE album ( name VARCHAR, track_count INTEGER, artist_count INTEGER, artist VARCHAR )");
