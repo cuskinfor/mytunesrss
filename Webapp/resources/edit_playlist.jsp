@@ -45,7 +45,7 @@
 					Name <input type="text" value=""/>
 				</td>
 				<td class="links">
-					<a class="add" href="#" style="background-image:url('${appUrl}/images/add.gif');">add more songs</a>
+					<a class="add" href="#" style="background-image:url('${appUrl}/images/add_more.gif');">add more songs</a>
 				</td>
 		</table>
 
@@ -68,7 +68,7 @@
 											</td>
                     <td class="icon">
                         <a href="${servletUrl}/removeFromPlaylist?track=${track.id}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}">
-                            <img src="${appUrl}/images/delete${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                            <img src="${appUrl}/images/delete${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                     </td>
                 </tr>
             </c:forEach>
