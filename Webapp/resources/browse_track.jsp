@@ -32,9 +32,12 @@
         }
 
         function selectAll(ids, checkbox) {
-            var idArray = ids.split(";");
+            var idArray = ids.split(",");
             for (var i = 0; i < idArray.length; i++) {
-                document.getElementById("item" + idArray[i]).checked = checkbox.checked == true ? true : false;
+                var element = document.getElementById("item" + idArray[i]);
+                if (element) {
+                    element.checked = checkbox.checked == true ? true : false;
+                }
             }
         }
 
