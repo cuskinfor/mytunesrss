@@ -36,6 +36,15 @@ public class WebConfig {
         myConfigValues.clear();
     }
 
+    public void clearFileSuffixes() {
+        for (Iterator<String> iterator = myConfigValues.keySet().iterator(); iterator.hasNext(); ) {
+            String key = iterator.next();
+            if (key.startsWith("CFG_SUFFIX")) {
+                iterator.remove();
+            }
+        }
+    }
+
     private void initWithDefaults() {
         myConfigValues.put(CFG_FEED_TYPES, "rss,m3u");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
@@ -120,6 +129,10 @@ public class WebConfig {
 
     public void setRememberLogin(boolean rememberLogin) {
         myConfigValues.put(CFG_LOGIN_COOKIE, Boolean.toString(rememberLogin));
+    }
+
+    public void clearFeedTypes() {
+        myConfigValues.remove(CFG_FEED_TYPES);
     }
 
     public String[] getFeedTypes() {
