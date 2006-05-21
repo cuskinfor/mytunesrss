@@ -32,12 +32,9 @@
         }
 
         function selectAll(ids, checkbox) {
-            var idArray = ids.split(",");
+            var idArray = ids.split(";");
             for (var i = 0; i < idArray.length; i++) {
-                var element = document.getElementById("item" + idArray[i]);
-                if (element) {
-                    element.checked = checkbox.checked == true ? true : false;
-                }
+                document.getElementById("item" + idArray[i]).checked = checkbox.checked == true ? true : false;
             }
         }
 
@@ -170,7 +167,7 @@
         </c:choose>
     </tr>
 </c:if>
-<tr class="${cwfn:choose(count % 2 == 1, '', 'odd')}">
+<tr class="${cwfn:choose(count % 2 == 1, 'even', 'odd')}">
     <c:if test="${!empty sessionScope.playlist}">
         <td class="check">
             <input type="checkbox" id="item${track.id}" name="track" value="${track.id}"<c:if test="${selectedTracks[track.id]}">

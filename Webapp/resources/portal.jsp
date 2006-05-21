@@ -38,7 +38,7 @@
         <li style="float:right"><a href="${servletUrl}/logout">logout</a></li>
     </ul>
 
-    <form name="search" action="${servletUrl}/browseTrack" method="post">
+    <form id="search" action="${servletUrl}/browseTrack" method="post">
 
         <table class="portal" cellspacing="0">
             <tr>
@@ -74,7 +74,7 @@
             <th class="active" colspan="${1 + fn:length(config.feedTypes)}">Playlists</th>
         </tr>
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
-            <tr class="${cwfn:choose(loopStatus.index % 2 == 1, '', 'odd')}">
+            <tr class="${cwfn:choose(loopStatus.index % 2 == 1, 'even', 'odd')}">
                 <td>
                     <c:out value="${playlist.name}" />
                 </td>

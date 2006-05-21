@@ -53,7 +53,7 @@
 <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.artist, '*', param.page)}" />
 <jsp:include page="incl_pager.jsp" />
 
-<form name="browse" action="" method="post">
+<form id="browse" action="" method="post">
     <input type="hidden" name="backUrl" value="${backUrl}" />
 
     <table class="select" cellspacing="0">
@@ -67,7 +67,7 @@
             <th colspan="3">Tracks</th>
         </tr>
         <c:forEach items="${albums}" var="album" varStatus="loopStatus">
-            <tr class="${cwfn:choose(loopStatus.index % 2 == 1, '', 'odd')}">
+            <tr class="${cwfn:choose(loopStatus.index % 2 == 1, 'even', 'odd')}">
                 <c:if test="${!empty sessionScope.playlist}">
                     <td class="check">
                         <input type="checkbox" name="album" value="<c:out value="${album.name}"/>" />

@@ -68,6 +68,7 @@
 
         <div class="buttons">
             <input type="submit" value="save" />
+						<input type="button" value="cancel" onclick="document.location.href='${servletUrl}/showPortal'"/>
         </div>
     </form>
 </div>

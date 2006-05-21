@@ -21,7 +21,7 @@
 
 </head>
 
-<body onLoad="document.forms[0].elements['password'].focus()">
+<body onload="document.forms[0].elements['password'].focus()">
 
 <div class="body">
 
