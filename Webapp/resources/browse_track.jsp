@@ -107,7 +107,7 @@
             <th class="check"><input type="checkbox" name="none" value="none" onClick="selectAll('${track.sectionIds}',this)" />
             </th>
         </c:if>
-        <th class="active">
+        <th class="active" colspan="2">
             <c:choose>
                 <c:when test="${sortOrder == 'Album'}">
                     <c:if test="${track.simple}">
@@ -174,12 +174,10 @@
                 checked="checked"</c:if> />
         </td>
     </c:if>
-    <td class="artist">
+    <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
         <c:choose>
             <c:when test="${sortOrder == 'Album'}">
                 <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
-                <c:if test="${!track.simple}"><c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
-                    -</c:if>
                 <c:out value="${cwfn:choose(mtfn:unknown(track.name), '(unknown)', track.name)}" />
             </c:when>
             <c:otherwise>
@@ -189,6 +187,13 @@
             </c:otherwise>
         </c:choose>
     </td>
+		<c:if test="${sortOrder == 'Album' && !track.simple}">
+			<td>
+				<a href="${servletUrl}/browseAlbum?artist=${cwfn:urlEncode(track.artist, 'UTF-8')}">
+					<c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
+				</a>
+			</td>
+		</c:if>
     <c:choose>
         <c:when test="${empty sessionScope.playlist}">
             <c:forEach items="${config.feedTypes}" var="feedType">
