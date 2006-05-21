@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertPlaylistStatement
  */
-public class InsertPlaylistStatement implements DataStoreStatement {
+public abstract class InsertPlaylistStatement implements DataStoreStatement {
     private String myId;
     private String myName;
     private PlaylistType myType;
@@ -24,7 +24,7 @@ public class InsertPlaylistStatement implements DataStoreStatement {
         myName = name;
     }
 
-    public void setType(PlaylistType type) {
+    protected void setType(PlaylistType type) {
         myType = type;
     }
 

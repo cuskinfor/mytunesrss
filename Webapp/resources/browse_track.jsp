@@ -10,9 +10,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}
-                                                  &index=${param.index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}
-                                                  &sortOrder=${sortOrder}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/editPlaylist?index=${param.index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}</c:set>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 

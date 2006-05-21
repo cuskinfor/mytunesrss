@@ -12,4 +12,5 @@
             <fmt:param value="${errorParam1}" />
         </fmt:message>
     </div>
+    <c:remove var="error" scope="session"/>
 </c:if>

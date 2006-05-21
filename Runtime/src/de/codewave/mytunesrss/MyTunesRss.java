@@ -76,15 +76,6 @@ public class MyTunesRss {
                 }
                 MyTunesRssConfig data = new MyTunesRssConfig();
                 data.load();
-                try {
-                    if (StringUtils.isNotEmpty(data.getLibraryXml()) && builder.needsUpdate(new File(data.getLibraryXml()).toURL())) {
-                        builder.loadFromITunes(frame, new File(data.getLibraryXml()).toURL());
-                    }
-                } catch (Exception e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not load iTunes library.", e);
-                    }
-                }
                 if (data.isAutoStartServer()) {
                     settings.doStartServer(builder);
                 }

@@ -532,7 +532,6 @@ public class Settings {
     private void enableButtons(boolean enabled) {
         myStartStopButton.setEnabled(enabled);
         myQuitButton.setEnabled(enabled);
-        myRebuildDatabase.setEnabled(enabled);
     }
 
     private void enableConfig(boolean enabled) {
@@ -553,6 +552,7 @@ public class Settings {
         myUpdateOnStartCheckbox.setEnabled(enabled && !myAutoStartServer.isSelected());
         myUpdateButton.setEnabled(enabled);
         myAutoStartServer.setEnabled(enabled);
+        myRebuildDatabase.setEnabled(enabled);
     }
 
     private void enableElementAndLabel(JComponent element, boolean enabled) {

@@ -18,6 +18,7 @@ public enum MyTunesRssCommand implements Command {
     CancelCreatePlaylist("cancelCreatePlaylist", CancelCreatePlaylistCommandHandler.class),
     AddToPlaylist("addToPlaylist", AddToPlaylistCommandHandler.class),
     RemoveFromPlaylist("removeFromPlaylist", RemoveFromPlaylistCommandHandler.class),
+    SavePlaylist("savePlaylist", SavePlaylistCommandHandler.class),
     EditPlaylist("editPlaylist", EditPlaylistCommandHandler.class),
     ShowPlaylistManager("showPlaylistManager", ShowPlaylistManagerCommandHandler.class),
     CreateM3u("createM3U", CreateM3uCommandHandler.class),

@@ -8,6 +8,8 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
+<c:set var="backUrl">${servletUrl}/editPlaylist?index=${param.index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}</c:set>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -38,18 +40,18 @@
             <a href="${param.backUrl}">back</a>
         </li>
     </ul>
-		
+
+    <form id="playlist" action="${servletUrl}/removeFromPlaylist" method="post">
 		<table class="portal" cellspacing="0">
 			<tr>
 				<td class="playlistManager">
-					Name <input type="text" value=""/>
+					Name <input type="text" name="name" value="<c:out value="${playlist.name}"/>"/>
 				</td>
 				<td class="links">
-					<a class="add" href="#" style="background-image:url('${appUrl}/images/add_more.gif');">add more songs</a>
+					<a class="add" href="${servletUrl}/>browseArtist" style="background-image:url('${appUrl}/images/add_more.gif');">add more songs</a>
 				</td>
 		</table>
 
-    <form id="playlist" action="${servletUrl}/removeFromPlaylist" method="post">
         <input type="hidden" name="backUrl" value="${param.backUrl}" />
         <table cellspacing="0">
 					<tr>
@@ -67,7 +69,7 @@
                         <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
 											</td>
                     <td class="icon">
-                        <a href="${servletUrl}/removeFromPlaylist?track=${track.id}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}">
+                        <a href="${servletUrl}/removeFromPlaylist?track=${track.id}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}">
                             <img src="${appUrl}/images/delete${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                     </td>
                 </tr>
@@ -76,14 +78,14 @@
         <c:if test="${!empty pager}">
             <c:set var="pagerCommand"
                    scope="request"
-                   value="${servletUrl}/editPlaylist?index={index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}" />
+                   value="${servletUrl}/editPlaylist?index={index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}" />
             <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
             <jsp:include page="incl_bottomPager.jsp" />
         </c:if>
 
         <div class="buttons">
             <input type="submit" onClick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist'" value="remove selected" />
-            <input type="button" value="save playlist" onclick="document.location.href='${servletUrl}/savePlaylist'"/>
+            <input type="submit" onClick="document.forms['playlist'].action = '${servletUrl}/savePlaylist';document.forms['playlist'].elements['backUrl'].value = '${backUrl}'" value="save playlist" />
         </div>
     </form>
 

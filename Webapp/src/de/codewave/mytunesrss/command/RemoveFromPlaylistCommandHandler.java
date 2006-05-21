@@ -22,7 +22,7 @@ public class RemoveFromPlaylistCommandHandler extends MyTunesRssCommandHandler {
             dummyTrack.setId(trackId);
             playlistContent.remove(dummyTrack);
         }
-        Playlist playlist = (Playlist)getSession().getAttribute("playlistContent");
+        Playlist playlist = (Playlist)getSession().getAttribute("playlist");
         playlist.setTrackCount(playlistContent.size());
         forward(MyTunesRssCommand.EditPlaylist);
     }

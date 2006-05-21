@@ -59,7 +59,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected void setError(String error) {
-        getRequest().setAttribute("error", error);
+        getSession().setAttribute("error", error);
     }
 
     protected DataStore getDataStore() {
