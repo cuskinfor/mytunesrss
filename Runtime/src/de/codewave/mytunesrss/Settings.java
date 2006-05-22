@@ -214,14 +214,23 @@ public class Settings {
             enableButtons(false);
             enableConfig(false);
             myRootPanel.validate();
-            setStatus(myMainBundle.getString("info.server.starting"));
-            new Thread(new Runnable() {
-                public void run() {
+            try {
+                if (DatabaseBuilderTask.needsUpdate(library.toURL())) {
+                    PleaseWait.start(myFrame, null, "Rebuilding database... please wait.", false, false, new DatabaseBuilderTask(new File(
+                            myTunesXmlPath.getText()).toURL()));
+                }
+            } catch (SQLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not update database.", e);
+                }
+            } catch (MalformedURLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not create URL from iTunes XML file.", e);
+                }
+            }
+            PleaseWait.start(myFrame, null, myMainBundle.getString("info.server.starting"), false, false, new PleaseWait.Task() {
+                public void execute() {
                     try {
-                        if (DatabaseBuilderTask.needsUpdate(library.toURL())) {
-                            PleaseWait.start(myFrame, null, "Rebuilding database... please wait.", false, false, new DatabaseBuilderTask(new File(
-                                    myTunesXmlPath.getText()).toURL()));
-                        }
                         myServer = createServer("mytunesrss", null, serverPort, new File("."), "ROOT", "");
                         if (myServer != null) {
                             myServer.start();
@@ -265,11 +274,14 @@ public class Settings {
                         setStatus(myMainBundle.getString("info.server.idle"));
                         enableConfig(true);
                     }
-                    enableButtons(true);
-                    myRootPanel.validate();
                 }
 
-            }).start();
+                protected void cancel() {
+                    // intentionally left blank
+                }
+            });
+            enableButtons(true);
+            myRootPanel.validate();
         }
     }
 
@@ -361,14 +373,13 @@ public class Settings {
     public void doStopServer() {
         enableButtons(false);
         myRootPanel.validate();
-        new Thread(new Runnable() {
-            public void run() {
+        PleaseWait.start(myFrame, null, myMainBundle.getString("info.server.stopping"), false, false, new PleaseWait.Task() {
+            public void execute() {
                 try {
-                    setStatus(myMainBundle.getString("info.server.stopping"));
-                    myStatusText.setToolTipText(null);
                     myServer.stop();
                     myServer = null;
                     setStatus(myMainBundle.getString("info.server.idle"));
+                    myStatusText.setToolTipText(null);
                     enableConfig(true);
                     myStartStopButton.setText(myMainBundle.getString("gui.settings.button.startServer"));
                     myStartStopButton.setToolTipText(myMainBundle.getString("gui.settings.tooltip.startServer"));
@@ -376,10 +387,14 @@ public class Settings {
                     showErrorMessage(myMainBundle.getString("error.server.stopFailure") + e.getMessage());
                     setServerRunningStatus(Integer.parseInt(myPort.getText()));
                 }
-                enableButtons(true);
-                myRootPanel.validate();
             }
-        }).start();
+
+            protected void cancel() {
+                // intentionally left blank
+            }
+        });
+        enableButtons(true);
+        myRootPanel.validate();
     }
 
     private void setStatus(String text) {
@@ -394,25 +409,22 @@ public class Settings {
             Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_x", myFrame.getLocation().x);
             Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", myFrame.getLocation().y);
             MyTunesRssConfig config = createPrefDataFromGUI();
-            if (true) {// config.isDiffenrentFromSaved()
-                //                if (JOptionPane.showOptionDialog(myRootPanel.getTopLevelAncestor(),
-                //                                                 myMainBundle.getString("dialog.saveSettingsQuestion.message"),
-                //                                                 myMainBundle.getString("dialog.saveSettingsQuestion.title"),
-                //                                                 JOptionPane.YES_NO_OPTION,
-                //                                                 JOptionPane.QUESTION_MESSAGE,
-                //                                                 null,
-                //                                                 null,
-                //                                                 null) == JOptionPane.YES_OPTION) {
-                config.save();
-                //                }
-            }
-            try {
-                MyTunesRss.STORE.destroy();
-            } catch (Exception e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not destroy the store.", e);
+            config.save();
+            PleaseWait.start(myFrame, null, "Shutting down database... please wait.", false, false, new PleaseWait.Task() {
+                public void execute() {
+                    try {
+                        MyTunesRss.STORE.destroy();
+                    } catch (Exception e) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Could not destroy the store.", e);
+                        }
+                    }
                 }
-            }
+
+                protected void cancel() {
+                    // intentionally left blank
+                }
+            });
             System.exit(0);
         } else {
             showErrorMessage(myMainBundle.getString("error.quitWhileStartingOrStopping"));
@@ -510,7 +522,7 @@ public class Settings {
                     setPercentage(progress);
                 }
             });
-            
+
             public void execute() {
                 switch (myDownloader.download()) {
                     case Finished:
