@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.codewave.mytunesrss.PleaseWait">
+  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+    <margin top="10" left="15" bottom="10" right="15"/>
+    <constraints>
+      <xy x="20" y="20" width="312" height="133"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="2806a" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="de/codewave/mytunesrss/PleaseWait.gif"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="e4c07" class="javax.swing.JLabel" binding="myInfoLabel">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font swing-font="Label.font"/>
+          <text value="Please wait..."/>
+        </properties>
+      </component>
+      <component id="11d6d" class="javax.swing.JProgressBar" binding="myProgressBar">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font swing-font="ProgressBar.font"/>
+        </properties>
+      </component>
+      <component id="58637" class="javax.swing.JButton" binding="myCancelButton">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font swing-font="Button.font"/>
+          <opaque value="false"/>
+          <text value="Cancel"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

@@ -1,10 +1,8 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.datastore.*;
-import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.*;
 import de.codewave.utils.network.*;
-import de.codewave.utils.serialnumber.*;
 import org.apache.catalina.*;
 import org.apache.catalina.connector.*;
 import org.apache.catalina.session.*;
@@ -30,7 +28,6 @@ public class Settings {
     private static final int MIN_PORT = 1;
     private static final int MAX_PORT = 65535;
     private static final String LIBRARY_XML_FILE_NAME = "iTunes Music Library.xml";
-    private static final String SER_NUM_RANDOM = "myTUNESrss4eeeever!";
 
     private final ResourceBundle myMainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
 
@@ -42,21 +39,12 @@ public class Settings {
     private JButton myStartStopButton;
     private JButton myQuitButton;
     private JButton myLookupButton;
-    private JCheckBox myUseAuthCheck;
     private JPasswordField myPassword;
-    private JTextField myFakeMp3Suffix;
-    private JTextField myFakeM4aSuffix;
-    private JTextField myRegisterName;
-    private JButton myRegisterButton;
-    private JTextField myRegisterCode;
-    private JTextArea myRegisterInfoTextArea;
     private JButton myShowLogButton;
     private JLabel myMaxMemLabel;
     private JSpinner myMaxMemSpinner;
     private JButton myMaxMemSaveButton;
     private JCheckBox myWriteLogCheckbox;
-    private JTextField myMaxRssEntries;
-    private JCheckBox myLimitRssItemsCheckbox;
     private JCheckBox myUpdateOnStartCheckbox;
     private JButton myUpdateButton;
     private JButton myRebuildDatabase;
@@ -65,33 +53,18 @@ public class Settings {
     private LogDisplay myLogDisplay = new LogDisplay();
     private boolean myRememberedUpdateOnStart;
 
-    public Settings(final JFrame frame, final DatabaseBuilder builder) throws UnsupportedEncodingException {
+    public Settings(final JFrame frame) throws UnsupportedEncodingException {
         Logger.getRootLogger().removeAllAppenders();
         Logger.getLogger("de.codewave").removeAllAppenders();
         Logger.getRootLogger().addAppender(myLogDisplay);
         Logger.getLogger("de.codewave").addAppender(myLogDisplay);
         myFrame = frame;
-        String regName = Boolean.getBoolean("unregistered") ? "" : Preferences.userRoot().node("/de/codewave/mytunesrss").get("regname", "");
-        String regCode = Boolean.getBoolean("unregistered") ? "" : Preferences.userRoot().node("/de/codewave/mytunesrss").get("regcode", "");
-        MyTunesRss.REGISTERED = true;// SerialNumberUtils.isValid(regName, regCode, SER_NUM_RANDOM);
-        if (MyTunesRss.REGISTERED) {
-            setGuiToRegisteredMode();
-            myRegisterName.setText(regName);
-            myRegisterCode.setText(regCode);
-        } else {
-            setGuiToUnregisteredMode();
-        }
         setStatus(myMainBundle.getString("info.server.idle"));
         MyTunesRssConfig data = new MyTunesRssConfig();
         data.load();
         myPort.setText(data.getPort());
         myTunesXmlPath.setText(data.getLibraryXml());
-        myUseAuthCheck.setSelected(data.isAuth());
         myPassword.setText(data.getPassword());
-        myLimitRssItemsCheckbox.setSelected(data.isLimitRss());
-        myMaxRssEntries.setText(data.getMaxRssItems());
-        myFakeMp3Suffix.setText(data.getFakeMp3Suffix());
-        myFakeM4aSuffix.setText(data.getFakeM4aSuffix());
         myWriteLogCheckbox.setSelected(data.isLoggingEnabled());
         myLogDisplay.setLoggingEnabled(data.isLoggingEnabled());
         if (!myLogDisplay.isLoggingEnabled()) {
@@ -114,14 +87,9 @@ public class Settings {
             myUpdateOnStartCheckbox.setEnabled(false);
         }
         enableConfig(true);
-        myRegisterButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                doRegister();
-            }
-        });
         myStartStopButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                doStartStopServer(builder);
+                doStartStopServer();
             }
         });
         myQuitButton.addActionListener(new ActionListener() {
@@ -132,16 +100,6 @@ public class Settings {
         myLookupButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 doLookupLibraryFile();
-            }
-        });
-        myUseAuthCheck.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                enableElementAndLabel(myPassword, myUseAuthCheck.isSelected());
-            }
-        });
-        myLimitRssItemsCheckbox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                enableElementAndLabel(myMaxRssEntries, myLimitRssItemsCheckbox.isSelected());
             }
         });
         myShowLogButton.addActionListener(new ActionListener() {
@@ -183,11 +141,8 @@ public class Settings {
         myRebuildDatabase.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    builder.loadFromITunes(frame, new File(myTunesXmlPath.getText()).toURL());
-                } catch (SQLException e1) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not load iTunes library.", e1);
-                    }
+                    PleaseWait.start(myFrame, null, "Rebuilding database... please wait.", false, false, new DatabaseBuilderTask(new File(
+                            myTunesXmlPath.getText()).toURL()));
                 } catch (MalformedURLException e1) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error(null, e1);
@@ -218,27 +173,6 @@ public class Settings {
         return myRootPanel;
     }
 
-    public void doRegister() {
-        String regName = myRegisterName.getText();
-        String regCode = myRegisterCode.getText();
-        try {
-            MyTunesRss.REGISTERED = SerialNumberUtils.isValid(regName, regCode, SER_NUM_RANDOM);
-        } catch (UnsupportedEncodingException e1) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not validate registration code.", e1);
-            }
-        }
-        if (MyTunesRss.REGISTERED) {
-            Preferences.userRoot().node("/de/codewave/mytunesrss").put("regname", regName);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").put("regcode", regCode);
-            showInfoMessage(myMainBundle.getString("info.registration.success"));
-            setGuiToRegisteredMode();
-            myFrame.pack();
-        } else {
-            showErrorMessage(myMainBundle.getString("error.registration.failure"));
-        }
-    }
-
     public void doLookupLibraryFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new ITunesLibraryFileFilter(true));
@@ -253,36 +187,28 @@ public class Settings {
         }
     }
 
-    public void doStartStopServer(DatabaseBuilder builder) {
+    public void doStartStopServer() {
         if (myServer == null) {
-            doStartServer(builder);
+            doStartServer();
         } else {
             doStopServer();
         }
     }
 
-    public void doStartServer(final DatabaseBuilder builder) {
+    public void doStartServer() {
         int port;
         try {
             port = Integer.parseInt(myPort.getText().trim());
         } catch (NumberFormatException e) {
             port = MIN_PORT - 1;
         }
-        int maxRssEntries;
-        try {
-            maxRssEntries = Integer.parseInt(myMaxRssEntries.getText().trim());
-        } catch (NumberFormatException e) {
-            maxRssEntries = 0;
-        }
         final int serverPort = port;
         final File library = new File(myTunesXmlPath.getText().trim());
         if (port < MIN_PORT || port > MAX_PORT) {
             showErrorMessage(myMainBundle.getString("error.startServer.port"));
-        } else if (myLimitRssItemsCheckbox.isSelected() && maxRssEntries <= 0) {
-            showErrorMessage(myMainBundle.getString("error.startServer.limitItemsButIllegalMaxValue"));
         } else if (!new ITunesLibraryFileFilter(false).accept(library)) {
             showErrorMessage(myMainBundle.getString("error.startServer.libraryXmlFile"));
-        } else if (myUseAuthCheck.isSelected() && myPassword.getPassword().length == 0) {
+        } else if (myPassword.getPassword().length == 0) {
             showErrorMessage(myMainBundle.getString("error.authButNoPassword"));
         } else {
             enableButtons(false);
@@ -292,8 +218,9 @@ public class Settings {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        if (builder.needsUpdate(library.toURL())) {
-                            builder.loadFromITunes(myFrame, library.toURL());
+                        if (DatabaseBuilderTask.needsUpdate(library.toURL())) {
+                            PleaseWait.start(myFrame, null, "Rebuilding database... please wait.", false, false, new DatabaseBuilderTask(new File(
+                                    myTunesXmlPath.getText()).toURL()));
                         }
                         myServer = createServer("mytunesrss", null, serverPort, new File("."), "ROOT", "");
                         if (myServer != null) {
@@ -467,17 +394,17 @@ public class Settings {
             Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_x", myFrame.getLocation().x);
             Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", myFrame.getLocation().y);
             MyTunesRssConfig config = createPrefDataFromGUI();
-            if (true) { // config.isDiffenrentFromSaved()
-//                if (JOptionPane.showOptionDialog(myRootPanel.getTopLevelAncestor(),
-//                                                 myMainBundle.getString("dialog.saveSettingsQuestion.message"),
-//                                                 myMainBundle.getString("dialog.saveSettingsQuestion.title"),
-//                                                 JOptionPane.YES_NO_OPTION,
-//                                                 JOptionPane.QUESTION_MESSAGE,
-//                                                 null,
-//                                                 null,
-//                                                 null) == JOptionPane.YES_OPTION) {
-                    config.save();
-//                }
+            if (true) {// config.isDiffenrentFromSaved()
+                //                if (JOptionPane.showOptionDialog(myRootPanel.getTopLevelAncestor(),
+                //                                                 myMainBundle.getString("dialog.saveSettingsQuestion.message"),
+                //                                                 myMainBundle.getString("dialog.saveSettingsQuestion.title"),
+                //                                                 JOptionPane.YES_NO_OPTION,
+                //                                                 JOptionPane.QUESTION_MESSAGE,
+                //                                                 null,
+                //                                                 null,
+                //                                                 null) == JOptionPane.YES_OPTION) {
+                config.save();
+                //                }
             }
             try {
                 MyTunesRss.STORE.destroy();
@@ -496,13 +423,8 @@ public class Settings {
         MyTunesRssConfig config = new MyTunesRssConfig();
         config.setPort(myPort.getText().trim());
         config.setLibraryXml(myTunesXmlPath.getText().trim());
-        config.setAuth(myUseAuthCheck.isSelected());
         config.setPassword(new String(myPassword.getPassword()).trim());
-        config.setFakeMp3Suffix(myFakeMp3Suffix.getText().trim());
-        config.setFakeM4aSuffix(myFakeM4aSuffix.getText().trim());
         config.setLoggingEnabled(myWriteLogCheckbox.isSelected());
-        config.setLimitRss(myLimitRssItemsCheckbox.isSelected());
-        config.setMaxRssItems(myMaxRssEntries.getText());
         config.setCheckUpdateOnStart(myUpdateOnStartCheckbox.isSelected());
         config.setAutoStartServer(myAutoStartServer.isSelected());
         return config;
@@ -538,17 +460,9 @@ public class Settings {
         myLookupButton.setEnabled(enabled);
         enableElementAndLabel(myPort, enabled);
         enableElementAndLabel(myTunesXmlPath, enabled);
-        myUseAuthCheck.setEnabled(enabled && MyTunesRss.REGISTERED);
-        enableElementAndLabel(myPassword, enabled && myUseAuthCheck.isSelected() && MyTunesRss.REGISTERED);
-        enableElementAndLabel(myFakeMp3Suffix, enabled && MyTunesRss.REGISTERED);
-        enableElementAndLabel(myFakeM4aSuffix, enabled && MyTunesRss.REGISTERED);
-        myRegisterName.setEnabled(enabled && !MyTunesRss.REGISTERED);
-        myRegisterCode.setEnabled(enabled && !MyTunesRss.REGISTERED);
-        myRegisterButton.setEnabled(enabled);
+        enableElementAndLabel(myPassword, enabled);
         myMaxMemSaveButton.setEnabled(enabled);
         enableElementAndLabel(myMaxMemSpinner, enabled);
-        myLimitRssItemsCheckbox.setEnabled(enabled);
-        enableElementAndLabel(myMaxRssEntries, enabled && myLimitRssItemsCheckbox.isSelected());
         myUpdateOnStartCheckbox.setEnabled(enabled && !myAutoStartServer.isSelected());
         myUpdateButton.setEnabled(enabled);
         myAutoStartServer.setEnabled(enabled);
@@ -565,32 +479,6 @@ public class Settings {
                 }
             }
         }
-    }
-
-    private void setGuiToRegisteredMode() {
-        myRegisterName.setEnabled(false);
-        myRegisterCode.setEnabled(false);
-        myRegisterButton.setVisible(false);
-        myUseAuthCheck.setEnabled(true);
-        enableElementAndLabel(myPassword, myUseAuthCheck.isSelected());
-        enableElementAndLabel(myFakeMp3Suffix, true);
-        enableElementAndLabel(myFakeM4aSuffix, true);
-        myRegisterInfoTextArea.setText(myMainBundle.getString("gui.settings.registration.infotext.registered"));
-        myUseAuthCheck.setToolTipText(myMainBundle.getString("gui.settings.tooltip.useAuth"));
-        myPassword.setToolTipText(myMainBundle.getString("gui.settings.tooltip.password"));
-        myFakeMp3Suffix.setToolTipText(myMainBundle.getString("gui.settings.tooltip.fake.mp3"));
-        myFakeM4aSuffix.setToolTipText(myMainBundle.getString("gui.settings.tooltip.fake.m4a"));
-    }
-
-    private void setGuiToUnregisteredMode() {
-        myUseAuthCheck.setEnabled(false);
-        enableElementAndLabel(myPassword, false);
-        enableElementAndLabel(myFakeMp3Suffix, false);
-        enableElementAndLabel(myFakeM4aSuffix, false);
-        myUseAuthCheck.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
-        myPassword.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
-        myFakeMp3Suffix.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
-        myFakeM4aSuffix.setToolTipText(myMainBundle.getString("gui.settings.tooltip.onlyRegistered"));
     }
 
     public void checkForUpdate(boolean autoCheck) {
@@ -616,44 +504,39 @@ public class Settings {
     }
 
     private void downloadUpdate(final URL url, final File file, String version) {
-        final DownloadProgress progress = new DownloadProgress();
-        progress.getLabel().setText(MessageFormat.format(myMainBundle.getString("gui.download.message"), version));
-        final JDialog dialog = new JDialog(myFrame, myMainBundle.getString("gui.download.title"), true);
-        dialog.add(progress.getRootPanel());
-        dialog.pack();
-        dialog.setLocationRelativeTo(myFrame);
-        final Downloader downloader = NetworkUtils.createDownloader(url, file, new DownloadListener() {
-            public void setPercentageComplete(int i) {
-                progress.getProgressBar().setValue(i);
-                progress.getProgressBar().setString(i + "%");
-                progress.getProgressBar().validate();
-            }
-
-            public void stateChange(DownloadState state) {
-                if (state == DownloadState.Failed || state == DownloadState.Cancelled) {
-                    if (file.exists() && file.isFile()) {
-                        file.delete();
-                    }
-                    dialog.dispose();
-                    if (state == DownloadState.Failed) {
-                        showErrorMessage(myMainBundle.getString("error.updateDownloadFailed"));
-                    } else {
+        PleaseWait.Task task = new PleaseWait.Task() {
+            Downloader myDownloader = NetworkUtils.createDownloader(url, file, new DownloadProgressListener() {
+                public void reportProgress(int progress) {
+                    setPercentage(progress);
+                }
+            });
+            
+            public void execute() {
+                switch (myDownloader.download()) {
+                    case Finished:
+                        showInfoMessage(myMainBundle.getString("info.updateDownloadComplete"));
+                        break;
+                    case Cancelled:
+                        if (file.exists() && file.isFile()) {
+                            file.delete();
+                        }
                         showErrorMessage(myMainBundle.getString("error.updateDownloadCancelled"));
-                    }
-                } else if (state == DownloadState.Success) {
-                    dialog.dispose();
-                    showInfoMessage(myMainBundle.getString("info.updateDownloadComplete"));
+                        break;
+                    case Failed:
+                        if (file.exists() && file.isFile()) {
+                            file.delete();
+                        }
+                        showErrorMessage(myMainBundle.getString("error.updateDownloadFailed"));
+                        break;
                 }
             }
-        });
-        progress.getCancelButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                progress.getCancelButton().setEnabled(false);
-                downloader.cancelDownload();
+
+            protected void cancel() {
+                myDownloader.cancel();
             }
-        });
-        downloader.startDownload();
-        dialog.setVisible(true);
+        };
+        PleaseWait.start(myFrame, myMainBundle.getString("gui.download.title"), MessageFormat.format(myMainBundle.getString("gui.download.message"),
+                                                                                                     version), true, true, task);
     }
 
     private boolean askForUpdate(UpdateInfo updateInfo, boolean autoCheck) {
@@ -670,7 +553,7 @@ public class Settings {
         String stopNagging = myMainBundle.getString("info.newVersionAvailable.stopNagging");
         String later = myMainBundle.getString("info.newVersionAvailable.later");
         String download = myMainBundle.getString("info.newVersionAvailable.download");
-        String cancel = myMainBundle.getString("info.newVersionAvailable.cancel");
+        String cancel = myMainBundle.getString("gui.cancel");
         if (autoCheck) {
             pane.setOptions(new String[] {download, later, stopNagging});
         } else {

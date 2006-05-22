@@ -8,7 +8,6 @@ import de.codewave.mytunesrss.datastore.*;
 import de.codewave.utils.*;
 import de.codewave.utils.moduleinfo.*;
 import org.apache.catalina.*;
-import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 import org.apache.log4j.*;
 
@@ -26,7 +25,6 @@ import java.util.prefs.*;
  */
 public class MyTunesRss {
     private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
-    public static boolean REGISTERED;
     public static String VERSION;
     public static Map<OperatingSystem, URL> UPDATE_URLS;
     public static DataStore STORE = new DataStore();
@@ -52,7 +50,6 @@ public class MyTunesRss {
             Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
         }
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        final DatabaseBuilder builder = new DatabaseBuilder();
         ResourceBundle mainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
         VERSION = modulesInfo != null ? modulesInfo.getVersion() : "0.0.0";
@@ -60,7 +57,7 @@ public class MyTunesRss {
         final JFrame frame = new JFrame(mainBundle.getString("gui.title") + " v" + VERSION);
         frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        final Settings settings = new Settings(frame, builder);
+        final Settings settings = new Settings(frame);
         frame.addWindowListener(new MyTunesRssMainWindowListener(settings));
         frame.getContentPane().add(settings.getRootPanel());
         frame.setResizable(false);
@@ -77,7 +74,7 @@ public class MyTunesRss {
                 MyTunesRssConfig data = new MyTunesRssConfig();
                 data.load();
                 if (data.isAutoStartServer()) {
-                    settings.doStartServer(builder);
+                    settings.doStartServer();
                 }
             }
         });

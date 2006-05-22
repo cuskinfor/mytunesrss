@@ -56,10 +56,10 @@ public class ITunesUtils {
         return null;
     }
 
-    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, JProgressBar progress) throws SQLException {
+    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession) throws SQLException {
         try {
             Map plist = (Map)XmlUtils.parseApplePList(iTunesLibraryXml);
-            createTracks(plist, storeSession, progress);
+            createTracks(plist, storeSession);
             createPlaylists(plist, storeSession);
         } catch (ParserConfigurationException e) {
             if (LOG.isErrorEnabled()) {
@@ -76,15 +76,10 @@ public class ITunesUtils {
         }
     }
 
-    private static void createTracks(Map plist, DataStoreSession storeSession, JProgressBar progress) throws SQLException {
+    private static void createTracks(Map plist, DataStoreSession storeSession) throws SQLException {
         Map<String, Map<String, String>> tracks = (Map<String, Map<String, String>>)plist.get("Tracks");
         int counter = 0;
         for (Iterator<Map<String, String>> trackIterator = tracks.values().iterator(); trackIterator.hasNext();) {
-            if (progress != null) {
-                progress.setValue(counter * 100 / tracks.size());
-                progress.setString((counter * 100 / tracks.size()) + " %");
-                progress.validate();
-            }
             Map<String, String> track = trackIterator.next();
             insertTrack(track, storeSession);
             counter++;
