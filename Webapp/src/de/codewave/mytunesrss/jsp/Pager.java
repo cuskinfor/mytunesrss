@@ -73,16 +73,10 @@ public class Pager {
     public static class Page {
         private String myKey;
         private String myValue;
-        private Map<String, Object> myUserData = new HashMap<String, Object>();
 
         public Page(String key, String value) {
             myKey = key;
             myValue = value;
-        }
-
-        public Page(String key, String value, Map<String, Object> userData) {
-            this(key, value);
-            myUserData = new HashMap<String, Object>(userData);
         }
 
         public String getKey() {
@@ -91,10 +85,6 @@ public class Pager {
 
         public String getValue() {
             return myValue;
-        }
-
-        public Map<String, Object> getUserData() {
-            return myUserData;
         }
     }
 }

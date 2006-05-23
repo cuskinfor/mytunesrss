@@ -66,11 +66,12 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
             if (needsCreation()) {
                 createDatabase();
             } else {
-                storeSession.executeStatement(new ClearAllTablesStatement());
+                storeSession.executeStatement(new PrepareForReloadStatement());
             }
             final long updateTime = System.currentTimeMillis();
             ITunesUtils.loadFromITunes(myLibraryXmlUrl, storeSession);
             storeSession.executeStatement(new UpdateHelpTablesStatement());
+            storeSession.executeStatement(new CleanupAfterReloadStatement());
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     connection.createStatement().execute("UPDATE itunes SET lastupdate = " + updateTime);
