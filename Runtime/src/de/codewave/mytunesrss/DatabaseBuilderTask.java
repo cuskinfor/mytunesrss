@@ -72,6 +72,7 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
             ITunesUtils.loadFromITunes(myLibraryXmlUrl, storeSession);
             storeSession.executeStatement(new UpdateHelpTablesStatement());
             storeSession.executeStatement(new CleanupAfterReloadStatement());
+            createPagers(storeSession);
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     connection.createStatement().execute("UPDATE itunes SET lastupdate = " + updateTime);
@@ -90,6 +91,60 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
                 }
             }
         }
+    }
+
+    private void createPagers(DataStoreSession storeSession) throws SQLException {
+        List<FindIndexesQuery.Index> indexes = (List<FindIndexesQuery.Index>)storeSession.executeQuery(new FindAlbumIndexesQuery());
+        Pager pager = createPager(indexes);
+        List<Pager.Page> pages = null;
+        if (pager != null) {
+            pages = pager.getCurrentPages();
+            for (int i = 0; i < pages.size(); i++) {
+                Pager.Page page = pages.get(i);
+                storeSession.executeStatement(new InsertAlbumPageStatement(i, page.getKey(), page.getValue()));
+            }
+        }
+        indexes = (List<FindIndexesQuery.Index>)storeSession.executeQuery(new FindArtistIndexesQuery());
+        pager = createPager(indexes);
+        if (pager != null) {
+            pages = pager.getCurrentPages();
+            for (int i = 0; i < pages.size(); i++) {
+                Pager.Page page = pages.get(i);
+                storeSession.executeStatement(new InsertArtistPageStatement(i, page.getKey(), page.getValue()));
+            }
+        }
+    }
+
+    private static Pager createPager(List<FindIndexesQuery.Index> indexes) {
+        if (indexes != null && indexes.size() > 1) {
+            List<Pager.Page> pages = new ArrayList<Pager.Page>();
+            if (indexes.size() < 10) {
+                for (FindIndexesQuery.Index index : indexes) {
+                    pages.add(new Pager.Page(index.getLetter(), index.getLetter()));
+                }
+            } else {
+                float indexesPerPage = indexes.size() / 9;
+                for (int page = 0; page < 9; page++) {
+                    int startIndex = (int)(page * indexesPerPage);
+                    int endIndex = page == 8 ? indexes.size() - 1 : (int)(((page + 1) * indexesPerPage) - 1);
+                    String value;
+                    if (startIndex != endIndex) {
+                        value = indexes.get(startIndex).getLetter() + " - " + indexes.get(endIndex).getLetter();
+                    } else {
+                        value = indexes.get(startIndex).getLetter();
+                    }
+                    StringBuffer key = new StringBuffer(page == 0 ? "_!" : "");
+                    for (int i = startIndex; i <= endIndex; i++) {
+                        key.append("_").append(indexes.get(i).getLetter());
+                    }
+                    pages.add(new Pager.Page(key.substring(1), value));
+                }
+            }
+            pages.add(new Pager.Page("", "all"));// todo: i18n word "all"
+            Pager pager = new Pager(pages, pages.size());
+            return pager;
+        }
+        return null;
     }
 
     public void createDatabase() throws SQLException {

@@ -4,7 +4,7 @@
 
 package de.codewave.mytunesrss.datastore;
 
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.statement.*;import de.codewave.mytunesrss.*;
 import de.codewave.utils.xml.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
@@ -78,11 +78,9 @@ public class ITunesUtils {
 
     private static void createTracks(Map plist, DataStoreSession storeSession) throws SQLException {
         Map<String, Map<String, String>> tracks = (Map<String, Map<String, String>>)plist.get("Tracks");
-        int counter = 0;
         for (Iterator<Map<String, String>> trackIterator = tracks.values().iterator(); trackIterator.hasNext();) {
             Map<String, String> track = trackIterator.next();
             insertTrack(track, storeSession);
-            counter++;
         }
     }
 
@@ -90,7 +88,7 @@ public class ITunesUtils {
         String trackId = track.get("Track ID");
         String name = track.get("Name");
         File file = ITunesUtils.getFileForLocation(track.get("Location"));
-        if (StringUtils.isNotEmpty(trackId) && StringUtils.isNotEmpty(name) && file != null) {
+        if (StringUtils.isNotEmpty(trackId) && StringUtils.isNotEmpty(name) && (MyTunesRss.NO_FILE_CHECK || file != null)) {
             try {
                 InsertTrackStatement statement = new InsertTrackStatement();
                 statement.setId(trackId.trim());
@@ -99,7 +97,7 @@ public class ITunesUtils {
                 statement.setAlbum(StringUtils.trimToNull(track.get("Album")));
                 statement.setTime(StringUtils.isNotEmpty(track.get("Total Time")) ? Integer.parseInt(track.get("Total Time")) / 1000 : 0);
                 statement.setTrackNumber(StringUtils.isNotEmpty(track.get("Track Number")) ? Integer.parseInt(track.get("Track Number")) : 0);
-                statement.setFileName(file.getAbsolutePath());
+                statement.setFileName(file != null ? file.getAbsolutePath() : null);
                 storeSession.executeStatement(statement);
             } catch (NumberFormatException e) {
                 if (LOG.isErrorEnabled()) {

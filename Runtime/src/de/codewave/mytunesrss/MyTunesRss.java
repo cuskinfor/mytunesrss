@@ -28,6 +28,7 @@ public class MyTunesRss {
     public static String VERSION;
     public static Map<OperatingSystem, URL> UPDATE_URLS;
     public static DataStore STORE = new DataStore();
+    public static boolean NO_FILE_CHECK;
 
     static {
         UPDATE_URLS = new HashMap<OperatingSystem, URL>();
@@ -49,6 +50,7 @@ public class MyTunesRss {
         if (ProgramUtils.getCommandLineArguments(args).containsKey("debug")) {
             Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
         }
+        NO_FILE_CHECK = ProgramUtils.getCommandLineArguments(args).containsKey("nofilecheck");
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         ResourceBundle mainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");

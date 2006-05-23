@@ -22,8 +22,6 @@ import java.sql.*;
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
  */
 public abstract class MyTunesRssCommandHandler extends CommandHandler {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssCommandHandler.class);
-
     protected MyTunesRssConfig getMyTunesRssConfig() {
         return (MyTunesRssConfig)getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
     }
@@ -93,7 +91,17 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     public void execute() throws Exception {
-        createSessionPagers();
+        List<Pager.Page> pages = (List<Pager.Page>)getDataStore().executeQuery(new FindAlbumPagesStatement());
+        if (pages != null) {
+            getRequest().setAttribute("albumPager", new Pager(pages, pages.size()));
+            getRequest().setAttribute("albumInitialPager", pages.get(0).getKey());
+        }
+        pages = (List<Pager.Page>)getDataStore().executeQuery(new FindArtistPagesStatement());
+        if (pages != null) {
+            getRequest().setAttribute("artistPager", new Pager(pages, pages.size()));
+            getRequest().setAttribute("artistInitialPager", pages.get(0).getKey());
+        }
+
         if (needsAuthorization() && getWebConfig().isRememberLogin()) {
             authorize();
             executeAuthorized();
@@ -122,47 +130,5 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             return pager;
         }
         return null;
-    }
-
-    public void createSessionPagers() throws SQLException {
-        if (getSession().getAttribute("artistPager") == null) {
-            List<FindIndexesQuery.Index> indexes = (List<FindIndexesQuery.Index>)getDataStore().executeQuery(new FindArtistIndexesQuery());
-            Pager pager = createTopPager(indexes);
-            getSession().setAttribute("artistPager", pager);
-        }
-        if (getSession().getAttribute("albumPager") == null) {
-            List<FindIndexesQuery.Index> indexes = (List<FindIndexesQuery.Index>)getDataStore().executeQuery(new FindAlbumIndexesQuery());
-            Pager pager = createTopPager(indexes);
-            getSession().setAttribute("albumPager", pager);
-        }
-    }
-
-    private Pager createTopPager(List<FindIndexesQuery.Index> indexes) {
-        List<Pager.Page> pages = new ArrayList<Pager.Page>();
-        if (indexes.size() < 10) {
-            for (FindIndexesQuery.Index index : indexes) {
-                pages.add(new Pager.Page(index.getLetter(), index.getLetter()));
-            }
-        } else {
-            float indexesPerPage = indexes.size() / 9;
-            for (int page = 0; page < 9; page++) {
-                int startIndex = (int)(page * indexesPerPage);
-                int endIndex = (int)(((page + 1) * indexesPerPage) - 1);
-                String value;
-                if (startIndex != endIndex) {
-                    value = indexes.get(startIndex).getLetter() + " - " + indexes.get(endIndex).getLetter();
-                } else {
-                    value = indexes.get(startIndex).getLetter();
-                }
-                StringBuffer key = new StringBuffer(page == 0 ? "_!" : "");
-                for (int i = startIndex; i <= endIndex; i++) {
-                    key.append("_").append(indexes.get(i).getLetter());
-                }
-                pages.add(new Pager.Page(key.substring(1), value));
-            }
-        }
-        pages.add(new Pager.Page("", "all"));// todo: i18n word "all"
-        Pager pager = new Pager(pages, pages.size());
-        return pager;
     }
 }

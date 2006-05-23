@@ -111,7 +111,8 @@ public class FindTrackQuery extends DataStoreQuery<Track> {
             track.setAlbum(resultSet.getString("ALBUM"));
             track.setTime(resultSet.getInt("TIME"));
             track.setTrackNumber(resultSet.getInt("TRACK_NUMBER"));
-            track.setFile(new File(resultSet.getString("FILE")));
+            String pathname = resultSet.getString("FILE");
+            track.setFile(StringUtils.isNotEmpty(pathname) ? new File(pathname): null);
             return track;
         }
     }

@@ -27,6 +27,13 @@ public class DataStoreSession {
     public synchronized void begin() {
         if (myConnection == null) {
             myConnection = myDataStore.aquireConnection();
+            try {
+                myConnection.setAutoCommit(false);
+            } catch (SQLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not set auto-commit to false.", e);
+                }
+            }
         } else {
             throw new IllegalStateException(
                     "Cannot begin a new transaction while another one is pending. First commit or rollback the pending transaction.");

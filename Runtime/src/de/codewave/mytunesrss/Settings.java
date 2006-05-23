@@ -211,6 +211,9 @@ public class Settings {
         } else if (myPassword.getPassword().length == 0) {
             showErrorMessage(myMainBundle.getString("error.authButNoPassword"));
         } else {
+            final Map<String, Object> contextEntries = new HashMap<String, Object>();
+            contextEntries.put(MyTunesRssConfig.class.getName(), createPrefDataFromGUI());
+            contextEntries.put(DataStore.class.getName(), MyTunesRss.STORE);
             enableButtons(false);
             enableConfig(false);
             myRootPanel.validate();
@@ -231,7 +234,7 @@ public class Settings {
             PleaseWait.start(myFrame, null, myMainBundle.getString("info.server.starting"), false, false, new PleaseWait.Task() {
                 public void execute() {
                     try {
-                        myServer = createServer("mytunesrss", null, serverPort, new File("."), "ROOT", "");
+                        myServer = createServer("mytunesrss", null, serverPort, new File("."), "ROOT", "", contextEntries);
                         if (myServer != null) {
                             myServer.start();
                             byte health = checkServerHealth(serverPort);
@@ -347,8 +350,7 @@ public class Settings {
     }
 
     private Embedded createServer(String name, InetAddress listenAddress, int listenPort, File catalinaBasePath, String webAppName,
-            String webAppContext) throws IOException, SQLException {
-        MyTunesRssConfig config = createPrefDataFromGUI();
+            String webAppContext, Map<String, Object> contextEntries) throws IOException, SQLException {
         Embedded server = new Embedded();
         server.setCatalinaBase(catalinaBasePath.getCanonicalPath());
         Engine engine = server.createEngine();
@@ -365,8 +367,9 @@ public class Settings {
         Connector connector = server.createConnector(listenAddress, listenPort, false);
         connector.setURIEncoding("UTF-8");
         server.addConnector(connector);
-        context.getServletContext().setAttribute(MyTunesRssConfig.class.getName(), config);
-        context.getServletContext().setAttribute(DataStore.class.getName(), MyTunesRss.STORE);
+        for (Map.Entry<String, Object> contextEntry : contextEntries.entrySet()) {
+            context.getServletContext().setAttribute(contextEntry.getKey(), contextEntry.getValue());
+        }
         return server;
     }
 
@@ -466,6 +469,7 @@ public class Settings {
     private void enableButtons(boolean enabled) {
         myStartStopButton.setEnabled(enabled);
         myQuitButton.setEnabled(enabled);
+        myRebuildDatabase.setEnabled(enabled);
     }
 
     private void enableConfig(boolean enabled) {
@@ -478,7 +482,6 @@ public class Settings {
         myUpdateOnStartCheckbox.setEnabled(enabled && !myAutoStartServer.isSelected());
         myUpdateButton.setEnabled(enabled);
         myAutoStartServer.setEnabled(enabled);
-        myRebuildDatabase.setEnabled(enabled);
     }
 
     private void enableElementAndLabel(JComponent element, boolean enabled) {

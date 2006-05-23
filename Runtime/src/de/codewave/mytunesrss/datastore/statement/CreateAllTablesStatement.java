@@ -20,6 +20,9 @@ public class CreateAllTablesStatement implements DataStoreStatement {
         connection.createStatement().execute("INSERT INTO itunes VALUES ( 0 )");
         connection.createStatement().execute("CREATE TABLE album ( name VARCHAR, track_count INTEGER, artist_count INTEGER, artist VARCHAR )");
         connection.createStatement().execute("CREATE TABLE artist ( name VARCHAR, track_count INTEGER, album_count INTEGER )");
+        connection.createStatement().execute("CREATE TABLE album_pager ( index INTEGER, key VARCHAR, value VARCHAR )");
+        connection.createStatement().execute("CREATE TABLE artist_pager ( index INTEGER, key VARCHAR, value VARCHAR )");
+
         connection.createStatement().execute("CREATE INDEX idx_track_id ON track ( id )");
         connection.createStatement().execute("CREATE INDEX idx_track_name ON track ( name )");
         connection.createStatement().execute("CREATE INDEX idx_track_artist ON track ( artist )");
@@ -28,6 +31,7 @@ public class CreateAllTablesStatement implements DataStoreStatement {
         connection.createStatement().execute("CREATE INDEX idx_album_name ON album ( name )");
         connection.createStatement().execute("CREATE INDEX idx_album_artist ON album ( artist )");
         connection.createStatement().execute("CREATE INDEX idx_artist_name ON artist ( name )");
+
         connection.createStatement().execute("CREATE SEQUENCE mytunes_playlist_id");
         connection.commit();
     }

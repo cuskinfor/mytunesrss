@@ -2,7 +2,7 @@
  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
  */
 
-package de.codewave.mytunesrss.jsp;
+package de.codewave.mytunesrss;
 
 import java.util.*;
 
