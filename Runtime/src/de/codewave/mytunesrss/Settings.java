@@ -40,24 +40,17 @@ public class Settings {
     private JButton myQuitButton;
     private JButton myLookupButton;
     private JPasswordField myPassword;
-    private JButton myShowLogButton;
     private JLabel myMaxMemLabel;
     private JSpinner myMaxMemSpinner;
     private JButton myMaxMemSaveButton;
-    private JCheckBox myWriteLogCheckbox;
     private JCheckBox myUpdateOnStartCheckbox;
     private JButton myUpdateButton;
     private JButton myRebuildDatabase;
     private JCheckBox myAutoStartServer;
     private Embedded myServer;
-    private LogDisplay myLogDisplay = new LogDisplay();
     private boolean myRememberedUpdateOnStart;
 
     public Settings(final JFrame frame) throws UnsupportedEncodingException {
-        Logger.getRootLogger().removeAllAppenders();
-        Logger.getLogger("de.codewave").removeAllAppenders();
-        Logger.getRootLogger().addAppender(myLogDisplay);
-        Logger.getLogger("de.codewave").addAppender(myLogDisplay);
         myFrame = frame;
         setStatus(myMainBundle.getString("info.server.idle"));
         MyTunesRssConfig data = new MyTunesRssConfig();
@@ -65,11 +58,6 @@ public class Settings {
         myPort.setText(data.getPort());
         myTunesXmlPath.setText(data.getLibraryXml());
         myPassword.setText(data.getPassword());
-        myWriteLogCheckbox.setSelected(data.isLoggingEnabled());
-        myLogDisplay.setLoggingEnabled(data.isLoggingEnabled());
-        if (!myLogDisplay.isLoggingEnabled()) {
-            myShowLogButton.setEnabled(false);
-        }
         int minMemory = ProgramUtils.getMemorySwitch(MemorySwitchType.Minimum);
         int maxMemory = ProgramUtils.getMemorySwitch(MemorySwitchType.Maxmimum);
         if (maxMemory != -1) {
@@ -100,23 +88,6 @@ public class Settings {
         myLookupButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 doLookupLibraryFile();
-            }
-        });
-        myShowLogButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                myShowLogButton.setEnabled(false);
-                myLogDisplay.show(frame, myShowLogButton);
-            }
-        });
-        myWriteLogCheckbox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (myWriteLogCheckbox.isSelected()) {
-                    myShowLogButton.setEnabled(true);
-                    myLogDisplay.setLoggingEnabled(true);
-                } else {
-                    myShowLogButton.setEnabled(false);
-                    myLogDisplay.setLoggingEnabled(false);
-                }
             }
         });
         myMaxMemSaveButton.addActionListener(new ActionListener() {
@@ -245,9 +216,7 @@ public class Settings {
                             } else {
                                 myServer.stop();
                                 myServer = null;
-                                if (myLogDisplay.isOutOfMemoryError()) {
-                                    showErrorMessage(myMainBundle.getString("error.server.startFailureOutOfMemory"));
-                                } else if (health == CheckHealthResult.EMPTY_LIBRARY) {
+                                if (health == CheckHealthResult.EMPTY_LIBRARY) {
                                     showErrorMessage(myMainBundle.getString("error.server.startFailureEmptyLibrary"));
                                 } else {
                                     showErrorMessage(myMainBundle.getString("error.server.startFailureHealth"));
@@ -439,7 +408,6 @@ public class Settings {
         config.setPort(myPort.getText().trim());
         config.setLibraryXml(myTunesXmlPath.getText().trim());
         config.setPassword(new String(myPassword.getPassword()).trim());
-        config.setLoggingEnabled(myWriteLogCheckbox.isSelected());
         config.setCheckUpdateOnStart(myUpdateOnStartCheckbox.isSelected());
         config.setAutoStartServer(myAutoStartServer.isSelected());
         return config;

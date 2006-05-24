@@ -17,7 +17,6 @@ public class PrepareForReloadStatement implements DataStoreStatement {
                 .execute("DELETE FROM link_track_playlist WHERE NOT EXISTS ( SELECT * FROM playlist p WHERE p.id = playlist_id )");
         connection.createStatement().execute("DELETE FROM album");
         connection.createStatement().execute("DELETE FROM artist");
-        connection.createStatement().execute("DELETE FROM album_pager");
-        connection.createStatement().execute("DELETE FROM artist_pager");
+        connection.createStatement().execute("DELETE FROM pager");
     }
 }

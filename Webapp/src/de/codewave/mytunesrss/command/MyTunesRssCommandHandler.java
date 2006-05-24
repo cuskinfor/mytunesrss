@@ -11,12 +11,10 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.utils.servlet.*;
 import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
 
 import javax.servlet.*;
 import java.io.*;
 import java.util.*;
-import java.sql.*;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
@@ -91,14 +89,11 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     public void execute() throws Exception {
-        List<Pager.Page> pages = (List<Pager.Page>)getDataStore().executeQuery(new FindAlbumPagesStatement());
+        List<Pager.Page> pages = (List<Pager.Page>)getDataStore().executeQuery(new FindPagesStatement());
         if (pages != null) {
             getRequest().setAttribute("albumPager", new Pager(pages, pages.size()));
-            getRequest().setAttribute("albumInitialPager", pages.get(0).getKey());
-        }
-        pages = (List<Pager.Page>)getDataStore().executeQuery(new FindArtistPagesStatement());
-        if (pages != null) {
             getRequest().setAttribute("artistPager", new Pager(pages, pages.size()));
+            getRequest().setAttribute("albumInitialPager", pages.get(0).getKey());
             getRequest().setAttribute("artistInitialPager", pages.get(0).getKey());
         }
 

@@ -10,14 +10,14 @@ import java.util.*;
 import java.sql.*;
 
 /**
- * de.codewave.mytunesrss.datastore.statement.FindArtistPagesStatement
+ * de.codewave.mytunesrss.datastore.statement.FindPagesStatement
  */
-public class FindArtistPagesStatement extends DataStoreQuery {
+public class FindPagesStatement extends DataStoreQuery {
     public Collection execute(Connection connection) throws SQLException {
-        ResultSet resultSet = connection.createStatement().executeQuery("SELECT key AS key, value AS value FROM artist_pager ORDER by index");
+        ResultSet resultSet = connection.createStatement().executeQuery("SELECT index AS index, value AS value FROM pager ORDER by index");
         List<Pager.Page> pages = new ArrayList<Pager.Page>();
         while (resultSet.next()) {
-            pages.add(new Pager.Page(resultSet.getString("KEY"), resultSet.getString("VALUE")));
+            pages.add(new Pager.Page(Integer.toString(resultSet.getInt("INDEX")), resultSet.getString("VALUE")));
         }
         return pages.isEmpty() ? null : pages;
     }

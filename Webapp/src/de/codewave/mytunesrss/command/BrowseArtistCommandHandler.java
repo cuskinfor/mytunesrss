@@ -23,11 +23,7 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
         String page = getRequest().getParameter("page");
         Collection<Artist> artists;
         if (StringUtils.isNotEmpty(page)) {
-            List<String> startPatterns = new ArrayList<String>();
-            for (StringTokenizer tokenizer = new StringTokenizer(page, "_"); tokenizer.hasMoreTokens();) {
-                startPatterns.add(tokenizer.nextToken().toLowerCase() + "%");
-            }
-            artists = getDataStore().executeQuery(new FindArtistQuery(startPatterns.toArray(new String[startPatterns.size()])));
+            artists = getDataStore().executeQuery(new FindArtistQuery(Integer.parseInt(page)));
         } else {
             artists = getDataStore().executeQuery(new FindArtistQuery(album));
         }

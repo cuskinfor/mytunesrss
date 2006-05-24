@@ -119,7 +119,7 @@
                       </grid>
                     </constraints>
                   </vspacer>
-                  <grid id="9c543" layout-manager="GridLayoutManager" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+                  <grid id="9c543" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
                     <margin top="5" left="5" bottom="5" right="5"/>
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -150,7 +150,7 @@
                       </component>
                       <component id="408e3" class="javax.swing.JLabel" binding="myMaxMemLabel">
                         <constraints>
-                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <font swing-font="Label.font"/>
@@ -160,7 +160,7 @@
                       </component>
                       <component id="d437e" class="javax.swing.JSpinner" binding="myMaxMemSpinner">
                         <constraints>
-                          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <font swing-font="Spinner.font"/>
@@ -170,35 +170,13 @@
                       </component>
                       <component id="247da" class="javax.swing.JButton" binding="myMaxMemSaveButton">
                         <constraints>
-                          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="1" indent="0" use-parent-layout="false"/>
+                          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <font swing-font="Button.font"/>
                           <opaque value="false"/>
                           <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.memory.button"/>
                           <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.memory.tooltip.button"/>
-                        </properties>
-                      </component>
-                      <component id="109d0" class="javax.swing.JButton" binding="myShowLogButton">
-                        <constraints>
-                          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties>
-                          <font swing-font="Button.font"/>
-                          <opaque value="false"/>
-                          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.button.showLog"/>
-                          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.showLog"/>
-                        </properties>
-                      </component>
-                      <component id="492bf" class="javax.swing.JCheckBox" binding="myWriteLogCheckbox">
-                        <constraints>
-                          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties>
-                          <font swing-font="CheckBox.font"/>
-                          <opaque value="false"/>
-                          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.label.writeLog"/>
-                          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.writelog"/>
                         </properties>
                       </component>
                       <component id="cb7ec" class="javax.swing.JCheckBox" binding="myAutoStartServer">

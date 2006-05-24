@@ -101,4 +101,8 @@ public class DataStoreSession {
             statement.execute(myConnection);
         }
     }
+
+    public synchronized PreparedStatement prepare(String sql) throws SQLException {
+        return myConnection.prepareStatement(sql);
+    }
 }

@@ -14,15 +14,15 @@ import java.util.*;
  */
 public class FindAlbumQuery extends DataStoreQuery<Album> {
     private String myArtist;
-    private String[] myStartPatterns;
+    private int myIndex = -1;
     private AlbumResultBuilder myBuilder = new AlbumResultBuilder();
 
     public FindAlbumQuery(String artist) {
         myArtist = artist;
     }
 
-    public FindAlbumQuery(String[] startPatterns) {
-        myStartPatterns = startPatterns;
+    public FindAlbumQuery(int index) {
+        myIndex = index;
     }
 
     public Collection<Album> execute(Connection connection) throws SQLException {
@@ -31,12 +31,11 @@ public class FindAlbumQuery extends DataStoreQuery<Album> {
             statement = connection.prepareStatement(
                     "SELECT name, track_count, artist_count, artist FROM album WHERE name IN ( SELECT DISTINCT(album) FROM track WHERE artist = ? ) ORDER BY name");
             return execute(statement, myBuilder, myArtist);
-        } else if (myStartPatterns != null && myStartPatterns.length > 0) {
-            statement = connection.prepareStatement("SELECT name, track_count, artist_count, artist FROM album WHERE " + SQLUtils.createChain(
-                    "LCASE(name) LIKE ?",
-                    " OR ",
-                    myStartPatterns.length) + " ORDER BY name");
-            return execute(statement, myBuilder, (Object[])myStartPatterns);
+        } else if (myIndex > -1) {
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT condition AS condition FROM pager WHERE index = " + myIndex);
+            resultSet.next();
+            statement = connection.prepareStatement("SELECT name, track_count, artist_count, artist FROM album WHERE " + resultSet.getString("CONDITION") + " ORDER BY name");
+            return execute(statement, myBuilder);
         } else {
             statement = connection.prepareStatement("SELECT name, track_count, artist_count, artist FROM album ORDER BY name");
             return execute(statement, myBuilder);

@@ -9,22 +9,22 @@ import java.sql.*;
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertPagerPageStatement
  */
-public class InsertArtistPageStatement implements DataStoreStatement {
+public class InsertPageStatement implements DataStoreStatement {
     private int myIndex;
-    private String myKey;
+    private String myCondition;
     private String myValue;
 
-    public InsertArtistPageStatement(int index, String key, String value) {
+    public InsertPageStatement(int index, String condition, String value) {
         myIndex = index;
-        myKey = key;
+        myCondition = condition;
         myValue = value;
     }
 
     public void execute(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO artist_pager VALUES ( ?, ?, ? )");
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO pager VALUES ( ?, ?, ? )");
         statement.clearParameters();
         statement.setInt(1, myIndex);
-        statement.setString(2, myKey);
+        statement.setString(2, myCondition);
         statement.setString(3, myValue);
         statement.execute();
     }

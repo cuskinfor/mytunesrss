@@ -13,7 +13,6 @@ public class MyTunesRssConfig {
     private String myPort;
     private String myLibraryXml;
     private String myPassword;
-    private boolean myLoggingEnabled;
     private boolean myCheckUpdateOnStart;
     private boolean myAutoStartServer;
 
@@ -45,14 +44,6 @@ public class MyTunesRssConfig {
         myPort = port;
     }
 
-    public boolean isLoggingEnabled() {
-        return myLoggingEnabled;
-    }
-
-    public void setLoggingEnabled(boolean loggingEnabled) {
-        myLoggingEnabled = loggingEnabled;
-    }
-
     public boolean isCheckUpdateOnStart() {
         return myCheckUpdateOnStart;
     }
@@ -73,7 +64,6 @@ public class MyTunesRssConfig {
         myPort = Preferences.userRoot().node("/de/codewave/mytunesrss").get("port", "8080");
         myLibraryXml = Preferences.userRoot().node("/de/codewave/mytunesrss").get("library", "");
         myPassword = Preferences.userRoot().node("/de/codewave/mytunesrss").get("authPassword", "");
-        myLoggingEnabled = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("loggingEnabled", false);
         myCheckUpdateOnStart = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("checkUpdateOnStart", true);
         myAutoStartServer = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("autoStartServer", false);
     }
@@ -82,7 +72,6 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("port", myPort);
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("library", myLibraryXml);
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("authPassword", myPassword);
-        Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("loggingEnabled", myLoggingEnabled);
         Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("checkUpdateOnStart", myCheckUpdateOnStart);
         Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("autoStartServer", myAutoStartServer);
     }
