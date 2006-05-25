@@ -45,7 +45,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             if (StringUtils.isNotEmpty(getRequest().getParameter("authHash"))) {
                 try {
                     int requestAuthHash = Integer.parseInt(getRequest().getParameter("authHash"));
-                    return !isAuthorized(requestAuthHash);
+                    if (isAuthorized(requestAuthHash)) {
+                        authorize();
+                        return false;
+                    }
                 } catch (NumberFormatException e) {
                     // intentionally left blank
                 }

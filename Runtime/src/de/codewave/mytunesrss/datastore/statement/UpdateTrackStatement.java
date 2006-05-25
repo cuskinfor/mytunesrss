@@ -4,19 +4,18 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.lang.*;
 
 import java.sql.*;
-import java.util.*;
 
 import de.codewave.mytunesrss.datastore.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackStatement
  */
-public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
-    private static final Log LOG = LogFactory.getLog(InsertTrackStatement.class);
+public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
+    private static final Log LOG = LogFactory.getLog(UpdateTrackStatement.class);
     public static final String UNKNOWN = new String("!");
 
     private String myId;
@@ -27,18 +26,18 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
     private int myTrackNumber;
     private String myFileName;
     private PreparedStatement myStatement;
-    private static final String SQL = "INSERT INTO track VALUES ( ?, ?, ?, ?, ?, ?, ? )";
+    private static final String SQL = "UPDATE track SET name = ?, album = ?, artist = ?, time = ?, track_number = ?, file = ? WHERE id = ?";
 
-    public InsertTrackStatement() {
+    public UpdateTrackStatement() {
         // intentionally left blank
     }
 
-    public InsertTrackStatement(DataStoreSession storeSession) {
+    public UpdateTrackStatement(DataStoreSession storeSession) {
         try {
-            myStatement = storeSession.prepare(SQL);
+            myStatement = storeSession.prepare(UpdateTrackStatement.SQL);
         } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not prepare statement, trying again during execution.", e);
+            if (UpdateTrackStatement.LOG.isErrorEnabled()) {
+                UpdateTrackStatement.LOG.error("Could not prepare statement, trying again during execution.", e);
             }
         }
     }
@@ -73,19 +72,19 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
 
     public void execute(Connection connection) throws SQLException {
         try {
-            PreparedStatement statement = myStatement != null ? myStatement : connection.prepareStatement(SQL);
+            PreparedStatement statement = myStatement != null ? myStatement : connection.prepareStatement(UpdateTrackStatement.SQL);
             statement.clearParameters();
-            statement.setString(1, myId);
-            statement.setString(2, StringUtils.isNotEmpty(myName) ? myName : UNKNOWN);
-            statement.setString(3, StringUtils.isNotEmpty(myArtist) ? myArtist : UNKNOWN);
-            statement.setString(4, StringUtils.isNotEmpty(myAlbum) ? myAlbum : UNKNOWN);
-            statement.setInt(5, myTime);
-            statement.setInt(6, myTrackNumber);
-            statement.setString(7, myFileName);
+            statement.setString(1, StringUtils.isNotEmpty(myName) ? myName : UpdateTrackStatement.UNKNOWN);
+            statement.setString(2, StringUtils.isNotEmpty(myAlbum) ? myAlbum : UpdateTrackStatement.UNKNOWN);
+            statement.setString(3, StringUtils.isNotEmpty(myArtist) ? myArtist : UpdateTrackStatement.UNKNOWN);
+            statement.setInt(4, myTime);
+            statement.setInt(5, myTrackNumber);
+            statement.setString(6, myFileName);
+            statement.setString(7, myId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error(String.format("Could not insert track with ID \"%s\" into database.", myId) , e);
+            if (UpdateTrackStatement.LOG.isErrorEnabled()) {
+                UpdateTrackStatement.LOG.error(String.format("Could not update track with ID \"%s\" in database.", myId) , e);
             }
         }
     }

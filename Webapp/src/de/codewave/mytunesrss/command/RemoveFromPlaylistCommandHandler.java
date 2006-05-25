@@ -17,13 +17,17 @@ public class RemoveFromPlaylistCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws Exception {
         Collection<Track> playlistContent = (Collection<Track>)getSession().getAttribute("playlistContent");
         String[] trackIds = getNonEmptyParameterValues("track");
-        Track dummyTrack = new Track();
-        for (String trackId : trackIds) {
-            dummyTrack.setId(trackId);
-            playlistContent.remove(dummyTrack);
+        if (trackIds != null && trackIds.length > 0) {
+            Track dummyTrack = new Track();
+            for (String trackId : trackIds) {
+                dummyTrack.setId(trackId);
+                playlistContent.remove(dummyTrack);
+            }
+            Playlist playlist = (Playlist)getSession().getAttribute("playlist");
+            playlist.setTrackCount(playlistContent.size());
+        } else {
+            setError("@@must select at least one track");
         }
-        Playlist playlist = (Playlist)getSession().getAttribute("playlist");
-        playlist.setTrackCount(playlistContent.size());
         forward(MyTunesRssCommand.EditPlaylist);
     }
 }

@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.mytunesrss.*;
+
 import java.sql.*;
 
 /**
@@ -15,11 +17,14 @@ public class CreateAllTablesStatement implements DataStoreStatement {
         connection.createStatement().execute(
                 "CREATE CACHED TABLE track ( id varchar, name VARCHAR, artist VARCHAR, album VARCHAR, time INTEGER, track_number INTEGER, file VARCHAR, UNIQUE ( id ) )");
         connection.createStatement().execute("CREATE CACHED TABLE playlist ( id VARCHAR, name VARCHAR, type VARCHAR, UNIQUE ( id ) )");
-        connection.createStatement().execute("CREATE CACHED TABLE link_track_playlist ( index INTEGER, track_id VARCHAR, playlist_id VARCHAR )");
-        connection.createStatement().execute("CREATE TABLE mytunes ( lastupdate BIGINT, version VARCHAR )");
-        connection.createStatement().execute("INSERT INTO mytunes VALUES ( 0, '2.0' )");
-        connection.createStatement().execute("CREATE CACHED TABLE album ( name VARCHAR, first VARCHAR, track_count INTEGER, artist_count INTEGER, artist VARCHAR, UNIQUE ( name ) )");
-        connection.createStatement().execute("CREATE CACHED TABLE artist ( name VARCHAR, first VARCHAR, track_count INTEGER, album_count INTEGER, UNIQUE ( name ) )");
+        connection.createStatement().execute(
+                "CREATE CACHED TABLE link_track_playlist ( index INTEGER, track_id VARCHAR, playlist_id VARCHAR, FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE, FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE )");
+        connection.createStatement().execute("CREATE TABLE mytunesrss ( lastupdate BIGINT, version VARCHAR )");
+        connection.createStatement().execute("INSERT INTO mytunesrss VALUES ( 0, '" + MyTunesRss.VERSION + "' )");
+        connection.createStatement().execute(
+                "CREATE CACHED TABLE album ( name VARCHAR, first VARCHAR, track_count INTEGER, artist_count INTEGER, artist VARCHAR, UNIQUE ( name ) )");
+        connection.createStatement().execute(
+                "CREATE CACHED TABLE artist ( name VARCHAR, first VARCHAR, track_count INTEGER, album_count INTEGER, UNIQUE ( name ) )");
         connection.createStatement().execute("CREATE TABLE pager ( index INTEGER, condition VARCHAR, value VARCHAR )");
 
         connection.createStatement().execute("CREATE INDEX idx_track_name ON track ( name )");
@@ -34,7 +39,5 @@ public class CreateAllTablesStatement implements DataStoreStatement {
 
         connection.createStatement().execute("SET PROPERTY \"hsqldb.cache_scale\" 12");
         connection.createStatement().execute("SET PROPERTY \"hsqldb.cache_size_scale\" 9");
-
-        connection.commit();
     }
 }

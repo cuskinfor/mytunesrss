@@ -19,6 +19,20 @@ import java.util.*;
 public class DatabaseBuilderTask extends PleaseWait.Task {
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
 
+    public static enum BuildType {
+        Recreate("Recreating"), Refresh("Refreshing"), Update("Updating");
+
+        private String myVerb;
+
+        BuildType(String verb) {
+            myVerb = verb;
+        }
+
+        public String getVerb() {
+            return myVerb;
+        }
+    }
+
     public static boolean needsCreation() {
         try {
             List<Boolean> result = (List<Boolean>)MyTunesRss.STORE.executeQuery(new DataStoreQuery<Boolean>() {
@@ -43,7 +57,7 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
             }
             Collection<Long> lastUpdate = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Long>() {
                 public Collection<Long> execute(Connection connection) throws SQLException {
-                    ResultSet resultSet = connection.createStatement().executeQuery("SELECT lastupdate FROM mytunes");
+                    ResultSet resultSet = connection.createStatement().executeQuery("SELECT lastupdate FROM mytunesrss");
                     if (resultSet.next()) {
                         return Collections.singletonList(resultSet.getLong(1));
                     }
@@ -58,9 +72,11 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
     }
 
     private URL myLibraryXmlUrl;
+    private BuildType myBuildType;
 
-    public DatabaseBuilderTask(URL libraryXmlUrl) {
+    public DatabaseBuilderTask(URL libraryXmlUrl, BuildType buildType) {
         myLibraryXmlUrl = libraryXmlUrl;
+        myBuildType = buildType;
     }
 
     public void execute() {
@@ -70,25 +86,40 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
         DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
         storeSession.begin();
         try {
+            if (myBuildType == BuildType.Recreate) {
+                dropAllTables();
+            }
             if (needsCreation()) {
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Creating database tables.");
                 }
-                createDatabase();
+                createAllTables();
             } else {
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Preparing database tables for full refresh.");
                 }
-                storeSession.executeStatement(new PrepareForReloadStatement());
+                storeSession.executeStatement(new PrepareForUpdateStatement());
             }
-            final long updateTime = System.currentTimeMillis();
+            final long timeUpdateStart = System.currentTimeMillis();
+            Long timeLastUpdate = Long.MIN_VALUE;
+            if (myBuildType == BuildType.Update) {
+                timeLastUpdate = storeSession.getFirstQueryResult(new DataStoreQuery<Long>() {
+                    public Collection<Long> execute(Connection connection) throws SQLException {
+                        ResultSet resultSet = connection.createStatement().executeQuery("SELECT lastupdate AS lastupdate FROM mytunesrss");
+                        if (resultSet.next()) {
+                            return Collections.singletonList(resultSet.getLong("LASTUPDATE"));
+                        }
+                        return Collections.singletonList(Long.MIN_VALUE);
+                    }
+                });
+            }
             if (LOG.isInfoEnabled()) {
                 LOG.info("Loading tracks from iTunes library.");
             }
-            ITunesUtils.loadFromITunes(myLibraryXmlUrl, storeSession);
+            ITunesUtils.loadFromITunes(myLibraryXmlUrl, storeSession, timeLastUpdate.longValue());
             long timeAfterTracks = System.currentTimeMillis();
             if (LOG.isInfoEnabled()) {
-                LOG.info("Time for loading tracks: " + (timeAfterTracks - updateTime));
+                LOG.info("Time for loading tracks: " + (timeAfterTracks - timeUpdateStart));
                 LOG.info("Building help tables.");
             }
             storeSession.executeStatement(new UpdateHelpTablesStatement(storeSession.executeQuery(new FindAlbumArtistMappingQuery())));
@@ -100,7 +131,7 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
             createPagers(storeSession);
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
-                    connection.createStatement().execute("UPDATE mytunes SET lastupdate = " + updateTime);
+                    connection.createStatement().execute("UPDATE mytunesrss SET lastupdate = " + timeUpdateStart);
                 }
             });
             if (LOG.isInfoEnabled()) {
@@ -137,7 +168,7 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
         storeSession.executeStatement(new InsertPageStatement(8, "first >= 'w' AND first <= 'z'", "W - Z"));
     }
 
-    public void createDatabase() throws SQLException {
+    public void createAllTables() throws SQLException {
         DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
         storeSession.begin();
         try {
@@ -150,6 +181,13 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
             storeSession.rollback();
             throw e;
         }
+    }
+
+    public void dropAllTables() throws SQLException {
+        DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
+        storeSession.begin();
+        storeSession.executeStatement(new DropAllTablesStatement());
+        storeSession.commit();
     }
 
     protected void cancel() {

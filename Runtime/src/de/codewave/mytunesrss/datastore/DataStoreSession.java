@@ -94,6 +94,21 @@ public class DataStoreSession {
         }
     }
 
+    public synchronized <T> T getFirstQueryResult(DataStoreQuery<T> query) throws SQLException {
+        Collection<T> results;
+        if (myConnection == null) {
+            Connection connection = myDataStore.aquireConnection();
+            try {
+                results =  query.execute(connection);
+            } finally {
+                myDataStore.releaseConnection(connection);
+            }
+        } else {
+            results = query.execute(myConnection);
+        }
+        return results.isEmpty() ? null : results.iterator().next();
+    }
+
     public synchronized void executeStatement(DataStoreStatement statement) throws SQLException {
         if (myConnection == null) {
             throw new IllegalStateException("No pending transaction for executing a query.");

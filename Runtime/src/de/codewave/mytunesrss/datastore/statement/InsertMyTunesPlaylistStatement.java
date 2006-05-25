@@ -8,6 +8,8 @@ import org.apache.commons.logging.*;
 
 import java.sql.*;
 
+import de.codewave.mytunesrss.datastore.*;
+
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertITunesPlaylistStatement
  */
@@ -18,6 +20,10 @@ public class InsertMyTunesPlaylistStatement extends InsertPlaylistStatement {
         setType(PlaylistType.MyTunes);
     }
 
+    public InsertMyTunesPlaylistStatement(DataStoreSession storeSession) throws SQLException {
+        super(storeSession);
+        setType(PlaylistType.MyTunes);
+    }
 
     @Override
     public void execute(Connection connection) throws SQLException {

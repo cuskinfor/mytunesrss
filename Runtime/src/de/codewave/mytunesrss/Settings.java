@@ -8,7 +8,6 @@ import org.apache.catalina.connector.*;
 import org.apache.catalina.session.*;
 import org.apache.catalina.startup.*;
 import org.apache.commons.logging.*;
-import org.apache.log4j.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,8 +44,10 @@ public class Settings {
     private JButton myMaxMemSaveButton;
     private JCheckBox myUpdateOnStartCheckbox;
     private JButton myUpdateButton;
-    private JButton myRebuildDatabase;
     private JCheckBox myAutoStartServer;
+    private JButton myRecreateDatabaseButton;
+    private JButton myRefreshDatabaseButton;
+    private JButton myUpdateDatabaseButton;
     private Embedded myServer;
     private boolean myRememberedUpdateOnStart;
 
@@ -109,17 +110,19 @@ public class Settings {
                 });
             }
         });
-        myRebuildDatabase.addActionListener(new ActionListener() {
+        myUpdateDatabaseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                try {
-                    PleaseWait.start(myFrame, null, "Rebuilding database... please wait.", false, false, new DatabaseBuilderTask(new File(
-                            myTunesXmlPath.getText()).toURL()));
-                } catch (MalformedURLException e1) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error(null, e1);
-                    }
-
-                }
+                runBuildDatabaseTask(DatabaseBuilderTask.BuildType.Update);
+            }
+        });
+        myRefreshDatabaseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                runBuildDatabaseTask(DatabaseBuilderTask.BuildType.Refresh);
+            }
+        });
+        myRecreateDatabaseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                runBuildDatabaseTask(DatabaseBuilderTask.BuildType.Recreate);
             }
         });
         myAutoStartServer.addActionListener(new ActionListener() {
@@ -134,6 +137,18 @@ public class Settings {
                 }
             }
         });
+    }
+
+    private void runBuildDatabaseTask(DatabaseBuilderTask.BuildType buildType) {
+        try {
+            PleaseWait.start(myFrame, null, buildType.getVerb() + " database... please wait.", false, false, new DatabaseBuilderTask(new File(
+                    myTunesXmlPath.getText()).toURL(), buildType));
+        } catch (MalformedURLException e1) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not build database.", e1);
+            }
+
+        }
     }
 
     public boolean isUpdateCheckOnStartup() {
@@ -190,8 +205,12 @@ public class Settings {
             myRootPanel.validate();
             try {
                 if (DatabaseBuilderTask.needsUpdate(library.toURL())) {
-                    PleaseWait.start(myFrame, null, "Rebuilding database... please wait.", false, false, new DatabaseBuilderTask(new File(
-                            myTunesXmlPath.getText()).toURL()));
+                    PleaseWait.start(myFrame,
+                                     null,
+                                     DatabaseBuilderTask.BuildType.Update.getVerb() + " database... please wait.",
+                                     false,
+                                     false,
+                                     new DatabaseBuilderTask(new File(myTunesXmlPath.getText()).toURL(), DatabaseBuilderTask.BuildType.Update));
                 }
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
@@ -437,7 +456,7 @@ public class Settings {
     private void enableButtons(boolean enabled) {
         myStartStopButton.setEnabled(enabled);
         myQuitButton.setEnabled(enabled);
-        myRebuildDatabase.setEnabled(enabled);
+        myUpdateDatabaseButton.setEnabled(enabled);
     }
 
     private void enableConfig(boolean enabled) {
@@ -551,6 +570,10 @@ public class Settings {
             Preferences.userRoot().node("/de/codewave/mytunesrss").put("noNagVersion", updateInfo.getVersion());
         }
         return pane.getValue() == download;
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 
     public static class ITunesLibraryFileFilter extends javax.swing.filechooser.FileFilter {

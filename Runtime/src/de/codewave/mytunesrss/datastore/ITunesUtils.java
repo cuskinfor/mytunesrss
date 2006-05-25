@@ -15,6 +15,7 @@ import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 /**
  * de.codewave.mytunesrss.datastore.ITunesUtils
@@ -24,12 +25,7 @@ public class ITunesUtils {
 
     public static File getFileForLocation(String location) {
         try {
-            String pathname = URLEncoder.encode(new URI(location).getPath(), "UTF-8");
-            return new File(pathname);
-        } catch (UnsupportedEncodingException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not encode location \"" + location + "\".", e);
-            }
+            return new File(new URI(location).getPath());
         } catch (URISyntaxException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not create URI from location \"" + location + "\".", e);
@@ -38,12 +34,28 @@ public class ITunesUtils {
         return null;
     }
 
-    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession) throws SQLException {
+    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate) throws SQLException {
         try {
             PListHandler handler = new PListHandler();
-            handler.addListener("/plist/dict[Tracks]/dict", new TrackListener(storeSession));
+            TrackListener trackListener = new TrackListener(storeSession, timeLastUpdate);
+            handler.addListener("/plist/dict[Tracks]/dict", trackListener);
             handler.addListener("/plist/dict[Playlists]/array", new PlaylistListener(storeSession));
+            Set<String> databaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery());
             XmlUtils.parseApplePList(iTunesLibraryXml, handler);
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " tracks.");
+            }
+            databaseIds.removeAll(trackListener.getExistingIds());
+            if (!databaseIds.isEmpty()) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Removing " + databaseIds.size() + " obsolete tracks.");
+                }
+                DeleteTrackStatement deleteTrackStatement = new DeleteTrackStatement(storeSession);
+                for (String id : databaseIds) {
+                    deleteTrackStatement.setId(id);
+                    storeSession.executeStatement(deleteTrackStatement);
+                }
+            }
         } catch (ParserConfigurationException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not read data from iTunes xml file.", e);
@@ -61,13 +73,39 @@ public class ITunesUtils {
 
     public static class TrackListener implements PListHandlerListener {
         DataStoreSession myDataStoreSession;
+        long myTimeLastUpdate;
+        InsertTrackStatement myInsertStatement;
+        UpdateTrackStatement myUpdateStatement;
+        int myUpdatedCount;
+        Set<String> myExistingIds = new HashSet<String>();
 
-        public TrackListener(DataStoreSession dataStoreSession) {
+        public TrackListener(DataStoreSession dataStoreSession, long timeLastUpdate) {
             myDataStoreSession = dataStoreSession;
+            myTimeLastUpdate = timeLastUpdate;
+            myInsertStatement = new InsertTrackStatement(dataStoreSession);
+            myUpdateStatement = new UpdateTrackStatement(dataStoreSession);
+        }
+
+        public Set<String> getExistingIds() {
+            return myExistingIds;
+        }
+
+        public int getUpdatedCount() {
+            return myUpdatedCount;
         }
 
         public boolean beforeDictPut(Map dict, String key, Object value) {
-            insertTrack((Map)value);
+            Map track = (Map)value;
+            myExistingIds.add(track.get("Track ID").toString());
+            Date dateModified = ((Date)track.get("Date Modified"));
+            long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
+            Date dateAdded = ((Date)track.get("Date Added"));
+            long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
+            if (dateModifiedTime >= myTimeLastUpdate || dateAddedTime >= myTimeLastUpdate) {
+                if (insertOrUpdateTrack(track)) {
+                    myUpdatedCount++;
+                }
+            }
             return false;
         }
 
@@ -75,16 +113,19 @@ public class ITunesUtils {
             throw new UnsupportedOperationException("method beforeArrayAdd of class ITunesUtils$TrackListener is not supported!");
         }
 
-        private void insertTrack(Map track) {
-            Integer trackId = (Integer)track.get("Track ID");
+        private boolean insertOrUpdateTrack(Map track) {
+            String trackId = track.get("Track ID").toString();
             String name = (String)track.get("Name");
             String trackType = (String)track.get("Track Type");
             if ("File".equals(trackType)) {
                 File file = ITunesUtils.getFileForLocation((String)track.get("Location"));
                 if (trackId != null && StringUtils.isNotEmpty(name) && file != null) {
                     try {
-                        InsertTrackStatement statement = new InsertTrackStatement();
-                        statement.setId(trackId.toString());
+                        Collection<Track> tracks = myDataStoreSession.executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
+                        boolean exists = tracks != null && !tracks.isEmpty();
+                        InsertOrUpdateTrackStatement statement = exists ? myUpdateStatement : myInsertStatement;
+                        statement.clear();
+                        statement.setId(trackId);
                         statement.setName(name.trim());
                         statement.setArtist(StringUtils.trimToNull((String)track.get("Artist")));
                         statement.setAlbum(StringUtils.trimToNull((String)track.get("Album")));
@@ -92,6 +133,7 @@ public class ITunesUtils {
                         statement.setTrackNumber(track.get("Track Number") != null ? (Integer)track.get("Track Number") : 0);
                         statement.setFileName(file != null ? file.getAbsolutePath() : null);
                         myDataStoreSession.executeStatement(statement);
+                        return true;
                     } catch (SQLException e) {
                         if (LOG.isErrorEnabled()) {
                             LOG.error("Could not insert track \"" + name + "\" into database", e);
@@ -103,6 +145,7 @@ public class ITunesUtils {
                     }
                 }
             }
+            return false;
         }
     }
 

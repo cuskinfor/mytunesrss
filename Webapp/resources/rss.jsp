@@ -11,7 +11,7 @@
 <rss version="2.0">
     <channel>
         <title><c:out value="${channel}"/></title>
-        <link><c:out value="${feedUrl}"/></link>
+        <link>${servletUrl}/<c:out value="${pathInfo}"/></link>
         <description><fmt:message key="rss.channel.description"/></description>
         <c:forEach items="${tracks}" var="track">
             <c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:virtualSuffix(config, track)}</c:set>
@@ -19,7 +19,7 @@
                 <title><c:out value="${track.name}"/></title>
                 <description><c:if test="${!empty track.artist && !mtfn:unknown(artist)}"><c:out value="${track.artist}"/> - </c:if><c:out value="${track.album}"/></description>
                 <author><c:out value="${track.artist}"/></author>
-                <link>${servletUrl}/createRSS/track=${track.id}/authHash=${authHash}</link>
+                <link>${servletUrl}/createRSS/track=${track.id}/authHash=${authHash}/<c:out value="${virtualFileName}"/></link>
                 <guid>${servletUrl}/createRSS/track=${track.id}</guid>
                 <pubDate>${pubDate}</pubDate>
                 <enclosure url="${servletUrl}/playTrack/track=${track.id}/authHash=${authHash}/${cwfn:urlEncode(virtualFileName, 'UTF-8')}"

@@ -41,7 +41,7 @@
         </li>
     </ul>
 
-    <form id="playlist" action="${servletUrl}/removeFromPlaylist" method="post">
+    <form id="playlist" action="${servletUrl}/savePlaylist" method="post">
 		<table class="portal" cellspacing="0">
 			<tr>
 				<td class="playlistManager">
