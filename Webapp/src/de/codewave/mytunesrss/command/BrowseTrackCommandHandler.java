@@ -37,15 +37,18 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         }
         getRequest().setAttribute("sortOrder", sortOrderName);
         if (query != null) {
-            EnhancedTracks enhancedTracks = getTracks(getDataStore().executeQuery(query), sortOrderValue);
-            getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()));
+            List<Track> simpleTracks = (List<Track>)getDataStore().executeQuery(query);
             int pageSize = getWebConfig().getPageSize();
+            if (pageSize > 0 && simpleTracks.size() > pageSize) {
+                int current = Integer.parseInt(getRequestParameter("index", "0"));
+                Pager pager = createPager(simpleTracks.size(), current);
+                getRequest().setAttribute("pager", pager);
+                simpleTracks = simpleTracks.subList(current * pageSize, Math.min((current * pageSize) + pageSize, simpleTracks.size()));
+            }
+            EnhancedTracks enhancedTracks = getTracks(simpleTracks, sortOrderValue);
+            getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()));
             List<EnhancedTrack> tracks = (List<EnhancedTrack>)enhancedTracks.getTracks();
             if (pageSize > 0 && tracks.size() > pageSize) {
-                int current = Integer.parseInt(getRequestParameter("index", "0"));
-                Pager pager = createPager(tracks.size(), current);
-                getRequest().setAttribute("pager", pager);
-                tracks = tracks.subList(current * pageSize, Math.min((current * pageSize) + pageSize, tracks.size()));
                 tracks.get(0).setContinuation(!tracks.get(0).isNewSection());
                 tracks.get(0).setNewSection(true);
             }
