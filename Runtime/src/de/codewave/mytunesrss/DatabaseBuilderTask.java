@@ -60,24 +60,53 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
     }
 
     public void execute() {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Building database.");
+        }
         DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
         storeSession.begin();
         try {
             if (needsCreation()) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Creating database tables.");
+                }
                 createDatabase();
             } else {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Preparing database tables for full refresh.");
+                }
                 storeSession.executeStatement(new PrepareForReloadStatement());
             }
             final long updateTime = System.currentTimeMillis();
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Loading tracks from iTunes library.");
+            }
             ITunesUtils.loadFromITunes(myLibraryXmlUrl, storeSession);
-            storeSession.executeStatement(new UpdateHelpTablesStatement());
+            long timeAfterTracks = System.currentTimeMillis();
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Time for loading tracks: " + (timeAfterTracks - updateTime));
+                LOG.info("Building help tables.");
+            }
+            storeSession.executeStatement(new UpdateHelpTablesStatement(storeSession.executeQuery(new FindAlbumArtistMappingQuery())));
+            long timeAfterHelpTables = System.currentTimeMillis();
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Time for building help tables: " + (timeAfterHelpTables - timeAfterTracks));
+                LOG.info("Building pager and updating system information.");
+            }
             createPagers(storeSession);
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     connection.createStatement().execute("UPDATE mytunes SET lastupdate = " + updateTime);
                 }
             });
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Committing transaction.");
+            }
             storeSession.commit();
+            long timeAfterCommit = System.currentTimeMillis();
+            if (LOG.isInfoEnabled()) {
+                LOG.info("time for commit: " + (timeAfterCommit - timeAfterHelpTables));
+            }
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not load iTunes library.", e);
