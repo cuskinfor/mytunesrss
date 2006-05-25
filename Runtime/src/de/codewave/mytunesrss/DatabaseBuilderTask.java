@@ -21,12 +21,16 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
 
     public static boolean needsCreation() {
         try {
-            return MyTunesRss.STORE.executeQuery(new DataStoreQuery<Boolean>() {
+            List<Boolean> result = (List<Boolean>)MyTunesRss.STORE.executeQuery(new DataStoreQuery<Boolean>() {
                 public Collection<Boolean> execute(Connection connection) throws SQLException {
-                    connection.createStatement().executeQuery("SELECT COUNT(*) FROM track");
-                    return Collections.singletonList(Boolean.FALSE);
+                    ResultSet resultSet = connection.createStatement().executeQuery("SELECT COUNT(*) FROM information_schema.system_tables WHERE table_schem = 'PUBLIC' AND table_name = 'TRACK'");
+                    if (resultSet.next()) {
+                        return Collections.singletonList(resultSet.getInt(1) != 1);
+                    }
+                    return Collections.singletonList(true);
                 }
-            }).iterator().next();
+            });
+            return result.get(0);
         } catch (SQLException e) {
             return true;
         }

@@ -123,11 +123,12 @@ public class ITunesUtils {
         }
 
         private void insertPlaylist(Map playlist) {
-            boolean master = (Boolean)playlist.get("Master") != null && ((Boolean)playlist.get("Master")).booleanValue();
-            boolean purchased = (Boolean)playlist.get("Purchased Music") != null && ((Boolean)playlist.get("Purchased Music")).booleanValue();
-            boolean partyShuffle = (Boolean)playlist.get("Party Shuffle") != null && ((Boolean)playlist.get("Party Shuffle")).booleanValue();
+            boolean master = playlist.get("Master") != null && ((Boolean)playlist.get("Master")).booleanValue();
+            boolean purchased = playlist.get("Purchased Music") != null && ((Boolean)playlist.get("Purchased Music")).booleanValue();
+            boolean partyShuffle = playlist.get("Party Shuffle") != null && ((Boolean)playlist.get("Party Shuffle")).booleanValue();
+            boolean podcasts = playlist.get("Podcasts") != null && ((Boolean)playlist.get("Podcasts")).booleanValue();
 
-            if (!master && !purchased && !partyShuffle) {
+            if (!master && !purchased && !partyShuffle && !podcasts) {
                 Integer id = (Integer)playlist.get("Playlist ID");
                 String name = (String)playlist.get("Name");
                 List<Map> items = (List<Map>)playlist.get("Playlist Items");
