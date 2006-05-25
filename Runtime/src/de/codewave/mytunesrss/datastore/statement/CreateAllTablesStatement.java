@@ -16,7 +16,7 @@ public class CreateAllTablesStatement implements DataStoreStatement {
         connection.createStatement().execute("SET DATABASE COLLATION \"Latin1_General\"");
         connection.createStatement().execute(
                 "CREATE CACHED TABLE track ( id varchar, name VARCHAR, artist VARCHAR, album VARCHAR, time INTEGER, track_number INTEGER, file VARCHAR, UNIQUE ( id ) )");
-        connection.createStatement().execute("CREATE CACHED TABLE playlist ( id VARCHAR, name VARCHAR, type VARCHAR, UNIQUE ( id ) )");
+        connection.createStatement().execute("CREATE CACHED TABLE playlist ( id VARCHAR, name VARCHAR, type VARCHAR, track_count INTEGER, UNIQUE ( id ) )");
         connection.createStatement().execute(
                 "CREATE CACHED TABLE link_track_playlist ( index INTEGER, track_id VARCHAR, playlist_id VARCHAR, FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE, FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE )");
         connection.createStatement().execute("CREATE TABLE mytunesrss ( lastupdate BIGINT, version VARCHAR )");

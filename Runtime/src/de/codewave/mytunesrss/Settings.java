@@ -572,10 +572,6 @@ public class Settings {
         return pane.getValue() == download;
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
-
     public static class ITunesLibraryFileFilter extends javax.swing.filechooser.FileFilter {
         private boolean myAllowDirectories;
 

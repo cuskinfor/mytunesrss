@@ -6,7 +6,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/showPlaylistManager</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/showPlaylistManager?index=${param.index}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -42,30 +42,31 @@
             <th class="active">Playlists</th>
             <th colspan="4">Tracks</th>
         </tr>
-        <tr>
-            <td class="mytunes">
-                Playlist 1 </td>
-            <td class="tracks"><a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml">(21&nbsp;Tracks)</a></td>
-            <td class="icon">
-                <a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml">
-                    <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
-            </td>
-            <td class="icon">
-                <a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml">
-                    <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
-            </td>
-            <td class="icon">
-                <a href="${servletUrl}/createM3U/playlist=${playlist.id}/mytunesrss.m3u">
-                    <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
-            </td>
-        </tr>
-        <tr class="odd">
-            <td class="itunes">
-                Playlist 2 </td>
-            <td class="tracks"><a href="${servletUrl}/createRSS?playlist=${playlist.id}/mytunesrss.xml">(21&nbsp;Tracks)</a></td>
-            <td colspan="3">&nbsp;</td>
-        </tr>
+        <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
+            <tr>
+                <td class="mytunes"><c:out value="${playlist.name}" /></td>
+                <td class="tracks"><a href="${servletUrl}/browseTrack?playlist=${playlist.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${playlist.trackCount}</a></td>
+                <td class="icon">
+                    <a href="${servletUrl}/loadAndContinuePlaylist?playlist=${playlist.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                        <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                </td>
+                <td class="icon">
+                    <a href="${servletUrl}/loadAndEditPlaylist?playlist=${playlist.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                        <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                </td>
+                <td class="icon">
+                    <a href="${servletUrl}/deletePlaylist/playlist=${playlist.id}">
+                        <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
+                </td>
+            </tr>
+        </c:forEach>
     </table>
+
+    <c:if test="${!empty pager}">
+        <c:set var="pagerCommand" scope="request" value="${servletUrl}/showPlaylistManager?index={index}" />
+        <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
+        <jsp:include page="incl_bottomPager.jsp" />
+    </c:if>
 
 </div>
 

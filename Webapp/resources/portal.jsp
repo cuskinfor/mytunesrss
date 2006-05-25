@@ -8,7 +8,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/showPortal</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/showPortal&amp;index=${param.index}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -49,16 +49,16 @@
                     <input class="button" type="submit" value="search" />
                 </td>
                 <td class="links">
-                    <a href="${servletUrl}/browseArtist?page=${artistInitialPager}" style="background-image:url('${appUrl}/images/library_small.gif');">
-                        browse library </a>
+                    <a href="${servletUrl}/browseArtist?page=${artistInitialPager}"
+                       style="background-image:url('${appUrl}/images/library_small.gif');"> browse library </a>
                     <c:choose>
                         <c:when test="${empty sessionScope.playlist}">
                             <a href="${servletUrl}/showPlaylistManager" style="background-image:url('${appUrl}/images/feeds_small.gif');"> manage
                                                                                                                                            playlists </a>
                         </c:when>
                         <c:otherwise>
-                            <a href="${servletUrl}/editPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}" style="background-image:url('${appUrl}/images/feeds_small.gif');"> finish
-                                                                                                                                    playlist </a>
+                            <a href="${servletUrl}/editPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"
+                               style="background-image:url('${appUrl}/images/feeds_small.gif');"> finish playlist </a>
                         </c:otherwise>
                     </c:choose>
                 </td>
@@ -71,13 +71,13 @@
 
     <table cellspacing="0">
         <tr>
-            <th class="active" colspan="${1 + fn:length(config.feedTypes)}">Playlists</th>
+            <th class="active">Playlists</th>
+            <th colspan="${1+ fn:length(config.feedTypes)}">Tracks</th>
         </tr>
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 1, 'even', 'odd')}">
-                <td>
-                    <c:out value="${playlist.name}" />
-                </td>
+                <td class="${fn:toLowerCase(playlist.type)}"><c:out value="${playlist.name}" /></td>
+                <td class="tracks">${playlist.trackCount}</td>
                 <c:forEach items="${config.feedTypes}" var="feedType">
                     <td class="icon">
                         <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/playlist=${playlist.id}/${mtfn:cleanFileName(playlist.name)}.${config.feedFileSuffix[feedType]}">
@@ -87,6 +87,12 @@
             </tr>
         </c:forEach>
     </table>
+
+    <c:if test="${!empty pager}">
+        <c:set var="pagerCommand" scope="request" value="${servletUrl}/showPortal?index={index}" />
+        <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
+        <jsp:include page="incl_bottomPager.jsp" />
+    </c:if>
 
 </div>
 

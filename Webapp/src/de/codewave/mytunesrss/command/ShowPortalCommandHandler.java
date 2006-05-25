@@ -6,24 +6,32 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.*;
 
 import javax.servlet.*;
 import java.io.*;
-import java.util.*;
 import java.sql.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.command.ShowPortalCommandHandler
  */
 public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws SQLException, IOException, ServletException {
-            List<Playlist> playlists = new ArrayList<Playlist>();
-            for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistsQuery())) {
-                playlists.add(playlist);
-                playlists.addAll(createSplittedPlaylists(playlist));
-            }
-            getRequest().setAttribute("playlists", playlists);
-            forward(MyTunesRssResource.Portal);
+        List<Playlist> playlists = new ArrayList<Playlist>();
+        for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistQuery())) {
+            playlists.add(playlist);
+            playlists.addAll(createSplittedPlaylists(playlist));
+        }
+        int pageSize = getWebConfig().getPageSize();
+        if (playlists.size() > pageSize) {
+            int current = Integer.parseInt(getRequestParameter("index", "0"));
+            Pager pager = createPager(playlists.size(), current);
+            getRequest().setAttribute("pager", pager);
+            playlists = playlists.subList(current * pageSize, Math.min((current * pageSize) + pageSize, playlists.size()));
+        }
+        getRequest().setAttribute("playlists", playlists);
+        forward(MyTunesRssResource.Portal);
     }
 
     private List<Playlist> createSplittedPlaylists(Playlist playlist) {

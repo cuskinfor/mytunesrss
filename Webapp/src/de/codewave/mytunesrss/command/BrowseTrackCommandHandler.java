@@ -24,16 +24,19 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         String searchTerm = getRequestParameter("searchTerm", null);
         String[] albums = getNonEmptyParameterValues("album");
         String[] artists = getNonEmptyParameterValues("artist");
+        String playlistId = getRequestParameter("playlist", null);
         String sortOrderName = getRequestParameter("sortOrder", SortOrder.Album.name());
         SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);
 
-        FindTrackQuery query = null;
+        DataStoreQuery<Track> query = null;
         if (StringUtils.isNotEmpty(searchTerm)) {
             query = FindTrackQuery.getForSearchTerm(searchTerm, sortOrderValue == SortOrder.Artist);
         } else if (albums != null && albums.length > 0) {
             query = FindTrackQuery.getForAlbum(albums, sortOrderValue == SortOrder.Artist);
         } else if (artists != null && artists.length > 0) {
             query = FindTrackQuery.getForArtist(artists, sortOrderValue == SortOrder.Artist);
+        } else if (StringUtils.isNotEmpty(playlistId)) {
+            query = new FindPlaylistTracksQuery(playlistId);
         }
         getRequest().setAttribute("sortOrder", sortOrderName);
         if (query != null) {

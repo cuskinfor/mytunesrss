@@ -10,6 +10,7 @@ package de.codewave.mytunesrss.datastore.statement;
 public class Playlist {
     private String myId;
     private String myName;
+    private PlaylistType myType;
     private int myTrackCount;
 
     public String getId() {
@@ -26,6 +27,14 @@ public class Playlist {
 
     public void setName(String name) {
         myName = name;
+    }
+
+    public PlaylistType getType() {
+        return myType;
+    }
+
+    public void setType(PlaylistType type) {
+        myType = type;
     }
 
     public int getTrackCount() {
