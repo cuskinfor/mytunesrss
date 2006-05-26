@@ -34,6 +34,7 @@ public class CreateAllTablesStatement implements DataStoreStatement {
         connection.createStatement().execute("CREATE INDEX idx_album_first ON album ( first )");
         connection.createStatement().execute("CREATE INDEX idx_album_artist ON album ( artist )");
         connection.createStatement().execute("CREATE INDEX idx_artist_first ON artist ( first )");
+        connection.createStatement().execute("CREATE INDEX idx_playlist_id ON playlist ( id )");
 
         connection.createStatement().execute("CREATE SEQUENCE mytunes_playlist_id");
 

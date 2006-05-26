@@ -4,6 +4,9 @@
 
 package de.codewave.mytunesrss.jsp;
 
+import javax.servlet.http.*;
+import java.util.*;
+
 public enum MyTunesRssResource {
     Login("/login.jsp"),
     Portal("/portal.jsp"),
@@ -24,5 +27,13 @@ public enum MyTunesRssResource {
 
     public String getValue() {
         return myValue;
+    }
+
+    public void beforeForward(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Boolean> states = (Map<String, Boolean>)request.getSession().getAttribute("states");
+        if (this != EditPlaylist && (states == null || !Boolean.TRUE.equals(states.get("addToPlaylistMode")))) {
+            request.getSession().removeAttribute("playlist");
+            request.getSession().removeAttribute("playlistContent");
+        }
     }
 }

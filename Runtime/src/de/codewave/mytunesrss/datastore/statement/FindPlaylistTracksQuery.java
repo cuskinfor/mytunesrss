@@ -29,10 +29,14 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Track> {
     }
 
     public Collection<Track> execute(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(
-                "SELECT ltp.index AS index, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file FROM track t, link_track_playlist ltp WHERE t.id = ltp.track_id AND ltp.playlist_id = ? ORDER BY index");
-        List<Track> tracks = (List<Track>)execute(statement, myBuilder, myId);
-        return myFirst == -1 ? tracks : tracks.subList(myFirst, myLast + 1);
+        String sql = "SELECT ltp.index AS index, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file FROM link_track_playlist ltp, track t WHERE t.id = ltp.track_id AND ltp.playlist_id = ? ORDER BY index";
+        Object[] parameters = new Object[] {myId};
+        if (myFirst != -1 && myLast >= myFirst) {
+            sql += " LIMIT ? OFFSET ?";
+            parameters = new Object[] {myId, myFirst, myLast};
+        }
+        PreparedStatement statement = connection.prepareStatement(sql);
+        return (List<Track>)execute(statement, myBuilder, parameters);
     }
 
     public static class TrackResultBuilder implements ResultBuilder<Track> {

@@ -67,6 +67,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
         prepareRequestForResource();
+        resource.beforeForward(getRequest(), getResponse());
         forward(resource.getValue());
     }
 
@@ -89,6 +90,20 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected void forward(MyTunesRssCommand command) throws IOException, ServletException {
         prepareRequestForResource();
         forward("/mytunesrss/" + command.getName());
+    }
+
+    protected Map<String, Boolean> getStates() {
+        Map<String, Boolean> states = (Map<String, Boolean>)getSession().getAttribute("states");
+        if (states == null) {
+            synchronized(getSession()) {
+                states = (Map<String, Boolean>)getSession().getAttribute("states");
+                if (states == null) {
+                    states = new HashMap<String, Boolean>();
+                    getSession().setAttribute("states", states);
+                }
+            }
+        }
+        return states;
     }
 
     public void execute() throws Exception {

@@ -183,7 +183,7 @@ public class ITunesUtils {
                     }
                 }
                 if (!tracks.isEmpty()) {
-                    InsertPlaylistStatement statement = new InsertITunesPlaylistStatement();
+                    SavePlaylistStatement statement = new SaveITunesPlaylistStatement();
                     statement.setId(id.toString());
                     statement.setName(name);
                     statement.setTrackIds(tracks);

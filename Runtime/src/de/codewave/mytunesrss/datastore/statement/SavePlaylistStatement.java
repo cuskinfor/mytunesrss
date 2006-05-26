@@ -12,28 +12,30 @@ import java.util.*;
 import org.apache.commons.logging.*;
 
 /**
- * de.codewave.mytunesrss.datastore.statement.InsertPlaylistStatement
+ * de.codewave.mytunesrss.datastore.statement.SavePlaylistStatement
  */
-public abstract class InsertPlaylistStatement implements DataStoreStatement {
-    private static final Log LOG = LogFactory.getLog(InsertPlaylistStatement.class);
+public abstract class SavePlaylistStatement implements DataStoreStatement {
+    private static final Log LOG = LogFactory.getLog(SavePlaylistStatement.class);
 
     private static final String SQL_PLAYLIST = "INSERT INTO playlist VALUES ( ?, ?, ?, ? )";
+    private static final String SQL_UPDATE_PLAYLIST = "UPDATE playlist SET name = ? WHERE id = ?";
     private static final String SQL_LINK = "INSERT INTO link_track_playlist VALUES ( ?, ?, ? )";
     private static final String SQL_UPDATE_TRACK_COUNT = "UPDATE playlist SET track_count = ? WHERE id = ?";
+    private static final String SQL_DELETE_LINKS = "DELETE FROM link_track_playlist WHERE playlist_id = ?";
 
     private PreparedStatement myInsertPlaylistStatement;
     private PreparedStatement myInsertLinkStatement;
     private PreparedStatement myUpdateTrackCountStatement;
-    private String myId;
+    protected String myId;
     private String myName;
     private PlaylistType myType;
     private List<String> myTrackIds;
 
-    protected InsertPlaylistStatement() {
+    protected SavePlaylistStatement() {
         // intentionally left blank
     }
 
-    protected InsertPlaylistStatement(DataStoreSession storeSession) throws SQLException {
+    protected SavePlaylistStatement(DataStoreSession storeSession) throws SQLException {
         myInsertPlaylistStatement = storeSession.prepare(SQL_PLAYLIST);
         myInsertLinkStatement = storeSession.prepare(SQL_LINK);
         myUpdateTrackCountStatement = storeSession.prepare(SQL_UPDATE_TRACK_COUNT);
@@ -55,7 +57,7 @@ public abstract class InsertPlaylistStatement implements DataStoreStatement {
         myTrackIds = trackIds;
     }
 
-    public void execute(Connection connection) throws SQLException {
+    protected void executeInsert(Connection connection) throws SQLException {
         PreparedStatement statement = myInsertPlaylistStatement != null ? myInsertPlaylistStatement : connection.prepareStatement(SQL_PLAYLIST);
         statement.clearParameters();
         statement.setString(1, myId);
@@ -63,6 +65,11 @@ public abstract class InsertPlaylistStatement implements DataStoreStatement {
         statement.setString(3, myType.name());
         statement.setInt(4, 0);
         statement.execute();
+        createLinksAndUpdateCount(connection);
+    }
+
+    private void createLinksAndUpdateCount(Connection connection) throws SQLException {
+        PreparedStatement statement;
         statement = myInsertLinkStatement != null ? myInsertLinkStatement : connection.prepareStatement(SQL_LINK);
         statement.setString(3, myId);
         int index = 0;
@@ -83,5 +90,16 @@ public abstract class InsertPlaylistStatement implements DataStoreStatement {
         statement.setInt(1, inserted);
         statement.setString(2, myId);
         statement.execute();
+    }
+
+    protected void executeUpdate(Connection connection) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PLAYLIST);
+        statement.setString(1, myName);
+        statement.setString(2, myId);
+        statement.execute();
+        statement = connection.prepareStatement(SQL_DELETE_LINKS);
+        statement.setString(1, myId);
+        statement.execute();
+        createLinksAndUpdateCount(connection);
     }
 }

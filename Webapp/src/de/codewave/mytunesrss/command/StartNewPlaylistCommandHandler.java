@@ -17,6 +17,7 @@ import org.apache.commons.lang.*;
 public class StartNewPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
+        getStates().put("addToPlaylistMode", Boolean.TRUE);
         getSession().setAttribute("playlist", new Playlist());
         getSession().setAttribute("playlistContent", new LinkedHashSet<Track>());
         String backUrl = getRequestParameter("backUrl", null);

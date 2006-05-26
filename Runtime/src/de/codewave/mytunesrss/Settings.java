@@ -469,6 +469,8 @@ public class Settings {
         myUpdateOnStartCheckbox.setEnabled(enabled && !myAutoStartServer.isSelected());
         myUpdateButton.setEnabled(enabled);
         myAutoStartServer.setEnabled(enabled);
+        myRefreshDatabaseButton.setEnabled(enabled);
+        myRecreateDatabaseButton.setEnabled(enabled);
     }
 
     private void enableElementAndLabel(JComponent element, boolean enabled) {

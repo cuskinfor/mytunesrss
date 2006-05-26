@@ -4,20 +4,14 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.datastore.statement.*;
-
-import java.util.*;
-
-import org.apache.commons.lang.*;
-
 /**
- * de.codewave.mytunesrss.command.StartNewPlaylistCommandHandler
+ * de.codewave.mytunesrss.command.ContinuePlaylistCommandHandler
  */
-public class LoadAndContinuePlaylistCommandHandler extends LoadPlaylistCommandHandler {
+public class ContinuePlaylistCommandHandler extends MyTunesRssCommandHandler {
+
     @Override
     public void executeAuthorized() throws Exception {
         getStates().put("addToPlaylistMode", Boolean.TRUE);
-        loadPlaylist();
         forward(MyTunesRssCommand.BrowseArtist);
     }
 }

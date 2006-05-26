@@ -35,39 +35,42 @@
 
     <jsp:include page="/incl_error.jsp" />
 
-    <ul class="links">
-        <li style="float:right;">
-            <a href="${param.backUrl}">back</a>
-        </li>
-    </ul>
+    <c:if test="${states.addToPlaylistMode}">
+        <ul class="links">
+            <li style="float:right;">
+                <a href="${param.backUrl}">back</a>
+            </li>
+        </ul>
+    </c:if>
 
     <form id="playlist" action="${servletUrl}/savePlaylist" method="post">
-		<table class="portal" cellspacing="0">
-			<tr>
-				<td class="playlistManager">
-					Name <input type="text" name="name" value="<c:out value="${playlist.name}"/>"/>
-				</td>
-				<td class="links">
-					<a class="add" href="${servletUrl}/>browseArtist" style="background-image:url('${appUrl}/images/add_more.gif');">add more songs</a>
-				</td>
-		</table>
+        <table class="portal" cellspacing="0">
+            <tr>
+                <td class="playlistManager">
+                    Name <input type="text" name="name" value="<c:out value="${playlist.name}"/>" />
+                </td>
+                <td class="links">
+                    <a class="add" href="${servletUrl}/continuePlaylist" style="background-image:url('${appUrl}/images/add_more.gif');">add more
+                                                                                                                                     songs</a>
+                </td>
+        </table>
 
         <input type="hidden" name="backUrl" value="${param.backUrl}" />
         <table cellspacing="0">
-					<tr>
-						<th class="active" colspan="4">New Playlist</th>
-					</tr>
+            <tr>
+                <th class="active" colspan="4">New Playlist</th>
+            </tr>
             <c:forEach items="${tracks}" var="track" varStatus="trackLoop">
                 <tr class="${cwfn:choose(trackLoop.index % 2 == 1, 'even', 'odd')}">
                     <td class="check">
                         <input type="checkbox" id="item${track.id}" name="track" value="${track.id}" />
                     </td>
-											<td>
+                    <td>
                         <c:out value="${cwfn:choose(mtfn:unknown(track.name), '(unknown)', track.name)}" />
                     </td>
                     <td>
                         <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
-											</td>
+                    </td>
                     <td class="icon">
                         <a href="${servletUrl}/removeFromPlaylist?track=${track.id}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}">
                             <img src="${appUrl}/images/delete${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
@@ -85,7 +88,12 @@
 
         <div class="buttons">
             <input type="submit" onClick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist'" value="remove selected" />
-            <input type="submit" onClick="document.forms['playlist'].action = '${servletUrl}/savePlaylist';document.forms['playlist'].elements['backUrl'].value = '${backUrl}'" value="save playlist" />
+            <input type="submit"
+                   onClick="document.forms['playlist'].action = '${servletUrl}/savePlaylist';document.forms['playlist'].elements['backUrl'].value = '${backUrl}'"
+                   value="save playlist" />
+            <c:if test="${!states.addToPlaylistMode}">
+                <input type="button" onClick="document.location.href = '${param.backUrl}'" value="cancel" />
+            </c:if>
         </div>
     </form>
 
