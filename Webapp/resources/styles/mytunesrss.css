@@ -70,11 +70,11 @@ th.check {
 
 td {
     padding: 5px 10px;
-    background: #edf3fe;
+    background: #fff;
 }
 
 tr.odd td {
-    background: #fff;
+    background: #edf3fe;
 }
 
 td a {
@@ -254,20 +254,30 @@ td.tracks {
 	width: 45px;
 }
 
+td.playlistTracks {
+	width: 45px;
+	padding: 0 0 0 28px;
+	background: #fff url("../images/playlist_tracks.gif") left center no-repeat;
+}
+
+tr.odd td.playlistTracks {
+	background: #edf3fe url("../images/playlist_tracks.gif") left center no-repeat;
+}
+
 td.album a {
     display: block;
     padding: 0 0 2px 20px;
-    background: url( "../images/albums.gif" ) 0 -84px no-repeat;
+    background: url( "../images/albums.gif" ) 0 0 no-repeat;
 }
 
 td.tracks a {
     display: block;
     padding: 0 0 2px 20px;
-    background: url( "../images/tracks.gif" ) 0 -84px no-repeat;
+    background: url( "../images/tracks.gif" ) 0 0 no-repeat;
 }
 
 tr.odd td.album a, tr.odd td.tracks a {
-    background-position: 0 0;
+    background-position: 0 -84px;
 }
 
 td.icon {
@@ -343,16 +353,30 @@ div.login {
 }
 
 
-td.mytunes, tr.odd td.mytunes {
+td.mytunes {
     padding-left: 32px;
     background-image: url( "../images/playlist_mt.gif" );
     background-position: 10px center;
     background-repeat: no-repeat;
 }
 
-td.itunes, tr.odd td.itunes {
+tr.odd td.mytunes {
+    padding-left: 32px;
+    background-image: url( "../images/playlist_mt_odd.gif" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+td.itunes {
     padding-left: 32px;
     background-image: url( "../images/playlist_it.gif" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+tr.odd td.itunes {
+    padding-left: 32px;
+    background-image: url( "../images/playlist_it_odd.gif" );
     background-position: 10px center;
     background-repeat: no-repeat;
 }

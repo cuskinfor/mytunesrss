@@ -67,7 +67,7 @@
                 <th colspan="3">Tracks</th>
             </tr>
             <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
-                <tr class="${cwfn:choose(loopStatus.index % 2 == 1, 'even', 'odd')}">
+                <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                     <c:if test="${!empty sessionScope.playlist}">
                         <td class="check"><input type="checkbox" name="artist" value="<c:out value="${artist.name}"/>" /></td>
                     </c:if>

@@ -170,7 +170,7 @@
         </c:choose>
     </tr>
 </c:if>
-<tr class="${cwfn:choose(count % 2 == 1, 'even', 'odd')}">
+<tr class="${cwfn:choose(count % 2 == 0, 'even', 'odd')}">
     <c:if test="${!empty sessionScope.playlist}">
         <td class="check">
             <input type="checkbox" id="item${track.id}" name="track" value="${track.id}" />

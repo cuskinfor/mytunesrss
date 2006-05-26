@@ -67,7 +67,7 @@
             <th colspan="3">Tracks</th>
         </tr>
         <c:forEach items="${albums}" var="album" varStatus="loopStatus">
-            <tr class="${cwfn:choose(loopStatus.index % 2 == 1, 'even', 'odd')}">
+            <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                 <c:if test="${!empty sessionScope.playlist}">
                     <td class="check">
                         <input type="checkbox" name="album" value="<c:out value="${album.name}"/>" />
@@ -129,7 +129,7 @@
                         <c:forEach items="${config.feedTypes}" var="feedType">
                             <td class="icon">
                                 <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>/${mtfn:cleanFileName(param.artist)}.${config.feedFileSuffix[feedType]}">
-                                    <img src="${appUrl}/images/${feedType}${cwfn:choose(fn:length(albums) % 2 == 1, '', '_odd')}.gif"
+                                    <img src="${appUrl}/images/${feedType}${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
                                          alt="${feedType}" /> </a>
                             </td>
                         </c:forEach>
@@ -137,7 +137,7 @@
                     <c:otherwise>
                         <td class="icon">
                             <a href="${servletUrl}/addToPlaylist?artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
-                                <img src="${appUrl}/images/add${cwfn:choose(fn:length(albums) % 2 == 1, '', '_odd')}.gif" alt="add" /> </a>
+                                <img src="${appUrl}/images/add${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                         </td>
                     </c:otherwise>
                 </c:choose>
