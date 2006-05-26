@@ -22,16 +22,6 @@ public class DropAllTablesStatement implements DataStoreStatement {
         executeCatchException(connection, "DROP TABLE track");
         executeCatchException(connection, "DROP TABLE pager");
         executeCatchException(connection, "DROP TABLE mytunesrss");
-
-        executeCatchException(connection, "DROP SEQUENCE mytunes_playlist_id");
-
-        executeCatchException(connection, "DROP INDEX idx_track_name IF EXISTS");
-        executeCatchException(connection, "DROP INDEX idx_track_artist IF EXISTS");
-        executeCatchException(connection, "DROP INDEX idx_track_album IF EXISTS");
-        executeCatchException(connection, "DROP INDEX idx_link_track_playlist_playlist_id IF EXISTS");
-        executeCatchException(connection, "DROP INDEX idx_album_first IF EXISTS");
-        executeCatchException(connection, "DROP INDEX idx_album_artist IF EXISTS");
-        executeCatchException(connection, "DROP INDEX idx_artist_first IF EXISTS");
     }
 
     private void executeCatchException(Connection connection, String statement) {
@@ -39,7 +29,7 @@ public class DropAllTablesStatement implements DataStoreStatement {
             connection.createStatement().execute(statement);
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
-                LOG.error("Could not drop table.", e);
+                LOG.error("Could not drop database object (statement: \"" + statement + "\").");
             }
         }
     }

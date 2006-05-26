@@ -19,7 +19,7 @@ public abstract class FindIndexesQuery extends DataStoreQuery {
 
     public Collection execute(Connection connection) throws SQLException {
         ResultSet resultSet = connection.createStatement().executeQuery(
-                "SELECT DISTINCT(SUBSTRING(UCASE(name), 1, 1)) AS index, COUNT(name) AS index_count FROM " + myTable +
+                "SELECT DISTINCT(SUBSTR(UCASE(name), 1, 1)) AS index, COUNT(name) AS index_count FROM " + myTable +
                         " GROUP BY index ORDER BY index");
         Collection<FindIndexesQuery.Index> indexes = new ArrayList<FindIndexesQuery.Index>();
         while (resultSet.next()) {

@@ -21,7 +21,6 @@ public class SaveITunesPlaylistStatement extends SavePlaylistStatement {
         setType(PlaylistType.ITunes);
     }
 
-
     public void execute(Connection connection) throws SQLException {
         executeInsert(connection);
     }

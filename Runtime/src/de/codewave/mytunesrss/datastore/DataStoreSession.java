@@ -46,11 +46,14 @@ public class DataStoreSession {
                 LOG.debug("Transaction marked for rollback only. Rolling back instead of committing.");
             }
             rollback();
+            myConnection.setAutoCommit(true);
+            myDataStore.releaseConnection(myConnection);
         } else if (myConnection == null) {
             throw new IllegalStateException("No pending transaction to commit.");
         } else {
             try {
                 myConnection.commit();
+                myConnection.setAutoCommit(true);
                 myDataStore.releaseConnection(myConnection);
             } catch (SQLException e) {
                 myDataStore.destroyConnection(myConnection);
@@ -71,6 +74,7 @@ public class DataStoreSession {
         } else {
             try {
                 myConnection.rollback();
+                myConnection.setAutoCommit(true);
                 myDataStore.releaseConnection(myConnection);
             } catch (SQLException e) {
                 myDataStore.destroyConnection(myConnection);

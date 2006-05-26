@@ -78,12 +78,14 @@ public class ITunesUtils {
         UpdateTrackStatement myUpdateStatement;
         int myUpdatedCount;
         Set<String> myExistingIds = new HashSet<String>();
+        Set<String> myDatabaseIds = new HashSet<String>();
 
-        public TrackListener(DataStoreSession dataStoreSession, long timeLastUpdate) {
+        public TrackListener(DataStoreSession dataStoreSession, long timeLastUpdate) throws SQLException {
             myDataStoreSession = dataStoreSession;
             myTimeLastUpdate = timeLastUpdate;
             myInsertStatement = new InsertTrackStatement(dataStoreSession);
             myUpdateStatement = new UpdateTrackStatement(dataStoreSession);
+            myDatabaseIds = (Set<String>)dataStoreSession.executeQuery(new FindTrackIdsQuery());
         }
 
         public Set<String> getExistingIds() {
@@ -121,9 +123,7 @@ public class ITunesUtils {
                 File file = ITunesUtils.getFileForLocation((String)track.get("Location"));
                 if (trackId != null && StringUtils.isNotEmpty(name) && file != null) {
                     try {
-                        Collection<Track> tracks = myDataStoreSession.executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
-                        boolean exists = tracks != null && !tracks.isEmpty();
-                        InsertOrUpdateTrackStatement statement = exists ? myUpdateStatement : myInsertStatement;
+                        InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(trackId) ? myUpdateStatement : myInsertStatement;
                         statement.clear();
                         statement.setId(trackId);
                         statement.setName(name.trim());

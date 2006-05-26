@@ -203,18 +203,28 @@ public class Settings {
             enableButtons(false);
             enableConfig(false);
             myRootPanel.validate();
+            final Set<Boolean> checkResult = new HashSet<Boolean>();
             try {
-                if (DatabaseBuilderTask.needsUpdate(library.toURL())) {
+                PleaseWait.start(myFrame, null, "Checking database", false, false, new PleaseWait.Task() {
+                    public void execute() {
+                        try {
+                            checkResult.add(Boolean.valueOf(DatabaseBuilderTask.needsUpdate(library.toURL())));
+                        } catch (Exception e) {
+                            checkResult.add(Boolean.FALSE);
+                        }
+                    }
+
+                    protected void cancel() {
+                        // intentionally left blank
+                    }
+                });
+                if (checkResult.iterator().next()) {
                     PleaseWait.start(myFrame,
                                      null,
                                      DatabaseBuilderTask.BuildType.Update.getVerb() + " database... please wait.",
                                      false,
                                      false,
-                                     new DatabaseBuilderTask(new File(myTunesXmlPath.getText()).toURL(), DatabaseBuilderTask.BuildType.Update));
-                }
-            } catch (SQLException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not update database.", e);
+                                     new DatabaseBuilderTask(library.toURL(), DatabaseBuilderTask.BuildType.Update));
                 }
             } catch (MalformedURLException e) {
                 if (LOG.isErrorEnabled()) {

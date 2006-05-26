@@ -28,9 +28,11 @@ public class SaveMyTunesPlaylistStatement extends SavePlaylistStatement {
 
     public void execute(Connection connection) throws SQLException {
         if (StringUtils.isEmpty(myId)) {
-            ResultSet result = connection.createStatement().executeQuery("SELECT TOP 1 NEXT VALUE FOR mytunes_playlist_id AS id FROM playlist");
+            ResultSet result = connection.createStatement().executeQuery("SELECT next_playlist_id FROM mytunesrss FOR UPDATE OF next_playlist_id");
             if (result.next()) {
-                setId("MyTunesRSS" + result.getInt("id"));
+                int id = result.getInt("NEXT_PLAYLIST_ID");
+                setId("MyTunesRSS" + id);
+                connection.createStatement().execute("UPDATE mytunesrss SET next_playlist_id = " + (id + 1) + " WHERE CURRENT OF " + result.getCursorName());
                 executeInsert(connection);
             } else {
                 if (LOG.isErrorEnabled()) {

@@ -21,7 +21,7 @@ public class FindPlaylistQuery extends DataStoreQuery<Playlist> {
 
     public FindPlaylistQuery(PlaylistType type) {
         mySql = "SELECT id AS id, name AS name, type AS type, track_count AS track_count FROM playlist WHERE type = ? ORDER BY name";
-        myParameters = new Object[]{type};
+        myParameters = new Object[]{type.name()};
     }
 
     public FindPlaylistQuery(String playlistId) {

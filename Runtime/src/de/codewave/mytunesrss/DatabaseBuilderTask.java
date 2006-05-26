@@ -37,7 +37,7 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
         try {
             List<Boolean> result = (List<Boolean>)MyTunesRss.STORE.executeQuery(new DataStoreQuery<Boolean>() {
                 public Collection<Boolean> execute(Connection connection) throws SQLException {
-                    ResultSet resultSet = connection.createStatement().executeQuery("SELECT COUNT(*) FROM information_schema.system_tables WHERE table_schem = 'PUBLIC' AND table_name = 'TRACK'");
+                    ResultSet resultSet = connection.createStatement().executeQuery("SELECT COUNT(*) FROM sys.systables WHERE LOWER(tablename) = 'track'");
                     if (resultSet.next()) {
                         return Collections.singletonList(resultSet.getInt(1) != 1);
                     }
@@ -96,7 +96,7 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
                 createAllTables();
             } else {
                 if (LOG.isInfoEnabled()) {
-                    LOG.info("Preparing database tables for full refresh.");
+                    LOG.info("Preparing database tables for refresh/update.");
                 }
                 storeSession.executeStatement(new PrepareForUpdateStatement());
             }
@@ -157,15 +157,15 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
     }
 
     private void createPagers(DataStoreSession storeSession) throws SQLException {
-        storeSession.executeStatement(new InsertPageStatement(0, "first < 'a' OR first > 'z'", "0 - 9"));
-        storeSession.executeStatement(new InsertPageStatement(1, "first >= 'a' AND first < 'd'", "A - C"));
-        storeSession.executeStatement(new InsertPageStatement(2, "first >= 'd' AND first < 'g'", "D - F"));
-        storeSession.executeStatement(new InsertPageStatement(3, "first >= 'g' AND first < 'j'", "G - I"));
-        storeSession.executeStatement(new InsertPageStatement(4, "first >= 'j' AND first < 'm'", "J - L"));
-        storeSession.executeStatement(new InsertPageStatement(5, "first >= 'm' AND first < 'p'", "M - O"));
-        storeSession.executeStatement(new InsertPageStatement(6, "first >= 'p' AND first < 't'", "P - S"));
-        storeSession.executeStatement(new InsertPageStatement(7, "first >= 't' AND first < 'w'", "T - V"));
-        storeSession.executeStatement(new InsertPageStatement(8, "first >= 'w' AND first <= 'z'", "W - Z"));
+        storeSession.executeStatement(new InsertPageStatement(0, "first_char < 'a' OR first_char > 'z'", "0 - 9"));
+        storeSession.executeStatement(new InsertPageStatement(1, "first_char >= 'a' AND first_char < 'd'", "A - C"));
+        storeSession.executeStatement(new InsertPageStatement(2, "first_char >= 'd' AND first_char < 'g'", "D - F"));
+        storeSession.executeStatement(new InsertPageStatement(3, "first_char >= 'g' AND first_char < 'j'", "G - I"));
+        storeSession.executeStatement(new InsertPageStatement(4, "first_char >= 'j' AND first_char < 'm'", "J - L"));
+        storeSession.executeStatement(new InsertPageStatement(5, "first_char >= 'm' AND first_char < 'p'", "M - O"));
+        storeSession.executeStatement(new InsertPageStatement(6, "first_char >= 'p' AND first_char < 't'", "P - S"));
+        storeSession.executeStatement(new InsertPageStatement(7, "first_char >= 't' AND first_char < 'w'", "T - V"));
+        storeSession.executeStatement(new InsertPageStatement(8, "first_char >= 'w' AND first_char <= 'z'", "W - Z"));
     }
 
     public void createAllTables() throws SQLException {

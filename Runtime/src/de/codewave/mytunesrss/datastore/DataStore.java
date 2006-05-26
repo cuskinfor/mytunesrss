@@ -21,7 +21,8 @@ public class DataStore {
 
     static {
         try {
-            Class.forName("org.hsqldb.jdbcDriver");
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+//            Class.forName("org.hsqldb.jdbcDriver");
         } catch (ClassNotFoundException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not load database driver.", e);
@@ -34,7 +35,8 @@ public class DataStore {
     public void init() {
         myConnectionPool = new GenericObjectPool(new BasePoolableObjectFactory() {
             public Object makeObject() throws Exception {
-                return DriverManager.getConnection("jdbc:hsqldb:file:hsqldb/MyTunesRSS-" + MyTunesRss.VERSION, "sa", "");
+                return DriverManager.getConnection("jdbc:derby:derby/MyTunesRSS-" + MyTunesRss.VERSION + ";create=true;territory=" + Locale.getDefault().toString(), null, null);
+//                return DriverManager.getConnection("jdbc:hsqldb:file:hsqldb/MyTunesRSS-" + MyTunesRss.VERSION, "sa", "");
             }
         }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 5, false, false, 10000, 2, 20000, false, 20000);
     }
