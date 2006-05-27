@@ -2,10 +2,11 @@
  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 
 import java.io.*;
@@ -14,9 +15,9 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * de.codewave.mytunesrss.DatabaseBuilderTask
+ *de.codewave.mytunesrss.task.DatabaseBuilderTaskk
  */
-public class DatabaseBuilderTask extends PleaseWait.Task {
+public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
 
     public static enum BuildType {
@@ -181,9 +182,4 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
         storeSession.executeStatement(new DeleteAllContentStatement());
         storeSession.commit();
     }
-
-    protected void cancel() {
-        // intentionally left blank
-    }
-
 }

@@ -57,9 +57,9 @@ public class PleaseWait {
     }
 
     public abstract static class Task {
-        JProgressBar myProgressBar;
+        private JProgressBar myProgressBar;
 
-        private void setProgressBar(JProgressBar progressBar) {
+        void setProgressBar(JProgressBar progressBar) {
             myProgressBar = progressBar;
         }
 
@@ -73,5 +73,11 @@ public class PleaseWait {
         public abstract void execute() throws Exception;
 
         protected abstract void cancel();
+    }
+
+    public abstract static class NoCancelTask extends Task {
+        protected final void cancel() {
+            // intentionally left blank
+        }
     }
 }

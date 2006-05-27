@@ -2,10 +2,10 @@
  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.server;
 
 /**
- * de.codewave.mytunesrss.CheckHealthResult
+ * de.codewave.mytunesrss.server.CheckHealthResult
  */
 public interface CheckHealthResult {
     byte OK = 0;

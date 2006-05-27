@@ -5,7 +5,9 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.datastore.*;
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.server.*;
+import de.codewave.mytunesrss.settings.*;
+import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.*;
 import de.codewave.utils.moduleinfo.*;
 import org.apache.catalina.*;
@@ -29,6 +31,9 @@ public class MyTunesRss {
     public static String VERSION;
     public static Map<OperatingSystem, URL> UPDATE_URLS;
     public static DataStore STORE = new DataStore();
+    public static MyTunesRssConfig CONFIG = new MyTunesRssConfig();
+    public static ResourceBundle BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
+    public static WebServer WEBSERVER = new WebServer();
 
     static {
         UPDATE_URLS = new HashMap<OperatingSystem, URL>();
@@ -46,22 +51,24 @@ public class MyTunesRss {
 
     public static void main(String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
             ClassNotFoundException, IOException, SQLException {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Operating system: " + ProgramUtils.guessOperatingSystem().name());
-        }
-        STORE.init();
         if (ProgramUtils.getCommandLineArguments(args).containsKey("debug")) {
             Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
         }
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Operating system: " + ProgramUtils.guessOperatingSystem().name());
+        }
+        CONFIG.load();
+        STORE.init();
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        ResourceBundle mainBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
         VERSION = modulesInfo != null ? modulesInfo.getVersion() : "0.0.0";
         System.setProperty("mytunesrss.version", VERSION);
-        final JFrame frame = new JFrame(mainBundle.getString("gui.title") + " v" + VERSION);
+        final JFrame frame = new JFrame(BUNDLE.getString("gui.title") + " v" + VERSION);
         frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        final Settings settings = new Settings(frame);
+        final Settings settings = new Settings();
+        settings.init(frame);
+        settings.setGuiMode(GuiMode.ServerIdle);
         frame.addWindowListener(new MyTunesRssMainWindowListener(settings));
         frame.getContentPane().add(settings.getRootPanel());
         frame.setResizable(false);
@@ -73,23 +80,12 @@ public class MyTunesRss {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 frame.pack();
-                if (settings.isUpdateCheckOnStartup()) {
-                    settings.checkForUpdate(true);
+                if (CONFIG.isCheckUpdateOnStart()) {
+                    new Updater(frame).checkForUpdate(true);
                 }
-                CheckNeedsCreationTask checkNeedsCreationTask = new CheckNeedsCreationTask();
-                PleaseWait.start(frame, null, "Checking database... please wait.", false, false, checkNeedsCreationTask);
-                if (!checkNeedsCreationTask.isExistent()) {
-                    PleaseWait.start(frame,
-                                     null,
-                                     DatabaseBuilderTask.BuildType.Update.getVerb() + " database... please wait.",
-                                     false,
-                                     false,
-                                     new CreateAllTablesTask());
-                }
-                MyTunesRssConfig data = new MyTunesRssConfig();
-                data.load();
-                if (data.isAutoStartServer()) {
-                    settings.doStartServer();
+                PleaseWait.start(frame, null, "Checking database... please wait.", false, false, new InitializeDatabaseTask());
+                if (CONFIG.isAutoStartServer()) {
+                    settings.getGeneralForm().doStartServer();
                 }
             }
         });
@@ -105,63 +101,6 @@ public class MyTunesRss {
         @Override
         public void windowClosing(WindowEvent e) {
             mySettingsForm.doQuitApplication();
-        }
-    }
-
-    public static class CheckNeedsCreationTask extends PleaseWait.Task {
-        private boolean myExistent;
-
-        public void execute() {
-            try {
-                MyTunesRss.STORE.executeQuery(new DataStoreQuery<Boolean>() {
-                    public Collection<Boolean> execute(Connection connection) throws SQLException {
-                        ResultSet resultSet = connection.createStatement().executeQuery(
-                                "SELECT COUNT(*) FROM information_schema.system_tables WHERE table_schem = 'PUBLIC' AND table_name = 'TRACK'");
-                        if (resultSet.next() && resultSet.getInt(1) == 1) {
-                            myExistent = true;
-                            return null;
-                        }
-                        myExistent = false;
-                        return null;
-                    }
-                });
-            } catch (SQLException e) {
-                myExistent = false;
-            }
-        }
-
-        protected void cancel() {
-            // intentionally left blank
-        }
-
-        public boolean isExistent() {
-            return myExistent;
-        }
-    }
-
-    public static class CreateAllTablesTask extends PleaseWait.Task {
-        public void execute() {
-            DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
-            storeSession.begin();
-            try {
-                storeSession.executeStatement(new CreateAllTablesStatement());
-                storeSession.commit();
-            } catch (SQLException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not create tables.", e);
-                }
-                try {
-                    storeSession.rollback();
-                } catch (SQLException e1) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not rollback transaction.", e1);
-                    }
-                }
-            }
-        }
-
-        protected void cancel() {
-            // intentionally left blank
         }
     }
 

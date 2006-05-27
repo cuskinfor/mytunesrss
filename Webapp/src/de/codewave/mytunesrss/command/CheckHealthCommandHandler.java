@@ -4,11 +4,10 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 
-import javax.servlet.*;
 import java.io.*;
 import java.sql.*;
 
