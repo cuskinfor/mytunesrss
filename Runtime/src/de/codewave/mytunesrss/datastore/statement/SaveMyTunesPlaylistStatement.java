@@ -4,12 +4,11 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.datastore.*;
 import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 
 import java.sql.*;
-
-import de.codewave.mytunesrss.datastore.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.SaveITunesPlaylistStatement
@@ -28,17 +27,11 @@ public class SaveMyTunesPlaylistStatement extends SavePlaylistStatement {
 
     public void execute(Connection connection) throws SQLException {
         if (StringUtils.isEmpty(myId)) {
-            ResultSet result = connection.createStatement().executeQuery("SELECT next_playlist_id FROM mytunesrss FOR UPDATE OF next_playlist_id");
-            if (result.next()) {
-                int id = result.getInt("NEXT_PLAYLIST_ID");
-                setId("MyTunesRSS" + id);
-                connection.createStatement().execute("UPDATE mytunesrss SET next_playlist_id = " + (id + 1) + " WHERE CURRENT OF " + result.getCursorName());
-                executeInsert(connection);
-            } else {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not create next sequence value for mytunesrss playlist.");
-                }
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT TOP 1 NEXT VALUE FOR playlist_id_sequence AS id FROM mytunesrss");
+            if (resultSet.next()) {
+                setId("MyTunesRSS" + resultSet.getInt("ID"));
             }
+            executeInsert(connection);
         } else {
             executeUpdate(connection);
         }

@@ -24,7 +24,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
             playlists.addAll(createSplittedPlaylists(playlist));
         }
         int pageSize = getWebConfig().getPageSize();
-        if (playlists.size() > pageSize) {
+        if (pageSize > 0 && playlists.size() > pageSize) {
             int current = Integer.parseInt(getRequestParameter("index", "0"));
             Pager pager = createPager(playlists.size(), current);
             getRequest().setAttribute("pager", pager);
