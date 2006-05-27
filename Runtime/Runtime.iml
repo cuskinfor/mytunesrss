@@ -124,7 +124,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/derby.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/hsqldb.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

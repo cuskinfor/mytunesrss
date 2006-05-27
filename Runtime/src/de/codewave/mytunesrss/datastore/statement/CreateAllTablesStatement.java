@@ -14,17 +14,17 @@ import java.sql.*;
 public class CreateAllTablesStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
         connection.createStatement().execute(
-                "CREATE TABLE track ( id VARCHAR(20) NOT NULL, name VARCHAR(255) NOT NULL, artist VARCHAR(255) NOT NULL, album VARCHAR(255) NOT NULL, time INTEGER, track_number INTEGER, file VARCHAR(1024) NOT NULL, UNIQUE ( id ) )");
-        connection.createStatement().execute("CREATE TABLE playlist ( id VARCHAR(20) NOT NULL, name VARCHAR(255) NOT NULL, type VARCHAR(20) NOT NULL, track_count INTEGER, UNIQUE ( id ) )");
+                "CREATE CACHED TABLE track ( id VARCHAR(20) NOT NULL, name VARCHAR(255) NOT NULL, artist VARCHAR(255) NOT NULL, album VARCHAR(255) NOT NULL, time INTEGER, track_number INTEGER, file VARCHAR(1024) NOT NULL, UNIQUE ( id ) )");
+        connection.createStatement().execute("CREATE CACHED TABLE playlist ( id VARCHAR(20) NOT NULL, name VARCHAR(255) NOT NULL, type VARCHAR(20) NOT NULL, track_count INTEGER, UNIQUE ( id ) )");
         connection.createStatement().execute(
-                "CREATE TABLE link_track_playlist ( index INTEGER, track_id VARCHAR(20) NOT NULL, playlist_id VARCHAR(20) NOT NULL, FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE, FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE )");
+                "CREATE CACHED TABLE link_track_playlist ( index INTEGER, track_id VARCHAR(20) NOT NULL, playlist_id VARCHAR(20) NOT NULL, FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE, FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE )");
         connection.createStatement().execute("CREATE TABLE mytunesrss ( lastupdate BIGINT, version VARCHAR(20) NOT NULL, next_playlist_id INTEGER NOT NULL )");
         connection.createStatement().execute("INSERT INTO mytunesrss VALUES ( 0, '" + MyTunesRss.VERSION + "', 0 )");
         connection.createStatement().execute(
-                "CREATE TABLE album ( name VARCHAR(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, artist_count INTEGER, artist VARCHAR(255), UNIQUE ( name ) )");
+                "CREATE CACHED TABLE album ( name VARCHAR(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, artist_count INTEGER, artist VARCHAR(255), UNIQUE ( name ) )");
         connection.createStatement().execute(
-                "CREATE TABLE artist ( name VARCHAR(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, album_count INTEGER, UNIQUE ( name ) )");
-        connection.createStatement().execute("CREATE TABLE pager ( index INTEGER, condition VARCHAR(255) NOT NULL, value VARCHAR(255) NOT NULL )");
+                "CREATE CACHED TABLE artist ( name VARCHAR(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, album_count INTEGER, UNIQUE ( name ) )");
+        connection.createStatement().execute("CREATE CACHED TABLE pager ( index INTEGER, condition VARCHAR(255) NOT NULL, value VARCHAR(255) NOT NULL )");
 
         connection.createStatement().execute("CREATE INDEX idx_track_name ON track ( name )");
         connection.createStatement().execute("CREATE INDEX idx_track_artist ON track ( artist )");

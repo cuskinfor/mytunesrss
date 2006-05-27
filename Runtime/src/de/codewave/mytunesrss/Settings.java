@@ -205,7 +205,7 @@ public class Settings {
             myRootPanel.validate();
             final Set<Boolean> checkResult = new HashSet<Boolean>();
             try {
-                PleaseWait.start(myFrame, null, "Checking database", false, false, new PleaseWait.Task() {
+                PleaseWait.start(myFrame, null, "Checking database... please wait.", false, false, new PleaseWait.Task() {
                     public void execute() {
                         try {
                             checkResult.add(Boolean.valueOf(DatabaseBuilderTask.needsUpdate(library.toURL())));

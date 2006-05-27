@@ -20,7 +20,7 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
 
     public static enum BuildType {
-        Recreate("Recreating"), Refresh("Refreshing"), Update("Updating");
+        Recreate("Recreating"),Refresh("Refreshing"),Update("Updating");
 
         private String myVerb;
 
@@ -33,28 +33,8 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
         }
     }
 
-    public static boolean needsCreation() {
-        try {
-            List<Boolean> result = (List<Boolean>)MyTunesRss.STORE.executeQuery(new DataStoreQuery<Boolean>() {
-                public Collection<Boolean> execute(Connection connection) throws SQLException {
-                    ResultSet resultSet = connection.createStatement().executeQuery("SELECT COUNT(*) FROM sys.systables WHERE LOWER(tablename) = 'track'");
-                    if (resultSet.next()) {
-                        return Collections.singletonList(resultSet.getInt(1) != 1);
-                    }
-                    return Collections.singletonList(true);
-                }
-            });
-            return result.get(0);
-        } catch (SQLException e) {
-            return true;
-        }
-    }
-
     public static boolean needsUpdate(URL libraryXmlUrl) throws SQLException {
         if (libraryXmlUrl != null) {
-            if (needsCreation()) {
-                return true;
-            }
             Collection<Long> lastUpdate = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Long>() {
                 public Collection<Long> execute(Connection connection) throws SQLException {
                     ResultSet resultSet = connection.createStatement().executeQuery("SELECT lastupdate FROM mytunesrss");
@@ -87,19 +67,12 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
         storeSession.begin();
         try {
             if (myBuildType == BuildType.Recreate) {
-                dropAllTables();
+                deleteAllContent();
             }
-            if (needsCreation()) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Creating database tables.");
-                }
-                createAllTables();
-            } else {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Preparing database tables for refresh/update.");
-                }
-                storeSession.executeStatement(new PrepareForUpdateStatement());
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Preparing database tables for refresh/update.");
             }
+            storeSession.executeStatement(new PrepareForUpdateStatement());
             final long timeUpdateStart = System.currentTimeMillis();
             Long timeLastUpdate = Long.MIN_VALUE;
             if (myBuildType == BuildType.Update) {
@@ -168,25 +141,10 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
         storeSession.executeStatement(new InsertPageStatement(8, "first_char >= 'w' AND first_char <= 'z'", "W - Z"));
     }
 
-    public void createAllTables() throws SQLException {
+    public void deleteAllContent() throws SQLException {
         DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
         storeSession.begin();
-        try {
-            storeSession.executeStatement(new CreateAllTablesStatement());
-            storeSession.commit();
-        } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create tables.", e);
-            }
-            storeSession.rollback();
-            throw e;
-        }
-    }
-
-    public void dropAllTables() throws SQLException {
-        DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
-        storeSession.begin();
-        storeSession.executeStatement(new DropAllTablesStatement());
+        storeSession.executeStatement(new DeleteAllContentStatement());
         storeSession.commit();
     }
 

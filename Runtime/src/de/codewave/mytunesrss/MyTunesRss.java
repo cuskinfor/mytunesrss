@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.datastore.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.*;
 import de.codewave.utils.moduleinfo.*;
 import org.apache.catalina.*;
@@ -74,6 +75,16 @@ public class MyTunesRss {
                 if (settings.isUpdateCheckOnStartup()) {
                     settings.checkForUpdate(true);
                 }
+                CheckNeedsCreationTask checkNeedsCreationTask = new CheckNeedsCreationTask();
+                PleaseWait.start(frame, null, "Checking database... please wait.", false, false, checkNeedsCreationTask);
+                if (!checkNeedsCreationTask.isExistent()) {
+                    PleaseWait.start(frame,
+                                     null,
+                                     DatabaseBuilderTask.BuildType.Update.getVerb() + " database... please wait.",
+                                     false,
+                                     false,
+                                     new CreateAllTablesTask());
+                }
                 MyTunesRssConfig data = new MyTunesRssConfig();
                 data.load();
                 if (data.isAutoStartServer()) {
@@ -93,6 +104,63 @@ public class MyTunesRss {
         @Override
         public void windowClosing(WindowEvent e) {
             mySettingsForm.doQuitApplication();
+        }
+    }
+
+    public static class CheckNeedsCreationTask extends PleaseWait.Task {
+        private boolean myExistent;
+
+        public void execute() {
+            try {
+                MyTunesRss.STORE.executeQuery(new DataStoreQuery<Boolean>() {
+                    public Collection<Boolean> execute(Connection connection) throws SQLException {
+                        ResultSet resultSet = connection.createStatement().executeQuery(
+                                "SELECT COUNT(*) FROM information_schema.system_tables WHERE table_schem = 'PUBLIC' AND table_name = 'TRACK'");
+                        if (resultSet.next() && resultSet.getInt(1) == 1) {
+                            myExistent = true;
+                            return null;
+                        }
+                        myExistent = false;
+                        return null;
+                    }
+                });
+            } catch (SQLException e) {
+                myExistent = false;
+            }
+        }
+
+        protected void cancel() {
+            // intentionally left blank
+        }
+
+        public boolean isExistent() {
+            return myExistent;
+        }
+    }
+
+    public static class CreateAllTablesTask extends PleaseWait.Task {
+        public void execute() {
+            DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
+            storeSession.begin();
+            try {
+                storeSession.executeStatement(new CreateAllTablesStatement());
+                storeSession.commit();
+            } catch (SQLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not create tables.", e);
+                }
+                try {
+                    storeSession.rollback();
+                } catch (SQLException e1) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not rollback transaction.", e1);
+                    }
+                }
+            }
+        }
+
+        protected void cancel() {
+            // intentionally left blank
         }
     }
 }
