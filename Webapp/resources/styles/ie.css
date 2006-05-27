@@ -9,5 +9,6 @@ body div.input input {
 }
 
 ul.links li a {
-		float: left;
+		height: auto;
+		padding: 3px 0 3px 15px;
 }
