@@ -8,7 +8,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseArtist?album=${param.album}&amp;page=${param.page}&amp;index=${param.index}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseArtist?album=${param.album}&page=${param.page}&index=${param.index}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 

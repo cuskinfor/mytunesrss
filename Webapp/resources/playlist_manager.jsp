@@ -7,6 +7,7 @@
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
 <c:set var="backUrl" scope="request">${servletUrl}/showPlaylistManager?index=${param.index}</c:set>
+<c:set var="browseArtistUrl" scope="request">${servletUrl}/browseArtist?page=1</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -32,7 +33,7 @@
     </h1>
 
     <ul class="links">
-        <li><a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">new playlist</a></li>
+        <li><a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(browseArtistUrl, 'UTF-8')}">new playlist</a></li>
     </ul>
 
     <jsp:include page="/incl_error.jsp" />
@@ -45,9 +46,9 @@
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                 <td class="mytunes"><c:out value="${playlist.name}" /></td>
-                <td class="tracks"><a href="${servletUrl}/browseTrack?playlist=${playlist.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${playlist.trackCount}</a></td>
+                <td class="tracks"><a href="${servletUrl}/browseTrack?playlist=${playlist.id}&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${playlist.trackCount}</a></td>
                 <td class="icon">
-                    <a href="${servletUrl}/loadAndEditPlaylist?playlist=${playlist.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                    <a href="${servletUrl}/loadAndEditPlaylist?playlist=${playlist.id}&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
                         <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                 </td>
                 <td class="icon">

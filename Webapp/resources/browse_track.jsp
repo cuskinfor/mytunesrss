@@ -221,7 +221,7 @@
 <c:if test="${!empty pager}">
     <c:set var="pagerCommand"
            scope="request"
-           value="${servletUrl}/browseTrack?fullAlbums=${param.fullAlbums}&amp;album=${param.album}&amp;artist=${param.artist}&amp;searchTerm=${param.searchTerm}&amp;index={index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}" />
+           value="${servletUrl}/browseTrack?fullAlbums=${param.fullAlbums}&album=${param.album}&amp;artist=${param.artist}&amp;searchTerm=${param.searchTerm}&amp;index={index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}" />
     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
     <jsp:include page="incl_bottomPager.jsp" />
 </c:if>

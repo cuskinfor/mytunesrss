@@ -8,7 +8,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
-<c:set var="backUrl">${servletUrl}/editPlaylist?index=${param.index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}</c:set>
+<c:set var="backUrl">${servletUrl}/editPlaylist?index=${param.index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -72,7 +72,7 @@
                         <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                     </td>
                     <td class="icon">
-                        <a href="${servletUrl}/removeFromPlaylist?track=${track.id}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}">
+                        <a href="${servletUrl}/removeFromPlaylist?track=${track.id}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}">
                             <img src="${appUrl}/images/delete${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                     </td>
                 </tr>
@@ -81,7 +81,7 @@
         <c:if test="${!empty pager}">
             <c:set var="pagerCommand"
                    scope="request"
-                   value="${servletUrl}/editPlaylist?index={index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}" />
+                   value="${servletUrl}/editPlaylist?index={index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}" />
             <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
             <jsp:include page="incl_bottomPager.jsp" />
         </c:if>

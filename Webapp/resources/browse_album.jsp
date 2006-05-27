@@ -122,7 +122,7 @@
                 </c:if>
                 <td colspan="2"><em>All tracks of the above albums</em></td>
                 <td class="tracks">
-                    <a href="${servletUrl}/browseTrack?fullAlbums=true&amp;artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${singleArtistTrackCount}</a>
+                    <a href="${servletUrl}/browseTrack?fullAlbums=true&amp;artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${singleArtistTrackCount}</a>
                 </td>
                 <c:choose>
                     <c:when test="${empty sessionScope.playlist}">
@@ -136,7 +136,7 @@
                     </c:when>
                     <c:otherwise>
                         <td class="icon">
-                            <a href="${servletUrl}/addToPlaylist?fullAlbums=true&amp;artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                            <a href="${servletUrl}/addToPlaylist?fullAlbums=true&amp;artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
                                 <img src="${appUrl}/images/add${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                         </td>
                     </c:otherwise>
