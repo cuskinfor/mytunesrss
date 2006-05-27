@@ -50,10 +50,10 @@ public class FindTrackQuery extends DataStoreQuery<Track> {
         String artistSort = sortByArtistFirst ? "artist, " : "";
         if (albums.length > 1) {
             query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album IN (" +
-                    SQLUtils.createParameters(albums.length) + ") ORDER BY " + artistSort + "track_number, name";
+                    SQLUtils.createParameters(albums.length) + ") ORDER BY " + artistSort + "album, track_number, name";
         } else {
             query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album = ? ORDER BY " + artistSort +
-                    "track_number, name";
+                    "album, track_number, name";
         }
         query.myParameters = albums;
         return query;

@@ -22,8 +22,8 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         String searchTerm = getRequestParameter("searchTerm", null);
-        String[] albums = getNonEmptyParameterValues("album");
-        String[] artists = getNonEmptyParameterValues("artist");
+        String album = getRequestParameter("album", null);
+        String artist = getRequestParameter("artist", null);
         String playlistId = getRequestParameter("playlist", null);
         String sortOrderName = getRequestParameter("sortOrder", SortOrder.Album.name());
         SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);
@@ -31,10 +31,19 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         DataStoreQuery<Track> query = null;
         if (StringUtils.isNotEmpty(searchTerm)) {
             query = FindTrackQuery.getForSearchTerm(searchTerm, sortOrderValue == SortOrder.Artist);
-        } else if (albums != null && albums.length > 0) {
-            query = FindTrackQuery.getForAlbum(albums, sortOrderValue == SortOrder.Artist);
-        } else if (artists != null && artists.length > 0) {
-            query = FindTrackQuery.getForArtist(artists, sortOrderValue == SortOrder.Artist);
+        } else if (StringUtils.isNotEmpty(album)) {
+            query = FindTrackQuery.getForAlbum(new String[] {album}, sortOrderValue == SortOrder.Artist);
+        } else if (StringUtils.isNotEmpty(artist)) {
+            if (Boolean.valueOf(getRequestParameter("fullAlbums", "false"))) {
+                Collection<Album> albumsWithArtist = getDataStore().executeQuery(new FindAlbumQuery(artist));
+                List<String> albumNames = new ArrayList<String>();
+                for (Album albumWithArtist : albumsWithArtist) {
+                    albumNames.add(albumWithArtist.getName());
+                }
+                query = FindTrackQuery.getForAlbum(albumNames.toArray(new String[albumsWithArtist.size()]), sortOrderValue == SortOrder.Artist);
+            } else {
+                query = FindTrackQuery.getForArtist(new String[] {artist}, sortOrderValue == SortOrder.Artist);
+            }
         } else if (StringUtils.isNotEmpty(playlistId)) {
             query = new FindPlaylistTracksQuery(playlistId);
         }

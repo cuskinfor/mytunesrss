@@ -35,7 +35,7 @@ public class InsertPageStatement implements DataStoreStatement {
         statement.setInt(2, myIndex);
         statement.setString(3, myCondition);
         statement.setString(4, myValue);
-        statement.setInt(4, myContentCount);
+        statement.setInt(5, myContentCount);
         statement.execute();
     }
 }

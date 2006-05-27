@@ -122,13 +122,13 @@
                 </c:if>
                 <td colspan="2"><em>All tracks of the above albums</em></td>
                 <td class="tracks">
-                    <a href="${servletUrl}/browseTrack?artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${singleArtistTrackCount}</a>
+                    <a href="${servletUrl}/browseTrack?fullAlbums=true&amp;artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${singleArtistTrackCount}</a>
                 </td>
                 <c:choose>
                     <c:when test="${empty sessionScope.playlist}">
                         <c:forEach items="${config.feedTypes}" var="feedType">
                             <td class="icon">
-                                <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>/${mtfn:cleanFileName(param.artist)}.${config.feedFileSuffix[feedType]}">
+                                <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/fullAlbums=true/artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>/${mtfn:cleanFileName(param.artist)}.${config.feedFileSuffix[feedType]}">
                                     <img src="${appUrl}/images/${feedType}${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
                                          alt="${feedType}" /> </a>
                             </td>
@@ -136,7 +136,7 @@
                     </c:when>
                     <c:otherwise>
                         <td class="icon">
-                            <a href="${servletUrl}/addToPlaylist?artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                            <a href="${servletUrl}/addToPlaylist?fullAlbums=true&amp;artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
                                 <img src="${appUrl}/images/add${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                         </td>
                     </c:otherwise>
