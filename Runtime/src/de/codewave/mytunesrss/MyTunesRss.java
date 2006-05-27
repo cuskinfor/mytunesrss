@@ -167,27 +167,42 @@ public class MyTunesRss {
 
     public static class UncaughtHandler implements Thread.UncaughtExceptionHandler {
         private JDialog myDialog;
+        private JOptionPane myPane;
 
         public UncaughtHandler(JFrame parent) {
-            JOptionPane pane = new JOptionPane() {
+            myPane = new JOptionPane() {
                 @Override
                 public int getMaxCharactersPerLineCount() {
                     return 100;
                 }
             };
-            pane.setMessageType(JOptionPane.ERROR_MESSAGE);
-            pane.setMessage(
-                    "The application has failed because it has run out of memory. Please raise the available memory on the first settings tab and restart MyTunesRSS to activate the changes.");
+            myPane.setMessageType(JOptionPane.ERROR_MESSAGE);
             String okButton = "Ok";
-            pane.setInitialValue(okButton);
-            myDialog = pane.createDialog(parent, "Fatal error");
+            myPane.setInitialValue(okButton);
+            myDialog = myPane.createDialog(parent, "Fatal error");
             myDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         }
 
-        public void uncaughtException(Thread t, Throwable e) {
+        public void uncaughtException(Thread t, final Throwable e) {
             if (e instanceof OutOfMemoryError) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
+                        myPane.setMessage(
+                                "The application has failed because it has run out of memory. Please raise the available memory on the first settings tab and restart MyTunesRSS to activate the changes.");
+                        myDialog.pack();
+                        myDialog.setLocationRelativeTo(myDialog.getParent());
+                        myDialog.setVisible(true);
+                    }
+                });
+            } else {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error(null, e);
+                        }
+                        myPane.setMessage(
+                                "An error occured. You may be able to continue working but you should check your log file and contact the Codewave support.");
+                        myDialog.pack();
                         myDialog.setLocationRelativeTo(myDialog.getParent());
                         myDialog.setVisible(true);
                     }

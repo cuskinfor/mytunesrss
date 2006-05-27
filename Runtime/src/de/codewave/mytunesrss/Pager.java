@@ -70,13 +70,20 @@ public class Pager {
         updateCurrentPages();
     }
 
-    public static class Page {
+    public static class Page<T> {
         private String myKey;
         private String myValue;
+        private T myUserData;
 
         public Page(String key, String value) {
             myKey = key;
             myValue = value;
+        }
+
+        public Page(String key, String value, T userData) {
+            myKey = key;
+            myValue = value;
+            myUserData = userData;
         }
 
         public String getKey() {
@@ -85,6 +92,10 @@ public class Pager {
 
         public String getValue() {
             return myValue;
+        }
+
+        public T getUserData() {
+            return myUserData;
         }
     }
 }

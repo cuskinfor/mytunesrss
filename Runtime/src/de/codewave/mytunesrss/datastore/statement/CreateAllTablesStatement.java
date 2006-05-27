@@ -24,7 +24,7 @@ public class CreateAllTablesStatement implements DataStoreStatement {
                 "CREATE CACHED TABLE album ( name VARCHAR(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, artist_count INTEGER, artist VARCHAR(255), UNIQUE ( name ) )");
         connection.createStatement().execute(
                 "CREATE CACHED TABLE artist ( name VARCHAR(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, album_count INTEGER, UNIQUE ( name ) )");
-        connection.createStatement().execute("CREATE CACHED TABLE pager ( index INTEGER, condition VARCHAR(255) NOT NULL, value VARCHAR(255) NOT NULL )");
+        connection.createStatement().execute("CREATE CACHED TABLE pager ( type VARCHAR(20) NOT NULL, index INTEGER NOT NULL, condition VARCHAR(255) NOT NULL, value VARCHAR(255) NOT NULL, content_count INTEGER, UNIQUE ( type, index ) )");
 
         connection.createStatement().execute("CREATE INDEX idx_track_name ON track ( name )");
         connection.createStatement().execute("CREATE INDEX idx_track_artist ON track ( artist )");

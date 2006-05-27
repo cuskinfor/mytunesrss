@@ -53,13 +53,14 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
 
     private URL myLibraryXmlUrl;
     private BuildType myBuildType;
+    private boolean myCancellationRequested;
 
     public DatabaseBuilderTask(URL libraryXmlUrl, BuildType buildType) {
         myLibraryXmlUrl = libraryXmlUrl;
         myBuildType = buildType;
     }
 
-    public void execute() {
+    public void execute() throws SQLException {
         if (LOG.isInfoEnabled()) {
             LOG.info("Building database.");
         }
@@ -101,7 +102,8 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
                 LOG.info("Time for building help tables: " + (timeAfterHelpTables - timeAfterTracks));
                 LOG.info("Building pager and updating system information.");
             }
-            createPagers(storeSession);
+            createAlbumPager(storeSession);
+            createArtistPager(storeSession);
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     connection.createStatement().execute("UPDATE mytunesrss SET lastupdate = " + timeUpdateStart);
@@ -116,29 +118,61 @@ public class DatabaseBuilderTask extends PleaseWait.Task {
                 LOG.info("time for commit: " + (timeAfterCommit - timeAfterHelpTables));
             }
         } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not load iTunes library.", e);
-            }
-            try {
-                storeSession.rollback();
-            } catch (SQLException e1) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not rollback transaction.", e1);
-                }
-            }
+            storeSession.rollback();
+            throw e;
         }
     }
 
-    private void createPagers(DataStoreSession storeSession) throws SQLException {
-        storeSession.executeStatement(new InsertPageStatement(0, "first_char < 'a' OR first_char > 'z'", "0 - 9"));
-        storeSession.executeStatement(new InsertPageStatement(1, "first_char >= 'a' AND first_char < 'd'", "A - C"));
-        storeSession.executeStatement(new InsertPageStatement(2, "first_char >= 'd' AND first_char < 'g'", "D - F"));
-        storeSession.executeStatement(new InsertPageStatement(3, "first_char >= 'g' AND first_char < 'j'", "G - I"));
-        storeSession.executeStatement(new InsertPageStatement(4, "first_char >= 'j' AND first_char < 'm'", "J - L"));
-        storeSession.executeStatement(new InsertPageStatement(5, "first_char >= 'm' AND first_char < 'p'", "M - O"));
-        storeSession.executeStatement(new InsertPageStatement(6, "first_char >= 'p' AND first_char < 't'", "P - S"));
-        storeSession.executeStatement(new InsertPageStatement(7, "first_char >= 't' AND first_char < 'w'", "T - V"));
-        storeSession.executeStatement(new InsertPageStatement(8, "first_char >= 'w' AND first_char <= 'z'", "W - Z"));
+    private void createAlbumPager(DataStoreSession storeSession) throws SQLException {
+        insertAlbumPage(storeSession, 0, "first_char < 'a' OR first_char > 'z'", "0 - 9");
+        insertAlbumPage(storeSession, 1, "first_char >= 'a' AND first_char < 'd'", "A - C");
+        insertAlbumPage(storeSession, 2, "first_char >= 'd' AND first_char < 'g'", "D - F");
+        insertAlbumPage(storeSession, 3, "first_char >= 'g' AND first_char < 'j'", "G - I");
+        insertAlbumPage(storeSession, 4, "first_char >= 'j' AND first_char < 'm'", "J - L");
+        insertAlbumPage(storeSession, 5, "first_char >= 'm' AND first_char < 'p'", "M - O");
+        insertAlbumPage(storeSession, 6, "first_char >= 'p' AND first_char < 't'", "P - S");
+        insertAlbumPage(storeSession, 7, "first_char >= 't' AND first_char < 'w'", "T - V");
+        insertAlbumPage(storeSession, 8, "first_char >= 'w' AND first_char <= 'z'", "W - Z");
+    }
+
+    private void insertAlbumPage(DataStoreSession storeSession, final int index, String condition, String value) throws SQLException {
+        storeSession.executeStatement(new InsertPageStatement(InsertPageStatement.PagerType.Album, index, condition, value, 0));
+        final int count = storeSession.executeQuery(new FindAlbumQuery(index)).size();
+        storeSession.executeStatement(new DataStoreStatement() {
+            public void execute(Connection connection) throws SQLException {
+                PreparedStatement update = connection.prepareStatement("UPDATE pager SET content_count = ? WHERE index = ? AND type = ?");
+                update.setInt(1, count);
+                update.setInt(2, index);
+                update.setString(3, InsertPageStatement.PagerType.Album.name());
+                update.execute();
+            }
+        });
+    }
+
+    private void createArtistPager(DataStoreSession storeSession) throws SQLException {
+        insertArtistPage(storeSession, 0, "first_char < 'a' OR first_char > 'z'", "0 - 9");
+        insertArtistPage(storeSession, 1, "first_char >= 'a' AND first_char < 'd'", "A - C");
+        insertArtistPage(storeSession, 2, "first_char >= 'd' AND first_char < 'g'", "D - F");
+        insertArtistPage(storeSession, 3, "first_char >= 'g' AND first_char < 'j'", "G - I");
+        insertArtistPage(storeSession, 4, "first_char >= 'j' AND first_char < 'm'", "J - L");
+        insertArtistPage(storeSession, 5, "first_char >= 'm' AND first_char < 'p'", "M - O");
+        insertArtistPage(storeSession, 6, "first_char >= 'p' AND first_char < 't'", "P - S");
+        insertArtistPage(storeSession, 7, "first_char >= 't' AND first_char < 'w'", "T - V");
+        insertArtistPage(storeSession, 8, "first_char >= 'w' AND first_char <= 'z'", "W - Z");
+    }
+
+    private void insertArtistPage(DataStoreSession storeSession, final int index, String condition, String value) throws SQLException {
+        storeSession.executeStatement(new InsertPageStatement(InsertPageStatement.PagerType.Artist, index, condition, value, 0));
+        final int count = storeSession.executeQuery(new FindArtistQuery(index)).size();
+        storeSession.executeStatement(new DataStoreStatement() {
+            public void execute(Connection connection) throws SQLException {
+                PreparedStatement update = connection.prepareStatement("UPDATE pager SET content_count = ? WHERE index = ? AND type = ?");
+                update.setInt(1, count);
+                update.setInt(2, index);
+                update.setString(3, InsertPageStatement.PagerType.Artist.name());
+                update.execute();
+            }
+        });
     }
 
     public void deleteAllContent() throws SQLException {

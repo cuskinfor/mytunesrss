@@ -49,7 +49,7 @@
                     <input class="button" type="submit" value="search" />
                 </td>
                 <td class="links">
-                    <a href="${servletUrl}/browseArtist?page=${artistInitialPager}"
+                    <a href="${servletUrl}/browseArtist?page=1"
                        style="background-image:url('${appUrl}/images/library_small.gif');"> browse library </a>
                     <c:choose>
                         <c:when test="${empty sessionScope.playlist}">

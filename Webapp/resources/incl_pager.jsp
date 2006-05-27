@@ -8,10 +8,17 @@
     <tr>
         <c:forEach items="${pager.currentPages}" var="page">
             <td>
-                <a href="${cwfn:choose(pagerCurrent == page.key, '#', mtfn:replace(pagerCommand, '{index}', page.key))}"
-                        <c:if test="${pagerCurrent == page.key}">class="active"</c:if>>
-                    <c:out value="${page.value}" />
-                </a>
+                <c:choose>
+                    <c:when test="${page.userData > 0}">
+                        <a href="${cwfn:choose(pagerCurrent == page.key, '#', mtfn:replace(pagerCommand, '{index}', page.key))}"
+                                <c:if test="${pagerCurrent == page.key}">class="active"</c:if>>
+                            <c:out value="${page.value}" />
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <span><c:out value="${page.value}" /></span>
+                    </c:otherwise>
+                </c:choose>
             </td>
         </c:forEach>
     </tr>

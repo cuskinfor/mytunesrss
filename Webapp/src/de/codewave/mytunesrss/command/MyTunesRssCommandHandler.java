@@ -107,14 +107,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     public void execute() throws Exception {
-        List<Pager.Page> pages = (List<Pager.Page>)getDataStore().executeQuery(new FindPagesStatement());
-        if (pages != null) {
-            getRequest().setAttribute("albumPager", new Pager(pages, pages.size()));
-            getRequest().setAttribute("artistPager", new Pager(pages, pages.size()));
-            getRequest().setAttribute("albumInitialPager", pages.get(0).getKey());
-            getRequest().setAttribute("artistInitialPager", pages.get(0).getKey());
-        }
-
         if (needsAuthorization() && getWebConfig().isRememberLogin()) {
             authorize();
             executeAuthorized();

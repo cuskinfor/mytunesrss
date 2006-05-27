@@ -32,9 +32,11 @@ public class FindAlbumQuery extends DataStoreQuery<Album> {
                     "SELECT name, track_count, artist_count, artist FROM album WHERE name IN ( SELECT DISTINCT(album) FROM track WHERE artist = ? ) ORDER BY name");
             return execute(statement, myBuilder, myArtist);
         } else if (myIndex > -1) {
-            ResultSet resultSet = connection.createStatement().executeQuery("SELECT condition AS condition FROM pager WHERE index = " + myIndex);
+            ResultSet resultSet = connection.createStatement().executeQuery(
+                    "SELECT condition AS condition FROM pager WHERE type = '" + InsertPageStatement.PagerType.Album + "' AND index = " + myIndex);
             resultSet.next();
-            statement = connection.prepareStatement("SELECT name, track_count, artist_count, artist FROM album WHERE " + resultSet.getString("CONDITION") + " ORDER BY name");
+            statement = connection.prepareStatement("SELECT name, track_count, artist_count, artist FROM album WHERE " + resultSet.getString(
+                    "CONDITION") + " ORDER BY name");
             return execute(statement, myBuilder);
         } else {
             statement = connection.prepareStatement("SELECT name, track_count, artist_count, artist FROM album ORDER BY name");

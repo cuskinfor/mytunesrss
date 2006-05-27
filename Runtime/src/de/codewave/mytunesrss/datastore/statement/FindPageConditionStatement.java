@@ -4,13 +4,11 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.*;
-
 import java.util.*;
 import java.sql.*;
 
 /**
- * de.codewave.mytunesrss.datastore.statement.FindPagesStatement
+ * de.codewave.mytunesrss.datastore.statement.FindPagesQuery
  */
 public class FindPageConditionStatement extends DataStoreQuery {
     private int myIndex;

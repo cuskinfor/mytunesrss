@@ -37,7 +37,7 @@
 
     <ul class="links">
         <li>
-            <a href="${servletUrl}/browseAlbum?page=${cwfn:choose(empty param.page && empty param.album, '', albumInitialPager)}">browse albums</a>
+            <a href="${servletUrl}/browseAlbum?page=${cwfn:choose(empty param.page && empty param.album, '', '1')}">browse albums</a>
         </li>
         <c:if test="${empty sessionScope.playlist}">
             <li>

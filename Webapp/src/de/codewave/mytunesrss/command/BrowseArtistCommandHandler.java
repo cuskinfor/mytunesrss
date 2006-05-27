@@ -21,6 +21,10 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws SQLException, IOException, ServletException {
         String album = getRequest().getParameter("album");
         String page = getRequest().getParameter("page");
+        List<Pager.Page> artistPages = (List<Pager.Page>)getDataStore().executeQuery(new FindPagesQuery(InsertPageStatement.PagerType.Artist));
+        if (artistPages != null) {
+            getRequest().setAttribute("artistPager", new Pager(artistPages, artistPages.size()));
+        }
         Collection<Artist> artists;
         if (StringUtils.isNotEmpty(page)) {
             artists = getDataStore().executeQuery(new FindArtistQuery(Integer.parseInt(page)));

@@ -22,14 +22,18 @@ public class PleaseWait {
         dialog.setLocationRelativeTo(parent);
         Thread taskThread = new Thread(new Runnable() {
             public void run() {
-                task.execute();
-                dialog.dispose();
+                try {
+                    task.execute();
+                    dialog.dispose();
+                } catch (Exception e) {
+                    Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+                }
             }
         });
         taskThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             public void uncaughtException(Thread t, Throwable e) {
                 dialog.dispose();
-                t.getThreadGroup().uncaughtException(t, e); // forward further
+                t.getThreadGroup().uncaughtException(t, e);// forward further
             }
         });
         taskThread.start();
@@ -66,7 +70,7 @@ public class PleaseWait {
             myProgressBar.setValue(percentage);
         }
 
-        public abstract void execute();
+        public abstract void execute() throws Exception;
 
         protected abstract void cancel();
     }
