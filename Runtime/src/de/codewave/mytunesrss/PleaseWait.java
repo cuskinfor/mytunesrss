@@ -20,12 +20,19 @@ public class PleaseWait {
         dialog.add(pleaseWait.myRootPanel);
         dialog.pack();
         dialog.setLocationRelativeTo(parent);
-        new Thread(new Runnable() {
+        Thread taskThread = new Thread(new Runnable() {
             public void run() {
                 task.execute();
                 dialog.dispose();
             }
-        }).start();
+        });
+        taskThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            public void uncaughtException(Thread t, Throwable e) {
+                dialog.dispose();
+                t.getThreadGroup().uncaughtException(t, e); // forward further
+            }
+        });
+        taskThread.start();
         dialog.setVisible(true);
     }
 

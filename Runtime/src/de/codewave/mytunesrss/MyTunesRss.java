@@ -69,6 +69,7 @@ public class MyTunesRss {
         int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", frame.getLocation().y);
         frame.setLocation(x, y);
         frame.setVisible(true);
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtHandler(frame));
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 frame.pack();
@@ -161,6 +162,37 @@ public class MyTunesRss {
 
         protected void cancel() {
             // intentionally left blank
+        }
+    }
+
+    public static class UncaughtHandler implements Thread.UncaughtExceptionHandler {
+        private JDialog myDialog;
+
+        public UncaughtHandler(JFrame parent) {
+            JOptionPane pane = new JOptionPane() {
+                @Override
+                public int getMaxCharactersPerLineCount() {
+                    return 100;
+                }
+            };
+            pane.setMessageType(JOptionPane.ERROR_MESSAGE);
+            pane.setMessage(
+                    "The application has failed because it has run out of memory. Please raise the available memory on the first settings tab and restart MyTunesRSS to activate the changes.");
+            String okButton = "Ok";
+            pane.setInitialValue(okButton);
+            myDialog = pane.createDialog(parent, "Fatal error");
+            myDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        }
+
+        public void uncaughtException(Thread t, Throwable e) {
+            if (e instanceof OutOfMemoryError) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        myDialog.setLocationRelativeTo(myDialog.getParent());
+                        myDialog.setVisible(true);
+                    }
+                });
+            }
         }
     }
 }
