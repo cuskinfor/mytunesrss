@@ -7,3 +7,7 @@ div.body {
 body div.input input {
     margin: 0;
 }
+
+ul.links li a {
+		float: left;
+}
