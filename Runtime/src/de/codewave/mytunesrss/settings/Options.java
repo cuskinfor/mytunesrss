@@ -36,9 +36,8 @@ public class Options {
     private JButton myDatabaseUpdateButton;
     private JButton myDatabaseRefreshButton;
     private JButton myDatabaseRecreateButton;
-    private JLabel myLastUpdatedLabel;
     private JCheckBox myAutoUpdateDatabaseInput;
-    private JSpinner myAutoUpdateDatabaseIntervalInput;
+    private JSpinner myAutoUpdateDatabaseIntervalInput;private JLabel myLastUpdatedLabel;
     private Settings mySettingsForm;
 
     public void init(Settings settingsForm) {
@@ -109,7 +108,7 @@ public class Options {
             myDatabaseRefreshButton.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
             myDatabaseUpdateButton.setEnabled(true);
         } else {
-            myLastUpdatedLabel.setText("Database has never been created.");
+            myLastUpdatedLabel.setText("Database has not been created yet.");
             myDatabaseRefreshButton.setEnabled(false);
             myDatabaseUpdateButton.setEnabled(false);
         }

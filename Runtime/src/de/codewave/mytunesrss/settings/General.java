@@ -33,9 +33,8 @@ public class General {
     private JTextField myTunesXmlPathInput;
     private JButton myTunesXmlPathLookupButton;
     private Settings mySettingsForm;
-    private JButton myStartServerButton;
     private JButton myStopServerButton;
-    private JLabel myServerStatusLabel;
+    private JLabel myServerStatusLabel;private JButton myStartServerButton;
 
     public JTextField getTunesXmlPathInput() {
         return myTunesXmlPathInput;
