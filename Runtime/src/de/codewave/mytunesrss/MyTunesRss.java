@@ -23,6 +23,9 @@ import java.sql.*;
 import java.util.*;
 import java.util.Timer;
 import java.util.prefs.*;
+import java.lang.reflect.*;
+
+import snoozesoft.systray4j.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -36,6 +39,7 @@ public class MyTunesRss {
     public static ResourceBundle BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
     public static WebServer WEBSERVER = new WebServer();
     public static Timer DATABASE_WATCHDOG = new Timer("MyTunesRSSDatabaseWatchdog");
+    public static MyTunesRSSSysTrayMenu SYSTRAYMENU;
 
     static {
         UPDATE_URLS = new HashMap<OperatingSystem, URL>();
@@ -70,13 +74,16 @@ public class MyTunesRss {
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         final Settings settings = new Settings();
         settings.init(frame);
-        settings.setGuiMode(GuiMode.ServerIdle);
-        frame.addWindowListener(new MyTunesRssMainWindowListener(settings));
+        MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
+        executeApple(mainWindowListener);
+        executeWindows(settings, mainWindowListener);
+        frame.addWindowListener(mainWindowListener);
         frame.getContentPane().add(settings.getRootPanel());
         frame.setResizable(false);
         int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", frame.getLocation().x);
         int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", frame.getLocation().y);
         frame.setLocation(x, y);
+        settings.setGuiMode(GuiMode.ServerIdle);
         frame.setVisible(true);
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtHandler(frame));
         SwingUtilities.invokeLater(new Runnable() {
@@ -91,6 +98,24 @@ public class MyTunesRss {
                 }
             }
         });
+    }
+
+    private static void executeWindows(Settings settingsForm, WindowListener windowListener) {
+        if (ProgramUtils.guessOperatingSystem() == OperatingSystem.Windows && SysTrayMenu.isAvailable()) {
+            SYSTRAYMENU = new MyTunesRSSSysTrayMenu(settingsForm, windowListener);
+        }
+    }
+
+    private static void executeApple(MyTunesRssMainWindowListener mainWindowListener) {
+        if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
+            try {
+                Class appleExtensionsClass = Class.forName("de.codewave.mytunesrss.AppleExtensions");
+                Method activateMethod = appleExtensionsClass.getMethod("activate", WindowListener.class);
+                activateMethod.invoke(null, mainWindowListener);
+            } catch (Exception e) {
+                // intentionally left blank
+            }
+        }
     }
 
     public static class MyTunesRssMainWindowListener extends WindowAdapter {
@@ -127,6 +152,14 @@ public class MyTunesRss {
                                      }
                                  });
                 System.exit(0);
+            }
+        }
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+            if (MyTunesRss.SYSTRAYMENU != null) {
+                mySettingsForm.getFrame().setVisible(false);
+                MyTunesRss.SYSTRAYMENU.show();
             }
         }
     }

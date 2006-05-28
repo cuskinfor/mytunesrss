@@ -4,7 +4,6 @@ import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 
 import javax.swing.*;
-import java.util.prefs.*;
 
 /**
  * de.codewave.mytunesrss.settings.Settings
@@ -24,6 +23,10 @@ public class Settings {
 
     public General getGeneralForm() {
         return myGeneralForm;
+    }
+
+    public Options getOptionsForm() {
+        return myOptionsForm;
     }
 
     public JPanel getRootPanel() {
@@ -52,6 +55,12 @@ public class Settings {
     }
 
     public void setGuiMode(GuiMode mode) {
+        switch (mode) {
+            case ServerRunning:
+                MyTunesRss.SYSTRAYMENU.setServerRunning();
+            case ServerIdle:
+                MyTunesRss.SYSTRAYMENU.setServerStopped();
+        }
         myGeneralForm.setGuiMode(mode);
         myOptionsForm.setGuiMode(mode);
         myRootPanel.validate();

@@ -116,7 +116,7 @@ public class Options {
         myRootPanel.validate();
     }
 
-    private void runBuildDatabaseTask(DatabaseBuilderTask.BuildType buildType) {
+    public void runBuildDatabaseTask(DatabaseBuilderTask.BuildType buildType) {
         try {
             PleaseWait.start(mySettingsForm.getFrame(),
                              null,

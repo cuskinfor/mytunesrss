@@ -47,6 +47,7 @@
             </zipfileset>
             <zipfileset dir="etc" prefix="data">
                 <include name="java.properties"/>
+                <include name="*.dll"/>
             </zipfileset>
             <fileset dir="etc">
                 <include name="*.exe"/>

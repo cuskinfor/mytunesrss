@@ -33,11 +33,6 @@
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib/derby.jar" />
-        <url>jar://$MODULE_DIR$/lib/derby.jar!/</url>
-      </containerElement>
-      <containerElement type="library" level="module">
-        <attribute name="method" value="2" />
         <attribute name="URI" value="/lib/hsqldb.jar" />
         <url>jar://$MODULE_DIR$/lib/hsqldb.jar!/</url>
       </containerElement>
@@ -45,6 +40,11 @@
         <attribute name="method" value="2" />
         <attribute name="URI" value="/lib/log4j-1.2.11.jar" />
         <url>jar://$MODULE_DIR$/lib/log4j-1.2.11.jar!/</url>
+      </containerElement>
+      <containerElement type="library" level="module">
+        <attribute name="method" value="2" />
+        <attribute name="URI" value="/lib/systray4j.jar" />
+        <url>jar://$MODULE_DIR$/lib/systray4j.jar!/</url>
       </containerElement>
       <containerElement type="library" name="Tomcat" level="project">
         <attribute name="method" value="2" />
@@ -125,6 +125,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/hsqldb.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/systray4j.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
