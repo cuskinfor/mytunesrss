@@ -21,5 +21,11 @@
                 </c:choose>
             </td>
         </c:forEach>
+        <td>
+            <a href="${cwfn:choose(empty pagerCurrent, '#', mtfn:replace(pagerCommand, '{index}', ''))}"
+                    <c:if test="${empty pagerCurrent}">class="active"</c:if>>
+                all
+            </a>
+        </td>
     </tr>
 </table>

@@ -57,9 +57,14 @@ public class Settings {
     public void setGuiMode(GuiMode mode) {
         switch (mode) {
             case ServerRunning:
-                MyTunesRss.SYSTRAYMENU.setServerRunning();
+                if (MyTunesRss.SYSTRAYMENU != null) {
+                    MyTunesRss.SYSTRAYMENU.setServerRunning();
+                }
+                break;
             case ServerIdle:
-                MyTunesRss.SYSTRAYMENU.setServerStopped();
+                if (MyTunesRss.SYSTRAYMENU != null) {
+                    MyTunesRss.SYSTRAYMENU.setServerStopped();
+                }
         }
         myGeneralForm.setGuiMode(mode);
         myOptionsForm.setGuiMode(mode);

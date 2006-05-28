@@ -13,6 +13,7 @@ import java.sql.*;
  */
 public class CreateAllTablesStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
+        connection.createStatement().execute("SET DATABASE COLLATION \"Latin1_General\"");
         connection.createStatement().execute(
                 "CREATE CACHED TABLE track ( id VARCHAR(20) NOT NULL, name VARCHAR(255) NOT NULL, artist VARCHAR(255) NOT NULL, album VARCHAR(255) NOT NULL, time INTEGER, track_number INTEGER, file VARCHAR(1024) NOT NULL, UNIQUE ( id ) )");
         connection.createStatement().execute("CREATE CACHED TABLE playlist ( id VARCHAR(20) NOT NULL, name VARCHAR(255) NOT NULL, type VARCHAR(20) NOT NULL, track_count INTEGER, UNIQUE ( id ) )");

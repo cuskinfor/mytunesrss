@@ -77,7 +77,7 @@
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                 <td class="${fn:toLowerCase(playlist.type)}"><c:out value="${playlist.name}" /></td>
-                <td class="playlistTracks">${playlist.trackCount}</td>
+                <td class="playlistTracks"><a href="${servletUrl}/browseTrack?playlist=${playlist.id}&backUrl=${backUrl}"> ${playlist.trackCount} </a></td>
                 <c:forEach items="${config.feedTypes}" var="feedType">
                     <td class="icon">
                         <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/playlist=${playlist.id}/${mtfn:cleanFileName(playlist.name)}.${config.feedFileSuffix[feedType]}">

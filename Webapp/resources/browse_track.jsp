@@ -10,7 +10,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?fullAlbums=${param.fullAlbums}&album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}&index=${param.index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?playlist=${param.playlist}&fullAlbums=${param.fullAlbums}&album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}&index=${param.index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}</c:set>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -99,6 +99,7 @@
 <input type="hidden" name="searchTerm" value="${param.searchTerm}" />
 <input type="hidden" name="album" value="${param.album}" />
 <input type="hidden" name="artist" value="${param.artist}" />
+<input type="hidden" name="playlist" value="${param.playlist}" />
 <input type="hidden" name="backUrl" value="${param.backUrl}" />
 <input type="hidden" name="fullAlbums" value="${param.fullAlbums}" />
 
