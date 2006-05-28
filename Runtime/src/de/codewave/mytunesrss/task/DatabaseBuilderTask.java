@@ -46,15 +46,20 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
                 }
             });
             if (lastUpdate == null || lastUpdate.isEmpty() || new File(libraryXmlUrl.getPath()).lastModified() > lastUpdate.iterator().next()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Database update needed.");
+                }
                 return true;
             }
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Database update not necessary.");
         }
         return false;
     }
 
     private URL myLibraryXmlUrl;
     private BuildType myBuildType;
-    private boolean myCancellationRequested;
 
     public DatabaseBuilderTask(URL libraryXmlUrl, BuildType buildType) {
         myLibraryXmlUrl = libraryXmlUrl;
@@ -62,8 +67,8 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
     }
 
     public void execute() throws SQLException {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Building database.");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Database builder task started.");
         }
         DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
         storeSession.begin();
@@ -71,8 +76,8 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
             if (myBuildType == BuildType.Recreate) {
                 deleteAllContent();
             }
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Preparing database tables for refresh/update.");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Preparing database tables for refresh/update.");
             }
             storeSession.executeStatement(new PrepareForUpdateStatement());
             final long timeUpdateStart = System.currentTimeMillis();
@@ -88,20 +93,20 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
                     }
                 });
             }
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Loading tracks from iTunes library.");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Loading tracks from iTunes library.");
             }
             ITunesUtils.loadFromITunes(myLibraryXmlUrl, storeSession, timeLastUpdate.longValue());
             long timeAfterTracks = System.currentTimeMillis();
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Time for loading tracks: " + (timeAfterTracks - timeUpdateStart));
-                LOG.info("Building help tables.");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Time for loading tracks: " + (timeAfterTracks - timeUpdateStart));
+                LOG.debug("Building help tables.");
             }
             storeSession.executeStatement(new UpdateHelpTablesStatement(storeSession.executeQuery(new FindAlbumArtistMappingQuery())));
             long timeAfterHelpTables = System.currentTimeMillis();
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Time for building help tables: " + (timeAfterHelpTables - timeAfterTracks));
-                LOG.info("Building pager and updating system information.");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Time for building help tables: " + (timeAfterHelpTables - timeAfterTracks));
+                LOG.debug("Building pager and updating system information.");
             }
             createAlbumPager(storeSession);
             createArtistPager(storeSession);
@@ -110,13 +115,13 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
                     connection.createStatement().execute("UPDATE mytunesrss SET lastupdate = " + timeUpdateStart);
                 }
             });
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Committing transaction.");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Committing transaction.");
             }
             storeSession.commit();
             long timeAfterCommit = System.currentTimeMillis();
-            if (LOG.isInfoEnabled()) {
-                LOG.info("time for commit: " + (timeAfterCommit - timeAfterHelpTables));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("time for commit: " + (timeAfterCommit - timeAfterHelpTables));
             }
         } catch (SQLException e) {
             storeSession.rollback();

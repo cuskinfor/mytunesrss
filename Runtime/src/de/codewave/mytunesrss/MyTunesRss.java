@@ -21,6 +21,7 @@ import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
+import java.util.Timer;
 import java.util.prefs.*;
 
 /**
@@ -34,6 +35,7 @@ public class MyTunesRss {
     public static MyTunesRssConfig CONFIG = new MyTunesRssConfig();
     public static ResourceBundle BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
     public static WebServer WEBSERVER = new WebServer();
+    public static Timer DATABASE_WATCHDOG = new Timer("MyTunesRSSDatabaseWatchdog");
 
     static {
         UPDATE_URLS = new HashMap<OperatingSystem, URL>();
@@ -100,7 +102,32 @@ public class MyTunesRss {
 
         @Override
         public void windowClosing(WindowEvent e) {
-            mySettingsForm.doQuitApplication();
+            if (MyTunesRss.WEBSERVER.isRunning()) {
+                mySettingsForm.getGeneralForm().doStopServer();
+            }
+            if (!MyTunesRss.WEBSERVER.isRunning()) {
+                Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_x", mySettingsForm.getFrame().getLocation().x);
+                Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", mySettingsForm.getFrame().getLocation().y);
+                mySettingsForm.updateConfigFromGui();
+                MyTunesRss.CONFIG.save();
+                PleaseWait.start(mySettingsForm.getFrame(),
+                                 null,
+                                 "Shutting down database... please wait.",
+                                 false,
+                                 false,
+                                 new PleaseWait.NoCancelTask() {
+                                     public void execute() {
+                                         try {
+                                             MyTunesRss.STORE.destroy();
+                                         } catch (Exception e) {
+                                             if (LOG.isErrorEnabled()) {
+                                                 LOG.error("Could not destroy the store.", e);
+                                             }
+                                         }
+                                     }
+                                 });
+                System.exit(0);
+            }
         }
     }
 

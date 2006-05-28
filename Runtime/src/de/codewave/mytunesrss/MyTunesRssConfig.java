@@ -4,17 +4,21 @@
 
 package de.codewave.mytunesrss;
 
+import com.sun.java_cup.internal.*;
+
 import java.util.prefs.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssConfig
  */
 public class MyTunesRssConfig {
-    private String myPort;
+    private int myPort;
     private String myLibraryXml;
     private String myPassword;
     private boolean myCheckUpdateOnStart;
     private boolean myAutoStartServer;
+    private boolean myAutoUpdateDatabase;
+    private int myAutoUpdateDatabaseInterval;
 
     public String getLibraryXml() {
         return myLibraryXml;
@@ -36,11 +40,11 @@ public class MyTunesRssConfig {
         myPassword = password;
     }
 
-    public String getPort() {
+    public int getPort() {
         return myPort;
     }
 
-    public void setPort(String port) {
+    public void setPort(int port) {
         myPort = port;
     }
 
@@ -60,19 +64,52 @@ public class MyTunesRssConfig {
         myAutoStartServer = autoStartServer;
     }
 
+    public boolean isAutoUpdateDatabase() {
+        return myAutoUpdateDatabase;
+    }
+
+    public void setAutoUpdateDatabase(boolean autoUpdateDatabase) {
+        myAutoUpdateDatabase = autoUpdateDatabase;
+    }
+
+    public int getAutoUpdateDatabaseInterval() {
+        return myAutoUpdateDatabaseInterval;
+    }
+
+    public void setAutoUpdateDatabaseInterval(int autoUpdateDatabaseInterval) {
+        myAutoUpdateDatabaseInterval = autoUpdateDatabaseInterval;
+    }
+
     public void load() {
-        myPort = Preferences.userRoot().node("/de/codewave/mytunesrss").get("port", "8080");
-        myLibraryXml = Preferences.userRoot().node("/de/codewave/mytunesrss").get("library", "");
-        myPassword = Preferences.userRoot().node("/de/codewave/mytunesrss").get("authPassword", "");
+        checkPrefsVersion();
+        myPort = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("serverPort", 8080);
+        myLibraryXml = Preferences.userRoot().node("/de/codewave/mytunesrss").get("iTunesLibrary", "");
+        myPassword = Preferences.userRoot().node("/de/codewave/mytunesrss").get("serverPassword", "");
         myCheckUpdateOnStart = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("checkUpdateOnStart", true);
         myAutoStartServer = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("autoStartServer", false);
+        myAutoUpdateDatabase = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("autoUpdateDatabase", false);
+        myAutoUpdateDatabaseInterval = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("autoUpdateDatabaseInterval", 600);
     }
 
     public void save() {
-        Preferences.userRoot().node("/de/codewave/mytunesrss").put("port", myPort);
-        Preferences.userRoot().node("/de/codewave/mytunesrss").put("library", myLibraryXml);
-        Preferences.userRoot().node("/de/codewave/mytunesrss").put("authPassword", myPassword);
+        Preferences.userRoot().node("/de/codewave/mytunesrss").put("version", MyTunesRss.VERSION);
+        Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("serverPort", myPort);
+        Preferences.userRoot().node("/de/codewave/mytunesrss").put("iTunesLibrary", myLibraryXml);
+        Preferences.userRoot().node("/de/codewave/mytunesrss").put("serverPassword", myPassword);
         Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("checkUpdateOnStart", myCheckUpdateOnStart);
         Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("autoStartServer", myAutoStartServer);
+        Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("autoUpdateDatabase", myAutoUpdateDatabase);
+        Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
+    }
+
+    private void checkPrefsVersion() {
+        String version = Preferences.userRoot().node("/de/codewave/mytunesrss").get("version", "");
+        if ("".equals(version)) {
+            try {
+                Preferences.userRoot().node("/de/codewave/mytunesrss").removeNode();
+            } catch (BackingStoreException e) {
+                // intentionally left blank
+            }
+        }
     }
 }

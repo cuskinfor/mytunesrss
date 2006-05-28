@@ -15,6 +15,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.Timer;
 
 /**
  * General settings panel
@@ -41,7 +42,7 @@ public class General {
 
     public void init(Settings settingsForm) {
         mySettingsForm = settingsForm;
-        myPortInput.setText(MyTunesRss.CONFIG.getPort());
+        myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
         myPasswordInput.setText(MyTunesRss.CONFIG.getPassword());
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
         myTunesXmlPathLookupButton.addActionListener(new TunesXmlPathLookupButtonListener());
@@ -72,55 +73,60 @@ public class General {
         } else if (myPasswordInput.getPassword().length == 0) {
             SwingUtils.showErrorMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("error.authButNoPassword"));
         } else {
-            final Map<String, Object> contextEntries = new HashMap<String, Object>();
-            mySettingsForm.updateConfigFromGui();
-            contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
-            contextEntries.put(DataStore.class.getName(), MyTunesRss.STORE);
-            updateDatabase(library);
-            final int serverPort = port;
-            PleaseWait.start(mySettingsForm.getFrame(),
+            try {
+                URL libraryUrl = library.toURL();
+                final Map<String, Object> contextEntries = new HashMap<String, Object>();
+                mySettingsForm.updateConfigFromGui();
+                contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
+                contextEntries.put(DataStore.class.getName(), MyTunesRss.STORE);
+                updateDatabase(libraryUrl);
+                final int serverPort = port;
+                PleaseWait.start(mySettingsForm.getFrame(),
                              null,
                              MyTunesRss.BUNDLE.getString("info.server.starting"),
                              false,
                              false,
                              new PleaseWait.NoCancelTask() {
-                                 public void execute() throws Exception {
-                                     MyTunesRss.WEBSERVER.start(serverPort, contextEntries);
-                                 }
-                             });
-            if (!MyTunesRss.WEBSERVER.isRunning()) {
-                SwingUtils.showErrorMessage(mySettingsForm.getFrame(), MyTunesRss.WEBSERVER.getLastErrorMessage());
-            } else {
-                mySettingsForm.setGuiMode(GuiMode.ServerRunning);
-                setServerRunningStatus(port);
+                                     public void execute() throws Exception {
+                                         MyTunesRss.WEBSERVER.start(serverPort, contextEntries);
+                                     }
+                                 });
+                if (!MyTunesRss.WEBSERVER.isRunning()) {
+                    SwingUtils.showErrorMessage(mySettingsForm.getFrame(), MyTunesRss.WEBSERVER.getLastErrorMessage());
+                } else {
+                    mySettingsForm.setGuiMode(GuiMode.ServerRunning);
+                    setServerRunningStatus(port);
+                    if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
+                        int interval = MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval();
+                        MyTunesRss.DATABASE_WATCHDOG.schedule(new DatabaseWatchdogTask(interval, libraryUrl), 1000 * interval);
+                    }
+                }
+            } catch (MalformedURLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not create URL from iTunes XML file.", e);
+                }
             }
         }
     }
 
-    private void updateDatabase(final File library) {
+    private void updateDatabase(final URL library) {
         final Set<Boolean> checkResult = new HashSet<Boolean>();
-        try {
-            PleaseWait.start(mySettingsForm.getFrame(), null, "Checking database... please wait.", false, false, new PleaseWait.NoCancelTask() {
-                public void execute() {
-                    try {
-                        checkResult.add(Boolean.valueOf(DatabaseBuilderTask.needsUpdate(library.toURL())));
-                    } catch (Exception e) {
-                        checkResult.add(Boolean.FALSE);
-                    }
+        PleaseWait.start(mySettingsForm.getFrame(), null, "Checking database... please wait.", false, false, new PleaseWait.NoCancelTask() {
+            public void execute() {
+                try {
+                    checkResult.add(Boolean.valueOf(DatabaseBuilderTask.needsUpdate(library)));
+                } catch (Exception e) {
+                    checkResult.add(Boolean.FALSE);
                 }
-            });
-            if (checkResult.iterator().next()) {
-                PleaseWait.start(mySettingsForm.getFrame(),
-                                 null,
-                                 DatabaseBuilderTask.BuildType.Update.getVerb() + " database... please wait.",
-                                 false,
-                                 false,
-                                 new DatabaseBuilderTask(library.toURL(), DatabaseBuilderTask.BuildType.Update));
             }
-        } catch (MalformedURLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create URL from iTunes XML file.", e);
-            }
+        });
+        if (checkResult.iterator().next()) {
+            PleaseWait.start(mySettingsForm.getFrame(),
+                             null,
+                             DatabaseBuilderTask.BuildType.Update.getVerb() + " database... please wait.",
+                             false,
+                             false,
+                             new DatabaseBuilderTask(library, DatabaseBuilderTask.BuildType.Update));
         }
     }
 
@@ -155,13 +161,21 @@ public class General {
             mySettingsForm.setGuiMode(GuiMode.ServerIdle);
             mySettingsForm.setStatus(MyTunesRss.BUNDLE.getString("info.server.idle"), null);
             myRootPanel.validate();
+            if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
+                MyTunesRss.DATABASE_WATCHDOG.cancel();
+                MyTunesRss.DATABASE_WATCHDOG = new Timer("MyTunesRSSDatabaseWatchdog");
+            }
         } else {
             SwingUtils.showErrorMessage(mySettingsForm.getFrame(), MyTunesRss.WEBSERVER.getLastErrorMessage());
         }
     }
 
     public void updateConfigFromGui() {
-        MyTunesRss.CONFIG.setPort(myPortInput.getText().trim());
+        try {
+            MyTunesRss.CONFIG.setPort(Integer.parseInt(myPortInput.getText().trim()));
+        } catch (NumberFormatException e) {
+            // intentionally left blank
+        }
         MyTunesRss.CONFIG.setLibraryXml(myTunesXmlPathInput.getText().trim());
         MyTunesRss.CONFIG.setPassword(new String(myPasswordInput.getPassword()).trim());
     }

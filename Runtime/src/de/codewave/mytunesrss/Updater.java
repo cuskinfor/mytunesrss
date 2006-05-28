@@ -25,7 +25,7 @@ public class Updater {
     public void checkForUpdate(boolean autoCheck) {
         final UpdateInfo updateInfo = NetworkUtils.getCurrentUpdateInfo(MyTunesRss.UPDATE_URLS);
         if (updateInfo != null) {
-            String noNagVersion = Preferences.userRoot().node("/de/codewave/mytunesrss").get("noNagVersion", MyTunesRss.VERSION);
+            String noNagVersion = Preferences.userRoot().node("/de/codewave/mytunesrss").get("updateIgnoreVersion", MyTunesRss.VERSION);
             if (!updateInfo.getVersion().equals(MyTunesRss.VERSION) && (!autoCheck || !noNagVersion.equals(updateInfo.getVersion()))) {
                 if (askForUpdate(updateInfo, autoCheck)) {
                     final JFileChooser fileChooser = new JFileChooser();
@@ -75,7 +75,7 @@ public class Updater {
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         dialog.setVisible(true);
         if (pane.getValue() == stopNagging) {
-            Preferences.userRoot().node("/de/codewave/mytunesrss").put("noNagVersion", updateInfo.getVersion());
+            Preferences.userRoot().node("/de/codewave/mytunesrss").put("updateIgnoreVersion", updateInfo.getVersion());
         }
         return pane.getValue() == download;
     }

@@ -46,30 +46,6 @@ public class Settings {
         }
     }
 
-    public void doQuitApplication() {
-        if (MyTunesRss.WEBSERVER.isRunning()) {
-            myGeneralForm.doStopServer();
-        }
-        if (!MyTunesRss.WEBSERVER.isRunning()) {
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_x", myFrame.getLocation().x);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", myFrame.getLocation().y);
-            updateConfigFromGui();
-            MyTunesRss.CONFIG.save();
-            PleaseWait.start(myFrame, null, "Shutting down database... please wait.", false, false, new PleaseWait.NoCancelTask() {
-                public void execute() {
-                    try {
-                        MyTunesRss.STORE.destroy();
-                    } catch (Exception e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not destroy the store.", e);
-                        }
-                    }
-                }
-            });
-            System.exit(0);
-        }
-    }
-
     public void updateConfigFromGui() {
         myGeneralForm.updateConfigFromGui();
         myOptionsForm.updateConfigFromGui();

@@ -37,6 +37,8 @@ public class Options {
     private JButton myDatabaseRefreshButton;
     private JButton myDatabaseRecreateButton;
     private JLabel myLastUpdatedLabel;
+    private JCheckBox myAutoUpdateDatabaseInput;
+    private JSpinner myAutoUpdateDatabaseIntervalInput;
     private Settings mySettingsForm;
 
     public void init(Settings settingsForm) {
@@ -76,6 +78,11 @@ public class Options {
             }
         });
         myAutoStartServerInput.addActionListener(new AutoStartServerInputListener());
+        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval(), 60, 3600, 10);
+        myAutoUpdateDatabaseIntervalInput.setModel(spinnerNumberModel);
+        myAutoUpdateDatabaseInput.setSelected(MyTunesRss.CONFIG.isAutoUpdateDatabase());
+        SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, MyTunesRss.CONFIG.isAutoUpdateDatabase());
+        myAutoUpdateDatabaseInput.addActionListener(new AutoUpdateDatabaseInputListener());
     }
 
     private void refreshLastUpdate() {
@@ -129,6 +136,8 @@ public class Options {
     public void updateConfigFromGui() {
         MyTunesRss.CONFIG.setCheckUpdateOnStart(myUpdateOnStartInput.isSelected());
         MyTunesRss.CONFIG.setAutoStartServer(myAutoStartServerInput.isSelected());
+        MyTunesRss.CONFIG.setAutoUpdateDatabase(myAutoUpdateDatabaseInput.isSelected());
+        MyTunesRss.CONFIG.setAutoUpdateDatabaseInterval((Integer)myAutoUpdateDatabaseIntervalInput.getValue());
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -141,6 +150,8 @@ public class Options {
                 myProgramUpdateButton.setEnabled(false);
                 myDatabaseRefreshButton.setEnabled(false);
                 myDatabaseRecreateButton.setEnabled(false);
+                myAutoUpdateDatabaseInput.setEnabled(false);
+                SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, false);
                 break;
             case ServerIdle:
                 SwingUtils.enableElementAndLabel(myMaxMemInput, true);
@@ -150,6 +161,8 @@ public class Options {
                 myProgramUpdateButton.setEnabled(true);
                 myDatabaseRefreshButton.setEnabled(true);
                 myDatabaseRecreateButton.setEnabled(true);
+                myAutoUpdateDatabaseInput.setEnabled(true);
+                SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
                 break;
         }
     }
@@ -185,6 +198,14 @@ public class Options {
                 myUpdateOnStartInput.setSelected(myUpdateOnStartInputCache);
                 myUpdateOnStartInput.setEnabled(true);
             }
+            myRootPanel.validate();
+        }
+    }
+
+    public class AutoUpdateDatabaseInputListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
+            myRootPanel.validate();
         }
     }
 }

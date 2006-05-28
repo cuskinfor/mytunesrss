@@ -76,13 +76,14 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
         int inserted = 0;
         for (Iterator<String> iterator = myTrackIds.iterator(); iterator.hasNext();) {
             statement.setInt(1, index++);
-            statement.setString(2, iterator.next());
+            String trackId = iterator.next();
+            statement.setString(2, trackId);
             try {
                 statement.execute();
                 inserted++;
             } catch (SQLException e) {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("Could not create link from playlist \"" + myName + "\" to track with id " + myId);
+                    LOG.warn("Could not create link from playlist \"" + myName + "\" to track with id " + trackId);
                 }
             }
         }
