@@ -70,6 +70,9 @@ public class MyTunesRss {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
         VERSION = modulesInfo != null ? modulesInfo.getVersion() : "0.0.0";
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Application version: " + VERSION);
+        }
         System.setProperty("mytunesrss.version", VERSION);
         final JFrame frame = new JFrame(BUNDLE.getString("gui.title") + " v" + VERSION);
         frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));

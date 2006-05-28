@@ -16,6 +16,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.Timer;
+import java.util.zip.*;
 
 /**
  * General settings panel
@@ -34,7 +35,9 @@ public class General {
     private JButton myTunesXmlPathLookupButton;
     private Settings mySettingsForm;
     private JButton myStopServerButton;
-    private JLabel myServerStatusLabel;private JButton myStartServerButton;
+    private JLabel myServerStatusLabel;
+    private JButton myStartServerButton;
+    private JButton mySaveLogButton;
 
     public JTextField getTunesXmlPathInput() {
         return myTunesXmlPathInput;
@@ -56,6 +59,7 @@ public class General {
                 doStopServer();
             }
         });
+        mySaveLogButton.addActionListener(new SaveLogButtonActionListener());
         setServerStatus(MyTunesRss.BUNDLE.getString("info.server.idle"), null);
     }
 
@@ -243,6 +247,55 @@ public class General {
 
         public String getDescription() {
             return "iTunes Library";
+        }
+    }
+
+    public class SaveLogButtonActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            final JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fileChooser.setSelectedFile(new File("MyTunesRSS-" + MyTunesRss.VERSION + "-LogFile.zip"));
+            if (fileChooser.showSaveDialog(mySettingsForm.getFrame()) == JFileChooser.APPROVE_OPTION) {
+                FileInputStream input = null;
+                ZipOutputStream zipOutput = null;
+                try {
+                    input = new FileInputStream(new File("MyTunesRSS.log"));
+                    zipOutput = new ZipOutputStream(new FileOutputStream(fileChooser.getSelectedFile()));
+                    zipOutput.putNextEntry(new ZipEntry("MyTunesRSS.log"));
+                    byte[] bytes = new byte[4096];
+                    for (int bytesRead = input.read(bytes); bytesRead != -1; bytesRead = input.read(bytes)) {
+                        if (bytesRead > 0) {
+                            zipOutput.write(bytes, 0, bytesRead);
+                        }
+                    }
+                    zipOutput.closeEntry();
+                } catch (IOException e1) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not create zip archive with log file.", e1);
+                    }
+                    SwingUtils.showErrorMessage(mySettingsForm.getFrame(), "Could not create zip archive with log file. Please try again.");
+                } finally {
+                    if (zipOutput != null) {
+                        try {
+                            zipOutput.close();
+                        } catch (IOException e1) {
+                            if (LOG.isErrorEnabled()) {
+                                LOG.error("Could not close output file.", e1);
+                            }
+                        }
+                    }
+                    if (input != null) {
+                        try {
+                            input.close();
+                        } catch (IOException e1) {
+                            if (LOG.isErrorEnabled()) {
+                                LOG.error("Could not close input file.", e1);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

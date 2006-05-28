@@ -33,11 +33,10 @@ public class Options {
     private JCheckBox myUpdateOnStartInput;
     private boolean myUpdateOnStartInputCache;
     private JButton myProgramUpdateButton;
-    private JButton myDatabaseUpdateButton;
-    private JButton myDatabaseRefreshButton;
-    private JButton myDatabaseRecreateButton;
     private JCheckBox myAutoUpdateDatabaseInput;
-    private JSpinner myAutoUpdateDatabaseIntervalInput;private JLabel myLastUpdatedLabel;
+    private JSpinner myAutoUpdateDatabaseIntervalInput;
+    private JLabel myLastUpdatedLabel;
+    private JButton myDatabaseUpdateButton;private JButton myDatabaseRefreshButton;private JButton myDatabaseRecreateButton;
     private Settings mySettingsForm;
 
     public void init(Settings settingsForm) {
