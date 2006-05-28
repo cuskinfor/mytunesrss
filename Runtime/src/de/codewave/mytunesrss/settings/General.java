@@ -35,6 +35,7 @@ public class General {
     private Settings mySettingsForm;
     private JButton myStartServerButton;
     private JButton myStopServerButton;
+    private JLabel myServerStatusLabel;
 
     public JTextField getTunesXmlPathInput() {
         return myTunesXmlPathInput;
@@ -56,6 +57,7 @@ public class General {
                 doStopServer();
             }
         });
+        setServerStatus(MyTunesRss.BUNDLE.getString("info.server.idle"), null);
     }
 
     public void doStartServer() {
@@ -105,6 +107,7 @@ public class General {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not create URL from iTunes XML file.", e);
                 }
+                SwingUtils.showErrorMessage(mySettingsForm.getFrame(), "Could not start server. Please check the log for errors.");
             }
         }
     }
@@ -133,14 +136,14 @@ public class General {
     private void setServerRunningStatus(int serverPort) {
         String[] localAddresses = NetworkUtils.getLocalNetworkAddresses();
         if (localAddresses.length == 0) {
-            mySettingsForm.setStatus(MyTunesRss.BUNDLE.getString("info.server.running"), null);
+            setServerStatus(MyTunesRss.BUNDLE.getString("info.server.running"), null);
         } else {
             StringBuffer tooltip = new StringBuffer("<html>").append(MyTunesRss.BUNDLE.getString("info.server.running.addressInfo"));
             for (int i = 0; i < localAddresses.length; i++) {
                 tooltip.append("http://").append(localAddresses[i]).append(":").append(serverPort);
                 tooltip.append(i + 1 < localAddresses.length ? "<br>" : "</html>");
             }
-            mySettingsForm.setStatus(MyTunesRss.BUNDLE.getString("info.server.running") + " [ http://" + localAddresses[0] + ":" + serverPort + " ] ",
+            setServerStatus(MyTunesRss.BUNDLE.getString("info.server.running") + " [ http://" + localAddresses[0] + ":" + serverPort + " ] ",
                                      tooltip.toString());
         }
         myRootPanel.validate();
@@ -159,7 +162,7 @@ public class General {
                          });
         if (!MyTunesRss.WEBSERVER.isRunning()) {
             mySettingsForm.setGuiMode(GuiMode.ServerIdle);
-            mySettingsForm.setStatus(MyTunesRss.BUNDLE.getString("info.server.idle"), null);
+            setServerStatus(MyTunesRss.BUNDLE.getString("info.server.idle"), null);
             myRootPanel.validate();
             if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
                 MyTunesRss.DATABASE_WATCHDOG.cancel();
@@ -198,6 +201,15 @@ public class General {
                 SwingUtils.enableElementAndLabel(myTunesXmlPathInput, true);
                 myTunesXmlPathLookupButton.setEnabled(true);
                 break;
+        }
+    }
+
+    public void setServerStatus(String text, String tooltipText) {
+        if (text != null) {
+            myServerStatusLabel.setText(text);
+        }
+        if (tooltipText != null) {
+            myServerStatusLabel.setToolTipText(tooltipText);
         }
     }
 

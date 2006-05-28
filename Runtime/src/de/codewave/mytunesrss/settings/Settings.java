@@ -13,7 +13,6 @@ public class Settings {
 
     private JFrame myFrame;
     private JPanel myRootPanel;
-    private JLabel myStatusLabel;
     private General myGeneralForm;
     private Options myOptionsForm;
 
@@ -37,16 +36,6 @@ public class Settings {
         myGeneralForm.init(this);
         myOptionsForm.init(this);
         myFrame = frame;
-        setStatus(MyTunesRss.BUNDLE.getString("info.server.idle"), null);
-    }
-
-    public void setStatus(String text, String tooltipText) {
-        if (text != null) {
-            myStatusLabel.setText(text);
-        }
-        if (tooltipText != null) {
-            myStatusLabel.setToolTipText(tooltipText);
-        }
     }
 
     public void updateConfigFromGui() {

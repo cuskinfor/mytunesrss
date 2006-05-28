@@ -94,6 +94,7 @@ public class MyTunesRss {
                 }
                 PleaseWait.start(frame, null, "Checking database... please wait.", false, false, new InitializeDatabaseTask());
                 if (CONFIG.isAutoStartServer()) {
+                    frame.setExtendedState(JFrame.ICONIFIED);
                     settings.getGeneralForm().doStartServer();
                 }
             }
