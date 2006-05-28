@@ -39,7 +39,7 @@ public class MyTunesRss {
     public static ResourceBundle BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
     public static WebServer WEBSERVER = new WebServer();
     public static Timer DATABASE_WATCHDOG = new Timer("MyTunesRSSDatabaseWatchdog");
-    public static MyTunesRSSSysTrayMenu SYSTRAYMENU;
+    public static SysTray SYSTRAYMENU;
 
     static {
         UPDATE_URLS = new HashMap<OperatingSystem, URL>();
@@ -102,7 +102,7 @@ public class MyTunesRss {
 
     private static void executeWindows(Settings settingsForm, WindowListener windowListener) {
         if (ProgramUtils.guessOperatingSystem() == OperatingSystem.Windows && SysTrayMenu.isAvailable()) {
-            SYSTRAYMENU = new MyTunesRSSSysTrayMenu(settingsForm, windowListener);
+            SYSTRAYMENU = new SysTray(settingsForm, windowListener);
         }
     }
 

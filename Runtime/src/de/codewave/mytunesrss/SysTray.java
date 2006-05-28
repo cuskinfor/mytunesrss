@@ -12,9 +12,9 @@ import javax.swing.*;
 import java.awt.event.*;
 
 /**
- * de.codewave.mytunesrss.MyTunesRSSSysTrayMenu
+ * de.codewave.mytunesrss.SysTray
  */
-public class MyTunesRSSSysTrayMenu {
+public class SysTray {
     private SysTrayMenu myMenu;
     private SysTrayMenuItem myQuit;
     private SysTrayMenuItem myShow;
@@ -22,8 +22,8 @@ public class MyTunesRSSSysTrayMenu {
     private SysTrayMenuItem myStartServer;
     private SysTrayMenuItem myStopServer;
 
-    public MyTunesRSSSysTrayMenu(Settings settingsForm, WindowListener windowListener) {
-        SysTrayMenuIcon menuIcon = new SysTrayMenuIcon(MyTunesRss.class.getResource("MyTunesRSS.ico"));
+    public SysTray(Settings settingsForm, WindowListener windowListener) {
+        SysTrayMenuIcon menuIcon = new SysTrayMenuIcon(getClass().getResource("SysTray.ico"));
         Listener menuListener = new Listener(settingsForm, windowListener);
         menuIcon.addSysTrayMenuListener(menuListener);
         myMenu = new SysTrayMenu(menuIcon, "This is MyTunesRSS");
