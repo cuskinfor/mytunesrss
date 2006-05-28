@@ -165,6 +165,11 @@ public class WebConfig {
         return Integer.parseInt(myConfigValues.get(CFG_PAGE_SIZE));
     }
 
+    public int getEffectivePageSize() {
+        int pageSize = getPageSize();
+        return pageSize > 0 ? pageSize : 1000;
+    }
+
     public void setPageSize(int pageSize) {
         myConfigValues.put(CFG_PAGE_SIZE, Integer.toString(pageSize));
     }

@@ -16,7 +16,7 @@ public class EditPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         Collection<Track> playlist = (Collection<Track>)getSession().getAttribute("playlistContent");
-        int pageSize = getWebConfig().getPageSize();
+        int pageSize = getWebConfig().getEffectivePageSize();
         if (pageSize > 0 && playlist.size() > pageSize) {
             int index = Integer.parseInt(getRequestParameter("index", "0"));
             getRequest().setAttribute("tracks", new ArrayList<Track>(playlist).subList(index * pageSize, Math.min((index * pageSize) + pageSize,

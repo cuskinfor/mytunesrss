@@ -39,8 +39,8 @@
                 <th>&nbsp;</th>
             </tr>
             <tr class="odd">
-                <td>Items per page (0 = no limit)</td>
-                <td><input type="text" name="pageSize" maxlength="3" value="<c:out value="${config.pageSize}"/>" style="width: 50px;" /></td>
+                <td>Items per page</td>
+                <td><input type="text" name="pageSize" maxlength="3" value="<c:out value="${cwfn:choose(config.pageSize > 0, config.pageSize, '')}"/>" style="width: 50px;" /></td>
             </tr>
             <tr>
                 <td>Fake MP3 suffix</td>
@@ -51,9 +51,9 @@
                 <td><input type="text" name="suffix.m4a" maxlength="20" value="<c:out value="${config.map['suffix.m4a']}"/>" style="width: 50px;" /></td>
             </tr>
             <tr>
-                <td>Limit RSS feed items (0 = no limit)</td>
+                <td>Limit RSS feed items</td>
                 <td>
-                    <input type="text" name="rssFeedLimit" maxlength="3" value="<c:out value="${config.rssFeedLimit}"/>" style="width: 50px;" />
+                    <input type="text" name="rssFeedLimit" maxlength="3" value="<c:out value="${cwfn:choose(config.rssFeedLimit > 0, config.rssFeedLimit, '')}"/>" style="width: 50px;" />
                 </td>
             </tr>
             <tr class="odd">

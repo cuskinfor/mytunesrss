@@ -31,7 +31,7 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
         } else {
             artists = getDataStore().executeQuery(new FindArtistQuery(album));
         }
-        int pageSize = getWebConfig().getPageSize();
+        int pageSize = getWebConfig().getEffectivePageSize();
         if (pageSize > 0 && artists.size() > pageSize) {
             int current = Integer.parseInt(getRequestParameter("index", "0"));
             Pager pager = createPager(artists.size(), current);

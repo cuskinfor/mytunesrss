@@ -50,7 +50,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         getRequest().setAttribute("sortOrder", sortOrderName);
         if (query != null) {
             List<Track> simpleTracks = (List<Track>)getDataStore().executeQuery(query);
-            int pageSize = getWebConfig().getPageSize();
+            int pageSize = getWebConfig().getEffectivePageSize();
             if (pageSize > 0 && simpleTracks.size() > pageSize) {
                 int current = Integer.parseInt(getRequestParameter("index", "0"));
                 Pager pager = createPager(simpleTracks.size(), current);

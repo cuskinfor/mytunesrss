@@ -18,7 +18,7 @@ public class ShowPlaylistManagerCommandHandler extends MyTunesRssCommandHandler 
     @Override
     public void executeAuthorized() throws Exception {
         List<Playlist> playlists = (List<Playlist>)getDataStore().executeQuery(new FindPlaylistQuery(PlaylistType.MyTunes));
-        int pageSize = getWebConfig().getPageSize();
+        int pageSize = getWebConfig().getEffectivePageSize();
         if (pageSize > 0 && playlists.size() > pageSize) {
             int current = Integer.parseInt(getRequestParameter("index", "0"));
             Pager pager = createPager(playlists.size(), current);

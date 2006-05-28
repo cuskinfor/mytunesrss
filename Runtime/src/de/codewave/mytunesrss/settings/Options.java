@@ -106,7 +106,7 @@ public class Options {
         if (result != null && !result.isEmpty()) {
             Date date = new Date(result.get(0).longValue());
             myLastUpdatedLabel.setText("Last updated: " + new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(date));
-            myDatabaseRefreshButton.setEnabled(true);
+            myDatabaseRefreshButton.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
             myDatabaseUpdateButton.setEnabled(true);
         } else {
             myLastUpdatedLabel.setText("Database has never been created.");
