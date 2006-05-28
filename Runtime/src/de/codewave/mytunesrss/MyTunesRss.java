@@ -12,11 +12,13 @@ import de.codewave.utils.*;
 import de.codewave.utils.moduleinfo.*;
 import org.apache.catalina.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.lang.*;
 import org.apache.log4j.*;
 
 import javax.imageio.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
@@ -80,25 +82,38 @@ public class MyTunesRss {
         frame.addWindowListener(mainWindowListener);
         frame.getContentPane().add(settings.getRootPanel());
         frame.setResizable(false);
-        int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", frame.getLocation().x);
-        int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", frame.getLocation().y);
-        frame.setLocation(x, y);
+        frame.setLocation(1000000, 1000000);
         settings.setGuiMode(GuiMode.ServerIdle);
+        removeAllEmptyTooltips(frame.getRootPane());
         frame.setVisible(true);
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtHandler(frame));
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 frame.pack();
+                int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", frame.getLocation().x);
+                int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", frame.getLocation().y);
+                frame.setLocation(x, y);
                 if (CONFIG.isCheckUpdateOnStart()) {
                     new Updater(frame).checkForUpdate(true);
                 }
                 PleaseWait.start(frame, null, "Checking database... please wait.", false, false, new InitializeDatabaseTask());
                 if (CONFIG.isAutoStartServer()) {
-                    frame.setExtendedState(JFrame.ICONIFIED);
                     settings.getGeneralForm().doStartServer();
+                    frame.setExtendedState(JFrame.ICONIFIED);
                 }
             }
         });
+    }
+
+    private static void removeAllEmptyTooltips(JComponent component) {
+        String toolTipText = component.getToolTipText();
+        if (toolTipText != null && StringUtils.isEmpty(toolTipText.trim())) {
+            component.setToolTipText(null);
+        }
+        Component[] childComponents = component.getComponents();
+        for (int i = 0; i < childComponents.length; i++) {
+            removeAllEmptyTooltips((JComponent)childComponents[i]);
+        }
     }
 
     private static void executeWindows(Settings settingsForm, WindowListener windowListener) {
