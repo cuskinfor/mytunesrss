@@ -136,7 +136,7 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Quit MyTunesRSS"/>
+                  <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.quitApplication"/>
                   <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.quitApplicationTooltip"/>
                 </properties>
               </component>
