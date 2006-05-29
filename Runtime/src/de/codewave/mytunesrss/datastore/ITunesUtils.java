@@ -37,9 +37,10 @@ public class ITunesUtils {
     public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate) throws SQLException {
         try {
             PListHandler handler = new PListHandler();
-            TrackListener trackListener = new TrackListener(storeSession, timeLastUpdate);
+            Map<Integer, String> trackIdToPersId = new HashMap<Integer, String>();
+            TrackListener trackListener = new TrackListener(storeSession, timeLastUpdate, trackIdToPersId);
             handler.addListener("/plist/dict[Tracks]/dict", trackListener);
-            handler.addListener("/plist/dict[Playlists]/array", new PlaylistListener(storeSession));
+            handler.addListener("/plist/dict[Playlists]/array", new PlaylistListener(storeSession, trackIdToPersId));
             Set<String> databaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery());
             XmlUtils.parseApplePList(iTunesLibraryXml, handler);
             if (LOG.isInfoEnabled()) {
@@ -79,13 +80,15 @@ public class ITunesUtils {
         int myUpdatedCount;
         Set<String> myExistingIds = new HashSet<String>();
         Set<String> myDatabaseIds = new HashSet<String>();
+        Map<Integer, String> myTrackIdToPersId;
 
-        public TrackListener(DataStoreSession dataStoreSession, long timeLastUpdate) throws SQLException {
+        public TrackListener(DataStoreSession dataStoreSession, long timeLastUpdate, Map<Integer, String> trackIdToPersId) throws SQLException {
             myDataStoreSession = dataStoreSession;
             myTimeLastUpdate = timeLastUpdate;
             myInsertStatement = new InsertTrackStatement(dataStoreSession);
             myUpdateStatement = new UpdateTrackStatement(dataStoreSession);
             myDatabaseIds = (Set<String>)dataStoreSession.executeQuery(new FindTrackIdsQuery());
+            myTrackIdToPersId = trackIdToPersId;
         }
 
         public Set<String> getExistingIds() {
@@ -98,7 +101,9 @@ public class ITunesUtils {
 
         public boolean beforeDictPut(Map dict, String key, Object value) {
             Map track = (Map)value;
-            myExistingIds.add(track.get("Track ID").toString());
+            String persId = track.get("Persistent ID").toString();
+            myExistingIds.add(persId);
+            myTrackIdToPersId.put((Integer)track.get("Track ID"), persId);
             Date dateModified = ((Date)track.get("Date Modified"));
             long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
             Date dateAdded = ((Date)track.get("Date Added"));
@@ -116,7 +121,7 @@ public class ITunesUtils {
         }
 
         private boolean insertOrUpdateTrack(Map track) {
-            String trackId = track.get("Track ID").toString();
+            String trackId = track.get("Persistent ID").toString();
             String name = (String)track.get("Name");
             String trackType = (String)track.get("Track Type");
             if ("File".equals(trackType)) {
@@ -150,10 +155,12 @@ public class ITunesUtils {
     }
 
     public static class PlaylistListener implements PListHandlerListener {
-        DataStoreSession myDataStoreSession;
+        private DataStoreSession myDataStoreSession;
+        private Map<Integer, String> myTrackIdToPersId;
 
-        public PlaylistListener(DataStoreSession dataStoreSession) {
+        public PlaylistListener(DataStoreSession dataStoreSession, Map<Integer, String> trackIdToPersId) {
             myDataStoreSession = dataStoreSession;
+            myTrackIdToPersId = trackIdToPersId;
         }
 
         public boolean beforeDictPut(Map dict, String key, Object value) {
@@ -179,7 +186,7 @@ public class ITunesUtils {
                 if (items != null && !items.isEmpty()) {
                     for (Iterator<Map> itemIterator = items.iterator(); itemIterator.hasNext();) {
                         Map item = itemIterator.next();
-                        tracks.add(item.get("Track ID").toString());
+                        tracks.add(myTrackIdToPersId.get((Integer)item.get("Track ID")));
                     }
                 }
                 if (!tracks.isEmpty()) {
