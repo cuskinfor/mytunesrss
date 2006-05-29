@@ -118,7 +118,7 @@
                   <label resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.startServer"/>
                   <name value=""/>
                   <opaque value="false"/>
-                  <text value="Start server"/>
+                  <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.startServer"/>
                   <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.startServerTooltip"/>
                 </properties>
               </component>
