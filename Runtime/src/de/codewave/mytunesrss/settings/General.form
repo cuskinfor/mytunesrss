@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
     <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="349" height="314"/>
+      <xy x="20" y="20" width="345" height="285"/>
     </constraints>
     <properties>
       <opaque value="false"/>
@@ -18,7 +18,7 @@
         <properties>
           <opaque value="false"/>
         </properties>
-        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.title.server"/>
+        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.server"/>
         <children>
           <component id="fe0bc" class="javax.swing.JTextField" binding="myPortInput">
             <constraints>
@@ -28,7 +28,7 @@
             </constraints>
             <properties>
               <font swing-font="TextField.font"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.port"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverPortTooltip"/>
             </properties>
           </component>
           <component id="fbf36" class="javax.swing.JLabel">
@@ -38,7 +38,7 @@
             <properties>
               <font swing-font="Label.font"/>
               <labelFor value="fe0bc"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.label.port"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverPort"/>
             </properties>
           </component>
           <component id="d7241" class="javax.swing.JLabel">
@@ -48,7 +48,7 @@
             <properties>
               <font swing-font="Label.font"/>
               <labelFor value="82489"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.label.password"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.authPassword"/>
             </properties>
           </component>
           <component id="82489" class="javax.swing.JPasswordField" binding="myPasswordInput">
@@ -59,7 +59,7 @@
             </constraints>
             <properties>
               <font swing-font="PasswordField.font"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.password"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.authPasswordTooltip"/>
             </properties>
           </component>
           <grid id="e61d1" layout-manager="BorderLayout" hgap="0" vgap="0">
@@ -90,7 +90,7 @@
             <properties>
               <font swing-font="Label.font"/>
               <labelFor value="78c00"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.memory.label"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.maxMemory"/>
             </properties>
           </component>
           <component id="78c00" class="javax.swing.JSpinner" binding="myMaxMemInput">
@@ -100,7 +100,7 @@
             <properties>
               <font swing-font="Spinner.font"/>
               <opaque value="false"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.memory.tooltip"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.maxMemoryTooltip"/>
             </properties>
           </component>
           <component id="a2c4a" class="javax.swing.JButton" binding="myMaxMemSaveButton">
@@ -110,8 +110,8 @@
             <properties>
               <font swing-font="Button.font"/>
               <opaque value="false"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.memory.button"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.memory.tooltip.button"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.saveMemory"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.saveMemoryTooltip"/>
             </properties>
           </component>
         </children>
@@ -124,7 +124,7 @@
         <properties>
           <opaque value="false"/>
         </properties>
-        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.title.itunes"/>
+        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.iTunes"/>
         <children>
           <component id="c295c" class="javax.swing.JTextField" binding="myTunesXmlPathInput">
             <constraints>
@@ -135,7 +135,7 @@
             <properties>
               <font swing-font="TextField.font"/>
               <opaque value="true"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.libraryXmlFile"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.tunesXmlTooltip"/>
             </properties>
           </component>
           <component id="643a4" class="javax.swing.JButton" binding="myTunesXmlPathLookupButton">
@@ -147,7 +147,7 @@
               <name value=""/>
               <opaque value="false"/>
               <text value="..."/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.lookupFile"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.tunesXmlLookupTooltip"/>
             </properties>
           </component>
           <hspacer id="52ba4">
@@ -164,7 +164,7 @@
             <properties>
               <font swing-font="Label.font"/>
               <labelFor value="c295c"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.label.libraryXmlFile"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.tunesXml"/>
             </properties>
           </component>
         </children>

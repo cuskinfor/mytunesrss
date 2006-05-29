@@ -21,17 +21,7 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
 
     public static enum BuildType {
-        Recreate("Recreating"),Refresh("Refreshing"),Update("Updating");
-
-        private String myVerb;
-
-        BuildType(String verb) {
-            myVerb = verb;
-        }
-
-        public String getVerb() {
-            return myVerb;
-        }
+        Recreate(),Refresh(),Update();
     }
 
     public static boolean needsUpdate(URL libraryXmlUrl) throws SQLException {

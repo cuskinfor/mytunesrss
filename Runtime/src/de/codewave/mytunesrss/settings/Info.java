@@ -50,7 +50,7 @@ public class Info {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not create zip archive with log file.", e1);
                     }
-                    SwingUtils.showErrorMessage(mySettingsForm.getFrame(), "Could not create zip archive with log file. Please try again.");
+                    SwingUtils.showErrorMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("error.couldNotCreateLogArchive"));
                 } finally {
                     if (zipOutput != null) {
                         try {

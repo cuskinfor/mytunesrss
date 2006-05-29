@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
     <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="510" height="259"/>
+      <xy x="20" y="20" width="510" height="1331"/>
     </constraints>
     <properties>
       <opaque value="false"/>
@@ -18,7 +18,7 @@
         <properties>
           <opaque value="false"/>
         </properties>
-        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.info.title.developer"/>
+        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.developers"/>
         <children>
           <component id="c17ce" class="javax.swing.JLabel">
             <constraints>
@@ -26,7 +26,7 @@
             </constraints>
             <properties>
               <font swing-font="Label.font"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.about.label.programming"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.programming"/>
             </properties>
           </component>
           <component id="e06a8" class="javax.swing.JLabel">
@@ -35,7 +35,7 @@
             </constraints>
             <properties>
               <font swing-font="Label.font"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.about.label.design"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.design"/>
             </properties>
           </component>
           <component id="8590a" class="javax.swing.JLabel">
@@ -90,7 +90,7 @@
           <opaque value="false"/>
           <visible value="true"/>
         </properties>
-        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="gui.settings.info.freeware"/>
+        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.termsOfUse"/>
         <children>
           <component id="92fed" class="javax.swing.JTextArea">
             <constraints>
@@ -101,7 +101,7 @@
               <font swing-font="Label.font"/>
               <lineWrap value="true"/>
               <opaque value="false"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.info.freeware.txt"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.termsOfUseInfo"/>
               <wrapStyleWord value="true"/>
             </properties>
           </component>
@@ -114,7 +114,8 @@
         <properties>
           <font swing-font="Button.font"/>
           <opaque value="false"/>
-          <text value="Save log"/>
+          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.saveLog"/>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.saveLogTooltip"/>
         </properties>
       </component>
     </children>

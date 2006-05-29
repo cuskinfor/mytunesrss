@@ -73,7 +73,7 @@ public class MyTunesRss {
             LOG.info("Application version: " + VERSION);
         }
         System.setProperty("mytunesrss.version", VERSION);
-        final JFrame frame = new JFrame(BUNDLE.getString("gui.title") + " v" + VERSION);
+        final JFrame frame = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
         frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         final Settings settings = new Settings();
@@ -98,7 +98,7 @@ public class MyTunesRss {
                 if (CONFIG.isCheckUpdateOnStart()) {
                     new Updater(frame).checkForUpdate(true);
                 }
-                PleaseWait.start(frame, null, "Checking database... please wait.", false, false, new InitializeDatabaseTask());
+                PleaseWait.start(frame, null, MyTunesRss.BUNDLE.getString("pleaseWait.checkingDatabase"), false, false, new InitializeDatabaseTask());
                 if (CONFIG.isAutoStartServer()) {
                     settings.doStartServer();
                     frame.setExtendedState(JFrame.ICONIFIED);
@@ -179,8 +179,7 @@ public class MyTunesRss {
             if (e instanceof OutOfMemoryError) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        myPane.setMessage(
-                                "The application has failed because it has run out of memory. Please raise the available memory on the first settings tab and restart MyTunesRSS to activate the changes.");
+                        myPane.setMessage(MyTunesRss.BUNDLE.getString("error.outOfMemory"));
                         myDialog.pack();
                         myDialog.setLocationRelativeTo(myDialog.getParent());
                         myDialog.setVisible(true);
@@ -192,8 +191,7 @@ public class MyTunesRss {
                         if (LOG.isErrorEnabled()) {
                             LOG.error(null, e);
                         }
-                        myPane.setMessage(
-                                "An error occured. You may be able to continue working but you should check your log file and contact the Codewave support.");
+                        myPane.setMessage(MyTunesRss.BUNDLE.getString("error.uncaughtException"));
                         myDialog.pack();
                         myDialog.setLocationRelativeTo(myDialog.getParent());
                         myDialog.setVisible(true);

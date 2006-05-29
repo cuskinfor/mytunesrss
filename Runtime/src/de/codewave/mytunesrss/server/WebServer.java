@@ -36,32 +36,32 @@ public class WebServer {
                         myEmbeddedTomcat.stop();
                         myEmbeddedTomcat = null;
                         if (health == CheckHealthResult.EMPTY_LIBRARY) {
-                            myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.server.startFailureEmptyLibrary");
+                            myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverEmptyLibrary");
                         } else {
-                            myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.server.startFailureHealth");
+                            myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverHealth");
                         }
                         myEmbeddedTomcat = null;
                         return false;
                     }
                 } else {
-                    myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.server.startFailureHealth");
+                    myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverHealth");
                     myEmbeddedTomcat = null;
                     return false;
                 }
             } catch (LifecycleException e) {
                 if (e.getMessage().contains("BindException")) {
-                    myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.server.startFailureBindException");
+                    myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverAddressBind");
                 } else {
-                    myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.server.startFailure") + e.getMessage();
+                    myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverStart") + e.getMessage();
                 }
                 myEmbeddedTomcat = null;
                 return false;
             } catch (IOException e) {
-                myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.server.startFailure") + e.getMessage();
+                myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverStart") + e.getMessage();
                 myEmbeddedTomcat = null;
                 return false;
             } catch (SQLException e) {
-                myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.server.startFailure") + e.getMessage();
+                myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverStart") + e.getMessage();
                 myEmbeddedTomcat = null;
                 return false;
             }
@@ -145,7 +145,7 @@ public class WebServer {
                 myEmbeddedTomcat.stop();
                 myEmbeddedTomcat = null;
             } catch (LifecycleException e) {
-                myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.server.stopFailure") + e.getMessage();
+                myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.stopServer") + e.getMessage();
                 return false;
             }
         }

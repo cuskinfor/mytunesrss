@@ -7,9 +7,7 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
-import de.codewave.utils.*;
 import org.apache.commons.logging.*;
-import org.apache.log4j.lf5.viewer.categoryexplorer.*;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -29,7 +27,9 @@ public class Options {
     private JPanel myRootPanel;
     private boolean myUpdateOnStartInputCache;
     private JLabel myLastUpdatedLabel;
-    private JButton myDatabaseUpdateButton;private JButton myDatabaseRefreshButton;private JButton myDatabaseRecreateButton;
+    private JButton myDatabaseUpdateButton;
+    private JButton myDatabaseRefreshButton;
+    private JButton myDatabaseRecreateButton;
     private Settings mySettingsForm;
     private JCheckBox myUpdateOnStartInput;
     private JCheckBox myAutoStartServerInput;
@@ -90,11 +90,13 @@ public class Options {
         }
         if (result != null && !result.isEmpty()) {
             Date date = new Date(result.get(0).longValue());
-            myLastUpdatedLabel.setText("Last updated: " + new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(date));
+            myLastUpdatedLabel.setText(
+                    MyTunesRss.BUNDLE.getString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRss.BUNDLE.getString(
+                            "settings.lastDatabaseUpdateDateFormat")).format(date));
             myDatabaseRefreshButton.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
             myDatabaseUpdateButton.setEnabled(true);
         } else {
-            myLastUpdatedLabel.setText("Database has not been created yet.");
+            myLastUpdatedLabel.setText(MyTunesRss.BUNDLE.getString("settings.databaseNotYetCreated"));
             myDatabaseRefreshButton.setEnabled(false);
             myDatabaseUpdateButton.setEnabled(false);
         }
@@ -104,8 +106,7 @@ public class Options {
     public void runBuildDatabaseTask(DatabaseBuilderTask.BuildType buildType) {
         try {
             PleaseWait.start(mySettingsForm.getFrame(),
-                             null,
-                             buildType.getVerb() + " database... please wait.",
+                             null, MyTunesRss.BUNDLE.getString("settings.buildDatabase" + buildType.name()),
                              false,
                              false,
                              new DatabaseBuilderTask(new File(mySettingsForm.getGeneralForm().getTunesXmlPathInput().getText()).toURL(), buildType));

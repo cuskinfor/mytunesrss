@@ -103,11 +103,11 @@ public class Settings {
         }
         final File library = new File(myGeneralForm.getTunesXmlPathInput().getText().trim());
         if (port < MIN_PORT || port > MAX_PORT) {
-            SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.startServer.port"));
+            SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.illegalServerPort"));
         } else if (!new General.ITunesLibraryFileFilter(false).accept(library)) {
-            SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.startServer.libraryXmlFile"));
+            SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.illegalTunesXml"));
         } else if (myGeneralForm.getPasswordInput().getPassword().length == 0) {
-            SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.authButNoPassword"));
+            SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.missingAuthPassword"));
         } else {
             try {
                 URL libraryUrl = library.toURL();
@@ -117,7 +117,7 @@ public class Settings {
                 contextEntries.put(DataStore.class.getName(), MyTunesRss.STORE);
                 updateDatabase(libraryUrl);
                 final int serverPort = port;
-                PleaseWait.start(getFrame(), null, MyTunesRss.BUNDLE.getString("info.server.starting"), false, false, new PleaseWait.NoCancelTask() {
+                PleaseWait.start(getFrame(), null, MyTunesRss.BUNDLE.getString("pleaseWait.serverstarting"), false, false, new PleaseWait.NoCancelTask() {
                     public void execute() throws Exception {
                         MyTunesRss.WEBSERVER.start(serverPort, contextEntries);
                     }
@@ -136,14 +136,14 @@ public class Settings {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not create URL from iTunes XML file.", e);
                 }
-                SwingUtils.showErrorMessage(getFrame(), "Could not start server. Please check the log for errors.");
+                SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.serverStart"));
             }
         }
     }
 
     private void updateDatabase(final URL library) {
         final Set<Boolean> checkResult = new HashSet<Boolean>();
-        PleaseWait.start(getFrame(), null, "Checking database... please wait.", false, false, new PleaseWait.NoCancelTask() {
+        PleaseWait.start(getFrame(), null, MyTunesRss.BUNDLE.getString("pleaseWait.checkingDatabase"), false, false, new PleaseWait.NoCancelTask() {
             public void execute() {
                 try {
                     checkResult.add(Boolean.valueOf(DatabaseBuilderTask.needsUpdate(library)));
@@ -154,8 +154,7 @@ public class Settings {
         });
         if (checkResult.iterator().next()) {
             PleaseWait.start(getFrame(),
-                             null,
-                             DatabaseBuilderTask.BuildType.Update.getVerb() + " database... please wait.",
+                             null, MyTunesRss.BUNDLE.getString("settings.buildDatabase" + DatabaseBuilderTask.BuildType.Update.name()),
                              false,
                              false,
                              new DatabaseBuilderTask(library, DatabaseBuilderTask.BuildType.Update));
@@ -163,14 +162,14 @@ public class Settings {
     }
 
     public void doStopServer() {
-        PleaseWait.start(getFrame(), null, MyTunesRss.BUNDLE.getString("info.server.stopping"), false, false, new PleaseWait.NoCancelTask() {
+        PleaseWait.start(getFrame(), null, MyTunesRss.BUNDLE.getString("pleaseWait.serverstopping"), false, false, new PleaseWait.NoCancelTask() {
             public void execute() throws Exception {
                 MyTunesRss.WEBSERVER.stop();
             }
         });
         if (!MyTunesRss.WEBSERVER.isRunning()) {
             setGuiMode(GuiMode.ServerIdle);
-            myGeneralForm.setServerStatus(MyTunesRss.BUNDLE.getString("info.server.idle"), null);
+            myGeneralForm.setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
             myRootPanel.validate();
             if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
                 MyTunesRss.DATABASE_WATCHDOG.cancel();
@@ -190,7 +189,7 @@ public class Settings {
             Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", getFrame().getLocation().y);
             updateConfigFromGui();
             MyTunesRss.CONFIG.save();
-            PleaseWait.start(getFrame(), null, "Shutting down database... please wait.", false, false, new PleaseWait.NoCancelTask() {
+            PleaseWait.start(getFrame(), null, MyTunesRss.BUNDLE.getString("pleaseWait.shutdownDatabase"), false, false, new PleaseWait.NoCancelTask() {
                 public void execute() {
                     try {
                         MyTunesRss.STORE.destroy();

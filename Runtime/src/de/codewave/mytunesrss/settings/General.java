@@ -12,14 +12,11 @@ import org.apache.commons.logging.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.zip.*;
 
 /**
  * General settings panel
  */
 public class General {
-    private static final Log LOG = LogFactory.getLog(General.class);
-
     private static final String LIBRARY_XML_FILE_NAME = "iTunes Music Library.xml";
 
     private JPanel myRootPanel;
@@ -62,20 +59,20 @@ public class General {
         }
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
         myTunesXmlPathLookupButton.addActionListener(new TunesXmlPathLookupButtonListener());
-        setServerStatus(MyTunesRss.BUNDLE.getString("info.server.idle"), null);
+        setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
     }
 
     public void setServerRunningStatus(int serverPort) {
         String[] localAddresses = NetworkUtils.getLocalNetworkAddresses();
         if (localAddresses.length == 0) {
-            setServerStatus(MyTunesRss.BUNDLE.getString("info.server.running"), null);
+            setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running"), null);
         } else {
-            StringBuffer tooltip = new StringBuffer("<html>").append(MyTunesRss.BUNDLE.getString("info.server.running.addressInfo"));
+            StringBuffer tooltip = new StringBuffer("<html>").append(MyTunesRss.BUNDLE.getString("serverStatus.running.addresses"));
             for (int i = 0; i < localAddresses.length; i++) {
                 tooltip.append("http://").append(localAddresses[i]).append(":").append(serverPort);
                 tooltip.append(i + 1 < localAddresses.length ? "<br>" : "</html>");
             }
-            setServerStatus(MyTunesRss.BUNDLE.getString("info.server.running") + " [ http://" + localAddresses[0] + ":" + serverPort + " ] ",
+            setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running") + " [ http://" + localAddresses[0] + ":" + serverPort + " ] ",
                             tooltip.toString());
         }
         myRootPanel.validate();
@@ -126,13 +123,13 @@ public class General {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileFilter(new ITunesLibraryFileFilter(true));
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fileChooser.setDialogTitle(MyTunesRss.BUNDLE.getString("dialog.lookupLibraryXml.title"));
+            fileChooser.setDialogTitle(MyTunesRss.BUNDLE.getString("lookupTunesXml.title"));
             if (fileChooser.showDialog(myRootPanel.getTopLevelAncestor(), null) == JFileChooser.APPROVE_OPTION) {
                 try {
                     myTunesXmlPathInput.setText(fileChooser.getSelectedFile().getCanonicalPath());
                 } catch (IOException e) {
                     SwingUtils.showErrorMessage(mySettingsForm.getFrame(),
-                                                MyTunesRss.BUNDLE.getString("error.lookupLibraryXml.failure") + e.getMessage());
+                                                MyTunesRss.BUNDLE.getString("error.lookupLibraryXml") + e.getMessage());
                 }
             }
         }
@@ -159,9 +156,9 @@ public class General {
         public void actionPerformed(ActionEvent e) {
             int maxMem = ((Integer)myMaxMemInput.getValue()).intValue();
             if (ProgramUtils.updateMemorySwitch(MemorySwitchType.Maxmimum, maxMem)) {
-                SwingUtils.showInfoMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("info.savemem.success"));
+                SwingUtils.showInfoMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("info.saveMaxMemoryDone"));
             } else {
-                SwingUtils.showErrorMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("error.memsave.failure"));
+                SwingUtils.showErrorMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("error.saveMaxMemory"));
             }
         }
     }

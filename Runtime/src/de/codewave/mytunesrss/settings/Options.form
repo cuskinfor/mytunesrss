@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
     <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="348" height="349"/>
+      <xy x="20" y="20" width="417" height="293"/>
     </constraints>
     <properties>
       <opaque value="false"/>
@@ -23,7 +23,7 @@
         <properties>
           <opaque value="false"/>
         </properties>
-        <border type="etched" title="MyTunesRSS Database"/>
+        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.database"/>
         <children>
           <grid id="faa32" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints>
@@ -64,8 +64,8 @@
                   <font swing-font="Button.font"/>
                   <horizontalAlignment value="0"/>
                   <opaque value="false"/>
-                  <text value="Update"/>
-                  <toolTipText value=""/>
+                  <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.updateDatabase"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.updateDatabaseTooltip"/>
                 </properties>
               </component>
               <component id="af7c5" class="javax.swing.JButton" binding="myDatabaseRefreshButton">
@@ -75,7 +75,8 @@
                 <properties>
                   <font swing-font="Button.font"/>
                   <opaque value="false"/>
-                  <text value="Refresh"/>
+                  <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.refreshDatabase"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.refreshDatabaseTooltip"/>
                 </properties>
               </component>
               <component id="3fd26" class="javax.swing.JButton" binding="myDatabaseRecreateButton">
@@ -84,16 +85,17 @@
                 </constraints>
                 <properties>
                   <font swing-font="Button.font"/>
-                  <label value="Recreate"/>
+                  <label value="Neu erstellen"/>
                   <opaque value="false"/>
-                  <text value="Recreate"/>
+                  <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.recreateDatabase"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.recreateDatabaseTooltip"/>
                 </properties>
               </component>
             </children>
           </grid>
         </children>
       </grid>
-      <grid id="7596f" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+      <grid id="7596f" layout-manager="GridLayoutManager" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -105,44 +107,46 @@
         <children>
           <component id="1161" class="javax.swing.JCheckBox" binding="myAutoStartServerInput">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font swing-font="CheckBox.font"/>
               <opaque value="false"/>
-              <text value="Start server automatically"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.autoStartServer"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.autoStartServerTooltip"/>
             </properties>
           </component>
           <component id="a1081" class="javax.swing.JCheckBox" binding="myUpdateOnStartInput">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font swing-font="CheckBox.font"/>
               <opaque value="false"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.info.update.autoOnStart"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.info.update.autoOnStart.tooltip"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.checkForUpdateOnStart"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.checkForUpdateOnStartTooltip"/>
             </properties>
           </component>
           <component id="ad8cc" class="javax.swing.JButton" binding="myProgramUpdateButton">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font swing-font="Button.font"/>
               <opaque value="false"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.info.update.now"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.info.update.now.tooltip"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.checkForUpdate"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.checkForUpdateTooltip"/>
             </properties>
           </component>
           <component id="db462" class="javax.swing.JCheckBox" binding="myAutoUpdateDatabaseInput">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font swing-font="CheckBox.font"/>
               <opaque value="false"/>
-              <text value="Automatically update while server is running"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.autoUpdateDatabase"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.autoUpdateDatabaseTooltip"/>
             </properties>
           </component>
           <component id="a05f5" class="javax.swing.JLabel">
@@ -152,7 +156,8 @@
             <properties>
               <font swing-font="Label.font"/>
               <labelFor value="967fd"/>
-              <text value="Check interval (seconds)"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.checkInterval"/>
+              <toolTipText value=""/>
             </properties>
           </component>
           <component id="967fd" class="javax.swing.JSpinner" binding="myAutoUpdateDatabaseIntervalInput">
@@ -163,6 +168,7 @@
             </constraints>
             <properties>
               <font swing-font="Spinner.font"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.checkIntervalTooltip"/>
             </properties>
           </component>
         </children>

@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="0">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="400" height="2594"/>
+      <xy x="20" y="20" width="460" height="4754"/>
     </constraints>
     <properties>
       <background color="-1"/>
@@ -15,9 +15,12 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <font name="Lucida Grande" size="72" style="0"/>
+          <foreground swing-color="Button.select"/>
           <horizontalAlignment value="0"/>
+          <horizontalTextPosition value="0"/>
           <icon value="de/codewave/mytunesrss/settings/MyTunesRSS.png"/>
-          <text value=""/>
+          <text value="B   E   T   A"/>
           <toolTipText value=""/>
         </properties>
       </component>
@@ -109,11 +112,11 @@
                 <properties>
                   <font swing-font="Button.font"/>
                   <horizontalAlignment value="0"/>
-                  <label resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.button.startServer"/>
+                  <label resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.startServer"/>
                   <name value=""/>
                   <opaque value="false"/>
                   <text value="Start Server"/>
-                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.startServer"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.startServerTooltip"/>
                 </properties>
               </component>
               <component id="720fc" class="javax.swing.JButton" binding="myStopServerButton">
@@ -124,7 +127,8 @@
                   <enabled value="true"/>
                   <font swing-font="Button.font"/>
                   <opaque value="false"/>
-                  <text value="Stop Server"/>
+                  <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.stopServer"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.stopServerTooltip"/>
                 </properties>
               </component>
               <component id="a8143" class="javax.swing.JButton" binding="myQuitButton">
@@ -133,6 +137,7 @@
                 </constraints>
                 <properties>
                   <text value="Quit MyTunesRSS"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.quitApplicationTooltip"/>
                 </properties>
               </component>
             </children>

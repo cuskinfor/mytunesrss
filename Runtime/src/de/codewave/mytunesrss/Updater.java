@@ -37,7 +37,7 @@ public class Updater {
                     }
                 }
             } else if (!autoCheck) {
-                SwingUtils.showInfoMessage(myParent, MyTunesRss.BUNDLE.getString("info.noUpdateAvailable"));
+                SwingUtils.showInfoMessage(myParent, MyTunesRss.BUNDLE.getString("info.noUpdate"));
             }
         } else if (!autoCheck) {
             SwingUtils.showErrorMessage(myParent, MyTunesRss.BUNDLE.getString("error.noUpdateInfo"));
@@ -45,8 +45,8 @@ public class Updater {
     }
 
     private void downloadUpdate(final URL url, final File file, String version) {
-        PleaseWait.start(myParent, MyTunesRss.BUNDLE.getString("gui.download.title"), MessageFormat.format(MyTunesRss.BUNDLE.getString(
-                "gui.download.message"), version), true, true, new DownloadUpdateTask(url, file));
+        PleaseWait.start(myParent, MyTunesRss.BUNDLE.getString("pleaseWait.dowloadTitle"), MessageFormat.format(MyTunesRss.BUNDLE.getString(
+                "pleaseWait.downloadMessage"), version), true, true, new DownloadUpdateTask(url, file));
     }
 
     private boolean askForUpdate(UpdateInfo updateInfo, boolean autoCheck) {
@@ -57,20 +57,20 @@ public class Updater {
             }
         };
         pane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
-        pane.setMessage(MessageFormat.format(MyTunesRss.BUNDLE.getString("info.newVersionAvailable.message"),
+        pane.setMessage(MessageFormat.format(MyTunesRss.BUNDLE.getString("info.newVersionMessage"),
                                              MyTunesRss.VERSION,
                                              updateInfo.getVersion()));
-        String stopNagging = MyTunesRss.BUNDLE.getString("info.newVersionAvailable.stopNagging");
-        String later = MyTunesRss.BUNDLE.getString("info.newVersionAvailable.later");
-        String download = MyTunesRss.BUNDLE.getString("info.newVersionAvailable.download");
-        String cancel = MyTunesRss.BUNDLE.getString("gui.cancel");
+        String stopNagging = MyTunesRss.BUNDLE.getString("info.newVersionStopNagging");
+        String later = MyTunesRss.BUNDLE.getString("info.newVersionLater");
+        String download = MyTunesRss.BUNDLE.getString("info.newVersionDownload");
+        String cancel = MyTunesRss.BUNDLE.getString("cancel");
         if (autoCheck) {
             pane.setOptions(new String[] {download, later, stopNagging});
         } else {
             pane.setOptions(new String[] {download, cancel});
         }
         pane.setInitialValue(download);
-        JDialog dialog = pane.createDialog(myParent, MessageFormat.format(MyTunesRss.BUNDLE.getString("info.newVersionAvailable.title"),
+        JDialog dialog = pane.createDialog(myParent, MessageFormat.format(MyTunesRss.BUNDLE.getString("info.newVersionTitle"),
                                                                           updateInfo.getVersion()));
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         dialog.setVisible(true);
@@ -96,19 +96,19 @@ public class Updater {
         public void execute() {
             switch (myDownloader.download()) {
                 case Finished:
-                    SwingUtils.showInfoMessage(myParent, MyTunesRss.BUNDLE.getString("info.updateDownloadComplete"));
+                    SwingUtils.showInfoMessage(myParent, MyTunesRss.BUNDLE.getString("info.newVersionDownloadDone"));
                     break;
                 case Cancelled:
                     if (myFile.exists() && myFile.isFile()) {
                         myFile.delete();
                     }
-                    SwingUtils.showErrorMessage(myParent, MyTunesRss.BUNDLE.getString("error.updateDownloadCancelled"));
+                    SwingUtils.showErrorMessage(myParent, MyTunesRss.BUNDLE.getString("info.newVersionDownloadCancelled"));
                     break;
                 case Failed:
                     if (myFile.exists() && myFile.isFile()) {
                         myFile.delete();
                     }
-                    SwingUtils.showErrorMessage(myParent, MyTunesRss.BUNDLE.getString("error.updateDownloadFailed"));
+                    SwingUtils.showErrorMessage(myParent, MyTunesRss.BUNDLE.getString("info.newVersionDownloadFailed"));
                     break;
             }
         }
