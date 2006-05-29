@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.*;
 import org.apache.commons.logging.*;
+import org.apache.log4j.lf5.viewer.categoryexplorer.*;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -26,33 +27,19 @@ public class Options {
     private static final Log LOG = LogFactory.getLog(Options.class);
 
     private JPanel myRootPanel;
-    private JSpinner myMaxMemInput;
-    private JLabel myMaxMemLabel;
-    private JButton myMaxMemSaveButton;
-    private JCheckBox myAutoStartServerInput;
-    private JCheckBox myUpdateOnStartInput;
     private boolean myUpdateOnStartInputCache;
-    private JButton myProgramUpdateButton;
-    private JCheckBox myAutoUpdateDatabaseInput;
-    private JSpinner myAutoUpdateDatabaseIntervalInput;
     private JLabel myLastUpdatedLabel;
     private JButton myDatabaseUpdateButton;private JButton myDatabaseRefreshButton;private JButton myDatabaseRecreateButton;
     private Settings mySettingsForm;
+    private JCheckBox myUpdateOnStartInput;
+    private JCheckBox myAutoStartServerInput;
+    private JButton myProgramUpdateButton;
+    private JSpinner myAutoUpdateDatabaseIntervalInput;
+    private JCheckBox myAutoUpdateDatabaseInput;
 
     public void init(Settings settingsForm) {
         mySettingsForm = settingsForm;
         refreshLastUpdate();
-        int minMemory = ProgramUtils.getMemorySwitch(MemorySwitchType.Minimum);
-        int maxMemory = ProgramUtils.getMemorySwitch(MemorySwitchType.Maxmimum);
-        if (maxMemory != -1) {
-            SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(maxMemory, Math.max(10, minMemory), 500, 10);
-            myMaxMemInput.setModel(spinnerNumberModel);
-        } else {
-            myMaxMemLabel.setVisible(false);
-            myMaxMemInput.setVisible(false);
-            myMaxMemSaveButton.setVisible(false);
-            myMaxMemSaveButton.addActionListener(new MaxMemSaveButtonListener());
-        }
         myUpdateOnStartInput.setSelected(MyTunesRss.CONFIG.isCheckUpdateOnStart());
         myAutoStartServerInput.setSelected(MyTunesRss.CONFIG.isAutoStartServer());
         if (myAutoStartServerInput.isSelected()) {
@@ -141,8 +128,6 @@ public class Options {
     public void setGuiMode(GuiMode mode) {
         switch (mode) {
             case ServerRunning:
-                SwingUtils.enableElementAndLabel(myMaxMemInput, false);
-                myMaxMemSaveButton.setEnabled(false);
                 myAutoStartServerInput.setEnabled(false);
                 myUpdateOnStartInput.setEnabled(false);
                 myProgramUpdateButton.setEnabled(false);
@@ -152,8 +137,6 @@ public class Options {
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, false);
                 break;
             case ServerIdle:
-                SwingUtils.enableElementAndLabel(myMaxMemInput, true);
-                myMaxMemSaveButton.setEnabled(true);
                 myAutoStartServerInput.setEnabled(true);
                 myUpdateOnStartInput.setEnabled(true);
                 myProgramUpdateButton.setEnabled(true);
@@ -162,17 +145,6 @@ public class Options {
                 myAutoUpdateDatabaseInput.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
                 break;
-        }
-    }
-
-    public class MaxMemSaveButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            int maxMem = ((Integer)myMaxMemInput.getValue()).intValue();
-            if (ProgramUtils.updateMemorySwitch(MemorySwitchType.Maxmimum, maxMem)) {
-                SwingUtils.showInfoMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("info.savemem.success"));
-            } else {
-                SwingUtils.showErrorMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("error.memsave.failure"));
-            }
         }
     }
 

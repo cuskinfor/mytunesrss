@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="0">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="400" height="2563"/>
+      <xy x="20" y="20" width="400" height="2594"/>
     </constraints>
     <properties>
       <background color="-1"/>
@@ -21,7 +21,7 @@
           <toolTipText value=""/>
         </properties>
       </component>
-      <grid id="3032c" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+      <grid id="3032c" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
         <margin top="5" left="10" bottom="10" right="10"/>
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="0" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
@@ -83,7 +83,7 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <nested-form id="8bf67" form-file="de/codewave/mytunesrss/settings/Info.form">
+                  <nested-form id="8bf67" form-file="de/codewave/mytunesrss/settings/Info.form" binding="myInfoForm">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -92,15 +92,58 @@
               </grid>
             </children>
           </tabbedpane>
+          <grid id="f9ea9" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <opaque value="false"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="a26bd" class="javax.swing.JButton" binding="myStartServerButton">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font swing-font="Button.font"/>
+                  <horizontalAlignment value="0"/>
+                  <label resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.button.startServer"/>
+                  <name value=""/>
+                  <opaque value="false"/>
+                  <text value="Start Server"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="gui.settings.tooltip.startServer"/>
+                </properties>
+              </component>
+              <component id="720fc" class="javax.swing.JButton" binding="myStopServerButton">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <enabled value="true"/>
+                  <font swing-font="Button.font"/>
+                  <opaque value="false"/>
+                  <text value="Stop Server"/>
+                </properties>
+              </component>
+              <component id="a8143" class="javax.swing.JButton" binding="myQuitButton">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Quit MyTunesRSS"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
         </children>
       </grid>
-      <grid id="975fa" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="fc542" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <minimum-size width="-1" height="1"/>
             <preferred-size width="-1" height="1"/>
-            <maximum-size width="-1" height="1"/>
           </grid>
         </constraints>
         <properties>

@@ -11,23 +11,22 @@ import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.*;
 import de.codewave.utils.moduleinfo.*;
 import org.apache.catalina.*;
-import org.apache.commons.logging.*;
 import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 import org.apache.log4j.*;
+import snoozesoft.systray4j.*;
 
 import javax.imageio.*;
 import javax.swing.*;
-import java.awt.event.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
 import java.util.Timer;
 import java.util.prefs.*;
-import java.lang.reflect.*;
-
-import snoozesoft.systray4j.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -101,7 +100,7 @@ public class MyTunesRss {
                 }
                 PleaseWait.start(frame, null, "Checking database... please wait.", false, false, new InitializeDatabaseTask());
                 if (CONFIG.isAutoStartServer()) {
-                    settings.getGeneralForm().doStartServer();
+                    settings.doStartServer();
                     frame.setExtendedState(JFrame.ICONIFIED);
                 }
             }
@@ -121,7 +120,7 @@ public class MyTunesRss {
 
     private static void executeWindows(Settings settingsForm, WindowListener windowListener) {
         if (ProgramUtils.guessOperatingSystem() == OperatingSystem.Windows && SysTrayMenu.isAvailable()) {
-            SYSTRAYMENU = new SysTray(settingsForm, windowListener);
+            SYSTRAYMENU = new SysTray(settingsForm);
         }
     }
 
@@ -146,32 +145,7 @@ public class MyTunesRss {
 
         @Override
         public void windowClosing(WindowEvent e) {
-            if (MyTunesRss.WEBSERVER.isRunning()) {
-                mySettingsForm.getGeneralForm().doStopServer();
-            }
-            if (!MyTunesRss.WEBSERVER.isRunning()) {
-                Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_x", mySettingsForm.getFrame().getLocation().x);
-                Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", mySettingsForm.getFrame().getLocation().y);
-                mySettingsForm.updateConfigFromGui();
-                MyTunesRss.CONFIG.save();
-                PleaseWait.start(mySettingsForm.getFrame(),
-                                 null,
-                                 "Shutting down database... please wait.",
-                                 false,
-                                 false,
-                                 new PleaseWait.NoCancelTask() {
-                                     public void execute() {
-                                         try {
-                                             MyTunesRss.STORE.destroy();
-                                         } catch (Exception e) {
-                                             if (LOG.isErrorEnabled()) {
-                                                 LOG.error("Could not destroy the store.", e);
-                                             }
-                                         }
-                                     }
-                                 });
-                System.exit(0);
-            }
+            mySettingsForm.doQuitApplication();
         }
 
         @Override

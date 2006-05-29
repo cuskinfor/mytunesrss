@@ -9,7 +9,6 @@ import de.codewave.mytunesrss.task.*;
 import snoozesoft.systray4j.*;
 
 import javax.swing.*;
-import java.awt.event.*;
 
 /**
  * de.codewave.mytunesrss.SysTray
@@ -22,9 +21,9 @@ public class SysTray {
     private SysTrayMenuItem myStartServer;
     private SysTrayMenuItem myStopServer;
 
-    public SysTray(Settings settingsForm, WindowListener windowListener) {
+    public SysTray(Settings settingsForm) {
         SysTrayMenuIcon menuIcon = new SysTrayMenuIcon(getClass().getResource("SysTray.ico"));
-        Listener menuListener = new Listener(settingsForm, windowListener);
+        Listener menuListener = new Listener(settingsForm);
         menuIcon.addSysTrayMenuListener(menuListener);
         myMenu = new SysTrayMenu(menuIcon, "This is MyTunesRSS");
         myQuit = new SysTrayMenuItem("Quit MyTunesRSS", "quit");
@@ -83,11 +82,9 @@ public class SysTray {
 
     public static class Listener extends SysTrayMenuAdapter {
         private Settings mySettingsForm;
-        private WindowListener myWindowListener;
 
-        public Listener(Settings settingsForm, WindowListener windowListener) {
+        public Listener(Settings settingsForm) {
             mySettingsForm = settingsForm;
-            myWindowListener = windowListener;
         }
 
         @Override
@@ -104,15 +101,15 @@ public class SysTray {
         @Override
         public void menuItemSelected(SysTrayMenuEvent sysTrayMenuEvent) {
             if ("quit".equals(sysTrayMenuEvent.getActionCommand())) {
-                myWindowListener.windowClosing(null);
+                mySettingsForm.doQuitApplication();
             } else if ("show".equals(sysTrayMenuEvent.getActionCommand())) {
                 showFrame();
             } else if ("update_database".equals(sysTrayMenuEvent.getActionCommand())) {
                 mySettingsForm.getOptionsForm().runBuildDatabaseTask(DatabaseBuilderTask.BuildType.Update);
             } else if ("stop_server".equals(sysTrayMenuEvent.getActionCommand())) {
-                mySettingsForm.getGeneralForm().doStopServer();
+                mySettingsForm.doStopServer();
             } else if ("start_server".equals(sysTrayMenuEvent.getActionCommand())) {
-                mySettingsForm.getGeneralForm().doStartServer();
+                mySettingsForm.doStartServer();
             }
         }
     }
