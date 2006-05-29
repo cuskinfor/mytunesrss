@@ -61,7 +61,7 @@
                 <th class="active" colspan="4">New Playlist</th>
             </tr>
             <c:forEach items="${tracks}" var="track" varStatus="trackLoop">
-                <tr class="${cwfn:choose(trackLoop.index % 2 == 1, 'even', 'odd')}">
+                <tr class="${cwfn:choose(trackLoop.index % 2 == 0, 'even', 'odd')}">
                     <td class="check">
                         <input type="checkbox" id="item${track.id}" name="track" value="${track.id}" />
                     </td>
