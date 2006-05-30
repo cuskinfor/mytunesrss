@@ -84,6 +84,7 @@ public class MyTunesRss {
         frame.addWindowListener(mainWindowListener);
         frame.getContentPane().add(settings.getRootPanel());
         frame.setResizable(false);
+        final Point defaultPosition = frame.getLocation();
         frame.setLocation(1000000, 1000000);
         settings.setGuiMode(GuiMode.ServerIdle);
         removeAllEmptyTooltips(frame.getRootPane());
@@ -92,8 +93,8 @@ public class MyTunesRss {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 frame.pack();
-                int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", frame.getLocation().x);
-                int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", frame.getLocation().y);
+                int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", defaultPosition.x);
+                int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", defaultPosition.y);
                 frame.setLocation(x, y);
                 if (CONFIG.isCheckUpdateOnStart()) {
                     new Updater(frame).checkForUpdate(true);

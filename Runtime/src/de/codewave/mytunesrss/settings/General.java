@@ -51,11 +51,11 @@ public class General {
         if (maxMemory != -1) {
             SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(maxMemory, Math.max(10, minMemory), 500, 10);
             myMaxMemInput.setModel(spinnerNumberModel);
+            myMaxMemSaveButton.addActionListener(new MaxMemSaveButtonListener());
         } else {
             myMaxMemLabel.setVisible(false);
             myMaxMemInput.setVisible(false);
             myMaxMemSaveButton.setVisible(false);
-            myMaxMemSaveButton.addActionListener(new MaxMemSaveButtonListener());
         }
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
         myTunesXmlPathLookupButton.addActionListener(new TunesXmlPathLookupButtonListener());
