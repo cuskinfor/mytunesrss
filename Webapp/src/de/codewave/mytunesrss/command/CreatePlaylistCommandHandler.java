@@ -42,7 +42,6 @@ public class CreatePlaylistCommandHandler extends MyTunesRssCommandHandler {
         }
         if (!tracks.isEmpty()) {
             getRequest().setAttribute("tracks", tracks);
-            getRequest().setAttribute("authHash", getAuthHash());
             forward(playlistResource);
         } else {
             setError("error.emptyFeed");

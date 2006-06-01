@@ -158,7 +158,7 @@
             <c:when test="${empty sessionScope.playlist}">
                 <c:forEach items="${config.feedTypes}" var="feedType">
                     <th class="icon">
-                        <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/tracklist=${cwfn:urlEncode(track.sectionIds, 'UTF-8')}/${mtfn:cleanFileName(sectionFileName)}.${config.feedFileSuffix[feedType]}">
+                        <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/authHash=${authHash}/tracklist=${cwfn:urlEncode(track.sectionIds, 'UTF-8')}/${mtfn:cleanFileName(sectionFileName)}.${config.feedFileSuffix[feedType]}">
                             <img src="${appUrl}/images/${feedType}_th.gif" alt="${feedType}" /> </a>
                     </th>
                 </c:forEach>
@@ -202,7 +202,7 @@
         <c:when test="${empty sessionScope.playlist}">
             <c:forEach items="${config.feedTypes}" var="feedType">
                 <td class="icon">
-                    <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/track=<c:out value="${cwfn:urlEncode(track.id, 'UTF-8')}"/>/${mtfn:virtualTrackName(track)}.${config.feedFileSuffix[feedType]}">
+                    <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/authHash=${authHash}/track=<c:out value="${cwfn:urlEncode(track.id, 'UTF-8')}"/>/${mtfn:virtualTrackName(track)}.${config.feedFileSuffix[feedType]}">
                         <img src="${appUrl}/images/${feedType}${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="${feedType}" /> </a>
                 </td>
             </c:forEach>

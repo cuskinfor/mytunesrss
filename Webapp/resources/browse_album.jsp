@@ -100,7 +100,7 @@
                     <c:when test="${empty sessionScope.playlist}">
                         <c:forEach items="${config.feedTypes}" var="feedType">
                             <td class="icon">
-                                <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>/${mtfn:virtualAlbumName(album)}.${config.feedFileSuffix[feedType]}">
+                                <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/authHash=${authHash}/album=<c:out value="${cwfn:urlEncode(album.name, 'UTF-8')}"/>/${mtfn:virtualAlbumName(album)}.${config.feedFileSuffix[feedType]}">
                                     <img src="${appUrl}/images/${feedType}${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="${feedType}" /> </a>
                             </td>
@@ -128,7 +128,7 @@
                     <c:when test="${empty sessionScope.playlist}">
                         <c:forEach items="${config.feedTypes}" var="feedType">
                             <td class="icon">
-                                <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/fullAlbums=true/artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>/${mtfn:cleanFileName(param.artist)}.${config.feedFileSuffix[feedType]}">
+                                <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/authHash=${authHash}/fullAlbums=true/artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>/${mtfn:cleanFileName(param.artist)}.${config.feedFileSuffix[feedType]}">
                                     <img src="${appUrl}/images/${feedType}${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
                                          alt="${feedType}" /> </a>
                             </td>

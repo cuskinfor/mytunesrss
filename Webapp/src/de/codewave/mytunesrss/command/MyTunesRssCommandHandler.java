@@ -68,6 +68,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
         prepareRequestForResource();
         resource.beforeForward(getRequest(), getResponse());
+        getResponse().setHeader("Cache-Control", "no-cache");
+        getResponse().setHeader("Pragma", "no-cache");
+        getResponse().setDateHeader("Expires", 0);
         forward(resource.getValue());
     }
 
