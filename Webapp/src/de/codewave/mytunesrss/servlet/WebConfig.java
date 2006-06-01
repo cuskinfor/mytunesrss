@@ -18,7 +18,8 @@ public class WebConfig {
     private static final Log LOG = LogFactory.getLog(WebConfig.class);
 
     private static final String CONFIG_COOKIE_NAME = "MyTunesRSSConfig";
-    private static final String CFG_LOGIN_COOKIE = "rememberLogin";
+    private static final String CFG_PASSWORD_HASH = "passwordHash";
+    private static final String CFG_PASSWORD_HASH_STORED = "rememberLogin";
     private static final String CFG_FEED_TYPES = "feedTypes";
     private static final String CFG_SUFFIX = "suffix.";
     private static final String CFG_RSS_LIMIT = "rssLimit";
@@ -48,7 +49,8 @@ public class WebConfig {
     private void initWithDefaults() {
         myConfigValues.put(CFG_FEED_TYPES, "rss,m3u");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
-        myConfigValues.put(CFG_LOGIN_COOKIE, "false");
+        myConfigValues.put(CFG_PASSWORD_HASH_STORED, "false");
+        myConfigValues.put(CFG_PASSWORD_HASH, "0");
         myConfigValues.put(CFG_PAGE_SIZE, "0");
     }
 
@@ -122,13 +124,29 @@ public class WebConfig {
         myConfigValues.put(CFG_SUFFIX + originalSuffix.toLowerCase(), fakeSuffix.toLowerCase());
     }
 
-    public boolean isRememberLogin() {
-        String rememberLogin = myConfigValues.get(CFG_LOGIN_COOKIE);
-        return Boolean.valueOf(rememberLogin);
+    public boolean isPasswordHashStored() {
+        String passwordHashStored = myConfigValues.get(CFG_PASSWORD_HASH_STORED);
+        return Boolean.valueOf(passwordHashStored);
     }
 
-    public void setRememberLogin(boolean rememberLogin) {
-        myConfigValues.put(CFG_LOGIN_COOKIE, Boolean.toString(rememberLogin));
+    public void setPasswordHashStored(boolean passwordHashStored) {
+        myConfigValues.put(CFG_PASSWORD_HASH_STORED, Boolean.toString(passwordHashStored));
+    }
+
+    public int getPasswordHash() {
+        String passwordHash = myConfigValues.get(CFG_PASSWORD_HASH);
+        if (StringUtils.isNotEmpty(passwordHash)) {
+            try {
+                return Integer.parseInt(passwordHash);
+            } catch (NumberFormatException e) {
+                return 0;
+            }
+        }
+        return 0;
+    }
+
+    public void setPasswordHash(int passwordHash) {
+        myConfigValues.put(CFG_PASSWORD_HASH, Integer.toString(passwordHash));
     }
 
     public void clearFeedTypes() {

@@ -19,7 +19,9 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
         if (password != null && needsAuthorization()) {
             if (isAuthorized(password.hashCode())) {
                 WebConfig webConfig = getWebConfig();
-                webConfig.setRememberLogin(Boolean.valueOf(getRequestParameter("rememberLogin", "false")));
+                Boolean rememberLogin = Boolean.valueOf(getRequestParameter("rememberLogin", "false"));
+                webConfig.setPasswordHashStored(rememberLogin);
+                webConfig.setPasswordHash(password.hashCode());
                 webConfig.save(getResponse());
                 authorize();
                 forward(MyTunesRssCommand.ShowPortal);

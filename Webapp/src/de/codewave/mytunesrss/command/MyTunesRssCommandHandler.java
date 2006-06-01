@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.datastore.*;
-import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.utils.servlet.*;
 import org.apache.commons.lang.*;
@@ -110,7 +109,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     public void execute() throws Exception {
-        if (needsAuthorization() && getWebConfig().isRememberLogin()) {
+        if (needsAuthorization() && getWebConfig().isPasswordHashStored() && isAuthorized(getWebConfig().getPasswordHash())) {
             authorize();
             executeAuthorized();
         } else if (needsAuthorization()) {
