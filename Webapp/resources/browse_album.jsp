@@ -116,7 +116,7 @@
             </tr>
         </c:forEach>
         <c:if test="${singleArtist && fn:length(albums) > 1}">
-            <tr class="${cwfn:choose(fn:length(albums) % 2 == 1, '', 'odd')}">
+            <tr class="${cwfn:choose(fn:length(albums) % 2 == 0, 'even', 'odd')}">
                 <c:if test="${!empty sessionScope.playlist}">
                     <td class="check">&nbsp;</td>
                 </c:if>
