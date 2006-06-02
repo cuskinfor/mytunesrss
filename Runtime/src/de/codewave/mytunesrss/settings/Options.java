@@ -88,7 +88,7 @@ public class Options {
             }
 
         }
-        if (result != null && !result.isEmpty()) {
+        if (result != null && !result.isEmpty() && result.get(0).longValue() > 0) {
             Date date = new Date(result.get(0).longValue());
             myLastUpdatedLabel.setText(
                     MyTunesRss.BUNDLE.getString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRss.BUNDLE.getString(

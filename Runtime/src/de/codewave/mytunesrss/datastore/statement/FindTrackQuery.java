@@ -32,17 +32,30 @@ public class FindTrackQuery extends DataStoreQuery<Track> {
     public static FindTrackQuery getForSearchTerm(String searchTerm, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
         String artistSort = sortByArtistFirst ? "artist, " : "";
-        query.myQuery =
-                "SELECT id, name, artist, album, time, track_number, file FROM track WHERE LCASE(name) LIKE ? ESCAPE '\\' OR LCASE(album) LIKE ? ESCAPE '\\' OR LCASE(artist) LIKE ? ESCAPE '\\' ORDER BY " +
-                        artistSort + "album, track_number, name";
-        String sqlTerm = null;
-        if (StringUtils.isNotEmpty(searchTerm)) {
-            sqlTerm = "%" + SQLUtils.escapeLikeString(searchTerm.toLowerCase()) + "%";
-        } else {
-            sqlTerm = "%";
+        String[] searchTerms = StringUtils.split(searchTerm, " ");
+        query.myQuery = createLikeQuery(searchTerms, artistSort);
+        query.myParameters = new String[searchTerms != null ? searchTerms.length * 3 : 3];
+        for (int i = 0; i < (searchTerms != null && searchTerms.length > 0 ? searchTerms.length : 1); i++) {
+            String sqlTerm = null;
+            if (searchTerms != null && searchTerms.length > 0) {
+                sqlTerm = "%" + SQLUtils.escapeLikeString(searchTerms[i].toLowerCase()) + "%";
+            } else {
+                sqlTerm = "%";
+            }
+            query.myParameters[i * 3] = sqlTerm;
+            query.myParameters[(i * 3) + 1] = sqlTerm;
+            query.myParameters[(i * 3) + 2] = sqlTerm;
+
         }
-        query.myParameters = new String[] {sqlTerm, sqlTerm, sqlTerm};
         return query;
+    }
+
+    private static String createLikeQuery(String[] searchTerms, String artistSort) {
+        StringBuffer likes = new StringBuffer();
+        for (int i = 0; i < (searchTerms != null && searchTerms.length > 0 ? searchTerms.length : 1); i++) {
+            likes.append("AND ( LCASE(name) LIKE ? ESCAPE '\\' OR LCASE(album) LIKE ? ESCAPE '\\' OR LCASE(artist) LIKE ? ESCAPE '\\' ) ");
+        }
+        return "SELECT id, name, artist, album, time, track_number, file FROM track WHERE" + likes.substring(3) + "ORDER BY " + artistSort + "album, track_number, name";
     }
 
     public static FindTrackQuery getForAlbum(String[] albums, boolean sortByArtistFirst) {

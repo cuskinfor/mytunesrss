@@ -23,7 +23,10 @@ public class Updater {
     }
 
     public void checkForUpdate(boolean autoCheck) {
-        final UpdateInfo updateInfo = NetworkUtils.getCurrentUpdateInfo(MyTunesRss.UPDATE_URLS);
+        CheckUpdateTask checkUpdateTask = new CheckUpdateTask();
+        PleaseWait.start(myParent, MyTunesRss.BUNDLE.getString("pleaseWait.updateCheckTitle"), MyTunesRss.BUNDLE.getString(
+                "pleaseWait.updateCheck"), false, false, checkUpdateTask);
+        UpdateInfo updateInfo = checkUpdateTask.getUpdateInfo();
         if (updateInfo != null) {
             String noNagVersion = Preferences.userRoot().node("/de/codewave/mytunesrss").get("updateIgnoreVersion", MyTunesRss.VERSION);
             if (!updateInfo.getVersion().equals(MyTunesRss.VERSION) && (!autoCheck || !noNagVersion.equals(updateInfo.getVersion()))) {
@@ -115,6 +118,18 @@ public class Updater {
 
         protected void cancel() {
             myDownloader.cancel();
+        }
+    }
+
+    public class CheckUpdateTask extends PleaseWait.NoCancelTask {
+        private UpdateInfo myUpdateInfo;
+
+        public UpdateInfo getUpdateInfo() {
+            return myUpdateInfo;
+        }
+
+        public void execute() throws Exception {
+            myUpdateInfo = NetworkUtils.getCurrentUpdateInfo(MyTunesRss.UPDATE_URLS);
         }
     }
 }
