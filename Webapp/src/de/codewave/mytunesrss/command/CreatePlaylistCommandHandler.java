@@ -5,7 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.jsp.*;import de.codewave.utils.*;
 
 import javax.servlet.*;
 import java.sql.*;
@@ -21,8 +21,8 @@ public class CreatePlaylistCommandHandler extends MyTunesRssCommandHandler {
 
     protected void createDataAndForward(MyTunesRssResource playlistResource) throws SQLException, IOException, ServletException {
         String playlistId = getRequest().getParameter("playlist");
-        String[] albums = getNonEmptyParameterValues("album");
-        String[] artists = getNonEmptyParameterValues("artist");
+        String album = getRequestParameter("album", null);
+        String artist = getRequestParameter("artist", null);
         String[] trackIds = getNonEmptyParameterValues("track");
         String trackList = getRequestParameter("tracklist", null);
         if ((trackIds == null || trackIds.length == 0) && StringUtils.isNotEmpty(trackList)) {
@@ -33,10 +33,10 @@ public class CreatePlaylistCommandHandler extends MyTunesRssCommandHandler {
             tracks = getDataStore().executeQuery(new FindPlaylistTracksQuery(playlistId));
         } else if (trackIds != null && trackIds.length > 0) {
             tracks = getDataStore().executeQuery(FindTrackQuery.getForId(trackIds));
-        } else if (albums != null && albums.length > 0) {
-            tracks = getDataStore().executeQuery(FindTrackQuery.getForAlbum(albums, false));
-        } else if (artists != null && artists.length > 0) {
-            tracks = getDataStore().executeQuery(FindTrackQuery.getForArtist(artists, false));
+        } else if (StringUtils.isNotEmpty(album)) {
+            tracks = getDataStore().executeQuery(FindTrackQuery.getForAlbum(new String[] {MiscUtils.getStringFromHexString(album)}, false));
+        } else if (StringUtils.isNotEmpty(artist)) {
+            tracks = getDataStore().executeQuery(FindTrackQuery.getForArtist(new String[] {MiscUtils.getStringFromHexString(artist)}, false));
         } else {
             tracks = Collections.emptyList();
         }

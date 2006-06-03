@@ -96,4 +96,17 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Get a hexadecimal encoded string.
+        </description>
+        <name>hex</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String hexCode(java.lang.String)
+        </function-signature>
+        <example>
+            &lt;c:out value="${mtfn:hex('please encode me')}"/&gt;
+        </example>
+    </function>
+
 </taglib>

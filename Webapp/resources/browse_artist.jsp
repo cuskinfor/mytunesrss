@@ -84,7 +84,7 @@
                         <c:when test="${empty sessionScope.playlist}">
                             <c:forEach items="${config.feedTypes}" var="feedType">
                                 <td class="icon">
-                                    <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/authHash=${authHash}/artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>/${mtfn:virtualArtistName(artist)}.${config.feedFileSuffix[feedType]}">
+                                    <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/authHash=${authHash}/artist=<c:out value="${mtfn:hex(artist.name)}"/>/${mtfn:virtualArtistName(artist)}.${config.feedFileSuffix[feedType]}">
                                         <img src="${appUrl}/images/${feedType}${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="${feedType}" /> </a>
                                 </td>

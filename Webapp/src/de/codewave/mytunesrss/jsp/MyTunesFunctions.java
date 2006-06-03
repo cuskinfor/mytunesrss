@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.*;
+import de.codewave.utils.*;
 
 import javax.servlet.http.*;
 import java.net.*;
@@ -17,6 +18,7 @@ public class MyTunesFunctions {
     private static final String DEFAULT_NAME = "MyTunesRSS";
 
     public static String cleanFileName(String name) {
+        name = name.replace('/', '_');
         return name.replace(' ', '_');
     }
 
@@ -37,6 +39,8 @@ public class MyTunesFunctions {
             return DEFAULT_NAME;
         } else if (unknown(album.getArtist())) {
             return cleanFileName(album.getName());
+        } else if (album.getArtistCount() > 1) {
+            return cleanFileName(album.getName());
         }
         return cleanFileName(album.getArtist() + " - " + album.getName());
     }
@@ -54,5 +58,9 @@ public class MyTunesFunctions {
 
     public static String replace(String string, String target, String replacement) {
         return string.replace(target, replacement);
+    }
+
+    public static String hexCode(String string) {
+        return MiscUtils.toHexString(string);
     }
 }
