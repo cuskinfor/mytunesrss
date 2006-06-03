@@ -5,10 +5,12 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.settings.*;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import org.apache.commons.logging.*;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
@@ -36,9 +38,11 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
     }
 
     private URL myLibraryXmlUrl;
+    private Options myOptionsForm;
 
-    public DatabaseBuilderTask(URL libraryXmlUrl) {
+    public DatabaseBuilderTask(URL libraryXmlUrl, Options optionsForm) {
         myLibraryXmlUrl = libraryXmlUrl;
+        myOptionsForm = optionsForm;
     }
 
     public void execute() throws SQLException {
@@ -85,6 +89,11 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("time for commit: " + (timeAfterCommit - timeAfterHelpTables));
             }
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    myOptionsForm.refreshLastUpdate();
+                }
+            });
         } catch (SQLException e) {
             storeSession.rollback();
             throw e;

@@ -35,7 +35,11 @@ public class Options {
 
     public void init(Settings settingsForm) {
         mySettingsForm = settingsForm;
-        refreshLastUpdate();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                refreshLastUpdate();
+            }
+        });
         myUpdateOnStartInput.setSelected(MyTunesRss.CONFIG.isCheckUpdateOnStart());
         myAutoStartServerInput.setSelected(MyTunesRss.CONFIG.isAutoStartServer());
         if (myAutoStartServerInput.isSelected()) {

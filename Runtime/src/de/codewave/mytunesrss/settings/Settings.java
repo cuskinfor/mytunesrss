@@ -129,7 +129,7 @@ public class Settings {
                     myGeneralForm.setServerRunningStatus(port);
                     if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
                         int interval = MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval();
-                        MyTunesRss.DATABASE_WATCHDOG.schedule(new DatabaseWatchdogTask(interval, libraryUrl), 1000 * interval);
+                        MyTunesRss.DATABASE_WATCHDOG.schedule(new DatabaseWatchdogTask(myOptionsForm, interval, libraryUrl), 1000 * interval);
                     }
                 }
             } catch (MalformedURLException e) {
@@ -146,7 +146,7 @@ public class Settings {
                          null, MyTunesRss.BUNDLE.getString("settings.buildDatabase"),
                          false,
                          false,
-                         new DatabaseBuilderTask(library));
+                         new DatabaseBuilderTask(library, myOptionsForm));
     }
 
     public void doStopServer() {

@@ -19,7 +19,7 @@ import org.apache.commons.logging.*;
  */
 public class SysTray {
     private static final Log LOG = LogFactory.getLog(SysTray.class);
-    
+
     private SysTrayMenu myMenu;
     private SysTrayMenuItem myQuit;
     private SysTrayMenuItem myShow;
@@ -112,8 +112,7 @@ public class SysTray {
                 showFrame();
             } else if ("update_database".equals(sysTrayMenuEvent.getActionCommand())) {
                 try {
-                    PleaseWait.start(mySettingsForm.getFrame(), null, MyTunesRss.BUNDLE.getString("settings.buildDatabase"), false, false, new DatabaseBuilderTask(new File(mySettingsForm.getGeneralForm().getTunesXmlPathInput().getText()).toURL()));
-                    mySettingsForm.getOptionsForm().refreshLastUpdate();
+                    PleaseWait.start(mySettingsForm.getFrame(), null, MyTunesRss.BUNDLE.getString("settings.buildDatabase"), false, false, new DatabaseBuilderTask(new File(mySettingsForm.getGeneralForm().getTunesXmlPathInput().getText()).toURL(), mySettingsForm.getOptionsForm()));
                 } catch (MalformedURLException e1) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not build database.", e1);
