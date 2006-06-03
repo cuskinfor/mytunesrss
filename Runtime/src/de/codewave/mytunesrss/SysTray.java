@@ -9,11 +9,17 @@ import de.codewave.mytunesrss.task.*;
 import snoozesoft.systray4j.*;
 
 import javax.swing.*;
+import java.io.*;
+import java.net.*;
+
+import org.apache.commons.logging.*;
 
 /**
  * de.codewave.mytunesrss.SysTray
  */
 public class SysTray {
+    private static final Log LOG = LogFactory.getLog(SysTray.class);
+    
     private SysTrayMenu myMenu;
     private SysTrayMenuItem myQuit;
     private SysTrayMenuItem myShow;
@@ -105,7 +111,15 @@ public class SysTray {
             } else if ("show".equals(sysTrayMenuEvent.getActionCommand())) {
                 showFrame();
             } else if ("update_database".equals(sysTrayMenuEvent.getActionCommand())) {
-                mySettingsForm.getOptionsForm().runBuildDatabaseTask(DatabaseBuilderTask.BuildType.Update);
+                try {
+                    PleaseWait.start(mySettingsForm.getFrame(), null, MyTunesRss.BUNDLE.getString("settings.buildDatabase"), false, false, new DatabaseBuilderTask(new File(mySettingsForm.getGeneralForm().getTunesXmlPathInput().getText()).toURL()));
+                    mySettingsForm.getOptionsForm().refreshLastUpdate();
+                } catch (MalformedURLException e1) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not build database.", e1);
+                    }
+
+                }
             } else if ("stop_server".equals(sysTrayMenuEvent.getActionCommand())) {
                 mySettingsForm.doStopServer();
             } else if ("start_server".equals(sysTrayMenuEvent.getActionCommand())) {

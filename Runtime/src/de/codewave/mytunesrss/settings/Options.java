@@ -15,7 +15,6 @@ import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.text.*;
-import java.util.*;
 import java.util.Date;
 
 /**
@@ -27,9 +26,6 @@ public class Options {
     private JPanel myRootPanel;
     private boolean myUpdateOnStartInputCache;
     private JLabel myLastUpdatedLabel;
-    private JButton myDatabaseUpdateButton;
-    private JButton myDatabaseRefreshButton;
-    private JButton myDatabaseRecreateButton;
     private Settings mySettingsForm;
     private JCheckBox myUpdateOnStartInput;
     private JCheckBox myAutoStartServerInput;
@@ -47,21 +43,6 @@ public class Options {
             myUpdateOnStartInput.setEnabled(false);
         }
         myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
-        myDatabaseUpdateButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                runBuildDatabaseTask(DatabaseBuilderTask.BuildType.Update);
-            }
-        });
-        myDatabaseRefreshButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                runBuildDatabaseTask(DatabaseBuilderTask.BuildType.Refresh);
-            }
-        });
-        myDatabaseRecreateButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                runBuildDatabaseTask(DatabaseBuilderTask.BuildType.Recreate);
-            }
-        });
         myAutoStartServerInput.addActionListener(new AutoStartServerInputListener());
         SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval(), 60, 3600, 10);
         myAutoUpdateDatabaseIntervalInput.setModel(spinnerNumberModel);
@@ -70,53 +51,25 @@ public class Options {
         myAutoUpdateDatabaseInput.addActionListener(new AutoUpdateDatabaseInputListener());
     }
 
-    private void refreshLastUpdate() {
-        List<Long> result = null;
+    public void refreshLastUpdate() {
+        SystemInformation systemInformation = null;
         try {
-            result = (List<Long>)MyTunesRss.STORE.executeQuery(new DataStoreQuery<Long>() {
-                public Collection<Long> execute(Connection connection) throws SQLException {
-                    ResultSet resultSet = connection.createStatement().executeQuery("SELECT lastupdate AS lastupdate FROM mytunesrss");
-                    if (resultSet.next()) {
-                        return Collections.singletonList(Long.valueOf(resultSet.getLong("LASTUPDATE")));
-                    }
-                    return null;
-                }
-            });
+            systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not get last update time from database.", e);
             }
 
         }
-        if (result != null && !result.isEmpty() && result.get(0).longValue() > 0) {
-            Date date = new Date(result.get(0).longValue());
+        if (systemInformation.getLastUpdate() > 0) {
+            Date date = new Date(systemInformation.getLastUpdate());
             myLastUpdatedLabel.setText(
                     MyTunesRss.BUNDLE.getString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRss.BUNDLE.getString(
                             "settings.lastDatabaseUpdateDateFormat")).format(date));
-            myDatabaseRefreshButton.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
-            myDatabaseUpdateButton.setEnabled(true);
         } else {
             myLastUpdatedLabel.setText(MyTunesRss.BUNDLE.getString("settings.databaseNotYetCreated"));
-            myDatabaseRefreshButton.setEnabled(false);
-            myDatabaseUpdateButton.setEnabled(false);
         }
         myRootPanel.validate();
-    }
-
-    public void runBuildDatabaseTask(DatabaseBuilderTask.BuildType buildType) {
-        try {
-            PleaseWait.start(mySettingsForm.getFrame(),
-                             null, MyTunesRss.BUNDLE.getString("settings.buildDatabase" + buildType.name()),
-                             false,
-                             false,
-                             new DatabaseBuilderTask(new File(mySettingsForm.getGeneralForm().getTunesXmlPathInput().getText()).toURL(), buildType));
-            refreshLastUpdate();
-        } catch (MalformedURLException e1) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not build database.", e1);
-            }
-
-        }
     }
 
     public void updateConfigFromGui() {
@@ -132,8 +85,6 @@ public class Options {
                 myAutoStartServerInput.setEnabled(false);
                 myUpdateOnStartInput.setEnabled(false);
                 myProgramUpdateButton.setEnabled(false);
-                myDatabaseRefreshButton.setEnabled(false);
-                myDatabaseRecreateButton.setEnabled(false);
                 myAutoUpdateDatabaseInput.setEnabled(false);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, false);
                 break;
@@ -141,8 +92,6 @@ public class Options {
                 myAutoStartServerInput.setEnabled(true);
                 myUpdateOnStartInput.setEnabled(true);
                 myProgramUpdateButton.setEnabled(true);
-                myDatabaseRefreshButton.setEnabled(true);
-                myDatabaseRecreateButton.setEnabled(true);
                 myAutoUpdateDatabaseInput.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
                 break;

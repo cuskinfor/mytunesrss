@@ -28,7 +28,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         String sortOrderName = getRequestParameter("sortOrder", SortOrder.Album.name());
         SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);
 
-        DataStoreQuery<Track> query = null;
+        DataStoreQuery<Collection<Track>> query = null;
         if (StringUtils.isNotEmpty(searchTerm)) {
             query = FindTrackQuery.getForSearchTerm(searchTerm, sortOrderValue == SortOrder.Artist);
         } else if (StringUtils.isNotEmpty(album)) {

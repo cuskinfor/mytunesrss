@@ -24,15 +24,15 @@ public class InitializeDatabaseTask extends PleaseWait.NoCancelTask {
     public void execute() {
         try {
             MyTunesRss.STORE.executeQuery(new DataStoreQuery<Boolean>() {
-                public Collection<Boolean> execute(Connection connection) throws SQLException {
+                public Boolean execute(Connection connection) throws SQLException {
                     ResultSet resultSet = connection.createStatement().executeQuery(
                             "SELECT COUNT(*) FROM information_schema.system_tables WHERE table_schem = 'PUBLIC' AND table_name = 'TRACK'");
                     if (resultSet.next() && resultSet.getInt(1) == 1) {
                         myExistent = true;
-                        return null;
+                        return Boolean.TRUE;
                     }
                     myExistent = false;
-                    return null;
+                    return Boolean.FALSE;
                 }
             });
             if (!myExistent) {

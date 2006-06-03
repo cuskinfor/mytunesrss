@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery
  */
-public class FindPlaylistQuery extends DataStoreQuery<Playlist> {
+public class FindPlaylistQuery extends DataStoreQuery<Collection<Playlist>> {
     private PlaylistResultBuilder myBuilder = new PlaylistResultBuilder();
     private Object[] myParameters;
     private String mySql;

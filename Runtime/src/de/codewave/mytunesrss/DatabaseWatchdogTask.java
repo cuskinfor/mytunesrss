@@ -29,7 +29,7 @@ public class DatabaseWatchdogTask extends TimerTask {
     public void run() {
         try {
             if (DatabaseBuilderTask.needsUpdate(myLibrary)) {
-                new DatabaseBuilderTask(myLibrary, DatabaseBuilderTask.BuildType.Update).execute();
+                new DatabaseBuilderTask(myLibrary).execute();
             }
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {

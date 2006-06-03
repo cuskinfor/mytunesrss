@@ -34,57 +34,93 @@ public class ITunesUtils {
         return null;
     }
 
-    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate) throws SQLException {
+    public static String loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, String previousLibraryId, long timeLastUpdate)
+            throws SQLException {
+        PListHandler handler = new PListHandler();
+        Map<Integer, String> trackIdToPersId = new HashMap<Integer, String>();
+        LibraryListener libraryListener = new LibraryListener(previousLibraryId, timeLastUpdate);
+        TrackListener trackListener = new TrackListener(storeSession, libraryListener, trackIdToPersId);
+        handler.addListener("/plist/dict", libraryListener);
+        handler.addListener("/plist/dict[Tracks]/dict", trackListener);
+        handler.addListener("/plist/dict[Playlists]/array", new PlaylistListener(storeSession, trackIdToPersId));
+        Set<String> databaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery());
         try {
-            PListHandler handler = new PListHandler();
-            Map<Integer, String> trackIdToPersId = new HashMap<Integer, String>();
-            TrackListener trackListener = new TrackListener(storeSession, timeLastUpdate, trackIdToPersId);
-            handler.addListener("/plist/dict[Tracks]/dict", trackListener);
-            handler.addListener("/plist/dict[Playlists]/array", new PlaylistListener(storeSession, trackIdToPersId));
-            Set<String> databaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery());
             XmlUtils.parseApplePList(iTunesLibraryXml, handler);
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " tracks.");
-            }
-            databaseIds.removeAll(trackListener.getExistingIds());
-            if (!databaseIds.isEmpty()) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Removing " + databaseIds.size() + " obsolete tracks.");
-                }
-                DeleteTrackStatement deleteTrackStatement = new DeleteTrackStatement(storeSession);
-                for (String id : databaseIds) {
-                    deleteTrackStatement.setId(id);
-                    storeSession.executeStatement(deleteTrackStatement);
-                }
-            }
-        } catch (ParserConfigurationException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not read data from iTunes xml file.", e);
-            }
-        } catch (SAXException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not read data from iTunes xml file.", e);
-            }
-        } catch (IOException e) {
+        } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not read data from iTunes xml file.", e);
             }
         }
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " tracks.");
+        }
+        databaseIds.removeAll(trackListener.getExistingIds());
+        if (!databaseIds.isEmpty()) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Removing " + databaseIds.size() + " obsolete tracks.");
+            }
+            DeleteTrackStatement deleteTrackStatement = new DeleteTrackStatement(storeSession);
+            for (String id : databaseIds) {
+                deleteTrackStatement.setId(id);
+                storeSession.executeStatement(deleteTrackStatement);
+            }
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.info(trackListener.getExistingIds().size() + " tracks in the database.");
+        }
+        return libraryListener.getLibraryId();
+    }
+
+    public static class LibraryListener implements PListHandlerListener {
+        private String myPreviousLibraryId;
+        private String myLibraryId;
+        private long myTimeLastUpate;
+
+        public LibraryListener(String previousLibraryId, long timeLastUpate) {
+            myPreviousLibraryId = previousLibraryId;
+            myTimeLastUpate = timeLastUpate;
+        }
+
+        public long getTimeLastUpate() {
+            return myTimeLastUpate;
+        }
+
+        public String getLibraryId() {
+            return myLibraryId;
+        }
+
+        public boolean beforeArrayAdd(List array, Object value) {
+            throw new UnsupportedOperationException("method beforeArrayAdd of class ITunesUtils$LibraryListener is not implemented!");
+        }
+
+        public boolean beforeDictPut(Map dict, String key, Object value) {
+            if ("Library Persistent ID".equals(key)) {
+                myLibraryId = (String)value;
+                if (!value.equals(myPreviousLibraryId)) {
+                    myTimeLastUpate = Long.MIN_VALUE;
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Library persistent ID changed, updating all tracks regardless of last update time.");
+                    }
+                }
+            }
+            return true;
+        }
     }
 
     public static class TrackListener implements PListHandlerListener {
-        DataStoreSession myDataStoreSession;
-        long myTimeLastUpdate;
-        InsertTrackStatement myInsertStatement;
-        UpdateTrackStatement myUpdateStatement;
-        int myUpdatedCount;
-        Set<String> myExistingIds = new HashSet<String>();
-        Set<String> myDatabaseIds = new HashSet<String>();
-        Map<Integer, String> myTrackIdToPersId;
+        private DataStoreSession myDataStoreSession;
+        private LibraryListener myLibraryListener;
+        private InsertTrackStatement myInsertStatement;
+        private UpdateTrackStatement myUpdateStatement;
+        private int myUpdatedCount;
+        private Set<String> myExistingIds = new HashSet<String>();
+        private Set<String> myDatabaseIds = new HashSet<String>();
+        private Map<Integer, String> myTrackIdToPersId;
 
-        public TrackListener(DataStoreSession dataStoreSession, long timeLastUpdate, Map<Integer, String> trackIdToPersId) throws SQLException {
+        public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Integer, String> trackIdToPersId)
+                throws SQLException {
             myDataStoreSession = dataStoreSession;
-            myTimeLastUpdate = timeLastUpdate;
+            myLibraryListener = libraryListener;
             myInsertStatement = new InsertTrackStatement(dataStoreSession);
             myUpdateStatement = new UpdateTrackStatement(dataStoreSession);
             myDatabaseIds = (Set<String>)dataStoreSession.executeQuery(new FindTrackIdsQuery());
@@ -108,7 +144,7 @@ public class ITunesUtils {
             long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
             Date dateAdded = ((Date)track.get("Date Added"));
             long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
-            if (dateModifiedTime >= myTimeLastUpdate || dateAddedTime >= myTimeLastUpdate) {
+            if (dateModifiedTime >= myLibraryListener.getTimeLastUpate() || dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
                 if (insertOrUpdateTrack(track)) {
                     myUpdatedCount++;
                 }

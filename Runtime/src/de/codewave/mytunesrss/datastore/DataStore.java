@@ -82,7 +82,7 @@ public class DataStore {
         return new DataStoreSession(this);
     }
 
-    public <T> Collection<T> executeQuery(DataStoreQuery<T> query) throws SQLException {
+    public <T> T executeQuery(DataStoreQuery<T> query) throws SQLException {
         Connection connection = aquireConnection();
         try {
             return query.execute(connection);

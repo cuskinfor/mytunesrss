@@ -11,9 +11,9 @@ import java.util.*;
  de.codewave.mytunesrss.datastore.statement.DataStoreQueryry
  */
 public abstract class DataStoreQuery<T> {
-    public abstract Collection<T> execute(Connection connection) throws SQLException;
+    public abstract T execute(Connection connection) throws SQLException;
 
-    protected Collection<T> execute(PreparedStatement statement, ResultBuilder<T> builder, Object... parameters) throws SQLException {
+    protected <E> List<E> execute(PreparedStatement statement, ResultBuilder<E> builder, Object... parameters) throws SQLException {
         statement.clearParameters();
         if (parameters != null && parameters.length > 0) {
             for (int i = 0; i < parameters.length; i++) {
@@ -21,7 +21,7 @@ public abstract class DataStoreQuery<T> {
             }
         }
         ResultSet resultSet = statement.executeQuery();
-        List<T> results = new ArrayList<T>();
+        List<E> results = new ArrayList<E>();
         while (resultSet.next()) {
             results.add(builder.create(resultSet));
         }

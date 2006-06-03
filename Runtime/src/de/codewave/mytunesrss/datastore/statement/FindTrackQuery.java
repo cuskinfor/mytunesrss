@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
  */
-public class FindTrackQuery extends DataStoreQuery<Track> {
+public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
     public static FindTrackQuery getForId(String[] trackIds) {
         FindTrackQuery query = new FindTrackQuery();
         if (trackIds.length > 1) {

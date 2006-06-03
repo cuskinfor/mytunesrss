@@ -142,23 +142,11 @@ public class Settings {
     }
 
     private void updateDatabase(final URL library) {
-        final Set<Boolean> checkResult = new HashSet<Boolean>();
-        PleaseWait.start(getFrame(), null, MyTunesRss.BUNDLE.getString("pleaseWait.checkingDatabase"), false, false, new PleaseWait.NoCancelTask() {
-            public void execute() {
-                try {
-                    checkResult.add(Boolean.valueOf(DatabaseBuilderTask.needsUpdate(library)));
-                } catch (Exception e) {
-                    checkResult.add(Boolean.FALSE);
-                }
-            }
-        });
-        if (checkResult.iterator().next()) {
-            PleaseWait.start(getFrame(),
-                             null, MyTunesRss.BUNDLE.getString("settings.buildDatabase" + DatabaseBuilderTask.BuildType.Update.name()),
-                             false,
-                             false,
-                             new DatabaseBuilderTask(library, DatabaseBuilderTask.BuildType.Update));
-        }
+        PleaseWait.start(getFrame(),
+                         null, MyTunesRss.BUNDLE.getString("settings.buildDatabase"),
+                         false,
+                         false,
+                         new DatabaseBuilderTask(library));
     }
 
     public void doStopServer() {

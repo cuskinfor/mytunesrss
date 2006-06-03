@@ -4,38 +4,25 @@
 
 package de.codewave.mytunesrss.task;
 
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 
 import java.io.*;
 import java.net.*;
 import java.sql.*;
-import java.util.*;
 
 /**
- *de.codewave.mytunesrss.task.DatabaseBuilderTaskk
+ * de.codewave.mytunesrss.task.DatabaseBuilderTaskk
  */
 public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
 
-    public static enum BuildType {
-        Recreate(),Refresh(),Update();
-    }
-
     public static boolean needsUpdate(URL libraryXmlUrl) throws SQLException {
         if (libraryXmlUrl != null) {
-            Collection<Long> lastUpdate = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Long>() {
-                public Collection<Long> execute(Connection connection) throws SQLException {
-                    ResultSet resultSet = connection.createStatement().executeQuery("SELECT lastupdate FROM mytunesrss");
-                    if (resultSet.next()) {
-                        return Collections.singletonList(resultSet.getLong(1));
-                    }
-                    return null;
-                }
-            });
-            if (lastUpdate == null || lastUpdate.isEmpty() || new File(libraryXmlUrl.getPath()).lastModified() > lastUpdate.iterator().next()) {
+            SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
+            if (new File(libraryXmlUrl.getPath()).lastModified() > systemInformation.getLastUpdate()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Database update needed.");
                 }
@@ -49,11 +36,9 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
     }
 
     private URL myLibraryXmlUrl;
-    private BuildType myBuildType;
 
-    public DatabaseBuilderTask(URL libraryXmlUrl, BuildType buildType) {
+    public DatabaseBuilderTask(URL libraryXmlUrl) {
         myLibraryXmlUrl = libraryXmlUrl;
-        myBuildType = buildType;
     }
 
     public void execute() throws SQLException {
@@ -63,30 +48,16 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
         DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
         storeSession.begin();
         try {
-            if (myBuildType == BuildType.Recreate) {
-                deleteAllContent();
-            }
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Preparing database tables for refresh/update.");
+                LOG.debug("Preparing database tables for update.");
             }
             storeSession.executeStatement(new PrepareForUpdateStatement());
             final long timeUpdateStart = System.currentTimeMillis();
-            Long timeLastUpdate = Long.MIN_VALUE;
-            if (myBuildType == BuildType.Update) {
-                timeLastUpdate = storeSession.getFirstQueryResult(new DataStoreQuery<Long>() {
-                    public Collection<Long> execute(Connection connection) throws SQLException {
-                        ResultSet resultSet = connection.createStatement().executeQuery("SELECT lastupdate AS lastupdate FROM mytunesrss");
-                        if (resultSet.next()) {
-                            return Collections.singletonList(resultSet.getLong("LASTUPDATE"));
-                        }
-                        return Collections.singletonList(Long.MIN_VALUE);
-                    }
-                });
-            }
+            SystemInformation systemInformation = storeSession.executeQuery(new GetSystemInformationQuery());
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Loading tracks from iTunes library.");
             }
-            ITunesUtils.loadFromITunes(myLibraryXmlUrl, storeSession, timeLastUpdate.longValue());
+            final String libraryId = ITunesUtils.loadFromITunes(myLibraryXmlUrl, storeSession, systemInformation.getItunesLibraryId(), systemInformation.getLastUpdate());
             long timeAfterTracks = System.currentTimeMillis();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Time for loading tracks: " + (timeAfterTracks - timeUpdateStart));
@@ -102,7 +73,8 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
             createArtistPager(storeSession);
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
-                    connection.createStatement().execute("UPDATE mytunesrss SET lastupdate = " + timeUpdateStart);
+                    connection.createStatement().execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
+                    connection.createStatement().execute("UPDATE system_information SET itunes_library_id = '" + libraryId + "'");
                 }
             });
             if (LOG.isDebugEnabled()) {

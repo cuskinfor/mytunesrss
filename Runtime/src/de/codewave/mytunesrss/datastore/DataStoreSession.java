@@ -85,7 +85,7 @@ public class DataStoreSession {
         }
     }
 
-    public synchronized <T> Collection<T> executeQuery(DataStoreQuery<T> query) throws SQLException {
+    public synchronized <T> T executeQuery(DataStoreQuery<T> query) throws SQLException {
         if (myConnection == null) {
             Connection connection = myDataStore.aquireConnection();
             try {
@@ -98,7 +98,7 @@ public class DataStoreSession {
         }
     }
 
-    public synchronized <T> T getFirstQueryResult(DataStoreQuery<T> query) throws SQLException {
+    public synchronized <T> T getFirstQueryResult(DataStoreQuery<Collection<T>> query) throws SQLException {
         Collection<T> results;
         if (myConnection == null) {
             Connection connection = myDataStore.aquireConnection();

@@ -23,7 +23,7 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
         }
         String[] albums = getNonEmptyParameterValues("album");
         String[] artists = getNonEmptyParameterValues("artist");
-        DataStoreQuery query = null;
+        DataStoreQuery<Collection<Track>> query = null;
         if (trackIds != null && trackIds.length > 0) {
             query = FindTrackQuery.getForId(trackIds);
         } else if (albums != null && albums.length > 0) {

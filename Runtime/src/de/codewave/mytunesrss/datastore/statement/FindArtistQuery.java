@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
  */
-public class FindArtistQuery extends DataStoreQuery<Artist> {
+public class FindArtistQuery extends DataStoreQuery<Collection<Artist>> {
     private String myAlbum;
     private int myIndex = -1;
     private ArtistResultBuilder myBuilder = new ArtistResultBuilder();

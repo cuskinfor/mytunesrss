@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
  */
-public class FindPlaylistTracksQuery extends DataStoreQuery<Track> {
+public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
     private static final String BASE_SQL =
             "SELECT ltp.index AS index, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file FROM link_track_playlist ltp, track t WHERE t.id = ltp.track_id AND ltp.playlist_id = ?";
     private static final String PLAYLIST_ORDER = BASE_SQL + " ORDER BY index";
