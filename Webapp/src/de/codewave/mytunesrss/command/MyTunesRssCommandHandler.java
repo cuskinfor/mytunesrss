@@ -9,11 +9,13 @@ import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.utils.servlet.*;
+import de.codewave.utils.*;
 import org.apache.commons.lang.*;
 
 import javax.servlet.*;
 import java.io.*;
 import java.util.*;
+import java.security.*;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
@@ -23,13 +25,13 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         return (MyTunesRssConfig)getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
     }
 
-    protected boolean isAuthorized(int authHash) {
+    protected boolean isAuthorized(byte[] authHash) {
         MyTunesRssConfig config = getMyTunesRssConfig();
-        return config.getPasswordHash() == authHash;
+        return Arrays.equals(config.getPasswordHash(), authHash);
     }
 
     protected void authorize() {
-        getSession().setAttribute("authHash", getMyTunesRssConfig().getPasswordHash());
+        getSession().setAttribute("authHash", MiscUtils.toHexString(getMyTunesRssConfig().getPasswordHash()));
     }
 
     protected int getAuthHash() {
@@ -43,7 +45,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         } else {
             if (StringUtils.isNotEmpty(getRequest().getParameter("authHash"))) {
                 try {
-                    int requestAuthHash = Integer.parseInt(getRequest().getParameter("authHash"));
+                    byte[] requestAuthHash = MiscUtils.fromHexString(getRequestParameter("authHash", ""));
                     if (isAuthorized(requestAuthHash)) {
                         authorize();
                         return false;

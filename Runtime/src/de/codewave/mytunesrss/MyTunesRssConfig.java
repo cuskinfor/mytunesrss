@@ -7,11 +7,16 @@ package de.codewave.mytunesrss;
 import com.sun.java_cup.internal.*;
 
 import java.util.prefs.*;
+import java.io.*;
+
+import org.apache.commons.logging.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssConfig
  */
 public class MyTunesRssConfig {
+    private static final Log LOG = LogFactory.getLog(MyTunesRssConfig.class);
+
     private int myPort;
     private String myLibraryXml;
     private String myPassword;
@@ -28,8 +33,15 @@ public class MyTunesRssConfig {
         myLibraryXml = libraryXml;
     }
 
-    public int getPasswordHash() {
-        return myPassword != null ? myPassword.hashCode() : 0;
+    public byte[] getPasswordHash() {
+        try {
+            return myPassword != null ? MyTunesRss.MESSAGE_DIGEST.digest(myPassword.getBytes("UTF-8")) : null;
+        } catch (UnsupportedEncodingException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error(null, e);
+            }
+        }
+        return null;
     }
 
     public String getPassword() {

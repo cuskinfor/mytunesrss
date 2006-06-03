@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.servlet;
 
+import de.codewave.utils.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -38,7 +39,7 @@ public class WebConfig {
     }
 
     public void clearFileSuffixes() {
-        for (Iterator<String> iterator = myConfigValues.keySet().iterator(); iterator.hasNext(); ) {
+        for (Iterator<String> iterator = myConfigValues.keySet().iterator(); iterator.hasNext();) {
             String key = iterator.next();
             if (key.startsWith("CFG_SUFFIX")) {
                 iterator.remove();
@@ -50,7 +51,7 @@ public class WebConfig {
         myConfigValues.put(CFG_FEED_TYPES, "rss,m3u");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
         myConfigValues.put(CFG_PASSWORD_HASH_STORED, "false");
-        myConfigValues.put(CFG_PASSWORD_HASH, "0");
+        myConfigValues.put(CFG_PASSWORD_HASH, "");
         myConfigValues.put(CFG_PAGE_SIZE, "0");
     }
 
@@ -85,7 +86,7 @@ public class WebConfig {
         }
         Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, encode(value.substring(1)));
         cookie.setComment("MyTunesRSS settings cookie");
-        cookie.setMaxAge(3600 * 24 * 365); // one year
+        cookie.setMaxAge(3600 * 24 * 365);// one year
         response.addCookie(cookie);
     }
 
@@ -99,7 +100,7 @@ public class WebConfig {
 
     private String decode(String text) {
         StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < text.length(); i+= 2) {
+        for (int i = 0; i < text.length(); i += 2) {
             buffer.append((char)Integer.parseInt(text.substring(i, i + 2), 16));
         }
         return buffer.toString();
@@ -133,20 +134,20 @@ public class WebConfig {
         myConfigValues.put(CFG_PASSWORD_HASH_STORED, Boolean.toString(passwordHashStored));
     }
 
-    public int getPasswordHash() {
+    public byte[] getPasswordHash() {
         String passwordHash = myConfigValues.get(CFG_PASSWORD_HASH);
         if (StringUtils.isNotEmpty(passwordHash)) {
             try {
-                return Integer.parseInt(passwordHash);
-            } catch (NumberFormatException e) {
-                return 0;
+                return MiscUtils.fromHexString(passwordHash);
+            } catch (IllegalArgumentException e) {
+                return null; // ignore exception
             }
         }
-        return 0;
+        return null;
     }
 
-    public void setPasswordHash(int passwordHash) {
-        myConfigValues.put(CFG_PASSWORD_HASH, Integer.toString(passwordHash));
+    public void setPasswordHash(byte[] passwordHash) {
+        myConfigValues.put(CFG_PASSWORD_HASH, MiscUtils.toHexString(passwordHash));
     }
 
     public void clearFeedTypes() {

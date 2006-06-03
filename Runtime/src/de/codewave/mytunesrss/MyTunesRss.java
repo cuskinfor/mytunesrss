@@ -27,6 +27,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.Timer;
 import java.util.prefs.*;
+import java.security.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -41,6 +42,7 @@ public class MyTunesRss {
     public static WebServer WEBSERVER = new WebServer();
     public static Timer DATABASE_WATCHDOG = new Timer("MyTunesRSSDatabaseWatchdog");
     public static SysTray SYSTRAYMENU;
+    public static MessageDigest MESSAGE_DIGEST;
 
     static {
         UPDATE_URLS = new HashMap<OperatingSystem, URL>();
@@ -52,6 +54,13 @@ public class MyTunesRss {
         } catch (MalformedURLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not create update url.", e);
+            }
+        }
+        try {
+            MESSAGE_DIGEST = MessageDigest.getInstance("SHA");
+        } catch (NoSuchAlgorithmException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not create message digest.", e);
             }
         }
     }

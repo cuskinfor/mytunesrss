@@ -16,7 +16,7 @@ public class DoLogoutCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws Exception {
         WebConfig webConfig = getWebConfig();
         webConfig.setPasswordHashStored(false);
-        webConfig.setPasswordHash(0);
+        webConfig.setPasswordHash(new byte[0]);
         webConfig.save(getResponse());
         getSession().invalidate();
         forward(MyTunesRssResource.Login);

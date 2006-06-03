@@ -6,9 +6,11 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.servlet.*;
+import de.codewave.mytunesrss.*;
 
 import javax.servlet.*;
 import java.io.*;
+import java.security.*;
 
 /**
  * de.codewave.mytunesrss.commanDoLoginCommandHandlerer
@@ -17,11 +19,12 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
     public void execute() throws IOException, ServletException {
         String password = getRequest().getParameter("password");
         if (password != null && needsAuthorization()) {
-            if (isAuthorized(password.hashCode())) {
+            byte[] authHash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
+            if (isAuthorized(authHash)) {
                 WebConfig webConfig = getWebConfig();
                 Boolean rememberLogin = Boolean.valueOf(getRequestParameter("rememberLogin", "false"));
                 webConfig.setPasswordHashStored(rememberLogin);
-                webConfig.setPasswordHash(password.hashCode());
+                webConfig.setPasswordHash(authHash);
                 webConfig.save(getResponse());
                 authorize();
                 forward(MyTunesRssCommand.ShowPortal);
