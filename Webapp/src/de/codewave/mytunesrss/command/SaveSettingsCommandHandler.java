@@ -9,8 +9,6 @@ import de.codewave.mytunesrss.servlet.*;
 
 import java.util.*;
 
-import org.apache.commons.lang.*;
-
 /**
  * de.codewave.mytunesrss.command.SaveSettingsCommandHandler
  */
@@ -19,50 +17,52 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         WebConfig webConfig = getWebConfig();
-        String errors = transferAndValidate(webConfig);
-        if (StringUtils.isEmpty(errors)) {
+        if (transferAndValidate(webConfig)) {
             webConfig.save(getResponse());
             forward(MyTunesRssCommand.ShowPortal);
         } else {
-            getRequest().setAttribute("error", errors);
             forward(MyTunesRssResource.Settings);
         }
     }
 
-    private String transferAndValidate(WebConfig webConfig) {
-        StringBuffer errors = new StringBuffer();
-        errors.append(transferAndValidatePageSize(webConfig)).append(" ");
-        errors.append(transferAndValidateRssFeedLimit(webConfig)).append(" ");
-        errors.append(transferAndValidateFakeSuffixes(webConfig)).append(" ");
-        errors.append(transferAndValidateFeedTypes(webConfig)).append(" ");
-        return errors.toString().trim();
+    private boolean transferAndValidate(WebConfig webConfig) {
+        boolean error = false;
+        error |= transferAndValidatePageSize(webConfig);
+        error |= transferAndValidateRssFeedLimit(webConfig);
+        error |= transferAndValidateFakeSuffixes(webConfig);
+        error |= transferAndValidateFeedTypes(webConfig);
+        return !error;
     }
 
-    private String transferAndValidatePageSize(WebConfig webConfig) {
+    private boolean transferAndValidatePageSize(WebConfig webConfig) {
         try {
             webConfig.setPageSize(Integer.parseInt(getRequestParameter("pageSize", "0")));
             if (webConfig.getPageSize() < 0 || webConfig.getPageSize() > 999) {
-                return "page size range error.";
+                addError(new BundleError("error.settingsPageSizeRange"));
+                return true;
             }
         } catch (NumberFormatException e) {
-            return "page size format error.";
+            addError(new BundleError("error.settingsPageSizeRange"));
+            return true;
         }
-        return "";
+        return false;
     }
 
-    private String transferAndValidateRssFeedLimit(WebConfig webConfig) {
+    private boolean transferAndValidateRssFeedLimit(WebConfig webConfig) {
         try {
             webConfig.setRssFeedLimit(Integer.parseInt(getRequestParameter("rssFeedLimit", "0")));
             if (webConfig.getRssFeedLimit() < 0 || webConfig.getRssFeedLimit() > 999) {
-                return "feed limit range error.";
+                addError(new BundleError("error.settingsFeedLimitSizeRange"));
+                return true;
             }
         } catch (NumberFormatException e) {
-            return "rss feed limit format error.";
+            addError(new BundleError("error.settingsFeedLimitSizeRange"));
+            return true;
         }
-        return "";
+        return false;
     }
 
-    private String transferAndValidateFakeSuffixes(WebConfig webConfig) {
+    private boolean transferAndValidateFakeSuffixes(WebConfig webConfig) {
         webConfig.clearFileSuffixes();
         for (String parameterName : Collections.list((Enumeration<String>)getRequest().getParameterNames())) {
             if (parameterName.startsWith("suffix.")) {
@@ -73,10 +73,10 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
                 webConfig.addFileSuffix(parameterName.substring("suffix.".length()), fakeSuffix);
             }
         }
-        return "";
+        return false;
     }
 
-    private String transferAndValidateFeedTypes(WebConfig webConfig) {
+    private boolean transferAndValidateFeedTypes(WebConfig webConfig) {
         webConfig.clearFeedTypes();
         String[] feedTypes = getNonEmptyParameterValues("feedType");
         if (feedTypes != null && feedTypes.length > 0) {
@@ -85,8 +85,9 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
             }
         }
         if (webConfig.getFeedTypes() == null || webConfig.getFeedTypes().length == 0) {
-            return "must select at least one feed type!";
+            addError(new BundleError("error.settingsNoFeedType"));
+            return true;
         }
-        return "";
+        return false;
     }
 }
