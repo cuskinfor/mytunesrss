@@ -137,8 +137,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             }
         } catch (Exception e) {
             getSession().removeAttribute("errors");
-            addError(new BundleError("error.unexpected"));
-            redirect(ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss" + "/" + MyTunesRssCommand.ShowPortal);
+            redirect(ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss" + "/" + MyTunesRssCommand.ShowFatalError.getName());
         }
     }
 

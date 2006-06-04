@@ -1,3 +1,7 @@
+<%--
+  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
+  --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -30,10 +34,10 @@
         <h2 class="fatalError">fatal Error</h2>
 
 				<div class="fatalError">
-				
-					saddasf ljfk jasfkl öl 
-				
-					<a href="#">zum Portal</a>
+
+					<fmt:message key="error.fatal"/> 
+
+					<a href="#"><fmt:message key="gotoPortal"/></a>
 
 				</div>
 

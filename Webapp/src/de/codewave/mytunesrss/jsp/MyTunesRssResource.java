@@ -17,7 +17,8 @@ public enum MyTunesRssResource {
     Settings("/settings.jsp"),
     EditPlaylist("/edit_playlist.jsp"),
     TemplateM3u("/m3u.jsp"),
-    TemplateRss("/rss.jsp");
+    TemplateRss("/rss.jsp"),
+    FatalError("/fatal_error.jsp");
 
     private String myValue;
 
