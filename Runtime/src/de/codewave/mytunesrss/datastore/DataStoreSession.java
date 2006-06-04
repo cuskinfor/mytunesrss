@@ -40,6 +40,25 @@ public class DataStoreSession {
         }
     }
 
+    public synchronized void commitAndContinue() throws SQLException {
+        if (myRollbackOnly) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Transaction marked for rollback only. Rolling back instead of committing.");
+            }
+            rollbackAndContinue();
+        } else if (myConnection == null) {
+            throw new IllegalStateException("No pending transaction to commit.");
+        } else {
+            try {
+                myConnection.commit();
+            } catch (SQLException e) {
+                myDataStore.destroyConnection(myConnection);
+                myConnection = null;
+                throw e;
+            }
+        }
+    }
+
     public synchronized void commit() throws SQLException {
         if (myRollbackOnly) {
             if (LOG.isDebugEnabled()) {
@@ -85,6 +104,20 @@ public class DataStoreSession {
         }
     }
 
+    public synchronized void rollbackAndContinue() throws SQLException {
+        if (myConnection == null) {
+            throw new IllegalStateException("No pending transaction to rollback.");
+        } else {
+            try {
+                myConnection.rollback();
+            } catch (SQLException e) {
+                myDataStore.destroyConnection(myConnection);
+                myConnection = null;
+                throw e;
+            }
+        }
+    }
+
     public synchronized <T> T executeQuery(DataStoreQuery<T> query) throws SQLException {
         if (myConnection == null) {
             Connection connection = myDataStore.aquireConnection();
@@ -103,7 +136,7 @@ public class DataStoreSession {
         if (myConnection == null) {
             Connection connection = myDataStore.aquireConnection();
             try {
-                results =  query.execute(connection);
+                results = query.execute(connection);
             } finally {
                 myDataStore.releaseConnection(connection);
             }

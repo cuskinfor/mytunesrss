@@ -8,9 +8,7 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.xml.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
-import org.xml.sax.*;
 
-import javax.xml.parsers.*;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
@@ -147,6 +145,15 @@ public class ITunesUtils {
             if (dateModifiedTime >= myLibraryListener.getTimeLastUpate() || dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
                 if (insertOrUpdateTrack(track)) {
                     myUpdatedCount++;
+                    if (myUpdatedCount % 1000 == 0) { // commit every 1000 tracks to not run out of memory
+                        try {
+                            myDataStoreSession.commitAndContinue();
+                        } catch (SQLException e) {
+                            if (LOG.isErrorEnabled()) {
+                                LOG.error("Could not commit block of track updates.", e);
+                            }
+                        }
+                    }
                 }
             }
             return false;

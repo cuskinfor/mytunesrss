@@ -187,6 +187,9 @@ public class MyTunesRss {
 
         public void uncaughtException(Thread t, final Throwable e) {
             if (e instanceof OutOfMemoryError) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error(e);
+                }
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         myPane.setMessage(MyTunesRss.BUNDLE.getString("error.outOfMemory"));
