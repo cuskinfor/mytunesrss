@@ -8,7 +8,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseArtist?album=${param.album}&page=${param.page}&index=${param.index}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseArtist?album=${param.album}&amp;page=${param.page}&amp;index=${param.index}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -78,7 +78,7 @@
                         <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>"> ${artist.albumCount} </a>
                     </td>
                     <td class="tracks">
-                        <a href="${servletUrl}/browseTrack?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"> ${artist.trackCount} </a>
+                        <a href="${servletUrl}/browseTrack?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"> ${artist.trackCount} </a>
                     </td>
                     <c:choose>
                         <c:when test="${empty sessionScope.playlist}">
@@ -92,7 +92,7 @@
                         </c:when>
                         <c:otherwise>
                             <td class="icon">
-                                <a href="${servletUrl}/addToPlaylist?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                                <a href="${servletUrl}/addToPlaylist?artist=<c:out value="${cwfn:urlEncode(artist.name, 'UTF-8')}"/>&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
                                     <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                             </td>
                         </c:otherwise>
@@ -103,7 +103,7 @@
 
         <c:if test="${!empty indexPager}">
             <c:set var="pager" scope="request" value="${indexPager}" />
-            <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseArtist?page=${param.page}&album=${param.album}&index={index}" />
+            <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseArtist?page=${param.page}&amp;album=${param.album}&amp;index={index}" />
             <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
             <jsp:include page="incl_bottomPager.jsp" />
         </c:if>

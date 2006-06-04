@@ -10,7 +10,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?playlist=${param.playlist}&fullAlbums=${param.fullAlbums}&album=${param.album}&artist=${param.artist}&searchTerm=${param.searchTerm}&index=${param.index}&backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&sortOrder=${sortOrder}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?playlist=${param.playlist}&amp;fullAlbums=${param.fullAlbums}&amp;album=${param.album}&amp;artist=${param.artist}&amp;searchTerm=${param.searchTerm}&amp;index=${param.index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}</c:set>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -123,7 +123,7 @@
                     <c:set var="sectionFileName">${sectionFileName} ${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}</c:set>
                     <c:choose>
                         <c:when test="${empty param.album}">
-                            <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                            <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
                                 <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
                             </a>
                         </c:when>
@@ -142,7 +142,7 @@
                         -
                         <c:choose>
                             <c:when test="${empty param.album}">
-                                <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                                <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
                                     <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
                                 </a>
                             </c:when>
@@ -165,7 +165,7 @@
             </c:when>
             <c:otherwise>
                 <th class="icon">
-                    <a href="${servletUrl}/addToPlaylist?tracklist=${cwfn:urlEncode(track.sectionIds, 'UTF-8')}&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                    <a href="${servletUrl}/addToPlaylist?tracklist=${cwfn:urlEncode(track.sectionIds, 'UTF-8')}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
                         <img src="${appUrl}/images/add_th.gif" alt="add" /> </a>
                 </th>
             </c:otherwise>
@@ -209,7 +209,7 @@
         </c:when>
         <c:otherwise>
             <td class="icon">
-                <a href="${servletUrl}/addToPlaylist?track=${track.id}&backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                <a href="${servletUrl}/addToPlaylist?track=${track.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
                     <img src="${appUrl}/images/add${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
             </td>
         </c:otherwise>
@@ -222,7 +222,7 @@
 <c:if test="${!empty pager}">
     <c:set var="pagerCommand"
            scope="request"
-           value="${servletUrl}/browseTrack?fullAlbums=${param.fullAlbums}&album=${param.album}&amp;artist=${param.artist}&amp;searchTerm=${param.searchTerm}&amp;index={index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}" />
+           value="${servletUrl}/browseTrack?fullAlbums=${param.fullAlbums}&amp;album=${param.album}&amp;artist=${param.artist}&amp;searchTerm=${param.searchTerm}&amp;index={index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}" />
     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
     <jsp:include page="incl_bottomPager.jsp" />
 </c:if>

@@ -11,7 +11,7 @@
 				<a href="${mtfn:replace(pagerCommand, '{index}', pager.previousPage.key)}"><img src="${appUrl}/images/pager_previous.gif" alt="previous"/></a>
 		</c:if>
 		<c:forEach items="${pager.currentPages}" var="page">
-				<a href="${cwfn:choose(pagerCurrent == page.key, '#', mtfn:replace(pagerCommand, '{index}', page.key))}" <c:if test="${pagerCurrent == page.key}">class="active"</c:if>>
+                <a href="${cwfn:choose(pagerCurrent == page.key, '#', mtfn:replace(pagerCommand, '{index}', page.key))}" <c:if test="${pagerCurrent == page.key}">class="active"</c:if>>
 						<c:out value="${page.value}" /></a>
 		</c:forEach>
 		<c:if test="${!pager.last}">

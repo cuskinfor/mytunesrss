@@ -8,7 +8,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/showPortal&index=${param.index}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/showPortal&amp;index=${param.index}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -77,7 +77,7 @@
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                 <td class="${fn:toLowerCase(playlist.type)}"><c:out value="${playlist.name}" /></td>
-                <td class="tracks"><a href="${servletUrl}/browseTrack?playlist=${playlist.id}&backUrl=${backUrl}"> ${playlist.trackCount} </a></td>
+                <td class="tracks"><a href="${servletUrl}/browseTrack?playlist=${playlist.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"> ${playlist.trackCount} </a></td>
                 <c:forEach items="${config.feedTypes}" var="feedType">
                     <td class="icon">
                         <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/authHash=${authHash}/playlist=${playlist.id}/${mtfn:cleanFileName(playlist.name)}.${config.feedFileSuffix[feedType]}">
