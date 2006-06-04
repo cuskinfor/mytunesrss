@@ -27,11 +27,11 @@
 
 <div class="body">
 
-    <h1 class="search"><span>MyTunesRSS</span></h1>
+    <h1 class="search"><span><fmt:message key="myTunesRss"/></span></h1>
 
     <form id="login" action="${servletUrl}/login" method="post">
 
-        <h2 class="fatalError">fatal Error</h2>
+        <h2 class="fatalError"><fmt:message key="fatalError"/></h2>
 
 				<div class="fatalError">
 
