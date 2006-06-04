@@ -145,10 +145,10 @@ public class ITunesUtils {
             if (dateModifiedTime >= myLibraryListener.getTimeLastUpate() || dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
                 if (insertOrUpdateTrack(track)) {
                     myUpdatedCount++;
-                    if (myUpdatedCount % 1000 == 0) { // commit every 1000 tracks to not run out of memory
+                    if (myUpdatedCount % 5000 == 0) { // commit every 5000 tracks to not run out of memory
                         try {
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Committing transaction after 1000 inserted/updated tracks.");
+                                LOG.debug("Committing transaction after 5000 inserted/updated tracks.");
                             }
                             myDataStoreSession.commitAndContinue();
                         } catch (SQLException e) {
