@@ -515,3 +515,9 @@ table.portal td.playlistManager input {
 	margin-left: 10px;
 	width: 200px;
 }
+
+fieldset {
+	margin: 0;
+	padding: 0;
+	border: none;
+}

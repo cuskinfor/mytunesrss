@@ -64,7 +64,7 @@
 
 </head>
 
-<body onLoad="registerTR()">
+<body onload="registerTR()">
 
 <div class="body">
 
@@ -95,6 +95,8 @@
 
 <form id="browse" action="${servletUrl}/addToPlaylist" method="post">
 
+<fieldset>
+
 <input type="hidden" name="sortOrder" value="${sortOrder}" />
 <input type="hidden" name="searchTerm" value="${param.searchTerm}" />
 <input type="hidden" name="album" value="${param.album}" />
@@ -102,6 +104,8 @@
 <input type="hidden" name="playlist" value="${param.playlist}" />
 <input type="hidden" name="backUrl" value="${param.backUrl}" />
 <input type="hidden" name="fullAlbums" value="${param.fullAlbums}" />
+
+</fieldset>
 
 <table cellspacing="0">
 <c:forEach items="${tracks}" var="track">

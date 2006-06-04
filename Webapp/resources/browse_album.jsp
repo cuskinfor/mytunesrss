@@ -54,7 +54,10 @@
 <jsp:include page="incl_pager.jsp" />
 
 <form id="browse" action="" method="post">
+
+	<fieldset>
     <input type="hidden" name="backUrl" value="${backUrl}" />
+	</fieldset>
 
     <table class="select" cellspacing="0">
         <tr>
