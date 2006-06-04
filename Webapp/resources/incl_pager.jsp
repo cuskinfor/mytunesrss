@@ -1,8 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
+
+<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
 <table class="pager" cellspacing="0">
     <tr>
@@ -24,7 +27,7 @@
         <td>
             <a href="${cwfn:choose(empty pagerCurrent, '#', mtfn:replace(pagerCommand, '{index}', ''))}"
                     <c:if test="${empty pagerCurrent}">class="active"</c:if>>
-                all
+                <fmt:message key="alphabetPagerAll"/>
             </a>
         </td>
     </tr>

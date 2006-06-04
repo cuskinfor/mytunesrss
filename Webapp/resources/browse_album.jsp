@@ -30,18 +30,18 @@
 <div class="body">
 
 <h1 class="browse">
-    <a class="portal" href="${servletUrl}/showPortal">Portal</a> <span>MyTunesRSS</span>
+    <a class="portal" href="${servletUrl}/showPortal"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
 </h1>
 
 <jsp:include page="/incl_error.jsp" />
 
 <ul class="links">
     <li>
-        <a href="${servletUrl}/browseArtist?page=${cwfn:choose(empty param.page && empty param.artist, '', '1')}">browse artists</a>
+        <a href="${servletUrl}/browseArtist?page=${cwfn:choose(empty param.page && empty param.artist, '', '1')}"><fmt:message key="browseArtist"/></a>
     </li>
     <c:if test="${empty sessionScope.playlist}">
         <li>
-            <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">new playlist</a>
+            <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"><fmt:message key="newPlaylist"/></a>
         </li>
     </c:if>
 </ul>
@@ -63,11 +63,11 @@
         <tr>
             <c:if test="${!empty sessionScope.playlist}"><th>&nbsp;</th></c:if>
             <th class="active">
-                Albums
-                <c:if test="${!empty param.artist}"> with "<c:out value="${param.artist}" />"</c:if>
+                <fmt:message key="albums"/>
+                <c:if test="${!empty param.artist}"> <fmt:message key="with"/> "<c:out value="${param.artist}" />"</c:if>
             </th>
-            <th>Artist</th>
-            <th colspan="3">Tracks</th>
+            <th><fmt:message key="artist"/></th>
+            <th colspan="3"><fmt:message key="tracks"/></th>
         </tr>
         <c:forEach items="${albums}" var="album" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -92,7 +92,7 @@
                                 </c:otherwise>
                             </c:choose>
                         </c:when>
-                        <c:otherwise>various</c:otherwise>
+                        <c:otherwise><fmt:message key="variousArtists"/></c:otherwise>
                     </c:choose>
 
                 </td>
@@ -123,7 +123,7 @@
                 <c:if test="${!empty sessionScope.playlist}">
                     <td class="check">&nbsp;</td>
                 </c:if>
-                <td colspan="2"><em>All tracks of the above albums</em></td>
+                <td colspan="2"><em><fmt:message key="allTracksOfAboveAlbums"/></em></td>
                 <td class="tracks">
                     <a href="${servletUrl}/browseTrack?fullAlbums=true&amp;artist=<c:out value="${cwfn:urlEncode(param.artist, 'UTF-8')}"/>&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${singleArtistTrackCount}</a>
                 </td>
@@ -157,7 +157,7 @@
 
     <c:if test="${!empty sessionScope.playlist}">
         <div class="buttons">
-            <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/addToPlaylist'" value="add selected" />
+            <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/addToPlaylist'" value="<fmt:message key="addSelected"/>" />
         </div>
     </c:if>
 

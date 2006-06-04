@@ -30,18 +30,18 @@
 <div class="body">
 
     <h1 class="browse">
-        <a class="portal" href="${servletUrl}/showPortal">Portal</a> <span>MyTunesRSS</span>
+        <a class="portal" href="${servletUrl}/showPortal"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
     </h1>
 
     <jsp:include page="/incl_error.jsp" />
 
     <ul class="links">
         <li>
-            <a href="${servletUrl}/browseAlbum?page=${cwfn:choose(empty param.page && empty param.album, '', '1')}">browse albums</a>
+            <a href="${servletUrl}/browseAlbum?page=${cwfn:choose(empty param.page && empty param.album, '', '1')}"><fmt:message key="browseAlbums"/></a>
         </li>
         <c:if test="${empty sessionScope.playlist}">
             <li>
-                <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">new playlist</a>
+                <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"><fmt:message key="newPlaylist"/></a>
             </li>
         </c:if>
     </ul>
@@ -54,7 +54,7 @@
     <jsp:include page="incl_pager.jsp" />
 
     <form id="browse" action="" method="post">
-		
+
 			<fieldset>
         <input type="hidden" name="backUrl" value="${backUrl}" />
 			</fieldset>
@@ -63,11 +63,11 @@
             <tr>
                 <c:if test="${!empty sessionScope.playlist}"><th>&nbsp;</th></c:if>
                 <th class="active">
-                    Artists
+                    <fmt:message key="artists"/>
                     <c:if test="${!empty param.album}"> on "<c:out value="${param.album}" />"</c:if>
                 </th>
-                <th>Album</th>
-                <th colspan="3">Tracks</th>
+                <th><fmt:message key="albums"/></th>
+                <th colspan="3"><fmt:message key="tracks"/></th>
             </tr>
             <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
                 <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -113,7 +113,7 @@
 
         <c:if test="${!empty sessionScope.playlist}">
             <div class="buttons">
-                <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/addToPlaylist'" value="add selected" />
+                <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/addToPlaylist'" value="<fmt:message key="addSelected"/>" />
             </div>
         </c:if>
 

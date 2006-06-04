@@ -1,5 +1,5 @@
-        function sort(sortOrder) {
-            document.forms["browse"].action = "${servletUrl}/browseTrack";
+        function sort(servletUrl, sortOrder) {
+            document.forms["browse"].action = servletUrl + "/browseTrack";
             document.forms["browse"].elements["sortOrder"].value = sortOrder;
             document.forms["browse"].submit();
         }

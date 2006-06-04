@@ -20,5 +20,5 @@
             <c:out value="${cwfn:message(localizedMessage, error.parameters)}" />
         </c:forEach>
     </div>
-    <c:remove var="error" scope="session" />
+    <c:remove var="errors" scope="session" />
 </c:if>

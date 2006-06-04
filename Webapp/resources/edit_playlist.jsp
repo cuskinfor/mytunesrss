@@ -30,7 +30,7 @@
 <div class="body">
 
     <h1 class="browse">
-        <a class="portal" href="${servletUrl}/showPortal">Portal</a> <span>MyTunesRSS</span>
+        <a class="portal" href="${servletUrl}/showPortal"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
     </h1>
 
     <jsp:include page="/incl_error.jsp" />
@@ -38,7 +38,7 @@
     <c:if test="${states.addToPlaylistMode}">
         <ul class="links">
             <li style="float:right;">
-                <a href="${param.backUrl}">back</a>
+                <a href="${param.backUrl}"><fmt:message key="back"/></a>
             </li>
         </ul>
     </c:if>
@@ -47,18 +47,17 @@
         <table class="portal" cellspacing="0">
             <tr>
                 <td class="playlistManager">
-                    Name <input type="text" name="name" value="<c:out value="${playlist.name}"/>" />
+                    <fmt:message key="playlistName"/> <input type="text" name="name" value="<c:out value="${playlist.name}"/>" />
                 </td>
                 <td class="links">
-                    <a class="add" href="${servletUrl}/continuePlaylist" style="background-image:url('${appUrl}/images/add_more.gif');">add more
-                                                                                                                                     songs</a>
+                    <a class="add" href="${servletUrl}/continuePlaylist" style="background-image:url('${appUrl}/images/add_more.gif');"><fmt:message key="addMoreSongs"/></a>
                 </td>
         </table>
 
         <input type="hidden" name="backUrl" value="${param.backUrl}" />
         <table cellspacing="0">
             <tr>
-                <th class="active" colspan="4">New Playlist</th>
+                <th class="active" colspan="4"><fmt:message key="playlistContent"/></th>
             </tr>
             <c:forEach items="${tracks}" var="track" varStatus="trackLoop">
                 <tr class="${cwfn:choose(trackLoop.index % 2 == 0, 'even', 'odd')}">
@@ -87,12 +86,12 @@
         </c:if>
 
         <div class="buttons">
-            <input type="submit" onClick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist'" value="remove selected" />
+            <input type="submit" onClick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist'" value="<fmt:message key="removeSelected"/>" />
             <input type="submit"
                    onClick="document.forms['playlist'].action = '${servletUrl}/savePlaylist';document.forms['playlist'].elements['backUrl'].value = '${backUrl}'"
-                   value="save playlist" />
+                   value="<fmt:message key="savePlaylist"/>" />
             <c:if test="${!states.addToPlaylistMode}">
-                <input type="button" onClick="document.location.href = '${param.backUrl}'" value="cancel" />
+                <input type="button" onClick="document.location.href = '${param.backUrl}'" value="<fmt:message key="doCancel"/>" />
             </c:if>
         </div>
     </form>

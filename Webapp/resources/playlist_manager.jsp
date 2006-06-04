@@ -29,19 +29,19 @@
 <div class="body">
 
     <h1 class="manager">
-        <a class="portal" href="${servletUrl}/showPortal">Portal</a> <span>MyTunesRSS</span>
+        <a class="portal" href="${servletUrl}/showPortal"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
     </h1>
 
     <ul class="links">
-        <li><a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(browseArtistUrl, 'UTF-8')}">new playlist</a></li>
+        <li><a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(browseArtistUrl, 'UTF-8')}"><fmt:message key="newPlaylist"/></a></li>
     </ul>
 
     <jsp:include page="/incl_error.jsp" />
 
     <table cellspacing="0">
         <tr>
-            <th class="active">Playlists</th>
-            <th colspan="4">Tracks</th>
+            <th class="active"><fmt:message key="playlists"/></th>
+            <th colspan="4"><fmt:message key="tracks"/></th>
         </tr>
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">

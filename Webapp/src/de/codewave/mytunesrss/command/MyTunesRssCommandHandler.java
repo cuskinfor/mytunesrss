@@ -12,6 +12,7 @@ import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.utils.servlet.*;
 import de.codewave.utils.*;
 import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 
 import javax.servlet.*;
 import java.io.*;
@@ -22,6 +23,8 @@ import java.lang.*;
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
  */
 public abstract class MyTunesRssCommandHandler extends CommandHandler {
+    private static final Log LOG = LogFactory.getLog(MyTunesRssCommandHandler.class);
+    
     protected MyTunesRssConfig getMyTunesRssConfig() {
         return (MyTunesRssConfig)getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
     }
@@ -136,6 +139,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 executeAuthorized();
             }
         } catch (Exception e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Unhandled exception: ", e);
+            }
             getSession().removeAttribute("errors");
             redirect(ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss" + "/" + MyTunesRssCommand.ShowFatalError.getName());
         }

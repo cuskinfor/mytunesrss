@@ -29,13 +29,13 @@
 
 <div class="body">
 
-    <h1 class="search"><span>MyTunesRSS</span></h1>
+    <h1 class="search"><span><fmt:message key="myTunesRss"/></span></h1>
 
     <jsp:include page="/incl_error.jsp" />
 
     <ul class="links">
-        <li><a href="${servletUrl}/showSettings">settings</a></li>
-        <li style="float:right"><a href="${servletUrl}/logout">logout</a></li>
+        <li><a href="${servletUrl}/showSettings"><fmt:message key="doSettings"/></a></li>
+        <li style="float:right"><a href="${servletUrl}/logout"><fmt:message key="doLogout"/></a></li>
     </ul>
 
     <form id="search" action="${servletUrl}/browseTrack" method="post">
@@ -43,22 +43,21 @@
         <table class="portal" cellspacing="0">
             <tr>
                 <td class="search">
-                    Search
+                    <fmt:message key="search"/>
                     <input class="text" type="text" name="searchTerm" value="<c:out value="${param.searchTerm}"/>" style="width:120px;" />
                     <input type="hidden" name="backUrl" value="${backUrl}" />
-                    <input class="button" type="submit" value="search" />
+                    <input class="button" type="submit" value="<fmt:message key="doSearch"/>" />
                 </td>
                 <td class="links">
                     <a href="${servletUrl}/browseArtist?page=1"
-                       style="background-image:url('${appUrl}/images/library_small.gif');"> browse library </a>
+                       style="background-image:url('${appUrl}/images/library_small.gif');"> <fmt:message key="browseLibrary"/> </a>
                     <c:choose>
                         <c:when test="${empty sessionScope.playlist}">
-                            <a href="${servletUrl}/showPlaylistManager" style="background-image:url('${appUrl}/images/feeds_small.gif');"> manage
-                                                                                                                                           playlists </a>
+                            <a href="${servletUrl}/showPlaylistManager" style="background-image:url('${appUrl}/images/feeds_small.gif');"> <fmt:message key="managePlaylists"/> </a>
                         </c:when>
                         <c:otherwise>
                             <a href="${servletUrl}/editPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"
-                               style="background-image:url('${appUrl}/images/feeds_small.gif');"> finish playlist </a>
+                               style="background-image:url('${appUrl}/images/feeds_small.gif');"> <fmt:message key="finishPlaylist"/> </a>
                         </c:otherwise>
                     </c:choose>
                 </td>
@@ -71,8 +70,8 @@
 
     <table cellspacing="0">
         <tr>
-            <th class="active">Playlists</th>
-            <th colspan="${1+ fn:length(config.feedTypes)}">Tracks</th>
+            <th class="active"><fmt:message key="playlists"/></th>
+            <th colspan="${1+ fn:length(config.feedTypes)}"><fmt:message key="tracks"/></th>
         </tr>
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">

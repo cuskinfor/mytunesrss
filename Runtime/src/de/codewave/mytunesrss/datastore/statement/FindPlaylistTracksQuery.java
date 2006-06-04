@@ -16,10 +16,13 @@ import java.util.*;
 public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
     private static final String BASE_SQL =
             "SELECT ltp.index AS index, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file FROM link_track_playlist ltp, track t WHERE t.id = ltp.track_id AND ltp.playlist_id = ?";
+    private static final String LIMIT = " LIMIT ? OFFSET ?";
     private static final String PLAYLIST_ORDER = BASE_SQL + " ORDER BY index";
-    private static final String PLAYLIST_ORDER_WITH_LIMIT = PLAYLIST_ORDER + " LIMIT ? OFFSET ?";
+    private static final String PLAYLIST_ORDER_WITH_LIMIT = PLAYLIST_ORDER + LIMIT;
     private static final String ALBUM_ORDER = BASE_SQL + " ORDER BY album, track_number, name";
+    private static final String ALBUM_ORDER_WITH_LIMIT = ALBUM_ORDER + LIMIT;
     private static final String ARTIST_ORDER = BASE_SQL + " ORDER BY artist, album, track_number, name";
+    private static final String ARTIST_ORDER_WITH_LIMIT = ARTIST_ORDER + LIMIT;
     private FindPlaylistTracksQuery.TrackResultBuilder myBuilder = new FindPlaylistTracksQuery.TrackResultBuilder();
     private String mySql;
     private Object[] myParameters;
@@ -30,13 +33,13 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
     }
 
     public FindPlaylistTracksQuery(String id, boolean sortByArtist) {
-        myParameters = new String[] {id};
-        mySql = sortByArtist ? ARTIST_ORDER : ALBUM_ORDER;
+        myParameters = StringUtils.split(id, "_");
+        mySql = sortByArtist ? (myParameters.length == 3 ? ARTIST_ORDER_WITH_LIMIT : ARTIST_ORDER) : (myParameters.length == 3 ? ALBUM_ORDER_WITH_LIMIT : ALBUM_ORDER);
     }
 
     public Collection<Track> execute(Connection connection) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(mySql);
-        return (List<Track>)execute(statement, myBuilder, myParameters);
+        return execute(statement, myBuilder, myParameters);
     }
 
     public static class TrackResultBuilder implements ResultBuilder<Track> {

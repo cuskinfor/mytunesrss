@@ -31,7 +31,7 @@
 <div class="body">
 
 <h1 class="<c:choose><c:when test="${!empty param.searchTerm}">searchResult</c:when><c:otherwise>browse</c:otherwise></c:choose>">
-    <a class="portal" href="${servletUrl}/showPortal">Portal</a> <span>MyTunesRSS</span>
+    <a class="portal" href="${servletUrl}/showPortal"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
 </h1>
 
 <jsp:include page="/incl_error.jsp" />
@@ -39,17 +39,17 @@
 <ul class="links">
     <c:if test="${sortOrderLink}">
         <li>
-            <c:if test="${sortOrder != 'Album'}"><a href="#" onclick="sort('Album')"><fmt:message key="groupByAlbum" /></a></c:if>
-            <c:if test="${sortOrder != 'Artist'}"><a href="#" onclick="sort('Artist')"><fmt:message key="groupByArtist" /></a></c:if>
+            <c:if test="${sortOrder != 'Album'}"><a href="#" onclick="sort('${servletUrl}', 'Album')"><fmt:message key="groupByAlbum" /></a></c:if>
+            <c:if test="${sortOrder != 'Artist'}"><a href="#" onclick="sort('${servletUrl}', 'Artist')"><fmt:message key="groupByArtist" /></a></c:if>
         </li>
     </c:if>
     <c:if test="${empty sessionScope.playlist}">
         <li>
-            <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">new playlist</a>
+            <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"><fmt:message key="newPlaylist"/></a>
         </li>
     </c:if>
     <li style="float:right;">
-        <a href="${param.backUrl}">back</a>
+        <a href="${param.backUrl}"><fmt:message key="back"/></a>
     </li>
 </ul>
 
@@ -188,7 +188,7 @@
 <c:if test="${!empty pager}">
     <c:set var="pagerCommand"
            scope="request"
-           value="${servletUrl}/browseTrack?fullAlbums=${param.fullAlbums}&amp;album=${param.album}&amp;artist=${param.artist}&amp;searchTerm=${param.searchTerm}&amp;index={index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}" />
+           value="${servletUrl}/browseTrack?playlist=${param.playlist}&amp;fullAlbums=${param.fullAlbums}&amp;album=${param.album}&amp;artist=${param.artist}&amp;searchTerm=${param.searchTerm}&amp;index={index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}" />
     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
     <jsp:include page="incl_bottomPager.jsp" />
 </c:if>
@@ -197,7 +197,7 @@
     <div class="buttons">
         <input type="submit"
                onclick="document.forms['browse'].action = '${servletUrl}/addToPlaylist';document.forms['browse'].elements['backUrl'].value = '${backUrl}'"
-               value="add selected" />
+               value="<fmt:message key="addSelected"/>" />
     </div>
 </c:if>
 

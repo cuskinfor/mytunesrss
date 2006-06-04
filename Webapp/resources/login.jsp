@@ -25,7 +25,7 @@
 
 <div class="body">
 
-    <h1 class="search"><span>MyTunesRSS</span></h1>
+    <h1 class="search"><span><fmt:message key="myTunesRss"/></span></h1>
 
     <jsp:include page="/incl_error.jsp" />
 
@@ -49,7 +49,7 @@
 							<td>&nbsp;</td>
 							<td>
 								<input type="checkbox" name="rememberLogin" value="true" />
-								Remember login
+								<fmt:message key="rememberLogin"/>
 							</td>
 							<td>&nbsp;</td>
 						</tr>
