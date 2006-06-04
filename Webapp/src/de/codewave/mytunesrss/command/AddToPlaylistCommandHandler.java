@@ -37,7 +37,7 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
         }
         String backUrl = getRequestParameter("backUrl", null);
         if (StringUtils.isNotEmpty(backUrl)) {
-            getResponse().sendRedirect(backUrl);
+            redirect(backUrl);
         } else {
             forward(MyTunesRssCommand.ShowPortal);
         }

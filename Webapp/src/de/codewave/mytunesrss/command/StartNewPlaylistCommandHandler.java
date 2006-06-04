@@ -22,7 +22,7 @@ public class StartNewPlaylistCommandHandler extends MyTunesRssCommandHandler {
         getSession().setAttribute("playlistContent", new LinkedHashSet<Track>());
         String backUrl = getRequestParameter("backUrl", null);
         if (StringUtils.isNotEmpty(backUrl)) {
-            getResponse().sendRedirect(backUrl);
+            redirect(backUrl);
         } else {
             forward(MyTunesRssCommand.ShowPortal);
         }

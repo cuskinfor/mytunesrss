@@ -107,6 +107,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         forward("/mytunesrss/" + command.getName());
     }
 
+    protected void redirect(String url) throws IOException {
+        getResponse().sendRedirect(url.replace("&amp;", "&"));
+    }
+
     protected Map<String, Boolean> getStates() {
         Map<String, Boolean> states = (Map<String, Boolean>)getSession().getAttribute("states");
         if (states == null) {

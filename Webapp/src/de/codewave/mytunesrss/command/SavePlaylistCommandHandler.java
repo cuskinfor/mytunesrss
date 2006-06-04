@@ -37,7 +37,7 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
             forward(MyTunesRssCommand.ShowPortal);
         } else {
             addError(new BundleError("error.needPlaylistNameForSave"));
-            getResponse().sendRedirect(getRequestParameter("backUrl", null));
+            redirect(getRequestParameter("backUrl", null));
         }
     }
 

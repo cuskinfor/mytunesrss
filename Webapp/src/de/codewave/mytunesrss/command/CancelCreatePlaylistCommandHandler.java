@@ -16,7 +16,7 @@ public class CancelCreatePlaylistCommandHandler extends MyTunesRssCommandHandler
         getSession().removeAttribute("playlistContent");
         String backUrl = getRequestParameter("backUrl", null);
         if (StringUtils.isNotEmpty(backUrl)) {
-            getResponse().sendRedirect(backUrl);
+            redirect(backUrl);
         } else {
             forward(MyTunesRssCommand.ShowPortal);
         }
