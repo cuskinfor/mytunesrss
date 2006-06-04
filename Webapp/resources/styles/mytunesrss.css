@@ -521,3 +521,15 @@ fieldset {
 	padding: 0;
 	border: none;
 }
+
+h2.fatalError {
+	background-image: url("../images/th_error.gif");
+	color: #fff;
+}
+
+div.fatalError {
+	border-bottom: 1px solid #666;
+	background: #fee;
+	color: #ff3300;
+	padding: 10px;
+}
