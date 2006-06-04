@@ -126,13 +126,19 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     public void execute() throws Exception {
-        if (needsAuthorization() && getWebConfig().isPasswordHashStored() && isAuthorized(getWebConfig().getPasswordHash())) {
-            authorize();
-            executeAuthorized();
-        } else if (needsAuthorization()) {
-            forward(MyTunesRssResource.Login);
-        } else {
-            executeAuthorized();
+        try {
+            if (needsAuthorization() && getWebConfig().isPasswordHashStored() && isAuthorized(getWebConfig().getPasswordHash())) {
+                authorize();
+                executeAuthorized();
+            } else if (needsAuthorization()) {
+                forward(MyTunesRssResource.Login);
+            } else {
+                executeAuthorized();
+            }
+        } catch (Exception e) {
+            getSession().removeAttribute("errors");
+            addError(new BundleError("error.unexpected"));
+            redirect(ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss" + "/" + MyTunesRssCommand.ShowPortal);
         }
     }
 
