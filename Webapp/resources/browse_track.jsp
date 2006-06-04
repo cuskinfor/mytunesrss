@@ -22,45 +22,7 @@
     <!--[if IE]>
       <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
     <![endif]-->
-
-    <script type="text/javascript">
-
-        function sort(sortOrder) {
-            document.forms["browse"].action = "${servletUrl}/browseTrack";
-            document.forms["browse"].elements["sortOrder"].value = sortOrder;
-            document.forms["browse"].submit();
-        }
-
-        function selectAll(ids, checkbox) {
-            var idArray = ids.split(",");
-            for (var i = 0; i < idArray.length; i++) {
-                var element = document.getElementById("item" + idArray[i]);
-                if (element) {
-                    element.checked = checkbox.checked == true ? true : false;
-                }
-            }
-        }
-
-        function registerTR() {
-            var trs = document.getElementsByTagName("TR");
-            for (var i = 0; i < trs.length; i++) {
-                if (trs[i].getElementsByTagName("TH").length > 0) {
-                    trs[i].getElementsByTagName("TH")[1].onclick = function() {
-                        this.parentNode.getElementsByTagName("INPUT")[0].click()
-                    };
-                }
-                if (trs[i].getElementsByTagName("TH").length == 0) {
-                    trs[i].getElementsByTagName("TD")[1].onclick = selectTrack;
-                }
-            }
-        }
-
-        function selectTrack() {
-            var checkbox = this.parentNode.getElementsByTagName("input")[0];
-            checkbox.checked = ( checkbox.checked == true ) ? false : true;
-        }
-
-    </script>
+		<script src="${appUrl}/js/functions.js" type="text/javascript"></script>
 
 </head>
 
@@ -77,8 +39,8 @@
 <ul class="links">
     <c:if test="${sortOrderLink}">
         <li>
-            <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="groupByAlbum" /></a></c:if>
-            <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="groupByArtist" /></a></c:if>
+            <c:if test="${sortOrder != 'Album'}"><a href="#" onclick="sort('Album')"><fmt:message key="groupByAlbum" /></a></c:if>
+            <c:if test="${sortOrder != 'Artist'}"><a href="#" onclick="sort('Artist')"><fmt:message key="groupByArtist" /></a></c:if>
         </li>
     </c:if>
     <c:if test="${empty sessionScope.playlist}">
@@ -113,7 +75,7 @@
     <c:set var="count" value="0" />
     <tr>
         <c:if test="${!empty sessionScope.playlist}">
-            <th class="check"><input type="checkbox" name="none" value="none" onClick="selectAll('${track.sectionIds}',this)" />
+            <th class="check"><input type="checkbox" name="none" value="none" onclick="selectAll('${track.sectionIds}',this)" />
             </th>
         </c:if>
         <th class="active" colspan="2">
@@ -234,7 +196,7 @@
 <c:if test="${!empty sessionScope.playlist}">
     <div class="buttons">
         <input type="submit"
-               onClick="document.forms['browse'].action = '${servletUrl}/addToPlaylist';document.forms['browse'].elements['backUrl'].value = '${backUrl}'"
+               onclick="document.forms['browse'].action = '${servletUrl}/addToPlaylist';document.forms['browse'].elements['backUrl'].value = '${backUrl}'"
                value="add selected" />
     </div>
 </c:if>
