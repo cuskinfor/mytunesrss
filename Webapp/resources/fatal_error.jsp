@@ -1,7 +1,3 @@
-<%--
-  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
-  --%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -37,7 +33,7 @@
 
 					<fmt:message key="error.fatal"/>
 
-					<p><a href="${servletUrl}/showPortal"><fmt:message key="gotoPortal"/></a></p>
+					<a href="${servletUrl}/showPortal"><fmt:message key="gotoPortal"/></a>
 
 				</div>
 
