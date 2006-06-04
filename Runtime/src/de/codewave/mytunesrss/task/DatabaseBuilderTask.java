@@ -84,10 +84,20 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Committing transaction.");
             }
-            storeSession.commit();
+            storeSession.commitAndContinue();
             long timeAfterCommit = System.currentTimeMillis();
             if (LOG.isDebugEnabled()) {
-                LOG.debug("time for commit: " + (timeAfterCommit - timeAfterHelpTables));
+                LOG.debug("Time for commit: " + (timeAfterCommit - timeAfterHelpTables));
+                LOG.debug("Creating database checkpoint.");
+            }
+            storeSession.executeStatement(new DataStoreStatement() {
+                public void execute(Connection connection) throws SQLException {
+                    connection.createStatement().execute("CHECKPOINT");
+                }
+            });
+            long timeAfterCheckpoint = System.currentTimeMillis();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("time for creating checkpoint: " + (timeAfterCheckpoint - timeAfterCommit));
             }
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
