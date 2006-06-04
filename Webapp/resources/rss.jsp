@@ -3,7 +3,7 @@
     <channel>
         <title><c:out value="${channel}"/></title>
         <link>${servletUrl}/<c:out value="${pathInfo}"/></link>
-        <description><fmt:message key="rss.channel.description"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:virtualSuffix(config, track)}</c:set>
+        <description><fmt:message key="rssChannelDescription"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:virtualSuffix(config, track)}</c:set>
             <item>
                 <title><c:out value="${track.name}"/></title>
                 <description><c:if test="${!empty track.artist && !mtfn:unknown(artist)}"><c:out value="${track.artist}"/> - </c:if><c:out value="${track.album}"/></description>

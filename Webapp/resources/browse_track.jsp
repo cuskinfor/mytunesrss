@@ -16,7 +16,7 @@
 
 <head>
 
-    <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
+    <title><fmt:message key="applicationTitle" /> v${cwfn:sysprop('mytunesrss.version')}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
     <!--[if IE]>
@@ -77,8 +77,8 @@
 <ul class="links">
     <c:if test="${sortOrderLink}">
         <li>
-            <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="select.group.album" /></a></c:if>
-            <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="select.group.artist" /></a></c:if>
+            <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('Album')"><fmt:message key="groupByAlbum" /></a></c:if>
+            <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('Artist')"><fmt:message key="groupByArtist" /></a></c:if>
         </li>
     </c:if>
     <c:if test="${empty sessionScope.playlist}">

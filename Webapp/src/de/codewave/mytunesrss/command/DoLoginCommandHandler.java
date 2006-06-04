@@ -10,7 +10,6 @@ import de.codewave.mytunesrss.*;
 
 import javax.servlet.*;
 import java.io.*;
-import java.security.*;
 
 /**
  * de.codewave.mytunesrss.commanDoLoginCommandHandlerer
@@ -29,7 +28,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                 authorize();
                 forward(MyTunesRssCommand.ShowPortal);
             } else {
-                setError("error.login_denied");
+                setError("error.LoginDenied");
                 forward(MyTunesRssResource.Login);
             }
         } else if (needsAuthorization()) {

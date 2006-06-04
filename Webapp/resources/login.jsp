@@ -12,7 +12,7 @@
 
 <head>
 
-    <title><fmt:message key="title" /> v${cwfn:sysprop('mytunesrss.version')}</title>
+    <title><fmt:message key="applicationTitle" /> v${cwfn:sysprop('mytunesrss.version')}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
     <!--[if IE]>
@@ -31,18 +31,18 @@
 
     <form id="login" action="${servletUrl}/login" method="post">
 
-        <h2><fmt:message key="login.caption" /></h2>
-				
+        <h2><fmt:message key="loginCaption" /></h2>
+
 				<div class="login">
 
 					<table class="login" cellspacing="0">
 						<tr>
-							<td><fmt:message key="login.password" /></td>
+							<td><fmt:message key="password" /></td>
 							<td>
 								<input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" />
 							</td>
 							<td>
-								<input class="button" type="submit" value="<fmt:message key="login.login"/>" />
+								<input class="button" type="submit" value="<fmt:message key="doLogin"/>" />
 							</td>
 						</tr>
 						<tr>
@@ -54,7 +54,7 @@
 							<td>&nbsp;</td>
 						</tr>
 					</table>
-					
+
 				</div>
 
     </form>
