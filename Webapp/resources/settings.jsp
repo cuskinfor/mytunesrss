@@ -27,7 +27,7 @@
 <div class="body">
 
     <h1 class="settings">
-        <a class="portal" href="${servletUrl}/showPortal">Portal</a> <span>MyTunesRSS</span>
+        <a class="portal" href="${servletUrl}/showPortal"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
     </h1>
 
     <jsp:include page="/incl_error.jsp" />
@@ -35,29 +35,29 @@
     <form action="${servletUrl}/saveSettings" method="post">
         <table cellspacing="0">
             <tr>
-                <th class="active">Settings</th>
+                <th class="active"><fmt:message key="settings"/></th>
                 <th>&nbsp;</th>
             </tr>
             <tr class="odd">
-                <td>Items per page</td>
+                <td><fmt:message key="settings.itemsPerPage"/></td>
                 <td><input type="text" name="pageSize" maxlength="3" value="<c:out value="${cwfn:choose(config.pageSize > 0, config.pageSize, '')}"/>" style="width: 50px;" /></td>
             </tr>
             <tr>
-                <td>Fake MP3 suffix</td>
+                <td><fmt:message key="settings.fakeMp3"/></td>
                 <td><input type="text" name="suffix.mp3" maxlength="20" value="<c:out value="${config.map['suffix.mp3']}"/>" style="width: 50px;" /></td>
             </tr>
             <tr class="odd">
-                <td>Fake M4A suffix</td>
+                <td><fmt:message key="settings.fakeM4a"/></td>
                 <td><input type="text" name="suffix.m4a" maxlength="20" value="<c:out value="${config.map['suffix.m4a']}"/>" style="width: 50px;" /></td>
             </tr>
             <tr>
-                <td>Limit RSS feed items</td>
+                <td><fmt:message key="settings.rssFeedLimit"/></td>
                 <td>
                     <input type="text" name="rssFeedLimit" maxlength="3" value="<c:out value="${cwfn:choose(config.rssFeedLimit > 0, config.rssFeedLimit, '')}"/>" style="width: 50px;" />
                 </td>
             </tr>
             <tr class="odd">
-                <td>Playlist types</td>
+                <td><fmt:message key="settings.playlistTypes"/></td>
                 <td>
                     <input type="checkbox" name="feedType" value="rss" <c:if test="${fn:contains(fn:join(config.feedTypes, ';'), 'rss')}">
                         checked="checked"</c:if> />
@@ -72,8 +72,8 @@
         </table>
 
         <div class="buttons">
-            <input type="submit" value="save" />
-						<input type="button" value="cancel" onclick="document.location.href='${servletUrl}/showPortal'"/>
+            <input type="submit" value="<fmt:message key="doSave"/>" />
+						<input type="button" value="<fmt:message key="doCancel"/>" onclick="document.location.href='${servletUrl}/showPortal'"/>
         </div>
     </form>
 </div>
