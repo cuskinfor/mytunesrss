@@ -533,3 +533,7 @@ div.fatalError {
 	color: #ff3300;
 	padding: 10px;
 }
+
+div.fatalError p {
+	text-align: center;
+}
