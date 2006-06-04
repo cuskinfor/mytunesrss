@@ -41,7 +41,7 @@ public class DataStore {
 
     public void destroy() throws Exception {
         try {
-            aquireConnection().createStatement().execute("SHUTDOWN");
+            aquireConnection().createStatement().execute("SHUTDOWN COMPACT");
         } finally {
             myConnectionPool.close();
         }
