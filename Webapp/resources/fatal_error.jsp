@@ -35,9 +35,9 @@
 
 				<div class="fatalError">
 
-					<fmt:message key="error.fatal"/> 
+					<fmt:message key="error.fatal"/>
 
-					<a href="#"><fmt:message key="gotoPortal"/></a>
+					<a href="${servletUrl}/showPortal"><fmt:message key="gotoPortal"/></a>
 
 				</div>
 
