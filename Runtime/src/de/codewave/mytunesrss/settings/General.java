@@ -47,7 +47,7 @@ public class General {
         myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
         myPasswordInput.setText(MyTunesRss.CONFIG.getPassword());
         int minMemory = ProgramUtils.getMemorySwitch(MemorySwitchType.Minimum);
-        int maxMemory = ProgramUtils.getMemorySwitch(MemorySwitchType.Maxmimum);
+        int maxMemory = -1; // ProgramUtils.getMemorySwitch(MemorySwitchType.Maxmimum);
         if (maxMemory != -1) {
             SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(maxMemory, Math.max(10, minMemory), 500, 10);
             myMaxMemInput.setModel(spinnerNumberModel);
