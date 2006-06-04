@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.jsp.*;
 
 import java.util.*;
 
@@ -26,7 +27,7 @@ public class RemoveFromPlaylistCommandHandler extends MyTunesRssCommandHandler {
             Playlist playlist = (Playlist)getSession().getAttribute("playlist");
             playlist.setTrackCount(playlistContent.size());
         } else {
-            setError("@@must select at least one track");
+            addError(new BundleError("error.deleteFromPlaylistNoTrack"));
         }
         forward(MyTunesRssCommand.EditPlaylist);
     }

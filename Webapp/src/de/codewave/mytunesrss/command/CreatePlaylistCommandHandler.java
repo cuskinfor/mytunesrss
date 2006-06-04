@@ -11,6 +11,8 @@ import javax.servlet.*;
 import java.sql.*;
 import java.io.*;
 import java.util.*;
+import java.lang.*;
+import java.lang.Error;
 
 import org.apache.commons.lang.*;
 
@@ -44,7 +46,7 @@ public class CreatePlaylistCommandHandler extends MyTunesRssCommandHandler {
             getRequest().setAttribute("tracks", tracks);
             forward(playlistResource);
         } else {
-            setError("error.emptyFeed");
+            addError(new BundleError("error.emptyFeed"));
             forward(MyTunesRssCommand.ShowPortal); // todo: redirect to backUrl
         }
     }

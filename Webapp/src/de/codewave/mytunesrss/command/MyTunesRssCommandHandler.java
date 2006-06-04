@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.utils.servlet.*;
 import de.codewave.utils.*;
 import org.apache.commons.lang.*;
@@ -15,7 +16,7 @@ import org.apache.commons.lang.*;
 import javax.servlet.*;
 import java.io.*;
 import java.util.*;
-import java.security.*;
+import java.lang.*;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
@@ -58,8 +59,18 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         }
     }
 
-    protected void setError(String error) {
-        getSession().setAttribute("error", error);
+    protected void addError(Error error) {
+        List<Error> errors = (List<Error>)getSession().getAttribute("errors");
+        if (errors == null) {
+            synchronized(getSession()) {
+                errors = (List<Error>)getSession().getAttribute("errors");
+                if (errors == null) {
+                    errors = new ArrayList<Error>();
+                    getSession().setAttribute("errors", errors);
+                }
+            }
+        }
+        errors.add(error);
     }
 
     protected DataStore getDataStore() {

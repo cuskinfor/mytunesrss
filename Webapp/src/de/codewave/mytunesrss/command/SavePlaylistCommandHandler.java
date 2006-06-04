@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.datastore.*;
+import de.codewave.mytunesrss.jsp.*;
 
 import java.util.*;
 
@@ -35,7 +36,7 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
             getSession().removeAttribute("playlistContent");
             forward(MyTunesRssCommand.ShowPortal);
         } else {
-            setError("missing playlist name!");
+            addError(new BundleError("error.needPlaylistNameForSave"));
             getResponse().sendRedirect(getRequestParameter("backUrl", null));
         }
     }
