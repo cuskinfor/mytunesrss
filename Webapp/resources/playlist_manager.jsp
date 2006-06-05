@@ -58,6 +58,9 @@
             </tr>
         </c:forEach>
     </table>
+    <c:if test="${empty playlists}">
+        <fmt:message key="noPlaylists"/>
+    </c:if>
 
     <c:if test="${!empty pager}">
         <c:set var="pagerCommand" scope="request" value="${servletUrl}/showPlaylistManager?index={index}" />

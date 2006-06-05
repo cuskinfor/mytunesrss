@@ -69,8 +69,10 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         }
         if (tracks == null || tracks.isEmpty()) {
             addError(new BundleError("error.browseTrackNoResult"));
+            redirect(getRequestParameter("backUrl", null));
+        } else {
+            forward(MyTunesRssResource.BrowseTrack);
         }
-        forward(MyTunesRssResource.BrowseTrack);
     }
 
     private EnhancedTracks getTracks(Collection<Track> tracks, SortOrder sortOrder) {
