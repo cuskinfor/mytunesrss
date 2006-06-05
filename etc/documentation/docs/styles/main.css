@@ -355,3 +355,14 @@ fieldset {
 	margin: 0;
 	padding: 0;
 }
+
+#sidebar ul.links ul.sub {
+	list-style: none;
+	margin: 0;
+	padding: 0 0 0 20px;
+}
+
+#sidebar ul.links ul.sub li a {
+	font-style: italic;
+	background-image: url("../images/sub.gif");
+}
