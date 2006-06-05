@@ -68,6 +68,7 @@ public class PleaseWait {
                 throw new IllegalArgumentException("Percentage value (found " + percentage + ") must not be less than 0 or greater than 100.");
             }
             myProgressBar.setValue(percentage);
+            myProgressBar.getRootPane().validate();
         }
 
         public abstract void execute() throws Exception;
