@@ -24,7 +24,7 @@ import java.lang.*;
  */
 public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private static final Log LOG = LogFactory.getLog(MyTunesRssCommandHandler.class);
-    
+
     protected MyTunesRssConfig getMyTunesRssConfig() {
         return (MyTunesRssConfig)getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
     }
@@ -83,9 +83,11 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
         prepareRequestForResource();
         resource.beforeForward(getRequest(), getResponse());
-        getResponse().setHeader("Cache-Control", "no-cache");
-        getResponse().setHeader("Pragma", "no-cache");
-        getResponse().setDateHeader("Expires", 0);
+        if (getRequest().getHeader("User-Agent").contains("PSP")) {
+            getResponse().setHeader("Cache-Control", "no-cache");
+            getResponse().setHeader("Pragma", "no-cache");
+            getResponse().setDateHeader("Expires", 0);
+        }
         forward(resource.getValue());
     }
 
