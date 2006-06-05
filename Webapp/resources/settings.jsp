@@ -61,11 +61,11 @@
                 <td>
                     <input type="checkbox" name="feedType" value="rss" <c:if test="${fn:contains(fn:join(config.feedTypes, ';'), 'rss')}">
                         checked="checked"</c:if> />
-												<img src="${appUrl}/images/rss.gif" alt="RSS" style="vertical-align:text-top;" />
+												<img src="${appUrl}/images/rss_odd.gif" alt="RSS" style="vertical-align:text-top;" />
 												RSS
                     <input type="checkbox" name="feedType" value="m3u" <c:if test="${fn:contains(fn:join(config.feedTypes, ';'), 'm3u')}">
                         checked="checked"</c:if> style="margin-left: 15px;" />
-												<img src="${appUrl}/images/m3u.gif" alt="M3U" style="vertical-align:text-top;"/>
+												<img src="${appUrl}/images/m3u_odd.gif" alt="M3U" style="vertical-align:text-top;"/>
 												M3U
 												</td>
             </tr>
