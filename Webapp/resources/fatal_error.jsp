@@ -33,7 +33,7 @@
 
 					<fmt:message key="error.fatal"/>
 
-					<a href="${servletUrl}/showPortal"><fmt:message key="gotoPortal"/></a>
+					<p><a href="${servletUrl}/showPortal"><fmt:message key="gotoPortal"/></a></p>
 
 				</div>
 

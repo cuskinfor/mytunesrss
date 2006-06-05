@@ -41,7 +41,9 @@
     <table cellspacing="0">
         <tr>
             <th class="active"><fmt:message key="playlists"/></th>
-            <th colspan="4"><fmt:message key="tracks"/></th>
+						<c:if test="${!empty playlists}">
+							<th colspan="4"><fmt:message key="tracks"/></th>
+						</c:if>
         </tr>
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -57,10 +59,10 @@
                 </td>
             </tr>
         </c:forEach>
+			<c:if test="${empty playlists}">
+				<tr><td><em><fmt:message key="noPlaylists"/></em></td></tr>
+			</c:if>
     </table>
-    <c:if test="${empty playlists}">
-        <fmt:message key="noPlaylists"/>
-    </c:if>
 
     <c:if test="${!empty pager}">
         <c:set var="pagerCommand" scope="request" value="${servletUrl}/showPlaylistManager?index={index}" />

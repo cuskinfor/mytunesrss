@@ -31,12 +31,12 @@
 
     <h1 class="search"><span><fmt:message key="myTunesRss"/></span></h1>
 
-    <jsp:include page="/incl_error.jsp" />
-
     <ul class="links">
         <li><a href="${servletUrl}/showSettings"><fmt:message key="doSettings"/></a></li>
         <li style="float:right"><a href="${servletUrl}/logout"><fmt:message key="doLogout"/></a></li>
     </ul>
+
+    <jsp:include page="/incl_error.jsp" />
 
     <form id="search" action="${servletUrl}/browseTrack" method="post">
 
@@ -71,7 +71,9 @@
     <table cellspacing="0">
         <tr>
             <th class="active"><fmt:message key="playlists"/></th>
-            <th colspan="${1+ fn:length(config.feedTypes)}"><fmt:message key="tracks"/></th>
+						<c:if test="${!empty playlists}">
+      	      <th colspan="${1+ fn:length(config.feedTypes)}"><fmt:message key="tracks"/></th>
+						</c:if>
         </tr>
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -85,10 +87,10 @@
                 </c:forEach>
             </tr>
         </c:forEach>
+			<c:if test="${empty playlists}">
+				<tr><td><em><fmt:message key="noPlaylists"/></em></td></tr>
+			</c:if>
     </table>
-    <c:if test="${empty playlists}">
-        <fmt:message key="noPlaylists"/>
-    </c:if>
 
     <c:if test="${!empty pager}">
         <c:set var="pagerCommand" scope="request" value="${servletUrl}/showPortal?index={index}" />
