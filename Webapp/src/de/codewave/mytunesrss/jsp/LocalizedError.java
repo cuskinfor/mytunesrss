@@ -11,7 +11,7 @@ public class LocalizedError extends Error {
     private String myMessage;
 
     public LocalizedError(String message) {
-        super(null);
+        super((Object[])null);
         myMessage = message;
     }
 

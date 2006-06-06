@@ -11,7 +11,7 @@ public class BundleError extends Error {
     public String myKey;
 
     public BundleError(String errorKey) {
-        super(null);
+        super((Object[])null);
         myKey = errorKey;
     }
 

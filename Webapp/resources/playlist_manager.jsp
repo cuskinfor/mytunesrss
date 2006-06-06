@@ -50,7 +50,7 @@
                 <td class="mytunes"><c:out value="${playlist.name}" /></td>
                 <td class="tracks"><a href="${servletUrl}/browseTrack?playlist=${playlist.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${playlist.trackCount}</a></td>
                 <td class="icon">
-                    <a href="${servletUrl}/loadAndEditPlaylist?playlist=${playlist.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                    <a href="${servletUrl}/loadAndEditPlaylist?allowEditEmpty=true&amp;playlist=${playlist.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
                         <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                 </td>
                 <td class="icon">
