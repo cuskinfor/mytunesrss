@@ -1,0 +1,82 @@
+<!--
+  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="../styles/main.css" />
+    <title>MyTunesRSS documentation</title>
+</head>
+
+<body>
+
+<div id="head"></div>
+
+<div id="body">
+
+    <div id="content">
+
+        <div id="sidebar">
+
+            <ul class="links">
+                <li><a href="intro.html">Introduction</a></li>
+                <li><a href="sysreqs.html">System requirements</a></li>
+                <li><a href="versions.html">Version history</a></li>
+                <li><a href="startup.html">Starting MyTunesRSS</a></li>
+                <li><a href="config.html">The configuration</a></li>
+                <li><a href="web_intro.html">The web application</a></li>
+                <ul class="sub">
+                    <li><a href="web_login.html">Login</a></li>
+                    <li><a href="web_portal.html">Portal</a></li>
+                    <li><a href="web_settings.html">Settings</a></li>
+                    <li><a href="web_browse.html">Browse library</a></li>
+                    <li><a href="web_playlists.html">MyTunesRSS playlists</a></li>
+                </ul>
+                <li><a href="license.html">Licenses</a></li>
+                <ul class="sub">
+                    <li><a href="lic_tomcat.html">Tomcat</a></li>
+                    <li><a href="lic_hsqldb.html">HSQL database engine</a></li>
+                    <li><a href="lic_systray.html">Systray4j project</a></li>
+                </ul>
+                <li><a href="outro.html">Contact</a></li>
+            </ul>
+            
+
+        </div>
+
+        <h1>Portal</h1>
+
+        <p>
+            Das Portal ist die Startseite von MyTunesRSS. Sie sehen im Portal alle verfügbaren Playlisten. Das sind die meisten Playlisten aus iTunes
+            (einige wie z.B. der Partyshuffle werden nicht angeboten) und alle MyTunesRSS Playlisten, die Sie sich mit Hilfe der Webanwendung erstellt
+            haben. Sie erkennen die unterschiedlichen Playlisten an Ihren Symbolen. </p>
+
+        <p>Vom Portal aus gelangen Sie an die Einstellungen und Sie können sich ausloggen. Beim Ausloggen wird ein möglicherweise vorher beim Login
+           gesetzter Cookie wieder gelöscht. Sie werden also dauerhaft ausgeloggt, auch wenn Sie beim Login die Option eingeloggt zu bleiben aktiviert
+           hatten. Sie können vom Portal aus in Ihre Bibliothek springen und diese nach Alben oder Künstlern durchsuchen und den Playlist Manager
+           aufrufen, um Ihre MyTunesRSS Playlisten zu verwalten.</p>
+
+        <p>
+            Die Suchfunktion kann genutzt werden, wenn Sie ungefähr wissen, welche Titel, Alben oder Künstler Sie anzeigen möchten. Sie können mehrere
+            Suchbegriffe durch Leerzeichen getrennt eingeben. Die Begriffe werden UND-Verknüpft, d.h. sie müssen alle in einem Titel und dem Album
+            oder Künstler des Titels vorkommen für einen Treffer. Zum Beispiel würde eine Suche nach "madonna music" alle Titel von Madonna finden,
+            deren Album und Titel das Wort "Music" enthält. Bei der Suche werden Groß-/Kleinschreibung nicht beachtet. </p>
+
+        <p>
+            Hinter jeder Playlist stehen die Anzahl der Titel in der Playlist. Mit einem Klick auf die Anzahl werden die Titel angezeigt. Am Ende
+            jeder Zeile finden Sie die Symbole zum Erzeugen einer M3U Playliste oder eines RSS Feeds aus der kompletten Playliste. </p>
+
+        <img src="images/web_portal.png" width="463" alt="Login" />
+
+    </div>
+
+    <div id="footer">
+        &copy; 2006 <a href="http://www.codewave.de" target="_blank">Codewave Software</a></div>
+
+</div>
+
+</html>

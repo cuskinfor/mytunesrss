@@ -19,85 +19,85 @@
         <div id="sidebar">
 
             <ul class="links">
-
                 <li><a href="intro.html">Introduction</a></li>
-
                 <li><a href="sysreqs.html">System requirements</a></li>
-
                 <li><a href="versions.html">Version history</a></li>
-
                 <li><a href="startup.html">Starting MyTunesRSS</a></li>
-
                 <li><a href="config.html">The configuration</a></li>
-
-                <li><a href="webapp.html">The web application</a></li>
-
+                <li><a href="web_intro.html">The web application</a></li>
+                <ul class="sub">
+                    <li><a href="web_login.html">Login</a></li>
+                    <li><a href="web_portal.html">Portal</a></li>
+                    <li><a href="web_settings.html">Settings</a></li>
+                    <li><a href="web_browse.html">Browse library</a></li>
+                    <li><a href="web_playlists.html">MyTunesRSS playlists</a></li>
+                </ul>
+                <li><a href="license.html">Licenses</a></li>
+                <ul class="sub">
+                    <li><a href="lic_tomcat.html">Tomcat</a></li>
+                    <li><a href="lic_hsqldb.html">HSQL database engine</a></li>
+                    <li><a href="lic_systray.html">Systray4j project</a></li>
+                </ul>
                 <li><a href="outro.html">Contact</a></li>
-
             </ul>
+
 
         </div>
 
-        <h1>The configuration</h1>
+        <h1>Die Konfiguration</h1>
 
         <p>
-            After starting the application you see a configuration panel. The settings can be found on three pages. On the first page you can make
-            general settings. </p>
-        <img src="images/general.png" alt="General settings" />
+            Nach dem Start der Anwendung sehen Sie die Konfigurationsoberfläche. Die Einstellungen sind auf drei Seiten verteilt. Auf der ersten Seite
+            befinden sich die allgemeinen Einstellungen. </p>
+        <img src="images/general.png" alt="Allgemeine Einstellungen" />
 
         <p>
-            You can choose the port on which the server is listening for incoming connections. The default port 8080 of the embedded Tomcat server
-            should be alright in most cases. On some systems using ports below 1024 might be restricted. </p>
+            Sie können den Port, auf dem der Server auf Verbindungen wartet, frei wählen. Der Standardport 8080 des Servers sollte in den meisten
+            Fällen problemlos funktionieren. Auf manchen Systemen kann die Benutzung von Portnummern unter 1024 eingeschränkt sein. </p>
 
         <p>
-            Logging can usually be deactivated. In case you have problems and want to request support from Codewave Software, please always attach a
-            log to your request. Activate logging after starting MyTunesRSS and use the application until you encounter the problem. The button "Show
-            log" opens a new window with the log messages which can be copied. </p>
+            Sie müssen zur Sicherheit ein Kennwort für den Zugriff auf die Webapplikation vergeben. Ohne ein Kennwort kann der Server nicht gestartet
+            werden. Das Kennwort wird unverschlüsselt gespeichert. Verwenden Sie daher bitte möglichst kein Kennwort, das sie an anderer Stelle für
+            den Schutz von kritischen Daten verwenden. </p>
 
         <p>
-            When starting the server you might get a message about memory problems. In this case you can increase the maximum memory the application
-            may use. Enter the new value in the field and save it using the button next to the field. After saving the new value, you have to restart
-            MyTunesRSS to activate it. This option is not available if you do not use the special Windows or Mac OS X starter applications but call
-            Java directly from the command line. </p>
+            Im unteren Teil der allgemeinen Einstellungen müssen Sie den Pfad zu der Datei "iTunes Music Library.xml" auf Ihrem System angeben. Sie
+            können den Pfad direkt in das Eingabefeld schreiben oder mit dem (...) Knopf suchen und auswählen. Unter Windows liegt diese Datei
+            normalerweise im Order "iTunes" unter "Eigene Musik". Auf Mac OS X sollte sie unter "iTunes" im Order "Musik" zu finden sein. </p>
+        <img src="images/options.png" alt="Optionen" />
 
         <p>
-            In the lower part of the genral settings you have to specify the path to the file "iTunes Music Library.xml" on your system. Either enter
-            the path directly or use the (...) button to search and select it. On windows it should be located in the "iTunes" folder which is located
-            in "My Music". On Mac OS X it is usually located in "iTunes" which is in "Music". </p>
-        <img src="images/options.png" alt="Options" />
+            Auf der zweiten Seite finden Sie weitere Optionen. Als oberstes wird der Status der in MyTunesRSS integrierten Datenbank angezeigt. In
+            dieser Datenbank hält MyTunesRSS eine Kopie der Daten aus der "iTunes Music Library.xml". Diese Datenbank wird automatisch beim Start des
+            Servers erzeugt bzw. aktualisiert.</p>
 
         <p>
-            The second page shows advanced options. You can activate authentication for the web application here and enter a password. The password is
-            saved as plain text, so please do not use a password you are using for protecting critical data elsewhere. </p>
+            Unter "Automatisierung" könnnen Sie wählen, ob der integrierte Server beim Start von MyTunesRSS automatisch gestartet werden soll. Mit
+            dieser Option können Sie MyTunesRSS in die Startobjekte Ihres Systems legen und damit beim Systemstart direkt komplett einsatzbereit
+            machen. Weiterhin können Sie bestimmen, ob beim Start der Anwendung automatisch nach neueren Versionen von MyTunesRSS gesucht werden soll.
+            Diese Option steht nicht zur Verfügung, wenn Sie den Server automatisch starten lassen. Sie können hier auch manuell nach einer neuen
+            Version suchen. Bei laufendem Server können Änderungen an iTunes optional automatisch in die MyTunesRSS Datenbank übernommen werden.
+            Aktivieren Sie die entsprechende Option und legen Sie fest, alle wieviel Sekunden MyTunesRSS nach Änderungen an der "iTunes Music
+            Library.xml" schauen soll. </p>
+
+        <img src="images/info.png" alt="Informationen" />
 
         <p>
-            Specifying a fake suffix can be necessary in case the target device which should use the RSS feed does not support the default suffix. The
-            Playstation Portable with firmware version 2.60 for example can play AAC files only with the suffix MP4 and not with the standard suffix
-            M4A used in iTunes. So you can offer the target device an alternative suffix for the supported file types MP3 and M4A. </p>
+            Auf der dritten Seite finden Sie Informationen zum Entwicklerteam und die Bitte um eine Spende, falls das Programm Ihnen gefällt. Wenn Sie
+            Probleme mit MyTunesRSS haben und eine Supportanfrage stellen, können Sie auf dieser Seite die aktuelle Logdatei in ein Zip-Archiv
+            speichern und an die Supportmail anhängen. </p>
 
         <p>
-            In case the target device supports a limited number of entries in an RSS feed only, you can set this limit in MyTunesRSS. The Playstation
-            Portable for example does not show more then 100 entries in a feed. When an iTunes playlist is bigger than the configured limit for a
-            feed, the list is automatically splitted into multiple lists matching the maximum size. The limit also applies when manually selecting
-            titles for a feed. </p>
-
-        <img src="images/info.png" alt="Information" />
-
-        <p>
-            On the last page you can find some information on the developer team and a request to make a donation in case you like the program. You
-            can also specify if you want MyTunesRSS to check for a newer version when starting. The button "Check now" lets you check for updates
-            right away. </p>
+            Unter den Konfigurationsseiten befinden sich die Knöpfe zum Starten und Stoppen des Servers und zum Beenden der Anwendung. Während der
+            Server läuft, können Sie keine Einstellungen verändern. Wenn der Server gestartet wurde, wird in der Statuszeile auf der ersten
+            Konfigurationsseite die Adresse angezeigt, unter der der Server in Ihrem lokalen Netz erreichbar ist. Üblicherweise haben Sie eine
+            einzeige lokale Adresse (z.B. 192.168.0.2). Wenn Sie mehrere Netzwerkschnittstellen haben (z.B. ein LAN und ein WLAN), dann haben Sie auch
+            mehrere lokale Adressen. Es wird nur eine davon in der Statuszeile angezeigt. Wenn Sie alle lokalen Adressen sehen möchten, bewegen Sie
+            bitte den Mauszeiger über den Statustext und schauen sich den Tooltip an. </p>
 
         <p>
-            Below the configuration pages you find the buttons to start and stop the server and to quit the program. Settings cannot be changed while
-            the server is running. After starting the server, the status bar displays the address your server can be reached on your local network.
-            Usually you have a single local address (e.g. 192.168.0.2). If you have multiple network interfaces (e.g. a LAN and a WLAN) you have
-            multiple local addresses as well. Only one of them is displayed. To see all addresses, please move the pointer over the status text and
-            look at the tooltip. </p>
-
-        <p>
-            A running server is automatically stopped when quitting the application. The window position is saved automatically for the next start. If
-            you made any changes to the configuration, the application asks you whether you want to save them for the next start or discard them. </p>
+            Beim Beenden des Programmes wird ein eventuell noch laufender Server zuerst gestoppt. Die Fensterposition und sämtliche Einstellunegn
+            werden automatisch für den nächsten Start gespeichert.</p>
 
     </div>
 
