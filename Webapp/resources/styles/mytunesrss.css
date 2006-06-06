@@ -439,7 +439,6 @@ table.pager td {
 }
 
 table.pager td span {
-	display: inline;
 	color: #bbb;
 	font-weight: normal;
 	font-size: 10px;
@@ -447,7 +446,6 @@ table.pager td span {
 }
 
 table.pager td a {
-	display: inline;
 	color: #fff;
 	font-weight: bold;
 	font-size: 10px;
