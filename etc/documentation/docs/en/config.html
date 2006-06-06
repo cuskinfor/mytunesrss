@@ -41,63 +41,57 @@
                 <li><a href="outro.html">Contact</a></li>
             </ul>
 
-
         </div>
 
-        <h1>Die Konfiguration</h1>
+        <h1>The configuration</h1>
 
         <p>
-            Nach dem Start der Anwendung sehen Sie die Konfigurationsoberfläche. Die Einstellungen sind auf drei Seiten verteilt. Auf der ersten Seite
-            befinden sich die allgemeinen Einstellungen. </p>
+            After starting the application you see the configuration panel. The settings are placed on three tabs. The first tab contains the general
+            settings. </p>
         <img src="images/general.png" alt="Allgemeine Einstellungen" />
 
         <p>
-            Sie können den Port, auf dem der Server auf Verbindungen wartet, frei wählen. Der Standardport 8080 des Servers sollte in den meisten
-            Fällen problemlos funktionieren. Auf manchen Systemen kann die Benutzung von Portnummern unter 1024 eingeschränkt sein. </p>
+            You can choose the port the server is listening for incoming connection freely. The default port 8080 should be okay in almost call cases.
+            On some systems use of ports below 1024 might be restricted. </p>
 
         <p>
-            Sie müssen zur Sicherheit ein Kennwort für den Zugriff auf die Webapplikation vergeben. Ohne ein Kennwort kann der Server nicht gestartet
-            werden. Das Kennwort wird unverschlüsselt gespeichert. Verwenden Sie daher bitte möglichst kein Kennwort, das sie an anderer Stelle für
-            den Schutz von kritischen Daten verwenden. </p>
+            For security reasons you have to choose a password for protecting access to the web application. The server will not start without a
+            password. The password is stored as plain text, so please do not use a password you are using to protect critical data elsewhere.</p>
 
         <p>
-            Im unteren Teil der allgemeinen Einstellungen müssen Sie den Pfad zu der Datei "iTunes Music Library.xml" auf Ihrem System angeben. Sie
-            können den Pfad direkt in das Eingabefeld schreiben oder mit dem (...) Knopf suchen und auswählen. Unter Windows liegt diese Datei
-            normalerweise im Order "iTunes" unter "Eigene Musik". Auf Mac OS X sollte sie unter "iTunes" im Order "Musik" zu finden sein. </p>
+            In the lower part of the general settings tab you have to specify the path to the "iTunes Music Library.xml" file on your system. You can
+            either enter the path directly into the text field or use the (...) button to browse your harddisk and look it up. On Windows systems this
+            file usually is found in the "iTunes" folder in "My Music". On Mac OS X you should find it in the "iTunes" folder in "Music".</p>
         <img src="images/options.png" alt="Optionen" />
 
         <p>
-            Auf der zweiten Seite finden Sie weitere Optionen. Als oberstes wird der Status der in MyTunesRSS integrierten Datenbank angezeigt. In
-            dieser Datenbank hält MyTunesRSS eine Kopie der Daten aus der "iTunes Music Library.xml". Diese Datenbank wird automatisch beim Start des
-            Servers erzeugt bzw. aktualisiert.</p>
+            The second tab shows additional options. Topmost you can see the status of the database integrated in MyTunesRSS. This database contains
+            all the data from the "iTunes Music Library.xml" file. It is created or updated automatically each time you start the server.</p>
 
         <p>
-            Unter "Automatisierung" könnnen Sie wählen, ob der integrierte Server beim Start von MyTunesRSS automatisch gestartet werden soll. Mit
-            dieser Option können Sie MyTunesRSS in die Startobjekte Ihres Systems legen und damit beim Systemstart direkt komplett einsatzbereit
-            machen. Weiterhin können Sie bestimmen, ob beim Start der Anwendung automatisch nach neueren Versionen von MyTunesRSS gesucht werden soll.
-            Diese Option steht nicht zur Verfügung, wenn Sie den Server automatisch starten lassen. Sie können hier auch manuell nach einer neuen
-            Version suchen. Bei laufendem Server können Änderungen an iTunes optional automatisch in die MyTunesRSS Datenbank übernommen werden.
-            Aktivieren Sie die entsprechende Option und legen Sie fest, alle wieviel Sekunden MyTunesRSS nach Änderungen an der "iTunes Music
-            Library.xml" schauen soll. </p>
+            In "automation" you can select to start the server automatically when starting MyTunesRSS. This way you can put the application into your
+            system's startup items and have the server up and running when booting your operating system. Furthermore you can have MyTunesRSS
+            automatically check for new versions on startup. This option is not available in case you choose to start the server automatically. You
+            can also look for new versions manually. When the server is running you can have it automatically check for changes in iTunes and have the
+            internal database updated. Select the number of seconds between these checks.</p>
 
         <img src="images/info.png" alt="Informationen" />
 
         <p>
-            Auf der dritten Seite finden Sie Informationen zum Entwicklerteam und die Bitte um eine Spende, falls das Programm Ihnen gefällt. Wenn Sie
-            Probleme mit MyTunesRSS haben und eine Supportanfrage stellen, können Sie auf dieser Seite die aktuelle Logdatei in ein Zip-Archiv
-            speichern und an die Supportmail anhängen. </p>
+            On the third page you can find information about the development team. Please donate if you find the programm useful. In case you have
+            problems and need support, you can click the button on this page to obtain a zipped log file. Please attach the log file to support
+            request mails.</p>
 
         <p>
-            Unter den Konfigurationsseiten befinden sich die Knöpfe zum Starten und Stoppen des Servers und zum Beenden der Anwendung. Während der
-            Server läuft, können Sie keine Einstellungen verändern. Wenn der Server gestartet wurde, wird in der Statuszeile auf der ersten
-            Konfigurationsseite die Adresse angezeigt, unter der der Server in Ihrem lokalen Netz erreichbar ist. Üblicherweise haben Sie eine
-            einzeige lokale Adresse (z.B. 192.168.0.2). Wenn Sie mehrere Netzwerkschnittstellen haben (z.B. ein LAN und ein WLAN), dann haben Sie auch
-            mehrere lokale Adressen. Es wird nur eine davon in der Statuszeile angezeigt. Wenn Sie alle lokalen Adressen sehen möchten, bewegen Sie
-            bitte den Mauszeiger über den Statustext und schauen sich den Tooltip an. </p>
+            Below the configuration pages are three buttons for starting and stopping the server and for quitting the program. You cannot change any
+            settings while the server is running. When the server is started, the status line on the first configuration tab displays your local
+            address which can be used to access the MyTunesRSS web application. Usually you have a single address which is displayed. In case you have
+            multiple network interfaces, e.g. LAN and WLAN, you have multiple addresses as well. Move the mouse over the status line and wait for the
+            tooltip to open. It displays all local addresses.</p>
 
         <p>
-            Beim Beenden des Programmes wird ein eventuell noch laufender Server zuerst gestoppt. Die Fensterposition und sämtliche Einstellunegn
-            werden automatisch für den nächsten Start gespeichert.</p>
+            When quitting the program while the server is running, it is stopped. The window position and all settings are automatically saved for the
+            next start.</p>
 
     </div>
 
