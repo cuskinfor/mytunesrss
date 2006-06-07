@@ -8,7 +8,7 @@
                 <title><c:out value="${track.name}"/></title>
                 <description><c:if test="${!empty track.artist && !mtfn:unknown(artist)}"><c:out value="${track.artist}"/> - </c:if><c:out value="${track.album}"/></description>
                 <author><c:out value="${track.artist}"/></author>
-                <link>${servletUrl}/createRSS/track=${track.id}/authHash=${authHash}/<c:out value="${virtualFileName}"/></link>
+                <link>${servletUrl}/createRSS/track=${track.id}/authHash=${authHash}</link>
                 <guid>${servletUrl}/createRSS/track=${track.id}</guid>
                 <pubDate>${pubDate}</pubDate>
                 <enclosure url="${servletUrl}/playTrack/track=${track.id}/authHash=${authHash}/${cwfn:urlEncode(virtualFileName, 'UTF-8')}"
