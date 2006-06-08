@@ -16,7 +16,10 @@ public class MigrationStatement implements DataStoreStatement {
 
     public void execute(Connection connection) throws SQLException {
         String version = getVersion(connection);
-        if (version.equals("2.0")) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Database version " + version + " detected.");
+        }
+        if (version.compareTo("2.0") <= 0) {
             // update from 2.0 to 2.0.1
             if (LOG.isInfoEnabled()) {
                 LOG.info("Migrating database to version 2.0.1");
