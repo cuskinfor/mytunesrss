@@ -53,6 +53,24 @@ public class InitializeDatabaseTask extends PleaseWait.NoCancelTask {
                         }
                     }
                 }
+            } else {
+                DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
+                storeSession.begin();
+                try {
+                    storeSession.executeStatement(new MigrationStatement());
+                    storeSession.commit();
+                } catch (SQLException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not migrate database.", e);
+                    }
+                    try {
+                        storeSession.rollback();
+                    } catch (SQLException e1) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Could not rollback transaction.", e1);
+                        }
+                    }
+                }
             }
         } catch (SQLException e) {
             myExistent = false;
