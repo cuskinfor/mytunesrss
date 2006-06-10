@@ -35,7 +35,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
             if (!tracks.isEmpty()) {
                 Track track = tracks.iterator().next();
-                fileSender = new FileSender(track.getFile(), track.getContentType());
+                fileSender = new FileSender(track.getFile(), track.getContentType(), 1024 * 50);
             } else {
                 fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
             }

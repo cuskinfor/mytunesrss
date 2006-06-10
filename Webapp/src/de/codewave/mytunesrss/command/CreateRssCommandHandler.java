@@ -17,17 +17,12 @@ public class CreateRssCommandHandler extends CreatePlaylistCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        String pathInfo = getRequest().getPathInfo();
-        String feedUrlPathInfo = pathInfo.substring(1, pathInfo.lastIndexOf("/"));
-        if (!feedUrlPathInfo.contains("authHash=")) {
-            feedUrlPathInfo += "/authHash=" + getAuthHash();
-        }
-        String channel = pathInfo.substring(pathInfo.lastIndexOf('/') + 1);
-        feedUrlPathInfo += "/" + channel;
+        String feedUrl = getRequest().getRequestURL().toString();
+        String channel = feedUrl.substring(feedUrl.lastIndexOf('/') + 1);
         channel = channel.substring(0, channel.lastIndexOf('.'));
         getRequest().setAttribute("channel", channel.replace('_', ' '));
         getRequest().setAttribute("pubDate", myPublishDateFormat.format(new Date()));
-        getRequest().setAttribute("pathInfo", feedUrlPathInfo);
+        getRequest().setAttribute("feedUrl", feedUrl);
         createDataAndForward(MyTunesRssResource.TemplateRss);
     }
 }
