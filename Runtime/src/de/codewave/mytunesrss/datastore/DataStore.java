@@ -6,12 +6,15 @@ package de.codewave.mytunesrss.datastore;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.utils.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.pool.*;
 import org.apache.commons.pool.impl.*;
+import org.apache.commons.lang.*;
 
 import java.sql.*;
 import java.util.*;
+import java.io.*;
 
 /**
  * de.codewave.mytunesrss.datastore.DataStore
@@ -34,9 +37,32 @@ public class DataStore {
     public void init() {
         myConnectionPool = new GenericObjectPool(new BasePoolableObjectFactory() {
             public Object makeObject() throws Exception {
-                return DriverManager.getConnection("jdbc:hsqldb:file:hsqldb/MyTunesRSS-" + MyTunesRss.VERSION, "sa", "");
+                String filename = "hsqldb/MyTunesRSS";
+                String pathname = getApplicationDataPath("MyTunesRSS");
+                return DriverManager.getConnection("jdbc:hsqldb:file:" + pathname + "/" + filename, "sa", "");
             }
         }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 5, false, false, 10000, 2, 20000, false, 20000);
+    }
+
+    private String getApplicationDataPath(String applicationName) throws IOException {
+        String pathname = System.getProperty("user.home");
+        if (StringUtils.isNotEmpty(pathname)) {
+            if (!pathname.endsWith("/") && !pathname.endsWith("\\")) {
+                pathname += "/";
+            }
+        } else {
+            pathname = "./";
+        }
+        if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
+            pathname += "Library/Caches/" + applicationName;
+        } else {
+            pathname += "." + applicationName;
+        }
+        File path = new File(pathname);
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        return pathname;
     }
 
     public void destroy() throws Exception {
