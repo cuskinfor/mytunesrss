@@ -55,6 +55,17 @@ public class DataStore {
         }
         if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
             pathname += "Library/Caches/" + applicationName;
+        } else if (ProgramUtils.guessOperatingSystem() == OperatingSystem.Windows) {
+            String envAppData = System.getenv("appdata");
+            if (StringUtils.isNotEmpty(envAppData)) {
+                pathname = envAppData;
+                if (!pathname.endsWith("/") && !pathname.endsWith("\\")) {
+                    pathname += "/";
+                }
+                pathname += applicationName;
+            } else {
+                pathname += "." + applicationName;
+            }
         } else {
             pathname += "." + applicationName;
         }
