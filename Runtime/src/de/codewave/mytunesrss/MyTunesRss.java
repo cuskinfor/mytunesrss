@@ -85,6 +85,7 @@ public class MyTunesRss {
         PleaseWait.start(frame, BUNDLE.getString("pleasedWait.initializingTitle"), BUNDLE.getString("pleasedWait.initializingMessage"), false, false, new PleaseWait.NoCancelTask() {
             public void execute() throws Exception {
                 CONFIG.load();
+                migrateConfig();
                 STORE.init();
                 final Settings settings = new Settings();
                 settings.init(frame);
@@ -111,7 +112,6 @@ public class MyTunesRss {
                             new Updater(frame).checkForUpdate(true);
                         }
                         PleaseWait.start(frame, null, MyTunesRss.BUNDLE.getString("pleaseWait.checkingDatabase"), false, false, new InitializeDatabaseTask());
-                        migrateConfig();
                         if (CONFIG.isAutoStartServer()) {
                             settings.doStartServer();
                             frame.setExtendedState(JFrame.ICONIFIED);
@@ -123,7 +123,7 @@ public class MyTunesRss {
     }
 
     private static void migrateConfig() {
-        if ("".equals(CONFIG.getVersion())) {
+        if (CONFIG.getVersion().compareTo("2.1") < 0) {
             // migrate to 2.1
             int autoUpdateDatabaseInterval = CONFIG.getAutoUpdateDatabaseInterval() / 60;
             CONFIG.setAutoUpdateDatabaseInterval(autoUpdateDatabaseInterval > 0 ? autoUpdateDatabaseInterval : 1);
