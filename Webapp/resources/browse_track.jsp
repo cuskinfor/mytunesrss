@@ -136,6 +136,9 @@
                 </th>
             </c:otherwise>
         </c:choose>
+        <c:if test="${config.showDownload}">
+            <th class="icon">&nbsp;</th>
+        </c:if>
     </tr>
 </c:if>
 <tr class="${cwfn:choose(count % 2 == 0, 'even', 'odd')}">
@@ -180,6 +183,12 @@
             </td>
         </c:otherwise>
     </c:choose>
+    <c:if test="${config.showDownload}">
+        <td class="icon">
+            <a href="${servletUrl}/playTrack/authHash=${authHash}/track=${track.id}/${mtfn:virtualTrackName(track)}.${mtfn:virtualSuffix(config, track)}">
+                <img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="downloadTrack"/>" /></a>
+        </td>
+    </c:if>
 </tr>
 <c:set var="count" value="${count + 1}" />
 </c:forEach>

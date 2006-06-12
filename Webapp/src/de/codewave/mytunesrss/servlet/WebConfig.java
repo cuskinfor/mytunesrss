@@ -25,6 +25,7 @@ public class WebConfig {
     private static final String CFG_SUFFIX = "suffix.";
     private static final String CFG_RSS_LIMIT = "rssLimit";
     private static final String CFG_PAGE_SIZE = "pageSize";
+    private static final String CFG_SHOW_DOWNLOAD = "showDownload";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     static {
@@ -53,6 +54,7 @@ public class WebConfig {
         myConfigValues.put(CFG_PASSWORD_HASH_STORED, "false");
         myConfigValues.put(CFG_PASSWORD_HASH, "");
         myConfigValues.put(CFG_PAGE_SIZE, "0");
+        myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
     }
 
     public void load(HttpServletRequest request) {
@@ -125,6 +127,14 @@ public class WebConfig {
         myConfigValues.put(CFG_SUFFIX + originalSuffix.toLowerCase(), fakeSuffix.toLowerCase());
     }
 
+    public void setShowDownload(boolean showDownload) {
+        myConfigValues.put(CFG_SHOW_DOWNLOAD, Boolean.toString(showDownload));
+    }
+
+    public boolean isShowDownload() {
+        return Boolean.valueOf(myConfigValues.get(CFG_SHOW_DOWNLOAD));
+    }
+
     public boolean isPasswordHashStored() {
         String passwordHashStored = myConfigValues.get(CFG_PASSWORD_HASH_STORED);
         return Boolean.valueOf(passwordHashStored);
@@ -140,7 +150,7 @@ public class WebConfig {
             try {
                 return MiscUtils.fromHexString(passwordHash);
             } catch (IllegalArgumentException e) {
-                return null; // ignore exception
+                return null;// ignore exception
             }
         }
         return null;

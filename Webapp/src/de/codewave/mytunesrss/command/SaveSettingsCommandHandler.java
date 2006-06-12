@@ -73,6 +73,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
                 webConfig.addFileSuffix(parameterName.substring("suffix.".length()), fakeSuffix);
             }
         }
+        webConfig.setShowDownload("true".equals(getRequestParameter("showDownload", "false")));
         return false;
     }
 
