@@ -48,7 +48,7 @@ public class Options {
         }
         myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
         myAutoStartServerInput.addActionListener(new AutoStartServerInputListener());
-        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval(), 60, 3600, 10);
+        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval(), 1, 60, 1);
         myAutoUpdateDatabaseIntervalInput.setModel(spinnerNumberModel);
         myAutoUpdateDatabaseInput.setSelected(MyTunesRss.CONFIG.isAutoUpdateDatabase());
         SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, MyTunesRss.CONFIG.isAutoUpdateDatabase());

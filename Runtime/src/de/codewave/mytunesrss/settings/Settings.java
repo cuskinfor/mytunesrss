@@ -129,7 +129,7 @@ public class Settings {
                     myGeneralForm.setServerRunningStatus(port);
                     if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
                         int interval = MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval();
-                        MyTunesRss.DATABASE_WATCHDOG.schedule(new DatabaseWatchdogTask(myOptionsForm, interval, libraryUrl), 1000 * interval);
+                        MyTunesRss.DATABASE_WATCHDOG.schedule(new DatabaseWatchdogTask(myOptionsForm, interval * 60, libraryUrl), 1000 * interval);
                     }
                 }
             } catch (MalformedURLException e) {

@@ -111,6 +111,7 @@ public class MyTunesRss {
                             new Updater(frame).checkForUpdate(true);
                         }
                         PleaseWait.start(frame, null, MyTunesRss.BUNDLE.getString("pleaseWait.checkingDatabase"), false, false, new InitializeDatabaseTask());
+                        migrateConfig();
                         if (CONFIG.isAutoStartServer()) {
                             settings.doStartServer();
                             frame.setExtendedState(JFrame.ICONIFIED);
@@ -119,6 +120,15 @@ public class MyTunesRss {
                 });
             }
         });
+    }
+
+    private static void migrateConfig() {
+        if ("".equals(CONFIG.getVersion())) {
+            // migrate to 2.1
+            int autoUpdateDatabaseInterval = CONFIG.getAutoUpdateDatabaseInterval() / 60;
+            CONFIG.setAutoUpdateDatabaseInterval(autoUpdateDatabaseInterval > 0 ? autoUpdateDatabaseInterval : 1);
+            CONFIG.setVersion("2.1");
+        }
     }
 
     private static void removeAllEmptyTooltips(JComponent component) {

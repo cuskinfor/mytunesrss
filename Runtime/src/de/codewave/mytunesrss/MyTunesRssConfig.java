@@ -24,6 +24,7 @@ public class MyTunesRssConfig {
     private boolean myAutoStartServer;
     private boolean myAutoUpdateDatabase;
     private int myAutoUpdateDatabaseInterval;
+    private String myVersion;
 
     public String getLibraryXml() {
         return myLibraryXml;
@@ -92,6 +93,14 @@ public class MyTunesRssConfig {
         myAutoUpdateDatabaseInterval = autoUpdateDatabaseInterval;
     }
 
+    public String getVersion() {
+        return myVersion;
+    }
+
+    public void setVersion(String version) {
+        myVersion = version;
+    }
+
     public void load() {
         checkPrefsVersion();
         myPort = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("serverPort", 8080);
@@ -101,6 +110,7 @@ public class MyTunesRssConfig {
         myAutoStartServer = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("autoStartServer", false);
         myAutoUpdateDatabase = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("autoUpdateDatabase", false);
         myAutoUpdateDatabaseInterval = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("autoUpdateDatabaseInterval", 600);
+        myVersion = Preferences.userRoot().node("/de/codewave/mytunesrss").get("version", "");
     }
 
     public void save() {
@@ -112,6 +122,7 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("autoStartServer", myAutoStartServer);
         Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("autoUpdateDatabase", myAutoUpdateDatabase);
         Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
+        Preferences.userRoot().node("/de/codewave/mytunesrss").put("version", myVersion);
     }
 
     private void checkPrefsVersion() {
