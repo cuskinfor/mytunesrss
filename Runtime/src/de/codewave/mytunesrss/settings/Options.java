@@ -94,7 +94,7 @@ public class Options {
                 break;
             case ServerIdle:
                 myAutoStartServerInput.setEnabled(true);
-                myUpdateOnStartInput.setEnabled(true);
+                myUpdateOnStartInput.setEnabled(!myAutoStartServerInput.isSelected());
                 myProgramUpdateButton.setEnabled(true);
                 myAutoUpdateDatabaseInput.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
