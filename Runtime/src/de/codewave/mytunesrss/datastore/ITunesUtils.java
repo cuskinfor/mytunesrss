@@ -39,6 +39,7 @@ public class ITunesUtils {
         LibraryListener libraryListener = new LibraryListener(previousLibraryId, timeLastUpdate);
         TrackListener trackListener = new TrackListener(storeSession, libraryListener, trackIdToPersId);
         handler.addListener("/plist/dict", libraryListener);
+        handler.addListener("/plist/dict", libraryListener);
         handler.addListener("/plist/dict[Tracks]/dict", trackListener);
         handler.addListener("/plist/dict[Playlists]/array", new PlaylistListener(storeSession, trackIdToPersId));
         Set<String> databaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery());
@@ -100,6 +101,10 @@ public class ITunesUtils {
                         LOG.debug("Library persistent ID changed, updating all tracks regardless of last update time.");
                     }
                 }
+            } else if ("Application Version".equals(key)) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("iTunes version " + value);
+                }
             }
             return true;
         }
@@ -135,9 +140,9 @@ public class ITunesUtils {
 
         public boolean beforeDictPut(Map dict, String key, Object value) {
             Map track = (Map)value;
-            String persId = track.get("Persistent ID").toString();
-            myExistingIds.add(persId);
-            myTrackIdToPersId.put((Integer)track.get("Track ID"), persId);
+            String trackId = track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
+            myExistingIds.add(trackId);
+            myTrackIdToPersId.put((Integer)track.get("Track ID"), trackId);
             Date dateModified = ((Date)track.get("Date Modified"));
             long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
             Date dateAdded = ((Date)track.get("Date Added"));
@@ -167,7 +172,7 @@ public class ITunesUtils {
         }
 
         private boolean insertOrUpdateTrack(Map track) {
-            String trackId = track.get("Persistent ID").toString();
+            String trackId = track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
             String name = (String)track.get("Name");
             String trackType = (String)track.get("Track Type");
             if ("File".equals(trackType)) {
