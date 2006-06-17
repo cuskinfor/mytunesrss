@@ -10,7 +10,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?playlist=${param.playlist}&amp;fullAlbums=${param.fullAlbums}&amp;album=${param.album}&amp;artist=${param.artist}&amp;searchTerm=${param.searchTerm}&amp;index=${param.index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?playlist=${param.playlist}&amp;fullAlbums=${param.fullAlbums}&amp;album=${cwfn:urlEncode(param.album, 'UTF-8')}&amp;artist=${cwfn:urlEncode(param.artist, 'UTF-8')}&amp;searchTerm=${cwfn:urlEncode(param.searchTerm, 'UTF-8')}&amp;index=${param.index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}</c:set>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -198,7 +198,7 @@
 <c:if test="${!empty pager}">
     <c:set var="pagerCommand"
            scope="request"
-           value="${servletUrl}/browseTrack?playlist=${param.playlist}&amp;fullAlbums=${param.fullAlbums}&amp;album=${param.album}&amp;artist=${param.artist}&amp;searchTerm=${param.searchTerm}&amp;index={index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}" />
+           value="${servletUrl}/browseTrack?playlist=${param.playlist}&amp;fullAlbums=${param.fullAlbums}&amp;album=${cwfn:urlEncode(param.album, 'UTF-8')}&amp;artist=${cwfn:urlEncode(param.artist, 'UTF-8')}&amp;searchTerm=${cwfn:urlEncode(param.searchTerm, 'UTF-8')}&amp;index={index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}" />
     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
     <jsp:include page="incl_bottomPager.jsp" />
 </c:if>

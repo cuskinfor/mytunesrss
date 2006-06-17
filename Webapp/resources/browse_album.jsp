@@ -8,7 +8,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseAlbum?artist=${param.artist}&amp;page=${param.page}&amp;index=${param.index}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseAlbum?artist=${cwfn:urlEncode(param.artist, 'UTF-8')}&amp;page=${param.page}&amp;index=${param.index}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -150,7 +150,7 @@
 
     <c:if test="${!empty indexPager}">
         <c:set var="pager" scope="request" value="${indexPager}" />
-        <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseAlbum?page=${param.page}&amp;artist=${param.album}&amp;index={index}" />
+        <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseAlbum?page=${param.page}&amp;artist=${cwfn:urlEncode(param.album, 'UTF-8')}&amp;index={index}" />
         <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
         <jsp:include page="incl_bottomPager.jsp" />
     </c:if>

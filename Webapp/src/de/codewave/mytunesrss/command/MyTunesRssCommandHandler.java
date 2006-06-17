@@ -112,7 +112,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         forward("/mytunesrss/" + command.getName());
     }
 
-    protected void redirect(String url) throws IOException {
+    protected void redirect(String url) throws IOException{
         getResponse().sendRedirect(url.replace("&amp;", "&"));
     }
 
