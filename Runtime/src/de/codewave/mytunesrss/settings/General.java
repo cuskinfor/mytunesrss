@@ -7,9 +7,9 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.*;
 import de.codewave.utils.network.*;
-import org.apache.commons.logging.*;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
@@ -47,7 +47,7 @@ public class General {
         myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
         myPasswordInput.setText(MyTunesRss.CONFIG.getPassword());
         int minMemory = ProgramUtils.getMemorySwitch(MemorySwitchType.Minimum);
-        int maxMemory = -1; // ProgramUtils.getMemorySwitch(MemorySwitchType.Maxmimum);
+        int maxMemory = -1;// ProgramUtils.getMemorySwitch(MemorySwitchType.Maxmimum);
         if (maxMemory != -1) {
             SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(maxMemory, Math.max(10, minMemory), 500, 10);
             myMaxMemInput.setModel(spinnerNumberModel);
@@ -120,35 +120,22 @@ public class General {
 
     public class TunesXmlPathLookupButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setFileFilter(new ITunesLibraryFileFilter(true));
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fileChooser.setDialogTitle(MyTunesRss.BUNDLE.getString("lookupTunesXml.title"));
-            if (fileChooser.showDialog(myRootPanel.getTopLevelAncestor(), null) == JFileChooser.APPROVE_OPTION) {
+            FileDialog fileDialog = new FileDialog(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("dialog.loadITunes"), FileDialog.LOAD);
+            fileDialog.setVisible(true);
+            if (fileDialog.getFile() != null) {
+                File sourceFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
                 try {
-                    myTunesXmlPathInput.setText(fileChooser.getSelectedFile().getCanonicalPath());
+                    myTunesXmlPathInput.setText(sourceFile.getCanonicalPath());
                 } catch (IOException e) {
-                    SwingUtils.showErrorMessage(mySettingsForm.getFrame(),
-                                                MyTunesRss.BUNDLE.getString("error.lookupLibraryXml") + e.getMessage());
+                    SwingUtils.showErrorMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("error.lookupLibraryXml") + e.getMessage());
                 }
             }
         }
     }
 
-    public static class ITunesLibraryFileFilter extends javax.swing.filechooser.FileFilter {
-        private boolean myAllowDirectories;
-
-        public ITunesLibraryFileFilter(boolean allowDirectories) {
-            myAllowDirectories = allowDirectories;
-        }
-
-        public boolean accept(File f) {
-            return f != null && f.exists() &&
-                    ((f.isDirectory() && myAllowDirectories) || (f.isFile() && LIBRARY_XML_FILE_NAME.equalsIgnoreCase(f.getName())));
-        }
-
-        public String getDescription() {
-            return "iTunes Library";
+    public static class ITunesLibraryFileFilter implements FilenameFilter {
+        public boolean accept(File directory, String filename) {
+            return filename != null && (new File(directory, filename).isFile() && LIBRARY_XML_FILE_NAME.equalsIgnoreCase(filename));
         }
     }
 

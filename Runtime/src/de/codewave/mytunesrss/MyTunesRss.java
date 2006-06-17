@@ -23,11 +23,11 @@ import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
+import java.security.*;
 import java.sql.*;
 import java.util.*;
 import java.util.Timer;
 import java.util.prefs.*;
-import java.security.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -83,44 +83,58 @@ public class MyTunesRss {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         final JFrame frame = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtHandler(frame));
-        PleaseWait.start(frame, BUNDLE.getString("pleasedWait.initializingTitle"), BUNDLE.getString("pleasedWait.initializingMessage"), false, false, new PleaseWait.NoCancelTask() {
-            public void execute() throws Exception {
-                CONFIG.load();
-                migrateConfig();
-                STORE.init();
-                final Settings settings = new Settings();
-                settings.init(frame);
-                MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
-                executeApple(mainWindowListener);
-                executeWindows(settings, mainWindowListener);
-                frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
-                frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                frame.addWindowListener(mainWindowListener);
-                frame.getContentPane().add(settings.getRootPanel());
-                frame.setResizable(false);
-                final Point defaultPosition = frame.getLocation();
-                frame.setLocation(1000000, 1000000);
-                settings.setGuiMode(GuiMode.ServerIdle);
-                removeAllEmptyTooltips(frame.getRootPane());
-                frame.setVisible(true);
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        frame.pack();
-                        int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", defaultPosition.x);
-                        int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", defaultPosition.y);
-                        frame.setLocation(x, y);
-                        if (CONFIG.isCheckUpdateOnStart()) {
-                            new Updater(frame).checkForUpdate(true);
-                        }
-                        PleaseWait.start(frame, null, MyTunesRss.BUNDLE.getString("pleaseWait.checkingDatabase"), false, false, new InitializeDatabaseTask());
-                        if (CONFIG.isAutoStartServer()) {
-                            settings.doStartServer();
-                            frame.setExtendedState(JFrame.ICONIFIED);
-                        }
-                    }
-                });
-            }
-        });
+        PleaseWait.start(frame,
+                         BUNDLE.getString("pleasedWait.initializingTitle"),
+                         BUNDLE.getString("pleasedWait.initializingMessage"),
+                         false,
+                         false,
+                         new PleaseWait.NoCancelTask() {
+                             public void execute() throws Exception {
+                                 CONFIG.load();
+                                 migrateConfig();
+                                 STORE.init();
+                                 final Settings settings = new Settings();
+                                 settings.init(frame);
+                                 MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
+                                 executeApple(mainWindowListener);
+                                 executeWindows(settings, mainWindowListener);
+                                 frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
+                                 frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                                 frame.addWindowListener(mainWindowListener);
+                                 frame.getContentPane().add(settings.getRootPanel());
+                                 frame.setResizable(false);
+                                 final Point defaultPosition = frame.getLocation();
+                                 frame.setLocation(1000000, 1000000);
+                                 settings.setGuiMode(GuiMode.ServerIdle);
+                                 removeAllEmptyTooltips(frame.getRootPane());
+                                 frame.setVisible(true);
+                                 SwingUtilities.invokeLater(new Runnable() {
+                                     public void run() {
+                                         frame.pack();
+                                         int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", defaultPosition.x);
+                                         int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", defaultPosition.y);
+                                         frame.setLocation(x, y);
+                                         if (CONFIG.isCheckUpdateOnStart()) {
+                                             new Updater(frame).checkForUpdate(true);
+                                         }
+                                         PleaseWait.start(frame,
+                                                          null,
+                                                          MyTunesRss.BUNDLE.getString("pleaseWait.checkingDatabase"),
+                                                          false,
+                                                          false,
+                                                          new InitializeDatabaseTask());
+                                         if (CONFIG.isAutoStartServer()) {
+                                             settings.doStartServer();
+                                             if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
+                                                 // todo: hide window
+                                             } else {
+                                                 frame.setExtendedState(JFrame.ICONIFIED);
+                                             }
+                                         }
+                                     }
+                                 });
+                             }
+                         });
     }
 
     private static String getJavaEnvironment() {

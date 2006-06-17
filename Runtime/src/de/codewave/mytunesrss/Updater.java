@@ -11,6 +11,7 @@ import java.io.*;
 import java.net.*;
 import java.text.*;
 import java.util.prefs.*;
+import java.awt.*;
 
 /**
  * de.codewave.mytunesrss.Updater
@@ -36,12 +37,15 @@ public class Updater {
                 String noNagVersion = Preferences.userRoot().node("/de/codewave/mytunesrss").get("updateIgnoreVersion", MyTunesRss.VERSION);
                 if (!updateInfo.getVersion().equals(MyTunesRss.VERSION) && (!autoCheck || !noNagVersion.equals(updateInfo.getVersion()))) {
                     if (askForUpdate(updateInfo, autoCheck)) {
-                        final JFileChooser fileChooser = new JFileChooser();
-                        fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
-                        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                        fileChooser.setSelectedFile(new File(updateInfo.getFileName()));
-                        if (fileChooser.showSaveDialog(myParent) == JFileChooser.APPROVE_OPTION) {
-                            downloadUpdate(updateInfo.getUrl(), fileChooser.getSelectedFile(), updateInfo.getVersion());
+                        File targetFile = new File(updateInfo.getFileName());
+                        final FileDialog fileDialog = new FileDialog(myParent, MyTunesRss.BUNDLE.getString("dialog.saveUpdate"),
+                                                               FileDialog.SAVE);
+                        fileDialog.setDirectory(targetFile.getParent());
+                        fileDialog.setFile(targetFile.getName());
+                        fileDialog.setVisible(true);
+                        if (fileDialog.getFile() != null) {
+                            targetFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
+                            downloadUpdate(updateInfo.getUrl(), targetFile, updateInfo.getVersion());
                         }
                     }
                 } else if (!autoCheck) {

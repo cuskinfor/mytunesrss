@@ -9,6 +9,7 @@ import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.*;
 import java.io.*;
 import java.util.zip.*;
 
@@ -28,16 +29,18 @@ public class Info {
 
     public class SaveLogButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            final JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fileChooser.setSelectedFile(new File("MyTunesRSS-" + MyTunesRss.VERSION + "-LogFile.zip"));
-            if (fileChooser.showSaveDialog(mySettingsForm.getFrame()) == JFileChooser.APPROVE_OPTION) {
+            File targetFile = new File("MyTunesRSS-" + MyTunesRss.VERSION + "-LogFile.zip");
+            FileDialog fileDialog = new FileDialog(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("dialog.saveLog"), FileDialog.SAVE);
+            fileDialog.setDirectory(targetFile.getParent());
+            fileDialog.setFile(targetFile.getName());
+            fileDialog.setVisible(true);
+            if (fileDialog.getFile() != null) {
+                targetFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
                 FileInputStream input = null;
                 ZipOutputStream zipOutput = null;
                 try {
                     input = new FileInputStream(new File("MyTunesRSS.log"));
-                    zipOutput = new ZipOutputStream(new FileOutputStream(fileChooser.getSelectedFile()));
+                    zipOutput = new ZipOutputStream(new FileOutputStream(targetFile));
                     zipOutput.putNextEntry(new ZipEntry("MyTunesRSS.log"));
                     byte[] bytes = new byte[4096];
                     for (int bytesRead = input.read(bytes); bytesRead != -1; bytesRead = input.read(bytes)) {

@@ -104,7 +104,7 @@ public class Settings {
         final File library = new File(myGeneralForm.getTunesXmlPathInput().getText().trim());
         if (port < MIN_PORT || port > MAX_PORT) {
             SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.illegalServerPort"));
-        } else if (!new General.ITunesLibraryFileFilter(false).accept(library)) {
+        } else if (!new General.ITunesLibraryFileFilter().accept(library.getParentFile(), library.getName())) {
             SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.illegalTunesXml"));
         } else if (myGeneralForm.getPasswordInput().getPassword().length == 0) {
             SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.missingAuthPassword"));
