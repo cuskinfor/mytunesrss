@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.xml.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
@@ -177,7 +178,7 @@ public class ITunesUtils {
             String trackType = (String)track.get("Track Type");
             if ("File".equals(trackType)) {
                 File file = ITunesUtils.getFileForLocation((String)track.get("Location"));
-                if (trackId != null && StringUtils.isNotEmpty(name) && file != null) {
+                if (trackId != null && StringUtils.isNotEmpty(name) && file != null && new SupportedFileFilter().accept(file.getParentFile(), file.getName())) {
                     try {
                         InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(trackId) ? myUpdateStatement : myInsertStatement;
                         statement.clear();
@@ -187,7 +188,7 @@ public class ITunesUtils {
                         statement.setAlbum(StringUtils.trimToNull((String)track.get("Album")));
                         statement.setTime(track.get("Total Time") != null ? (Integer)track.get("Total Time") / 1000 : 0);
                         statement.setTrackNumber(track.get("Track Number") != null ? (Integer)track.get("Track Number") : 0);
-                        statement.setFileName(file != null ? file.getAbsolutePath() : null);
+                        statement.setFileName(file.getAbsolutePath());
                         myDataStoreSession.executeStatement(statement);
                         return true;
                     } catch (SQLException e) {
@@ -202,6 +203,12 @@ public class ITunesUtils {
                 }
             }
             return false;
+        }
+
+        public static class SupportedFileFilter implements FilenameFilter {
+            public boolean accept(File parent, String filename) {
+                return FileSupportUtils.isSupported(filename);
+            }
         }
     }
 

@@ -4,8 +4,9 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.mytunesrss.*;
+
 import java.io.*;
-import java.net.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.Track
@@ -77,12 +78,7 @@ public class Track {
 
     public String getContentType() {
         String name = getFile().getName().toLowerCase();
-        if (name.endsWith(".mp3")) {
-            return "audio/mp3";
-        } else if (name.endsWith(".m4p") || name.endsWith(".m4a") || name.endsWith(".mp4")) {
-            return "audio/mp4";
-        }
-        return URLConnection.guessContentTypeFromName(name);
+        return FileSupportUtils.getContentType(name);
     }
 
     public long getContentLength() {
