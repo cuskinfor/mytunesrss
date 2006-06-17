@@ -109,4 +109,17 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Check if the specified track is a supported movie file.
+        </description>
+        <name>isMovie</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>boolean isMovie(de.codewave.mytunesrss.datastore.statement.Track)
+        </function-signature>
+        <example>
+            &lt;c:if test="${mtfn:isMovie(track)}"/&gt;...&lt;/c:if&gt;
+        </example>
+    </function>
+
 </taglib>

@@ -148,6 +148,7 @@
         </td>
     </c:if>
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
+        <c:if test="${mtfn:isMovie(track)}"><img src="${appUrl}/images/movie.gif" alt="video" /></c:if>
         <c:choose>
             <c:when test="${sortOrder == 'Album'}">
                 <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>

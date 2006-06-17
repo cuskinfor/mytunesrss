@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.*;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.*;
 
 import javax.servlet.http.*;
@@ -62,5 +63,9 @@ public class MyTunesFunctions {
 
     public static String hexCode(String string) {
         return MiscUtils.toHexString(string);
+    }
+
+    public static boolean isMovie(Track track) {
+        return FileSupportUtils.isSupportedVideo(track.getFile().getName());
     }
 }
