@@ -72,6 +72,7 @@ public class MyTunesRss {
         }
         if (LOG.isInfoEnabled()) {
             LOG.info("Operating system: " + ProgramUtils.guessOperatingSystem().name());
+            LOG.info("Java: " + getJavaEnvironment());
         }
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
         VERSION = modulesInfo != null ? modulesInfo.getVersion() : "0.0.0";
@@ -120,6 +121,13 @@ public class MyTunesRss {
                 });
             }
         });
+    }
+
+    private static String getJavaEnvironment() {
+        StringBuffer java = new StringBuffer();
+        java.append(System.getProperty("java.version")).append(" (\"").append(System.getProperty("java.home")).append("\")");
+
+        return java.toString();
     }
 
     private static void migrateConfig() {

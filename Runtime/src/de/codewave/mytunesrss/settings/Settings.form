@@ -16,11 +16,11 @@
         </constraints>
         <properties>
           <font name="Lucida Grande" size="72" style="0"/>
-          <foreground color="-16711680"/>
+          <foreground color="-65485"/>
           <horizontalAlignment value="0"/>
           <horizontalTextPosition value="0"/>
           <icon value="de/codewave/mytunesrss/settings/MyTunesRSS.png"/>
-          <text value=""/>
+          <text value="B  E  T  A"/>
           <toolTipText value=""/>
         </properties>
       </component>

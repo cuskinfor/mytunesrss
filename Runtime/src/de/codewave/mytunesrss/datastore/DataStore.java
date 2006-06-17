@@ -34,12 +34,13 @@ public class DataStore {
 
     private GenericObjectPool myConnectionPool;
 
-    public void init() {
+    public void init() throws IOException {
+        String filename = "hsqldb/MyTunesRSS";
+        String pathname = getApplicationDataPath("MyTunesRSS");
+        final String connectString = "jdbc:hsqldb:file:" + pathname + "/" + filename;
         myConnectionPool = new GenericObjectPool(new BasePoolableObjectFactory() {
             public Object makeObject() throws Exception {
-                String filename = "hsqldb/MyTunesRSS";
-                String pathname = getApplicationDataPath("MyTunesRSS");
-                return DriverManager.getConnection("jdbc:hsqldb:file:" + pathname + "/" + filename, "sa", "");
+                return DriverManager.getConnection(connectString, "sa", "");
             }
         }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 5, false, false, 10000, 2, 20000, false, 20000);
     }
@@ -77,9 +78,13 @@ public class DataStore {
     }
 
     public void destroy() throws Exception {
+        Connection connection = aquireConnection();
         try {
-            aquireConnection().createStatement().execute("SHUTDOWN COMPACT");
+            if (connection != null) {
+                connection.createStatement().execute("SHUTDOWN COMPACT");
+            }
         } finally {
+            releaseConnection(connection);
             myConnectionPool.close();
         }
     }
@@ -96,11 +101,13 @@ public class DataStore {
     }
 
     void releaseConnection(Connection connection) {
-        try {
-            myConnectionPool.returnObject(connection);
-        } catch (Exception e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not return connection to pool.", e);
+        if (connection != null) {
+            try {
+                myConnectionPool.returnObject(connection);
+            } catch (Exception e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not return connection to pool.", e);
+                }
             }
         }
     }

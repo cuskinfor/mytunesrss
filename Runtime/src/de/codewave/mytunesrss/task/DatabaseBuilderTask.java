@@ -105,6 +105,7 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
                     myOptionsForm.refreshLastUpdate();
                 }
             });
+            storeSession.commit();
         } catch (SQLException e) {
             storeSession.rollback();
             throw e;
