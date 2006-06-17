@@ -126,7 +126,13 @@ public class Settings {
                     SwingUtils.showErrorMessage(getFrame(), MyTunesRss.WEBSERVER.getLastErrorMessage());
                 } else {
                     setGuiMode(GuiMode.ServerRunning);
-                    myGeneralForm.setServerRunningStatus(port);
+                    myGeneralForm.setServerRunningStatus(port, false);
+                    final int finalPort = port;
+                    new Thread(new Runnable() {
+                        public void run() {
+                            myGeneralForm.setServerRunningStatus(finalPort, true);
+                        }
+                    }).start();
                     if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
                         int interval = MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval();
                         MyTunesRss.DATABASE_WATCHDOG.schedule(new DatabaseWatchdogTask(myOptionsForm, interval * 60, libraryUrl), 1000 * interval);

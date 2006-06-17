@@ -60,10 +60,6 @@ public class WebServer {
                 myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverStart") + e.getMessage();
                 myEmbeddedTomcat = null;
                 return false;
-            } catch (SQLException e) {
-                myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverStart") + e.getMessage();
-                myEmbeddedTomcat = null;
-                return false;
             }
         }
         return true;
@@ -116,7 +112,7 @@ public class WebServer {
     }
 
     private Embedded createServer(String name, InetAddress listenAddress, int listenPort, File catalinaBasePath, String webAppName,
-            String webAppContext, Map<String, Object> contextEntries) throws IOException, SQLException {
+            String webAppContext, Map<String, Object> contextEntries) throws IOException {
         Embedded server = new Embedded();
         server.setCatalinaBase(catalinaBasePath.getCanonicalPath());
         Engine engine = server.createEngine();

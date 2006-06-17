@@ -7,16 +7,20 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.*;
 import de.codewave.utils.network.*;
+import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.*;
 
 /**
  * General settings panel
  */
 public class General {
+    private static final Log LOG = LogFactory.getLog(General.class);
     private static final String LIBRARY_XML_FILE_NAME = "iTunes Music Library.xml";
 
     private JPanel myRootPanel;
@@ -62,20 +66,57 @@ public class General {
         setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
     }
 
-    public void setServerRunningStatus(int serverPort) {
+    public void setServerRunningStatus(int serverPort, boolean getExternalAddress) {
         String[] localAddresses = NetworkUtils.getLocalNetworkAddresses();
         if (localAddresses.length == 0) {
             setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running"), null);
         } else {
             StringBuffer tooltip = new StringBuffer("<html>").append(MyTunesRss.BUNDLE.getString("serverStatus.running.addresses"));
             for (int i = 0; i < localAddresses.length; i++) {
-                tooltip.append("http://").append(localAddresses[i]).append(":").append(serverPort);
-                tooltip.append(i + 1 < localAddresses.length ? "<br>" : "</html>");
+                tooltip.append("http://").append(localAddresses[i]).append(":").append(serverPort).append("<br>");
             }
+            if (getExternalAddress) {
+                String externalAddress = getExternalAddress();
+                if (StringUtils.isNotEmpty(externalAddress) && !externalAddress.equals("unreachable")) {
+                    tooltip.append(MyTunesRss.BUNDLE.getString("serverStatus.running.external"));
+                    tooltip.append("http://").append(externalAddress).append(":").append(serverPort);
+                } else {
+                    tooltip.append(MyTunesRss.BUNDLE.getString("serverStatus.running.noExternal"));
+                }
+            }
+            tooltip.append("</html>");
             setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running") + " [ http://" + localAddresses[0] + ":" + serverPort + " ] ",
                             tooltip.toString());
         }
         myRootPanel.validate();
+    }
+
+    private String getExternalAddress() {
+        BufferedReader reader = null;
+        try {
+            URLConnection connection = new URL("http://www.codewave.de/getip.php").openConnection();
+            if (connection != null) {
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                if (reader != null) {
+                    return reader.readLine();
+                }
+            }
+        } catch (IOException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Could not read my external address from \"www.codewave.de/getip.php\".", e);
+            }
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not close reader.", e);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public void updateConfigFromGui() {
