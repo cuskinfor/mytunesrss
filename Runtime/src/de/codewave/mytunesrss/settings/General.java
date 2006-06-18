@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.utils.*;
 import de.codewave.utils.network.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
@@ -30,9 +29,7 @@ public class General {
     private JButton myTunesXmlPathLookupButton;
     private Settings mySettingsForm;
     private JLabel myServerStatusLabel;
-    private JSpinner myMaxMemInput;
-    private JLabel myMaxMemLabel;
-    private JButton myMaxMemSaveButton;
+    private JButton myServerInfoButton;
 
     public JPasswordField getPasswordInput() {
         return myPasswordInput;
@@ -50,43 +47,18 @@ public class General {
         mySettingsForm = settingsForm;
         myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
         myPasswordInput.setText(MyTunesRss.CONFIG.getPassword());
-        int minMemory = ProgramUtils.getMemorySwitch(MemorySwitchType.Minimum);
-        int maxMemory = -1;// ProgramUtils.getMemorySwitch(MemorySwitchType.Maxmimum);
-        if (maxMemory != -1) {
-            SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(maxMemory, Math.max(10, minMemory), 500, 10);
-            myMaxMemInput.setModel(spinnerNumberModel);
-            myMaxMemSaveButton.addActionListener(new MaxMemSaveButtonListener());
-        } else {
-            myMaxMemLabel.setVisible(false);
-            myMaxMemInput.setVisible(false);
-            myMaxMemSaveButton.setVisible(false);
-        }
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
         myTunesXmlPathLookupButton.addActionListener(new TunesXmlPathLookupButtonListener());
         setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
+        myServerInfoButton.addActionListener(new ServerInfoButtonListener());
     }
 
-    public void setServerRunningStatus(int serverPort, boolean getExternalAddress) {
+    public void setServerRunningStatus(int serverPort) {
         String[] localAddresses = NetworkUtils.getLocalNetworkAddresses();
         if (localAddresses.length == 0) {
             setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running"), null);
         } else {
-            StringBuffer tooltip = new StringBuffer("<html>").append(MyTunesRss.BUNDLE.getString("serverStatus.running.addresses"));
-            for (int i = 0; i < localAddresses.length; i++) {
-                tooltip.append("http://").append(localAddresses[i]).append(":").append(serverPort).append("<br>");
-            }
-            if (getExternalAddress) {
-                String externalAddress = getExternalAddress();
-                if (StringUtils.isNotEmpty(externalAddress) && !externalAddress.equals("unreachable")) {
-                    tooltip.append(MyTunesRss.BUNDLE.getString("serverStatus.running.external"));
-                    tooltip.append("http://").append(externalAddress).append(":").append(serverPort);
-                } else {
-                    tooltip.append(MyTunesRss.BUNDLE.getString("serverStatus.running.noExternal"));
-                }
-            }
-            tooltip.append("</html>");
-            setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running") + " [ http://" + localAddresses[0] + ":" + serverPort + " ] ",
-                            tooltip.toString());
+            setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running") + " [ http://" + localAddresses[0] + ":" + serverPort + " ] ", null);
         }
         myRootPanel.validate();
     }
@@ -134,16 +106,12 @@ public class General {
             case ServerRunning:
                 SwingUtils.enableElementAndLabel(myPortInput, false);
                 SwingUtils.enableElementAndLabel(myPasswordInput, false);
-                SwingUtils.enableElementAndLabel(myMaxMemInput, false);
-                myMaxMemSaveButton.setEnabled(false);
                 SwingUtils.enableElementAndLabel(myTunesXmlPathInput, false);
                 myTunesXmlPathLookupButton.setEnabled(false);
                 break;
             case ServerIdle:
                 SwingUtils.enableElementAndLabel(myPortInput, true);
                 SwingUtils.enableElementAndLabel(myPasswordInput, true);
-                SwingUtils.enableElementAndLabel(myMaxMemInput, true);
-                myMaxMemSaveButton.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myTunesXmlPathInput, true);
                 myTunesXmlPathLookupButton.setEnabled(true);
                 break;
@@ -180,15 +148,64 @@ public class General {
         }
     }
 
-    public class MaxMemSaveButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            int maxMem = ((Integer)myMaxMemInput.getValue()).intValue();
-            if (ProgramUtils.updateMemorySwitch(MemorySwitchType.Maxmimum, maxMem)) {
-                SwingUtils.showInfoMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("info.saveMaxMemoryDone"));
-            } else {
-                SwingUtils.showErrorMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("error.saveMaxMemory"));
-            }
+    public class ServerInfoButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent actionEvent) {
+            PleaseWait.start(mySettingsForm.getFrame(),
+                             null,
+                             MyTunesRss.BUNDLE.getString("pleaseWait.gettingServerStatus"),
+                             false,
+                             true,
+                             new GetServerInfoTask());
         }
     }
 
+    public class GetServerInfoTask extends PleaseWait.Task {
+        private boolean myCancelled;
+        private boolean myDone;
+
+        public void execute() throws Exception {
+            String[] localAddresses = NetworkUtils.getLocalNetworkAddresses();
+            final String serverPort = myPortInput.getText().trim();
+            final StringBuffer info = new StringBuffer();
+            if (localAddresses != null && localAddresses.length > 0) {
+                info.append(localAddresses.length == 1 ? MyTunesRss.BUNDLE.getString("serverStatus.running.oneAddress") : MyTunesRss.BUNDLE.getString(
+                        "serverStatus.running.addresses"));
+                info.append("\n");
+                for (int i = 0; i < localAddresses.length; i++) {
+                    info.append("http://").append(localAddresses[i]).append(":").append(serverPort).append("\n");
+                }
+                new Thread(new Runnable() {
+                    public void run() {
+                        String externalAddress = getExternalAddress();
+                        if (StringUtils.isNotEmpty(externalAddress) && !externalAddress.equals("unreachable")) {
+                            info.append("\n").append(MyTunesRss.BUNDLE.getString("serverStatus.running.external")).append("\n");
+                            info.append("http://").append(externalAddress).append(":").append(serverPort);
+                        } else {
+                            info.append(MyTunesRss.BUNDLE.getString("serverStatus.running.noExternal"));
+                        }
+                        myDone = true;
+                    }
+                }).start();
+            } else {
+                info.append(MyTunesRss.BUNDLE.getString("serverStatus.running.noLocalAddress"));
+            }
+            int sleepTime = 50;
+            while (!myDone && !myCancelled) {
+                Thread.yield();
+                try {
+                    Thread.sleep(sleepTime);
+                    sleepTime = (int)Math.min(2000, sleepTime * 1.1);
+                } catch (InterruptedException e) {
+                    // intentionally left blank
+                }
+            }
+            if (StringUtils.isNotEmpty(info.toString())) {
+                SwingUtils.showInfoMessage(mySettingsForm.getFrame(), info.toString());
+            }
+        }
+
+        protected void cancel() {
+            myCancelled = true;
+        }
+    }
 }

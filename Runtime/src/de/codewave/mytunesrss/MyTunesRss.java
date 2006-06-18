@@ -84,8 +84,8 @@ public class MyTunesRss {
         final JFrame frame = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtHandler(frame));
         PleaseWait.start(frame,
-                         BUNDLE.getString("pleasedWait.initializingTitle"),
-                         BUNDLE.getString("pleasedWait.initializingMessage"),
+                         BUNDLE.getString("pleaseWait.initializingTitle"),
+                         BUNDLE.getString("pleaseWait.initializingMessage"),
                          false,
                          false,
                          new PleaseWait.NoCancelTask() {
