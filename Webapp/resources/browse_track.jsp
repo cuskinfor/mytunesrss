@@ -26,7 +26,7 @@
 
 </head>
 
-<body onload="registerTR()">
+<body onLoad="registerTR()">
 
 <div class="body">
 
@@ -39,8 +39,8 @@
 <ul class="links">
     <c:if test="${sortOrderLink}">
         <li>
-            <c:if test="${sortOrder != 'Album'}"><a href="#" onclick="sort('${servletUrl}', 'Album')"><fmt:message key="groupByAlbum" /></a></c:if>
-            <c:if test="${sortOrder != 'Artist'}"><a href="#" onclick="sort('${servletUrl}', 'Artist')"><fmt:message key="groupByArtist" /></a></c:if>
+            <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('${servletUrl}', 'Album')"><fmt:message key="groupByAlbum" /></a></c:if>
+            <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('${servletUrl}', 'Artist')"><fmt:message key="groupByArtist" /></a></c:if>
         </li>
     </c:if>
     <c:if test="${empty sessionScope.playlist}">
@@ -75,7 +75,7 @@
     <c:set var="count" value="0" />
     <tr>
         <c:if test="${!empty sessionScope.playlist}">
-            <th class="check"><input type="checkbox" name="none" value="none" onclick="selectAll('${track.sectionIds}',this)" />
+            <th class="check"><input type="checkbox" name="none" value="none" onClick="selectAll('${track.sectionIds}',this)" />
             </th>
         </c:if>
         <th class="active" colspan="2">
@@ -148,7 +148,7 @@
         </td>
     </c:if>
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
-        <c:if test="${mtfn:isMovie(track)}"><img src="${appUrl}/images/movie.gif" alt="video" /></c:if>
+        <c:if test="${mtfn:isMovie(track)}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="video" /></c:if>
         <c:choose>
             <c:when test="${sortOrder == 'Album'}">
                 <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
