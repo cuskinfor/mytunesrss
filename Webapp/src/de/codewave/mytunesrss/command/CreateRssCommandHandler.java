@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.jsp.*;
 
 import java.text.*;
 import java.util.*;
+import java.net.*;
 
 /**
  * de.codewave.mytunesrss.command.CreateRssCommandHandler
@@ -20,7 +21,7 @@ public class CreateRssCommandHandler extends CreatePlaylistCommandHandler {
         String feedUrl = getRequest().getRequestURL().toString();
         String channel = feedUrl.substring(feedUrl.lastIndexOf('/') + 1);
         channel = channel.substring(0, channel.lastIndexOf('.'));
-        getRequest().setAttribute("channel", channel.replace('_', ' '));
+        getRequest().setAttribute("channel", URLDecoder.decode(channel.replace('_', ' '), "UTF-8"));
         getRequest().setAttribute("pubDate", myPublishDateFormat.format(new Date()));
         getRequest().setAttribute("feedUrl", feedUrl);
         createDataAndForward(MyTunesRssResource.TemplateRss);
