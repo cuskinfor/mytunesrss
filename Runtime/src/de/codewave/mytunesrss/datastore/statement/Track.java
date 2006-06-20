@@ -19,6 +19,7 @@ public class Track {
     private int myTime;
     private int myTrackNumber;
     private File myFile;
+    private boolean myProtected;
 
     public String getAlbum() {
         return myAlbum;
@@ -74,6 +75,14 @@ public class Track {
 
     public void setTrackNumber(int trackNumber) {
         myTrackNumber = trackNumber;
+    }
+
+    public boolean isProtected() {
+        return myProtected;
+    }
+
+    public void setProtected(boolean aProtected) {
+        myProtected = aProtected;
     }
 
     public String getContentType() {

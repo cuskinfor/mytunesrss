@@ -19,8 +19,8 @@ public class MigrationStatement implements DataStoreStatement {
         if (LOG.isInfoEnabled()) {
             LOG.info("Database version " + version + " detected.");
         }
-        if (version.compareTo("2.0") <= 0) {
-            // update from 2.0 to 2.0.1
+        if (version.compareTo("2.0.1") < 0) {
+            // update to 2.0.1
             if (LOG.isInfoEnabled()) {
                 LOG.info("Migrating database to version 2.0.1");
             }
@@ -32,6 +32,16 @@ public class MigrationStatement implements DataStoreStatement {
                     "CREATE CACHED TABLE artist ( name VARCHAR(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, album_count INTEGER )");
             connection.createStatement().execute("UPDATE system_information SET version = '2.0.1'");
             version = "2.0.1";
+        }
+        if (version.compareTo("2.1") < 0) {
+            // update to 2.1
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Migrating database to version 2.1");
+            }
+            connection.createStatement().execute("ALTER TABLE track ADD COLUMN protected BOOLEAN");
+            connection.createStatement().execute("UPDATE system_information SET lastupdate = 0");
+            connection.createStatement().execute("UPDATE system_information SET version = '2.1'");
+            version = "2.1";
         }
     }
 

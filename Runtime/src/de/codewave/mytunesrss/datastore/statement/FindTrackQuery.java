@@ -18,10 +18,10 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
         FindTrackQuery query = new FindTrackQuery();
         if (trackIds.length > 1) {
             query.myQuery =
-                    "SELECT id, name, artist, album, time, track_number, file FROM track WHERE id IN (" + SQLUtils.createParameters(
+                    "SELECT id, name, artist, album, time, track_number, file, protected FROM track WHERE id IN (" + SQLUtils.createParameters(
                             trackIds.length) + ")";
         } else {
-            query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE id = ?";
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected FROM track WHERE id = ?";
         }
         query.myParameters = trackIds;
         query.myIdSortOrder = trackIds;
@@ -55,17 +55,17 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
         for (int i = 0; i < (searchTerms != null && searchTerms.length > 0 ? searchTerms.length : 1); i++) {
             likes.append("AND ( LCASE(name) LIKE ? ESCAPE '\\' OR LCASE(album) LIKE ? ESCAPE '\\' OR LCASE(artist) LIKE ? ESCAPE '\\' ) ");
         }
-        return "SELECT id, name, artist, album, time, track_number, file FROM track WHERE" + likes.substring(3) + "ORDER BY " + artistSort + "album, track_number, name";
+        return "SELECT id, name, artist, album, time, track_number, file, protected FROM track WHERE" + likes.substring(3) + "ORDER BY " + artistSort + "album, track_number, name";
     }
 
     public static FindTrackQuery getForAlbum(String[] albums, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
         String artistSort = sortByArtistFirst ? "artist, " : "";
         if (albums.length > 1) {
-            query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album IN (" +
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected FROM track WHERE album IN (" +
                     SQLUtils.createParameters(albums.length) + ") ORDER BY " + artistSort + "album, track_number, name";
         } else {
-            query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE album = ? ORDER BY " + artistSort +
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected FROM track WHERE album = ? ORDER BY " + artistSort +
                     "album, track_number, name";
         }
         query.myParameters = albums;
@@ -76,10 +76,10 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
         FindTrackQuery query = new FindTrackQuery();
         String artistSort = sortByArtistFirst ? "artist, " : "";
         if (artists.length > 1) {
-            query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist IN (" +
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected FROM track WHERE artist IN (" +
                     SQLUtils.createParameters(artists.length) + ") ORDER BY " + artistSort + "album, track_number, name";
         } else {
-            query.myQuery = "SELECT id, name, artist, album, time, track_number, file FROM track WHERE artist = ? ORDER BY " + artistSort +
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected FROM track WHERE artist = ? ORDER BY " + artistSort +
                     "album, track_number, name";
         }
         query.myParameters = artists;
@@ -126,6 +126,7 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
             track.setTrackNumber(resultSet.getInt("TRACK_NUMBER"));
             String pathname = resultSet.getString("FILE");
             track.setFile(StringUtils.isNotEmpty(pathname) ? new File(pathname): null);
+            track.setProtected(resultSet.getBoolean("PROTECTED"));
             return track;
         }
     }

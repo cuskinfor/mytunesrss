@@ -189,6 +189,7 @@ public class ITunesUtils {
                         statement.setTime(track.get("Total Time") != null ? (Integer)track.get("Total Time") / 1000 : 0);
                         statement.setTrackNumber(track.get("Track Number") != null ? (Integer)track.get("Track Number") : 0);
                         statement.setFileName(file.getAbsolutePath());
+                        statement.setProtected(track.get("Protected") != null && ((Boolean)track.get("Protected")).booleanValue());
                         myDataStoreSession.executeStatement(statement);
                         return true;
                     } catch (SQLException e) {

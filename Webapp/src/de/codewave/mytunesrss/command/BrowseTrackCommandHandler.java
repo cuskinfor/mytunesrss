@@ -162,6 +162,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             setTime(track.getTime());
             setTrackNumber(track.getTrackNumber());
             setFile(track.getFile());
+            setProtected(track.isProtected());
         }
 
         public boolean isNewSection() {

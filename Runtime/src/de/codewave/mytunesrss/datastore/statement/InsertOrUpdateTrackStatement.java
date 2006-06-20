@@ -24,5 +24,7 @@ public interface InsertOrUpdateTrackStatement extends DataStoreStatement {
 
     void setTrackNumber(int trackNumber);
 
+    void setProtected(boolean aProtected);
+
     void clear();
 }
