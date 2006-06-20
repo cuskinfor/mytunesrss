@@ -128,6 +128,9 @@
                             <img src="${appUrl}/images/${feedType}_th.gif" alt="${feedType}" /> </a>
                     </th>
                 </c:forEach>
+                <c:if test="${config.showDownload}">
+                    <th class="icon">&nbsp;</th>
+                </c:if>
             </c:when>
             <c:otherwise>
                 <th class="icon">
@@ -136,9 +139,6 @@
                 </th>
             </c:otherwise>
         </c:choose>
-        <c:if test="${config.showDownload}">
-            <th class="icon">&nbsp;</th>
-        </c:if>
     </tr>
 </c:if>
 <tr class="${cwfn:choose(count % 2 == 0, 'even', 'odd')}">
@@ -148,8 +148,8 @@
         </td>
     </c:if>
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
-        <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="protected" /></c:if>
-        <c:if test="${mtfn:isMovie(track)}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="video" /></c:if>
+        <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="protected" style="vertical-align:middle"/></c:if>
+        <c:if test="${mtfn:isMovie(track)}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="video" style="vertical-align:middle"/></c:if>
         <c:choose>
             <c:when test="${sortOrder == 'Album'}">
                 <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
@@ -177,6 +177,12 @@
                         <img src="${appUrl}/images/${feedType}${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="${feedType}" /> </a>
                 </td>
             </c:forEach>
+            <c:if test="${config.showDownload}">
+                <td class="icon">
+                    <a href="${servletUrl}/playTrack/authHash=${authHash}/track=${track.id}/${mtfn:virtualTrackName(track)}.${mtfn:virtualSuffix(config, track)}">
+                        <img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="downloadTrack"/>" /></a>
+                </td>
+            </c:if>
         </c:when>
         <c:otherwise>
             <td class="icon">
@@ -185,12 +191,6 @@
             </td>
         </c:otherwise>
     </c:choose>
-    <c:if test="${config.showDownload}">
-        <td class="icon">
-            <a href="${servletUrl}/playTrack/authHash=${authHash}/track=${track.id}/${mtfn:virtualTrackName(track)}.${mtfn:virtualSuffix(config, track)}">
-                <img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="downloadTrack"/>" /></a>
-        </td>
-    </c:if>
 </tr>
 <c:set var="count" value="${count + 1}" />
 </c:forEach>
