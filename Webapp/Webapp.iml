@@ -2,7 +2,7 @@
 <module version="4" relativePaths="true" type="J2EE_WEB_MODULE">
   <component name="AppServerSpecificValidatorsManager" />
   <component name="ModuleRootManager" />
-  <component name="NewModuleRootManager">
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../distribution/webapps/ROOT/WEB-INF/classes" />
     <exclude-output />
     <exploded url="file://$MODULE_DIR$/../distribution/webapps/ROOT" />

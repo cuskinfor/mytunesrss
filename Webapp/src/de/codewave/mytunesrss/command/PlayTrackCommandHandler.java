@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.servlet.*;
 
 import javax.servlet.http.*;
@@ -35,7 +36,17 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
             if (!tracks.isEmpty()) {
                 Track track = tracks.iterator().next();
-                fileSender = new FileSender(track.getFile(), track.getContentType(), 1024 * 50);
+                File file = track.getFile();
+                String contentType = track.getContentType();
+                if (!file.exists()) {
+                    try {
+                        fileSender = new FileSender(new File(MyTunesRss.class.getResource("failure.mp3").toURI()), "audio/mp3", 1024 * 50);
+                    } catch (URISyntaxException e) {
+                        fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
+                    }
+                } else {
+                    fileSender = new FileSender(file, contentType, 1024 * 50);
+                }
             } else {
                 fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
             }
