@@ -39,6 +39,7 @@ public class MigrationStatement implements DataStoreStatement {
                 LOG.info("Migrating database to version 2.1");
             }
             connection.createStatement().execute("ALTER TABLE track ADD COLUMN protected BOOLEAN");
+            connection.createStatement().execute("ALTER TABLE track ADD COLUMN video BOOLEAN");
             connection.createStatement().execute("UPDATE system_information SET lastupdate = 0");
             connection.createStatement().execute("UPDATE system_information SET version = '2.1'");
             version = "2.1";

@@ -190,6 +190,7 @@ public class ITunesUtils {
                         statement.setTrackNumber(track.get("Track Number") != null ? (Integer)track.get("Track Number") : 0);
                         statement.setFileName(file.getAbsolutePath());
                         statement.setProtected(track.get("Protected") != null && ((Boolean)track.get("Protected")).booleanValue());
+                        statement.setVideo(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue());
                         myDataStoreSession.executeStatement(statement);
                         return true;
                     } catch (SQLException e) {

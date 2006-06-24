@@ -20,6 +20,7 @@ public class Track {
     private int myTrackNumber;
     private File myFile;
     private boolean myProtected;
+    private boolean myVideo;
 
     public String getAlbum() {
         return myAlbum;
@@ -83,6 +84,14 @@ public class Track {
 
     public void setProtected(boolean aProtected) {
         myProtected = aProtected;
+    }
+
+    public boolean isVideo() {
+        return myVideo;
+    }
+
+    public void setVideo(boolean video) {
+        myVideo = video;
     }
 
     public String getContentType() {

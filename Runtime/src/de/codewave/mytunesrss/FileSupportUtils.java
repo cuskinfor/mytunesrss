@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class FileSupportUtils {
     private static String[] AUDIO_SUFFIXES = new String[] {".mp3", ".m4a", ".m4p", ".wav"};
-    private static String[] VIDEO_SUFFIXES = new String[] {".avi", ".mov", ".wmv", ".mpg", ".mpeg"};
+    private static String[] VIDEO_SUFFIXES = new String[] {".avi", ".mov", ".wmv", ".mpg", ".mpeg", ".m4v"};
     private static Map<String, String> MIME_TYPES;
 
     static {
@@ -27,6 +27,7 @@ public class FileSupportUtils {
         MIME_TYPES.put(".wmv", "video/x-ms-wmv");
         MIME_TYPES.put(".mpg", "video/mpeg");
         MIME_TYPES.put(".mpeg", "video/mpeg");
+        MIME_TYPES.put(".m4v", "video/x-m4v");
     }
 
     public static boolean isSupported(String filename) {

@@ -27,8 +27,9 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
     private int myTrackNumber;
     private String myFileName;
     private boolean myProtected;
+    private boolean myVideo;
     private PreparedStatement myStatement;
-    private static final String SQL = "INSERT INTO track ( id, name, artist, album, time, track_number, file, protected ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )";
+    private static final String SQL = "INSERT INTO track ( id, name, artist, album, time, track_number, file, protected, video ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
     public InsertTrackStatement() {
         // intentionally left blank
@@ -76,6 +77,10 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
         myProtected = aProtected;
     }
 
+    public void setVideo(boolean video) {
+        myVideo = video;
+    }
+
     public void execute(Connection connection) throws SQLException {
         try {
             PreparedStatement statement = myStatement != null ? myStatement : connection.prepareStatement(SQL);
@@ -88,6 +93,7 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
             statement.setInt(6, myTrackNumber);
             statement.setString(7, myFileName);
             statement.setBoolean(8, myProtected);
+            statement.setBoolean(9, myVideo);
             statement.executeUpdate();
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
@@ -105,5 +111,6 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
         myTrackNumber = 0;
         myFileName = null;
         myProtected = false;
+        myVideo = false;
     }
 }

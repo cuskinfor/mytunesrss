@@ -26,5 +26,7 @@ public interface InsertOrUpdateTrackStatement extends DataStoreStatement {
 
     void setProtected(boolean aProtected);
 
+    void setVideo(boolean video);
+
     void clear();
 }

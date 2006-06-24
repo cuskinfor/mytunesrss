@@ -149,7 +149,7 @@
     </c:if>
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
         <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="protected" style="vertical-align:middle"/></c:if>
-        <c:if test="${mtfn:isMovie(track)}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="video" style="vertical-align:middle"/></c:if>
+        <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="video" style="vertical-align:middle"/></c:if>
         <c:choose>
             <c:when test="${sortOrder == 'Album'}">
                 <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
