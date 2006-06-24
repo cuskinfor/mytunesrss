@@ -22,6 +22,7 @@ import org.apache.commons.logging.*;
  */
 public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
     private static final Log LOG = LogFactory.getLog(PlayTrackCommandHandler.class);
+    private static final int BUFFER_SIZE = 1024 * 50;
 
     @Override
     public void execute() throws SQLException, IOException {
@@ -30,6 +31,9 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
         }
         FileSender fileSender;
         if (needsAuthorization()) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Not authorized to request track, sending response code SC_UNAUTHORIZED.");
+            }
             fileSender = new StatusCodeFileSender(HttpServletResponse.SC_UNAUTHORIZED);
         } else {
             String trackId = getRequest().getParameter("track");
@@ -39,15 +43,24 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                 File file = track.getFile();
                 String contentType = track.getContentType();
                 if (!file.exists()) {
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");
+                    }
                     try {
-                        fileSender = new FileSender(new File(MyTunesRss.class.getResource("failure.mp3").toURI()), "audio/mp3", 1024 * 50);
+                        fileSender = new FileSender(new File(MyTunesRss.class.getResource("failure.mp3").toURI()), "audio/mp3", BUFFER_SIZE);
                     } catch (URISyntaxException e) {
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Could not send error sound file, sending response code SC_NO_CONTENT instead.", e);
+                        }
                         fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
                     }
                 } else {
-                    fileSender = new FileSender(file, contentType, 1024 * 50);
+                    fileSender = new FileSender(file, contentType, BUFFER_SIZE);
                 }
             } else {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("No tracks recognized in request, sending response code SC_NO_CONTENT instead.");
+                }
                 fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
             }
         }
