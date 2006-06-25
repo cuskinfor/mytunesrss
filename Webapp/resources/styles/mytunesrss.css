@@ -537,3 +537,16 @@ div.fatalError {
 div.fatalError p {
 	text-align: center;
 }
+
+/* Track Info */
+
+h1.info {
+    background: url( "../images/track_info.gif" ) center center no-repeat;
+    height: 30px;
+    padding: 0;
+    margin: 0;
+}
+
+h1.info span {
+    visibility: hidden;
+}
