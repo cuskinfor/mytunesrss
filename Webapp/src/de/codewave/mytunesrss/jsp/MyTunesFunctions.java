@@ -65,7 +65,24 @@ public class MyTunesFunctions {
         return MiscUtils.toHexString(string);
     }
 
-    public static boolean isMovie(Track track) {
-        return FileSupportUtils.isSupportedVideo(track.getFile().getName());
+    public static String getDuration(Track track) {
+        int time = track.getTime();
+        int hours = time / 3600;
+        int minutes = (time - (hours * 3600)) / 60;
+        int seconds = time % 60;
+        if (hours > 0) {
+            return getTwoDigitString(hours) + ":" + getTwoDigitString(minutes) + ":" + getTwoDigitString(seconds);
+        }
+        return getTwoDigitString(minutes) + ":" + getTwoDigitString(seconds);
+    }
+
+    private static String getTwoDigitString(int value) {
+        if (value < 0 || value > 99) {
+            throw new IllegalArgumentException("Cannot make a two digit string from value \"" + value + "\".");
+        }
+        if (value < 10) {
+            return "0" + value;
+        }
+        return Integer.toString(value);
     }
 }

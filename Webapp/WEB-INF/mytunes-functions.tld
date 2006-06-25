@@ -111,14 +111,14 @@
 
     <function>
         <description>
-            Check if the specified track is a supported movie file.
+            Get the duration of a track in hh:mm:ss where empty hours are not displayed.
         </description>
-        <name>isMovie</name>
+        <name>duration</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>boolean isMovie(de.codewave.mytunesrss.datastore.statement.Track)
+        <function-signature>java.lang.String getDuration(de.codewave.mytunesrss.datastore.statement.Track)
         </function-signature>
         <example>
-            &lt;c:if test="${mtfn:isMovie(track)}"/&gt;...&lt;/c:if&gt;
+            &lt;c:out value="${mtfn:duration(track)}"/&gt;
         </example>
     </function>
 

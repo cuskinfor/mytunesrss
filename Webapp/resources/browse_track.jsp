@@ -148,8 +148,8 @@
         </td>
     </c:if>
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
-        <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="protected" style="vertical-align:middle"/></c:if>
-        <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="video" style="vertical-align:middle"/></c:if>
+        <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
+        <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:if>
         <c:choose>
             <c:when test="${sortOrder == 'Album'}">
                 <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
@@ -180,7 +180,7 @@
             <c:if test="${config.showDownload}">
                 <td class="icon">
                     <a href="${servletUrl}/playTrack/authHash=${authHash}/track=${track.id}/${mtfn:virtualTrackName(track)}.${mtfn:virtualSuffix(config, track)}">
-                        <img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="downloadTrack"/>" /></a>
+                        <img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                 </td>
             </c:if>
         </c:when>
