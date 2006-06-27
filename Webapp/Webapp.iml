@@ -45,10 +45,49 @@
     <setting name="RUN_JASPER_VALIDATION" value="false" />
   </component>
   <component name="WebModuleProperties">
+    <containerElement type="module" name="Runtime">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/classes" />
+    </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/codewave-utils-1.4.jar" />
-      <url>jar://$MODULE_DIR$/../lib/codewave-utils-1.4.jar!/</url>
+      <attribute name="URI" value="/WEB-INF/lib/codewave-utils-16.jar" />
+      <url>jar://$MODULE_DIR$/../lib/codewave-utils-16.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/commons-jxpath-1.2.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/commons-jxpath-1.2.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/commons-lang-2.1.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/commons-lang-2.1.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/commons-logging.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/commons-logging.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/commons-pool-1.3.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/commons-pool-1.3.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/hsqldb.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/hsqldb.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/log4j-1.2.11.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/log4j-1.2.11.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/systray4j.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/systray4j.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />
@@ -59,6 +98,14 @@
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib/standard.jar" />
       <url>jar://$MODULE_DIR$/lib/standard.jar!/</url>
+    </containerElement>
+    <containerElement type="library" name="Tomcat" level="project">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="&lt;N/A&gt;" />
+    </containerElement>
+    <containerElement type="library" name="Tomcat 5.5" level="application_server_libraries">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="&lt;N/A&gt;" />
     </containerElement>
     <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/WEB-INF/web.xml" optional="false" version="2.4" />
     <webroots>

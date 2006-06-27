@@ -36,45 +36,13 @@ public class DataStore {
 
     public void init() throws IOException {
         String filename = "hsqldb/MyTunesRSS";
-        String pathname = getApplicationDataPath("MyTunesRSS");
+        String pathname = ProgramUtils.getApplicationDataPath("MyTunesRSS");
         final String connectString = "jdbc:hsqldb:file:" + pathname + "/" + filename;
         myConnectionPool = new GenericObjectPool(new BasePoolableObjectFactory() {
             public Object makeObject() throws Exception {
                 return DriverManager.getConnection(connectString, "sa", "");
             }
         }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 5, false, false, 10000, 2, 20000, false, 20000);
-    }
-
-    private String getApplicationDataPath(String applicationName) throws IOException {
-        String pathname = System.getProperty("user.home");
-        if (StringUtils.isNotEmpty(pathname)) {
-            if (!pathname.endsWith("/") && !pathname.endsWith("\\")) {
-                pathname += "/";
-            }
-        } else {
-            pathname = "./";
-        }
-        if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
-            pathname += "Library/Caches/" + applicationName;
-        } else if (ProgramUtils.guessOperatingSystem() == OperatingSystem.Windows) {
-            String envAppData = System.getenv("appdata");
-            if (StringUtils.isNotEmpty(envAppData)) {
-                pathname = envAppData;
-                if (!pathname.endsWith("/") && !pathname.endsWith("\\")) {
-                    pathname += "/";
-                }
-                pathname += applicationName;
-            } else {
-                pathname += "." + applicationName;
-            }
-        } else {
-            pathname += "." + applicationName;
-        }
-        File path = new File(pathname);
-        if (!path.exists()) {
-            path.mkdirs();
-        }
-        return pathname;
     }
 
     public void destroy() throws Exception {

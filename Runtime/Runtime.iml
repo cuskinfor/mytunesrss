@@ -8,8 +8,8 @@
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib/codewave-utils-1.4.jar" />
-        <url>jar://$MODULE_DIR$/../lib/codewave-utils-1.4.jar!/</url>
+        <attribute name="URI" value="/lib/codewave-utils-16.jar" />
+        <url>jar://$MODULE_DIR$/../lib/codewave-utils-16.jar!/</url>
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
@@ -131,12 +131,10 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-1.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-16.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../CodewaveUtils/src" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntryProperties />
