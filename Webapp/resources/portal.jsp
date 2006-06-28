@@ -72,7 +72,7 @@
         <tr>
             <th class="active"><fmt:message key="playlists"/></th>
 						<c:if test="${!empty playlists}">
-      	      <th colspan="${1+ fn:length(config.feedTypes)}"><fmt:message key="tracks"/></th>
+      	      <th colspan="${cwfn:choose(config.showDownload, 2, 1) + fn:length(config.feedTypes)}"><fmt:message key="tracks"/></th>
 						</c:if>
         </tr>
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
@@ -85,6 +85,12 @@
                             <img src="${appUrl}/images/${feedType}${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="${feedType}" /> </a>
                     </td>
                 </c:forEach>
+                <c:if test="${config.showDownload}">
+                    <td class="icon">
+                        <a href="${servletUrl}/getZipArchive/authHash=${authHash}/playlist=${playlist.id}/${mtfn:cleanFileName(playlist.name)}.zip">
+                            <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
+                    </td>
+                </c:if>
             </tr>
         </c:forEach>
 			<c:if test="${empty playlists}">

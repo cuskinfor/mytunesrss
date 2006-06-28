@@ -67,7 +67,7 @@
                 <c:if test="${!empty param.artist}"> <fmt:message key="with"/> "<c:out value="${param.artist}" />"</c:if>
             </th>
             <th><fmt:message key="artist"/></th>
-            <th colspan="3"><fmt:message key="tracks"/></th>
+            <th colspan="${cwfn:choose(config.showDownload, 2, 1) + fn:length(config.feedTypes)}"><fmt:message key="tracks"/></th>
         </tr>
         <c:forEach items="${albums}" var="album" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -108,6 +108,12 @@
                                          alt="${feedType}" /> </a>
                             </td>
                         </c:forEach>
+                        <c:if test="${config.showDownload}">
+                            <td class="icon">
+                                <a href="${servletUrl}/getZipArchive/authHash=${authHash}/album=<c:out value="${mtfn:hex(album.name)}"/>/${mtfn:virtualAlbumName(album)}.zip">
+                                    <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
+                            </td>
+                        </c:if>
                     </c:when>
                     <c:otherwise>
                         <td class="icon">
@@ -136,6 +142,12 @@
                                          alt="${feedType}" /> </a>
                             </td>
                         </c:forEach>
+                        <c:if test="${config.showDownload}">
+                            <td class="icon">
+                                <a href="${servletUrl}/getZipArchive/authHash=${authHash}/artist=<c:out value="${mtfn:hex(param.artist)}"/>/${mtfn:cleanFileName(param.artist)}.zip">
+                                    <img src="${appUrl}/images/download${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
+                            </td>
+                        </c:if>
                     </c:when>
                     <c:otherwise>
                         <td class="icon">

@@ -30,7 +30,8 @@ public enum MyTunesRssCommand implements Command {
     CreateRss("createRSS", CreateRssCommandHandler.class),
     ShowSettings("showSettings", ShowSettingsCommandHandler.class),
     SaveSettings("saveSettings", SaveSettingsCommandHandler.class),
-    ShowTZrackInfo("showTrackInfo", ShowTrackInfoCommandHandler.class),
+    ShowTrackInfo("showTrackInfo", ShowTrackInfoCommandHandler.class),
+    GetZipArchive("getZipArchive", GetZipArchiveCommandHandler.class),
     PlayTrack("playTrack", PlayTrackCommandHandler.class);
 
     private String myName;

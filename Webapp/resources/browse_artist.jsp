@@ -67,7 +67,7 @@
                     <c:if test="${!empty param.album}"> on "<c:out value="${param.album}" />"</c:if>
                 </th>
                 <th><fmt:message key="albums"/></th>
-                <th colspan="3"><fmt:message key="tracks"/></th>
+                <th colspan="${cwfn:choose(config.showDownload, 2, 1) + fn:length(config.feedTypes)}"><fmt:message key="tracks"/></th>
             </tr>
             <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
                 <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -92,6 +92,12 @@
                                              alt="${feedType}" /> </a>
                                 </td>
                             </c:forEach>
+                            <c:if test="${config.showDownload}">
+                                <td class="icon">
+                                    <a href="${servletUrl}/getZipArchive/authHash=${authHash}/artist=<c:out value="${mtfn:hex(artist.name)}"/>/${mtfn:virtualArtistName(artist)}.zip">
+                                        <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
+                                </td>
+                            </c:if>
                         </c:when>
                         <c:otherwise>
                             <td class="icon">
