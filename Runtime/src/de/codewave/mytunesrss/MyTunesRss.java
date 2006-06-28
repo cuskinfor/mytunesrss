@@ -126,7 +126,8 @@ public class MyTunesRss {
                                          if (CONFIG.isAutoStartServer()) {
                                              settings.doStartServer();
                                              if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
-                                                 // todo: hide window
+                                                 // todo: hide window on osx instead of iconify
+                                                 frame.setExtendedState(JFrame.ICONIFIED);
                                              } else {
                                                  frame.setExtendedState(JFrame.ICONIFIED);
                                              }
