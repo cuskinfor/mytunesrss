@@ -4,18 +4,16 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.servlet.*;
+import org.apache.commons.logging.*;
 
 import javax.servlet.http.*;
 import java.io.*;
-import java.util.*;
 import java.net.*;
 import java.sql.*;
-
-import org.apache.commons.logging.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.command.PlayTrackCommandHandler
@@ -25,7 +23,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
     private static final int BUFFER_SIZE = 1024 * 50;
 
     @Override
-    public void execute() throws SQLException, IOException {
+    public void execute() throws IOException, SQLException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(ServletUtils.getRequestInfo(getRequest()));
         }
@@ -46,16 +44,9 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                     if (LOG.isWarnEnabled()) {
                         LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");
                     }
-                    try {
-                        fileSender = new FileSender(new File(MyTunesRss.class.getResource("failure.mp3").toURI()), "audio/mp3", BUFFER_SIZE);
-                    } catch (URISyntaxException e) {
-                        if (LOG.isWarnEnabled()) {
-                            LOG.warn("Could not send error sound file, sending response code SC_NO_CONTENT instead.", e);
-                        }
-                        fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
-                    }
+                    fileSender = new FileSender(MyTunesRss.class.getResource("failure.mp3"), "audio/mp3", -1, BUFFER_SIZE);
                 } else {
-                    fileSender = new FileSender(file, contentType, BUFFER_SIZE);
+                    fileSender = new FileSender(file.toURL(), contentType, (int)file.length(), BUFFER_SIZE);
                 }
             } else {
                 if (LOG.isWarnEnabled()) {
@@ -74,13 +65,14 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
     private static class StatusCodeFileSender extends FileSender {
         private int myStatusCode;
 
-        public StatusCodeFileSender(int statusCode) {
-            super(null, null);
+        public StatusCodeFileSender(int statusCode) throws MalformedURLException {
+            super(null, null, -1);
             myStatusCode = statusCode;
         }
 
         @Override
-        public void sendGetResponse(HttpServletRequest servletRequest, HttpServletResponse httpServletResponse, boolean throwException) throws IOException {
+        public void sendGetResponse(HttpServletRequest servletRequest, HttpServletResponse httpServletResponse, boolean throwException)
+                throws IOException {
             httpServletResponse.setStatus(myStatusCode);
         }
 

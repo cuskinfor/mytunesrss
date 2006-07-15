@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.server;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.utils.servlet.*;
 import org.apache.catalina.*;
 import org.apache.catalina.connector.*;
 import org.apache.catalina.session.*;
@@ -13,7 +14,6 @@ import org.apache.commons.logging.*;
 
 import java.io.*;
 import java.net.*;
-import java.sql.*;
 import java.util.*;
 
 /**
@@ -23,6 +23,7 @@ public class WebServer {
     private static final Log LOG = LogFactory.getLog(WebServer.class);
 
     private Embedded myEmbeddedTomcat;
+    private Context myContext;
     private String myLastErrorMessage;
 
     public synchronized boolean start(int port, Map<String, Object> contextEntries) {
@@ -30,6 +31,7 @@ public class WebServer {
             try {
                 myEmbeddedTomcat = createServer("mytunesrss", null, port, new File("."), "ROOT", "", contextEntries);
                 if (myEmbeddedTomcat != null) {
+
                     myEmbeddedTomcat.start();
                     byte health = checkServerHealth(port);
                     if (health != CheckHealthResult.OK) {
@@ -120,17 +122,17 @@ public class WebServer {
         engine.setDefaultHost("host." + name);
         Host host = server.createHost("host." + name, new File(catalinaBasePath, "webapps").getCanonicalPath());
         engine.addChild(host);
-        Context context = server.createContext(webAppContext, webAppName);
+        myContext = server.createContext(webAppContext, webAppName);
         StandardManager sessionManager = new StandardManager();
         sessionManager.setPathname("");
-        context.setManager(sessionManager);
-        host.addChild(context);
+        myContext.setManager(sessionManager);
+        host.addChild(myContext);
         server.addEngine(engine);
         Connector connector = server.createConnector(listenAddress, listenPort, false);
         connector.setURIEncoding("UTF-8");
         server.addConnector(connector);
         for (Map.Entry<String, Object> contextEntry : contextEntries.entrySet()) {
-            context.getServletContext().setAttribute(contextEntry.getKey(), contextEntry.getValue());
+            myContext.getServletContext().setAttribute(contextEntry.getKey(), contextEntry.getValue());
         }
         return server;
     }
@@ -154,5 +156,19 @@ public class WebServer {
 
     public synchronized boolean isRunning() {
         return myEmbeddedTomcat != null;
+    }
+
+    public List<SessionManager.SessionInfo> getSessionInfos() {
+        if (isRunning()) {
+            List<SessionManager.SessionInfo> sessionInfos =
+                    new ArrayList<SessionManager.SessionInfo>(SessionManager.getAllSessionInfo(myContext.getServletContext()));
+            Collections.sort(sessionInfos, new Comparator<SessionManager.SessionInfo>() {
+                public int compare(SessionManager.SessionInfo sessionInfo, SessionManager.SessionInfo sessionInfo1) {
+                    return (int)(sessionInfo.getConnectTime() - sessionInfo1.getConnectTime());
+                }
+            });
+            return sessionInfos;
+        }
+        return Collections.emptyList();
     }
 }

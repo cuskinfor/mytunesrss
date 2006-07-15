@@ -11,6 +11,11 @@
         <display-name>CommandHandlerRegistry</display-name>
         <listener-class>de.codewave.mytunesrss.command.MyTunesRssCommandHandlerRegistry</listener-class>
     </listener>
+    <listener>
+        <description>Session manager listener</description>
+        <display-name>SessionManager</display-name>
+        <listener-class>de.codewave.utils.servlet.SessionManager</listener-class>
+    </listener>
     <filter>
         <description>Filter for adding path info key/value pairs to the request parameters.</description>
         <display-name>PathInfoRequestParameterFilter</display-name>
@@ -34,6 +39,10 @@
             <param-value>UTF-8</param-value>
         </init-param>
     </filter>
+    <filter>
+        <filter-name>SessionManagerFilter</filter-name>
+        <filter-class>de.codewave.utils.servlet.SessionManager</filter-class>
+    </filter>
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
         <servlet-name>CommandServlet</servlet-name>
@@ -45,6 +54,10 @@
     <filter-mapping>
         <filter-name>ServletRequestParameterTrimmer</filter-name>
         <servlet-name>CommandServlet</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>SessionManagerFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
     <servlet>
         <description>Command dispatcher servlet</description>

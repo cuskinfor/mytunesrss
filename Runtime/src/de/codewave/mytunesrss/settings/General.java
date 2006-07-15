@@ -63,34 +63,6 @@ public class General {
         myRootPanel.validate();
     }
 
-    private String getExternalAddress() {
-        BufferedReader reader = null;
-        try {
-            URLConnection connection = new URL("http://www.codewave.de/getip.php").openConnection();
-            if (connection != null) {
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-                if (reader != null) {
-                    return reader.readLine();
-                }
-            }
-        } catch (IOException e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Could not read my external address from \"www.codewave.de/getip.php\".", e);
-            }
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not close reader.", e);
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
     public void updateConfigFromGui() {
         try {
             MyTunesRss.CONFIG.setPort(Integer.parseInt(myPortInput.getText().trim()));
@@ -150,62 +122,7 @@ public class General {
 
     public class ServerInfoButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent) {
-            PleaseWait.start(mySettingsForm.getFrame(),
-                             null,
-                             MyTunesRss.BUNDLE.getString("pleaseWait.gettingServerStatus"),
-                             false,
-                             true,
-                             new GetServerInfoTask());
-        }
-    }
-
-    public class GetServerInfoTask extends PleaseWait.Task {
-        private boolean myCancelled;
-        private boolean myDone;
-
-        public void execute() throws Exception {
-            String[] localAddresses = NetworkUtils.getLocalNetworkAddresses();
-            final String serverPort = myPortInput.getText().trim();
-            final StringBuffer info = new StringBuffer();
-            if (localAddresses != null && localAddresses.length > 0) {
-                info.append(localAddresses.length == 1 ? MyTunesRss.BUNDLE.getString("serverStatus.running.oneAddress") : MyTunesRss.BUNDLE.getString(
-                        "serverStatus.running.addresses"));
-                info.append("\n");
-                for (int i = 0; i < localAddresses.length; i++) {
-                    info.append("http://").append(localAddresses[i]).append(":").append(serverPort).append("\n");
-                }
-                new Thread(new Runnable() {
-                    public void run() {
-                        String externalAddress = getExternalAddress();
-                        if (StringUtils.isNotEmpty(externalAddress) && !externalAddress.equals("unreachable")) {
-                            info.append("\n").append(MyTunesRss.BUNDLE.getString("serverStatus.running.external")).append("\n");
-                            info.append("http://").append(externalAddress).append(":").append(serverPort);
-                        } else {
-                            info.append(MyTunesRss.BUNDLE.getString("serverStatus.running.noExternal"));
-                        }
-                        myDone = true;
-                    }
-                }).start();
-            } else {
-                info.append(MyTunesRss.BUNDLE.getString("serverStatus.running.noLocalAddress"));
-            }
-            int sleepTime = 50;
-            while (!myDone && !myCancelled) {
-                Thread.yield();
-                try {
-                    Thread.sleep(sleepTime);
-                    sleepTime = (int)Math.min(2000, sleepTime * 1.1);
-                } catch (InterruptedException e) {
-                    // intentionally left blank
-                }
-            }
-            if (StringUtils.isNotEmpty(info.toString())) {
-                SwingUtils.showInfoMessage(mySettingsForm.getFrame(), info.toString());
-            }
-        }
-
-        protected void cancel() {
-            myCancelled = true;
+            new ServerInfo().display(mySettingsForm.getFrame(), myPortInput.getText());
         }
     }
 }
