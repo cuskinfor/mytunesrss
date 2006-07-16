@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.server;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.common.*;
 import de.codewave.utils.servlet.*;
 import org.apache.catalina.*;
 import org.apache.catalina.connector.*;
@@ -158,12 +159,13 @@ public class WebServer {
         return myEmbeddedTomcat != null;
     }
 
-    public List<SessionManager.SessionInfo> getSessionInfos() {
+    public List<MyTunesRssSessionInfo> getSessionInfos() {
         if (isRunning()) {
-            List<SessionManager.SessionInfo> sessionInfos =
-                    new ArrayList<SessionManager.SessionInfo>(SessionManager.getAllSessionInfo(myContext.getServletContext()));
-            Collections.sort(sessionInfos, new Comparator<SessionManager.SessionInfo>() {
-                public int compare(SessionManager.SessionInfo sessionInfo, SessionManager.SessionInfo sessionInfo1) {
+            List<MyTunesRssSessionInfo> sessionInfos =
+                    new ArrayList<MyTunesRssSessionInfo>((Collection<MyTunesRssSessionInfo>)SessionManager
+                            .getAllSessionInfo(myContext.getServletContext()));
+            Collections.sort(sessionInfos, new Comparator<MyTunesRssSessionInfo>() {
+                public int compare(MyTunesRssSessionInfo sessionInfo, MyTunesRssSessionInfo sessionInfo1) {
                     return (int)(sessionInfo.getConnectTime() - sessionInfo1.getConnectTime());
                 }
             });

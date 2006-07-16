@@ -59,6 +59,11 @@
         <filter-name>SessionManagerFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    <context-param>
+        <description>Session info class</description>
+        <param-name>sessionInfoClass</param-name>
+        <param-value>de.codewave.mytunesrss.common.MyTunesRssSessionInfo</param-value>
+    </context-param>
     <servlet>
         <description>Command dispatcher servlet</description>
         <display-name>CommandServlet</display-name>

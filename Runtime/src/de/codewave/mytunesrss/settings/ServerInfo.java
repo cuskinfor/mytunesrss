@@ -5,8 +5,8 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.common.*;
 import de.codewave.utils.network.*;
-import de.codewave.utils.servlet.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -27,7 +27,6 @@ public class ServerInfo {
     private JTextArea myInternalAddresses;
     private JButton myRefreshButton;
     private String myServerPort;
-
 
     public ServerInfo() {
         myRefreshButton.addActionListener(new RefreshButtonActionListener());
@@ -129,14 +128,19 @@ public class ServerInfo {
     }
 
     private void fetchActiveConnections() {
-        final List<SessionManager.SessionInfo> sessions = MyTunesRss.WEBSERVER.getSessionInfos();
+        final List<MyTunesRssSessionInfo> sessions = MyTunesRss.WEBSERVER.getSessionInfos();
         myConnections.setModel(new AbstractTableModel() {
             public int getRowCount() {
                 return sessions.size();
             }
 
             public int getColumnCount() {
-                return 3;
+                return 4;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int column) {
+                return column == 3 ? Long.class : String.class;
             }
 
             public Object getValueAt(int row, int column) {
@@ -147,6 +151,8 @@ public class ServerInfo {
                         return formatDate(sessions.get(row).getConnectTime());
                     case 2:
                         return formatDate(sessions.get(row).getLastAccessTime());
+                    case 3:
+                        return sessions.get(row).getBytesStreamed();
                     default:
                         throw new IllegalArgumentException("no such column: " + column);
                 }

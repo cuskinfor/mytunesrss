@@ -13,6 +13,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Tomcat 5.5" level="application_server_libraries" />
+    <orderEntry type="module" module-name="Common" />
     <orderEntry type="module" module-name="Runtime" />
     <orderEntry type="module-library">
       <library>
@@ -45,9 +46,13 @@
     <setting name="RUN_JASPER_VALIDATION" value="false" />
   </component>
   <component name="WebModuleProperties">
+    <containerElement type="module" name="Common">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="&lt;N/A&gt;" />
+    </containerElement>
     <containerElement type="module" name="Runtime">
       <attribute name="method" value="0" />
-      <attribute name="URI" value="/WEB-INF/classes" />
+      <attribute name="URI" value="&lt;N/A&gt;" />
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />
@@ -61,7 +66,7 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-lang-2.1.jar" />
+      <attribute name="URI" value="&lt;N/A&gt;" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/commons-lang-2.1.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">

@@ -2,6 +2,10 @@
 <module version="4" relativePaths="true" type="JAVA_MODULE">
   <component name="BuildJarSettings">
     <containerInfo>
+      <containerElement type="module" name="Common">
+        <attribute name="method" value="1" />
+        <attribute name="URI" value="/" />
+      </containerElement>
       <containerElement type="module" name="Runtime">
         <attribute name="method" value="1" />
         <attribute name="URI" value="/" />
@@ -64,6 +68,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="Common" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
