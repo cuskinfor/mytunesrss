@@ -32,6 +32,7 @@ public class Options {
     private JButton myProgramUpdateButton;
     private JSpinner myAutoUpdateDatabaseIntervalInput;
     private JCheckBox myAutoUpdateDatabaseInput;
+    private JCheckBox myIgnoreTimestampsInput;
 
     public void init(Settings settingsForm) {
         mySettingsForm = settingsForm;
@@ -51,6 +52,7 @@ public class Options {
         SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval(), 1, 60, 1);
         myAutoUpdateDatabaseIntervalInput.setModel(spinnerNumberModel);
         myAutoUpdateDatabaseInput.setSelected(MyTunesRss.CONFIG.isAutoUpdateDatabase());
+        myIgnoreTimestampsInput.setSelected(MyTunesRss.CONFIG.isIgnoreTimestamps());
         SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, MyTunesRss.CONFIG.isAutoUpdateDatabase());
         myAutoUpdateDatabaseInput.addActionListener(new AutoUpdateDatabaseInputListener());
     }
@@ -81,6 +83,7 @@ public class Options {
         MyTunesRss.CONFIG.setAutoStartServer(myAutoStartServerInput.isSelected());
         MyTunesRss.CONFIG.setAutoUpdateDatabase(myAutoUpdateDatabaseInput.isSelected());
         MyTunesRss.CONFIG.setAutoUpdateDatabaseInterval((Integer)myAutoUpdateDatabaseIntervalInput.getValue());
+        MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestampsInput.isSelected());
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -90,6 +93,7 @@ public class Options {
                 myUpdateOnStartInput.setEnabled(false);
                 myProgramUpdateButton.setEnabled(false);
                 myAutoUpdateDatabaseInput.setEnabled(false);
+                myIgnoreTimestampsInput.setEnabled(false);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, false);
                 break;
             case ServerIdle:
@@ -97,6 +101,7 @@ public class Options {
                 myUpdateOnStartInput.setEnabled(!myAutoStartServerInput.isSelected());
                 myProgramUpdateButton.setEnabled(true);
                 myAutoUpdateDatabaseInput.setEnabled(true);
+                myIgnoreTimestampsInput.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
                 break;
         }

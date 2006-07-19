@@ -25,6 +25,7 @@ public class MyTunesRssConfig {
     private boolean myAutoUpdateDatabase;
     private int myAutoUpdateDatabaseInterval;
     private String myVersion;
+    private boolean myIgnoreTimestamps;
 
     public String getLibraryXml() {
         return myLibraryXml;
@@ -101,6 +102,14 @@ public class MyTunesRssConfig {
         myVersion = version;
     }
 
+    public boolean isIgnoreTimestamps() {
+        return myIgnoreTimestamps;
+    }
+
+    public void setIgnoreTimestamps(boolean ignoreTimestamps) {
+        myIgnoreTimestamps = ignoreTimestamps;
+    }
+
     public void load() {
         checkPrefsVersion();
         myPort = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("serverPort", 8080);
@@ -111,6 +120,7 @@ public class MyTunesRssConfig {
         myAutoUpdateDatabase = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("autoUpdateDatabase", false);
         myAutoUpdateDatabaseInterval = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("autoUpdateDatabaseInterval", 600);
         myVersion = Preferences.userRoot().node("/de/codewave/mytunesrss").get("version", "");
+        myIgnoreTimestamps = Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("ignoreTimestamps", false);
     }
 
     public void save() {
@@ -123,6 +133,7 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("autoUpdateDatabase", myAutoUpdateDatabase);
         Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
         Preferences.userRoot().node("/de/codewave/mytunesrss").put("version", myVersion);
+        Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("ignoreTimestamps", myIgnoreTimestamps);
     }
 
     private void checkPrefsVersion() {

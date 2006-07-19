@@ -61,7 +61,8 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Loading tracks from iTunes library.");
             }
-            final String libraryId = ITunesUtils.loadFromITunes(myLibraryXmlUrl, storeSession, systemInformation.getItunesLibraryId(), systemInformation.getLastUpdate());
+            long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? 0 : systemInformation.getLastUpdate();
+            final String libraryId = ITunesUtils.loadFromITunes(myLibraryXmlUrl, storeSession, systemInformation.getItunesLibraryId(), timeLastUpdate);
             storeSession.commitAndContinue();
             long timeAfterTracks = System.currentTimeMillis();
             if (LOG.isDebugEnabled()) {
