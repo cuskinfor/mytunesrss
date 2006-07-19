@@ -10,32 +10,26 @@ import java.util.*;
  * de.codewave.mytunesrss.FileSupportUtils
  */
 public class FileSupportUtils {
-    private static String[] AUDIO_SUFFIXES = new String[] {".mp3", ".m4a", ".m4p", ".wav"};
-    private static String[] VIDEO_SUFFIXES = new String[] {".avi", ".mov", ".wmv", ".mpg", ".mpeg", ".m4v"};
+    private static String[] SUFFIXES = new String[] {".mp3", ".m4a", ".m4p", ".wav", ".avi", ".mov", ".wmv", ".mpg", ".mpeg", ".m4v", ".mp4"};
     private static Map<String, String> MIME_TYPES;
 
     static {
-        MIME_TYPES = new HashMap<String, String>(AUDIO_SUFFIXES.length + VIDEO_SUFFIXES.length);
-        // audio types
-        MIME_TYPES.put(".mp3", "audio/mp3");
-        MIME_TYPES.put(".m4a", "audio/x-m4a");
-        MIME_TYPES.put(".m4p", "audio/x-m4p");
-        MIME_TYPES.put(".wav", "audio/wav");
-        // video types
-        MIME_TYPES.put(".avi", "video/x-msvideo");
-        MIME_TYPES.put(".mov", "video/quicktime");
-        MIME_TYPES.put(".wmv", "video/x-ms-wmv");
-        MIME_TYPES.put(".mpg", "video/mpeg");
-        MIME_TYPES.put(".mpeg", "video/mpeg");
-        MIME_TYPES.put(".m4v", "video/x-m4v");
+        MIME_TYPES = new HashMap<String, String>(SUFFIXES.length);
+        MIME_TYPES.put(".mp3", "/mp3");
+        MIME_TYPES.put(".m4a", "/x-m4a");
+        MIME_TYPES.put(".m4p", "/x-m4p");
+        MIME_TYPES.put(".wav", "/wav");
+        MIME_TYPES.put(".mp4", "/x-mp4");
+        MIME_TYPES.put(".avi", "/x-msvideo");
+        MIME_TYPES.put(".mov", "/quicktime");
+        MIME_TYPES.put(".wmv", "/x-ms-wmv");
+        MIME_TYPES.put(".mpg", "/mpeg");
+        MIME_TYPES.put(".mpeg", "/mpeg");
+        MIME_TYPES.put(".m4v", "/x-m4v");
     }
 
     public static boolean isSupported(String filename) {
-        return isSupportedAudio(filename) || isSupportedVideo(filename);
-    }
-
-    public static boolean isSupportedAudio(String filename) {
-        for (String suffix : AUDIO_SUFFIXES) {
+        for (String suffix : SUFFIXES) {
             if (filename.toLowerCase().endsWith(suffix)) {
                 return true;
             }
@@ -43,18 +37,9 @@ public class FileSupportUtils {
         return false;
     }
 
-    public static boolean isSupportedVideo(String filename) {
-        for (String suffix : VIDEO_SUFFIXES) {
-            if (filename.toLowerCase().endsWith(suffix)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static String getContentType(String filename) {
+    public static String getContentType(String filename, boolean video) {
         if (isSupported(filename)) {
-            return MIME_TYPES.get(filename.substring(filename.lastIndexOf(".") + 1).toLowerCase());
+            return (video ? "video" : "audio") + MIME_TYPES.get(filename.substring(filename.lastIndexOf(".") + 1).toLowerCase());
         }
         return "application/octet-stream";
     }

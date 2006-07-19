@@ -96,7 +96,7 @@ public class Track {
 
     public String getContentType() {
         String name = getFile().getName().toLowerCase();
-        return FileSupportUtils.getContentType(name);
+        return FileSupportUtils.getContentType(name, isVideo());
     }
 
     public long getContentLength() {
