@@ -48,6 +48,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                 } else {
                     fileSender = new FileSender(file.toURL(), contentType, (int)file.length(), BUFFER_SIZE);
                 }
+                fileSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
             } else {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("No tracks recognized in request, sending response code SC_NO_CONTENT instead.");

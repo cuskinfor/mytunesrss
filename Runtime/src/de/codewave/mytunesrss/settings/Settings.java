@@ -117,11 +117,16 @@ public class Settings {
                 contextEntries.put(DataStore.class.getName(), MyTunesRss.STORE);
                 updateDatabase(libraryUrl);
                 final int serverPort = port;
-                PleaseWait.start(getFrame(), null, MyTunesRss.BUNDLE.getString("pleaseWait.serverstarting"), false, false, new PleaseWait.NoCancelTask() {
-                    public void execute() throws Exception {
-                        MyTunesRss.WEBSERVER.start(serverPort, contextEntries);
-                    }
-                });
+                PleaseWait.start(getFrame(),
+                                 null,
+                                 MyTunesRss.BUNDLE.getString("pleaseWait.serverstarting"),
+                                 false,
+                                 false,
+                                 new PleaseWait.NoCancelTask() {
+                                     public void execute() throws Exception {
+                                         MyTunesRss.WEBSERVER.start(serverPort, contextEntries);
+                                     }
+                                 });
                 if (!MyTunesRss.WEBSERVER.isRunning()) {
                     SwingUtils.showErrorMessage(getFrame(), MyTunesRss.WEBSERVER.getLastErrorMessage());
                 } else {
@@ -129,7 +134,10 @@ public class Settings {
                     myGeneralForm.setServerRunningStatus(port);
                     if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
                         int interval = MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval();
-                        MyTunesRss.DATABASE_WATCHDOG.schedule(new DatabaseWatchdogTask(myOptionsForm, interval * 60, libraryUrl), 1000 * interval);
+                        MyTunesRss.DATABASE_WATCHDOG.schedule(new DatabaseWatchdogTask(MyTunesRss.DATABASE_WATCHDOG,
+                                                                                       myOptionsForm,
+                                                                                       interval * 60,
+                                                                                       libraryUrl), 1000 * interval);
                     }
                 }
             } catch (MalformedURLException e) {
@@ -142,11 +150,8 @@ public class Settings {
     }
 
     private void updateDatabase(final URL library) {
-        PleaseWait.start(getFrame(),
-                         null, MyTunesRss.BUNDLE.getString("settings.buildDatabase"),
-                         false,
-                         false,
-                         new DatabaseBuilderTask(library, myOptionsForm));
+        PleaseWait.start(getFrame(), null, MyTunesRss.BUNDLE.getString("settings.buildDatabase"), false, false, new DatabaseBuilderTask(library,
+                                                                                                                                        myOptionsForm));
     }
 
     public void doStopServer() {
@@ -177,17 +182,22 @@ public class Settings {
             Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", getFrame().getLocation().y);
             updateConfigFromGui();
             MyTunesRss.CONFIG.save();
-            PleaseWait.start(getFrame(), null, MyTunesRss.BUNDLE.getString("pleaseWait.shutdownDatabase"), false, false, new PleaseWait.NoCancelTask() {
-                public void execute() {
-                    try {
-                        MyTunesRss.STORE.destroy();
-                    } catch (Exception e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not destroy the store.", e);
-                        }
-                    }
-                }
-            });
+            PleaseWait.start(getFrame(),
+                             null,
+                             MyTunesRss.BUNDLE.getString("pleaseWait.shutdownDatabase"),
+                             false,
+                             false,
+                             new PleaseWait.NoCancelTask() {
+                                 public void execute() {
+                                     try {
+                                         MyTunesRss.STORE.destroy();
+                                     } catch (Exception e) {
+                                         if (LOG.isErrorEnabled()) {
+                                             LOG.error("Could not destroy the store.", e);
+                                         }
+                                     }
+                                 }
+                             });
             System.exit(0);
         }
     }

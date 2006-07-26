@@ -5,8 +5,10 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.common.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.*;
+import de.codewave.utils.servlet.*;
 import org.apache.commons.lang.*;
 
 import java.io.*;
@@ -33,9 +35,9 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
         }
         getResponse().setContentType("application/zip");
         ZipOutputStream zipStream = new ZipOutputStream(getResponse().getOutputStream());
-        zipStream.setMethod(ZipOutputStream.DEFLATED);
         zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.mytunesrss.com)");
         byte[] buffer = new byte[102400];
+        MyTunesRssSessionInfo sessionInfo = (MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest());
         for (Track track : tracks) {
             String trackArtist = track.getArtist();
             if (trackArtist.equals(InsertTrackStatement.UNKNOWN)) {
@@ -46,7 +48,6 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 trackAlbum = "unknown";
             }
             ZipEntry entry = new ZipEntry(trackArtist + "/" + trackAlbum + "/" + track.getName() + "." + getWebConfig().getSuffix(track.getFile()));
-            entry.setSize(track.getContentLength());
             zipStream.putNextEntry(entry);
             InputStream file = new FileInputStream(track.getFile());
             for (int length = file.read(buffer); length >= 0; length = file.read(buffer)) {
@@ -56,6 +57,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             }
             file.close();
             zipStream.closeEntry();
+            sessionInfo.addBytesStreamed(entry.getCompressedSize());
         }
         zipStream.close();
     }
