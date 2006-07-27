@@ -71,7 +71,7 @@ public class WebServer {
     private byte checkServerHealth(int port) {
         HttpURLConnection connection = null;
         try {
-            URL targetUrl = new URL("http://127.0.0.1:" + port + "/mytunesrss/checkHealth");
+            URL targetUrl = new URL("http://127.0.0.1:" + port + "/mytunesrss/checkHealth?ignoreSession=true");
             if (LOG.isInfoEnabled()) {
                 LOG.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             }

@@ -21,9 +21,13 @@ import java.util.Timer;
 
 public class ServerInfo {
     private static final Log LOG = LogFactory.getLog(ServerInfo.class);
-    public static final long KBYTE = 1024;
-    public static final long MBYTE = 1024 * KBYTE;
-    public static final long GBYTE = 1024 * MBYTE;
+    public static final double KBYTE = 1024;
+    public static final double MBYTE = 1024 * KBYTE;
+    public static final double GBYTE = 1024 * MBYTE;
+    public static final NumberFormat BYTE_STREAMED_FORMAT = new DecimalFormat("0");
+    public static final NumberFormat KBYTE_STREAMED_FORMAT = new DecimalFormat("0");
+    public static final NumberFormat MBYTE_STREAMED_FORMAT = new DecimalFormat("0.000");
+    public static final NumberFormat GBYTE_STREAMED_FORMAT = new DecimalFormat("0.000");
 
     private JPanel myRootPanel;
     private JTable myConnections;
@@ -172,15 +176,15 @@ public class ServerInfo {
                 case 2:
                     return formatDate(sessions.get(row).getLastAccessTime());
                 case 3:
-                    long bytes = sessions.get(row).getBytesStreamed();
+                    double bytes = sessions.get(row).getBytesStreamed();
                     if (bytes > GBYTE) {
-                        return (bytes / GBYTE) + " GB";
+                        return GBYTE_STREAMED_FORMAT.format(bytes / GBYTE) + " GB";
                     } else if (bytes > MBYTE) {
-                        return (bytes / MBYTE) + " MB";
+                        return MBYTE_STREAMED_FORMAT.format(bytes / MBYTE) + " MB";
                     } else if (bytes > KBYTE) {
-                        return (bytes / KBYTE) + " KB";
+                        return KBYTE_STREAMED_FORMAT.format(bytes / KBYTE) + " KB";
                     }
-                    return bytes + " Byte";
+                    return BYTE_STREAMED_FORMAT.format(bytes) + " Byte";
                 default:
                     throw new IllegalArgumentException("no such column: " + column);
             }

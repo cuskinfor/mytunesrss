@@ -41,7 +41,7 @@
     </filter>
     <filter>
         <filter-name>SessionManagerFilter</filter-name>
-        <filter-class>de.codewave.utils.servlet.SessionManager</filter-class>
+        <filter-class>de.codewave.mytunesrss.servlet.MyTunesRssSessionManager</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
