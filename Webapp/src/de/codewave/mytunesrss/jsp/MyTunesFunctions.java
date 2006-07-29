@@ -11,16 +11,28 @@ import de.codewave.utils.*;
 
 import javax.servlet.http.*;
 import java.net.*;
+import java.io.*;
+
+import org.apache.commons.logging.*;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
  */
 public class MyTunesFunctions {
+    private static final Log LOG = LogFactory.getLog(MyTunesFunctions.class);
     private static final String DEFAULT_NAME = "MyTunesRSS";
 
     public static String cleanFileName(String name) {
         name = name.replace('/', '_');
-        return name.replace(' ', '_');
+        name = name.replace(' ', '_');
+        try {
+            return URLEncoder.encode(name, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not URL encode file name.", e);
+            }
+            return name;
+        }
     }
 
     public static boolean unknown(String trackAlbumOrArtist) {

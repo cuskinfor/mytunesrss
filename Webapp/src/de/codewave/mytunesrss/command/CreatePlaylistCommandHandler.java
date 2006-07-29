@@ -5,7 +5,9 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.jsp.*;import de.codewave.utils.*;
+import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.mp3.*;
+import de.codewave.utils.*;
 
 import javax.servlet.*;
 import java.sql.*;
@@ -44,6 +46,13 @@ public class CreatePlaylistCommandHandler extends MyTunesRssCommandHandler {
         }
         if (!tracks.isEmpty()) {
             getRequest().setAttribute("tracks", tracks);
+            for (Track track : tracks) {
+                Image image = ID3Utils.getImage(track);
+                if (image != null) {
+                    getRequest().setAttribute("imageTrackId", track.getId());
+                    break; // use first available image
+                }
+            }
             forward(playlistResource);
         } else {
             addError(new BundleError("error.emptyFeed"));

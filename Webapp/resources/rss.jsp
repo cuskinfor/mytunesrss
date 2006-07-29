@@ -3,6 +3,11 @@
     <channel>
         <title><c:out value="${channel}"/></title>
         <link>${feedUrl}</link>
+        <image>
+            <url>${servletUrl}/showTrackImage/track=${imageTrackId}</url>
+            <title><c:out value="${channel}"/></title>
+            <link>${feedUrl}</link>
+        </image>
         <description><fmt:message key="rssChannelDescription"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:virtualSuffix(config, track)}</c:set>
             <item>
                 <title><c:out value="${track.name}"/></title>
