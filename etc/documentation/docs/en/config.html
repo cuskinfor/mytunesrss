@@ -67,14 +67,20 @@
 
         <p>
             The second tab shows additional options. Topmost you can see the status of the database integrated in MyTunesRSS. This database contains
-            all the data from the "iTunes Music Library.xml" file. It is created or updated automatically each time you start the server.</p>
+            all the data from the "iTunes Music Library.xml" file. It is created or updated automatically each time you start the server. Usually only
+            tracks with a modification date later than the last update are refreshed. In some cases it is possible that iTunes refreshed certain data
+            without updating the modification time. If you encounter any problems with refreshing, just check the option to ignore timestamps.
+            Depending on your iTunes library size, an update will take longer with this option checked. If it does not take too long, you can always
+            have the option checked to be sure the MyTunesRSS database is always in sync with iTunes.</p>
 
         <p>
             In "automation" you can select to start the server automatically when starting MyTunesRSS. This way you can put the application into your
             system's startup items and have the server up and running when booting your operating system. Furthermore you can have MyTunesRSS
             automatically check for new versions on startup. This option is not available in case you choose to start the server automatically. You
             can also look for new versions manually. When the server is running you can have it automatically check for changes in iTunes and have the
-            internal database updated. Select the number of minutes between these checks.</p>
+            internal database updated. Select the number of minutes between these checks. This is the time between the finish of one update and the
+            start of the next one, i.e. if the update itself takes 5 minutes and the time is set to 10 minutes, the second update check will start 15
+            minutes after the first one started.</p>
 
         <img src="images/info.png" alt="Informationen" />
 
@@ -89,7 +95,9 @@
             address which can be used to access the MyTunesRSS web application. Usually you have a single address which is displayed. In case you have
             multiple network interfaces, e.g. LAN and WLAN, you have multiple addresses as well. The information button next to the server status
             opens a simple dialog which displays all local addresses and your external address if you are connected to the internet and it can be
-            determined. You can cancel fetching the external address if it takes too long. Your internal ones will be displayed nevertheless.</p>
+            determined. All active connections to MyTunesRSS are also shown in the server status window.</p>
+
+        <img src="images/serverinfo.png" alt="Server Informationen" width="468" />
 
         <p>
             When quitting the program while the server is running, it is stopped. The window position and all settings are automatically saved for the

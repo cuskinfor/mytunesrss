@@ -75,7 +75,7 @@ public class MyTunesRss {
             LOG.info("Java: " + getJavaEnvironment());
         }
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
-        VERSION = modulesInfo != null ? modulesInfo.getVersion() : "0.0.0";
+        VERSION = modulesInfo != null ? modulesInfo.getVersion() : System.getProperty("MyTunesRSS.version", "0.0.0");
         if (LOG.isInfoEnabled()) {
             LOG.info("Application version: " + VERSION);
         }

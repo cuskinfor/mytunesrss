@@ -14,7 +14,6 @@ import java.sql.*;
 import java.io.*;
 import java.util.*;
 import java.lang.*;
-import java.lang.Error;
 
 import org.apache.commons.lang.*;
 
