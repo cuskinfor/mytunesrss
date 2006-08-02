@@ -86,6 +86,11 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/jid3lib-0.5.4.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/jid3lib-0.5.4.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
       <attribute name="URI" value="/WEB-INF/lib/log4j-1.2.11.jar" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/log4j-1.2.11.jar!/</url>
     </containerElement>
