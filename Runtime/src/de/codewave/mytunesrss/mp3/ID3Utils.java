@@ -35,7 +35,7 @@ public class ID3Utils {
         if (mp3 != null && mp3.hasID3v2Tag()) {
             AbstractID3v2 id3v2Tag = mp3.getID3v2Tag();
             Iterator<ID3v2_2Frame> apicFrames = (Iterator<ID3v2_2Frame>)id3v2Tag.getFrameOfType("APIC");
-            if (apicFrames != null && apicFrames.hasNext()) {
+            while (apicFrames != null && apicFrames.hasNext()) {
                 ID3v2_2Frame apicFrame = apicFrames.next();
                 String mimeType = (String)apicFrame.getBody().getObject("MIME Type");
                 byte[] data = (byte[])apicFrame.getBody().getObject("Picture Data");

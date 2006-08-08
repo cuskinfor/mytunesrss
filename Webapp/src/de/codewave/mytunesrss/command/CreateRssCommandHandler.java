@@ -5,16 +5,22 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.mp3.*;
 
 import java.text.*;
 import java.util.*;
 import java.net.*;
 
+import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
+
 /**
  * de.codewave.mytunesrss.command.CreateRssCommandHandler
  */
 public class CreateRssCommandHandler extends CreatePlaylistCommandHandler {
-    private SimpleDateFormat myPublishDateFormat = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US);
+    private static final Log LOG = LogFactory.getLog(CreateRssCommandHandler.class);
+    private static final SimpleDateFormat PUBLISH_DATE_FORMAT = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US);
 
     @Override
     public void executeAuthorized() throws Exception {
@@ -22,8 +28,32 @@ public class CreateRssCommandHandler extends CreatePlaylistCommandHandler {
         String channel = feedUrl.substring(feedUrl.lastIndexOf('/') + 1);
         channel = channel.substring(0, channel.lastIndexOf('.'));
         getRequest().setAttribute("channel", URLDecoder.decode(channel.replace('_', ' '), "UTF-8"));
-        getRequest().setAttribute("pubDate", myPublishDateFormat.format(new Date()));
+        getRequest().setAttribute("pubDate", PUBLISH_DATE_FORMAT.format(new Date()));
         getRequest().setAttribute("feedUrl", feedUrl);
-        createDataAndForward(MyTunesRssResource.TemplateRss);
+        Collection<Track> tracks = getTracks();
+        if (tracks != null && !tracks.isEmpty()) {
+            for (Track track : tracks) {
+                try {
+                    Image image = ID3Utils.getImage(track);
+                    if (image != null && image.getData() != null && image.getData().length > 0 && StringUtils.isNotEmpty(image.getMimeType())) {
+                        getRequest().setAttribute("imageTrackId", track.getId());
+                        break;// use first available image
+                    } else {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Could not extract valid artwork from mp3 file.");
+                        }
+                    }
+                } catch (Exception e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Could not extract valid artwork from mp3 file.", e);
+                    }
+                }
+            }
+                getRequest().setAttribute("tracks", tracks);
+                forward(MyTunesRssResource.TemplateRss);
+        } else {
+            addError(new BundleError("error.emptyFeed"));
+            forward(MyTunesRssCommand.ShowPortal);// todo: redirect to backUrl
+        }
     }
 }

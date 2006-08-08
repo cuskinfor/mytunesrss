@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.mp3.*;
 import org.apache.commons.lang.*;
 
 import javax.servlet.*;
@@ -20,7 +21,14 @@ public class CreateM3uCommandHandler extends CreatePlaylistCommandHandler {
 
     @Override
     public void executeAuthorized() throws SQLException, IOException, ServletException {
-        createDataAndForward(MyTunesRssResource.TemplateM3u);
+        Collection<Track> tracks = getTracks();
+        if (tracks != null && !tracks.isEmpty()) {
+            getRequest().setAttribute("tracks", tracks);
+            forward(MyTunesRssResource.TemplateM3u);
+        } else {
+            addError(new BundleError("error.emptyFeed"));
+            forward(MyTunesRssCommand.ShowPortal);// todo: redirect to backUrl
+        }
     }
 
 }
