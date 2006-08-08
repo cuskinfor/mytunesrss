@@ -97,6 +97,13 @@
                 </a>
             </td>
         </tr>
+        <tr>
+          <td colspan="2">
+            <img alt="${track.name} Album Art"
+              src="${servletUrl}/showTrackImage/authHash=${authHash}/track=${track.id}"
+              width="200" style="display: block; margin: 10px auto;"/>
+          </td>
+        </tr>
     </table>
 
 </div>
