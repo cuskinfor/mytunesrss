@@ -26,6 +26,7 @@ public class WebConfig {
     private static final String CFG_RSS_LIMIT = "rssLimit";
     private static final String CFG_PAGE_SIZE = "pageSize";
     private static final String CFG_SHOW_DOWNLOAD = "showDownload";
+    private static final String CFG_RSS_ARTWORK = "rssArtwork";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     static {
@@ -55,6 +56,7 @@ public class WebConfig {
         myConfigValues.put(CFG_PASSWORD_HASH, "");
         myConfigValues.put(CFG_PAGE_SIZE, "0");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
+        myConfigValues.put(CFG_RSS_ARTWORK, "true");
     }
 
     public void load(HttpServletRequest request) {
@@ -201,5 +203,13 @@ public class WebConfig {
 
     public void setPageSize(int pageSize) {
         myConfigValues.put(CFG_PAGE_SIZE, Integer.toString(pageSize));
+    }
+
+    public boolean isRssArtwork() {
+        return Boolean.valueOf(myConfigValues.get(CFG_RSS_ARTWORK));
+    }
+
+    public void setRssArtwork(boolean rssArtwork) {
+        myConfigValues.put(CFG_RSS_ARTWORK, Boolean.toString(rssArtwork));
     }
 }

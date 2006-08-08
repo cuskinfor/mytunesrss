@@ -85,6 +85,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
                 webConfig.addFeedType(type);
             }
         }
+        webConfig.setRssArtwork(Boolean.valueOf(getRequestParameter("rssArtwork", "false")));
         if (webConfig.getFeedTypes() == null || webConfig.getFeedTypes().length == 0) {
             addError(new BundleError("error.settingsNoFeedType"));
             return true;

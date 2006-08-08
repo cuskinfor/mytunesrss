@@ -83,6 +83,12 @@
                     <img src="${appUrl}/images/download.gif" alt="M3U" style="vertical-align:text-top;" />
                 </td>
             </tr>
+            <tr class="odd">
+                <td><fmt:message key="settings.rssArtwork" /></td>
+                <td>
+                    <input type="checkbox" name="rssArtwork" value="true" <c:if test="${config.rssArtwork}">checked="checked"</c:if> />
+                </td>
+            </tr>
         </table>
 
         <div class="buttons">

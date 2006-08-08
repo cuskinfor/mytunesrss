@@ -4,16 +4,15 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.mp3.*;
-
-import java.text.*;
-import java.util.*;
-import java.net.*;
-
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+
+import java.net.*;
+import java.text.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.command.CreateRssCommandHandler
@@ -32,25 +31,27 @@ public class CreateRssCommandHandler extends CreatePlaylistCommandHandler {
         getRequest().setAttribute("feedUrl", feedUrl);
         Collection<Track> tracks = getTracks();
         if (tracks != null && !tracks.isEmpty()) {
-            for (Track track : tracks) {
-                try {
-                    Image image = ID3Utils.getImage(track);
-                    if (image != null && image.getData() != null && image.getData().length > 0 && StringUtils.isNotEmpty(image.getMimeType())) {
-                        getRequest().setAttribute("imageTrackId", track.getId());
-                        break;// use first available image
-                    } else {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Could not extract valid artwork from mp3 file.");
+            if (getWebConfig().isRssArtwork()) {
+                for (Track track : tracks) {
+                    try {
+                        Image image = ID3Utils.getImage(track);
+                        if (image != null && image.getData() != null && image.getData().length > 0 && StringUtils.isNotEmpty(image.getMimeType())) {
+                            getRequest().setAttribute("imageTrackId", track.getId());
+                            break;// use first available image
+                        } else {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Could not extract valid artwork from mp3 file.");
+                            }
                         }
-                    }
-                } catch (Exception e) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Could not extract valid artwork from mp3 file.", e);
+                    } catch (Exception e) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Could not extract valid artwork from mp3 file.", e);
+                        }
                     }
                 }
             }
-                getRequest().setAttribute("tracks", tracks);
-                forward(MyTunesRssResource.TemplateRss);
+            getRequest().setAttribute("tracks", tracks);
+            forward(MyTunesRssResource.TemplateRss);
         } else {
             addError(new BundleError("error.emptyFeed"));
             forward(MyTunesRssCommand.ShowPortal);// todo: redirect to backUrl

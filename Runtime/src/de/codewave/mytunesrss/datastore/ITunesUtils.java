@@ -239,19 +239,20 @@ public class ITunesUtils {
             boolean podcasts = playlist.get("Podcasts") != null && ((Boolean)playlist.get("Podcasts")).booleanValue();
 
             if (!master && !purchased && !partyShuffle && !podcasts) {
-                Integer id = (Integer)playlist.get("Playlist ID");
+                String playlistId =
+                        playlist.get("Playlist Persistent ID") != null ? playlist.get("Playlist Persistent ID").toString() : "PlaylistID" + playlist.get("Playlist ID").toString();
                 String name = (String)playlist.get("Name");
                 List<Map> items = (List<Map>)playlist.get("Playlist Items");
                 List<String> tracks = new ArrayList<String>();
                 if (items != null && !items.isEmpty()) {
                     for (Iterator<Map> itemIterator = items.iterator(); itemIterator.hasNext();) {
                         Map item = itemIterator.next();
-                        tracks.add(myTrackIdToPersId.get((Integer)item.get("Track ID")));
+                        tracks.add(myTrackIdToPersId.get(item.get("Track ID")));
                     }
                 }
                 if (!tracks.isEmpty()) {
                     SavePlaylistStatement statement = new SaveITunesPlaylistStatement();
-                    statement.setId(id.toString());
+                    statement.setId(playlistId);
                     statement.setName(name);
                     statement.setTrackIds(tracks);
                     try {
