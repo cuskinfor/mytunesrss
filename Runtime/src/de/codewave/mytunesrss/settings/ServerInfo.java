@@ -92,7 +92,7 @@ public class ServerInfo {
             }
             myInternalAddresses.setText(info.toString());
         } else {
-            myInternalAddresses.setText(MyTunesRss.BUNDLE.getString("serverStatus.noLocalAddress"));
+            myInternalAddresses.setText(MyTunesRss.BUNDLE.getString("serverStatus.unavailable"));
         }
         myRootPanel.validate();
     }
@@ -102,7 +102,7 @@ public class ServerInfo {
         if (StringUtils.isNotEmpty(externalAddress) && !externalAddress.equals("unreachable")) {
             myExternalAddress.setText("http://" + externalAddress + ":" + myServerPort);
         } else {
-            myExternalAddress.setText(MyTunesRss.BUNDLE.getString("serverStatus.noExternalAddress"));
+            myExternalAddress.setText(MyTunesRss.BUNDLE.getString("serverStatus.unavailable"));
         }
         myRootPanel.validate();
     }
