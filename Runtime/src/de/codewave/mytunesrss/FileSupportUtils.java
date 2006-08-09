@@ -39,7 +39,7 @@ public class FileSupportUtils {
 
     public static String getContentType(String filename, boolean video) {
         if (isSupported(filename)) {
-            return (video ? "video" : "audio") + MIME_TYPES.get(filename.substring(filename.lastIndexOf(".") + 1).toLowerCase());
+            return (video ? "video" : "audio") + MIME_TYPES.get("." + filename.substring(filename.lastIndexOf(".") + 1).toLowerCase());
         }
         return "application/octet-stream";
     }
