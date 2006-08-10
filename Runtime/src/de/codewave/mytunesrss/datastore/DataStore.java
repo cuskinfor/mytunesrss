@@ -21,6 +21,7 @@ import java.io.*;
  */
 public class DataStore {
     private static final Log LOG = LogFactory.getLog(DataStore.class);
+    public static final String DIRNAME = "hsqldb";
 
     static {
         try {
@@ -35,7 +36,7 @@ public class DataStore {
     private GenericObjectPool myConnectionPool;
 
     public void init() throws IOException {
-        String filename = "hsqldb/MyTunesRSS";
+        String filename = DIRNAME + "/MyTunesRSS";
         String pathname = ProgramUtils.getApplicationDataPath("MyTunesRSS");
         final String connectString = "jdbc:hsqldb:file:" + pathname + "/" + filename;
         myConnectionPool = new GenericObjectPool(new BasePoolableObjectFactory() {

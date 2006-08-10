@@ -21,6 +21,31 @@ import java.util.*;
 public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
     private static final Log LOG = LogFactory.getLog(PlayTrackCommandHandler.class);
     private static final int BUFFER_SIZE = 1024 * 50;
+    private static final URL FAILURE_RESOURCE = MyTunesRss.class.getResource("failure.mp3");
+    private static final int FAILURE_RESOURCE_SIZE = getResourceSize(FAILURE_RESOURCE);
+
+    private static int getResourceSize(URL resource) {
+        InputStream stream = null;
+        try {
+            stream = resource.openStream();
+            return stream.available();
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not get resource size.", e);
+            }
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not get resource size.", e);
+                    }
+                }
+            }
+        }
+        return -1;
+    }
 
     @Override
     public void execute() throws IOException, SQLException {
@@ -44,7 +69,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                     if (LOG.isWarnEnabled()) {
                         LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");
                     }
-                    fileSender = new FileSender(MyTunesRss.class.getResource("failure.mp3"), "audio/mp3", -1, BUFFER_SIZE);
+                    fileSender = new FileSender(FAILURE_RESOURCE, "audio/mp3", FAILURE_RESOURCE_SIZE, BUFFER_SIZE);
                 } else {
                     fileSender = new FileSender(file.toURL(), contentType, (int)file.length(), BUFFER_SIZE);
                 }

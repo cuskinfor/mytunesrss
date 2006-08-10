@@ -11,8 +11,6 @@ import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.io.*;
-import java.net.*;
 import java.sql.*;
 import java.text.*;
 import java.util.Date;
@@ -33,6 +31,7 @@ public class Options {
     private JSpinner myAutoUpdateDatabaseIntervalInput;
     private JCheckBox myAutoUpdateDatabaseInput;
     private JCheckBox myIgnoreTimestampsInput;
+    private JButton myDeleteDatabaseButton;
 
     public void init(Settings settingsForm) {
         mySettingsForm = settingsForm;
@@ -55,6 +54,7 @@ public class Options {
         myIgnoreTimestampsInput.setSelected(MyTunesRss.CONFIG.isIgnoreTimestamps());
         SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, MyTunesRss.CONFIG.isAutoUpdateDatabase());
         myAutoUpdateDatabaseInput.addActionListener(new AutoUpdateDatabaseInputListener());
+        myDeleteDatabaseButton.addActionListener(new DeleteDatabaseButtonListener());
     }
 
     public void refreshLastUpdate() {
@@ -94,6 +94,7 @@ public class Options {
                 myProgramUpdateButton.setEnabled(false);
                 myAutoUpdateDatabaseInput.setEnabled(false);
                 myIgnoreTimestampsInput.setEnabled(false);
+                myDeleteDatabaseButton.setEnabled(false);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, false);
                 break;
             case ServerIdle:
@@ -102,6 +103,7 @@ public class Options {
                 myProgramUpdateButton.setEnabled(true);
                 myAutoUpdateDatabaseInput.setEnabled(true);
                 myIgnoreTimestampsInput.setEnabled(true);
+                myDeleteDatabaseButton.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
                 break;
         }
@@ -135,6 +137,23 @@ public class Options {
         public void actionPerformed(ActionEvent e) {
             SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
             myRootPanel.validate();
+        }
+    }
+
+    public class DeleteDatabaseButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent actionEvent) {
+            String optionOk = MyTunesRss.BUNDLE.getString("ok");
+            String optionCancel = MyTunesRss.BUNDLE.getString("cancel");
+            Object option = SwingUtils.showOptionsMessage(mySettingsForm.getFrame(), JOptionPane.QUESTION_MESSAGE, null, MyTunesRss.BUNDLE.getString(
+                    "question.deleteDatabase"), new Object[] {optionCancel, optionOk});
+            if (optionOk.equals(option)) {
+                PleaseWait.start(mySettingsForm.getFrame(),
+                                 null,
+                                 MyTunesRss.BUNDLE.getString("pleaseWait.recreatingDatabase"),
+                                 false,
+                                 false,
+                                 new RecreateDatabaseTask());
+            }
         }
     }
 }

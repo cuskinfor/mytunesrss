@@ -21,7 +21,7 @@ public class InitializeDatabaseTask extends PleaseWait.NoCancelTask {
 
     private boolean myExistent;
 
-    public void execute() {
+    public void execute() throws Exception {
         try {
             MyTunesRss.STORE.executeQuery(new DataStoreQuery<Boolean>() {
                 public Boolean execute(Connection connection) throws SQLException {

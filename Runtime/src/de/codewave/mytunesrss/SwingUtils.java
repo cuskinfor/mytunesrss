@@ -20,6 +20,12 @@ public class SwingUtils {
     }
 
     private static void showMessage(JFrame parent, int type, String title, String message) {
+        JOptionPane pane = createPane(type, message);
+        JDialog dialog = pane.createDialog(parent, title);
+        dialog.setVisible(true);
+    }
+
+    private static JOptionPane createPane(int type, String message) {
         JOptionPane pane = new JOptionPane() {
             @Override
             public int getMaxCharactersPerLineCount() {
@@ -28,8 +34,15 @@ public class SwingUtils {
         };
         pane.setMessageType(type);
         pane.setMessage(message);
+        return pane;
+    }
+
+    public static Object showOptionsMessage(JFrame parent, int type, String title, String message, Object[] options) {
+        JOptionPane pane = createPane(type, message);
+        pane.setOptions(options);
         JDialog dialog = pane.createDialog(parent, title);
         dialog.setVisible(true);
+        return pane.getValue();
     }
 
     public static void enableElementAndLabel(JComponent element, boolean enabled) {
