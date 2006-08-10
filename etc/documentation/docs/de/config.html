@@ -14,103 +14,105 @@
 
 <div id="body">
 
-    <div id="content">
+<div id="content">
 
-        <div id="sidebar">
+    <div id="sidebar">
 
-            <ul class="links">
-                <li><a href="intro.html">Einführung</a></li>
-                <li><a href="sysreqs.html">Systemanforderungen</a></li>
-                <li><a href="versions.html">Versionshistorie</a></li>
-                <li><a href="startup.html">MyTunesRSS starten</a></li>
-                <li><a href="config.html">Die Konfiguration</a></li>
-                <li><a href="web_intro.html">Die Webanwendung</a></li>
-                <ul class="sub">
-                    <li><a href="web_login.html">Login</a></li>
-                    <li><a href="web_portal.html">Portal</a></li>
-                    <li><a href="web_settings.html">Einstellungen</a></li>
-                    <li><a href="web_browse.html">Bibliothek durchsuchen</a></li>
-                    <li><a href="web_playlists.html">MyTunesRSS Playlisten</a></li>
-                </ul>
-                <li><a href="license.html">Lizenzen</a></li>
-                <ul class="sub">
-                    <li><a href="lic_tomcat.html">Tomcat</a></li>
-                    <li><a href="lic_hsqldb.html">HSQL database engine</a></li>
-                    <li><a href="lic_systray.html">Systray4j Projekt</a></li>
-                    <li><a href="lic_jid3lib.html">Java MP3 ID3 Tag Library</a></li>
-                </ul>
-                <li><a href="outro.html">Kontakt</a></li>
+        <ul class="links">
+            <li><a href="intro.html">Einführung</a></li>
+            <li><a href="sysreqs.html">Systemanforderungen</a></li>
+            <li><a href="versions.html">Versionshistorie</a></li>
+            <li><a href="startup.html">MyTunesRSS starten</a></li>
+            <li><a href="config.html">Die Konfiguration</a></li>
+            <li><a href="web_intro.html">Die Webanwendung</a></li>
+            <ul class="sub">
+                <li><a href="web_login.html">Login</a></li>
+                <li><a href="web_portal.html">Portal</a></li>
+                <li><a href="web_settings.html">Einstellungen</a></li>
+                <li><a href="web_browse.html">Bibliothek durchsuchen</a></li>
+                <li><a href="web_playlists.html">MyTunesRSS Playlisten</a></li>
             </ul>
-
-        </div>
-
-        <h1>Die Konfiguration</h1>
-
-        <p>
-            Nach dem Start der Anwendung sehen Sie die Konfigurationsoberfläche. Die Einstellungen sind auf drei Seiten verteilt. Auf der ersten Seite
-            befinden sich die allgemeinen Einstellungen. </p>
-        <img src="images/general.png" alt="Allgemeine Einstellungen" />
-
-        <p>
-            Sie können den Port, auf dem der Server auf Verbindungen wartet, frei wählen. Der Standardport 8080 des Servers sollte in den meisten
-            Fällen problemlos funktionieren. Auf manchen Systemen kann die Benutzung von Portnummern unter 1024 eingeschränkt sein. </p>
-
-        <p>
-            Sie müssen zur Sicherheit ein Kennwort für den Zugriff auf die Webapplikation vergeben. Ohne ein Kennwort kann der Server nicht gestartet
-            werden. Das Kennwort wird unverschlüsselt gespeichert. Verwenden Sie daher bitte möglichst kein Kennwort, das sie an anderer Stelle für
-            den Schutz von kritischen Daten verwenden. </p>
-
-        <p>
-            Im unteren Teil der allgemeinen Einstellungen müssen Sie den Pfad zu der Datei "iTunes Music Library.xml" auf Ihrem System angeben. Sie
-            können den Pfad direkt in das Eingabefeld schreiben oder mit dem (...) Knopf suchen und auswählen. Unter Windows liegt diese Datei
-            normalerweise im Order "iTunes" unter "Eigene Musik". Auf Mac OS X sollte sie unter "iTunes" im Order "Musik" zu finden sein. </p>
-        <img src="images/options.png" alt="Optionen" />
-
-        <p>
-            Auf der zweiten Seite finden Sie weitere Optionen. Als oberstes wird der Status der in MyTunesRSS integrierten Datenbank angezeigt. In
-            dieser Datenbank hält MyTunesRSS eine Kopie der Daten aus der "iTunes Music Library.xml". Diese Datenbank wird automatisch beim Start des
-            Servers erzeugt bzw. aktualisiert. Normalerweise werden nur Titel aktualisiert, die ein Änderungsdatum nach dem Datum des letzten Updates
-            haben. Unter bestimmten Umständen kann es vorkommen, dass iTunes Daten ändert, ohne das Änderungsdatum zu aktualisieren. Wenn Sie
-            feststellen, dass MyTunesRSS nicht die aktuellen Daten anzeigt, wählen Sie einfach die Option zum Ignorieren der Zeitstempel. Ein
-            Datenbankupdate wird dann je nach Größe Ihrer iTunes Bibliothek länger dauern. Wenn sie feststellen, dass das Update mit gewählter Option
-            schnell genug ist, können Sie sie auch gewählt lassen, um sicher zu sein, dass die Daten in MyTunesRSS immer aktuell sind.</p>
-
-        <p>
-            Unter "Automatisierung" könnnen Sie wählen, ob der integrierte Server beim Start von MyTunesRSS automatisch gestartet werden soll. Mit
-            dieser Option können Sie MyTunesRSS in die Startobjekte Ihres Systems legen und damit beim Systemstart direkt komplett einsatzbereit
-            machen. Weiterhin können Sie bestimmen, ob beim Start der Anwendung automatisch nach neueren Versionen von MyTunesRSS gesucht werden soll.
-            Diese Option steht nicht zur Verfügung, wenn Sie den Server automatisch starten lassen. Sie können hier auch manuell nach einer neuen
-            Version suchen. Bei laufendem Server können Änderungen an iTunes optional automatisch in die MyTunesRSS Datenbank übernommen werden.
-            Aktivieren Sie die entsprechende Option und legen Sie fest, alle wieviel Minuten MyTunesRSS nach Änderungen an der "iTunes Music
-            Library.xml" schauen soll. Dieses ist die Zeit zwischen dem Ende eines Updates und dem Beginn der nächsten Prüfung, d.h. wenn ein Update 5
-            Minuten dauert und die Zeit auf 10 Minuten gestellt ist, beginnt die zweite Prüfung 15 Minuten nach dem Start der ersten.</p>
-
-        <img src="images/info.png" alt="Informationen" />
-
-        <p>
-            Auf der dritten Seite finden Sie Informationen zum Entwicklerteam und die Bitte um eine Spende, falls das Programm Ihnen gefällt. Wenn Sie
-            Probleme mit MyTunesRSS haben und eine Supportanfrage stellen, können Sie auf dieser Seite die aktuelle Logdatei in ein Zip-Archiv
-            speichern und an die Supportmail anhängen. </p>
-
-        <p>
-            Unter den Konfigurationsseiten befinden sich die Knöpfe zum Starten und Stoppen des Servers und zum Beenden der Anwendung. Während der
-            Server läuft, können Sie keine Einstellungen verändern. Wenn der Server gestartet wurde, wird in der Statuszeile auf der ersten
-            Konfigurationsseite die Adresse angezeigt, unter der der Server in Ihrem lokalen Netz erreichbar ist. Üblicherweise haben Sie eine einzige
-            lokale Adresse (z.B. 192.168.0.2). Wenn Sie mehrere Netzwerkschnittstellen haben (z.B. ein LAN und ein WLAN), dann haben Sie auch mehrere
-            lokale Adressen. Es wird nur eine davon in der Statuszeile angezeigt. Wenn Sie alle lokalen Adressen sehen möchten, klicken Sie auf den
-            Informationsknopf neben der Statusanzeige. Es wird auch Ihre externe Adresse angezeigt, wenn Sie mit dem Internet verbunden sind und die
-            Adresse ermittelt werden kann. Im Statusfenster werden außerdem alle aktuellen Verbindungen zu MyTunesRSS angezeigt.</p>
-
-        <img src="images/serverinfo.png" alt="Server Informationen" width="426" />
-
-        <p>
-            Beim Beenden des Programmes wird ein eventuell noch laufender Server zuerst gestoppt. Die Fensterposition und sämtliche Einstellunegn
-            werden automatisch für den nächsten Start gespeichert.</p>
+            <li><a href="license.html">Lizenzen</a></li>
+            <ul class="sub">
+                <li><a href="lic_tomcat.html">Tomcat</a></li>
+                <li><a href="lic_hsqldb.html">HSQL database engine</a></li>
+                <li><a href="lic_systray.html">Systray4j Projekt</a></li>
+                <li><a href="lic_jid3lib.html">Java MP3 ID3 Tag Library</a></li>
+            </ul>
+            <li><a href="outro.html">Kontakt</a></li>
+        </ul>
 
     </div>
 
-    <div id="footer">
-        &copy; 2006 <a href="http://www.codewave.de" target="_blank">Codewave Software</a></div>
+    <h1>Die Konfiguration</h1>
+
+    <p>
+        Nach dem Start der Anwendung sehen Sie die Konfigurationsoberfläche. Die Einstellungen sind auf drei Seiten verteilt. Auf der ersten Seite
+        befinden sich die allgemeinen Einstellungen. </p>
+    <img src="images/general.png" alt="Allgemeine Einstellungen" />
+
+    <p>
+        Sie können den Port, auf dem der Server auf Verbindungen wartet, frei wählen. Der Standardport 8080 des Servers sollte in den meisten Fällen
+        problemlos funktionieren. Auf manchen Systemen kann die Benutzung von Portnummern unter 1024 eingeschränkt sein. </p>
+
+    <p>
+        Sie müssen zur Sicherheit ein Kennwort für den Zugriff auf die Webapplikation vergeben. Ohne ein Kennwort kann der Server nicht gestartet
+        werden. Das Kennwort wird unverschlüsselt gespeichert. Verwenden Sie daher bitte möglichst kein Kennwort, das sie an anderer Stelle für den
+        Schutz von kritischen Daten verwenden. </p>
+
+    <p>
+        Im unteren Teil der allgemeinen Einstellungen müssen Sie den Pfad zu der Datei "iTunes Music Library.xml" auf Ihrem System angeben. Sie können
+        den Pfad direkt in das Eingabefeld schreiben oder mit dem (...) Knopf suchen und auswählen. Unter Windows liegt diese Datei normalerweise im
+        Order "iTunes" unter "Eigene Musik". Auf Mac OS X sollte sie unter "iTunes" im Order "Musik" zu finden sein. </p>
+    <img src="images/options.png" alt="Optionen" />
+
+    <p>
+        Auf der zweiten Seite finden Sie weitere Optionen. Als oberstes wird der Status der in MyTunesRSS integrierten Datenbank angezeigt. In dieser
+        Datenbank hält MyTunesRSS eine Kopie der Daten aus der "iTunes Music Library.xml". Diese Datenbank wird automatisch beim Start des Servers
+        erzeugt bzw. aktualisiert. Normalerweise werden nur Titel aktualisiert, die ein Änderungsdatum nach dem Datum des letzten Updates haben. Unter
+        bestimmten Umständen kann es vorkommen, dass iTunes Daten ändert, ohne das Änderungsdatum zu aktualisieren. Wenn Sie feststellen, dass
+        MyTunesRSS nicht die aktuellen Daten anzeigt, wählen Sie einfach die Option zum Ignorieren der Zeitstempel. Ein Datenbankupdate wird dann je
+        nach Größe Ihrer iTunes Bibliothek länger dauern. Wenn sie feststellen, dass das Update mit gewählter Option schnell genug ist, können Sie sie
+        auch gewählt lassen, um sicher zu sein, dass die Daten in MyTunesRSS immer aktuell sind. Wie Sie extreme Probleme mit der Datenbank haben,
+        können Sie diese mit dem Knopf neben dem Status komplett löschen und neu erstellen. Beachten Sie jedoch, dass in MyTunesRSS erstellte
+        Playlisten dadurch verloren gehen.</p>
+
+    <p>
+        Unter "Automatisierung" könnnen Sie wählen, ob der integrierte Server beim Start von MyTunesRSS automatisch gestartet werden soll. Mit dieser
+        Option können Sie MyTunesRSS in die Startobjekte Ihres Systems legen und damit beim Systemstart direkt komplett einsatzbereit machen.
+        Weiterhin können Sie bestimmen, ob beim Start der Anwendung automatisch nach neueren Versionen von MyTunesRSS gesucht werden soll. Diese
+        Option steht nicht zur Verfügung, wenn Sie den Server automatisch starten lassen. Sie können hier auch manuell nach einer neuen Version
+        suchen. Bei laufendem Server können Änderungen an iTunes optional automatisch in die MyTunesRSS Datenbank übernommen werden. Aktivieren Sie
+        die entsprechende Option und legen Sie fest, alle wieviel Minuten MyTunesRSS nach Änderungen an der "iTunes Music Library.xml" schauen soll.
+        Dieses ist die Zeit zwischen dem Ende eines Updates und dem Beginn der nächsten Prüfung, d.h. wenn ein Update 5 Minuten dauert und die Zeit
+        auf 10 Minuten gestellt ist, beginnt die zweite Prüfung 15 Minuten nach dem Start der ersten.</p>
+
+    <img src="images/info.png" alt="Informationen" />
+
+    <p>
+        Auf der dritten Seite finden Sie Informationen zum Entwicklerteam und die Bitte um eine Spende, falls das Programm Ihnen gefällt. Wenn Sie
+        Probleme mit MyTunesRSS haben und eine Supportanfrage stellen, können Sie auf dieser Seite die aktuelle Logdatei in ein Zip-Archiv speichern
+        und an die Supportmail anhängen. </p>
+
+    <p>
+        Unter den Konfigurationsseiten befinden sich die Knöpfe zum Starten und Stoppen des Servers und zum Beenden der Anwendung. Während der Server
+        läuft, können Sie keine Einstellungen verändern. Wenn der Server gestartet wurde, wird in der Statuszeile auf der ersten Konfigurationsseite
+        die Adresse angezeigt, unter der der Server in Ihrem lokalen Netz erreichbar ist. Üblicherweise haben Sie eine einzige lokale Adresse (z.B.
+        192.168.0.2). Wenn Sie mehrere Netzwerkschnittstellen haben (z.B. ein LAN und ein WLAN), dann haben Sie auch mehrere lokale Adressen. Es wird
+        nur eine davon in der Statuszeile angezeigt. Wenn Sie alle lokalen Adressen sehen möchten, klicken Sie auf den Informationsknopf neben der
+        Statusanzeige. Es wird auch Ihre externe Adresse angezeigt, wenn Sie mit dem Internet verbunden sind und die Adresse ermittelt werden kann. Im
+        Statusfenster werden außerdem alle aktuellen Verbindungen zu MyTunesRSS angezeigt.</p>
+
+    <img src="images/serverinfo.png" alt="Server Informationen" width="426" />
+
+    <p>
+        Beim Beenden des Programmes wird ein eventuell noch laufender Server zuerst gestoppt. Die Fensterposition und sämtliche Einstellunegn werden
+        automatisch für den nächsten Start gespeichert.</p>
+
+</div>
+
+<div id="footer">
+    &copy; 2006 <a href="http://www.codewave.de" target="_blank">Codewave Software</a></div>
 
 </div>
 
