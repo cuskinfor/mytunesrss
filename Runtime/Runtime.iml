@@ -141,7 +141,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/jid3lib-0.5.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-17.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -150,7 +150,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-17.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/codewave-id3v2-parser-1.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

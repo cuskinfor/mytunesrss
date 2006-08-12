@@ -4,14 +4,11 @@
 
 package de.codewave.mytunesrss.mp3;
 
+import de.codewave.id3v2.*;
+import de.codewave.id3v2.framebody.*;
+import de.codewave.id3v2.structure.*;
 import de.codewave.mytunesrss.datastore.statement.*;
-import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
-import org.farng.mp3.*;
-import org.farng.mp3.id3.*;
-
-import java.io.*;
-import java.util.*;
 
 /**
  * de.codewave.mytunesrss.mp3.ID3Utils
@@ -20,28 +17,21 @@ public class ID3Utils {
     private static final Log LOG = LogFactory.getLog(ID3Utils.class);
 
     public static Image getImage(Track track) {
-        MP3File mp3 = null;
+        Id3v2Tag id3v2Tag = null;
         try {
-            mp3 = new MP3File(track.getFile());
-        } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create MP3 file for \"" + track.getFile() + "\".", e);
-            }
-        } catch (TagException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create MP3 file for \"" + track.getFile() + "\".", e);
-            }
-        }
-        if (mp3 != null && mp3.hasID3v2Tag()) {
-            AbstractID3v2 id3v2Tag = mp3.getID3v2Tag();
-            Iterator<ID3v2_2Frame> apicFrames = (Iterator<ID3v2_2Frame>)id3v2Tag.getFrameOfType("APIC");
-            while (apicFrames != null && apicFrames.hasNext()) {
-                ID3v2_2Frame apicFrame = apicFrames.next();
-                String mimeType = (String)apicFrame.getBody().getObject("MIME Type");
-                byte[] data = (byte[])apicFrame.getBody().getObject("Picture Data");
-                if (StringUtils.isNotEmpty(mimeType) && data != null && data.length > 0) {
-                    return new Image(mimeType, data);
+            id3v2Tag = new Id3v2Tag(track.getFile().toURL());
+            for (Frame frame : id3v2Tag.getFrames()) {
+                if ("APIC".equals(frame.getId())) {
+                    APICFrameBody frameBody = new APICFrameBody(frame);
+                    return new Image(frameBody.getMimeType(), frameBody.getPictureData());
+                } else if ("PIC".equals(frame.getId())) {
+                    PICFrameBody frameBody = new PICFrameBody(frame);
+                    return new Image(frameBody.getMimeType(), frameBody.getPictureData());
                 }
+            }
+        } catch (Exception e) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Could not extract artwork for \"" + track.getFile() + "\".", e);
             }
         }
         return null;
