@@ -80,14 +80,8 @@ public class ShowTrackImageCommandHandler extends MyTunesRssCommandHandler {
             }
         } else {
             getResponse().setContentType(image.getMimeType());
-            // the first by of data might be invalid with this stupid mp3 library, so we skip it if it is 0x00
-            if (image.getData()[0] == 0) {
-                getResponse().setContentLength(image.getData().length - 1);
-                getResponse().getOutputStream().write(image.getData(), 1, image.getData().length - 1);
-            } else {
-                getResponse().setContentLength(image.getData().length);
-                getResponse().getOutputStream().write(image.getData());
-            }
+            getResponse().setContentLength(image.getData().length);
+            getResponse().getOutputStream().write(image.getData());
         }
     }
 }
