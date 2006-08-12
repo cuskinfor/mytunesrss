@@ -5,16 +5,13 @@
 package de.codewave.mytunesrss.datastore;
 
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.*;
 import de.codewave.utils.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.pool.*;
 import org.apache.commons.pool.impl.*;
-import org.apache.commons.lang.*;
 
-import java.sql.*;
-import java.util.*;
 import java.io.*;
+import java.sql.*;
 
 /**
  * de.codewave.mytunesrss.datastore.DataStore
@@ -46,15 +43,26 @@ public class DataStore {
         }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 5, false, false, 10000, 2, 20000, false, 20000);
     }
 
-    public void destroy() throws Exception {
-        Connection connection = aquireConnection();
+    public void destroy() {
+        Connection connection = null;
         try {
-            if (connection != null) {
-                connection.createStatement().execute("SHUTDOWN COMPACT");
+            connection = aquireConnection();
+            connection.createStatement().execute("SHUTDOWN COMPACT");
+        } catch (SQLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not shutdown database correctly.", e);
             }
         } finally {
-            releaseConnection(connection);
-            myConnectionPool.close();
+            if (connection != null) {
+                releaseConnection(connection);
+            }
+            try {
+                myConnectionPool.close();
+            } catch (Exception e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not close connection pool.", e);
+                }
+            }
         }
     }
 

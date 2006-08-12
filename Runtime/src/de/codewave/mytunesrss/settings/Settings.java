@@ -189,13 +189,7 @@ public class Settings {
                              false,
                              new PleaseWait.NoCancelTask() {
                                  public void execute() {
-                                     try {
-                                         MyTunesRss.STORE.destroy();
-                                     } catch (Exception e) {
-                                         if (LOG.isErrorEnabled()) {
-                                             LOG.error("Could not destroy the store.", e);
-                                         }
-                                     }
+                                     MyTunesRss.STORE.destroy();
                                  }
                              });
             System.exit(0);

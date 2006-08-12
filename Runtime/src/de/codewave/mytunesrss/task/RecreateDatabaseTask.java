@@ -18,7 +18,7 @@ import java.io.*;
 public class RecreateDatabaseTask extends InitializeDatabaseTask {
     private static final Log LOG = LogFactory.getLog(RecreateDatabaseTask.class);
 
-    public void execute() throws Exception {
+    public void execute() throws IOException {
         MyTunesRss.STORE.destroy();
         String pathname = null;
         pathname = ProgramUtils.getApplicationDataPath("MyTunesRSS");
