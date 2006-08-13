@@ -20,14 +20,16 @@ public class ID3Utils {
     public static Image getImage(Track track) {
         Id3v2Tag id3v2Tag = null;
         try {
-            id3v2Tag = Mp3Utils.readTag(track.getFile());
-            for (Frame frame : id3v2Tag.getFrames()) {
-                if ("APIC".equals(frame.getId())) {
-                    APICFrameBody frameBody = new APICFrameBody(frame);
-                    return new Image(frameBody.getMimeType(), frameBody.getPictureData());
-                } else if ("PIC".equals(frame.getId())) {
-                    PICFrameBody frameBody = new PICFrameBody(frame);
-                    return new Image(frameBody.getMimeType(), frameBody.getPictureData());
+            id3v2Tag = Mp3Utils.readId3v2Tag(track.getFile());
+            if (id3v2Tag != null && id3v2Tag.getFrames() != null) {
+                for (Frame frame : id3v2Tag.getFrames()) {
+                    if ("APIC".equals(frame.getId())) {
+                        APICFrameBody frameBody = new APICFrameBody(frame);
+                        return new Image(frameBody.getMimeType(), frameBody.getPictureData());
+                    } else if ("PIC".equals(frame.getId())) {
+                        PICFrameBody frameBody = new PICFrameBody(frame);
+                        return new Image(frameBody.getMimeType(), frameBody.getPictureData());
+                    }
                 }
             }
         } catch (Exception e) {
