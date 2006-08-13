@@ -4,9 +4,10 @@
 
 package de.codewave.mytunesrss.mp3;
 
-import de.codewave.id3v2.*;
-import de.codewave.id3v2.framebody.*;
-import de.codewave.id3v2.structure.*;
+import de.codewave.camel.mp3.*;
+import de.codewave.camel.mp3.framebody.v2.*;
+import de.codewave.camel.mp3.framebody.v3.*;
+import de.codewave.camel.mp3.structure.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import org.apache.commons.logging.*;
 
@@ -19,7 +20,7 @@ public class ID3Utils {
     public static Image getImage(Track track) {
         Id3v2Tag id3v2Tag = null;
         try {
-            id3v2Tag = new Id3v2Tag(track.getFile().toURL());
+            id3v2Tag = Mp3Utils.readTag(track.getFile());
             for (Frame frame : id3v2Tag.getFrames()) {
                 if ("APIC".equals(frame.getId())) {
                     APICFrameBody frameBody = new APICFrameBody(frame);

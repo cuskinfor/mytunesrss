@@ -2,10 +2,6 @@
 <module version="4" relativePaths="true" type="JAVA_MODULE">
   <component name="BuildJarSettings">
     <containerInfo>
-      <containerElement type="module" name="Common">
-        <attribute name="method" value="1" />
-        <attribute name="URI" value="/" />
-      </containerElement>
       <containerElement type="module" name="Runtime">
         <attribute name="method" value="1" />
         <attribute name="URI" value="/" />
@@ -14,6 +10,11 @@
         <attribute name="method" value="2" />
         <attribute name="URI" value="/lib/codewave-utils-17.jar" />
         <url>jar://$MODULE_DIR$/../lib/codewave-utils-17.jar!/</url>
+      </containerElement>
+      <containerElement type="library" level="module">
+        <attribute name="method" value="2" />
+        <attribute name="URI" value="/lib/camel-0.1.jar" />
+        <url>jar://$MODULE_DIR$/lib/camel-0.1.jar!/</url>
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
@@ -39,11 +40,6 @@
         <attribute name="method" value="2" />
         <attribute name="URI" value="/lib/hsqldb.jar" />
         <url>jar://$MODULE_DIR$/lib/hsqldb.jar!/</url>
-      </containerElement>
-      <containerElement type="library" level="module">
-        <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib/jid3lib-0.5.4.jar" />
-        <url>jar://$MODULE_DIR$/lib/jid3lib-0.5.4.jar!/</url>
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
@@ -73,7 +69,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="Common" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
@@ -150,7 +145,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/codewave-id3v2-parser-1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/camel-0.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

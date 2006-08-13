@@ -5,7 +5,7 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.common.*;
+import de.codewave.mytunesrss.server.*;
 import de.codewave.utils.network.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;

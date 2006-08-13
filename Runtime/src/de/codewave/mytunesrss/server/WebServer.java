@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.server;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.common.*;
 import de.codewave.utils.servlet.*;
 import org.apache.catalina.*;
 import org.apache.catalina.connector.*;

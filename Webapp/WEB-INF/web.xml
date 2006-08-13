@@ -62,7 +62,7 @@
     <context-param>
         <description>Session info class</description>
         <param-name>sessionInfoClass</param-name>
-        <param-value>de.codewave.mytunesrss.common.MyTunesRssSessionInfo</param-value>
+        <param-value>de.codewave.mytunesrss.server.MyTunesRssSessionInfo</param-value>
     </context-param>
     <servlet>
         <description>Command dispatcher servlet</description>

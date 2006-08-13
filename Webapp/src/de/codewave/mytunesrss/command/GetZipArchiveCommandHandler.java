@@ -5,7 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.common.*;
+import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.*;
 import de.codewave.utils.servlet.*;
