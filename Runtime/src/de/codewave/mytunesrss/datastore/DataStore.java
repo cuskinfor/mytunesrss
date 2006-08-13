@@ -47,7 +47,9 @@ public class DataStore {
         Connection connection = null;
         try {
             connection = aquireConnection();
-            connection.createStatement().execute("SHUTDOWN COMPACT");
+            if (connection != null) {
+                connection.createStatement().execute("SHUTDOWN COMPACT");
+            }
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not shutdown database correctly.", e);
