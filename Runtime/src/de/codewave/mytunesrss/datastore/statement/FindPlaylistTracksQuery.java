@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 
 import java.io.*;
 import java.sql.*;
@@ -14,6 +15,8 @@ import java.util.*;
  * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
  */
 public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
+    private static final Log LOG = LogFactory.getLog(FindPlaylistTracksQuery.class);
+    
     private static final String BASE_SQL =
             "SELECT ltp.index AS index, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video FROM link_track_playlist ltp, track t WHERE t.id = ltp.track_id AND ltp.playlist_id = ?";
     private static final String LIMIT = " LIMIT ? OFFSET ?";
@@ -28,12 +31,31 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
     private Object[] myParameters;
 
     public FindPlaylistTracksQuery(String id) {
-        myParameters = StringUtils.split(id, "_");
+        myParameters = getParameters(id);
         mySql = myParameters.length == 3 ? PLAYLIST_ORDER_WITH_LIMIT : PLAYLIST_ORDER;
     }
 
+    private String[] getParameters(String id) {
+        String[] splitId = StringUtils.split(id, "_");
+        if (splitId.length != 3) {
+            return splitId;
+        }
+        try {
+            String[] params = new String[3];
+            params[0] = splitId[0];
+            params[1] = Integer.toString(Integer.parseInt(splitId[2]) - Integer.parseInt(splitId[1]) + 1);
+            params[2] = splitId[1];
+            return params;
+        } catch (NumberFormatException e) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Could not parse playlist ID parameters.");
+            }
+            return splitId;
+        }
+    }
+
     public FindPlaylistTracksQuery(String id, boolean sortByArtist) {
-        myParameters = StringUtils.split(id, "_");
+        myParameters = getParameters(id);
         mySql = sortByArtist ? (myParameters.length == 3 ? ARTIST_ORDER_WITH_LIMIT : ARTIST_ORDER) : (myParameters.length == 3 ? ALBUM_ORDER_WITH_LIMIT : ALBUM_ORDER);
     }
 
