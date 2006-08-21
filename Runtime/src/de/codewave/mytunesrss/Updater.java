@@ -152,7 +152,7 @@ public class Updater {
                 }
             }).start();
             while (!myDone && !myCancelled) {
-                setPercentage((int)(((System.currentTimeMillis() - startTime) * 100) / READ_TIMEOUT));
+                setPercentage((int)Math.min(((System.currentTimeMillis() - startTime) * 100) / READ_TIMEOUT, 100));
                 Thread.yield();
                 try {
                     Thread.sleep(1000);
