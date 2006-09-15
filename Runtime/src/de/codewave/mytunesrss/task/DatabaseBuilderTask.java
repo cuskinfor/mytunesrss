@@ -101,11 +101,13 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("time for creating checkpoint: " + (timeAfterCheckpoint - timeAfterCommit));
             }
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    myOptionsForm.refreshLastUpdate();
-                }
-            });
+            if (myOptionsForm != null) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        myOptionsForm.refreshLastUpdate();
+                    }
+                });
+            }
             storeSession.commit();
         } catch (SQLException e) {
             storeSession.rollback();

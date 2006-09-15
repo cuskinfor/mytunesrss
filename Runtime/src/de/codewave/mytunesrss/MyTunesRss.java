@@ -43,6 +43,7 @@ public class MyTunesRss {
     public static Timer DATABASE_WATCHDOG = new Timer("MyTunesRSSDatabaseWatchdog");
     public static SysTray SYSTRAYMENU;
     public static MessageDigest MESSAGE_DIGEST;
+    public static String HEADLESS_SYNCHRONIZER = "";
 
     static {
         UPDATE_URLS = new HashMap<OperatingSystem, URL>();
@@ -80,62 +81,97 @@ public class MyTunesRss {
             LOG.info("Application version: " + VERSION);
         }
         System.setProperty("mytunesrss.version", VERSION);
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        final JFrame frame = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtHandler(frame));
-        PleaseWait.start(frame,
-                         BUNDLE.getString("pleaseWait.initializingTitle"),
-                         BUNDLE.getString("pleaseWait.initializingMessage"),
-                         false,
-                         false,
-                         new PleaseWait.NoCancelTask() {
-                             public void execute() throws Exception {
-                                 CONFIG.load();
-                                 migrateConfig();
-                                 STORE.init();
-                                 final Settings settings = new Settings();
-                                 settings.init(frame);
-                                 MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
-                                 executeApple(mainWindowListener);
-                                 executeWindows(settings, mainWindowListener);
-                                 frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
-                                 frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                                 frame.addWindowListener(mainWindowListener);
-                                 frame.getContentPane().add(settings.getRootPanel());
-                                 frame.setResizable(false);
-                                 final Point defaultPosition = frame.getLocation();
-                                 frame.setLocation(1000000, 1000000);
-                                 settings.setGuiMode(GuiMode.ServerIdle);
-                                 removeAllEmptyTooltips(frame.getRootPane());
-                                 frame.setVisible(true);
-                                 SwingUtilities.invokeLater(new Runnable() {
-                                     public void run() {
-                                         frame.pack();
-                                         int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", defaultPosition.x);
-                                         int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", defaultPosition.y);
-                                         frame.setLocation(x, y);
-                                         if (CONFIG.isCheckUpdateOnStart()) {
-                                             new Updater(frame).checkForUpdate(true);
-                                         }
-                                         PleaseWait.start(frame,
-                                                          null,
-                                                          MyTunesRss.BUNDLE.getString("pleaseWait.checkingDatabase"),
-                                                          false,
-                                                          false,
-                                                          new InitializeDatabaseTask());
-                                         if (CONFIG.isAutoStartServer()) {
-                                             settings.doStartServer();
-                                             if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
-                                                 // todo: hide window on osx instead of iconify
-                                                 frame.setExtendedState(JFrame.ICONIFIED);
-                                             } else {
-                                                 frame.setExtendedState(JFrame.ICONIFIED);
+        if (ProgramUtils.getCommandLineArguments(args).containsKey("headless")) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Headless mode");
+            }
+            CONFIG.load();
+            migrateConfig();
+            STORE.init();
+            Map<String, Object> contextEntries = new HashMap<String, Object>();
+            contextEntries.put(MyTunesRssConfig.class.getName(), CONFIG);
+            contextEntries.put(DataStore.class.getName(), STORE);
+            URL libraryUrl = new File(CONFIG.getLibraryXml().trim()).toURL();
+            new DatabaseBuilderTask(libraryUrl, null).execute();
+            final int serverPort = CONFIG.getPort();
+            WEBSERVER.start(serverPort, contextEntries);
+            if (!WEBSERVER.isRunning()) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error(MyTunesRss.WEBSERVER.getLastErrorMessage());
+                }
+            } else {
+                if (CONFIG.isAutoUpdateDatabase()) {
+                    int interval = CONFIG.getAutoUpdateDatabaseInterval();
+                    DATABASE_WATCHDOG.schedule(new DatabaseWatchdogTask(DATABASE_WATCHDOG, null, interval * 60, libraryUrl), 1000 * interval);
+                }
+            }
+            while (WEBSERVER.isRunning()) {
+                try {
+                    synchronized(HEADLESS_SYNCHRONIZER) {
+                        HEADLESS_SYNCHRONIZER.wait();
+                    }
+                } catch (InterruptedException e) {
+                    // intentionally left blank
+                }
+            }
+        } else {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            final JFrame frame = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
+            Thread.setDefaultUncaughtExceptionHandler(new UncaughtHandler(frame));
+            PleaseWait.start(frame,
+                             BUNDLE.getString("pleaseWait.initializingTitle"),
+                             BUNDLE.getString("pleaseWait.initializingMessage"),
+                             false,
+                             false,
+                             new PleaseWait.NoCancelTask() {
+                                 public void execute() throws Exception {
+                                     CONFIG.load();
+                                     migrateConfig();
+                                     STORE.init();
+                                     final Settings settings = new Settings();
+                                     settings.init(frame);
+                                     MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
+                                     executeApple(mainWindowListener);
+                                     executeWindows(settings, mainWindowListener);
+                                     frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
+                                     frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                                     frame.addWindowListener(mainWindowListener);
+                                     frame.getContentPane().add(settings.getRootPanel());
+                                     frame.setResizable(false);
+                                     final Point defaultPosition = frame.getLocation();
+                                     frame.setLocation(1000000, 1000000);
+                                     settings.setGuiMode(GuiMode.ServerIdle);
+                                     removeAllEmptyTooltips(frame.getRootPane());
+                                     frame.setVisible(true);
+                                     SwingUtilities.invokeLater(new Runnable() {
+                                         public void run() {
+                                             frame.pack();
+                                             int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", defaultPosition.x);
+                                             int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", defaultPosition.y);
+                                             frame.setLocation(x, y);
+                                             if (CONFIG.isCheckUpdateOnStart()) {
+                                                 new Updater(frame).checkForUpdate(true);
+                                             }
+                                             PleaseWait.start(frame,
+                                                              null,
+                                                              MyTunesRss.BUNDLE.getString("pleaseWait.checkingDatabase"),
+                                                              false,
+                                                              false,
+                                                              new InitializeDatabaseTask());
+                                             if (CONFIG.isAutoStartServer()) {
+                                                 settings.doStartServer();
+                                                 if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
+                                                     // todo: hide window on osx instead of iconify
+                                                     frame.setExtendedState(JFrame.ICONIFIED);
+                                                 } else {
+                                                     frame.setExtendedState(JFrame.ICONIFIED);
+                                                 }
                                              }
                                          }
-                                     }
-                                 });
-                             }
-                         });
+                                     });
+                                 }
+                             });
+        }
     }
 
     private static String getJavaEnvironment() {

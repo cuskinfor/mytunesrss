@@ -109,14 +109,13 @@ public class Settings {
         } else if (myGeneralForm.getPasswordInput().getPassword().length == 0) {
             SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.missingAuthPassword"));
         } else {
+            updateConfigFromGui();
             try {
-                URL libraryUrl = library.toURL();
+                URL libraryUrl = new File(MyTunesRss.CONFIG.getLibraryXml().trim()).toURL();
                 final Map<String, Object> contextEntries = new HashMap<String, Object>();
-                updateConfigFromGui();
                 contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
                 contextEntries.put(DataStore.class.getName(), MyTunesRss.STORE);
                 updateDatabase(libraryUrl);
-                final int serverPort = port;
                 PleaseWait.start(getFrame(),
                                  null,
                                  MyTunesRss.BUNDLE.getString("pleaseWait.serverstarting"),
@@ -124,14 +123,14 @@ public class Settings {
                                  false,
                                  new PleaseWait.NoCancelTask() {
                                      public void execute() throws Exception {
-                                         MyTunesRss.WEBSERVER.start(serverPort, contextEntries);
+                                         MyTunesRss.WEBSERVER.start(MyTunesRss.CONFIG.getPort(), contextEntries);
                                      }
                                  });
                 if (!MyTunesRss.WEBSERVER.isRunning()) {
                     SwingUtils.showErrorMessage(getFrame(), MyTunesRss.WEBSERVER.getLastErrorMessage());
                 } else {
                     setGuiMode(GuiMode.ServerRunning);
-                    myGeneralForm.setServerRunningStatus(port);
+                    myGeneralForm.setServerRunningStatus(MyTunesRss.CONFIG.getPort());
                     if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
                         int interval = MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval();
                         MyTunesRss.DATABASE_WATCHDOG.schedule(new DatabaseWatchdogTask(MyTunesRss.DATABASE_WATCHDOG,
