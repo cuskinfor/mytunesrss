@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mytunesrss>
+    <preferences load="true" save="true"/>
+    <!--server port="8080" autostart="false"/-->
+    <datasource>
+        <itunesxml/>
+        <basedir album="1" artist="2">/Users/mdescher/Desktop/Music</basedir>
+    </datasource>
+    <user name="default" password="PDp+yl6vs0Ft22LrTdBMYYw0a2I=">
+        <features download="false"/>
+    </user>
+</mytunesrss>
