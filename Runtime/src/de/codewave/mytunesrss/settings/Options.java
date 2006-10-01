@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
+import de.codewave.utils.swing.*;
 import org.apache.commons.logging.*;
 
 import javax.swing.*;
@@ -24,7 +25,6 @@ public class Options {
     private JPanel myRootPanel;
     private boolean myUpdateOnStartInputCache;
     private JLabel myLastUpdatedLabel;
-    private Settings mySettingsForm;
     private JCheckBox myUpdateOnStartInput;
     private JCheckBox myAutoStartServerInput;
     private JButton myProgramUpdateButton;
@@ -33,49 +33,47 @@ public class Options {
     private JCheckBox myIgnoreTimestampsInput;
     private JButton myDeleteDatabaseButton;
 
-    public void init(Settings settingsForm) {
-        mySettingsForm = settingsForm;
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                refreshLastUpdate();
-            }
-        });
+    public void init() {
+        myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
+        myAutoStartServerInput.addActionListener(new AutoStartServerInputListener());
+        myAutoUpdateDatabaseInput.addActionListener(new AutoUpdateDatabaseInputListener());
+        myDeleteDatabaseButton.addActionListener(new DeleteDatabaseButtonListener());
         myUpdateOnStartInput.setSelected(MyTunesRss.CONFIG.isCheckUpdateOnStart());
         myAutoStartServerInput.setSelected(MyTunesRss.CONFIG.isAutoStartServer());
         if (myAutoStartServerInput.isSelected()) {
             myUpdateOnStartInput.setSelected(false);
             myUpdateOnStartInput.setEnabled(false);
         }
-        myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
-        myAutoStartServerInput.addActionListener(new AutoStartServerInputListener());
+        refreshLastUpdate();
         SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval(), 1, 60, 1);
         myAutoUpdateDatabaseIntervalInput.setModel(spinnerNumberModel);
         myAutoUpdateDatabaseInput.setSelected(MyTunesRss.CONFIG.isAutoUpdateDatabase());
         myIgnoreTimestampsInput.setSelected(MyTunesRss.CONFIG.isIgnoreTimestamps());
         SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, MyTunesRss.CONFIG.isAutoUpdateDatabase());
-        myAutoUpdateDatabaseInput.addActionListener(new AutoUpdateDatabaseInputListener());
-        myDeleteDatabaseButton.addActionListener(new DeleteDatabaseButtonListener());
     }
 
     public void refreshLastUpdate() {
-        SystemInformation systemInformation = null;
         try {
-            systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
+            final SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    if (systemInformation.getLastUpdate() > 0) {
+                        Date date = new Date(systemInformation.getLastUpdate());
+                        myLastUpdatedLabel.setText(
+                                MyTunesRss.BUNDLE.getString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRss.BUNDLE.getString(
+                                        "settings.lastDatabaseUpdateDateFormat")).format(date));
+                    } else {
+                        myLastUpdatedLabel.setText(MyTunesRss.BUNDLE.getString("settings.databaseNotYetCreated"));
+                    }
+                    myRootPanel.validate();
+                }
+            });
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not get last update time from database.", e);
             }
 
         }
-        if (systemInformation.getLastUpdate() > 0) {
-            Date date = new Date(systemInformation.getLastUpdate());
-            myLastUpdatedLabel.setText(
-                    MyTunesRss.BUNDLE.getString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRss.BUNDLE.getString(
-                            "settings.lastDatabaseUpdateDateFormat")).format(date));
-        } else {
-            myLastUpdatedLabel.setText(MyTunesRss.BUNDLE.getString("settings.databaseNotYetCreated"));
-        }
-        myRootPanel.validate();
     }
 
     public void updateConfigFromGui() {
@@ -111,11 +109,7 @@ public class Options {
 
     public class ProgramUpdateButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    new Updater(mySettingsForm.getFrame()).checkForUpdate(false);
-                }
-            });
+            UpdateUtils.checkForUpdate(false);
         }
     }
 
@@ -144,15 +138,11 @@ public class Options {
         public void actionPerformed(ActionEvent actionEvent) {
             String optionOk = MyTunesRss.BUNDLE.getString("ok");
             String optionCancel = MyTunesRss.BUNDLE.getString("cancel");
-            Object option = SwingUtils.showOptionsMessage(mySettingsForm.getFrame(), JOptionPane.QUESTION_MESSAGE, null, MyTunesRss.BUNDLE.getString(
-                    "question.deleteDatabase"), new Object[] {optionCancel, optionOk});
+            Object option = SwingUtils.showOptionsMessage(MyTunesRss.ROOT_FRAME, JOptionPane.QUESTION_MESSAGE, null, MyTunesRss.BUNDLE.getString(
+                    "question.deleteDatabase"), MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH, new Object[] {optionCancel, optionOk});
             if (optionOk.equals(option)) {
-                PleaseWait.start(mySettingsForm.getFrame(),
-                                 null,
-                                 MyTunesRss.BUNDLE.getString("pleaseWait.recreatingDatabase"),
-                                 false,
-                                 false,
-                                 new RecreateDatabaseTask());
+                MyTunesRssUtils.executeTask(null,
+                                       MyTunesRss.BUNDLE.getString("pleaseWait.recreatingDatabase"), null, false, new RecreateDatabaseTask());
             }
         }
     }

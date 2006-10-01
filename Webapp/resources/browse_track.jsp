@@ -10,7 +10,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?playlist=${param.playlist}&amp;fullAlbums=${param.fullAlbums}&amp;album=${cwfn:urlEncode(param.album, 'UTF-8')}&amp;artist=${cwfn:urlEncode(param.artist, 'UTF-8')}&amp;searchTerm=${cwfn:urlEncode(param.searchTerm, 'UTF-8')}&amp;index=${param.index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?playlist=${cwfn:encodeUrl(param.playlist)}&amp;fullAlbums=${param.fullAlbums}&amp;album=${cwfn:encodeUrl(param.album)}&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;searchTerm=${cwfn:encodeUrl(param.searchTerm)}&amp;index=${param.index}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}&amp;sortOrder=${sortOrder}</c:set>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -22,7 +22,7 @@
     <!--[if IE]>
       <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
     <![endif]-->
-		<script src="${appUrl}/js/functions.js" type="text/javascript"></script>
+    <script src="${appUrl}/js/functions.js" type="text/javascript"></script>
 
 </head>
 
@@ -45,7 +45,7 @@
     </c:if>
     <c:if test="${empty sessionScope.playlist}">
         <li>
-            <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"><fmt:message key="newPlaylist"/></a>
+            <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:encodeUrl(backUrl)}"><fmt:message key="newPlaylist"/></a>
         </li>
     </c:if>
     <li style="float:right;">
@@ -75,21 +75,20 @@
     <c:set var="count" value="0" />
     <tr>
         <c:if test="${!empty sessionScope.playlist}">
-            <th class="check"><input type="checkbox" name="none" value="none" onClick="selectAll('${track.sectionIds}',this)" />
-            </th>
+            <th class="check"><input type="checkbox" name="none" value="none" onClick="selectAll('item', '${track.sectionIds}', this)" /></th>
         </c:if>
         <th class="active" colspan="2">
             <c:choose>
                 <c:when test="${sortOrder == 'Album'}">
                     <c:if test="${track.simple}">
                         <c:set var="sectionFileName">${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)} -</c:set>
-                        <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(track.artist, 'UTF-8')}"/>">
+                        <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(cwfn:encode64(track.artist))}">
                             <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                         </a> -</c:if>
                     <c:set var="sectionFileName">${sectionFileName} ${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}</c:set>
                     <c:choose>
                         <c:when test="${empty param.album}">
-                            <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                            <a href="${servletUrl}/browseTrack?album=${cwfn:encodeUrl(cwfn:encode64(track.album))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
                                 <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
                             </a>
                         </c:when>
@@ -99,7 +98,7 @@
                     </c:choose>
                 </c:when>
                 <c:otherwise>
-                    <a href="${servletUrl}/browseAlbum?artist=<c:out value="${cwfn:urlEncode(track.artist, 'UTF-8')}"/>">
+                    <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(cwfn:encode64(track.artist))}">
                         <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                     </a>
                     <c:set var="sectionFileName" value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
@@ -108,7 +107,7 @@
                         -
                         <c:choose>
                             <c:when test="${empty param.album}">
-                                <a href="${servletUrl}/browseTrack?album=<c:out value="${cwfn:urlEncode(track.album, 'UTF-8')}"/>&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                                <a href="${servletUrl}/browseTrack?album=${cwfn:encodeUrl(cwfn:encode64(track.album))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
                                     <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
                                 </a>
                             </c:when>
@@ -122,19 +121,25 @@
         </th>
         <c:choose>
             <c:when test="${empty sessionScope.playlist}">
-                <c:forEach items="${config.feedTypes}" var="feedType">
+                <c:if test="${authUser.rss && config.showRss}">
                     <th class="icon">
-                        <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/authHash=${authHash}/tracklist=${cwfn:urlEncode(track.sectionIds, 'UTF-8')}/${mtfn:cleanFileName(sectionFileName)}.${config.feedFileSuffix[feedType]}">
-                            <img src="${appUrl}/images/${feedType}_th.gif" alt="${feedType}" /> </a>
+                        <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:cleanFileName(sectionFileName)}.xml">
+                            <img src="${appUrl}/images/rss_th.gif" alt="rss" /> </a>
                     </th>
-                </c:forEach>
-                <c:if test="${config.showDownload}">
+                </c:if>
+                <c:if test="${authUser.m3u && config.showM3u}">
+                    <th class="icon">
+                        <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:cleanFileName(sectionFileName)}.m3u">
+                            <img src="${appUrl}/images/m3u_th.gif" alt="m3u" /> </a>
+                    </th>
+                </c:if>
+                <c:if test="${authUser.download && config.showDownload}">
                     <th class="icon">&nbsp;</th>
                 </c:if>
             </c:when>
             <c:otherwise>
                 <th class="icon">
-                    <a href="${servletUrl}/addToPlaylist?tracklist=${cwfn:urlEncode(track.sectionIds, 'UTF-8')}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                    <a href="${servletUrl}/addToPlaylist?tracklist=${cwfn:encodeUrl(track.sectionIds)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
                         <img src="${appUrl}/images/add_th.gif" alt="add" /> </a>
                 </th>
             </c:otherwise>
@@ -164,29 +169,35 @@
     </td>
     <c:if test="${sortOrder == 'Album' && !track.simple}">
         <td>
-            <a href="${servletUrl}/browseAlbum?artist=${cwfn:urlEncode(track.artist, 'UTF-8')}">
+            <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(cwfn:encode64(track.artist))}">
                 <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
             </a>
         </td>
     </c:if>
     <c:choose>
         <c:when test="${empty sessionScope.playlist}">
-            <c:forEach items="${config.feedTypes}" var="feedType">
+            <c:if test="${authUser.rss && config.showRss}">
                 <td class="icon">
-                    <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/authHash=${authHash}/track=<c:out value="${cwfn:urlEncode(track.id, 'UTF-8')}"/>/${mtfn:virtualTrackName(track)}.${config.feedFileSuffix[feedType]}">
-                        <img src="${appUrl}/images/${feedType}${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="${feedType}" /> </a>
+                    <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.xml">
+                        <img src="${appUrl}/images/rss${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="rss" /> </a>
                 </td>
-            </c:forEach>
-            <c:if test="${config.showDownload}">
+            </c:if>
+            <c:if test="${authUser.m3u && config.showM3u}">
                 <td class="icon">
-                    <a href="${servletUrl}/playTrack/authHash=${authHash}/track=${track.id}/${mtfn:virtualTrackName(track)}.${mtfn:virtualSuffix(config, track)}">
+                    <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.m3u">
+                        <img src="${appUrl}/images/m3u${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="m3u" /> </a>
+                </td>
+            </c:if>
+            <c:if test="${authUser.download && config.showDownload}">
+                <td class="icon">
+                    <a href="${servletUrl}/downloadTrack/auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}">
                         <img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                 </td>
             </c:if>
         </c:when>
         <c:otherwise>
             <td class="icon">
-                <a href="${servletUrl}/addToPlaylist?track=${track.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                <a href="${servletUrl}/addToPlaylist?track=${cwfn:encodeUrl(track.id)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
                     <img src="${appUrl}/images/add${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
             </td>
         </c:otherwise>
@@ -199,7 +210,7 @@
 <c:if test="${!empty pager}">
     <c:set var="pagerCommand"
            scope="request"
-           value="${servletUrl}/browseTrack?playlist=${param.playlist}&amp;fullAlbums=${param.fullAlbums}&amp;album=${cwfn:urlEncode(param.album, 'UTF-8')}&amp;artist=${cwfn:urlEncode(param.artist, 'UTF-8')}&amp;searchTerm=${cwfn:urlEncode(param.searchTerm, 'UTF-8')}&amp;index={index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}&amp;sortOrder=${sortOrder}" />
+           value="${servletUrl}/browseTrack?playlist=${cwfn:encodeUrl(param.playlist)}&amp;fullAlbums=${param.fullAlbums}&amp;album=${cwfn:encodeUrl(param.album)}&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;searchTerm=${cwfn:encodeUrl(param.searchTerm)}&amp;index={index}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}&amp;sortOrder=${sortOrder}" />
     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
     <jsp:include page="incl_bottomPager.jsp" />
 </c:if>

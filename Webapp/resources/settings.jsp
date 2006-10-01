@@ -47,16 +47,6 @@
                            style="width: 50px;" /></td>
             </tr>
             <tr>
-                <td><fmt:message key="settings.fakeMp3" /></td>
-                <td><input type="text" name="suffix.mp3" maxlength="20" value="<c:out value="${config.map['suffix.mp3']}"/>" style="width: 50px;" />
-                </td>
-            </tr>
-            <tr class="odd">
-                <td><fmt:message key="settings.fakeM4a" /></td>
-                <td><input type="text" name="suffix.m4a" maxlength="20" value="<c:out value="${config.map['suffix.m4a']}"/>" style="width: 50px;" />
-                </td>
-            </tr>
-            <tr>
                 <td><fmt:message key="settings.rssFeedLimit" /></td>
                 <td>
                     <input type="text"
@@ -67,23 +57,33 @@
                 </td>
             </tr>
             <tr class="odd">
+                <td><fmt:message key="settings.randomPlaylistSize" /></td>
+                <td>
+                    <input type="text"
+                           name="randomPlaylistSize"
+                           maxlength="3"
+                           value="<c:out value="${cwfn:choose(config.randomPlaylistSize > 0, config.randomPlaylistSize, '')}"/>"
+                           style="width: 50px;" />
+                </td>
+            </tr>
+            <tr>
                 <td><fmt:message key="settings.playlistTypes" /></td>
                 <td>
-                    <input type="checkbox" name="feedType" value="rss" <c:if test="${fn:contains(fn:join(config.feedTypes, ';'), 'rss')}">
+                    <input type="checkbox" name="feedType" value="rss" <c:if test="${config.showRss}">
                         checked="checked"</c:if> />
                     <img src="${appUrl}/images/rss_odd.gif" alt="RSS" style="vertical-align:text-top;" /> RSS
-                    <input type="checkbox" name="feedType" value="m3u" <c:if test="${fn:contains(fn:join(config.feedTypes, ';'), 'm3u')}">
+                    <input type="checkbox" name="feedType" value="m3u" <c:if test="${config.showM3u}">
                         checked="checked"</c:if> style="margin-left: 15px;" />
                     <img src="${appUrl}/images/m3u_odd.gif" alt="M3U" style="vertical-align:text-top;" /> M3U </td>
             </tr>
-            <tr>
+            <tr class="odd">
                 <td><fmt:message key="settings.showDownload" /></td>
                 <td>
                     <input type="checkbox" name="showDownload" value="true" <c:if test="${config.showDownload}">checked="checked"</c:if> />
                     <img src="${appUrl}/images/download.gif" alt="M3U" style="vertical-align:text-top;" />
                 </td>
             </tr>
-            <tr class="odd">
+            <tr>
                 <td><fmt:message key="settings.rssArtwork" /></td>
                 <td>
                     <input type="checkbox" name="rssArtwork" value="true" <c:if test="${config.rssArtwork}">checked="checked"</c:if> />

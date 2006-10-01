@@ -4,9 +4,9 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.servlet.*;
-import de.codewave.mytunesrss.*;
 
 import javax.servlet.*;
 import java.io.*;
@@ -16,22 +16,26 @@ import java.io.*;
  */
 public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
     public void execute() throws IOException, ServletException {
+        String userName = getRequest().getParameter("username");
         String password = getRequest().getParameter("password");
         if (password != null && needsAuthorization()) {
-            byte[] authHash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
-            if (isAuthorized(authHash)) {
+            byte[] passwordHash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
+            if (isAuthorized(userName, passwordHash)) {
                 WebConfig webConfig = getWebConfig();
-                Boolean rememberLogin = Boolean.valueOf(getRequestParameter("rememberLogin", "false"));
-                webConfig.setPasswordHashStored(rememberLogin);
-                webConfig.setPasswordHash(authHash);
+                Boolean rememberLogin = getBooleanRequestParameter("rememberLogin", false);
+                webConfig.setLoginStored(rememberLogin);
+                webConfig.setUserName(userName);
+                webConfig.setPasswordHash(passwordHash);
                 webConfig.save(getResponse());
-                authorize();
+                authorize(userName);
                 forward(MyTunesRssCommand.ShowPortal);
             } else {
                 addError(new BundleError("error.loginDenied"));
+                handleSingleUser();
                 forward(MyTunesRssResource.Login);
             }
         } else if (needsAuthorization()) {
+            handleSingleUser();
             forward(MyTunesRssResource.Login);
         } else {
             forward(MyTunesRssCommand.ShowPortal);

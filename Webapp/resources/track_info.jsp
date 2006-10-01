@@ -83,24 +83,26 @@
             <td>
                 <c:if test="${track.protected}"><img src="${appUrl}/images/protected.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle" /></c:if>
                 <c:if test="${track.video}"><img src="${appUrl}/images/movie.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle" /></c:if>
-                <c:out value="${mtfn:virtualSuffix(config, track)}" />
+                <c:out value="${mtfn:suffix(track)}" />
             </td>
         </tr>
-        <tr class="odd">
-            <td>
-                &nbsp;
-            </td>
-            <td>
-                <a href="${servletUrl}/playTrack/authHash=${authHash}/track=${track.id}/${mtfn:virtualTrackName(track)}.${mtfn:virtualSuffix(config, track)}">
-                    <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="download"/>" />
-                    <fmt:message key="doDownload"/>
-                </a>
-            </td>
-        </tr>
-        <tr>
+        <c:if test="${authUser.download && config.showDownload}">
+            <tr class="odd">
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <a href="${servletUrl}/playTrack/auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}">
+                        <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="download"/>" />
+                        <fmt:message key="doDownload"/>
+                    </a>
+                </td>
+            </tr>
+        </c:if>
+        <tr <c:if test="${!authUser.download || !config.showDownload}">class="odd"</c:if>>
           <td colspan="2">
             <img alt="${track.name} Album Art"
-              src="${servletUrl}/showTrackImage/authHash=${authHash}/track=${track.id}"
+              src="${servletUrl}/showTrackImage/auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}"
               width="200" style="display: block; margin: 10px auto;"/>
           </td>
         </tr>

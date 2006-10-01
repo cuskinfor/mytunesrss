@@ -4,28 +4,43 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
-import de.codewave.mytunesrss.*;
 
 import javax.servlet.*;
 import java.io.*;
 import java.sql.*;
+import java.text.*;
 import java.util.*;
 
 /**
  * de.codewave.mytunesrss.command.ShowPortalCommandHandler
  */
 public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
+
     public void executeAuthorized() throws SQLException, IOException, ServletException {
         List<Playlist> playlists = new ArrayList<Playlist>();
+        playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM,
+                                   PlaylistType.MyTunes,
+                                   getBundleString("playlist.specialAllByAlbum"),
+                                   -1));
+        playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ARTIST, PlaylistType.MyTunes, getBundleString(
+                "playlist.specialAllByArtist"), -1));
+        int randomPlaylistSize = getWebConfig().getRandomPlaylistSize();
+        if (randomPlaylistSize > 0) {
+            playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize,
+                                       PlaylistType.MyTunes,
+                                       MessageFormat.format(getBundleString("playlist.specialRandom"), randomPlaylistSize),
+                                       -1));
+        }
         for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistQuery())) {
             playlists.add(playlist);
             playlists.addAll(createSplittedPlaylists(playlist));
         }
         int pageSize = getWebConfig().getEffectivePageSize();
         if (pageSize > 0 && playlists.size() > pageSize) {
-            int current = Integer.parseInt(getRequestParameter("index", "0"));
+            int current = getSafeIntegerRequestParameter("index", 0);
             Pager pager = createPager(playlists.size(), current);
             getRequest().setAttribute("pager", pager);
             playlists = playlists.subList(current * pageSize, Math.min((current * pageSize) + pageSize, playlists.size()));

@@ -5,19 +5,18 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.datastore.*;
-import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.jsp.Error;
-import de.codewave.utils.servlet.*;
+import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.servlet.*;
 import de.codewave.utils.*;
+import de.codewave.utils.servlet.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
 import javax.servlet.*;
 import java.io.*;
 import java.util.*;
-import java.lang.*;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
@@ -29,30 +28,39 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         return (MyTunesRssConfig)getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
     }
 
-    protected boolean isAuthorized(byte[] authHash) {
+    protected boolean isAuthorized(String userName, byte[] passwordHash) {
         MyTunesRssConfig config = getMyTunesRssConfig();
-        return Arrays.equals(config.getPasswordHash(), authHash);
+        User user = config.getUser(userName);
+        return user != null && Arrays.equals(user.getPasswordHash(), passwordHash);
     }
 
-    protected void authorize() {
-        getSession().setAttribute("authHash", MiscUtils.toHexString(getMyTunesRssConfig().getPasswordHash()));
+    protected void authorize(String userName) {
+        User user = getMyTunesRssConfig().getUser(userName);
+        if (user != null) {
+            getSession().setAttribute("auth", Base64Utils.encode(user.getName()) + "_" + Base64Utils.encode(user.getPasswordHash()));
+            getSession().setAttribute("authUser", getMyTunesRssConfig().getUser(userName));
+        }
     }
 
-    protected int getAuthHash() {
-        Integer hash = (Integer)getSession().getAttribute("authHash");
-        return hash != null ? hash.intValue() : 0;
+    protected User getAuthUser() {
+        return (User)getSession().getAttribute("authUser");
     }
 
     protected boolean needsAuthorization() {
-        if (getSession().getAttribute("authHash") != null) {
+        if (getSession().getAttribute("auth") != null) {
             return false;
         } else {
-            if (StringUtils.isNotEmpty(getRequest().getParameter("authHash"))) {
+            if (StringUtils.isNotEmpty(getRequest().getParameter("auth"))) {
                 try {
-                    byte[] requestAuthHash = MiscUtils.fromHexString(getRequestParameter("authHash", ""));
-                    if (isAuthorized(requestAuthHash)) {
-                        authorize();
-                        return false;
+                    String auth = getRequestParameter("auth", "");
+                    int i = auth.indexOf("_");
+                    if (i >= 1 && i < auth.length() - 1) {
+                        byte[] requestAuthHash = Base64Utils.decode(auth.substring(i + 1));
+                        String userName = Base64Utils.decodeToString(auth.substring(0, i));
+                        if (isAuthorized(userName, requestAuthHash)) {
+                            authorize(userName);
+                            return false;
+                        }
                     }
                 } catch (NumberFormatException e) {
                     // intentionally left blank
@@ -65,7 +73,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected void addError(Error error) {
         List<Error> errors = (List<Error>)getSession().getAttribute("errors");
         if (errors == null) {
-            synchronized(getSession()) {
+            synchronized (getSession()) {
                 errors = (List<Error>)getSession().getAttribute("errors");
                 if (errors == null) {
                     errors = new ArrayList<Error>();
@@ -76,8 +84,8 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         errors.add(error);
     }
 
-    protected DataStore getDataStore() {
-        return (DataStore)getContext().getAttribute(DataStore.class.getName());
+    protected MyTunesRssDataStore getDataStore() {
+        return (MyTunesRssDataStore)getContext().getAttribute(MyTunesRssDataStore.class.getName());
     }
 
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
@@ -94,7 +102,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private void prepareRequestForResource() {
         getRequest().setAttribute("servletUrl", ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss");
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
-        getWebConfig(); // result not needed, method also fills the request attribute "config"
+        getWebConfig();// result not needed, method also fills the request attribute "config"
     }
 
     protected WebConfig getWebConfig() {
@@ -112,14 +120,14 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         forward("/mytunesrss/" + command.getName());
     }
 
-    protected void redirect(String url) throws IOException{
+    protected void redirect(String url) throws IOException {
         getResponse().sendRedirect(url.replace("&amp;", "&"));
     }
 
     protected Map<String, Boolean> getStates() {
         Map<String, Boolean> states = (Map<String, Boolean>)getSession().getAttribute("states");
         if (states == null) {
-            synchronized(getSession()) {
+            synchronized (getSession()) {
                 states = (Map<String, Boolean>)getSession().getAttribute("states");
                 if (states == null) {
                     states = new HashMap<String, Boolean>();
@@ -132,10 +140,12 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     public void execute() throws Exception {
         try {
-            if (needsAuthorization() && getWebConfig().isPasswordHashStored() && isAuthorized(getWebConfig().getPasswordHash())) {
-                authorize();
+            if (needsAuthorization() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
+                                                                                       getWebConfig().getPasswordHash())) {
+                authorize(getWebConfig().getUserName());
                 executeAuthorized();
             } else if (needsAuthorization()) {
+                handleSingleUser();
                 forward(MyTunesRssResource.Login);
             } else {
                 executeAuthorized();
@@ -167,5 +177,17 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             return pager;
         }
         return null;
+    }
+
+    protected String getBundleString(String key) {
+        ResourceBundle bundle = ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRSSWeb", getRequest().getLocale());
+        return bundle.getString(key);
+    }
+
+    protected void handleSingleUser() {
+        Collection<User> users = getMyTunesRssConfig().getUsers();
+        if (users != null && users.size() == 1) {
+            getRequest().setAttribute("singleUserName", users.iterator().next().getName());
+        }
     }
 }

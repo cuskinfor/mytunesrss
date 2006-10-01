@@ -5,10 +5,9 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import org.apache.commons.lang.*;
 
 import java.util.*;
-
-import org.apache.commons.lang.*;
 
 /**
  * de.codewave.mytunesrss.command.StartNewPlaylistCommandHandler

@@ -5,12 +5,14 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.settings.*;
-import de.codewave.mytunesrss.datastore.*;
+import de.codewave.mytunesrss.datastore.filesystem.*;
+import de.codewave.mytunesrss.datastore.itunes.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.utils.sql.*;
+import de.codewave.utils.swing.*;
+import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
@@ -18,13 +20,32 @@ import java.sql.*;
 /**
  * de.codewave.mytunesrss.task.DatabaseBuilderTaskk
  */
-public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
+public class DatabaseBuilderTask extends MyTunesRssTask {
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
 
-    public static boolean needsUpdate(URL libraryXmlUrl) throws SQLException {
-        if (libraryXmlUrl != null) {
+    private URL myLibraryXmlUrl;
+    private File myBaseDir;
+
+    public DatabaseBuilderTask() {
+        try {
+            myLibraryXmlUrl = StringUtils.isNotEmpty(MyTunesRss.CONFIG.getLibraryXml()) ? new File(MyTunesRss.CONFIG.getLibraryXml().trim()).toURL() :
+                    null;
+            myBaseDir = StringUtils.isNotEmpty(MyTunesRss.CONFIG.getBaseDir()) ? new File(MyTunesRss.CONFIG.getBaseDir().trim()) : null;
+        } catch (MalformedURLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not create URL from iTunes XML file.", e);
+            }
+            MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.fatal"));
+        }
+    }
+
+    public boolean needsUpdate() throws SQLException {
+        if (myBaseDir != null && myBaseDir.isDirectory() && myBaseDir.exists()) {
+            return true;
+        }
+        if (myLibraryXmlUrl != null) {
             SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
-            if (new File(libraryXmlUrl.getPath()).lastModified() > systemInformation.getLastUpdate()) {
+            if (new File(myLibraryXmlUrl.getPath()).lastModified() > systemInformation.getLastUpdate()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Database update needed.");
                 }
@@ -37,15 +58,7 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
         return false;
     }
 
-    private URL myLibraryXmlUrl;
-    private Options myOptionsForm;
-
-    public DatabaseBuilderTask(URL libraryXmlUrl, Options optionsForm) {
-        myLibraryXmlUrl = libraryXmlUrl;
-        myOptionsForm = optionsForm;
-    }
-
-    public void execute() throws SQLException {
+    public void execute() throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Database builder task started.");
         }
@@ -61,8 +74,12 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Loading tracks from iTunes library.");
             }
-            long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? 0 : systemInformation.getLastUpdate();
-            final String libraryId = ITunesUtils.loadFromITunes(myLibraryXmlUrl, storeSession, systemInformation.getItunesLibraryId(), timeLastUpdate);
+            long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
+            final String libraryId = ItunesLoader.loadFromITunes(myLibraryXmlUrl,
+                                                                 storeSession,
+                                                                 systemInformation.getItunesLibraryId(),
+                                                                 timeLastUpdate);
+            final String baseDirId = MyTunesRss.REGISTRATION.isRegistered() ? FileSystemLoader.loadFromFileSystem(myBaseDir, storeSession, systemInformation.getBaseDirId(), timeLastUpdate) : null;
             storeSession.commitAndContinue();
             long timeAfterTracks = System.currentTimeMillis();
             if (LOG.isDebugEnabled()) {
@@ -81,6 +98,7 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
                 public void execute(Connection connection) throws SQLException {
                     connection.createStatement().execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
                     connection.createStatement().execute("UPDATE system_information SET itunes_library_id = '" + libraryId + "'");
+                    connection.createStatement().execute("UPDATE system_information SET basedir_id = '" + baseDirId + "'");
                 }
             });
             if (LOG.isDebugEnabled()) {
@@ -101,15 +119,8 @@ public class DatabaseBuilderTask extends PleaseWait.NoCancelTask {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("time for creating checkpoint: " + (timeAfterCheckpoint - timeAfterCommit));
             }
-            if (myOptionsForm != null) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        myOptionsForm.refreshLastUpdate();
-                    }
-                });
-            }
             storeSession.commit();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             storeSession.rollback();
             throw e;
         }

@@ -16,7 +16,9 @@
 
 <head>
 
-    <title><fmt:message key="applicationTitle" /> v${cwfn:sysprop('mytunesrss.version')}</title>
+    <title>
+        <fmt:message key="applicationTitle" />
+        v${cwfn:sysprop('mytunesrss.version')}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
     <!--[if IE]>
@@ -29,11 +31,15 @@
 
 <div class="body">
 
-    <h1 class="search"><span><fmt:message key="myTunesRss"/></span></h1>
+    <h1 class="search"><span><fmt:message key="myTunesRss" /></span></h1>
 
     <ul class="links">
-        <li><a href="${servletUrl}/showSettings"><fmt:message key="doSettings"/></a></li>
-        <li style="float:right"><a href="${servletUrl}/logout"><fmt:message key="doLogout"/></a></li>
+        <li><a href="${servletUrl}/showSettings">
+            <fmt:message key="doSettings" />
+        </a></li>
+        <li style="float:right"><a href="${servletUrl}/logout">
+            <fmt:message key="doLogout" />
+        </a></li>
     </ul>
 
     <jsp:include page="/incl_error.jsp" />
@@ -44,19 +50,25 @@
             <tr>
                 <td class="search">
                     <input class="text" type="text" name="searchTerm" value="<c:out value="${param.searchTerm}"/>" style="width:120px;" />
-                    <input type="hidden" name="backUrl" value="${backUrl}" />
-                    <input class="button" type="submit" value="<fmt:message key="doSearch"/>" />
+                    <input type="hidden" name="backUrl" value="${backUrl}" /> <input class="button"
+                                                                                     type="submit"
+                                                                                     value="<fmt:message key="doSearch"/>" />
                 </td>
                 <td class="links">
-                    <a href="${servletUrl}/browseArtist?page=1"
-                       style="background-image:url('${appUrl}/images/library_small.gif');"> <fmt:message key="browseLibrary"/> </a>
+                    <a href="${servletUrl}/browseArtist?page=1" style="background-image:url('${appUrl}/images/library_small.gif');">
+                        <fmt:message key="browseLibrary" />
+                    </a>
                     <c:choose>
                         <c:when test="${empty sessionScope.playlist}">
-                            <a href="${servletUrl}/showPlaylistManager" style="background-image:url('${appUrl}/images/feeds_small.gif');"> <fmt:message key="managePlaylists"/> </a>
+                            <a href="${servletUrl}/showPlaylistManager" style="background-image:url('${appUrl}/images/feeds_small.gif');">
+                                <fmt:message key="managePlaylists" />
+                            </a>
                         </c:when>
                         <c:otherwise>
-                            <a href="${servletUrl}/editPlaylist?backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"
-                               style="background-image:url('${appUrl}/images/feeds_small.gif');"> <fmt:message key="finishPlaylist"/> </a>
+                            <a href="${servletUrl}/editPlaylist?backUrl=${cwfn:encodeUrl(backUrl)}"
+                               style="background-image:url('${appUrl}/images/feeds_small.gif');">
+                                <fmt:message key="finishPlaylist" />
+                            </a>
                         </c:otherwise>
                     </c:choose>
                 </td>
@@ -69,32 +81,58 @@
 
     <table cellspacing="0">
         <tr>
-            <th class="active"><fmt:message key="playlists"/></th>
-						<c:if test="${!empty playlists}">
-      	      <th colspan="${cwfn:choose(config.showDownload, 2, 1) + fn:length(config.feedTypes)}"><fmt:message key="tracks"/></th>
-						</c:if>
+            <th class="active">
+                <fmt:message key="playlists" />
+            </th>
+            <c:if test="${!empty playlists}">
+                <th colspan="${cwfn:choose(config.showDownload, 2, 1) + config.feedTypeCount}">
+                    <fmt:message key="tracks" />
+                </th>
+            </c:if>
         </tr>
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-                <td class="${fn:toLowerCase(playlist.type)}"><c:out value="${playlist.name}" /></td>
-                <td class="tracks"><a href="${servletUrl}/browseTrack?playlist=${playlist.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}"> ${playlist.trackCount} </a></td>
-                <c:forEach items="${config.feedTypes}" var="feedType">
+                <td class="${fn:toLowerCase(playlist.type)}">
+                    <c:out value="${playlist.name}" />
+                </td>
+                <td class="tracks">
+                    <c:choose>
+                        <c:when test="${playlist.trackCount >= 0}">
+                            <a href="${servletUrl}/browseTrack?playlist=${cwfn:encodeUrl(playlist.id)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${playlist.trackCount} </a>
+                        </c:when>
+                        <c:otherwise>
+                            &nbsp;
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+                <c:if test="${authUser.rss && config.showRss}">
                     <td class="icon">
-                        <a href="${servletUrl}/create${fn:toUpperCase(feedType)}/authHash=${authHash}/playlist=${playlist.id}/${mtfn:cleanFileName(playlist.name)}.${config.feedFileSuffix[feedType]}">
-                            <img src="${appUrl}/images/${feedType}${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="${feedType}" /> </a>
+                        <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:cleanFileName(playlist.name)}.xml">
+                            <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="rss" /> </a>
                     </td>
-                </c:forEach>
-                <c:if test="${config.showDownload}">
+                </c:if>
+                <c:if test="${authUser.m3u && config.showM3u}">
                     <td class="icon">
-                        <a href="${servletUrl}/getZipArchive/authHash=${authHash}/playlist=${playlist.id}/${mtfn:cleanFileName(playlist.name)}.zip">
-                            <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
+                        <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:cleanFileName(playlist.name)}.m3u">
+                            <img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="m3u" /> </a>
+                    </td>
+                </c:if>
+                <c:if test="${authUser.download && config.showDownload}">
+                    <td class="icon">
+                        <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:cleanFileName(playlist.name)}.zip">
+                            <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                 alt="<fmt:message key="download"/>" /></a>
                     </td>
                 </c:if>
             </tr>
         </c:forEach>
-			<c:if test="${empty playlists}">
-				<tr><td><em><fmt:message key="noPlaylists"/></em></td></tr>
-			</c:if>
+        <c:if test="${empty playlists}">
+            <tr>
+                <td><em>
+                    <fmt:message key="noPlaylists" />
+                </em></td>
+            </tr>
+        </c:if>
     </table>
 
     <c:if test="${!empty pager}">

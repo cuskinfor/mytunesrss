@@ -116,7 +116,7 @@
         <properties>
           <opaque value="false"/>
         </properties>
-        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.iTunes"/>
+        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.datasource"/>
         <children>
           <component id="c295c" class="javax.swing.JTextField" binding="myTunesXmlPathInput">
             <constraints>

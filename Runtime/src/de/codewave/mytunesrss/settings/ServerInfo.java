@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.server.*;
 import de.codewave.utils.network.*;
+import de.codewave.utils.swing.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -49,29 +50,23 @@ public class ServerInfo {
             }
         });
         dialog.add(myRootPanel);
-        dialog.pack();
-        dialog.setLocationRelativeTo(parent);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         myConnections.setModel(myConnectionsTableModel);
         myTimer.schedule(new RefreshTask(), 1000);
-        dialog.setVisible(true);
+        SwingUtils.packAndShowRelativeTo(dialog, parent);
     }
 
     private void fetchServerStatusLater() {
-        SwingUtilities.invokeLater(new Runnable() {
+        new Thread(new Runnable() {
             public void run() {
-                new Thread(new Runnable() {
-                    public void run() {
-                        fetchLocalAddresses();
-                    }
-                }).start();
-                new Thread(new Runnable() {
-                    public void run() {
-                        fetchExternalAddress();
-                    }
-                }).start();
+                fetchLocalAddresses();
             }
-        });
+        }, "FetchLocalAddresses").start();
+        new Thread(new Runnable() {
+            public void run() {
+                fetchExternalAddress();
+            }
+        }, "FetchExternalAddress").start();
     }
 
     private void init() {
@@ -81,30 +76,38 @@ public class ServerInfo {
     }
 
     private void fetchLocalAddresses() {
-        String[] localAddresses = NetworkUtils.getLocalNetworkAddresses();
-        final StringBuffer info = new StringBuffer();
-        if (localAddresses != null && localAddresses.length > 0) {
-            for (int i = 0; i < localAddresses.length; i++) {
-                info.append("http://").append(localAddresses[i]).append(":").append(myServerPort);
-                if (i + 1 < localAddresses.length) {
-                    info.append("\n");
+        final String[] localAddresses = NetworkUtils.getLocalNetworkAddresses();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                StringBuffer info = new StringBuffer();
+                if (localAddresses != null && localAddresses.length > 0) {
+                    for (int i = 0; i < localAddresses.length; i++) {
+                        info.append("http://").append(localAddresses[i]).append(":").append(myServerPort);
+                        if (i + 1 < localAddresses.length) {
+                            info.append("\n");
+                        }
+                    }
+                    myInternalAddresses.setText(info.toString());
+                } else {
+                    myInternalAddresses.setText(MyTunesRss.BUNDLE.getString("serverStatus.unavailable"));
                 }
+                myRootPanel.validate();
             }
-            myInternalAddresses.setText(info.toString());
-        } else {
-            myInternalAddresses.setText(MyTunesRss.BUNDLE.getString("serverStatus.unavailable"));
-        }
-        myRootPanel.validate();
+        });
     }
 
     private void fetchExternalAddress() {
-        String externalAddress = getExternalAddress();
-        if (StringUtils.isNotEmpty(externalAddress) && !externalAddress.equals("unreachable")) {
-            myExternalAddress.setText("http://" + externalAddress + ":" + myServerPort);
-        } else {
-            myExternalAddress.setText(MyTunesRss.BUNDLE.getString("serverStatus.unavailable"));
-        }
-        myRootPanel.validate();
+        final String externalAddress = getExternalAddress();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (StringUtils.isNotEmpty(externalAddress) && !"unreachable".equals(externalAddress)) {
+                    myExternalAddress.setText("http://" + externalAddress + ":" + myServerPort);
+                } else {
+                    myExternalAddress.setText(MyTunesRss.BUNDLE.getString("serverStatus.unavailable"));
+                }
+                myRootPanel.validate();
+            }
+        });
     }
 
     private String getExternalAddress() {

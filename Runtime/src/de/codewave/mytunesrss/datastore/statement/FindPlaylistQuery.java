@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.utils.sql.*;
+
 import java.sql.*;
 import java.util.*;
 
@@ -16,17 +18,18 @@ public class FindPlaylistQuery extends DataStoreQuery<Collection<Playlist>> {
     private String mySql;
 
     public FindPlaylistQuery() {
-        mySql = "SELECT id AS id, name AS name, type AS type, track_count AS track_count FROM playlist ORDER BY name";
+        mySql = "SELECT id AS id, name AS name, type AS type, track_count AS track_count FROM playlist WHERE track_count > 0 ORDER BY name";
     }
 
     public FindPlaylistQuery(PlaylistType type) {
-        mySql = "SELECT id AS id, name AS name, type AS type, track_count AS track_count FROM playlist WHERE type = ? ORDER BY name";
-        myParameters = new Object[]{type.name()};
+        mySql =
+                "SELECT id AS id, name AS name, type AS type, track_count AS track_count FROM playlist WHERE track_count > 0 AND type = ? ORDER BY name";
+        myParameters = new Object[] {type.name()};
     }
 
     public FindPlaylistQuery(String playlistId) {
         mySql = "SELECT id AS id, name AS name, type AS type, track_count AS track_count FROM playlist WHERE id = ?";
-        myParameters = new Object[]{playlistId};
+        myParameters = new Object[] {playlistId};
     }
 
     public Collection<Playlist> execute(Connection connection) throws SQLException {

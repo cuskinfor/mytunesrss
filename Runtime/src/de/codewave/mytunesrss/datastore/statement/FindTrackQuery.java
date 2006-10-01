@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 
 import java.io.*;
@@ -55,7 +56,8 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
         for (int i = 0; i < (searchTerms != null && searchTerms.length > 0 ? searchTerms.length : 1); i++) {
             likes.append("AND ( LCASE(name) LIKE ? ESCAPE '\\' OR LCASE(album) LIKE ? ESCAPE '\\' OR LCASE(artist) LIKE ? ESCAPE '\\' ) ");
         }
-        return "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE" + likes.substring(3) + "ORDER BY " + artistSort + "album, track_number, name";
+        return "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE" + likes.substring(3) + "ORDER BY " +
+                artistSort + "album, track_number, name";
     }
 
     public static FindTrackQuery getForAlbum(String[] albums, boolean sortByArtistFirst) {
@@ -65,8 +67,8 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
             query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE album IN (" +
                     SQLUtils.createParameters(albums.length) + ") ORDER BY " + artistSort + "album, track_number, name";
         } else {
-            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE album = ? ORDER BY " + artistSort +
-                    "album, track_number, name";
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE album = ? ORDER BY " +
+                    artistSort + "album, track_number, name";
         }
         query.myParameters = albums;
         return query;
@@ -79,8 +81,8 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
             query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE artist IN (" +
                     SQLUtils.createParameters(artists.length) + ") ORDER BY " + artistSort + "album, track_number, name";
         } else {
-            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE artist = ? ORDER BY " + artistSort +
-                    "album, track_number, name";
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE artist = ? ORDER BY " +
+                    artistSort + "album, track_number, name";
         }
         query.myParameters = artists;
         return query;
@@ -125,7 +127,7 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
             track.setTime(resultSet.getInt("TIME"));
             track.setTrackNumber(resultSet.getInt("TRACK_NUMBER"));
             String pathname = resultSet.getString("FILE");
-            track.setFile(StringUtils.isNotEmpty(pathname) ? new File(pathname): null);
+            track.setFile(StringUtils.isNotEmpty(pathname) ? new File(pathname) : null);
             track.setProtected(resultSet.getBoolean("PROTECTED"));
             track.setVideo(resultSet.getBoolean("VIDEO"));
             return track;

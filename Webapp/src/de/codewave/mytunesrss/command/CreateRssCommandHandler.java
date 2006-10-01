@@ -7,9 +7,11 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.mp3.*;
+import de.codewave.utils.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
+import javax.servlet.http.*;
 import java.net.*;
 import java.text.*;
 import java.util.*;
@@ -23,38 +25,43 @@ public class CreateRssCommandHandler extends CreatePlaylistCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        String feedUrl = getRequest().getRequestURL().toString();
-        String channel = feedUrl.substring(feedUrl.lastIndexOf('/') + 1);
-        channel = channel.substring(0, channel.lastIndexOf('.'));
-        getRequest().setAttribute("channel", URLDecoder.decode(channel.replace('_', ' '), "UTF-8"));
-        getRequest().setAttribute("pubDate", PUBLISH_DATE_FORMAT.format(new Date()));
-        getRequest().setAttribute("feedUrl", feedUrl);
-        Collection<Track> tracks = getTracks();
-        if (tracks != null && !tracks.isEmpty()) {
-            if (getWebConfig().isRssArtwork()) {
-                for (Track track : tracks) {
-                    try {
-                        Image image = ID3Utils.getImage(track);
-                        if (image != null && image.getData() != null && image.getData().length > 0 && StringUtils.isNotEmpty(image.getMimeType())) {
-                            getRequest().setAttribute("imageTrackId", track.getId());
-                            break;// use first available image
-                        } else {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Could not extract valid artwork from mp3 file.");
+        if (getAuthUser().isRss()) {
+            String feedUrl = getRequest().getRequestURL().toString();
+            String channel = feedUrl.substring(feedUrl.lastIndexOf('/') + 1);
+            channel = channel.substring(0, channel.lastIndexOf('.'));
+            getRequest().setAttribute("channel", MiscUtils.decodeUrl(channel.replace('_', ' ')));
+            getRequest().setAttribute("pubDate", PUBLISH_DATE_FORMAT.format(new Date()));
+            getRequest().setAttribute("feedUrl", feedUrl);
+            Collection<Track> tracks = getTracks();
+            if (tracks != null && !tracks.isEmpty()) {
+                if (getWebConfig().isRssArtwork()) {
+                    for (Track track : tracks) {
+                        try {
+                            Image image = ID3Utils.getImage(track);
+                            if (image != null && image.getData() != null && image.getData().length > 0 &&
+                                    StringUtils.isNotEmpty(image.getMimeType())) {
+                                getRequest().setAttribute("imageTrackId", track.getId());
+                                break;// use first available image
+                            } else {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Could not extract valid artwork from mp3 file.");
+                                }
                             }
-                        }
-                    } catch (Exception e) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Could not extract valid artwork from mp3 file.", e);
+                        } catch (Exception e) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Could not extract valid artwork from mp3 file.", e);
+                            }
                         }
                     }
                 }
+                getRequest().setAttribute("tracks", tracks);
+                forward(MyTunesRssResource.TemplateRss);
+            } else {
+                addError(new BundleError("error.emptyFeed"));
+                forward(MyTunesRssCommand.ShowPortal);// todo: redirect to backUrl
             }
-            getRequest().setAttribute("tracks", tracks);
-            forward(MyTunesRssResource.TemplateRss);
         } else {
-            addError(new BundleError("error.emptyFeed"));
-            forward(MyTunesRssCommand.ShowPortal);// todo: redirect to backUrl
+            getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
     }
 }

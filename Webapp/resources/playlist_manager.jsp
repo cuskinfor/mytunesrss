@@ -33,7 +33,7 @@
     </h1>
 
     <ul class="links">
-        <li><a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:urlEncode(browseArtistUrl, 'UTF-8')}"><fmt:message key="newPlaylist"/></a></li>
+        <li><a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:encodeUrl(browseArtistUrl)}"><fmt:message key="newPlaylist"/></a></li>
     </ul>
 
     <jsp:include page="/incl_error.jsp" />
@@ -48,13 +48,13 @@
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                 <td class="mytunes"><c:out value="${playlist.name}" /></td>
-                <td class="tracks"><a href="${servletUrl}/browseTrack?playlist=${playlist.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">${playlist.trackCount}</a></td>
+                <td class="tracks"><a href="${servletUrl}/browseTrack?playlist=${cwfn:encodeUrl(playlist.id)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">${playlist.trackCount}</a></td>
                 <td class="icon">
-                    <a href="${servletUrl}/loadAndEditPlaylist?allowEditEmpty=true&amp;playlist=${playlist.id}&amp;backUrl=${cwfn:urlEncode(backUrl, 'UTF-8')}">
+                    <a href="${servletUrl}/loadAndEditPlaylist?allowEditEmpty=true&amp;playlist=${cwfn:encodeUrl(playlist.id)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
                         <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                 </td>
                 <td class="icon">
-                    <a href="${servletUrl}/deletePlaylist/playlist=${playlist.id}">
+                    <a href="${servletUrl}/deletePlaylist/playlist=${cwfn:encodeUrl(playlist.id)}">
                         <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                 </td>
             </tr>

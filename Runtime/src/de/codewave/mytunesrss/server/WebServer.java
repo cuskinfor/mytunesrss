@@ -5,11 +5,14 @@
 package de.codewave.mytunesrss.server;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.*;
 import de.codewave.utils.servlet.*;
 import org.apache.catalina.*;
+import org.apache.catalina.realm.*;
 import org.apache.catalina.connector.*;
 import org.apache.catalina.session.*;
 import org.apache.catalina.startup.*;
+import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
 import java.io.*;
@@ -21,50 +24,61 @@ import java.util.*;
  */
 public class WebServer {
     private static final Log LOG = LogFactory.getLog(WebServer.class);
+    private static final int MIN_PORT = 1;
+    private static final int MAX_PORT = 65535;
 
     private Embedded myEmbeddedTomcat;
     private Context myContext;
-    private String myLastErrorMessage;
 
-    public synchronized boolean start(int port, Map<String, Object> contextEntries) {
+    public synchronized boolean start() {
         if (myEmbeddedTomcat == null) {
-            try {
-                myEmbeddedTomcat = createServer("mytunesrss", null, port, new File("."), "ROOT", "", contextEntries);
-                if (myEmbeddedTomcat != null) {
-
-                    myEmbeddedTomcat.start();
-                    byte health = checkServerHealth(port);
-                    if (health != CheckHealthResult.OK) {
-                        myEmbeddedTomcat.stop();
-                        myEmbeddedTomcat = null;
-                        if (health == CheckHealthResult.EMPTY_LIBRARY) {
-                            myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverEmptyLibrary");
-                        } else {
-                            myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverHealth");
+            if (MyTunesRss.CONFIG.getPort() < MIN_PORT || MyTunesRss.CONFIG.getPort() > MAX_PORT) {
+                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.illegalServerPort"));
+            } else if (MyTunesRss.CONFIG.getUser("default") == null || MyTunesRss.CONFIG.getUser("default").getPasswordHash() == null ||
+                    MyTunesRss.CONFIG.getUser("default").getPasswordHash().length == 0) {
+                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.missingAuthPassword"));
+            } else {
+                try {
+                    final Map<String, Object> contextEntries = new HashMap<String, Object>();
+                    contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
+                    contextEntries.put(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
+                    myEmbeddedTomcat = createServer("mytunesrss", null, MyTunesRss.CONFIG.getPort(), new File("."), "ROOT", "", contextEntries);
+                    if (myEmbeddedTomcat != null) {
+                        myEmbeddedTomcat.start();
+                        byte health = checkServerHealth(MyTunesRss.CONFIG.getPort());
+                        if (health != CheckHealthResult.OK) {
+                            myEmbeddedTomcat.stop();
+                            myEmbeddedTomcat = null;
+                            if (health == CheckHealthResult.EMPTY_LIBRARY) {
+                                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.serverEmptyLibrary"));
+                            } else {
+                                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.fatal"));
+                            }
+                            myEmbeddedTomcat = null;
+                            return false;
                         }
+                        return true;
+                    } else {
+                        MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.fatal"));
                         myEmbeddedTomcat = null;
                         return false;
                     }
-                } else {
-                    myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverHealth");
+                } catch (LifecycleException e) {
+                    if (e.getMessage().contains("BindException")) {
+                        MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.serverAddressBind"));
+                    } else {
+                        MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.fatal") + e.getMessage());
+                    }
+                    myEmbeddedTomcat = null;
+                    return false;
+                } catch (IOException e) {
+                    MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.fatal") + e.getMessage());
                     myEmbeddedTomcat = null;
                     return false;
                 }
-            } catch (LifecycleException e) {
-                if (e.getMessage().contains("BindException")) {
-                    myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverAddressBind");
-                } else {
-                    myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverStart") + e.getMessage();
-                }
-                myEmbeddedTomcat = null;
-                return false;
-            } catch (IOException e) {
-                myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.serverStart") + e.getMessage();
-                myEmbeddedTomcat = null;
-                return false;
             }
         }
-        return true;
+        return false;
     }
 
     private byte checkServerHealth(int port) {
@@ -143,15 +157,11 @@ public class WebServer {
                 myEmbeddedTomcat.stop();
                 myEmbeddedTomcat = null;
             } catch (LifecycleException e) {
-                myLastErrorMessage = MyTunesRss.BUNDLE.getString("error.stopServer") + e.getMessage();
+                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.stopServer") + e.getMessage());
                 return false;
             }
         }
         return true;
-    }
-
-    public synchronized String getLastErrorMessage() {
-        return myLastErrorMessage;
     }
 
     public synchronized boolean isRunning() {
@@ -160,9 +170,8 @@ public class WebServer {
 
     public List<MyTunesRssSessionInfo> getSessionInfos() {
         if (isRunning()) {
-            List<MyTunesRssSessionInfo> sessionInfos =
-                    new ArrayList<MyTunesRssSessionInfo>((Collection<MyTunesRssSessionInfo>)SessionManager
-                            .getAllSessionInfo(myContext.getServletContext()));
+            List<MyTunesRssSessionInfo> sessionInfos = new ArrayList<MyTunesRssSessionInfo>((Collection<MyTunesRssSessionInfo>)SessionManager
+                    .getAllSessionInfo(myContext.getServletContext()));
             Collections.sort(sessionInfos, new Comparator<MyTunesRssSessionInfo>() {
                 public int compare(MyTunesRssSessionInfo sessionInfo, MyTunesRssSessionInfo sessionInfo1) {
                     return (int)(sessionInfo.getConnectTime() - sessionInfo1.getConnectTime());

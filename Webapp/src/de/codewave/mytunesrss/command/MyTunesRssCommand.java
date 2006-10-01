@@ -33,6 +33,7 @@ public enum MyTunesRssCommand implements Command {
     ShowTrackInfo("showTrackInfo", ShowTrackInfoCommandHandler.class),
     GetZipArchive("getZipArchive", GetZipArchiveCommandHandler.class),
     ShowTrackImage("showTrackImage", ShowTrackImageCommandHandler.class),
+    DownloadTrack("downloadTrack", DownloadTrackCommandHandler.class),
     PlayTrack("playTrack", PlayTrackCommandHandler.class);
 
     private String myName;

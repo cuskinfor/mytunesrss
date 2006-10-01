@@ -6,13 +6,10 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.settings.*;
 import de.codewave.mytunesrss.task.*;
+import org.apache.commons.logging.*;
 import snoozesoft.systray4j.*;
 
 import javax.swing.*;
-import java.io.*;
-import java.net.*;
-
-import org.apache.commons.logging.*;
 
 /**
  * de.codewave.mytunesrss.SysTray
@@ -99,8 +96,8 @@ public class SysTray {
         }
 
         private void showFrame() {
-            mySettingsForm.getFrame().setVisible(true);
-            mySettingsForm.getFrame().setExtendedState(JFrame.NORMAL);
+            MyTunesRss.ROOT_FRAME.setVisible(true);
+            MyTunesRss.ROOT_FRAME.setExtendedState(JFrame.NORMAL);
             MyTunesRss.SYSTRAYMENU.hide();
         }
 
@@ -111,14 +108,8 @@ public class SysTray {
             } else if ("show".equals(sysTrayMenuEvent.getActionCommand())) {
                 showFrame();
             } else if ("update_database".equals(sysTrayMenuEvent.getActionCommand())) {
-                try {
-                    PleaseWait.start(mySettingsForm.getFrame(), null, MyTunesRss.BUNDLE.getString("settings.buildDatabase"), false, false, new DatabaseBuilderTask(new File(mySettingsForm.getGeneralForm().getTunesXmlPathInput().getText()).toURL(), mySettingsForm.getOptionsForm()));
-                } catch (MalformedURLException e1) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not build database.", e1);
-                    }
-
-                }
+                DatabaseBuilderTask task = new GuiDatabaseBuilderTask(mySettingsForm.getOptionsForm());
+                MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("settings.buildDatabase"), null, false, task);
             } else if ("stop_server".equals(sysTrayMenuEvent.getActionCommand())) {
                 mySettingsForm.doStopServer();
             } else if ("start_server".equals(sysTrayMenuEvent.getActionCommand())) {

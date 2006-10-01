@@ -4,13 +4,11 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
 import java.sql.*;
-import java.util.*;
-
-import de.codewave.mytunesrss.datastore.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackStatement
@@ -28,16 +26,19 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
     private String myFileName;
     private boolean myProtected;
     private boolean myVideo;
+    private TrackSource mySource;
     private PreparedStatement myStatement;
-    private static final String SQL = "INSERT INTO track ( id, name, artist, album, time, track_number, file, protected, video ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+    private static final String SQL =
+            "INSERT INTO track ( id, name, artist, album, time, track_number, file, protected, video, source ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
     public InsertTrackStatement() {
         // intentionally left blank
     }
 
-    public InsertTrackStatement(DataStoreSession storeSession) {
+    public InsertTrackStatement(DataStoreSession storeSession, TrackSource source) {
         try {
             myStatement = storeSession.prepare(SQL);
+            mySource = source;
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not prepare statement, trying again during execution.", e);
@@ -94,10 +95,11 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
             statement.setString(7, myFileName);
             statement.setBoolean(8, myProtected);
             statement.setBoolean(9, myVideo);
+            statement.setString(10, mySource.name());
             statement.executeUpdate();
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
-                LOG.error(String.format("Could not insert track with ID \"%s\" into database.", myId) , e);
+                LOG.error(String.format("Could not insert track with ID \"%s\" into database.", myId), e);
             }
         }
     }

@@ -9,7 +9,6 @@ import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
 import javax.servlet.http.*;
-import java.io.*;
 import java.util.*;
 
 /**
@@ -19,20 +18,17 @@ public class WebConfig {
     private static final Log LOG = LogFactory.getLog(WebConfig.class);
 
     private static final String CONFIG_COOKIE_NAME = "MyTunesRSSConfig";
+    private static final String CFG_USER_NAME = "userName";
     private static final String CFG_PASSWORD_HASH = "passwordHash";
-    private static final String CFG_PASSWORD_HASH_STORED = "rememberLogin";
-    private static final String CFG_FEED_TYPES = "feedTypes";
-    private static final String CFG_SUFFIX = "suffix.";
+    private static final String CFG_LOGIN_STORED = "rememberLogin";
+    private static final String CFG_FEED_TYPE_RSS = "feedTypeRss";
+    private static final String CFG_FEED_TYPE_M3U = "feedTypeM3u";
     private static final String CFG_RSS_LIMIT = "rssLimit";
     private static final String CFG_PAGE_SIZE = "pageSize";
     private static final String CFG_SHOW_DOWNLOAD = "showDownload";
     private static final String CFG_RSS_ARTWORK = "rssArtwork";
+    private static final String CFG_RANDOM_PLAYLIST_SIZE = "randomPlaylistSize";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
-
-    static {
-        FEED_FILE_SUFFIXES.put("rss", "xml");
-        FEED_FILE_SUFFIXES.put("m3u", "m3u");
-    }
 
     Map<String, String> myConfigValues = new HashMap<String, String>();
 
@@ -50,13 +46,15 @@ public class WebConfig {
     }
 
     private void initWithDefaults() {
-        myConfigValues.put(CFG_FEED_TYPES, "rss,m3u");
+        myConfigValues.put(CFG_FEED_TYPE_RSS, "true");
+        myConfigValues.put(CFG_FEED_TYPE_M3U, "true");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
-        myConfigValues.put(CFG_PASSWORD_HASH_STORED, "false");
+        myConfigValues.put(CFG_LOGIN_STORED, "false");
         myConfigValues.put(CFG_PASSWORD_HASH, "");
         myConfigValues.put(CFG_PAGE_SIZE, "0");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
         myConfigValues.put(CFG_RSS_ARTWORK, "true");
+        myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
     }
 
     public void load(HttpServletRequest request) {
@@ -67,11 +65,16 @@ public class WebConfig {
             for (int i = 0; i < cookies.length; i++) {
                 Cookie cookie = cookies[i];
                 if (CONFIG_COOKIE_NAME.equals(cookie.getName())) {
-                    String cookieValue = decode(cookie.getValue());
+                    String cookieValue = "";
+                    try {
+                        cookieValue = Base64Utils.decodeToString(cookie.getValue());
+                    } catch (Exception e) {
+                        // intentionally left blank
+                    }
                     for (String keyValueToken : StringUtils.split(cookieValue, ';')) {
-                        String[] keyValuePair = StringUtils.split(keyValueToken, '=');
-                        if (keyValuePair.length > 0) {
-                            myConfigValues.put(keyValuePair[0], keyValuePair.length > 1 ? keyValuePair[1] : "");
+                        int k = keyValueToken.indexOf('=');
+                        if (k > 0) {
+                            myConfigValues.put(keyValueToken.substring(0, k), k < keyValueToken.length() - 1 ? keyValueToken.substring(k + 1) : "");
                         } else {
                             if (LOG.isWarnEnabled()) {
                                 LOG.warn("Illegal configuration token found in cookie: \"" + keyValueToken + "\".");
@@ -88,45 +91,14 @@ public class WebConfig {
         for (Map.Entry<String, String> entry : myConfigValues.entrySet()) {
             value.append(";").append(entry.getKey()).append("=").append(entry.getValue());
         }
-        Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, encode(value.substring(1)));
+        Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, Base64Utils.encode(value.substring(1)));
         cookie.setComment("MyTunesRSS settings cookie");
         cookie.setMaxAge(3600 * 24 * 365);// one year
         response.addCookie(cookie);
     }
 
-    private String encode(String text) {
-        StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < text.length(); i++) {
-            buffer.append(Integer.toHexString(text.charAt(i)));
-        }
-        return buffer.toString().toUpperCase();
-    }
-
-    private String decode(String text) {
-        StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < text.length(); i += 2) {
-            buffer.append((char)Integer.parseInt(text.substring(i, i + 2), 16));
-        }
-        return buffer.toString();
-    }
-
-    public String getSuffix(File file) {
-        String name = file.getName();
-        int suffixSeparatorIndex = name.lastIndexOf(".");
-        if (suffixSeparatorIndex > -1 && suffixSeparatorIndex + 1 < name.length()) {
-            String suffix = name.substring(suffixSeparatorIndex + 1);
-            String pseudoSuffix = myConfigValues.get(CFG_SUFFIX + suffix.toLowerCase());
-            return StringUtils.isNotEmpty(pseudoSuffix) ? pseudoSuffix : suffix;
-        }
-        return null;
-    }
-
     public Map<String, String> getMap() {
         return Collections.unmodifiableMap(myConfigValues);
-    }
-
-    public void addFileSuffix(String originalSuffix, String fakeSuffix) {
-        myConfigValues.put(CFG_SUFFIX + originalSuffix.toLowerCase(), fakeSuffix.toLowerCase());
     }
 
     public void setShowDownload(boolean showDownload) {
@@ -137,20 +109,20 @@ public class WebConfig {
         return Boolean.valueOf(myConfigValues.get(CFG_SHOW_DOWNLOAD));
     }
 
-    public boolean isPasswordHashStored() {
-        String passwordHashStored = myConfigValues.get(CFG_PASSWORD_HASH_STORED);
+    public boolean isLoginStored() {
+        String passwordHashStored = myConfigValues.get(CFG_LOGIN_STORED);
         return Boolean.valueOf(passwordHashStored);
     }
 
-    public void setPasswordHashStored(boolean passwordHashStored) {
-        myConfigValues.put(CFG_PASSWORD_HASH_STORED, Boolean.toString(passwordHashStored));
+    public void setLoginStored(boolean passwordHashStored) {
+        myConfigValues.put(CFG_LOGIN_STORED, Boolean.toString(passwordHashStored));
     }
 
     public byte[] getPasswordHash() {
         String passwordHash = myConfigValues.get(CFG_PASSWORD_HASH);
         if (StringUtils.isNotEmpty(passwordHash)) {
             try {
-                return MiscUtils.fromHexString(passwordHash);
+                return Base64Utils.decode(passwordHash);
             } catch (IllegalArgumentException e) {
                 return null;// ignore exception
             }
@@ -159,21 +131,37 @@ public class WebConfig {
     }
 
     public void setPasswordHash(byte[] passwordHash) {
-        myConfigValues.put(CFG_PASSWORD_HASH, MiscUtils.toHexString(passwordHash));
+        myConfigValues.put(CFG_PASSWORD_HASH, Base64Utils.encode(passwordHash));
     }
 
-    public void clearFeedTypes() {
-        myConfigValues.remove(CFG_FEED_TYPES);
+    public String getUserName() {
+        return myConfigValues.get(CFG_USER_NAME);
     }
 
-    public String[] getFeedTypes() {
-        String feedTypes = myConfigValues.get(CFG_FEED_TYPES);
-        return StringUtils.split(feedTypes, ',');
+    public void setUserName(String userName) {
+        myConfigValues.put(CFG_USER_NAME, userName);
     }
 
-    public void addFeedType(String feedType) {
-        String feedTypes = myConfigValues.get(CFG_FEED_TYPES);
-        myConfigValues.put(CFG_FEED_TYPES, feedTypes != null ? feedTypes + "," + feedType : feedType);
+    public boolean isShowRss() {
+        return Boolean.valueOf(myConfigValues.get(CFG_FEED_TYPE_RSS));
+    }
+
+    public void setShowRss(boolean showRss) {
+        myConfigValues.put(CFG_FEED_TYPE_RSS, Boolean.toString(showRss));
+    }
+
+    public boolean isShowM3u() {
+        return Boolean.valueOf(myConfigValues.get(CFG_FEED_TYPE_M3U));
+    }
+
+    public void setShowM3u(boolean showM3u) {
+        myConfigValues.put(CFG_FEED_TYPE_M3U, Boolean.toString(showM3u));
+    }
+
+    public int getFeedTypeCount() {
+        int count = isShowRss() ? 1 : 0;
+        count += (isShowM3u() ? 1 : 0);
+        return count;
     }
 
     public int getRssFeedLimit() {
@@ -211,5 +199,13 @@ public class WebConfig {
 
     public void setRssArtwork(boolean rssArtwork) {
         myConfigValues.put(CFG_RSS_ARTWORK, Boolean.toString(rssArtwork));
+    }
+
+    public int getRandomPlaylistSize() {
+        return Integer.parseInt(myConfigValues.get(CFG_RANDOM_PLAYLIST_SIZE));
+    }
+
+    public void setRandomPlaylistSize(int count) {
+        myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, Integer.toString(count));
     }
 }

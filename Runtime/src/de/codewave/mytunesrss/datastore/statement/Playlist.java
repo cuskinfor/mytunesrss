@@ -13,6 +13,17 @@ public class Playlist {
     private PlaylistType myType;
     private int myTrackCount;
 
+    public Playlist() {
+        // intentionally left blank
+    }
+
+    public Playlist(String id, PlaylistType type, String name, int trackCount) {
+        myId = id;
+        myType = type;
+        myName = name;
+        myTrackCount = trackCount;
+    }
+
     public String getId() {
         return myId;
     }

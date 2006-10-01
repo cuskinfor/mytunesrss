@@ -1,15 +1,10 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.task.*;
-import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
 import java.util.Timer;
 import java.util.prefs.*;
 
@@ -17,11 +12,6 @@ import java.util.prefs.*;
  * de.codewave.mytunesrss.settings.Settings
  */
 public class Settings {
-    private static final Log LOG = LogFactory.getLog(Settings.class);
-    private static final int MIN_PORT = 1;
-    private static final int MAX_PORT = 65535;
-
-    private JFrame myFrame;
     private JPanel myRootPanel;
     private General myGeneralForm;
     private Options myOptionsForm;
@@ -29,10 +19,6 @@ public class Settings {
     private JButton myStartServerButton;
     private JButton myStopServerButton;
     private JButton myQuitButton;
-
-    public JFrame getFrame() {
-        return myFrame;
-    }
 
     public General getGeneralForm() {
         return myGeneralForm;
@@ -46,11 +32,7 @@ public class Settings {
         return myRootPanel;
     }
 
-    public void init(JFrame frame) {
-        myGeneralForm.init(this);
-        myOptionsForm.init(this);
-        myInfoForm.init(this);
-        myFrame = frame;
+    public void init() {
         myStartServerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 doStartServer();
@@ -66,6 +48,9 @@ public class Settings {
                 doQuitApplication();
             }
         });
+        myGeneralForm.init();
+        myOptionsForm.init();
+        myInfoForm.init();
     }
 
     public void updateConfigFromGui() {
@@ -95,66 +80,17 @@ public class Settings {
     }
 
     public void doStartServer() {
-        int port;
-        try {
-            port = Integer.parseInt(myGeneralForm.getPortInput().getText().trim());
-        } catch (NumberFormatException e) {
-            port = MIN_PORT - 1;
+        updateConfigFromGui();
+        DatabaseBuilderTask databaseBuilderTask = new GuiDatabaseBuilderTask(myOptionsForm);
+        MyTunesRss.startWebserver(databaseBuilderTask);
+        if (MyTunesRss.WEBSERVER.isRunning()) {
+            setGuiMode(GuiMode.ServerRunning);
+            myGeneralForm.setServerRunningStatus(MyTunesRss.CONFIG.getPort());
         }
-        final File library = new File(myGeneralForm.getTunesXmlPathInput().getText().trim());
-        if (port < MIN_PORT || port > MAX_PORT) {
-            SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.illegalServerPort"));
-        } else if (!new General.ITunesLibraryFileFilter().accept(library.getParentFile(), library.getName())) {
-            SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.illegalTunesXml"));
-        } else if (myGeneralForm.getPasswordInput().getPassword().length == 0) {
-            SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.missingAuthPassword"));
-        } else {
-            updateConfigFromGui();
-            try {
-                URL libraryUrl = new File(MyTunesRss.CONFIG.getLibraryXml().trim()).toURL();
-                final Map<String, Object> contextEntries = new HashMap<String, Object>();
-                contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
-                contextEntries.put(DataStore.class.getName(), MyTunesRss.STORE);
-                updateDatabase(libraryUrl);
-                PleaseWait.start(getFrame(),
-                                 null,
-                                 MyTunesRss.BUNDLE.getString("pleaseWait.serverstarting"),
-                                 false,
-                                 false,
-                                 new PleaseWait.NoCancelTask() {
-                                     public void execute() throws Exception {
-                                         MyTunesRss.WEBSERVER.start(MyTunesRss.CONFIG.getPort(), contextEntries);
-                                     }
-                                 });
-                if (!MyTunesRss.WEBSERVER.isRunning()) {
-                    SwingUtils.showErrorMessage(getFrame(), MyTunesRss.WEBSERVER.getLastErrorMessage());
-                } else {
-                    setGuiMode(GuiMode.ServerRunning);
-                    myGeneralForm.setServerRunningStatus(MyTunesRss.CONFIG.getPort());
-                    if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
-                        int interval = MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval();
-                        MyTunesRss.DATABASE_WATCHDOG.schedule(new DatabaseWatchdogTask(MyTunesRss.DATABASE_WATCHDOG,
-                                                                                       myOptionsForm,
-                                                                                       interval * 60,
-                                                                                       libraryUrl), 1000 * interval);
-                    }
-                }
-            } catch (MalformedURLException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not create URL from iTunes XML file.", e);
-                }
-                SwingUtils.showErrorMessage(getFrame(), MyTunesRss.BUNDLE.getString("error.serverStart"));
-            }
-        }
-    }
-
-    private void updateDatabase(final URL library) {
-        PleaseWait.start(getFrame(), null, MyTunesRss.BUNDLE.getString("settings.buildDatabase"), false, false, new DatabaseBuilderTask(library,
-                                                                                                                                        myOptionsForm));
     }
 
     public void doStopServer() {
-        PleaseWait.start(getFrame(), null, MyTunesRss.BUNDLE.getString("pleaseWait.serverstopping"), false, false, new PleaseWait.NoCancelTask() {
+        MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.serverstopping"), null, false, new MyTunesRssTask() {
             public void execute() throws Exception {
                 MyTunesRss.WEBSERVER.stop();
             }
@@ -167,8 +103,6 @@ public class Settings {
                 MyTunesRss.DATABASE_WATCHDOG.cancel();
                 MyTunesRss.DATABASE_WATCHDOG = new Timer("MyTunesRSSDatabaseWatchdog");
             }
-        } else {
-            SwingUtils.showErrorMessage(getFrame(), MyTunesRss.WEBSERVER.getLastErrorMessage());
         }
     }
 
@@ -177,20 +111,17 @@ public class Settings {
             doStopServer();
         }
         if (!MyTunesRss.WEBSERVER.isRunning()) {
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_x", getFrame().getLocation().x);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", getFrame().getLocation().y);
+            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_x", MyTunesRss.ROOT_FRAME.getLocation().x);
+            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", MyTunesRss.ROOT_FRAME.getLocation().y);
             updateConfigFromGui();
             MyTunesRss.CONFIG.save();
-            PleaseWait.start(getFrame(),
-                             null,
-                             MyTunesRss.BUNDLE.getString("pleaseWait.shutdownDatabase"),
-                             false,
-                             false,
-                             new PleaseWait.NoCancelTask() {
-                                 public void execute() {
-                                     MyTunesRss.STORE.destroy();
-                                 }
-                             });
+            MyTunesRss.DATABASE_WATCHDOG.cancel();
+            MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
+                public void execute() {
+                    MyTunesRss.STORE.destroy();
+                }
+            });
+            MyTunesRss.ROOT_FRAME.dispose();
             System.exit(0);
         }
     }

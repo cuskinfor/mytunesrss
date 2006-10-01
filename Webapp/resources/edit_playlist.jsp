@@ -8,7 +8,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
-<c:set var="backUrl">${servletUrl}/editPlaylist?allowEditEmpty=${param.allowEditEmpty}&amp;index=${param.index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}</c:set>
+<c:set var="backUrl">${servletUrl}/editPlaylist?allowEditEmpty=${param.allowEditEmpty}&amp;index=${param.index}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -66,13 +66,15 @@
                         <input type="checkbox" id="item${track.id}" name="track" value="${track.id}" />
                     </td>
                     <td>
+                        <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
+                        <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:if>
                         <c:out value="${cwfn:choose(mtfn:unknown(track.name), '(unknown)', track.name)}" />
                     </td>
                     <td>
                         <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                     </td>
                     <td class="icon">
-                        <a href="${servletUrl}/removeFromPlaylist?allowEditEmpty=${param.allowEditEmpty}&amp;track=${track.id}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}">
+                        <a href="${servletUrl}/removeFromPlaylist?allowEditEmpty=${param.allowEditEmpty}&amp;track=${cwfn:encodeUrl(track.id)}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}">
                             <img src="${appUrl}/images/delete${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                     </td>
                 </tr>
@@ -81,7 +83,7 @@
         <c:if test="${!empty pager}">
             <c:set var="pagerCommand"
                    scope="request"
-                   value="${servletUrl}/editPlaylist?allowEditEmpty=${param.allowEditEmpty}&amp;index={index}&amp;backUrl=${cwfn:urlEncode(param.backUrl, 'UTF-8')}" />
+                   value="${servletUrl}/editPlaylist?allowEditEmpty=${param.allowEditEmpty}&amp;index={index}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}" />
             <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
             <jsp:include page="incl_bottomPager.jsp" />
         </c:if>

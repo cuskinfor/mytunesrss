@@ -23,8 +23,8 @@ public class EncodingFilter implements Filter {
         myEncoding = encoding;
     }
 
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException,
-            ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
         servletRequest.setCharacterEncoding(myEncoding);
         filterChain.doFilter(servletRequest, servletResponse);
     }

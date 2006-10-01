@@ -6,28 +6,23 @@ package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.network.*;
+import de.codewave.utils.swing.*;
 import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
 
 /**
  * General settings panel
  */
 public class General {
-    private static final Log LOG = LogFactory.getLog(General.class);
-    private static final String LIBRARY_XML_FILE_NAME = "iTunes Music Library.xml";
-
     private JPanel myRootPanel;
     private JTextField myPortInput;
     private JPasswordField myPasswordInput;
     private JTextField myTunesXmlPathInput;
     private JButton myTunesXmlPathLookupButton;
-    private Settings mySettingsForm;
     private JLabel myServerStatusLabel;
     private JButton myServerInfoButton;
 
@@ -43,14 +38,14 @@ public class General {
         return myTunesXmlPathInput;
     }
 
-    public void init(Settings settingsForm) {
-        mySettingsForm = settingsForm;
-        myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
-        myPasswordInput.setText(MyTunesRss.CONFIG.getPassword());
-        myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
+    public void init() {
         myTunesXmlPathLookupButton.addActionListener(new TunesXmlPathLookupButtonListener());
-        setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
         myServerInfoButton.addActionListener(new ServerInfoButtonListener());
+        myPasswordInput.addFocusListener(new PasswordInputListener());
+        myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
+        myPasswordInput.setText(MyTunesRss.CONFIG.getUser("default") != null ? "dummypassword" : "");
+        myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
+        setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
     }
 
     public void setServerRunningStatus(int serverPort) {
@@ -67,10 +62,9 @@ public class General {
         try {
             MyTunesRss.CONFIG.setPort(Integer.parseInt(myPortInput.getText().trim()));
         } catch (NumberFormatException e) {
-            // intentionally left blank
+            MyTunesRss.CONFIG.setPort(-1);
         }
         MyTunesRss.CONFIG.setLibraryXml(myTunesXmlPathInput.getText().trim());
-        MyTunesRss.CONFIG.setPassword(new String(myPasswordInput.getPassword()).trim());
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -101,28 +95,42 @@ public class General {
 
     public class TunesXmlPathLookupButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            FileDialog fileDialog = new FileDialog(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("dialog.loadITunes"), FileDialog.LOAD);
+            FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("dialog.loadITunes"), FileDialog.LOAD);
             fileDialog.setVisible(true);
             if (fileDialog.getFile() != null) {
                 File sourceFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
                 try {
                     myTunesXmlPathInput.setText(sourceFile.getCanonicalPath());
                 } catch (IOException e) {
-                    SwingUtils.showErrorMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("error.lookupLibraryXml") + e.getMessage());
+                    MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.lookupLibraryXml") + e.getMessage());
                 }
             }
         }
     }
 
-    public static class ITunesLibraryFileFilter implements FilenameFilter {
-        public boolean accept(File directory, String filename) {
-            return filename != null && (new File(directory, filename).isFile() && LIBRARY_XML_FILE_NAME.equalsIgnoreCase(filename));
+    public class ServerInfoButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent actionEvent) {
+            new ServerInfo().display(MyTunesRss.ROOT_FRAME, myPortInput.getText());
         }
     }
 
-    public class ServerInfoButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent actionEvent) {
-            new ServerInfo().display(mySettingsForm.getFrame(), myPortInput.getText());
+    public class PasswordInputListener implements FocusListener {
+        private String myPassword;
+
+        public void focusGained(FocusEvent focusEvent) {
+            myPassword = new String(myPasswordInput.getPassword()).trim();
+        }
+
+        public void focusLost(FocusEvent focusEvent) {
+            String password = new String(myPasswordInput.getPassword()).trim();
+            if (!myPassword.equals(password) && StringUtils.isNotEmpty(password)) {
+                User user = MyTunesRss.CONFIG.getUser("default");
+                if (user == null) {
+                    user = new User("default");
+                    MyTunesRss.CONFIG.addUser(user);
+                }
+                user.setPassword(password);
+            }
         }
     }
 }

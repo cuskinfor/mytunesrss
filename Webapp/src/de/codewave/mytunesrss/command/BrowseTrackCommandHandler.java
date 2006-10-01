@@ -7,6 +7,8 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.utils.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 
 import java.util.*;
@@ -16,14 +18,14 @@ import java.util.*;
  */
 public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
     public static enum SortOrder {
-        Album(),Artist();
+        Album(), Artist();
     }
 
     @Override
     public void executeAuthorized() throws Exception {
         String searchTerm = getRequestParameter("searchTerm", null);
-        String album = getRequestParameter("album", null);
-        String artist = getRequestParameter("artist", null);
+        String album = Base64Utils.decodeToString(getRequestParameter("album", null));
+        String artist = Base64Utils.decodeToString(getRequestParameter("artist", null));
         String playlistId = getRequestParameter("playlist", null);
         String sortOrderName = getRequestParameter("sortOrder", SortOrder.Album.name());
         SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);
@@ -34,7 +36,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         } else if (StringUtils.isNotEmpty(album)) {
             query = FindTrackQuery.getForAlbum(new String[] {album}, sortOrderValue == SortOrder.Artist);
         } else if (StringUtils.isNotEmpty(artist)) {
-            if (Boolean.valueOf(getRequestParameter("fullAlbums", "false"))) {
+            if (getBooleanRequestParameter("fullAlbums", false)) {
                 Collection<Album> albumsWithArtist = getDataStore().executeQuery(new FindAlbumQuery(artist));
                 List<String> albumNames = new ArrayList<String>();
                 for (Album albumWithArtist : albumsWithArtist) {
@@ -56,7 +58,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             tracks = (List<EnhancedTrack>)enhancedTracks.getTracks();
             int pageSize = getWebConfig().getEffectivePageSize();
             if (pageSize > 0 && simpleTracks.size() > pageSize) {
-                int current = Integer.parseInt(getRequestParameter("index", "0"));
+                int current = getSafeIntegerRequestParameter("index", 0);
                 Pager pager = createPager(simpleTracks.size(), current);
                 getRequest().setAttribute("pager", pager);
                 tracks = tracks.subList(current * pageSize, Math.min((current * pageSize) + pageSize, simpleTracks.size()));

@@ -8,8 +8,8 @@ import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 
 import javax.swing.*;
-import java.awt.event.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.util.zip.*;
 
@@ -18,19 +18,17 @@ import java.util.zip.*;
  */
 public class Info {
     private static final Log LOG = LogFactory.getLog(Info.class);
-    private JPanel myRootPanel;
     private JButton mySaveLogButton;
-    private Settings mySettingsForm;
+    private JPanel myRootPanel;
 
-    public void init(Settings settingsForm) {
-        mySettingsForm = settingsForm;
+    public void init() {
         mySaveLogButton.addActionListener(new SaveLogButtonActionListener());
     }
 
     public class SaveLogButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             File targetFile = new File("MyTunesRSS-" + MyTunesRss.VERSION + "-LogFile.zip");
-            FileDialog fileDialog = new FileDialog(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("dialog.saveLog"), FileDialog.SAVE);
+            FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("dialog.saveLog"), FileDialog.SAVE);
             fileDialog.setDirectory(targetFile.getParent());
             fileDialog.setFile(targetFile.getName());
             fileDialog.setVisible(true);
@@ -53,7 +51,7 @@ public class Info {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not create zip archive with log file.", e1);
                     }
-                    SwingUtils.showErrorMessage(mySettingsForm.getFrame(), MyTunesRss.BUNDLE.getString("error.couldNotCreateLogArchive"));
+                    MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.couldNotCreateLogArchive"));
                 } finally {
                     if (zipOutput != null) {
                         try {

@@ -5,6 +5,16 @@
     <import file="../CodewaveAnt/etc/svn-macros.xml"/>
     <import file="../CodewaveAnt/etc/moduleinfo-macros.xml"/>
 
+    <target name="generate.keypair" description="generate a key pair for registration">
+        <taskdef name="keypair" classname="de.codewave.ant.task.registration.GenerateKeyPairTask"/>
+        <keypair applicationname="MyTunesRSSv3" publickey="Runtime/src/MyTunesRSS.public" privatekey="etc/registration/MyTunesRSS.private"/>
+    </target>
+
+    <target name="create.registration" description="create a registration file">
+        <taskdef name="signregistration" classname="de.codewave.ant.task.registration.CreateSignedRegistration"/>
+        <signregistration privatekey="etc/registration/MyTunesRSS.private" registrationdata="etc/registration/MyTunesRSS.xml" signeddata="etc/registration/MyTunesRSS.key"/>
+    </target>
+
     <target name="idea.after-compile" description="target to execute after compilation in idea">
         <antcall target="generate.moduleinfo"/>
         <antcall target="copy.tomcat-config"/>

@@ -15,8 +15,8 @@ import java.io.*;
 public class MyTunesRssSessionManager extends SessionManager {
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException,
-            ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
         if (!"true".equalsIgnoreCase(servletRequest.getParameter("ignoreSession"))) {
             super.doFilter(servletRequest, servletResponse, filterChain);
         } else {

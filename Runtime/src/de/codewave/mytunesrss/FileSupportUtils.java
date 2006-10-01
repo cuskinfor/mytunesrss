@@ -10,37 +10,53 @@ import java.util.*;
  * de.codewave.mytunesrss.FileSupportUtils
  */
 public class FileSupportUtils {
-    private static String[] SUFFIXES = new String[] {".mp3", ".m4a", ".m4p", ".wav", ".avi", ".mov", ".wmv", ".mpg", ".mpeg", ".m4v", ".mp4"};
-    private static Map<String, String> MIME_TYPES;
+    private static Set<String> SUPPORTED_SUFFIXES = new HashSet<String>();
 
     static {
-        MIME_TYPES = new HashMap<String, String>(SUFFIXES.length);
-        MIME_TYPES.put(".mp3", "/mp3");
-        MIME_TYPES.put(".m4a", "/x-m4a");
-        MIME_TYPES.put(".m4p", "/x-m4p");
-        MIME_TYPES.put(".wav", "/wav");
-        MIME_TYPES.put(".mp4", "/x-mp4");
-        MIME_TYPES.put(".avi", "/x-msvideo");
-        MIME_TYPES.put(".mov", "/quicktime");
-        MIME_TYPES.put(".wmv", "/x-ms-wmv");
-        MIME_TYPES.put(".mpg", "/mpeg");
-        MIME_TYPES.put(".mpeg", "/mpeg");
-        MIME_TYPES.put(".m4v", "/x-m4v");
+        for (FileSuffixInfo fileSuffixInfo : FileSuffixInfo.values()) {
+            SUPPORTED_SUFFIXES.add(fileSuffixInfo.name());
+        }
     }
 
     public static boolean isSupported(String filename) {
-        for (String suffix : SUFFIXES) {
-            if (filename.toLowerCase().endsWith(suffix)) {
-                return true;
-            }
+        return SUPPORTED_SUFFIXES.contains(getFileSuffix(filename));
+    }
+
+    private static boolean isSuffixSupported(String suffix) {
+        return SUPPORTED_SUFFIXES.contains(suffix);
+    }
+
+    public static FileSuffixInfo getFileSuffixInfo(String filename) {
+        String suffix = getFileSuffix(filename);
+        if (isSuffixSupported(suffix)) {
+            return FileSuffixInfo.valueOf(suffix);
         }
-        return false;
+        return null;
+    }
+
+    private static String getFileSuffix(String filename) {
+        int i = filename.lastIndexOf(".");
+        if (i != -1 && i + 1 < filename.length()) {
+            return filename.substring(i + 1).trim().toLowerCase();
+        }
+        return null;
     }
 
     public static String getContentType(String filename, boolean video) {
-        if (isSupported(filename)) {
-            return (video ? "video" : "audio") + MIME_TYPES.get("." + filename.substring(filename.lastIndexOf(".") + 1).toLowerCase());
+        FileSuffixInfo fileSuffixInfo = getFileSuffixInfo(filename);
+        if (fileSuffixInfo != null) {
+            return fileSuffixInfo.getMimeType(video);
         }
         return "application/octet-stream";
+    }
+
+    public static boolean isProtected(String filename) {
+        FileSuffixInfo fileSuffixInfo = getFileSuffixInfo(filename);
+        return fileSuffixInfo != null && fileSuffixInfo.isProtected();
+    }
+
+    public static boolean isVideo(String filename) {
+        FileSuffixInfo fileSuffixInfo = getFileSuffixInfo(filename);
+        return fileSuffixInfo != null && fileSuffixInfo.isVideo();
     }
 }

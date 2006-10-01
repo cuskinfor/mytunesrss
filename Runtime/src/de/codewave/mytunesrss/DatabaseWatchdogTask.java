@@ -4,12 +4,9 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.settings.*;
 import de.codewave.mytunesrss.task.*;
 import org.apache.commons.logging.*;
 
-import java.net.*;
-import java.sql.*;
 import java.util.*;
 
 /**
@@ -19,29 +16,27 @@ public class DatabaseWatchdogTask extends TimerTask {
     private static final Log LOG = LogFactory.getLog(DatabaseWatchdogTask.class);
 
     private int myInterval;
-    private URL myLibrary;
-    private Options myOptionsForm;
+    private DatabaseBuilderTask myDatabaseBuilderTask;
     private Timer myTimer;
 
-    public DatabaseWatchdogTask(Timer timer, Options options, int interval, URL library) {
+    public DatabaseWatchdogTask(Timer timer, int interval, DatabaseBuilderTask task) {
         myTimer = timer;
-        myOptionsForm = options;
         myInterval = interval;
-        myLibrary = library;
+        myDatabaseBuilderTask = task;
     }
 
     public void run() {
         try {
-            if (DatabaseBuilderTask.needsUpdate(myLibrary)) {
-                new DatabaseBuilderTask(myLibrary, myOptionsForm).execute();
+            if (myDatabaseBuilderTask.needsUpdate()) {
+                myDatabaseBuilderTask.execute();
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not automatically update database.", e);
             }
         }
         try {
-            myTimer.schedule(new DatabaseWatchdogTask(myTimer, myOptionsForm, myInterval, myLibrary), 1000 * myInterval);
+            myTimer.schedule(this, myInterval * 60000);
         } catch (IllegalStateException e) {
             // timer was cancelled, so we just don't schedule any further tasks
         }

@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.settings.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.*;
 import de.codewave.utils.moduleinfo.*;
+import de.codewave.utils.swing.*;
 import org.apache.catalina.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
@@ -18,7 +19,6 @@ import snoozesoft.systray4j.*;
 
 import javax.imageio.*;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -35,23 +35,24 @@ import java.util.prefs.*;
 public class MyTunesRss {
     private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
     public static String VERSION;
-    public static Map<OperatingSystem, URL> UPDATE_URLS;
-    public static DataStore STORE = new DataStore();
+    public static URL UPDATE_URL;
+    public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
     public static MyTunesRssConfig CONFIG = new MyTunesRssConfig();
     public static ResourceBundle BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
     public static WebServer WEBSERVER = new WebServer();
     public static Timer DATABASE_WATCHDOG = new Timer("MyTunesRSSDatabaseWatchdog");
     public static SysTray SYSTRAYMENU;
     public static MessageDigest MESSAGE_DIGEST;
-    public static String HEADLESS_SYNCHRONIZER = "";
+    public static JFrame ROOT_FRAME;
+    public static ImageIcon PLEASE_WAIT_ICON;
+    public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
+    public static int OPTION_PANE_MAX_MESSAGE_LENGTH = 100;
+    public static boolean HEADLESS;
 
     static {
-        UPDATE_URLS = new HashMap<OperatingSystem, URL>();
-        String base = "http://www.codewave.de/download/versions/mytunesrss_";
         try {
-            UPDATE_URLS.put(OperatingSystem.MacOSX, new URL(base + "macosx.txt"));
-            UPDATE_URLS.put(OperatingSystem.Windows, new URL(base + "windows.txt"));
-            UPDATE_URLS.put(OperatingSystem.Unknown, new URL(base + "generic.txt"));
+            UPDATE_URL = new URL("http://www.codewave.de/download/versions/mytunesrss.xml");
+            //UPDATE_URL = new URL("file:///Users/mdescher/Desktop/mytunesrss.xml");
         } catch (MalformedURLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not create update url.", e);
@@ -66,9 +67,11 @@ public class MyTunesRss {
         }
     }
 
-    public static void main(String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
-            ClassNotFoundException, IOException, SQLException {
-        if (ProgramUtils.getCommandLineArguments(args).containsKey("debug")) {
+    public static void main(final String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException,
+            InstantiationException, ClassNotFoundException, IOException, SQLException {
+        final Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
+        HEADLESS = arguments.containsKey("headless");
+        if (arguments.containsKey("debug")) {
             Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
         }
         if (LOG.isInfoEnabled()) {
@@ -80,128 +83,132 @@ public class MyTunesRss {
         if (LOG.isInfoEnabled()) {
             LOG.info("Application version: " + VERSION);
         }
-        System.setProperty("mytunesrss.version", VERSION);
-        if (ProgramUtils.getCommandLineArguments(args).containsKey("headless")) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Headless mode");
-            }
-            CONFIG.load();
-            migrateConfig();
-            STORE.init();
-            Map<String, Object> contextEntries = new HashMap<String, Object>();
-            contextEntries.put(MyTunesRssConfig.class.getName(), CONFIG);
-            contextEntries.put(DataStore.class.getName(), STORE);
-            URL libraryUrl = new File(CONFIG.getLibraryXml().trim()).toURL();
-            new DatabaseBuilderTask(libraryUrl, null).execute();
-            final int serverPort = CONFIG.getPort();
-            WEBSERVER.start(serverPort, contextEntries);
-            if (!WEBSERVER.isRunning()) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error(MyTunesRss.WEBSERVER.getLastErrorMessage());
-                }
-            } else {
-                if (CONFIG.isAutoUpdateDatabase()) {
-                    int interval = CONFIG.getAutoUpdateDatabaseInterval();
-                    DATABASE_WATCHDOG.schedule(new DatabaseWatchdogTask(DATABASE_WATCHDOG, null, interval * 60, libraryUrl), 1000 * interval);
-                }
-            }
-            while (WEBSERVER.isRunning()) {
-                try {
-                    synchronized(HEADLESS_SYNCHRONIZER) {
-                        HEADLESS_SYNCHRONIZER.wait();
-                    }
-                } catch (InterruptedException e) {
-                    // intentionally left blank
-                }
-            }
+        REGISTRATION.init();
+        if (Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("deleteDatabaseOnNextStartOnError", false)) {
+            new DeleteDatabaseTask(false).execute();
+        }
+        loadConfiguration(arguments);
+        if (HEADLESS) {
+            executeHeadlessMode();
         } else {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            final JFrame frame = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
-            Thread.setDefaultUncaughtExceptionHandler(new UncaughtHandler(frame));
-            PleaseWait.start(frame,
-                             BUNDLE.getString("pleaseWait.initializingTitle"),
-                             BUNDLE.getString("pleaseWait.initializingMessage"),
-                             false,
-                             false,
-                             new PleaseWait.NoCancelTask() {
-                                 public void execute() throws Exception {
-                                     CONFIG.load();
-                                     migrateConfig();
-                                     STORE.init();
-                                     final Settings settings = new Settings();
-                                     settings.init(frame);
-                                     MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
-                                     executeApple(mainWindowListener);
-                                     executeWindows(settings, mainWindowListener);
-                                     frame.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
-                                     frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                                     frame.addWindowListener(mainWindowListener);
-                                     frame.getContentPane().add(settings.getRootPanel());
-                                     frame.setResizable(false);
-                                     final Point defaultPosition = frame.getLocation();
-                                     frame.setLocation(1000000, 1000000);
-                                     settings.setGuiMode(GuiMode.ServerIdle);
-                                     removeAllEmptyTooltips(frame.getRootPane());
-                                     frame.setVisible(true);
-                                     SwingUtilities.invokeLater(new Runnable() {
-                                         public void run() {
-                                             frame.pack();
-                                             int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", defaultPosition.x);
-                                             int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", defaultPosition.y);
-                                             frame.setLocation(x, y);
-                                             if (CONFIG.isCheckUpdateOnStart()) {
-                                                 new Updater(frame).checkForUpdate(true);
-                                             }
-                                             PleaseWait.start(frame,
-                                                              null,
-                                                              MyTunesRss.BUNDLE.getString("pleaseWait.checkingDatabase"),
-                                                              false,
-                                                              false,
-                                                              new InitializeDatabaseTask());
-                                             if (CONFIG.isAutoStartServer()) {
-                                                 settings.doStartServer();
-                                                 if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
-                                                     // todo: hide window on osx instead of iconify
-                                                     frame.setExtendedState(JFrame.ICONIFIED);
-                                                 } else {
-                                                     frame.setExtendedState(JFrame.ICONIFIED);
-                                                 }
-                                             }
-                                         }
-                                     });
-                                 }
-                             });
+            Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(ROOT_FRAME, false));
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    try {
+                        executeGuiMode();
+                    } catch (Exception e) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error(null, e);
+                        }
+                    }
+                }
+            });
         }
     }
 
     private static String getJavaEnvironment() {
         StringBuffer java = new StringBuffer();
         java.append(System.getProperty("java.version")).append(" (\"").append(System.getProperty("java.home")).append("\")");
-
         return java.toString();
     }
 
-    private static void migrateConfig() {
-        if (CONFIG.getVersion().compareTo("2.1") < 0) {
-            // migrate to 2.1
-            int autoUpdateDatabaseInterval = CONFIG.getAutoUpdateDatabaseInterval() / 60;
-            CONFIG.setAutoUpdateDatabaseInterval(autoUpdateDatabaseInterval > 0 ? autoUpdateDatabaseInterval : 1);
-            CONFIG.setVersion("2.1");
+    private static void executeGuiMode() throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
+            ClassNotFoundException, IOException, InterruptedException {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        ROOT_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
+        Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(ROOT_FRAME, false));
+        showNewVersionInfo();
+        PLEASE_WAIT_ICON = new ImageIcon(MyTunesRss.class.getResource("PleaseWait.gif"));
+        final Settings settings = new Settings();
+        MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
+        executeApple(mainWindowListener);
+        executeWindows(settings);
+        ROOT_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
+        ROOT_FRAME.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        ROOT_FRAME.addWindowListener(mainWindowListener);
+        ROOT_FRAME.getContentPane().add(settings.getRootPanel());
+        ROOT_FRAME.setResizable(false);
+        settings.setGuiMode(GuiMode.ServerIdle);
+        SwingUtils.removeEmptyTooltips(ROOT_FRAME.getRootPane());
+        int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", Integer.MAX_VALUE);
+        int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", Integer.MAX_VALUE);
+        if (x != Integer.MAX_VALUE && y != Integer.MAX_VALUE) {
+            ROOT_FRAME.setLocation(x, y);
+            SwingUtils.packAndShow(ROOT_FRAME);
+        } else {
+            SwingUtils.packAndShowRelativeTo(ROOT_FRAME, null);
+        }
+        if (CONFIG.isCheckUpdateOnStart()) {
+            UpdateUtils.checkForUpdate(true);
+        }
+        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
+        settings.init();
+        if (CONFIG.isAutoStartServer()) {
+            settings.doStartServer();
+            if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
+                // todo: hide window on osx instead of iconify
+                ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
+            } else {
+                ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
+            }
         }
     }
 
-    private static void removeAllEmptyTooltips(JComponent component) {
-        String toolTipText = component.getToolTipText();
-        if (toolTipText != null && StringUtils.isEmpty(toolTipText.trim())) {
-            component.setToolTipText(null);
-        }
-        Component[] childComponents = component.getComponents();
-        for (int i = 0; i < childComponents.length; i++) {
-            removeAllEmptyTooltips((JComponent)childComponents[i]);
+    private static void showNewVersionInfo() {
+        String lastNewVersionInfo = Preferences.userRoot().node("/de/codewave/mytunesrss").get("lastNewVersionInfo", "0");
+        if (!VERSION.equals(lastNewVersionInfo)) {
+            try {
+                String message = BUNDLE.getString("info.newVersion");
+                if (StringUtils.isNotEmpty(message)) {
+                    MyTunesRssUtils.showInfoMessage(ROOT_FRAME, message);
+                }
+            } catch (MissingResourceException e) {
+                // intentionally left blank
+            }
+            Preferences.userRoot().node("/de/codewave/mytunesrss").put("lastNewVersionInfo", VERSION);
         }
     }
 
-    private static void executeWindows(Settings settingsForm, WindowListener windowListener) {
+    private static void executeHeadlessMode() throws IOException, SQLException {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Headless mode");
+        }
+        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
+        startWebserver(new DatabaseBuilderTask());
+        if (!WEBSERVER.isRunning()) {
+            CONFIG.save();
+            DATABASE_WATCHDOG.cancel();
+            STORE.destroy();
+        }
+    }
+
+    public static void startWebserver(DatabaseBuilderTask databaseBuilderTask) {
+        MyTunesRssUtils.executeTask(null, BUNDLE.getString("settings.buildDatabase"), null, false, databaseBuilderTask);
+        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.serverstarting"), null, false, new MyTunesRssTask() {
+            public void execute() throws Exception {
+                WEBSERVER.start();
+            }
+        });
+        if (WEBSERVER.isRunning()) {
+            if (CONFIG.isAutoUpdateDatabase()) {
+                DatabaseWatchdogTask databaseWatchdogTask = new DatabaseWatchdogTask(DATABASE_WATCHDOG,
+                                                                                     CONFIG.getAutoUpdateDatabaseInterval(),
+                                                                                     databaseBuilderTask);
+                DATABASE_WATCHDOG.schedule(databaseWatchdogTask, 60000 * CONFIG.getAutoUpdateDatabaseInterval());
+            }
+        }
+    }
+
+    private static void loadConfiguration(Map<String, String[]> arguments) throws MalformedURLException {
+        if (arguments.containsKey("config")) {
+            CONFIG.loadFromXml(new File(arguments.get("config")[0]).toURL());
+        } else {
+            CONFIG.loadFromPrefs();
+        }
+    }
+
+
+    private static void executeWindows(Settings settingsForm) {
         if (ProgramUtils.guessOperatingSystem() == OperatingSystem.Windows && SysTrayMenu.isAvailable()) {
             SYSTRAYMENU = new SysTray(settingsForm);
         }
@@ -219,7 +226,7 @@ public class MyTunesRss {
         }
     }
 
-    public static class MyTunesRssMainWindowListener extends WindowAdapter {
+    private static class MyTunesRssMainWindowListener extends WindowAdapter {
         private Settings mySettingsForm;
 
         public MyTunesRssMainWindowListener(Settings settingsForm) {
@@ -233,56 +240,9 @@ public class MyTunesRss {
 
         @Override
         public void windowIconified(WindowEvent e) {
-            if (MyTunesRss.SYSTRAYMENU != null) {
-                mySettingsForm.getFrame().setVisible(false);
-                MyTunesRss.SYSTRAYMENU.show();
-            }
-        }
-    }
-
-    public static class UncaughtHandler implements Thread.UncaughtExceptionHandler {
-        private JDialog myDialog;
-        private JOptionPane myPane;
-
-        public UncaughtHandler(JFrame parent) {
-            myPane = new JOptionPane() {
-                @Override
-                public int getMaxCharactersPerLineCount() {
-                    return 100;
-                }
-            };
-            myPane.setMessageType(JOptionPane.ERROR_MESSAGE);
-            String okButton = "Ok";
-            myPane.setInitialValue(okButton);
-            myDialog = myPane.createDialog(parent, "Fatal error");
-            myDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        }
-
-        public void uncaughtException(Thread t, final Throwable e) {
-            if (e instanceof OutOfMemoryError) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error(e);
-                }
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        myPane.setMessage(MyTunesRss.BUNDLE.getString("error.outOfMemory"));
-                        myDialog.pack();
-                        myDialog.setLocationRelativeTo(myDialog.getParent());
-                        myDialog.setVisible(true);
-                    }
-                });
-            } else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error(null, e);
-                        }
-                        myPane.setMessage(MyTunesRss.BUNDLE.getString("error.uncaughtException"));
-                        myDialog.pack();
-                        myDialog.setLocationRelativeTo(myDialog.getParent());
-                        myDialog.setVisible(true);
-                    }
-                });
+            if (SYSTRAYMENU != null) {
+                ROOT_FRAME.setVisible(false);
+                SYSTRAYMENU.show();
             }
         }
     }

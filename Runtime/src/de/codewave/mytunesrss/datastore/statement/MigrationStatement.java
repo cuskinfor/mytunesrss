@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.utils.sql.*;
 import org.apache.commons.logging.*;
 
 import java.sql.*;
@@ -43,6 +44,21 @@ public class MigrationStatement implements DataStoreStatement {
             connection.createStatement().execute("UPDATE system_information SET lastupdate = 0");
             connection.createStatement().execute("UPDATE system_information SET version = '2.1'");
             version = "2.1";
+        }
+        if (version.compareTo("2.3") < 0) {
+            // update to 2.3
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Migrating database to version 2.3");
+            }
+            connection.createStatement().execute("DROP TABLE link_track_playlist");
+            connection.createStatement().execute("ALTER TABLE track ALTER COLUMN id VARCHAR(2000)");
+            connection.createStatement().execute("ALTER TABLE track ADD COLUMN source VARCHAR(20)");
+            connection.createStatement().execute(
+                    "CREATE CACHED TABLE link_track_playlist ( index INTEGER, track_id VARCHAR(20) NOT NULL, playlist_id VARCHAR(20) NOT NULL, CONSTRAINT fk_linktrackplaylist_trackid FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE, CONSTRAINT fk_linktrackplaylist_playlistid FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE )");
+            connection.createStatement().execute("ALTER TABLE system_information ADD COLUMN basedir_id VARCHAR(2000)");
+            connection.createStatement().execute("UPDATE track SET source = '" + TrackSource.ITunes.name() + "'");
+            connection.createStatement().execute("UPDATE system_information SET version = '2.3'");
+            version = "2.3";
         }
     }
 

@@ -16,10 +16,10 @@ public class EditPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         Collection<Track> playlist = (Collection<Track>)getSession().getAttribute("playlistContent");
-        if ((playlist != null && !playlist.isEmpty()) || Boolean.valueOf(getRequestParameter("allowEditEmpty", "false"))) {
+        if ((playlist != null && !playlist.isEmpty()) || getBooleanRequestParameter("allowEditEmpty", false)) {
             int pageSize = getWebConfig().getEffectivePageSize();
             if (pageSize > 0 && playlist.size() > pageSize) {
-                int index = Integer.parseInt(getRequestParameter("index", "0"));
+                int index = getSafeIntegerRequestParameter("index", 0);
                 getRequest().setAttribute("tracks", new ArrayList<Track>(playlist).subList(index * pageSize, Math.min((index * pageSize) + pageSize,
                                                                                                                       playlist.size())));
                 getRequest().setAttribute("pager", createPager(playlist.size(), index));

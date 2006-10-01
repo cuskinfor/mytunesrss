@@ -5,34 +5,21 @@
 package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.servlet.*;
-import de.codewave.mytunesrss.*;
 import de.codewave.utils.*;
-
-import javax.servlet.http.*;
-import java.net.*;
-import java.io.*;
-
+import de.codewave.utils.io.*;
 import org.apache.commons.logging.*;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
  */
 public class MyTunesFunctions {
-    private static final Log LOG = LogFactory.getLog(MyTunesFunctions.class);
     private static final String DEFAULT_NAME = "MyTunesRSS";
 
     public static String cleanFileName(String name) {
         name = name.replace('/', '_');
+        name = name.replace('\\', '_');
         name = name.replace(' ', '_');
-        try {
-            return URLEncoder.encode(name, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not URL encode file name.", e);
-            }
-            return name;
-        }
+        return MiscUtils.encodeUrl(name);
     }
 
     public static boolean unknown(String trackAlbumOrArtist) {
@@ -65,16 +52,12 @@ public class MyTunesFunctions {
         return cleanFileName(artist.getName());
     }
 
-    public static String virtualSuffix(WebConfig webConfig, Track track) {
-        return webConfig.getSuffix(track.getFile());
+    public static String suffix(Track track) {
+        return IOUtils.getSuffix(track.getFile());
     }
 
     public static String replace(String string, String target, String replacement) {
         return string.replace(target, replacement);
-    }
-
-    public static String hexCode(String string) {
-        return MiscUtils.toHexString(string);
     }
 
     public static String getDuration(Track track) {

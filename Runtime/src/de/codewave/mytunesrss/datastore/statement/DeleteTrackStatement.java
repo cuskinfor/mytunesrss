@@ -4,7 +4,7 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.datastore.*;
+import de.codewave.utils.sql.*;
 
 import java.sql.*;
 

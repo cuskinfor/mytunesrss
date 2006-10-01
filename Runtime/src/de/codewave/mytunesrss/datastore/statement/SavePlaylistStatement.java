@@ -4,12 +4,11 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.datastore.*;
+import de.codewave.utils.sql.*;
+import org.apache.commons.logging.*;
 
 import java.sql.*;
 import java.util.*;
-
-import org.apache.commons.logging.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.SavePlaylistStatement

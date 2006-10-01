@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.utils.*;
 import org.apache.commons.lang.*;
 
 import javax.servlet.*;
@@ -19,7 +20,7 @@ import java.util.*;
  */
 public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws SQLException, IOException, ServletException {
-        String album = getRequest().getParameter("album");
+        String album = Base64Utils.decodeToString(getRequest().getParameter("album"));
         String page = getRequest().getParameter("page");
         List<Pager.Page> artistPages = (List<Pager.Page>)getDataStore().executeQuery(new FindPagesQuery(InsertPageStatement.PagerType.Artist));
         if (artistPages != null) {
@@ -33,7 +34,7 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
         }
         int pageSize = getWebConfig().getEffectivePageSize();
         if (pageSize > 0 && artists.size() > pageSize) {
-            int current = Integer.parseInt(getRequestParameter("index", "0"));
+            int current = getSafeIntegerRequestParameter("index", 0);
             Pager pager = createPager(artists.size(), current);
             getRequest().setAttribute("indexPager", pager);
             artists = ((List<Artist>)artists).subList(current * pageSize, Math.min((current * pageSize) + pageSize, artists.size()));

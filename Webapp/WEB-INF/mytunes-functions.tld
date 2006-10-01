@@ -73,13 +73,14 @@
 
     <function>
         <description>
-            Create a virtual suffix from a track.
+            Get the suffix for the file of a track.
         </description>
-        <name>virtualSuffix</name>
+        <name>suffix</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String virtualSuffix(de.codewave.mytunesrss.servlet.WebConfig, de.codewave.mytunesrss.datastore.statement.Track)</function-signature>
+        <function-signature>java.lang.String suffix(de.codewave.mytunesrss.datastore.statement.Track)
+        </function-signature>
         <example>
-            &lt;c:out value="${mtfn:virtualSuffix(request, track)}"/&gt;
+            &lt;c:out value="${mtfn:suffix(track)}"/&gt;
         </example>
     </function>
 
@@ -93,19 +94,6 @@
         </function-signature>
         <example>
             &lt;c:out value="${mtfn:replace('Your name is {name}. Hello {name}!' '{name}', 'James')}"/&gt;
-        </example>
-    </function>
-
-    <function>
-        <description>
-            Get a hexadecimal encoded string.
-        </description>
-        <name>hex</name>
-        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String hexCode(java.lang.String)
-        </function-signature>
-        <example>
-            &lt;c:out value="${mtfn:hex('please encode me')}"/&gt;
         </example>
     </function>
 

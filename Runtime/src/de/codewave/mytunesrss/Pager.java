@@ -25,8 +25,7 @@ public class Pager {
 
     private void updateCurrentPages() {
         myCurrentPages.clear();
-        for (ListIterator<Page> iterator = myPages.listIterator(myFirstPageInBar);
-                iterator.hasNext() && myCurrentPages.size() < myPageCountInBar;) {
+        for (ListIterator<Page> iterator = myPages.listIterator(myFirstPageInBar); iterator.hasNext() && myCurrentPages.size() < myPageCountInBar;) {
             myCurrentPages.add(iterator.next());
         }
     }

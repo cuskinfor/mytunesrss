@@ -4,19 +4,19 @@
         <title><c:out value="${channel}"/></title>
         <link>${feedUrl}</link>
         <image>
-            <url>${servletUrl}/showTrackImage/track=${imageTrackId}</url>
+            <url>${servletUrl}/showTrackImage/track=${cwfn:encodeUrl(imageTrackId)}</url>
             <title><c:out value="${channel}"/></title>
             <link>${feedUrl}</link>
         </image>
-        <description><fmt:message key="rssChannelDescription"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:virtualSuffix(config, track)}</c:set>
+        <description><fmt:message key="rssChannelDescription"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}</c:set>
             <item>
                 <title><c:out value="${track.name}"/></title>
                 <description><c:if test="${!empty track.artist && !mtfn:unknown(artist)}"><c:out value="${track.artist}"/> - </c:if><c:out value="${track.album}"/></description>
                 <author><c:out value="${track.artist}"/></author>
-                <link>${servletUrl}/showTrackInfo/track=${track.id}/authHash=${authHash}</link>
-                <guid>${servletUrl}/showTrackInfo/track=${track.id}/authHash=${authHash}</guid>
+                <link>${servletUrl}/showTrackInfo/track=${cwfn:encodeUrl(track.id)}/auth=${cwfn:encodeUrl(auth)}</link>
+                <guid>${servletUrl}/showTrackInfo/track=${cwfn:encodeUrl(track.id)}/auth=${cwfn:encodeUrl(auth)}</guid>
                 <pubDate>${pubDate}</pubDate>
-                <enclosure url="${servletUrl}/playTrack/track=${track.id}/authHash=${authHash}/${cwfn:urlEncode(virtualFileName, 'UTF-8')}"
+                <enclosure url="${servletUrl}/playTrack/track=${cwfn:encodeUrl(track.id)}/auth=${cwfn:encodeUrl(auth)}/${cwfn:encodeUrl(virtualFileName)}"
                            type="${track.contentType}"
                            length="${track.contentLength}"/>
             </item></c:forEach>

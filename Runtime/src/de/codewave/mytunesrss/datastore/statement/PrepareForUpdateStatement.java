@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.utils.sql.*;
+
 import java.sql.*;
 
 /**
@@ -11,7 +13,8 @@ import java.sql.*;
  */
 public class PrepareForUpdateStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
-        connection.createStatement().execute("DELETE FROM playlist WHERE type = '" + PlaylistType.ITunes.name() + "'");
+        connection.createStatement().execute("DELETE FROM playlist WHERE type = '" + PlaylistType.ITunes + "'");
+        connection.createStatement().execute("DELETE FROM playlist WHERE type = '" + PlaylistType.M3uFile + "'");
         connection.createStatement().execute("DELETE FROM album");
         connection.createStatement().execute("DELETE FROM artist");
         connection.createStatement().execute("DELETE FROM pager");

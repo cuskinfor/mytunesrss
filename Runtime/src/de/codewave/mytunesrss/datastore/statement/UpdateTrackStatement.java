@@ -4,12 +4,11 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import org.apache.commons.logging.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 
 import java.sql.*;
-
-import de.codewave.mytunesrss.datastore.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackStatement
@@ -28,7 +27,8 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
     private boolean myProtected;
     private boolean myVideo;
     private PreparedStatement myStatement;
-    private static final String SQL = "UPDATE track SET name = ?, album = ?, artist = ?, time = ?, track_number = ?, file = ?, protected = ?, video = ? WHERE id = ?";
+    private static final String SQL =
+            "UPDATE track SET name = ?, album = ?, artist = ?, time = ?, track_number = ?, file = ?, protected = ?, video = ? WHERE id = ?";
 
     public UpdateTrackStatement() {
         // intentionally left blank
@@ -96,7 +96,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             statement.executeUpdate();
         } catch (SQLException e) {
             if (UpdateTrackStatement.LOG.isErrorEnabled()) {
-                UpdateTrackStatement.LOG.error(String.format("Could not update track with ID \"%s\" in database.", myId) , e);
+                UpdateTrackStatement.LOG.error(String.format("Could not update track with ID \"%s\" in database.", myId), e);
             }
         }
     }
