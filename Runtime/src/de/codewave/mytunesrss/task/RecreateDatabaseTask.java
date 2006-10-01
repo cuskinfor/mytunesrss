@@ -1,44 +1,17 @@
-/*
- * Copyright (c) 2006, Codewave Software. All Rights Reserved.
- */
-
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.*;
-import de.codewave.utils.*;
-
-import java.io.*;
 
 /**
- * de.codewave.mytunesrss.task.InitializeDatabaseTask
+ * de.codewave.mytunesrss.task.RecreateDatabaseTask
  */
-public class RecreateDatabaseTask extends InitializeDatabaseTask {
-    public void execute() throws IOException {
+public class RecreateDatabaseTask extends MyTunesRssTask {
+    private DeleteDatabaseTask myDeleteDatabaseTask = new DeleteDatabaseTask(true);
+    private InitializeDatabaseTask myInitializeDatabaseTask = new InitializeDatabaseTask();
+
+    public void execute() throws Exception {
         MyTunesRss.STORE.destroy();
-        String pathname = null;
-        pathname = ProgramUtils.getApplicationDataPath("MyTunesRSS");
-        if (deleteRecursivly(new File(pathname + "/" + DataStore.DIRNAME))) {
-            MyTunesRss.STORE.init();
-            super.execute();
-        } else {
-            throw new IOException("Could not remove all old datebase files.");
-        }
+        myDeleteDatabaseTask.execute();
+        myInitializeDatabaseTask.execute();
     }
-
-    private boolean deleteRecursivly(File file) {
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                for (File subFile : file.listFiles()) {
-                    if (!deleteRecursivly(subFile)) {
-                        return false;
-                    }
-                }
-            } else {
-                return file.delete();
-            }
-        }
-        return true;
-    }
-
 }
