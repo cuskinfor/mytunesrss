@@ -8,6 +8,7 @@
         <basedir album="1" artist="2">/Users/mdescher/Desktop/Music</basedir>
     </datasource>
     <user name="default" password="PDp+yl6vs0Ft22LrTdBMYYw0a2I=">
+        <!--features rss="true" m3u="true" download="false" /-->
         <features download="false"/>
     </user>
 </mytunesrss>
