@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <registration>
-    <name>somebody</name>
-    <registered>false</registered>
+    <name>Roland Müller</name>
+    <registered>true</registered>
+    <expiration>2006-10-31</expiration>
 </registration>

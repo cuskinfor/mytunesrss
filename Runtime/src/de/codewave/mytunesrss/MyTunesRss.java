@@ -84,6 +84,9 @@ public class MyTunesRss {
             LOG.info("Application version: " + VERSION);
         }
         REGISTRATION.init();
+        if (REGISTRATION.isExpired()) {
+            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
+        }
         if (Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("deleteDatabaseOnNextStartOnError", false)) {
             new DeleteDatabaseTask(false).execute();
         }

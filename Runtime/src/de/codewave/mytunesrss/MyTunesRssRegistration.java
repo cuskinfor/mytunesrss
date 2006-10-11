@@ -82,6 +82,6 @@ public class MyTunesRssRegistration {
     }
 
     public boolean isRegistered() {
-        return myRegistered;
+        return myRegistered && !isExpired();
     }
 }
