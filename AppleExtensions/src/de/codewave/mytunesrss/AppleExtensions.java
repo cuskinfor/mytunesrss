@@ -20,7 +20,6 @@ public class AppleExtensions {
             public void handleQuit(ApplicationEvent applicationEvent) {
                 settings.doQuitApplication();
             }
-
         });
     }
 }
