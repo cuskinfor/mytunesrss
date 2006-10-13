@@ -83,6 +83,10 @@ public class MyTunesRss {
         if (LOG.isInfoEnabled()) {
             LOG.info("Application version: " + VERSION);
         }
+        if (!HEADLESS) {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            ROOT_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
+        }
         REGISTRATION.init();
         if (REGISTRATION.isExpired()) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
@@ -117,8 +121,6 @@ public class MyTunesRss {
 
     private static void executeGuiMode() throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
             ClassNotFoundException, IOException, InterruptedException {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        ROOT_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
         Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(ROOT_FRAME, false));
         showNewVersionInfo();
         PLEASE_WAIT_ICON = new ImageIcon(MyTunesRss.class.getResource("PleaseWait.gif"));
