@@ -126,7 +126,7 @@ public class MyTunesRss {
         PLEASE_WAIT_ICON = new ImageIcon(MyTunesRss.class.getResource("PleaseWait.gif"));
         final Settings settings = new Settings();
         MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
-        executeApple(mainWindowListener);
+        executeApple(settings);
         executeWindows(settings);
         ROOT_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
         ROOT_FRAME.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -219,14 +219,16 @@ public class MyTunesRss {
         }
     }
 
-    private static void executeApple(MyTunesRssMainWindowListener mainWindowListener) {
+    private static void executeApple(Settings settings) {
         if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
             try {
                 Class appleExtensionsClass = Class.forName("de.codewave.mytunesrss.AppleExtensions");
-                Method activateMethod = appleExtensionsClass.getMethod("activate", WindowListener.class);
-                activateMethod.invoke(null, mainWindowListener);
+                Method activateMethod = appleExtensionsClass.getMethod("activate", Settings.class);
+                activateMethod.invoke(null, settings);
             } catch (Exception e) {
-                // intentionally left blank
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not activate apple extensions.", e);
+                }
             }
         }
     }
