@@ -33,7 +33,7 @@
 		<key>MainClass</key>
 		<string>de.codewave.mytunesrss.MyTunesRss</string>
 		<key>VMOptions</key>
-		<string>-Xms32m -Xmx128m</string>
+		<string>-Xms32m -Xmx128m -Dfile.encoding=UTF-8</string>
 		<key>WorkingDirectory</key>
 		<string>$APP_PACKAGE/Contents/Resources/Java</string>
 	</dict>

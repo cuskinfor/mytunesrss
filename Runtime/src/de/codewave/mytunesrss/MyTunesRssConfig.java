@@ -296,14 +296,16 @@ public class MyTunesRssConfig {
         if (getVersion().compareTo("2.3") < 0) {
             // migrate to 2.3
             String password = Preferences.userRoot().node("/de/codewave/mytunesrss").get("serverPassword", "");
-            try {
-                byte[] hash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
-                Preferences.userRoot().node("/de/codewave/mytunesrss/user/default").putByteArray("password", hash);
-                Preferences.userRoot().node("/de/codewave/mytunesrss").remove("serverPassword");
-                setVersion("2.3");
-            } catch (UnsupportedEncodingException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not create password hash.", e);
+            if (StringUtils.isNotEmpty(password)) {
+                try {
+                    byte[] hash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
+                    Preferences.userRoot().node("/de/codewave/mytunesrss/user/default").putByteArray("password", hash);
+                    Preferences.userRoot().node("/de/codewave/mytunesrss").remove("serverPassword");
+                    setVersion("2.3");
+                } catch (UnsupportedEncodingException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not create password hash.", e);
+                    }
                 }
             }
         }
