@@ -2,8 +2,8 @@
 
 <project name="MyTunesRSS Runtime" basedir="." default="zip.distribution">
 
-    <import file="../CodewaveAnt/etc/svn-macros.xml"/>
-    <import file="../CodewaveAnt/etc/moduleinfo-macros.xml"/>
+    <import file="${user.home}/.ant/svn-macros.xml"/>
+    <import file="${user.home}/.ant/moduleinfo-macros.xml"/>
 
     <target name="generate.keypair" description="generate a key pair for registration">
         <taskdef name="keypair" classname="de.codewave.ant.task.registration.GenerateKeyPairTask"/>
