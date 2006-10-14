@@ -12,8 +12,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Tomcat 5.5" level="application_server_libraries" />
     <orderEntry type="module" module-name="Runtime" />
+    <orderEntry type="library" name="Tomcat 5.5" level="application_server_libraries" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -45,6 +45,10 @@
     <setting name="RUN_JASPER_VALIDATION" value="false" />
   </component>
   <component name="WebModuleProperties">
+    <containerElement type="module" name="AppleExtensions">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/classes" />
+    </containerElement>
     <containerElement type="module" name="Runtime">
       <attribute name="method" value="0" />
       <attribute name="URI" value="&lt;N/A&gt;" />
@@ -53,11 +57,6 @@
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib/codewave-utils-18.jar" />
       <url>jar://$MODULE_DIR$/../lib/codewave-utils-18.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="0" />
-      <attribute name="URI" value="/WEB-INF/lib/camel-0.1.jar" />
-      <url>jar://$MODULE_DIR$/../Runtime/lib/camel-0.1.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
@@ -88,11 +87,6 @@
       <attribute name="method" value="0" />
       <attribute name="URI" value="/WEB-INF/lib/hsqldb.jar" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/hsqldb.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="0" />
-      <attribute name="URI" value="/WEB-INF/lib/jid3lib-0.5.4.jar" />
-      <url>jar://$MODULE_DIR$/../Runtime/lib/jid3lib-0.5.4.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />

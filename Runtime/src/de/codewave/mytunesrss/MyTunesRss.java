@@ -219,12 +219,16 @@ public class MyTunesRss {
         }
     }
 
-    private static void executeApple(Settings settings) {
+    private static void executeApple(final Settings settings) {
         if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
             try {
                 Class appleExtensionsClass = Class.forName("de.codewave.mytunesrss.AppleExtensions");
-                Method activateMethod = appleExtensionsClass.getMethod("activate", Settings.class);
-                activateMethod.invoke(null, settings);
+                Method activateMethod = appleExtensionsClass.getMethod("activate", ApplicationListener.class);
+                activateMethod.invoke(null, new ApplicationListener() {
+                    public void handleQuit() {
+                        settings.doQuitApplication();
+                    }
+                });
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not activate apple extensions.", e);

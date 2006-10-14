@@ -5,20 +5,19 @@
 package de.codewave.mytunesrss;
 
 import com.apple.eawt.*;
-import de.codewave.mytunesrss.settings.*;
 
 /**
  * de.codewave.mytunesrss.AppleListener
  */
 public class AppleExtensions {
-    public static void activate(final Settings settings) {
+    public static void activate(final ApplicationListener listener) {
         Application application = Application.getApplication();
         application.setEnabledAboutMenu(false);
         application.setEnabledPreferencesMenu(false);
         application.addApplicationListener(new ApplicationAdapter() {
             @Override
             public void handleQuit(ApplicationEvent applicationEvent) {
-                settings.doQuitApplication();
+                listener.handleQuit();
             }
         });
     }
