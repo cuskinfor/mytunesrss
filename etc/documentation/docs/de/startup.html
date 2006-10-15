@@ -14,61 +14,119 @@
 
 <div id="body">
 
-    <div id="content">
+<div id="content">
 
-        <div id="sidebar">
+    <div id="sidebar">
 
-            <ul class="links">
-                <li><a href="intro.html">Einführung</a></li>
-                <li><a href="sysreqs.html">Systemanforderungen</a></li>
-                <li><a href="versions.html">Versionshistorie</a></li>
-                <li><a href="startup.html">MyTunesRSS starten</a></li>
-                <li><a href="config.html">Die Konfiguration</a></li>
-                <li><a href="web_intro.html">Die Webanwendung</a></li>
-                <ul class="sub">
-                    <li><a href="web_login.html">Login</a></li>
-                    <li><a href="web_portal.html">Portal</a></li>
-                    <li><a href="web_settings.html">Einstellungen</a></li>
-                    <li><a href="web_browse.html">Bibliothek durchsuchen</a></li>
-                    <li><a href="web_playlists.html">MyTunesRSS Playlisten</a></li>
-                </ul>
-                <li><a href="license.html">Lizenzen</a></li>
-                <ul class="sub">
-                    <li><a href="lic_tomcat.html">Tomcat</a></li>
-                    <li><a href="lic_hsqldb.html">HSQL database engine</a></li>
-                    <li><a href="lic_systray.html">Systray4j Projekt</a></li>
-                </ul>
-                <li><a href="outro.html">Kontakt</a></li>
+        <ul class="links">
+            <li><a href="intro.html">Einführung</a></li>
+            <li><a href="sysreqs.html">Systemanforderungen</a></li>
+            <li><a href="versions.html">Versionshistorie</a></li>
+            <li><a href="startup.html">MyTunesRSS starten</a></li>
+            <li><a href="config.html">Die Konfiguration</a></li>
+            <li><a href="web_intro.html">Die Webanwendung</a></li>
+            <ul class="sub">
+                <li><a href="web_login.html">Login</a></li>
+                <li><a href="web_portal.html">Portal</a></li>
+                <li><a href="web_settings.html">Einstellungen</a></li>
+                <li><a href="web_browse.html">Bibliothek durchsuchen</a></li>
+                <li><a href="web_playlists.html">MyTunesRSS Playlisten</a></li>
             </ul>
-
-        </div>
-
-        <h1>MyTunesRSS starten</h1>
-
-        <h2>Mac OS X</h2>
-
-        <p>
-            In der Mac OS X Distribution befindet sich ein Applikationspaket. Sie starten MyTunesRSS einfach durch einen Doppelklick auf das Symbol.
-            Sie können die Applikation in jeden beliebigen Ordner ziehen. Am besten legen Sie MyTunesRSS in den Programme-Ordner. </p>
-
-        <h2>Windows</h2>
-
-        <p>
-            Unter Windows finden Sie im MyTunesRSS Verzeichnis die Startdatei MyTunesRSS.exe, die Sie durch einen Doppelklick starten. Sie können den
-            MyTunesRSS Ordner an einer beliebigen Stelle ablegen. Am besten legen Sie ihn in das Programme-Verzeichnis. </p>
-
-        <h2>Andere Systeme</h2>
-
-        <p>
-            Sie können MyTunesRSS auf jeden javafähigen System benutzen. Dazu müssen Sie in einer Kommandozeile in das MyTunesRSS Verzeichnis wechseln
-            und dort das Programm mit dem folgenden Aufruf starten. </p>
-
-        <pre>java -jar MyTunesRSS.jar</pre>
+            <li><a href="license.html">Lizenzen</a></li>
+            <ul class="sub">
+                <li><a href="lic_tomcat.html">Tomcat</a></li>
+                <li><a href="lic_hsqldb.html">HSQL database engine</a></li>
+                <li><a href="lic_systray.html">Systray4j Projekt</a></li>
+            </ul>
+            <li><a href="outro.html">Kontakt</a></li>
+        </ul>
 
     </div>
 
-    <div id="footer">
-        &copy; 2006 <a href="http://www.codewave.de" target="_blank">Codewave Software</a></div>
+    <h1>MyTunesRSS starten</h1>
+
+    <h2>Mac OS X</h2>
+
+    <p>
+        In der Mac OS X Distribution befindet sich ein Applikationspaket. Sie starten MyTunesRSS einfach durch einen Doppelklick auf das Symbol. Sie
+        können die Applikation in jeden beliebigen Ordner ziehen. Am besten legen Sie MyTunesRSS in den Programme-Ordner. </p>
+
+    <h2>Windows</h2>
+
+    <p>
+        Unter Windows finden Sie im MyTunesRSS Verzeichnis die Startdatei MyTunesRSS.exe, die Sie durch einen Doppelklick starten. Sie können den
+        MyTunesRSS Ordner an einer beliebigen Stelle ablegen. Am besten legen Sie ihn in das Programme-Verzeichnis. </p>
+
+    <h2>Andere Systeme</h2>
+
+    <p>
+        Sie können MyTunesRSS auf jeden javafähigen System benutzen. Dazu müssen Sie in einer Kommandozeile in das MyTunesRSS Verzeichnis wechseln und
+        dort das Programm mit dem folgenden Aufruf starten. </p>
+
+    <pre>java -jar MyTunesRSS.jar</pre>
+
+    <h1>Erweiterte Möglichkeiten</h1>
+
+    <h2>Konfiguration über eine XML-Datei</h2>
+
+    <p>
+        Sie können die Einstellungen von MyTunesRSS über eine XML-Datei beim Start der Anwendung angeben. Dazu starten Sie MyTunesRSS mit dem
+        folgenden Parameter. </p>
+
+    <pre>java -jar MyTunesRSS.jar -config &lt;path_to_config_xml&gt;</pre>
+
+    <p>
+        Die Konfigurationsdatei hat den folgenden Aufbau. </p>
+
+        <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;mytunesrss&gt;
+    &lt;preferences load="true" save="true"/&gt;
+    &lt;server port="8080" autostart="false"/&gt;
+    &lt;datasource&gt;
+        &lt;itunesxml&gt;......&lt;/itunesxml&gt;
+    &lt;/datasource&gt;
+    &lt;updatecheck&gt;false&lt;/updatecheck&gt;
+    &lt;database autoupdate="true"
+              updateinterval="10"
+              ignoretimestamps="false"/&gt;
+    &lt;user name="default"
+          password="PDp+yl6vs0Ft22LrTdBMYYw0a2I="/&gt;
+&lt;/mytunesrss&gt;</pre>
+
+    <p>Mit den Attributen "load" und "save" am Element "preferences" steuern Sie, ob die normalen Einstellungen von MyTunesRSS, also die über die
+       Oberfläche gemachten, vor der XML-Datei geladen werden und ob die Einstellungen am Ende gespeichert werden sollen. Wenn "load" angeben und auf
+       "true" setzen, dann werden zuerst die Einstellungen geladen und dann mit denen aus der XML überschrieben. Sie können also beispielsweise die
+       XML auf einzelne Einträge beschränken, wenn Sie nur einige der Optionen überschreiben wollen. </p>
+
+    <p>Die meisten anderen Einstellungen sollten nach Lektüre des Kapitels zur Konfiguration von MyTunesRSS selbsterklärend sein. Es handelt sich
+       jeweils um die gleichen Einstellungen, die auch über die Oberfläche vorgenommen werden können. Es kann ein Benutzer angegeben werden, wobei der
+       Benutzername keine Rolle spielt und nur das Kennwort verwendet wird. Wenn Sie mehrere Benutzer angeben, wird nur das Kennwort des ersten
+       Benutzers verwendet. Die XML nutzt das vorliegende Format, da folgende Versionen von MyTunesRSS mehrere Benutzer unterstützen werden. Das
+       Kennwort ist verschlüsselt und Base64 kodiert. Sie können ein solches Kennwort mit dem folgenden Aufruf erzeugen.</p>
+
+    <pre>java -cp MyTunesRSS.jar de.codewave.mytunesrss.Crypt &lt;password&gt;</pre>
+
+    <p>Mit diesem Aufruf wird das angegebene Kennwort entsprechend verschlüsselt und kodiert ausgegeben und kann in die XML kopiert werden.</p>
+
+    <h2>Start ohne Oberfläche</h2>
+
+    <p>Wenn Sie MyTunesRSS als reinen Dienst ohne eine Oberfäche starten möchten, können Sie dieses mit dem folgenden Parameter tun.</p>
+
+    <pre>java -jar MyTunesRSS.jar -headless</pre>
+
+    <p>Damit der Server automatisch gestartet wird und MyTunesRSS korrekt konfiguriert ist, sollten Sie die Anwendung vorher einmal mit Oberfläche
+    starten und entsprechend konfigurieren oder die oben gezeigte Möglichkeit einer Konfiguration mit Hilfe einer XML-Datei verwenden. Wenn Sie
+    MyTunesRSS auf diese Weise starten, können Sie es mit Hilfe eines Webbrowsers mit folgendem Aufruf stoppen. Beachten Sie bitte, dass dieser
+    Aufruf aus Sicherheitsgründen nur funktioniert, wenn der Browser auf demselben Rechner läuft wie MyTunesRSS. Auf Systemen ohne grafische
+    Oberfläche müssen Sie entsprechend einen textbasierten Browser wie "lynx" verwenden.</p>
+
+    <pre>http://127.0.0.1:8080/shutdown</pre>
+
+</div>
+
+<div id="footer">
+    &copy; 2006 <a href="http://www.codewave.de" target="_blank">Codewave Software</a></div>
 
 </div>
 

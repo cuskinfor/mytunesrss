@@ -238,6 +238,9 @@ public class MyTunesRssConfig {
             user.setM3u(JXPathUtils.getBooleanValue(userContext, "features/@m3u", true));
             user.setDownload(JXPathUtils.getBooleanValue(userContext, "features/@download", true));
             addUser(user);
+            if (!MyTunesRss.REGISTRATION.isRegistered()) {
+                break;
+            }
         }
     }
 

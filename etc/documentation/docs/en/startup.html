@@ -66,6 +66,62 @@
 
         <pre>java -jar MyTunesRSS.jar</pre>
 
+        <h1>Advanced Options</h1>
+
+        <h2>XML configuration</h2>
+
+        <p>You can control the settings for MyTunesRSS with an XML file. Use the following command line option.</p>
+
+        <pre>java -jar MyTunesRSS.jar -config &lt;path_to_config_xml&gt;</pre>
+
+        <p>
+            The configuration file has the following structure.</p>
+
+            <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;mytunesrss&gt;
+    &lt;preferences load="true" save="true"/&gt;
+    &lt;server port="8080" autostart="false"/&gt;
+    &lt;datasource&gt;
+        &lt;itunesxml&gt;......&lt;/itunesxml&gt;
+    &lt;/datasource&gt;
+    &lt;updatecheck&gt;false&lt;/updatecheck&gt;
+    &lt;database autoupdate="true"
+              updateinterval="10"
+              ignoretimestamps="false"/&gt;
+    &lt;user name="default"
+          password="PDp+yl6vs0Ft22LrTdBMYYw0a2I="/&gt;
+&lt;/mytunesrss&gt;</pre>
+
+        <p>The attributes "load" and "save" at the element "preferences" control the way the normal settings of MyTunesRSS, the one you make using the
+           GUI, are treated. If you set "save" to "true", all settings are saved when MyTunesRSS is quit. If you specify "load" and set it to "true",
+           the normal settings are loaded first and then the ones from the XML overwrite them. So you can have a basic configuration made through the
+           GUI and modify a few values only using the XML file.</p>
+
+        <p>Most other options should be self-explainatory after reading the chapter about the configuration of MyTunesRSS. They are the same settings
+           you see on the GUI. You can specify a user with a user name and password. Only the password is used while the user name has no meaning.
+           Also if you specify more than one user, only the first one's password is used. The configuration uses the more flexible format since future
+           versions of MyTunesRSS will support multiple users. The password is encrypted and Base64 encoded. You can generate such a password with the
+           following call.</p>
+
+        <pre>java -cp MyTunesRSS.jar de.codewave.mytunesrss.Crypt &lt;password&gt;</pre>
+
+        <p>This encrypts and encodes the specified password and displays it for being copied into the XML file.</p>
+
+        <h2>Starting without a GUI</h2>
+
+        <p>If you want to use MyTunesRSS as a pure system service without any GUI, you can use the following command line option.</p>
+
+        <pre>java -jar MyTunesRSS.jar -headless</pre>
+
+        <p>For the server to start automatically and for MyTunesRSS to be configured correctly, you should first start it with the GUI once and go
+           through the configuration. Or use the above mentioned XML based configuration. If MyTunesRSS is started without a GUI, you need a browser
+           call to stop ist. Please note that for security reasons this call works only from the same machine that is running MyTunesRSS. So the
+           browser needs to be started on the same computer. If you have a system without a graphical user interface, you need to use a text based
+           browser like "lynx".</p>
+
+        <pre>http://127.0.0.1:8080/shutdown</pre>
+
     </div>
 
     <div id="footer">
