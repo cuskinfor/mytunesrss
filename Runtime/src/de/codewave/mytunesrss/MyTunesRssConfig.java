@@ -205,6 +205,17 @@ public class MyTunesRssConfig {
                 }
             }
         }
+        checkAndCreateDefaultUser();
+    }
+
+    private void checkAndCreateDefaultUser() {
+        if (getUsers().isEmpty()) {
+            User user = new User("default");
+            user.setRss(true);
+            user.setM3u(true);
+            user.setDownload(true);
+            addUser(user);
+        }
     }
 
     public void loadFromXml(URL xmlUrl) {
@@ -242,6 +253,7 @@ public class MyTunesRssConfig {
                 break;
             }
         }
+        checkAndCreateDefaultUser();
     }
 
     public void save() {
@@ -303,6 +315,9 @@ public class MyTunesRssConfig {
                 try {
                     byte[] hash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
                     Preferences.userRoot().node("/de/codewave/mytunesrss/user/default").putByteArray("password", hash);
+                    Preferences.userRoot().node("/de/codewave/mytunesrss/user/default").putBoolean("featureRss", true);
+                    Preferences.userRoot().node("/de/codewave/mytunesrss/user/default").putBoolean("featureM3u", true);
+                    Preferences.userRoot().node("/de/codewave/mytunesrss/user/default").putBoolean("featureDownload", true);
                     Preferences.userRoot().node("/de/codewave/mytunesrss").remove("serverPassword");
                     setVersion("2.3");
                 } catch (UnsupportedEncodingException e) {
