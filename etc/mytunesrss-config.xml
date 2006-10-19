@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <mytunesrss>
-    <preferences load="true" save="true"/>
+    <!--preferences load="true" save="true"/-->
+    <preferences/>
     <server port="8080" autostart="false"/>
     <datasource>
-        <itunesxml>/Users/mdescher/Music/iTunes/iTunes Music Library.xml</itunesxml>
-        <basedir album="1" artist="2">/Users/mdescher/Desktop/Music</basedir>
+        <!--itunesxml>/Users/mdescher/Music/iTunes/iTunes Music Library.xml</itunesxml-->
+        <!--basedir album="1" artist="2">/Users/mdescher/Desktop</basedir-->
+        <basedir>/Users/mdescher/Desktop</basedir>
     </datasource>
     <updatecheck>false</updatecheck>
     <database autoupdate="true" updateinterval="10" ignoretimestamps="false"/>

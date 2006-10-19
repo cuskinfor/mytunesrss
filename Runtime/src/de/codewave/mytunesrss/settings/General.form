@@ -99,7 +99,7 @@
                 </constraints>
                 <properties>
                   <focusPainted value="true"/>
-                  <icon value="de/codewave/mytunesrss/Info.gif"/>
+                  <icon value="de/codewave/mytunesrss/Info.png"/>
                   <opaque value="false"/>
                   <text value=""/>
                 </properties>

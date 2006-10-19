@@ -61,7 +61,7 @@
             </constraints>
             <properties>
               <focusPainted value="true"/>
-              <icon value="de/codewave/mytunesrss/DeleteDatabase.gif"/>
+              <icon value="de/codewave/mytunesrss/Delete.png"/>
               <opaque value="false"/>
               <text value=""/>
             </properties>
