@@ -41,6 +41,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.mytunesrss.com)");
             byte[] buffer = new byte[102400];
             MyTunesRssSessionInfo sessionInfo = (MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest());
+            Set<String> entryNames = new HashSet<String>();
             for (Track track : tracks) {
                 String trackArtist = track.getArtist();
                 if (trackArtist.equals(InsertTrackStatement.UNKNOWN)) {
@@ -50,7 +51,19 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 if (trackAlbum.equals(InsertTrackStatement.UNKNOWN)) {
                     trackAlbum = "unknown";
                 }
-                ZipEntry entry = new ZipEntry(trackArtist + "/" + trackAlbum + "/" + track.getName() + "." + IOUtils.getSuffix(track.getFile()));
+                int number = 1;
+                String entryNameWithoutSuffix = trackArtist + "/" + trackAlbum + "/";
+                if (track.getTrackNumber() > 0) {
+                    entryNameWithoutSuffix += StringUtils.leftPad(Integer.toString(track.getTrackNumber()), 2, "0") + " ";
+                }
+                entryNameWithoutSuffix += track.getName();
+                String entryName = entryNameWithoutSuffix + "." + IOUtils.getSuffix(track.getFile());
+                while (entryNames.contains(entryName)) {
+                    entryName = entryNameWithoutSuffix + " " + number + "." + IOUtils.getSuffix(track.getFile());
+                    number++;
+                }
+                entryNames.add(entryName);
+                ZipEntry entry = new ZipEntry(entryName);
                 zipStream.putNextEntry(entry);
                 InputStream file = new FileInputStream(track.getFile());
                 for (int length = file.read(buffer); length >= 0; length = file.read(buffer)) {
