@@ -23,20 +23,6 @@ function selectAll(prefix, ids, checkbox) {
     }
 }
 
-function registerTR() {
-    var trs = document.getElementsByTagName("TR");
-    for (var i = 0; i < trs.length; i++) {
-        if (trs[i].getElementsByTagName("TH").length > 0) {
-            trs[i].getElementsByTagName("TH")[1].onclick = function() {
-                this.parentNode.getElementsByTagName("INPUT")[0].click()
-            };
-        }
-        if (trs[i].getElementsByTagName("TH").length == 0) {
-            trs[i].getElementsByTagName("TD")[1].onclick = selectTrack;
-        }
-    }
-}
-
 function selectTrack() {
     var checkbox = this.parentNode.getElementsByTagName("input")[0];
     checkbox.checked = !checkbox.checked;

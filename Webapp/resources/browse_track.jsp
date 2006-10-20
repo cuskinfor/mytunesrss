@@ -26,7 +26,7 @@
 
 </head>
 
-<body onLoad="registerTR()">
+<body>
 
 <div class="body">
 
