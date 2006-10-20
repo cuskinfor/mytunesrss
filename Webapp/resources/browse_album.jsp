@@ -63,7 +63,7 @@
     <table class="select" cellspacing="0">
         <tr>
             <c:if test="${!empty sessionScope.playlist}">
-                <th class="check"><input type="checkbox" name="none" value="none" onClick="selectAllByLoop('album', 1, ${fn:length(albums)}, this)" /></th>
+                <th class="check"><input type="checkbox" name="none" value="none" onclick="selectAllByLoop('album', 1, ${fn:length(albums)}, this)" /></th>
             </c:if>
             <th class="active">
                 <fmt:message key="albums"/>
@@ -186,7 +186,7 @@
 
     <c:if test="${!empty sessionScope.playlist}">
         <div class="buttons">
-            <input type="submit" onClick="document.forms['browse'].action = '${servletUrl}/addToPlaylist'" value="<fmt:message key="addSelected"/>" />
+            <input type="submit" onclick="document.forms['browse'].action = '${servletUrl}/addToPlaylist'" value="<fmt:message key="addSelected"/>" />
         </div>
     </c:if>
 

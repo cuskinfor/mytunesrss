@@ -22,8 +22,3 @@ function selectAll(prefix, ids, checkbox) {
         }
     }
 }
-
-function selectTrack() {
-    var checkbox = this.parentNode.getElementsByTagName("input")[0];
-    checkbox.checked = !checkbox.checked;
-}

@@ -75,7 +75,7 @@
     <c:set var="count" value="0" />
     <tr>
         <c:if test="${!empty sessionScope.playlist}">
-            <th class="check"><input type="checkbox" name="none" value="none" onClick="selectAll('item', '${track.sectionIds}', this)" /></th>
+            <th class="check"><input type="checkbox" name="none" value="none" onclick="selectAll('item', '${track.sectionIds}', this)" /></th>
         </c:if>
         <th class="active" colspan="2">
             <c:choose>

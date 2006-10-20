@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
-<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
+<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb"/>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -12,12 +12,12 @@
 
 <head>
 
-    <title>
-        <fmt:message key="applicationTitle" />
-        v${cwfn:sysprop('mytunesrss.version')}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
-    <!--[if IE]>
+  <title>
+    <fmt:message key="applicationTitle"/>
+    v${cwfn:sysprop('mytunesrss.version')}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css"/>
+  <!--[if IE]>
 		<link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css" />
 	<![endif]-->
 
@@ -27,57 +27,58 @@
 
 <div class="body">
 
-    <h1 class="search"><span><fmt:message key="myTunesRss" /></span></h1>
+  <h1 class="search"><span><fmt:message key="myTunesRss"/></span></h1>
 
-    <jsp:include page="/incl_error.jsp" />
+  <jsp:include page="/incl_error.jsp"/>
 
-    <form id="login" action="${servletUrl}/login" method="post">
-        <c:if test="${!empty singleUserName}">
-            <input type="hidden" name="username" value="${singleUserName}"/>
+  <form id="login" action="${servletUrl}/login" method="post">
+
+    <c:if test="${!empty singleUserName}">
+      <fieldset><input type="hidden" name="username" value="${singleUserName}"/></fieldset>
+    </c:if>
+
+    <h2>
+      <fmt:message key="loginCaption"/>
+    </h2>
+
+    <div class="login">
+
+      <table class="login" cellspacing="0">
+        <c:if test="${empty singleUserName}">
+          <tr>
+            <td>
+              <fmt:message key="userName"/>
+            </td>
+            <td>
+              <input class="text" type="text" name="username" value="<c:out value="${param.username}"/>"/>
+            </td>
+            <td>&nbsp;</td>
+          </tr>
         </c:if>
+        <tr>
+          <td>
+            <fmt:message key="password"/>
+          </td>
+          <td>
+            <input class="text" type="password" name="password" value="<c:out value="${param.password}"/>"/>
+          </td>
+          <td>
+            <input class="button" type="submit" value="<fmt:message key="doLogin"/>"/>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td>
+            <input type="checkbox" name="rememberLogin" value="true"/>
+            <fmt:message key="rememberLogin"/>
+          </td>
+          <td>&nbsp;</td>
+        </tr>
+      </table>
 
-        <h2>
-            <fmt:message key="loginCaption" />
-        </h2>
+    </div>
 
-        <div class="login">
-
-            <table class="login" cellspacing="0">
-                <c:if test="${empty singleUserName}">
-                    <tr>
-                        <td>
-                            <fmt:message key="userName" />
-                        </td>
-                        <td>
-                            <input class="text" type="text" name="username" value="<c:out value="${param.username}"/>" />
-                        </td>
-                        <td>&nbsp;</td>
-                    </tr>
-                </c:if>
-                <tr>
-                    <td>
-                        <fmt:message key="password" />
-                    </td>
-                    <td>
-                        <input class="text" type="password" name="password" value="<c:out value="${param.password}"/>" />
-                    </td>
-                    <td>
-                        <input class="button" type="submit" value="<fmt:message key="doLogin"/>" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>&nbsp;</td>
-                    <td>
-                        <input type="checkbox" name="rememberLogin" value="true" />
-                        <fmt:message key="rememberLogin" />
-                    </td>
-                    <td>&nbsp;</td>
-                </tr>
-            </table>
-
-        </div>
-
-    </form>
+  </form>
 
 </div>
 
