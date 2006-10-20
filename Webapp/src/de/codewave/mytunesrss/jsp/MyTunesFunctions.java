@@ -16,10 +16,19 @@ public class MyTunesFunctions {
     private static final String DEFAULT_NAME = "MyTunesRSS";
 
     public static String cleanFileName(String name) {
-        name = name.replace('/', '_');
-        name = name.replace('\\', '_');
+        name = safeFileName(name);
         name = name.replace(' ', '_');
         return MiscUtils.encodeUrl(name);
+    }
+
+    public static String safeFileName(String name) {
+        name = name.replace('/', '_');
+        name = name.replace('\\', '_');
+        name = name.replace('*', '_');
+        name = name.replace('?', '_');
+        name = name.replace('\"', '_');
+        name = name.replace('\'', '_');
+        return name;
     }
 
     public static boolean unknown(String trackAlbumOrArtist) {

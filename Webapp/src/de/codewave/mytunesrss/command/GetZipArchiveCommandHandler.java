@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.server.*;
 import de.codewave.utils.*;
@@ -38,7 +39,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             }
             getResponse().setContentType("application/zip");
             ZipOutputStream zipStream = new ZipOutputStream(getResponse().getOutputStream());
-            zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.mytunesrss.com)");
+            zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.codewave.de)");
             byte[] buffer = new byte[102400];
             MyTunesRssSessionInfo sessionInfo = (MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest());
             Set<String> entryNames = new HashSet<String>();
@@ -52,11 +53,11 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     trackAlbum = "unknown";
                 }
                 int number = 1;
-                String entryNameWithoutSuffix = trackArtist + "/" + trackAlbum + "/";
+                String entryNameWithoutSuffix = MyTunesFunctions.safeFileName(trackArtist) + "/" + MyTunesFunctions.safeFileName(trackAlbum) + "/";
                 if (track.getTrackNumber() > 0) {
                     entryNameWithoutSuffix += StringUtils.leftPad(Integer.toString(track.getTrackNumber()), 2, "0") + " ";
                 }
-                entryNameWithoutSuffix += track.getName();
+                entryNameWithoutSuffix += MyTunesFunctions.safeFileName(track.getName());
                 String entryName = entryNameWithoutSuffix + "." + IOUtils.getSuffix(track.getFile());
                 while (entryNames.contains(entryName)) {
                     entryName = entryNameWithoutSuffix + " " + number + "." + IOUtils.getSuffix(track.getFile());
@@ -80,4 +81,5 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
     }
+
 }

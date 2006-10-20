@@ -36,53 +36,53 @@
     <target name="zip.distribution" description="generate a zip archive of the whole distribution">
         <svn.propget property="version" path="." name="codewave:version"/>
         <zip destfile="distribution/MyTunesRSS-${version}.zip">
-            <fileset dir="distribution">
-                <include name="conf/**"/>
-                <include name="lib/**"/>
-                <include name="tomcat/**"/>
-                <include name="webapps/**"/>
-                <include name="MyTunesRSS.jar"/>
-            </fileset>
-            <fileset dir="etc/documentation">
-                <include name="**"/>
-            </fileset>
-        </zip>
-        <zip destfile="distribution/MyTunesRSS_Windows-${version}.zip">
-            <zipfileset dir="distribution" prefix="data">
+            <zipfileset dir="distribution" prefix="MyTunesRSS-${version}">
                 <include name="conf/**"/>
                 <include name="lib/**"/>
                 <include name="tomcat/**"/>
                 <include name="webapps/**"/>
                 <include name="MyTunesRSS.jar"/>
             </zipfileset>
-            <zipfileset dir="etc" prefix="data">
+            <zipfileset dir="etc/documentation" prefix="MyTunesRSS-${version}">
+                <include name="**"/>
+            </zipfileset>
+        </zip>
+        <zip destfile="distribution/MyTunesRSS_Windows-${version}.zip">
+            <zipfileset dir="distribution" prefix="MyTunesRSS-${version}/data">
+                <include name="conf/**"/>
+                <include name="lib/**"/>
+                <include name="tomcat/**"/>
+                <include name="webapps/**"/>
+                <include name="MyTunesRSS.jar"/>
+            </zipfileset>
+            <zipfileset dir="etc" prefix="MyTunesRSS-${version}/data">
                 <include name="java.properties"/>
                 <include name="*.dll"/>
             </zipfileset>
-            <fileset dir="etc">
+            <zipfileset dir="etc" prefix="MyTunesRSS-${version}">
                 <include name="*.exe"/>
-            </fileset>
-            <fileset dir="etc/documentation">
+            </zipfileset>
+            <zipfileset dir="etc/documentation" prefix="MyTunesRSS-${version}">
                 <include name="**"/>
-            </fileset>
+            </zipfileset>
         </zip>
         <zip destfile="distribution/MyTunesRSS_MacOSX-${version}.zip">
-            <fileset dir="etc/MacOS-Bundle">
+            <zipfileset dir="etc/MacOS-Bundle" prefix="MyTunesRSS-${version}">
                 <exclude name="**/JavaApplicationStub*"/>
-            </fileset>
-            <zipfileset dir="etc/MacOS-Bundle" filemode="755">
+            </zipfileset>
+            <zipfileset dir="etc/MacOS-Bundle" filemode="755" prefix="MyTunesRSS-${version}">
                 <include name="**/JavaApplicationStub*"/>
             </zipfileset>
-            <zipfileset dir="distribution" prefix="MyTunesRSS.app/Contents/Resources/Java">
+            <zipfileset dir="distribution" prefix="MyTunesRSS-${version}/MyTunesRSS.app/Contents/Resources/Java">
                 <include name="conf/**"/>
                 <include name="lib/**"/>
                 <include name="tomcat/**"/>
                 <include name="webapps/**"/>
                 <include name="MyTunesRSS.jar"/>
             </zipfileset>
-            <fileset dir="etc/documentation">
+            <zipfileset dir="etc/documentation" prefix="MyTunesRSS-${version}">
                 <include name="**"/>
-            </fileset>
+            </zipfileset>
         </zip>
     </target>
 
