@@ -43,7 +43,8 @@ public class General {
         myServerInfoButton.addActionListener(new ServerInfoButtonListener());
         myPasswordInput.addFocusListener(new PasswordInputListener());
         myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
-        myPasswordInput.setText(MyTunesRss.CONFIG.getUser("default") != null ? "dummypassword" : "");
+        User defaultUser = MyTunesRss.CONFIG.getUser("default");
+        myPasswordInput.setText(defaultUser != null && defaultUser.getPasswordHash() != null && defaultUser.getPasswordHash().length > 0 ? "dummypassword" : "");
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
         setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
     }

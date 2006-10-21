@@ -277,7 +277,9 @@ public class MyTunesRssConfig {
                 }
                 // create and update existing users
                 for (User user : myUsers) {
-                    userNode.node(user.getName()).putByteArray("password", user.getPasswordHash());
+                    if (user.getPasswordHash() != null && user.getPasswordHash().length > 0) {
+                        userNode.node(user.getName()).putByteArray("password", user.getPasswordHash());
+                    }
                     userNode.node(user.getName()).putBoolean("featureRss", user.isRss());
                     userNode.node(user.getName()).putBoolean("featureM3u", user.isM3u());
                     userNode.node(user.getName()).putBoolean("featureDownload", user.isDownload());

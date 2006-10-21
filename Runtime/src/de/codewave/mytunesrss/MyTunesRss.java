@@ -126,7 +126,7 @@ public class MyTunesRss {
         PLEASE_WAIT_ICON = new ImageIcon(MyTunesRss.class.getResource("PleaseWait.gif"));
         final Settings settings = new Settings();
         MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
-//        executeApple(settings);
+        executeApple(settings);
         executeWindows(settings);
         ROOT_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
         ROOT_FRAME.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -219,7 +219,6 @@ public class MyTunesRss {
         }
     }
 
-/*
     private static void executeApple(final Settings settings) {
         if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
             try {
@@ -237,7 +236,6 @@ public class MyTunesRss {
             }
         }
     }
-*/
 
     private static class MyTunesRssMainWindowListener extends WindowAdapter {
         private Settings mySettingsForm;
