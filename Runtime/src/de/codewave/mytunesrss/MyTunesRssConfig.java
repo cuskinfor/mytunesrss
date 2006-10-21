@@ -279,6 +279,8 @@ public class MyTunesRssConfig {
                 for (User user : myUsers) {
                     if (user.getPasswordHash() != null && user.getPasswordHash().length > 0) {
                         userNode.node(user.getName()).putByteArray("password", user.getPasswordHash());
+                    } else {
+                        userNode.node(user.getName()).remove("password");
                     }
                     userNode.node(user.getName()).putBoolean("featureRss", user.isRss());
                     userNode.node(user.getName()).putBoolean("featureM3u", user.isM3u());
