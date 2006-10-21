@@ -32,6 +32,8 @@ public class Options {
     private JCheckBox myAutoUpdateDatabaseInput;
     private JCheckBox myIgnoreTimestampsInput;
     private JButton myDeleteDatabaseButton;
+    private static final int MAX_UPDATE_INTERVAL = 60;
+    private static final int MIN_UPDATE_INTERVAL = 1;
 
     public void init() {
         myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
@@ -45,7 +47,10 @@ public class Options {
             myUpdateOnStartInput.setEnabled(false);
         }
         refreshLastUpdate();
-        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval(), 1, 60, 1);
+        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval(),
+                                                                       MIN_UPDATE_INTERVAL,
+                                                                       MAX_UPDATE_INTERVAL,
+                                                                       1);
         myAutoUpdateDatabaseIntervalInput.setModel(spinnerNumberModel);
         myAutoUpdateDatabaseInput.setSelected(MyTunesRss.CONFIG.isAutoUpdateDatabase());
         myIgnoreTimestampsInput.setSelected(MyTunesRss.CONFIG.isIgnoreTimestamps());
@@ -142,7 +147,10 @@ public class Options {
                     "question.deleteDatabase"), MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH, new Object[] {optionCancel, optionOk});
             if (optionOk.equals(option)) {
                 MyTunesRssUtils.executeTask(null,
-                                       MyTunesRss.BUNDLE.getString("pleaseWait.recreatingDatabase"), null, false, new RecreateDatabaseTask());
+                                            MyTunesRss.BUNDLE.getString("pleaseWait.recreatingDatabase"),
+                                            null,
+                                            false,
+                                            new RecreateDatabaseTask());
             }
         }
     }
