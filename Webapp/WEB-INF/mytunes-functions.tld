@@ -13,13 +13,13 @@
 
     <function>
         <description>
-            Create a clean file name.
+            Create a web safe file name.
         </description>
-        <name>cleanFileName</name>
+        <name>webSafeFileName</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String cleanFileName(java.lang.String)</function-signature>
+        <function-signature>java.lang.String webSafeFileName(java.lang.String)</function-signature>
         <example>
-            &lt;c:out value="${mtfn:cleanFileName(name)}"/&gt;
+            &lt;c:out value="${mtfn:webSafeFileName(name)}"/&gt;
         </example>
     </function>
 

@@ -45,7 +45,7 @@ public class WebServer {
                     myEmbeddedTomcat = createServer("mytunesrss", null, MyTunesRss.CONFIG.getPort(), new File("."), "ROOT", "", contextEntries);
                     if (myEmbeddedTomcat != null) {
                         myEmbeddedTomcat.start();
-                        byte health = checkServerHealth(MyTunesRss.CONFIG.getPort());
+                        byte health = checkServerHealth(MyTunesRss.CONFIG.getPort(), true);
                         if (health != CheckHealthResult.OK) {
                             myEmbeddedTomcat.stop();
                             myEmbeddedTomcat = null;
@@ -81,16 +81,16 @@ public class WebServer {
         return false;
     }
 
-    private byte checkServerHealth(int port) {
+    private byte checkServerHealth(int port, boolean logging) {
         HttpURLConnection connection = null;
         try {
             URL targetUrl = new URL("http://127.0.0.1:" + port + "/mytunesrss/checkHealth?ignoreSession=true");
-            if (LOG.isInfoEnabled()) {
+            if (LOG.isInfoEnabled() && logging) {
                 LOG.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             }
             connection = (HttpURLConnection)targetUrl.openConnection();
             int responseCode = connection.getResponseCode();
-            if (LOG.isInfoEnabled()) {
+            if (LOG.isInfoEnabled() && logging) {
                 LOG.info("HTTP response code is " + responseCode);
             }
             if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -108,7 +108,7 @@ public class WebServer {
                         }
                     }
                 }
-                if (LOG.isInfoEnabled()) {
+                if (LOG.isInfoEnabled() && logging) {
                     LOG.info("Health servlet response code is " + result + " after " + trial + " trials.");
                 }
                 return result != -1 ? (byte)result : CheckHealthResult.EOF;
@@ -116,7 +116,7 @@ public class WebServer {
                 return CheckHealthResult.INVALID_HTTP_RESPONSE;
             }
         } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
+            if (LOG.isErrorEnabled() && logging) {
                 LOG.error("Could not get a proper server health status.", e);
             }
             return CheckHealthResult.SERVER_COMMUNICATION_FAILURE;
@@ -156,6 +156,10 @@ public class WebServer {
             try {
                 myEmbeddedTomcat.stop();
                 myEmbeddedTomcat = null;
+                byte health = CheckHealthResult.OK;
+                while (health != CheckHealthResult.INVALID_HTTP_RESPONSE && health != CheckHealthResult.SERVER_COMMUNICATION_FAILURE) {
+                    health = checkServerHealth(MyTunesRss.CONFIG.getPort(), false);
+                }
             } catch (LifecycleException e) {
                 MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.stopServer") + e.getMessage());
                 return false;

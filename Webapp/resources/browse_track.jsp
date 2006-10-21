@@ -123,13 +123,13 @@
             <c:when test="${empty sessionScope.playlist}">
                 <c:if test="${authUser.rss && config.showRss}">
                     <th class="icon">
-                        <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:cleanFileName(sectionFileName)}.xml">
+                        <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:webSafeFileName(sectionFileName)}.xml">
                             <img src="${appUrl}/images/rss_th.gif" alt="rss" /> </a>
                     </th>
                 </c:if>
                 <c:if test="${authUser.m3u && config.showM3u}">
                     <th class="icon">
-                        <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:cleanFileName(sectionFileName)}.m3u">
+                        <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:webSafeFileName(sectionFileName)}.m3u">
                             <img src="${appUrl}/images/m3u_th.gif" alt="m3u" /> </a>
                     </th>
                 </c:if>

@@ -50,49 +50,49 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             if (file.isFile()) {
                 String fileId = IOUtils.getFileIdentifier(myBaseDir, file);
                 myExistingIds.add(fileId);
-                InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(fileId) ? myUpdateStatement : myInsertStatement;
-                statement.clear();
-                statement.setId(fileId);
-                Id3Tag tag = null;
-                if ("mp3".equals(IOUtils.getSuffix(file))) {
-                    try {
-                        tag = Mp3Utils.readId3Tag(file);
-                    } catch (Exception e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not get ID3 information from file.", e);
+                if (file.lastModified() >= myLastUpdateTime) {
+                    InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(fileId) ? myUpdateStatement : myInsertStatement;
+                    statement.clear();
+                    statement.setId(fileId);
+                    Id3Tag tag = null;
+                    if ("mp3".equals(IOUtils.getSuffix(file))) {
+                        try {
+                            tag = Mp3Utils.readId3Tag(file);
+                        } catch (Exception e) {
+                            if (LOG.isErrorEnabled()) {
+                                LOG.error("Could not get ID3 information from file.", e);
+                            }
                         }
                     }
-                }
-                if (tag == null) {
-                    statement.setName(IOUtils.getNameWithoutSuffix(file));
-                    statement.setAlbum(getAncestorAlbumName(file));
-                    statement.setArtist(getAncestorArtistName(file));
-                } else {
-                    String album = tag.getAlbum();
-                    if (StringUtils.isEmpty(album)) {
-                        album = getAncestorAlbumName(file);
+                    if (tag == null) {
+                        statement.setName(IOUtils.getNameWithoutSuffix(file));
+                        statement.setAlbum(getAncestorAlbumName(file));
+                        statement.setArtist(getAncestorArtistName(file));
+                    } else {
+                        String album = tag.getAlbum();
+                        if (StringUtils.isEmpty(album)) {
+                            album = getAncestorAlbumName(file);
+                        }
+                        statement.setAlbum(album);
+                        String artist = tag.getArtist();
+                        if (StringUtils.isEmpty(artist)) {
+                            artist = getAncestorArtistName(file);
+                        }
+                        statement.setArtist(artist);
+                        String name = tag.getTitle();
+                        if (StringUtils.isEmpty(name)) {
+                            name = IOUtils.getNameWithoutSuffix(file);
+                        }
+                        statement.setName(name);
+                        if (tag.isId3v2()) {
+                            statement.setTime(((Id3v2Tag)tag).getTimeSeconds());
+                            statement.setTrackNumber(((Id3v2Tag)tag).getTrackNumber());
+                        }
                     }
-                    statement.setAlbum(album);
-                    String artist = tag.getArtist();
-                    if (StringUtils.isEmpty(artist)) {
-                        artist = getAncestorArtistName(file);
-                    }
-                    statement.setArtist(artist);
-                    String name = tag.getTitle();
-                    if (StringUtils.isEmpty(name)) {
-                        name = IOUtils.getNameWithoutSuffix(file);
-                    }
-                    statement.setName(name);
-                    if (tag.isId3v2()) {
-                        statement.setTime(((Id3v2Tag)tag).getTimeSeconds());
-                        statement.setTrackNumber(((Id3v2Tag)tag).getTrackNumber());
-                    }
-                }
-                FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
-                statement.setProtected(fileSuffixInfo.isProtected());
-                statement.setVideo(fileSuffixInfo.isVideo());
-                statement.setFileName(canonicalFilePath);
-                if (file.lastModified() >= myLastUpdateTime) {
+                    FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
+                    statement.setProtected(fileSuffixInfo.isProtected());
+                    statement.setVideo(fileSuffixInfo.isVideo());
+                    statement.setFileName(canonicalFilePath);
                     try {
                         myStoreSession.executeStatement(statement);
                         myUpdatedCount++;

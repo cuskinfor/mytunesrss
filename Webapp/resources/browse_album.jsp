@@ -147,21 +147,21 @@
                     <c:when test="${empty sessionScope.playlist}">
                         <c:if test="${authUser.rss && config.showRss}">
                             <td class="icon">
-                                <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(cwfn:encode64(param.artist))}/${mtfn:cleanFileName(param.artist)}.xml">
+                                <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(cwfn:encode64(param.artist))}/${mtfn:webSafeFileName(param.artist)}.xml">
                                     <img src="${appUrl}/images/rss${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
                                          alt="rss" /> </a>
                             </td>
                         </c:if>
                         <c:if test="${authUser.m3u && config.showM3u}">
                             <td class="icon">
-                                <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(cwfn:encode64(param.artist))}/${mtfn:cleanFileName(param.artist)}.m3u">
+                                <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(cwfn:encode64(param.artist))}/${mtfn:webSafeFileName(param.artist)}.m3u">
                                     <img src="${appUrl}/images/m3u${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
                                          alt="m3u" /> </a>
                             </td>
                         </c:if>
                         <c:if test="${authUser.download && config.showDownload}">
                             <td class="icon">
-                                <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(cwfn:encode64(param.artist))}/${mtfn:cleanFileName(param.artist)}.zip">
+                                <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(cwfn:encode64(param.artist))}/${mtfn:webSafeFileName(param.artist)}.zip">
                                     <img src="${appUrl}/images/download${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                             </td>
                         </c:if>

@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.jsp;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.*;
 import de.codewave.utils.io.*;
-import org.apache.commons.logging.*;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
@@ -15,19 +14,21 @@ import org.apache.commons.logging.*;
 public class MyTunesFunctions {
     private static final String DEFAULT_NAME = "MyTunesRSS";
 
-    public static String cleanFileName(String name) {
-        name = safeFileName(name);
-        name = name.replace(' ', '_');
+    public static String webSafeFileName(String name) {
+        name = getLegalFileName(name);
         return MiscUtils.encodeUrl(name);
     }
 
-    public static String safeFileName(String name) {
+    public static String getLegalFileName(String name) {
         name = name.replace('/', '_');
         name = name.replace('\\', '_');
-        name = name.replace('*', '_');
         name = name.replace('?', '_');
+        name = name.replace('*', '_');
+        name = name.replace(':', '_');
+        name = name.replace('|', '_');
         name = name.replace('\"', '_');
-        name = name.replace('\'', '_');
+        name = name.replace('<', '_');
+        name = name.replace('>', '_');
         return name;
     }
 
@@ -37,28 +38,26 @@ public class MyTunesFunctions {
 
     public static String virtualTrackName(Track track) {
         if (unknown(track.getArtist())) {
-            return cleanFileName(track.getName());
+            return webSafeFileName(track.getName());
         }
-        return cleanFileName(track.getArtist() + " - " + track.getName());
+        return webSafeFileName(track.getArtist() + " - " + track.getName());
     }
 
 
     public static String virtualAlbumName(Album album) {
         if (unknown(album.getArtist()) && unknown(album.getName())) {
             return DEFAULT_NAME;
-        } else if (unknown(album.getArtist())) {
-            return cleanFileName(album.getName());
-        } else if (album.getArtistCount() > 1) {
-            return cleanFileName(album.getName());
+        } else if (unknown(album.getArtist()) || album.getArtistCount() > 1) {
+            return webSafeFileName(album.getName());
         }
-        return cleanFileName(album.getArtist() + " - " + album.getName());
+        return webSafeFileName(album.getArtist() + " - " + album.getName());
     }
 
     public static String virtualArtistName(Artist artist) {
         if (unknown(artist.getName())) {
             return DEFAULT_NAME;
         }
-        return cleanFileName(artist.getName());
+        return webSafeFileName(artist.getName());
     }
 
     public static String suffix(Track track) {

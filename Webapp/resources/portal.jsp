@@ -107,19 +107,19 @@
                 </td>
                 <c:if test="${authUser.rss && config.showRss}">
                     <td class="icon">
-                        <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:cleanFileName(playlist.name)}.xml">
+                        <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:webSafeFileName(playlist.name)}.xml">
                             <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="rss" /> </a>
                     </td>
                 </c:if>
                 <c:if test="${authUser.m3u && config.showM3u}">
                     <td class="icon">
-                        <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:cleanFileName(playlist.name)}.m3u">
+                        <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:webSafeFileName(playlist.name)}.m3u">
                             <img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="m3u" /> </a>
                     </td>
                 </c:if>
                 <c:if test="${authUser.download && config.showDownload}">
                     <td class="icon">
-                        <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:cleanFileName(playlist.name)}.zip">
+                        <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:webSafeFileName(playlist.name)}.zip">
                             <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                  alt="<fmt:message key="download"/>" /></a>
                     </td>
