@@ -124,7 +124,7 @@ public class General {
 
         public void focusLost(FocusEvent focusEvent) {
             String password = new String(myPasswordInput.getPassword()).trim();
-            if (!myPassword.equals(password) && StringUtils.isNotEmpty(password)) {
+            if (!myPassword.equals(password)) {
                 User user = MyTunesRss.CONFIG.getUser("default");
                 if (user == null) {
                     user = new User("default");
