@@ -12,8 +12,8 @@
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib/codewave-utils-18.jar" />
-        <url>jar://$MODULE_DIR$/../lib/codewave-utils-18.jar!/</url>
+        <attribute name="URI" value="/lib/codewave-utils-19.jar" />
+        <url>jar://$MODULE_DIR$/../lib/codewave-utils-19.jar!/</url>
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
@@ -211,17 +211,6 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-18.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../CodewaveUtils/src" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/camel-0.3.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -360,6 +349,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/jasper-runtime.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-19.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
