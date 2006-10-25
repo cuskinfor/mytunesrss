@@ -50,12 +50,7 @@ public class General {
     }
 
     public void setServerRunningStatus(int serverPort) {
-        String[] localAddresses = NetworkUtils.getLocalNetworkAddresses();
-        if (localAddresses.length == 0) {
-            setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running"), null);
-        } else {
-            setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running") + " [ http://" + localAddresses[0] + ":" + serverPort + " ] ", null);
-        }
+        setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running"), null);
         myRootPanel.validate();
     }
 
