@@ -102,6 +102,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private void prepareRequestForResource() {
         getRequest().setAttribute("servletUrl", ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss");
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
+        getRequest().setAttribute("mytunesrssVersion", MyTunesRss.VERSION);
         getWebConfig();// result not needed, method also fills the request attribute "config"
     }
 
