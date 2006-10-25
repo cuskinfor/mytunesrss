@@ -25,6 +25,10 @@ public class General {
     private JButton myTunesXmlPathLookupButton;
     private JLabel myServerStatusLabel;
     private JButton myServerInfoButton;
+    private JTextField myBaseDirInput;
+    private JButton myBaseDirLookupButton;
+    private JSpinner myArtistLevelInput;
+    private JSpinner myAlbumLevelInput;
 
     public JPasswordField getPasswordInput() {
         return myPasswordInput;
@@ -46,6 +50,12 @@ public class General {
         User defaultUser = MyTunesRss.CONFIG.getUser("default");
         myPasswordInput.setText(defaultUser != null && defaultUser.getPasswordHash() != null && defaultUser.getPasswordHash().length > 0 ? "dummypassword" : "");
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
+        myBaseDirInput.setText(MyTunesRss.CONFIG.getBaseDir());
+        SpinnerNumberModel artistModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getFileSystemArtistNameFolder(), 0, 5, 1);
+        SpinnerNumberModel albumModel= new SpinnerNumberModel(MyTunesRss.CONFIG.getFileSystemAlbumNameFolder(), 0, 5, 1);
+        myArtistLevelInput.setModel(artistModel);
+        myAlbumLevelInput.setModel(albumModel);
+        myBaseDirLookupButton.addActionListener(new BaseDirLookupButtonListener());
         setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
     }
 
@@ -66,6 +76,9 @@ public class General {
             MyTunesRss.CONFIG.setPort(-1);
         }
         MyTunesRss.CONFIG.setLibraryXml(myTunesXmlPathInput.getText().trim());
+        MyTunesRss.CONFIG.setBaseDir(myBaseDirInput.getText());
+        MyTunesRss.CONFIG.setFileSystemArtistNameFolder((Integer)myArtistLevelInput.getValue());
+        MyTunesRss.CONFIG.setFileSystemAlbumNameFolder((Integer)myAlbumLevelInput.getValue());
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -104,6 +117,22 @@ public class General {
                     myTunesXmlPathInput.setText(sourceFile.getCanonicalPath());
                 } catch (IOException e) {
                     MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.lookupLibraryXml") + e.getMessage());
+                }
+            }
+        }
+    }
+
+    public class BaseDirLookupButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent event) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle(MyTunesRss.BUNDLE.getString("dialog.lookupBaseDir"));
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int result = fileChooser.showOpenDialog(MyTunesRss.ROOT_FRAME);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                try {
+                    myBaseDirInput.setText(fileChooser.getSelectedFile().getCanonicalPath());
+                } catch (IOException e) {
+                    MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.lookupBaseDir") + e.getMessage());
                 }
             }
         }

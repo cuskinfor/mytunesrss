@@ -55,13 +55,28 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/codewave-utils-18.jar" />
-      <url>jar://$MODULE_DIR$/../lib/codewave-utils-18.jar!/</url>
+      <attribute name="URI" value="/WEB-INF/lib/codewave-utils-19.jar" />
+      <url>jar://$MODULE_DIR$/../lib/codewave-utils-19.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
       <attribute name="URI" value="/WEB-INF/lib/camel-0.3.jar" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/camel-0.3.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/catalina-optional.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/catalina-optional.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/catalina.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/catalina.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/commons-el.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/commons-el.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
@@ -80,6 +95,11 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/commons-modeler.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/commons-modeler.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
       <attribute name="URI" value="/WEB-INF/lib/commons-pool-1.3.jar" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/commons-pool-1.3.jar!/</url>
     </containerElement>
@@ -90,13 +110,68 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/jasper-compiler-jdt.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/jasper-compiler-jdt.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/jasper-compiler.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/jasper-compiler.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/jasper-runtime.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/jasper-runtime.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="&lt;N/A&gt;" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/jsp-api.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
       <attribute name="URI" value="/WEB-INF/lib/log4j-1.2.11.jar" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/log4j-1.2.11.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/naming-factory.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/naming-factory.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/naming-resources.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/naming-resources.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="&lt;N/A&gt;" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/servlet-api.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/servlets-default.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/servlets-default.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
       <attribute name="URI" value="/WEB-INF/lib/systray4j.jar" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/systray4j.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/tomcat-coyote.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/tomcat-coyote.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/tomcat-http.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/tomcat-http.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/tomcat-util.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/tomcat-util.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />

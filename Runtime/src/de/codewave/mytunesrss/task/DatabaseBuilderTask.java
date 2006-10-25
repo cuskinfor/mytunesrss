@@ -79,7 +79,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                                                                  storeSession,
                                                                  systemInformation.getItunesLibraryId(),
                                                                  timeLastUpdate);
-            final String baseDirId = MyTunesRss.REGISTRATION.isRegistered() ? FileSystemLoader.loadFromFileSystem(myBaseDir, storeSession, systemInformation.getBaseDirId(), timeLastUpdate) : null;
+            final String baseDirId = FileSystemLoader.loadFromFileSystem(myBaseDir, storeSession, systemInformation.getBaseDirId(), timeLastUpdate);
             storeSession.commitAndContinue();
             long timeAfterTracks = System.currentTimeMillis();
             if (LOG.isDebugEnabled()) {

@@ -188,6 +188,9 @@ public class MyTunesRssConfig {
         setAutoUpdateDatabaseInterval(Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("autoUpdateDatabaseInterval",
                                                                                                     getAutoUpdateDatabaseInterval()));
         setIgnoreTimestamps(Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("ignoreTimestamps", isIgnoreTimestamps()));
+        setBaseDir(Preferences.userRoot().node("/de/codewave/mytunesrss").get("baseDir", getBaseDir()));
+        setFileSystemArtistNameFolder(Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("artistFolder", getFileSystemArtistNameFolder()));
+        setFileSystemAlbumNameFolder(Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("albumFolder", getFileSystemAlbumNameFolder()));
         Preferences userNode = Preferences.userRoot().node("/de/codewave/mytunesrss/user");
         if (userNode != null) {
             try {
@@ -267,6 +270,9 @@ public class MyTunesRssConfig {
             Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
             Preferences.userRoot().node("/de/codewave/mytunesrss").put("version", myVersion);
             Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("ignoreTimestamps", myIgnoreTimestamps);
+            Preferences.userRoot().node("/de/codewave/mytunesrss").put("baseDir", myBaseDir);
+            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("artistFolder", myFileSystemArtistNameFolder);
+            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("albumFolder", myFileSystemAlbumNameFolder);
             Preferences userNode = Preferences.userRoot().node("/de/codewave/mytunesrss/user");
             try {
                 // remove obsolete users

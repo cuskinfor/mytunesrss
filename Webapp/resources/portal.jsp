@@ -18,7 +18,7 @@
 
     <title>
         <fmt:message key="applicationTitle" />
-        v${cwfn:sysprop('mytunesrss.version')}</title>
+        v${mytunesrssVersion}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css" />
     <!--[if IE]>
