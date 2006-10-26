@@ -5,9 +5,7 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.utils.network.*;
 import de.codewave.utils.swing.*;
-import org.apache.commons.lang.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,11 +46,12 @@ public class General {
         myPasswordInput.addFocusListener(new PasswordInputListener());
         myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
         User defaultUser = MyTunesRss.CONFIG.getUser("default");
-        myPasswordInput.setText(defaultUser != null && defaultUser.getPasswordHash() != null && defaultUser.getPasswordHash().length > 0 ? "dummypassword" : "");
+        myPasswordInput.setText(
+                defaultUser != null && defaultUser.getPasswordHash() != null && defaultUser.getPasswordHash().length > 0 ? "dummypassword" : "");
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
         myBaseDirInput.setText(MyTunesRss.CONFIG.getBaseDir());
         SpinnerNumberModel artistModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getFileSystemArtistNameFolder(), 0, 5, 1);
-        SpinnerNumberModel albumModel= new SpinnerNumberModel(MyTunesRss.CONFIG.getFileSystemAlbumNameFolder(), 0, 5, 1);
+        SpinnerNumberModel albumModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getFileSystemAlbumNameFolder(), 0, 5, 1);
         myArtistLevelInput.setModel(artistModel);
         myAlbumLevelInput.setModel(albumModel);
         myBaseDirLookupButton.addActionListener(new BaseDirLookupButtonListener());
@@ -60,12 +59,7 @@ public class General {
     }
 
     public void setServerRunningStatus(int serverPort) {
-        String[] localAddresses = NetworkUtils.getLocalNetworkAddresses();
-        if (localAddresses.length == 0) {
-            setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running"), null);
-        } else {
-            setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running") + " [ http://" + localAddresses[0] + ":" + serverPort + " ] ", null);
-        }
+        setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running"), null);
         myRootPanel.validate();
     }
 
