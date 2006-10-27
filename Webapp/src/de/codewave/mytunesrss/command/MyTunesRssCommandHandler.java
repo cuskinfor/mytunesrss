@@ -37,7 +37,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected void authorize(String userName) {
         User user = getMyTunesRssConfig().getUser(userName);
         if (user != null) {
-            getSession().setAttribute("auth", Base64Utils.encode(user.getName()) + "_" + Base64Utils.encode(user.getPasswordHash()));
+            getSession().setAttribute("auth", MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash()));
             getSession().setAttribute("authUser", getMyTunesRssConfig().getUser(userName));
         }
     }
@@ -53,10 +53,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             if (StringUtils.isNotEmpty(getRequest().getParameter("auth"))) {
                 try {
                     String auth = getRequestParameter("auth", "");
-                    int i = auth.indexOf("_");
+                    int i = auth.indexOf(" ");
                     if (i >= 1 && i < auth.length() - 1) {
-                        byte[] requestAuthHash = Base64Utils.decode(auth.substring(i + 1));
-                        String userName = Base64Utils.decodeToString(auth.substring(0, i));
+                        byte[] requestAuthHash = MyTunesRssBase64Utils.decode(auth.substring(i + 1));
+                        String userName = MyTunesRssBase64Utils.decodeToString(auth.substring(0, i));
                         if (isAuthorized(userName, requestAuthHash)) {
                             authorize(userName);
                             return false;

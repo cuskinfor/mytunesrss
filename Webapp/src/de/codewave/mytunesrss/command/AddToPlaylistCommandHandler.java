@@ -53,7 +53,7 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
     private void decodeBase64(String[] strings) {
         if (strings != null && strings.length > 0) {
             for (int i = 0; i < strings.length; i++) {
-                strings[i] = Base64Utils.decodeToString(strings[i]);
+                strings[i] = MyTunesRssBase64Utils.decodeToString(strings[i]);
             }
         }
     }

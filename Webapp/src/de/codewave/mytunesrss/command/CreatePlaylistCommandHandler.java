@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.*;
 import org.apache.commons.lang.*;
 
@@ -19,8 +20,8 @@ import java.util.*;
 public class CreatePlaylistCommandHandler extends MyTunesRssCommandHandler {
     protected Collection<Track> getTracks() throws SQLException, IOException, ServletException {
         String playlistId = getRequest().getParameter("playlist");
-        String album = Base64Utils.decodeToString(getRequestParameter("album", null));
-        String artist = Base64Utils.decodeToString(getRequestParameter("artist", null));
+        String album = MyTunesRssBase64Utils.decodeToString(getRequestParameter("album", null));
+        String artist = MyTunesRssBase64Utils.decodeToString(getRequestParameter("artist", null));
         String[] trackIds = getNonEmptyParameterValues("track");
         String trackList = getRequestParameter("tracklist", null);
         if ((trackIds == null || trackIds.length == 0) && StringUtils.isNotEmpty(trackList)) {

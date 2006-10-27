@@ -10,6 +10,6 @@ import java.security.*;
  */
 public class Crypt {
     public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        System.out.println(Base64Utils.encode(MessageDigest.getInstance("SHA").digest(args[0].getBytes("UTF-8"))));
+        System.out.println(MyTunesRssBase64Utils.encode(MessageDigest.getInstance("SHA").digest(args[0].getBytes("UTF-8"))));
     }
 }

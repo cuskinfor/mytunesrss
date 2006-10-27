@@ -24,8 +24,8 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         String searchTerm = getRequestParameter("searchTerm", null);
-        String album = Base64Utils.decodeToString(getRequestParameter("album", null));
-        String artist = Base64Utils.decodeToString(getRequestParameter("artist", null));
+        String album = MyTunesRssBase64Utils.decodeToString(getRequestParameter("album", null));
+        String artist = MyTunesRssBase64Utils.decodeToString(getRequestParameter("artist", null));
         String playlistId = getRequestParameter("playlist", null);
         String sortOrderName = getRequestParameter("sortOrder", SortOrder.Album.name());
         SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);

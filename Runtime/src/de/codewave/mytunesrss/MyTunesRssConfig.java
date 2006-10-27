@@ -247,7 +247,7 @@ public class MyTunesRssConfig {
         for (Iterator<JXPathContext> iterator = JXPathUtils.getContextIterator(context, "/mytunesrss/user"); iterator.hasNext();) {
             JXPathContext userContext = iterator.next();
             User user = new User(JXPathUtils.getStringValue(userContext, "@name", null));
-            user.setPasswordHash(Base64Utils.decode(JXPathUtils.getStringValue(userContext, "@password", null)));
+            user.setPasswordHash(MyTunesRssBase64Utils.decode(JXPathUtils.getStringValue(userContext, "@password", null)));
             user.setRss(JXPathUtils.getBooleanValue(userContext, "features/@rss", true));
             user.setM3u(JXPathUtils.getBooleanValue(userContext, "features/@m3u", true));
             user.setDownload(JXPathUtils.getBooleanValue(userContext, "features/@download", true));
