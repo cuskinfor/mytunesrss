@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.servlet;
 
 import de.codewave.utils.*;
+import de.codewave.mytunesrss.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -67,7 +68,7 @@ public class WebConfig {
                 if (CONFIG_COOKIE_NAME.equals(cookie.getName())) {
                     String cookieValue = "";
                     try {
-                        cookieValue = Base64Utils.decodeToString(cookie.getValue());
+                        cookieValue = MyTunesRssBase64Utils.decodeToString(cookie.getValue());
                     } catch (Exception e) {
                         // intentionally left blank
                     }
@@ -91,7 +92,7 @@ public class WebConfig {
         for (Map.Entry<String, String> entry : myConfigValues.entrySet()) {
             value.append(";").append(entry.getKey()).append("=").append(entry.getValue());
         }
-        Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, Base64Utils.encode(value.substring(1)));
+        Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, MyTunesRssBase64Utils.encode(value.substring(1)));
         cookie.setComment("MyTunesRSS settings cookie");
         cookie.setMaxAge(3600 * 24 * 365);// one year
         response.addCookie(cookie);
@@ -122,7 +123,7 @@ public class WebConfig {
         String passwordHash = myConfigValues.get(CFG_PASSWORD_HASH);
         if (StringUtils.isNotEmpty(passwordHash)) {
             try {
-                return Base64Utils.decode(passwordHash);
+                return MyTunesRssBase64Utils.decode(passwordHash);
             } catch (IllegalArgumentException e) {
                 return null;// ignore exception
             }
@@ -131,7 +132,7 @@ public class WebConfig {
     }
 
     public void setPasswordHash(byte[] passwordHash) {
-        myConfigValues.put(CFG_PASSWORD_HASH, Base64Utils.encode(passwordHash));
+        myConfigValues.put(CFG_PASSWORD_HASH, MyTunesRssBase64Utils.encode(passwordHash));
     }
 
     public String getUserName() {

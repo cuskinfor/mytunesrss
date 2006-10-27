@@ -26,8 +26,8 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         if (getAuthUser().isDownload()) {
-            String album = Base64Utils.decodeToString(getRequestParameter("album", null));
-            String artist = Base64Utils.decodeToString(getRequestParameter("artist", null));
+            String album = MyTunesRssBase64Utils.decodeToString(getRequestParameter("album", null));
+            String artist = MyTunesRssBase64Utils.decodeToString(getRequestParameter("artist", null));
             String playlist = getRequestParameter("playlist", null);
             Collection<Track> tracks;
             if (StringUtils.isNotEmpty(album)) {

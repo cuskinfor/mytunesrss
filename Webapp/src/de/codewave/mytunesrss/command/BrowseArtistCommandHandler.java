@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws SQLException, IOException, ServletException {
-        String album = Base64Utils.decodeToString(getRequest().getParameter("album"));
+        String album = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("album"));
         String page = getRequest().getParameter("page");
         List<Pager.Page> artistPages = (List<Pager.Page>)getDataStore().executeQuery(new FindPagesQuery(InsertPageStatement.PagerType.Artist));
         if (artistPages != null) {
