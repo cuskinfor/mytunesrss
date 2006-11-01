@@ -99,6 +99,7 @@
             <properties>
               <editable value="false"/>
               <font swing-font="Label.font"/>
+              <inheritsPopupMenu value="true"/>
               <lineWrap value="true"/>
               <opaque value="false"/>
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.termsOfUseInfo"/>
@@ -107,15 +108,15 @@
           </component>
         </children>
       </grid>
-      <component id="c10ed" class="javax.swing.JButton" binding="mySaveLogButton">
+      <component id="c10ed" class="javax.swing.JButton" binding="mySupportContactButton">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font swing-font="Button.font"/>
           <opaque value="false"/>
-          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.saveLog"/>
-          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.saveLogTooltip"/>
+          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.support"/>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.supportTooltip"/>
         </properties>
       </component>
     </children>

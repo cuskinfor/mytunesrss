@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.settings.*;
 import de.codewave.utils.swing.*;
 import org.apache.commons.logging.*;
 
@@ -11,17 +12,11 @@ import javax.swing.*;
 public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandler {
     private static final Log LOG = LogFactory.getLog(MyTunesRssUncaughtHandler.class);
 
-    private JDialog myDialog;
-    private JOptionPane myPane;
     private boolean myTerminate;
+    private JFrame myParent;
 
     public MyTunesRssUncaughtHandler(JFrame parent, boolean terminate) {
-        myPane = SwingUtils.createMaxLengthOptionPane(MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
-        myPane.setMessageType(JOptionPane.ERROR_MESSAGE);
-        String okButton = "Ok";
-        myPane.setInitialValue(okButton);
-        myDialog = myPane.createDialog(parent, "Fatal error");
-        myDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        myParent = parent;
         myTerminate = terminate;
     }
 
@@ -31,8 +26,8 @@ public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandle
         }
         SwingUtils.invokeAndWait(new Runnable() {
             public void run() {
-                myPane.setMessage(MyTunesRss.BUNDLE.getString("error.uncaughtException"));
-                SwingUtils.packAndShowRelativeTo(myDialog, myDialog.getParent());
+                new SupportContact().display(myParent, MyTunesRss.BUNDLE.getString("dialog.bugReport"), MyTunesRss.BUNDLE.getString(
+                        "settings.supportBugInfo"));
             }
         });
         if (myTerminate) {

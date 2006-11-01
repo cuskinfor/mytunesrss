@@ -4,7 +4,6 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.xml.*;
 import org.apache.commons.jxpath.*;
@@ -35,6 +34,11 @@ public class MyTunesRssConfig {
     private int myFileSystemArtistNameFolder = 2;
     private boolean mySaveEnabled = true;
     private Collection<User> myUsers = new HashSet<User>();
+    private String mySupportName = "";
+    private String mySupportEmail = "";
+    private boolean myProxyServer;
+    private String myProxyHost = "";
+    private int myProxyPort = -1;
 
     public String getLibraryXml() {
         return myLibraryXml;
@@ -146,6 +150,46 @@ public class MyTunesRssConfig {
         myUsers.remove(new User(userName));
     }
 
+    public String getSupportEmail() {
+        return mySupportEmail;
+    }
+
+    public void setSupportEmail(String supportEmail) {
+        mySupportEmail = supportEmail;
+    }
+
+    public String getSupportName() {
+        return mySupportName;
+    }
+
+    public void setSupportName(String supportName) {
+        mySupportName = supportName;
+    }
+
+    public String getProxyHost() {
+        return myProxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        myProxyHost = proxyHost;
+    }
+
+    public int getProxyPort() {
+        return myProxyPort;
+    }
+
+    public void setProxyPort(int proxyPort) {
+        myProxyPort = proxyPort;
+    }
+
+    public boolean isProxyServer() {
+        return myProxyServer;
+    }
+
+    public void setProxyServer(boolean proxyServer) {
+        myProxyServer = proxyServer;
+    }
+
     private String findItunesLibraryXml() {
         String userHome = System.getProperty("user.home");
         if (StringUtils.isNotEmpty(userHome)) {
@@ -206,6 +250,11 @@ public class MyTunesRssConfig {
             }
         }
         checkAndCreateDefaultUser();
+        setSupportName(Preferences.userRoot().node("/de/codewave/mytunesrss").get("supportName", getSupportName()));
+        setSupportEmail(Preferences.userRoot().node("/de/codewave/mytunesrss").get("supportEmail", getSupportEmail()));
+        setProxyServer(Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("proxyServer", isProxyServer()));
+        setProxyHost(Preferences.userRoot().node("/de/codewave/mytunesrss").get("proxyHost", getProxyHost()));
+        setProxyPort(Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("proxyPort", getProxyPort()));
     }
 
     private void checkAndCreateDefaultUser() {
@@ -254,6 +303,12 @@ public class MyTunesRssConfig {
             }
         }
         checkAndCreateDefaultUser();
+        // http proxy
+        JXPathContext dummyContext = JXPathUtils.getContext(context, "/");
+        dummyContext.setLenient(false);
+        setProxyServer(dummyContext.getValue("/mytunesrss/proxy") != null);
+        setProxyHost(JXPathUtils.getStringValue(context, "/mytunesrss/proxy/host", getProxyHost()));
+        setProxyPort(JXPathUtils.getIntValue(context, "/mytunesrss/proxy/port", getProxyPort()));
     }
 
     public void save() {
@@ -291,6 +346,11 @@ public class MyTunesRssConfig {
                     LOG.error("Could not read users.", e);
                 }
             }
+            Preferences.userRoot().node("/de/codewave/mytunesrss").put("supportName", mySupportName);
+            Preferences.userRoot().node("/de/codewave/mytunesrss").put("supportEmail", mySupportEmail);
+            Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("proxyServer", myProxyServer);
+            Preferences.userRoot().node("/de/codewave/mytunesrss").put("proxyHost", myProxyHost);
+            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("proxyPort", myProxyPort);
         }
     }
 
