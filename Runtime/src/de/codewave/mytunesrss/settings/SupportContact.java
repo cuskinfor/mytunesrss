@@ -19,6 +19,7 @@ import java.util.zip.*;
  */
 public class SupportContact {
     private static final Log LOG = LogFactory.getLog(SupportContact.class);
+    private static final String SUPPORT_URL = "http://www.codewave.de/tools/support.php";
 
     private JPanel myRootPanel;
     private JButton mySendButton;
@@ -90,15 +91,16 @@ public class SupportContact {
                 try {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     zipOutput = new ZipOutputStream(baos);
-                    ZipUtils.addToZip("MyTunesRSS.log", new File("MyTunesRSS.log"), zipOutput);
+                    ZipUtils.addToZip("/MyTunesRSS_Support/MyTunesRSS.log", new File("MyTunesRSS.log"), zipOutput);
                     String iTunesXml = MyTunesRss.CONFIG.getLibraryXml();
                     if (myItunesXmlInput.isSelected() && StringUtils.isNotEmpty(iTunesXml)) {
                         File file = new File(iTunesXml);
                         if (file.exists()) {
-                            ZipUtils.addToZip("iTunes Music Library.xml", file, zipOutput);
+                            ZipUtils.addToZip("/MyTunesRSS_Support/iTunes Music Library.xml", file, zipOutput);
                         }
                     }
-                    postMethod = new PostMethod("http://codewavesite/tools/support.php");
+                    zipOutput.close();
+                    postMethod = new PostMethod(SUPPORT_URL);
                     PartSource partSource = new ByteArrayPartSource("MyTunesRSS-Support.zip", baos.toByteArray());
                     Part[] part = new Part[] {new StringPart("mailSubject", "MyTunesRSS Support Request"), new StringPart("name", myNameInput.getText()),
                                               new StringPart("email", myEmailInput.getText()), new StringPart("comment", myCommentInput.getText()),
