@@ -19,7 +19,6 @@ import java.util.*;
  */
 public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
     private static final Log LOG = LogFactory.getLog(PlayTrackCommandHandler.class);
-    private static final int BUFFER_SIZE = 1024 * 50;
 
     @Override
     public void execute() throws IOException, SQLException {
@@ -42,7 +41,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                     }
                     fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
                 } else {
-                    fileSender = new FileSender(file, contentType, (int)file.length(), BUFFER_SIZE);
+                    fileSender = new FileSender(file, contentType, (int)file.length());
                 }
                 fileSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
             } else {

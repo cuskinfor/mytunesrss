@@ -12,6 +12,8 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.io.*;
 import org.apache.commons.logging.*;
 
+import java.io.*;
+
 /**
  * de.codewave.mytunesrss.mp3.ID3Utils
  */
@@ -19,9 +21,10 @@ public class ID3Utils {
     private static final Log LOG = LogFactory.getLog(ID3Utils.class);
 
     public static Image getImage(Track track) {
-        if ("mp3".equals(IOUtils.getSuffix(track.getFile()))) {
+        File file = track.getFile();
+        if (file.exists() && "mp3".equals(IOUtils.getSuffix(file))) {
             try {
-                Id3v2Tag id3v2Tag = Mp3Utils.readId3v2Tag(track.getFile());
+                Id3v2Tag id3v2Tag = Mp3Utils.readId3v2Tag(file);
                 if (id3v2Tag != null && id3v2Tag.getFrames() != null) {
                     for (Frame frame : id3v2Tag.getFrames()) {
                         if ("APIC".equals(frame.getId())) {
@@ -35,7 +38,7 @@ public class ID3Utils {
                 }
             } catch (Exception e) {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("Could not extract artwork for \"" + track.getFile() + "\".", e);
+                    LOG.warn("Could not extract artwork for \"" + file + "\".", e);
                 }
             }
         }

@@ -86,6 +86,9 @@ public class MyTunesRss {
         if (!HEADLESS) {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             ROOT_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
+            ROOT_FRAME.setLocation(Integer.MAX_VALUE, 0);
+            ROOT_FRAME.setVisible(true);
+            ROOT_FRAME.setVisible(false);
         }
         REGISTRATION.init();
         if (REGISTRATION.isExpired()) {

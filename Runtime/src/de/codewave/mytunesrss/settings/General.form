@@ -99,9 +99,8 @@
                 </constraints>
                 <properties>
                   <focusPainted value="true"/>
-                  <icon value="de/codewave/mytunesrss/Info.png"/>
                   <opaque value="false"/>
-                  <text value=""/>
+                  <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverInfo"/>
                 </properties>
               </component>
             </children>
