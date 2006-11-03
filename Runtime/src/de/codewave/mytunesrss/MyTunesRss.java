@@ -52,7 +52,6 @@ public class MyTunesRss {
     static {
         try {
             UPDATE_URL = new URL("http://www.codewave.de/download/versions/mytunesrss.xml");
-            //UPDATE_URL = new URL("file:///Users/mdescher/Desktop/mytunesrss.xml");
         } catch (MalformedURLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not create update url.", e);
