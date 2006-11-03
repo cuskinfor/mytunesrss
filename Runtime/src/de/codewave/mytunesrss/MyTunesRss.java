@@ -52,7 +52,6 @@ public class MyTunesRss {
     static {
         try {
             UPDATE_URL = new URL("http://www.codewave.de/download/versions/mytunesrss.xml");
-            //UPDATE_URL = new URL("file:///Users/mdescher/Desktop/mytunesrss.xml");
         } catch (MalformedURLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not create update url.", e);
@@ -84,11 +83,13 @@ public class MyTunesRss {
             LOG.info("Application version: " + VERSION);
         }
         if (!HEADLESS) {
+            Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(ROOT_FRAME, false));
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             ROOT_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
             ROOT_FRAME.setLocation(Integer.MAX_VALUE, 0);
             ROOT_FRAME.setVisible(true);
             ROOT_FRAME.setVisible(false);
+            PLEASE_WAIT_ICON = new ImageIcon(MyTunesRss.class.getResource("PleaseWait.gif"));
         }
         REGISTRATION.init();
         if (REGISTRATION.isExpired()) {
@@ -124,9 +125,7 @@ public class MyTunesRss {
 
     private static void executeGuiMode() throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
             ClassNotFoundException, IOException, InterruptedException {
-        Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(ROOT_FRAME, false));
         showNewVersionInfo();
-        PLEASE_WAIT_ICON = new ImageIcon(MyTunesRss.class.getResource("PleaseWait.gif"));
         final Settings settings = new Settings();
         MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
         executeApple(settings);
