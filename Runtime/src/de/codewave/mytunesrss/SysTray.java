@@ -20,7 +20,6 @@ public class SysTray {
     private SysTrayMenu myMenu;
     private SysTrayMenuItem myQuit;
     private SysTrayMenuItem myShow;
-    private SysTrayMenuItem myUpdateDatabase;
     private SysTrayMenuItem myStartServer;
     private SysTrayMenuItem myStopServer;
 
@@ -28,23 +27,20 @@ public class SysTray {
         SysTrayMenuIcon menuIcon = new SysTrayMenuIcon(getClass().getResource("SysTray.ico"));
         Listener menuListener = new Listener(settingsForm);
         menuIcon.addSysTrayMenuListener(menuListener);
-        myMenu = new SysTrayMenu(menuIcon, "This is MyTunesRSS");
-        myQuit = new SysTrayMenuItem("Quit MyTunesRSS", "quit");
+        myMenu = new SysTrayMenu(menuIcon, MyTunesRss.BUNDLE.getString("systray.menuLabel"));
+        myQuit = new SysTrayMenuItem(MyTunesRss.BUNDLE.getString("systray.quit"), "quit");
         myQuit.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myQuit);
         myMenu.addSeparator();
-        myShow = new SysTrayMenuItem("Show MyTunesRSS", "show");
+        myShow = new SysTrayMenuItem(MyTunesRss.BUNDLE.getString("systray.show"), "show");
         myShow.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myShow);
         myMenu.addSeparator();
-        myUpdateDatabase = new SysTrayMenuItem("Update database", "update_database");
-        myUpdateDatabase.addSysTrayMenuListener(menuListener);
-        myMenu.addItem(myUpdateDatabase);
         myMenu.addSeparator();
-        myStopServer = new SysTrayMenuItem("Stop server", "stop_server");
+        myStopServer = new SysTrayMenuItem(MyTunesRss.BUNDLE.getString("systray.stopServer"), "stop_server");
         myStopServer.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myStopServer);
-        myStartServer = new SysTrayMenuItem("Start server", "start_server");
+        myStartServer = new SysTrayMenuItem(MyTunesRss.BUNDLE.getString("systray.startServer"), "start_server");
         myStartServer.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myStartServer);
         hide();
@@ -54,7 +50,6 @@ public class SysTray {
     public void disableAll() {
         myQuit.setEnabled(false);
         myShow.setEnabled(false);
-        myUpdateDatabase.setEnabled(false);
         myStartServer.setEnabled(false);
         myStopServer.setEnabled(false);
     }
@@ -62,7 +57,6 @@ public class SysTray {
     public void setServerRunning() {
         myQuit.setEnabled(true);
         myShow.setEnabled(true);
-        myUpdateDatabase.setEnabled(true);
         myStartServer.setEnabled(false);
         myStopServer.setEnabled(true);
     }
@@ -70,7 +64,6 @@ public class SysTray {
     public void setServerStopped() {
         myQuit.setEnabled(true);
         myShow.setEnabled(true);
-        myUpdateDatabase.setEnabled(true);
         myStartServer.setEnabled(true);
         myStopServer.setEnabled(false);
     }
@@ -107,9 +100,6 @@ public class SysTray {
                 mySettingsForm.doQuitApplication();
             } else if ("show".equals(sysTrayMenuEvent.getActionCommand())) {
                 showFrame();
-            } else if ("update_database".equals(sysTrayMenuEvent.getActionCommand())) {
-                DatabaseBuilderTask task = new GuiDatabaseBuilderTask(mySettingsForm.getOptionsForm());
-                MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("settings.buildDatabase"), null, false, task);
             } else if ("stop_server".equals(sysTrayMenuEvent.getActionCommand())) {
                 mySettingsForm.doStopServer();
             } else if ("start_server".equals(sysTrayMenuEvent.getActionCommand())) {

@@ -61,9 +61,8 @@
             </constraints>
             <properties>
               <focusPainted value="true"/>
-              <icon value="de/codewave/mytunesrss/Delete.png"/>
               <opaque value="false"/>
-              <text value=""/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.resetDatabase"/>
             </properties>
           </component>
         </children>
