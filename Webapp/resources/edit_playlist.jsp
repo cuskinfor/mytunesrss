@@ -89,7 +89,7 @@
         </c:if>
 
         <div class="buttons">
-            <input type="submit" onClick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist'" value="<fmt:message key="removeSelected"/>" />
+            <input type="button" onClick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist'" value="<fmt:message key="removeSelected"/>" />
             <input type="submit"
                    onClick="document.forms['playlist'].action = '${servletUrl}/savePlaylist';document.forms['playlist'].elements['backUrl'].value = '${backUrl}'"
                    value="<fmt:message key="savePlaylist"/>" />
