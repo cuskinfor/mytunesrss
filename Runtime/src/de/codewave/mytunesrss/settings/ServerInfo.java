@@ -113,7 +113,7 @@ public class ServerInfo {
     private String getExternalAddress() {
         BufferedReader reader = null;
         try {
-            URLConnection connection = new URL("http://www.codewave.de/getip.php").openConnection();
+            URLConnection connection = new URL("http://www.codewave.de/tools/getip.php").openConnection();
             if (connection != null) {
                 reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
                 if (reader != null) {
@@ -122,7 +122,7 @@ public class ServerInfo {
             }
         } catch (IOException e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Could not read my external address from \"www.codewave.de/getip.php\".", e);
+                LOG.debug("Could not read my external address from \"www.codewave.de/tools/getip.php\".", e);
             }
         } finally {
             if (reader != null) {
