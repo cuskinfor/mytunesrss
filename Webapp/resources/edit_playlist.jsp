@@ -89,13 +89,11 @@
         </c:if>
 
         <div class="buttons">
-            <input type="button" onClick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist'" value="<fmt:message key="removeSelected"/>" />
+            <input type="button" onClick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist';document.forms['playlist'].submit()" value="<fmt:message key="removeSelected"/>" />
             <input type="submit"
                    onClick="document.forms['playlist'].action = '${servletUrl}/savePlaylist';document.forms['playlist'].elements['backUrl'].value = '${backUrl}'"
                    value="<fmt:message key="savePlaylist"/>" />
-            <c:if test="${!states.addToPlaylistMode}">
-                <input type="button" onClick="document.location.href = '${param.backUrl}'" value="<fmt:message key="doCancel"/>" />
-            </c:if>
+            <input type="button" onClick="document.location.href = '${servletUrl}/cancelEditPlaylist?backUrl=${cwfn:encodeUrl(param.backUrl)}'" value="<fmt:message key="doCancel"/>" />
         </div>
     </form>
 
