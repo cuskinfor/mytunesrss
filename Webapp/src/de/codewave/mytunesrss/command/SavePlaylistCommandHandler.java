@@ -33,6 +33,7 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
             session.commit();
             getSession().removeAttribute("playlist");
             getSession().removeAttribute("playlistContent");
+            getStates().put("addToPlaylistMode", Boolean.FALSE);
             forward(MyTunesRssCommand.ShowPortal);
         } else {
             addError(new BundleError("error.needPlaylistNameForSave"));

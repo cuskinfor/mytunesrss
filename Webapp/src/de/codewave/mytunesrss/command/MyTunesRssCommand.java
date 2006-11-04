@@ -16,7 +16,6 @@ public enum MyTunesRssCommand implements Command {
     BrowseArtist("browseArtist", BrowseArtistCommandHandler.class),
     BrowseTrack("browseTrack", BrowseTrackCommandHandler.class),
     StartNewPlaylist("startNewPlaylist", StartNewPlaylistCommandHandler.class),
-    LoadAndContinuePlaylist("loadAndContinuePlaylist", LoadAndContinuePlaylistCommandHandler.class),
     ContinuePlaylist("continuePlaylist", ContinuePlaylistCommandHandler.class),
     LoadAndEditPlaylist("loadAndEditPlaylist", LoadAndEditPlaylistCommandHandler.class),
     CancelCreatePlaylist("cancelCreatePlaylist", CancelCreatePlaylistCommandHandler.class),
@@ -34,6 +33,7 @@ public enum MyTunesRssCommand implements Command {
     GetZipArchive("getZipArchive", GetZipArchiveCommandHandler.class),
     ShowTrackImage("showTrackImage", ShowTrackImageCommandHandler.class),
     DownloadTrack("downloadTrack", DownloadTrackCommandHandler.class),
+    CancelEditPlaylist("cancelEditPlaylist", CancelEditPlaylistCommandHandler.class),
     PlayTrack("playTrack", PlayTrackCommandHandler.class);
 
     private String myName;
