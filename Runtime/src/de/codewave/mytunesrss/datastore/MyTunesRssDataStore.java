@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.datastore;
 
 import de.codewave.utils.*;
 import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.pool.*;
 import org.apache.commons.pool.impl.*;
@@ -33,7 +34,7 @@ public class MyTunesRssDataStore extends DataStore {
 
     public void init() throws IOException {
         String filename = DIRNAME + "/MyTunesRSS";
-        String pathname = ProgramUtils.getCacheDataPath("MyTunesRSS");
+        String pathname = PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
         final String connectString = "jdbc:hsqldb:file:" + pathname + "/" + filename;
         setConnectionPool(new GenericObjectPool(new BasePoolableObjectFactory() {
             public Object makeObject() throws Exception {

@@ -33,6 +33,16 @@ import java.util.prefs.*;
  * de.codewave.mytunesrss.MyTunesRss
  */
 public class MyTunesRss {
+    public static final String APPLICATION_IDENTIFIER = "MyTunesRSS";
+
+    static {
+        try {
+            System.setProperty("MyTunesRSS.logDir", PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER));
+        } catch (IOException e) {
+            System.setProperty("MyTunesRSS.logDir", ".");
+        }
+    }
+
     private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
     public static String VERSION;
     public static URL UPDATE_URL;
@@ -93,7 +103,12 @@ public class MyTunesRss {
         }
         REGISTRATION.init();
         if (REGISTRATION.isExpired()) {
-            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
+            if (REGISTRATION.isDefaultData()) {
+                MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.defaulRegistrationExpired"));
+                System.exit(0);
+            } else {
+                MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
+            }
         }
         if (Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("deleteDatabaseOnNextStartOnError", false)) {
             new DeleteDatabaseTask(false).execute();

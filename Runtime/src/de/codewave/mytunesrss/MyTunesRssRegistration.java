@@ -22,9 +22,10 @@ public class MyTunesRssRegistration {
     private String myName;
     private long myExpiration;
     private boolean myRegistered;
+    private boolean myDefaultData;
 
     public void init() throws IOException {
-        String path = ProgramUtils.getPreferencesDataPath("MyTunesRSS");
+        String path = PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
         URL publicKey = getClass().getResource("/MyTunesRSS.public");
         String registration = RegistrationUtils.getRegistrationData(new File(path + "/MyTunesRSS.key").toURL(), publicKey);
         if (registration != null) {
@@ -37,6 +38,7 @@ public class MyTunesRssRegistration {
                 LOG.info("Using default registration data.");
             }
             handleRegistration(RegistrationUtils.getRegistrationData(getClass().getResource("/MyTunesRSS.key"), publicKey));
+            myDefaultData = true;
         }
     }
 
@@ -83,5 +85,9 @@ public class MyTunesRssRegistration {
 
     public boolean isRegistered() {
         return myRegistered && !isExpired();
+    }
+
+    public boolean isDefaultData() {
+        return myDefaultData;
     }
 }
