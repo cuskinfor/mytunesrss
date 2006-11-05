@@ -55,8 +55,8 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/codewave-utils-20.jar" />
-      <url>jar://$MODULE_DIR$/../lib/codewave-utils-20.jar!/</url>
+      <attribute name="URI" value="/WEB-INF/lib/codewave-utils-21.jar" />
+      <url>jar://$MODULE_DIR$/../lib/codewave-utils-21.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
@@ -75,8 +75,18 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/commons-codec-1.3.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/commons-codec-1.3.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
       <attribute name="URI" value="/WEB-INF/lib/commons-el.jar" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/commons-el.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/commons-httpclient-3.0.1.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/commons-httpclient-3.0.1.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
