@@ -101,6 +101,10 @@ public class MyTunesRss {
             ROOT_FRAME.setVisible(false);
             PLEASE_WAIT_ICON = new ImageIcon(MyTunesRss.class.getResource("PleaseWait.gif"));
         }
+        if (isOtherInstanceRunning()) {
+            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
+            System.exit(0);
+        }
         REGISTRATION.init();
         if (REGISTRATION.isExpired()) {
             if (REGISTRATION.isDefaultData()) {
@@ -130,6 +134,18 @@ public class MyTunesRss {
                 }
             });
         }
+    }
+
+    private static boolean isOtherInstanceRunning() {
+        try {
+            RandomAccessFile file = new RandomAccessFile(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/MyTunesRSS.lck", "rw");
+            return file.getChannel().tryLock() == null;
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not check for other running instance.", e);
+            }
+        }
+        return false;
     }
 
     private static String getJavaEnvironment() {
