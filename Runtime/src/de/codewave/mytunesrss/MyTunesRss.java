@@ -54,6 +54,7 @@ public class MyTunesRss {
     public static SysTray SYSTRAYMENU;
     public static MessageDigest MESSAGE_DIGEST;
     public static JFrame ROOT_FRAME;
+    public static JFrame DUMMY_FRAME;
     public static ImageIcon PLEASE_WAIT_ICON;
     public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
     public static int OPTION_PANE_MAX_MESSAGE_LENGTH = 100;
@@ -96,9 +97,14 @@ public class MyTunesRss {
             Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(ROOT_FRAME, false));
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             ROOT_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
+            ROOT_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
             ROOT_FRAME.setLocation(Integer.MAX_VALUE, 0);
             ROOT_FRAME.setVisible(true);
             ROOT_FRAME.setVisible(false);
+            DUMMY_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
+            DUMMY_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
+            DUMMY_FRAME.setLocation(Integer.MAX_VALUE, 0);
+            DUMMY_FRAME.setVisible(true);
             PLEASE_WAIT_ICON = new ImageIcon(MyTunesRss.class.getResource("PleaseWait.gif"));
         }
         if (isOtherInstanceRunning()) {
@@ -161,7 +167,6 @@ public class MyTunesRss {
         MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
         executeApple(settings);
         executeWindows(settings);
-        ROOT_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
         ROOT_FRAME.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         ROOT_FRAME.addWindowListener(mainWindowListener);
         ROOT_FRAME.getContentPane().add(settings.getRootPanel());
@@ -170,6 +175,7 @@ public class MyTunesRss {
         SwingUtils.removeEmptyTooltips(ROOT_FRAME.getRootPane());
         int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", Integer.MAX_VALUE);
         int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", Integer.MAX_VALUE);
+        DUMMY_FRAME.dispose();
         if (x != Integer.MAX_VALUE && y != Integer.MAX_VALUE) {
             ROOT_FRAME.setLocation(x, y);
             SwingUtils.packAndShow(ROOT_FRAME);
