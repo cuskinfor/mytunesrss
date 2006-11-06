@@ -6,6 +6,7 @@ package de.codewave.mytunesrss;
 
 import de.codewave.utils.io.*;
 import de.codewave.utils.xml.*;
+import de.codewave.utils.*;
 import org.apache.commons.jxpath.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
@@ -190,13 +191,13 @@ public class MyTunesRssConfig {
         myProxyServer = proxyServer;
     }
 
-    private String findItunesLibraryXml() {
+    private String findItunesLibraryXml(Trigger trigger) {
         String userHome = System.getProperty("user.home");
         if (StringUtils.isNotEmpty(userHome)) {
             if (!userHome.endsWith("/") && !userHome.endsWith("\\")) {
                 userHome += "/";
             }
-            Collection<File> files = IOUtils.find(new File(userHome), "iTunes Music Library.xml");
+            Collection<File> files = IOUtils.find(new File(userHome), "iTunes Music Library.xml", trigger);
             if (!files.isEmpty()) {
                 for (File file : files) {
                     File parentFile = file.getParentFile();
@@ -216,9 +217,16 @@ public class MyTunesRssConfig {
         setPort(Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("serverPort", getPort()));
         try {
             if (!Arrays.asList(Preferences.userRoot().node("/de/codewave/mytunesrss").keys()).contains("iTunesLibrary")) {
-                MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.searchingItunesXml"), null, false, new MyTunesRssTask() {
+                MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.searchingItunesXml"), MyTunesRss.BUNDLE.getString("cancel"), false, new MyTunesRssTask() {
+                    private Trigger myCancelTrigger = new Trigger();
+
                     public void execute() throws Exception {
-                        setLibraryXml(findItunesLibraryXml());
+                        setLibraryXml(findItunesLibraryXml(myCancelTrigger));
+                    }
+
+                    @Override
+                    protected void cancel() {
+                        myCancelTrigger.trigger();
                     }
                 });
             }

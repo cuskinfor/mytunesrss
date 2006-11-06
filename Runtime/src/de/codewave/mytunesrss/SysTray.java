@@ -36,7 +36,6 @@ public class SysTray {
         myShow.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myShow);
         myMenu.addSeparator();
-        myMenu.addSeparator();
         myStopServer = new SysTrayMenuItem(MyTunesRss.BUNDLE.getString("systray.stopServer"), "stop_server");
         myStopServer.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myStopServer);

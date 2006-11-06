@@ -12,8 +12,8 @@
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib/codewave-utils-21.jar" />
-        <url>jar://$MODULE_DIR$/../lib/codewave-utils-21.jar!/</url>
+        <attribute name="URI" value="/lib/codewave-utils-22.jar" />
+        <url>jar://$MODULE_DIR$/../lib/codewave-utils-22.jar!/</url>
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
@@ -385,7 +385,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-21.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-22.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
