@@ -52,14 +52,14 @@ public class WebServer {
                             if (health == CheckHealthResult.EMPTY_LIBRARY) {
                                 MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.serverEmptyLibrary"));
                             } else {
-                                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.fatal"));
+                                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.serverStart"));
                             }
                             myEmbeddedTomcat = null;
                             return false;
                         }
                         return true;
                     } else {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.fatal"));
+                        MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.serverStart"));
                         myEmbeddedTomcat = null;
                         return false;
                     }
@@ -67,12 +67,12 @@ public class WebServer {
                     if (e.getMessage().contains("BindException")) {
                         MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.serverAddressBind"));
                     } else {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.fatal") + e.getMessage());
+                        MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.serverStart") + e.getMessage());
                     }
                     myEmbeddedTomcat = null;
                     return false;
                 } catch (IOException e) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.fatal") + e.getMessage());
+                    MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.serverStart") + e.getMessage());
                     myEmbeddedTomcat = null;
                     return false;
                 }

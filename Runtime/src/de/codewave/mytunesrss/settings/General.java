@@ -46,8 +46,11 @@ public class General {
         myPasswordInput.addFocusListener(new PasswordInputListener());
         myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
         User defaultUser = MyTunesRss.CONFIG.getUser("default");
-        myPasswordInput.setText(
-                defaultUser != null && defaultUser.getPasswordHash() != null && defaultUser.getPasswordHash().length > 0 ? "dummypassword" : "");
+        if (defaultUser != null && defaultUser.getPasswordHash() != null && defaultUser.getPasswordHash().length > 0) {
+            setPasswordVisible();
+        } else {
+            setPasswordHidden();
+        }
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
         myBaseDirInput.setText(MyTunesRss.CONFIG.getBaseDir());
         SpinnerNumberModel artistModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getFileSystemArtistNameFolder(), 0, 5, 1);
@@ -56,6 +59,23 @@ public class General {
         myAlbumLevelInput.setModel(albumModel);
         myBaseDirLookupButton.addActionListener(new BaseDirLookupButtonListener());
         setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
+    }
+
+    private void setPasswordVisible() {
+        myPasswordInput.setText("");
+        myPasswordInput.setEchoChar((char)0);
+        Font font = myPasswordInput.getFont();
+        myPasswordInput.setFont(new Font(font.getName(), font.getStyle() | Font.ITALIC, font.getSize()));
+        myPasswordInput.setForeground(Color.LIGHT_GRAY);
+        myPasswordInput.setText(MyTunesRss.BUNDLE.getString("settings.passwordHasBeenSet"));
+    }
+
+    private void setPasswordHidden() {
+        myPasswordInput.setText("");
+        myPasswordInput.setEchoChar('*');
+        Font font = myPasswordInput.getFont();
+        myPasswordInput.setFont(new Font(font.getName(), font.getStyle() & (Integer.MAX_VALUE - Font.ITALIC), font.getSize()));
+        myPasswordInput.setForeground(Color.BLACK);
     }
 
     public void setServerRunningStatus(int serverPort) {
@@ -139,21 +159,25 @@ public class General {
     }
 
     public class PasswordInputListener implements FocusListener {
-        private String myPassword;
+        private boolean myPreviousPasswordSet;
 
         public void focusGained(FocusEvent focusEvent) {
-            myPassword = new String(myPasswordInput.getPassword()).trim();
+            myPreviousPasswordSet = myPasswordInput.getPassword().length > 0;
+            setPasswordHidden();
         }
 
         public void focusLost(FocusEvent focusEvent) {
             String password = new String(myPasswordInput.getPassword()).trim();
-            if (!myPassword.equals(password)) {
+            if (StringUtils.isNotEmpty(password)) {
                 User user = MyTunesRss.CONFIG.getUser("default");
                 if (user == null) {
                     user = new User("default");
                     MyTunesRss.CONFIG.addUser(user);
                 }
                 user.setPassword(password);
+                setPasswordVisible();
+            } else if (myPreviousPasswordSet) {
+                setPasswordVisible();
             }
         }
     }

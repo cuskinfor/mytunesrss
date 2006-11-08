@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.swing.*;
+import de.codewave.utils.*;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.commons.httpclient.methods.multipart.*;
@@ -121,16 +122,16 @@ public class SupportContact {
             try {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 zipOutput = new ZipOutputStream(baos);
-                ZipUtils.addToZip("/MyTunesRSS_Support/MyTunesRSS.log", new File("MyTunesRSS.log"), zipOutput);
+                ZipUtils.addToZip("MyTunesRSS_Support/MyTunesRSS.log", new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.log"), zipOutput);
                 String iTunesXml = MyTunesRss.CONFIG.getLibraryXml();
                 if (myItunesXmlInput.isSelected() && StringUtils.isNotEmpty(iTunesXml)) {
                     File file = new File(iTunesXml);
                     if (file.exists()) {
-                        ZipUtils.addToZip("/MyTunesRSS_Support/iTunes Music Library.xml", file, zipOutput);
+                        ZipUtils.addToZip("MyTunesRSS_Support/iTunes Music Library.xml", file, zipOutput);
                     }
                 }
                 zipOutput.close();
-                postMethod = new PostMethod(SUPPORT_URL);
+                postMethod = new PostMethod(System.getProperty("MyTunesRSS.supportUrl", SUPPORT_URL));
                 PartSource partSource = new ByteArrayPartSource("MyTunesRSS-Support.zip", baos.toByteArray());
                 Part[] part = new Part[] {new StringPart("mailSubject", "MyTunesRSS Support Request"), new StringPart("name", myNameInput.getText()),
                                           new StringPart("email", myEmailInput.getText()), new StringPart("comment", myCommentInput.getText()),

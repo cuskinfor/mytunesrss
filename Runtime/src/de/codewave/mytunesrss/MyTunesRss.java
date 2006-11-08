@@ -33,6 +33,16 @@ import java.util.prefs.*;
  * de.codewave.mytunesrss.MyTunesRss
  */
 public class MyTunesRss {
+    public static final String APPLICATION_IDENTIFIER = "MyTunesRSS";
+
+    static {
+        try {
+            System.setProperty("MyTunesRSS.logDir", PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER));
+        } catch (IOException e) {
+            System.setProperty("MyTunesRSS.logDir", ".");
+        }
+    }
+
     private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
     public static String VERSION;
     public static URL UPDATE_URL;
@@ -44,6 +54,7 @@ public class MyTunesRss {
     public static SysTray SYSTRAYMENU;
     public static MessageDigest MESSAGE_DIGEST;
     public static JFrame ROOT_FRAME;
+    public static JFrame DUMMY_FRAME;
     public static ImageIcon PLEASE_WAIT_ICON;
     public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
     public static int OPTION_PANE_MAX_MESSAGE_LENGTH = 100;
@@ -86,14 +97,29 @@ public class MyTunesRss {
             Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(ROOT_FRAME, false));
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             ROOT_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
+            ROOT_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
             ROOT_FRAME.setLocation(Integer.MAX_VALUE, 0);
             ROOT_FRAME.setVisible(true);
             ROOT_FRAME.setVisible(false);
+            DUMMY_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
+            DUMMY_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
+            DUMMY_FRAME.setLocation(Integer.MAX_VALUE, 0);
+            DUMMY_FRAME.setVisible(true);
             PLEASE_WAIT_ICON = new ImageIcon(MyTunesRss.class.getResource("PleaseWait.gif"));
         }
+        if (isOtherInstanceRunning(3000)) {
+            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
+            System.exit(0);
+        }
+        removeStaleHsqldbLock();
         REGISTRATION.init();
         if (REGISTRATION.isExpired()) {
+            if (REGISTRATION.isDefaultData()) {
+                MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.defaulRegistrationExpired"));
+                System.exit(0);
+            } else {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
+        }
         }
         if (Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("deleteDatabaseOnNextStartOnError", false)) {
             new DeleteDatabaseTask(false).execute();
@@ -117,6 +143,47 @@ public class MyTunesRss {
         }
     }
 
+    private static void removeStaleHsqldbLock() {
+        try {
+            File hsqldbLock = new File(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/hsqldb/MyTunesRSS.lck");
+            if (hsqldbLock.exists()) {
+                hsqldbLock.delete();
+            }
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not delete existing HSQLDB lock.", e);
+            }
+        }
+    }
+
+    private static boolean isOtherInstanceRunning(long timeoutMillis) {
+        RandomAccessFile file;
+        try {
+            file = new RandomAccessFile(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/MyTunesRSS.lck", "rw");
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not check for other running instance.", e);
+            }
+            return false;
+        }
+        long endTime = System.currentTimeMillis() + timeoutMillis;
+        do {
+            try {
+                if (file.getChannel().tryLock() != null) {
+                    return false;
+                }
+                Thread.sleep(500);
+            } catch (IOException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not check for other running instance.", e);
+                }
+            } catch (InterruptedException e) {
+                // intentionally left blank
+            }
+        } while (System.currentTimeMillis() < endTime);
+        return true;
+    }
+
     private static String getJavaEnvironment() {
         StringBuffer java = new StringBuffer();
         java.append(System.getProperty("java.version")).append(" (\"").append(System.getProperty("java.home")).append("\")");
@@ -130,7 +197,6 @@ public class MyTunesRss {
         MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
         executeApple(settings);
         executeWindows(settings);
-        ROOT_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
         ROOT_FRAME.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         ROOT_FRAME.addWindowListener(mainWindowListener);
         ROOT_FRAME.getContentPane().add(settings.getRootPanel());
@@ -139,6 +205,7 @@ public class MyTunesRss {
         SwingUtils.removeEmptyTooltips(ROOT_FRAME.getRootPane());
         int x = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_x", Integer.MAX_VALUE);
         int y = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("window_y", Integer.MAX_VALUE);
+        DUMMY_FRAME.dispose();
         if (x != Integer.MAX_VALUE && y != Integer.MAX_VALUE) {
             ROOT_FRAME.setLocation(x, y);
             SwingUtils.packAndShow(ROOT_FRAME);

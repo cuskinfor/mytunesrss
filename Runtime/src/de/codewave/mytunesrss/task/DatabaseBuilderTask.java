@@ -30,13 +30,12 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         try {
             myLibraryXmlUrl = StringUtils.isNotEmpty(MyTunesRss.CONFIG.getLibraryXml()) ? new File(MyTunesRss.CONFIG.getLibraryXml().trim()).toURL() :
                     null;
-            myBaseDir = StringUtils.isNotEmpty(MyTunesRss.CONFIG.getBaseDir()) ? new File(MyTunesRss.CONFIG.getBaseDir().trim()) : null;
         } catch (MalformedURLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not create URL from iTunes XML file.", e);
             }
-            MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.fatal"));
         }
+        myBaseDir = StringUtils.isNotEmpty(MyTunesRss.CONFIG.getBaseDir()) ? new File(MyTunesRss.CONFIG.getBaseDir().trim()) : null;
     }
 
     public boolean needsUpdate() throws SQLException {

@@ -58,7 +58,7 @@
               </grid>
             </constraints>
             <properties>
-              <font swing-font="PasswordField.font"/>
+              <font swing-font="TextField.font"/>
               <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.authPasswordTooltip"/>
             </properties>
           </component>

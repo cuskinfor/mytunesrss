@@ -23,7 +23,7 @@ public class DeleteDatabaseTask extends MyTunesRssTask {
     }
 
     public void execute() throws IOException, SQLException {
-        String pathname = ProgramUtils.getCacheDataPath("MyTunesRSS");
+        String pathname = PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
         if (deleteRecursivly(new File(pathname + "/" + MyTunesRssDataStore.DIRNAME))) {
             Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("deleteDatabaseOnNextStartOnError", false);
         } else {

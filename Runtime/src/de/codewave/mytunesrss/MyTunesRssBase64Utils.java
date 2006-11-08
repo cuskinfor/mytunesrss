@@ -18,7 +18,6 @@ public class MyTunesRssBase64Utils {
             protected char getCharFor62() {
                 return '-';
             }
-
             @Override
             protected char getCharFor63() {
                 return '_';
