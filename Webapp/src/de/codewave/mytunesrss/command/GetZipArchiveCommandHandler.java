@@ -48,45 +48,51 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             Set<String> entryNames = new HashSet<String>();
             String lineSeparator = System.getProperty("line.separator");
             StringBuffer m3uPlaylist = new StringBuffer("#EXTM3U").append(lineSeparator);
+            int trackCount = 0;
             for (Track track : tracks) {
-                String trackArtist = track.getArtist();
-                if (trackArtist.equals(InsertTrackStatement.UNKNOWN)) {
-                    trackArtist = "unknown";
-                }
-                String trackAlbum = track.getAlbum();
-                if (trackAlbum.equals(InsertTrackStatement.UNKNOWN)) {
-                    trackAlbum = "unknown";
-                }
-                int number = 1;
-                String entryNameWithoutSuffix = MyTunesFunctions.getLegalFileName(trackArtist) + "/" + MyTunesFunctions.getLegalFileName(trackAlbum) + "/";
-                if (track.getTrackNumber() > 0) {
-                    entryNameWithoutSuffix += StringUtils.leftPad(Integer.toString(track.getTrackNumber()), 2, "0") + " ";
-                }
-                entryNameWithoutSuffix += MyTunesFunctions.getLegalFileName(track.getName());
-                String entryName = entryNameWithoutSuffix + "." + IOUtils.getSuffix(track.getFile());
-                while (entryNames.contains(entryName)) {
-                    entryName = entryNameWithoutSuffix + " " + number + "." + IOUtils.getSuffix(track.getFile());
-                    number++;
-                }
-                entryNames.add(entryName);
-                ZipEntry entry = new ZipEntry(baseName + "/" + entryName);
-                zipStream.putNextEntry(entry);
-                InputStream file = new FileInputStream(track.getFile());
-                for (int length = file.read(buffer); length >= 0; length = file.read(buffer)) {
-                    if (length > 0) {
-                        zipStream.write(buffer, 0, length);
+                if (track.getFile().exists()) {
+                    String trackArtist = track.getArtist();
+                    if (trackArtist.equals(InsertTrackStatement.UNKNOWN)) {
+                        trackArtist = "unknown";
                     }
+                    String trackAlbum = track.getAlbum();
+                    if (trackAlbum.equals(InsertTrackStatement.UNKNOWN)) {
+                        trackAlbum = "unknown";
+                    }
+                    int number = 1;
+                    String entryNameWithoutSuffix = MyTunesFunctions.getLegalFileName(trackArtist) + "/" + MyTunesFunctions.getLegalFileName(trackAlbum) + "/";
+                    if (track.getTrackNumber() > 0) {
+                        entryNameWithoutSuffix += StringUtils.leftPad(Integer.toString(track.getTrackNumber()), 2, "0") + " ";
+                    }
+                    entryNameWithoutSuffix += MyTunesFunctions.getLegalFileName(track.getName());
+                    String entryName = entryNameWithoutSuffix + "." + IOUtils.getSuffix(track.getFile());
+                    while (entryNames.contains(entryName)) {
+                        entryName = entryNameWithoutSuffix + " " + number + "." + IOUtils.getSuffix(track.getFile());
+                        number++;
+                    }
+                    entryNames.add(entryName);
+                    ZipEntry entry = new ZipEntry(baseName + "/" + entryName);
+                    zipStream.putNextEntry(entry);
+                    InputStream file = new FileInputStream(track.getFile());
+                    for (int length = file.read(buffer); length >= 0; length = file.read(buffer)) {
+                        if (length > 0) {
+                            zipStream.write(buffer, 0, length);
+                        }
+                    }
+                    file.close();
+                    zipStream.closeEntry();
+                    m3uPlaylist.append("#EXTINF:").append(track.getTime()).append(",").append(trackArtist).append(" - ").append(track.getName()).append(lineSeparator);
+                    m3uPlaylist.append(entryName).append(lineSeparator);
+                    trackCount++;
+                    sessionInfo.addBytesStreamed(entry.getCompressedSize());
                 }
-                file.close();
-                zipStream.closeEntry();
-                m3uPlaylist.append("#EXTINF:").append(track.getTime()).append(",").append(trackArtist).append(" - ").append(track.getName()).append(lineSeparator);
-                m3uPlaylist.append(entryName).append(lineSeparator);
-                sessionInfo.addBytesStreamed(entry.getCompressedSize());
             }
-            ZipEntry m3uPlaylistEntry = new ZipEntry(baseName + "/" + baseName + ".m3u");
-            zipStream.putNextEntry(m3uPlaylistEntry);
-            zipStream.write(m3uPlaylist.toString().getBytes());
-            zipStream.closeEntry();
+            if (trackCount > 0) {
+                ZipEntry m3uPlaylistEntry = new ZipEntry(baseName + "/" + baseName + ".m3u");
+                zipStream.putNextEntry(m3uPlaylistEntry);
+                zipStream.write(m3uPlaylist.toString().getBytes());
+                zipStream.closeEntry();
+            }
             zipStream.close();
         } else {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
