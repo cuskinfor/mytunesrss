@@ -12,6 +12,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
+import org.apache.commons.lang.*;
+
 /**
  * General settings panel
  */
@@ -53,8 +55,20 @@ public class General {
         }
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
         myBaseDirInput.setText(MyTunesRss.CONFIG.getBaseDir());
-        SpinnerNumberModel artistModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getFileSystemArtistNameFolder(), 0, 5, 1);
-        SpinnerNumberModel albumModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getFileSystemAlbumNameFolder(), 0, 5, 1);
+        int artistValue = MyTunesRss.CONFIG.getFileSystemArtistNameFolder();
+        if (artistValue < 0) {
+            artistValue = 0;
+        } else if (artistValue > 5) {
+            artistValue = 5;
+        }
+        SpinnerNumberModel artistModel = new SpinnerNumberModel(artistValue, 0, 5, 1);
+        int albumValue = MyTunesRss.CONFIG.getFileSystemAlbumNameFolder();
+        if (albumValue < 0) {
+            albumValue = 0;
+        } else if (albumValue > 5) {
+            albumValue = 5;
+        }
+        SpinnerNumberModel albumModel = new SpinnerNumberModel(albumValue, 0, 5, 1);
         myArtistLevelInput.setModel(artistModel);
         myAlbumLevelInput.setModel(albumModel);
         myBaseDirLookupButton.addActionListener(new BaseDirLookupButtonListener());

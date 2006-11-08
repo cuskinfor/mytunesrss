@@ -47,7 +47,13 @@ public class Options {
             myUpdateOnStartInput.setEnabled(false);
         }
         refreshLastUpdate();
-        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval(),
+        int interval = MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval();
+        if (interval < MIN_UPDATE_INTERVAL) {
+            interval = MIN_UPDATE_INTERVAL;
+        } else if (interval > MAX_UPDATE_INTERVAL) {
+            interval = MAX_UPDATE_INTERVAL;
+        }
+        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(interval,
                                                                        MIN_UPDATE_INTERVAL,
                                                                        MAX_UPDATE_INTERVAL,
                                                                        1);
