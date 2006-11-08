@@ -107,7 +107,7 @@ public class MyTunesRss {
             DUMMY_FRAME.setVisible(true);
             PLEASE_WAIT_ICON = new ImageIcon(MyTunesRss.class.getResource("PleaseWait.gif"));
         }
-        if (isOtherInstanceRunning()) {
+        if (isOtherInstanceRunning(3000)) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
             System.exit(0);
         }
@@ -142,16 +142,32 @@ public class MyTunesRss {
         }
     }
 
-    private static boolean isOtherInstanceRunning() {
+    private static boolean isOtherInstanceRunning(long timeoutMillis) {
+        RandomAccessFile file;
         try {
-            RandomAccessFile file = new RandomAccessFile(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/MyTunesRSS.lck", "rw");
-            return file.getChannel().tryLock() == null;
+            file = new RandomAccessFile(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/MyTunesRSS.lck", "rw");
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not check for other running instance.", e);
             }
+            return false;
         }
-        return false;
+        long endTime = System.currentTimeMillis() + timeoutMillis;
+        do {
+            try {
+                if (file.getChannel().tryLock() != null) {
+                    return false;
+                }
+                Thread.sleep(500);
+            } catch (IOException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not check for other running instance.", e);
+                }
+            } catch (InterruptedException e) {
+                // intentionally left blank
+            }
+        } while (System.currentTimeMillis() < endTime);
+        return true;
     }
 
     private static String getJavaEnvironment() {

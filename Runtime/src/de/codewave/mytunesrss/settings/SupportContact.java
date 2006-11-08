@@ -122,12 +122,12 @@ public class SupportContact {
             try {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 zipOutput = new ZipOutputStream(baos);
-                ZipUtils.addToZip("/MyTunesRSS_Support/MyTunesRSS.log", new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.log"), zipOutput);
+                ZipUtils.addToZip("MyTunesRSS_Support/MyTunesRSS.log", new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.log"), zipOutput);
                 String iTunesXml = MyTunesRss.CONFIG.getLibraryXml();
                 if (myItunesXmlInput.isSelected() && StringUtils.isNotEmpty(iTunesXml)) {
                     File file = new File(iTunesXml);
                     if (file.exists()) {
-                        ZipUtils.addToZip("/MyTunesRSS_Support/iTunes Music Library.xml", file, zipOutput);
+                        ZipUtils.addToZip("MyTunesRSS_Support/iTunes Music Library.xml", file, zipOutput);
                     }
                 }
                 zipOutput.close();
