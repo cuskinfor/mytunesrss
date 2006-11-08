@@ -111,6 +111,7 @@ public class MyTunesRss {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
             System.exit(0);
         }
+        removeStaleHsqldbLock();
         REGISTRATION.init();
         if (REGISTRATION.isExpired()) {
             if (REGISTRATION.isDefaultData()) {
@@ -139,6 +140,19 @@ public class MyTunesRss {
                     }
                 }
             });
+        }
+    }
+
+    private static void removeStaleHsqldbLock() {
+        try {
+            File hsqldbLock = new File(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/hsqldb/MyTunesRSS.lck");
+            if (hsqldbLock.exists()) {
+                hsqldbLock.delete();
+            }
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not delete existing HSQLDB lock.", e);
+            }
         }
     }
 
