@@ -29,8 +29,8 @@ public class MyTunesFunctions {
         name = name.replace('\"', '_');
         name = name.replace('<', '_');
         name = name.replace('>', '_');
+        name = name.replace('Â´', '_');
         name = name.replace('`', '_');
-        name = name.replace('´', '_');
         name = name.replace('\'', '_');
         return name;
     }

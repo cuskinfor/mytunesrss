@@ -48,6 +48,10 @@ public class PlaylistFileProcessor implements FileProcessor {
                     statement.setName(IOUtils.getNameWithoutSuffix(playlistFile));
                     statement.setTrackIds(trackIds);
                     myDataStoreSession.executeStatement(statement);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Committing transaction after inserting playlist.");
+                    }
+                    myDataStoreSession.commitAndContinue();
                 }
             } catch (IOException e) {
                 if (LOG.isErrorEnabled()) {

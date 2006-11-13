@@ -27,7 +27,7 @@ public class MyTunesRssDataStore extends DataStore {
             Class.forName("org.hsqldb.jdbcDriver");
         } catch (ClassNotFoundException e) {
             if (LOG.isErrorEnabled()) {
-                LOG.error("Could not loadFromPrefs database driver.", e);
+                LOG.error("Could not load database driver.", e);
             }
         }
     }
@@ -38,7 +38,32 @@ public class MyTunesRssDataStore extends DataStore {
         final String connectString = "jdbc:hsqldb:file:" + pathname + "/" + filename;
         setConnectionPool(new GenericObjectPool(new BasePoolableObjectFactory() {
             public Object makeObject() throws Exception {
-                return DriverManager.getConnection(connectString, "sa", "");
+                try {
+                    return DriverManager.getConnection(connectString, "sa", "");
+                } catch (SQLException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not get a connection. Trying again for 10 seconds.", e);
+                    }
+                    long endTime = System.currentTimeMillis() + 10000;
+                    while (System.currentTimeMillis() < endTime) {
+                        try {
+                            return DriverManager.getConnection(connectString, "sa", "");
+                        } catch (SQLException e1) {
+                            if (LOG.isErrorEnabled()) {
+                                LOG.error("Could not get a connection. Trying again in a second.", e);
+                            }
+                        }
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e1) {
+                            // intentionally left blank
+                        }
+                    }
+                }
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not get a database connection.");
+                }
+                return null;
             }
         }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 5, false, false, 10000, 2, 20000, false, 20000));
     }

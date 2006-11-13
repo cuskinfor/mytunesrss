@@ -57,6 +57,10 @@ public class PlaylistListener implements PListHandlerListener {
                 statement.setTrackIds(tracks);
                 try {
                     myDataStoreSession.executeStatement(statement);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Committing transaction after inserting playlist.");
+                    }
+                    myDataStoreSession.commitAndContinue();
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not insert playlist \"" + name + "\" into database.", e);

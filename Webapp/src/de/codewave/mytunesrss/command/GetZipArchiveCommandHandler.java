@@ -48,7 +48,9 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             Set<String> entryNames = new HashSet<String>();
             String lineSeparator = System.getProperty("line.separator");
             StringBuffer m3uPlaylist = new StringBuffer("#EXTM3U").append(lineSeparator);
+            int trackCount = 0;
             for (Track track : tracks) {
+                if (track.getFile().exists()) {
                 String trackArtist = track.getArtist();
                 if (trackArtist.equals(InsertTrackStatement.UNKNOWN)) {
                     trackArtist = "unknown";
@@ -81,12 +83,16 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 zipStream.closeEntry();
                 m3uPlaylist.append("#EXTINF:").append(track.getTime()).append(",").append(trackArtist).append(" - ").append(track.getName()).append(lineSeparator);
                 m3uPlaylist.append(entryName).append(lineSeparator);
+                    trackCount++;
                 sessionInfo.addBytesStreamed(entry.getCompressedSize());
             }
+            }
+            if (trackCount > 0) {
             ZipEntry m3uPlaylistEntry = new ZipEntry(baseName + "/" + baseName + ".m3u");
             zipStream.putNextEntry(m3uPlaylistEntry);
             zipStream.write(m3uPlaylist.toString().getBytes());
             zipStream.closeEntry();
+            }
             zipStream.close();
         } else {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
