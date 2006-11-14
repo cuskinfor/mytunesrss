@@ -4,13 +4,12 @@
 
 package de.codewave.mytunesrss.datastore;
 
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.*;
 import de.codewave.utils.sql.*;
-import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.pool.*;
 import org.apache.commons.pool.impl.*;
-import org.hsqldb.*;
 
 import java.io.*;
 import java.sql.*;
@@ -38,30 +37,27 @@ public class MyTunesRssDataStore extends DataStore {
         final String connectString = "jdbc:hsqldb:file:" + pathname + "/" + filename;
         setConnectionPool(new GenericObjectPool(new BasePoolableObjectFactory() {
             public Object makeObject() throws Exception {
+                long endTime = System.currentTimeMillis() + 10000;
+                do {
+                    try {
+                        return DriverManager.getConnection(connectString, "sa", "");
+                    } catch (SQLException e1) {
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Could not get a database connection.");
+                        }
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e1) {
+                        // intentionally left blank
+                    }
+                } while (System.currentTimeMillis() < endTime);
                 try {
                     return DriverManager.getConnection(connectString, "sa", "");
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not get a connection. Trying again for 10 seconds.", e);
+                        LOG.error("Could not get a database connection.", e);
                     }
-                    long endTime = System.currentTimeMillis() + 10000;
-                    while (System.currentTimeMillis() < endTime) {
-                        try {
-                            return DriverManager.getConnection(connectString, "sa", "");
-                        } catch (SQLException e1) {
-                            if (LOG.isErrorEnabled()) {
-                                LOG.error("Could not get a connection. Trying again in a second.", e);
-                            }
-                        }
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e1) {
-                            // intentionally left blank
-                        }
-                    }
-                }
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not get a database connection.");
                 }
                 return null;
             }
