@@ -22,7 +22,7 @@ public class ID3Utils {
 
     public static Image getImage(Track track) {
         File file = track.getFile();
-        if (file.exists() && "mp3".equals(IOUtils.getSuffix(file))) {
+        if (file.exists() && "mp3".equalsIgnoreCase(IOUtils.getSuffix(file))) {
             try {
                 Id3v2Tag id3v2Tag = Mp3Utils.readId3v2Tag(file);
                 if (id3v2Tag != null && id3v2Tag.getFrames() != null) {

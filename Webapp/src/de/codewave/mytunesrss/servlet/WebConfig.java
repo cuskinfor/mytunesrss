@@ -18,7 +18,7 @@ import java.util.*;
 public class WebConfig {
     private static final Log LOG = LogFactory.getLog(WebConfig.class);
 
-    private static final String CONFIG_COOKIE_NAME = "MyTunesRSSConfig";
+    private static final String CONFIG_COOKIE_NAME = MyTunesRss.APPLICATION_IDENTIFIER + "Cookie";
     private static final String CFG_USER_NAME = "userName";
     private static final String CFG_PASSWORD_HASH = "passwordHash";
     private static final String CFG_LOGIN_STORED = "rememberLogin";
