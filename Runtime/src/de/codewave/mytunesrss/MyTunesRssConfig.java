@@ -21,6 +21,7 @@ import java.util.prefs.*;
  */
 public class MyTunesRssConfig {
     private static final Log LOG = LogFactory.getLog(MyTunesRssConfig.class);
+    private static final String PREF_ROOT = "/de/codewave/mytunesrss30beta";
 
     private int myPort = 8080;
     private String myLibraryXml = "";
@@ -212,11 +213,11 @@ public class MyTunesRssConfig {
 
     public void loadFromPrefs() {
         checkPrefsVersion();
-        setVersion(Preferences.userRoot().node("/de/codewave/mytunesrss").get("version", ""));
+        setVersion(Preferences.userRoot().node(PREF_ROOT).get("version", ""));
         migrate();
-        setPort(Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("serverPort", getPort()));
+        setPort(Preferences.userRoot().node(PREF_ROOT).getInt("serverPort", getPort()));
         try {
-            if (!Arrays.asList(Preferences.userRoot().node("/de/codewave/mytunesrss").keys()).contains("iTunesLibrary")) {
+            if (!Arrays.asList(Preferences.userRoot().node(PREF_ROOT).keys()).contains("iTunesLibrary")) {
                 MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.searchingItunesXml"), MyTunesRss.BUNDLE.getString("cancel"), false, new MyTunesRssTask() {
                     private Trigger myCancelTrigger = new Trigger();
 
@@ -233,17 +234,17 @@ public class MyTunesRssConfig {
         } catch (BackingStoreException e) {
             // intentionally left blank
         }
-        setLibraryXml(Preferences.userRoot().node("/de/codewave/mytunesrss").get("iTunesLibrary", getLibraryXml()));
-        setCheckUpdateOnStart(Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("checkUpdateOnStart", isCheckUpdateOnStart()));
-        setAutoStartServer(Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("autoStartServer", isAutoStartServer()));
-        setAutoUpdateDatabase(Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("autoUpdateDatabase", isAutoUpdateDatabase()));
-        setAutoUpdateDatabaseInterval(Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("autoUpdateDatabaseInterval",
+        setLibraryXml(Preferences.userRoot().node(PREF_ROOT).get("iTunesLibrary", getLibraryXml()));
+        setCheckUpdateOnStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("checkUpdateOnStart", isCheckUpdateOnStart()));
+        setAutoStartServer(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoStartServer", isAutoStartServer()));
+        setAutoUpdateDatabase(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoUpdateDatabase", isAutoUpdateDatabase()));
+        setAutoUpdateDatabaseInterval(Preferences.userRoot().node(PREF_ROOT).getInt("autoUpdateDatabaseInterval",
                                                                                                     getAutoUpdateDatabaseInterval()));
-        setIgnoreTimestamps(Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("ignoreTimestamps", isIgnoreTimestamps()));
-        setBaseDir(Preferences.userRoot().node("/de/codewave/mytunesrss").get("baseDir", getBaseDir()));
-        setFileSystemArtistNameFolder(Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("artistFolder", getFileSystemArtistNameFolder()));
-        setFileSystemAlbumNameFolder(Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("albumFolder", getFileSystemAlbumNameFolder()));
-        Preferences userNode = Preferences.userRoot().node("/de/codewave/mytunesrss/user");
+        setIgnoreTimestamps(Preferences.userRoot().node(PREF_ROOT).getBoolean("ignoreTimestamps", isIgnoreTimestamps()));
+        setBaseDir(Preferences.userRoot().node(PREF_ROOT).get("baseDir", getBaseDir()));
+        setFileSystemArtistNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("artistFolder", getFileSystemArtistNameFolder()));
+        setFileSystemAlbumNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("albumFolder", getFileSystemAlbumNameFolder()));
+        Preferences userNode = Preferences.userRoot().node(PREF_ROOT + "/user");
         if (userNode != null) {
             try {
                 for (String userName : userNode.childrenNames()) {
@@ -261,11 +262,11 @@ public class MyTunesRssConfig {
             }
         }
         checkAndCreateDefaultUser();
-        setSupportName(Preferences.userRoot().node("/de/codewave/mytunesrss").get("supportName", getSupportName()));
-        setSupportEmail(Preferences.userRoot().node("/de/codewave/mytunesrss").get("supportEmail", getSupportEmail()));
-        setProxyServer(Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("proxyServer", isProxyServer()));
-        setProxyHost(Preferences.userRoot().node("/de/codewave/mytunesrss").get("proxyHost", getProxyHost()));
-        setProxyPort(Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("proxyPort", getProxyPort()));
+        setSupportName(Preferences.userRoot().node(PREF_ROOT).get("supportName", getSupportName()));
+        setSupportEmail(Preferences.userRoot().node(PREF_ROOT).get("supportEmail", getSupportEmail()));
+        setProxyServer(Preferences.userRoot().node(PREF_ROOT).getBoolean("proxyServer", isProxyServer()));
+        setProxyHost(Preferences.userRoot().node(PREF_ROOT).get("proxyHost", getProxyHost()));
+        setProxyPort(Preferences.userRoot().node(PREF_ROOT).getInt("proxyPort", getProxyPort()));
     }
 
     private void checkAndCreateDefaultUser() {
@@ -324,19 +325,19 @@ public class MyTunesRssConfig {
 
     public void save() {
         if (mySaveEnabled) {
-            Preferences.userRoot().node("/de/codewave/mytunesrss").put("version", MyTunesRss.VERSION);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("serverPort", myPort);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").put("iTunesLibrary", myLibraryXml);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("checkUpdateOnStart", myCheckUpdateOnStart);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("autoStartServer", myAutoStartServer);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("autoUpdateDatabase", myAutoUpdateDatabase);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").put("version", myVersion);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("ignoreTimestamps", myIgnoreTimestamps);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").put("baseDir", myBaseDir);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("artistFolder", myFileSystemArtistNameFolder);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("albumFolder", myFileSystemAlbumNameFolder);
-            Preferences userNode = Preferences.userRoot().node("/de/codewave/mytunesrss/user");
+            Preferences.userRoot().node(PREF_ROOT).put("version", MyTunesRss.VERSION);
+            Preferences.userRoot().node(PREF_ROOT).putInt("serverPort", myPort);
+            Preferences.userRoot().node(PREF_ROOT).put("iTunesLibrary", myLibraryXml);
+            Preferences.userRoot().node(PREF_ROOT).putBoolean("checkUpdateOnStart", myCheckUpdateOnStart);
+            Preferences.userRoot().node(PREF_ROOT).putBoolean("autoStartServer", myAutoStartServer);
+            Preferences.userRoot().node(PREF_ROOT).putBoolean("autoUpdateDatabase", myAutoUpdateDatabase);
+            Preferences.userRoot().node(PREF_ROOT).putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
+            Preferences.userRoot().node(PREF_ROOT).put("version", myVersion);
+            Preferences.userRoot().node(PREF_ROOT).putBoolean("ignoreTimestamps", myIgnoreTimestamps);
+            Preferences.userRoot().node(PREF_ROOT).put("baseDir", myBaseDir);
+            Preferences.userRoot().node(PREF_ROOT).putInt("artistFolder", myFileSystemArtistNameFolder);
+            Preferences.userRoot().node(PREF_ROOT).putInt("albumFolder", myFileSystemAlbumNameFolder);
+            Preferences userNode = Preferences.userRoot().node(PREF_ROOT + "/user");
             try {
                 // remove obsolete users
                 for (String username : userNode.childrenNames()) {
@@ -360,19 +361,19 @@ public class MyTunesRssConfig {
                     LOG.error("Could not read users.", e);
                 }
             }
-            Preferences.userRoot().node("/de/codewave/mytunesrss").put("supportName", mySupportName);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").put("supportEmail", mySupportEmail);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("proxyServer", myProxyServer);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").put("proxyHost", myProxyHost);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("proxyPort", myProxyPort);
+            Preferences.userRoot().node(PREF_ROOT).put("supportName", mySupportName);
+            Preferences.userRoot().node(PREF_ROOT).put("supportEmail", mySupportEmail);
+            Preferences.userRoot().node(PREF_ROOT).putBoolean("proxyServer", myProxyServer);
+            Preferences.userRoot().node(PREF_ROOT).put("proxyHost", myProxyHost);
+            Preferences.userRoot().node(PREF_ROOT).putInt("proxyPort", myProxyPort);
         }
     }
 
     private void checkPrefsVersion() {
-        String version = Preferences.userRoot().node("/de/codewave/mytunesrss").get("version", "");
+        String version = Preferences.userRoot().node(PREF_ROOT).get("version", "");
         if ("".equals(version)) {
             try {
-                Preferences.userRoot().node("/de/codewave/mytunesrss").removeNode();
+                Preferences.userRoot().node(PREF_ROOT).removeNode();
             } catch (BackingStoreException e) {
                 // intentionally left blank
             }
@@ -382,21 +383,21 @@ public class MyTunesRssConfig {
     private void migrate() {
         if (getVersion().compareTo("2.1") < 0) {
             // migrate to 2.1
-            int interval = Preferences.userRoot().node("/de/codewave/mytunesrss").getInt("autoUpdateDatabaseInterval", 600) / 60;
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("autoUpdateDatabaseInterval", interval);
+            int interval = Preferences.userRoot().node(PREF_ROOT).getInt("autoUpdateDatabaseInterval", 600) / 60;
+            Preferences.userRoot().node(PREF_ROOT).putInt("autoUpdateDatabaseInterval", interval);
             setVersion("2.1");
         }
         if (getVersion().compareTo("2.3") < 0) {
             // migrate to 2.3
-            String password = Preferences.userRoot().node("/de/codewave/mytunesrss").get("serverPassword", "");
+            String password = Preferences.userRoot().node(PREF_ROOT).get("serverPassword", "");
             if (StringUtils.isNotEmpty(password)) {
                 try {
                     byte[] hash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
-                    Preferences.userRoot().node("/de/codewave/mytunesrss/user/default").putByteArray("password", hash);
-                    Preferences.userRoot().node("/de/codewave/mytunesrss/user/default").putBoolean("featureRss", true);
-                    Preferences.userRoot().node("/de/codewave/mytunesrss/user/default").putBoolean("featureM3u", true);
-                    Preferences.userRoot().node("/de/codewave/mytunesrss/user/default").putBoolean("featureDownload", true);
-                    Preferences.userRoot().node("/de/codewave/mytunesrss").remove("serverPassword");
+                    Preferences.userRoot().node(PREF_ROOT + "/user/default").putByteArray("password", hash);
+                    Preferences.userRoot().node(PREF_ROOT + "/user/default").putBoolean("featureRss", true);
+                    Preferences.userRoot().node(PREF_ROOT + "/user/default").putBoolean("featureM3u", true);
+                    Preferences.userRoot().node(PREF_ROOT + "/user/default").putBoolean("featureDownload", true);
+                    Preferences.userRoot().node(PREF_ROOT).remove("serverPassword");
                     setVersion("2.3");
                 } catch (UnsupportedEncodingException e) {
                     if (LOG.isErrorEnabled()) {
