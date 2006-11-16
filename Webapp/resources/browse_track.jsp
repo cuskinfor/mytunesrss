@@ -155,6 +155,7 @@
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
         <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
         <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:if>
+        <a href="${servletUrl}/showTrackInfo?auth=${cwfn:encodeUrl(auth)}&amp;track=${cwfn:encodeUrl(track.id)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
         <c:choose>
             <c:when test="${sortOrder == 'Album'}">
                 <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
@@ -166,6 +167,7 @@
                 <c:out value="${cwfn:choose(mtfn:unknown(track.name), '(unknown)', track.name)}" />
             </c:otherwise>
         </c:choose>
+        </a>
     </td>
     <c:if test="${sortOrder == 'Album' && !track.simple}">
         <td>
