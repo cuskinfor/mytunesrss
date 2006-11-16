@@ -34,9 +34,8 @@ public class WebServer {
         if (myEmbeddedTomcat == null) {
             if (MyTunesRss.CONFIG.getPort() < MIN_PORT || MyTunesRss.CONFIG.getPort() > MAX_PORT) {
                 MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.illegalServerPort"));
-            } else if (MyTunesRss.CONFIG.getUser("default") == null || MyTunesRss.CONFIG.getUser("default").getPasswordHash() == null ||
-                    MyTunesRss.CONFIG.getUser("default").getPasswordHash().length == 0) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.missingAuthPassword"));
+            } else if (MyTunesRss.CONFIG.getUsers() == null || MyTunesRss.CONFIG.getUsers().isEmpty()) {
+                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.noUsersFound"));
             } else {
                 try {
                     final Map<String, Object> contextEntries = new HashMap<String, Object>();
