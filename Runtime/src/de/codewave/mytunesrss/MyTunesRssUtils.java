@@ -5,6 +5,7 @@ import de.codewave.utils.swing.pleasewait.*;
 import org.apache.commons.logging.*;
 
 import javax.swing.*;
+import java.text.MessageFormat;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -52,5 +53,12 @@ public class MyTunesRssUtils {
             }
             PleaseWaitUtils.executeAndWait(MyTunesRss.ROOT_FRAME, MyTunesRss.PLEASE_WAIT_ICON, title, text, cancelButtonText, progressBar, task);
         }
+    }
+
+    public static String getBundleString(String key, Object... parameters) {
+        if (parameters == null || parameters.length == 0) {
+            return MyTunesRss.BUNDLE.getString(key);
+        }
+        return MessageFormat.format(MyTunesRss.BUNDLE.getString(key), parameters);
     }
 }

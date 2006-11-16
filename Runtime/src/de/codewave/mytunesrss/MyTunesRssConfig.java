@@ -316,9 +316,7 @@ public class MyTunesRssConfig {
         }
         checkAndCreateDefaultUser();
         // http proxy
-        JXPathContext dummyContext = JXPathUtils.getContext(context, "/");
-        dummyContext.setLenient(false);
-        setProxyServer(dummyContext.getValue("/mytunesrss/proxy") != null);
+        setProxyServer(context.getValue("/mytunesrss/proxy") != null);
         setProxyHost(JXPathUtils.getStringValue(context, "/mytunesrss/proxy/host", getProxyHost()));
         setProxyPort(JXPathUtils.getIntValue(context, "/mytunesrss/proxy/port", getProxyPort()));
     }

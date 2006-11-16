@@ -278,8 +278,8 @@ public class MyTunesRss {
         if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
             try {
                 Class appleExtensionsClass = Class.forName("de.codewave.mytunesrss.AppleExtensions");
-                Method activateMethod = appleExtensionsClass.getMethod("activate", ApplicationListener.class);
-                activateMethod.invoke(null, new ApplicationListener() {
+                Method activateMethod = appleExtensionsClass.getMethod("activate", EventListener.class);
+                activateMethod.invoke(null, new EventListener() {
                     public void handleQuit() {
                         settings.doQuitApplication();
                     }

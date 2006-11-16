@@ -4,15 +4,17 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.network.*;
-import de.codewave.utils.swing.*;
+import de.codewave.utils.network.DownloadProgressListener;
+import de.codewave.utils.network.Downloader;
+import de.codewave.utils.network.NetworkUtils;
+import de.codewave.utils.network.UpdateInfo;
+import de.codewave.utils.swing.SwingUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
-import java.net.*;
-import java.text.*;
-import java.util.prefs.*;
+import java.io.File;
+import java.net.URL;
+import java.util.prefs.Preferences;
 
 /**
  * de.codewave.mytunesrss.UpdateUtils
@@ -51,27 +53,27 @@ public class UpdateUtils {
     }
 
     private static void downloadUpdate(final URL url, final File file, String version) {
-        MyTunesRssUtils.executeTask(MyTunesRss.BUNDLE.getString("pleaseWait.dowloadTitle"), MessageFormat.format(MyTunesRss.BUNDLE.getString(
-                "pleaseWait.downloadMessage"), version), MyTunesRss.BUNDLE.getString("cancel"), true, new DownloadUpdateTask(url, file));
+        MyTunesRssUtils.executeTask(MyTunesRss.BUNDLE.getString("pleaseWait.dowloadTitle"),
+                                    MyTunesRssUtils.getBundleString("pleaseWait.downloadMessage", version), MyTunesRss.BUNDLE.getString("cancel"), true,
+                                    new DownloadUpdateTask(url, file));
     }
 
     private static boolean askForUpdate(UpdateInfo updateInfo, boolean autoCheck) {
         JOptionPane pane = SwingUtils.createMaxLengthOptionPane(MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
         pane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
-        pane.setMessage(MessageFormat.format(MyTunesRss.BUNDLE.getString("info.newVersionMessage"), MyTunesRss.VERSION, updateInfo.getVersion()));
+        pane.setMessage(MyTunesRssUtils.getBundleString("info.newVersionMessage", MyTunesRss.VERSION, updateInfo.getVersion()));
         String stopNagging = MyTunesRss.BUNDLE.getString("info.newVersionStopNagging");
         String later = MyTunesRss.BUNDLE.getString("info.newVersionLater");
         String download = MyTunesRss.BUNDLE.getString("info.newVersionDownload");
         String cancel = MyTunesRss.BUNDLE.getString("cancel");
         String moreInfo = MyTunesRss.BUNDLE.getString("info.newVersionMoreInfo");
         if (autoCheck) {
-            pane.setOptions(new String[] {stopNagging, later, download, moreInfo});
+            pane.setOptions(new String[]{stopNagging, later, download, moreInfo});
         } else {
-            pane.setOptions(new String[] {cancel, download, moreInfo});
+            pane.setOptions(new String[]{cancel, download, moreInfo});
         }
         pane.setInitialValue(moreInfo);
-        JDialog dialog = pane.createDialog(MyTunesRss.ROOT_FRAME, MessageFormat.format(MyTunesRss.BUNDLE.getString("info.newVersionTitle"),
-                                                                                       updateInfo.getVersion()));
+        JDialog dialog = pane.createDialog(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("info.newVersionTitle", updateInfo.getVersion()));
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         do {
             dialog.setVisible(true);

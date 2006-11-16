@@ -9,10 +9,13 @@
     <!--</datasource>-->
     <!--<updatecheck>false</updatecheck>-->
     <!--<database autoupdate="true" updateinterval="10" ignoretimestamps="false"/>-->
-    <user name="default" password="PDp+yl6vs0Ft22LrTdBMYYw0a2I=">
-        <features rss="true" m3u="true" download="true"/>
-    </user>
     <user name="tanja" password="VsJNIpJ2kuWaOLJKXPQp2bCQYEA=">
+        <features rss="false" m3u="false" download="true"/>
+    </user>
+    <user name="mdescher" password="VsJNIpJ2kuWaOLJKXPQp2bCQYEA=">
+        <features rss="false" m3u="false" download="true"/>
+    </user>
+    <user name="rmueller" password="VsJNIpJ2kuWaOLJKXPQp2bCQYEA=">
         <features rss="false" m3u="false" download="true"/>
     </user>
 </mytunesrss>

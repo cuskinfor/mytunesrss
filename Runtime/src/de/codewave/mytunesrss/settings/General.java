@@ -4,15 +4,20 @@
 
 package de.codewave.mytunesrss.settings;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.utils.swing.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.User;
+import de.codewave.utils.swing.SwingUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-
-import org.apache.commons.lang.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * General settings panel
@@ -20,7 +25,6 @@ import org.apache.commons.lang.*;
 public class General {
     private JPanel myRootPanel;
     private JTextField myPortInput;
-    private JPasswordField myPasswordInput;
     private JTextField myTunesXmlPathInput;
     private JButton myTunesXmlPathLookupButton;
     private JLabel myServerStatusLabel;
@@ -29,10 +33,6 @@ public class General {
     private JButton myBaseDirLookupButton;
     private JSpinner myArtistLevelInput;
     private JSpinner myAlbumLevelInput;
-
-    public JPasswordField getPasswordInput() {
-        return myPasswordInput;
-    }
 
     public JTextField getPortInput() {
         return myPortInput;
@@ -45,14 +45,7 @@ public class General {
     public void init() {
         myTunesXmlPathLookupButton.addActionListener(new TunesXmlPathLookupButtonListener());
         myServerInfoButton.addActionListener(new ServerInfoButtonListener());
-        myPasswordInput.addFocusListener(new PasswordInputListener());
         myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
-        User defaultUser = MyTunesRss.CONFIG.getUser("default");
-        if (defaultUser != null && defaultUser.getPasswordHash() != null && defaultUser.getPasswordHash().length > 0) {
-            setPasswordVisible();
-        } else {
-            setPasswordHidden();
-        }
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
         myBaseDirInput.setText(MyTunesRss.CONFIG.getBaseDir());
         int artistValue = MyTunesRss.CONFIG.getFileSystemArtistNameFolder();
@@ -73,23 +66,6 @@ public class General {
         myAlbumLevelInput.setModel(albumModel);
         myBaseDirLookupButton.addActionListener(new BaseDirLookupButtonListener());
         setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
-    }
-
-    private void setPasswordVisible() {
-        myPasswordInput.setText("");
-        myPasswordInput.setEchoChar((char)0);
-        Font font = myPasswordInput.getFont();
-        myPasswordInput.setFont(new Font(font.getName(), font.getStyle() | Font.ITALIC, font.getSize()));
-        myPasswordInput.setForeground(Color.LIGHT_GRAY);
-        myPasswordInput.setText(MyTunesRss.BUNDLE.getString("settings.passwordHasBeenSet"));
-    }
-
-    private void setPasswordHidden() {
-        myPasswordInput.setText("");
-        myPasswordInput.setEchoChar('*');
-        Font font = myPasswordInput.getFont();
-        myPasswordInput.setFont(new Font(font.getName(), font.getStyle() & (Integer.MAX_VALUE - Font.ITALIC), font.getSize()));
-        myPasswordInput.setForeground(Color.BLACK);
     }
 
     public void setServerRunningStatus(int serverPort) {
@@ -113,15 +89,21 @@ public class General {
         switch (mode) {
             case ServerRunning:
                 SwingUtils.enableElementAndLabel(myPortInput, false);
-                SwingUtils.enableElementAndLabel(myPasswordInput, false);
                 SwingUtils.enableElementAndLabel(myTunesXmlPathInput, false);
+                SwingUtils.enableElementAndLabel(myBaseDirInput, false);
                 myTunesXmlPathLookupButton.setEnabled(false);
+                myBaseDirLookupButton.setEnabled(false);
+                SwingUtils.enableElementAndLabel(myAlbumLevelInput, false);
+                SwingUtils.enableElementAndLabel(myArtistLevelInput, false);
                 break;
             case ServerIdle:
                 SwingUtils.enableElementAndLabel(myPortInput, true);
-                SwingUtils.enableElementAndLabel(myPasswordInput, true);
                 SwingUtils.enableElementAndLabel(myTunesXmlPathInput, true);
+                SwingUtils.enableElementAndLabel(myBaseDirInput, true);
                 myTunesXmlPathLookupButton.setEnabled(true);
+                myBaseDirLookupButton.setEnabled(true);
+                SwingUtils.enableElementAndLabel(myAlbumLevelInput, true);
+                SwingUtils.enableElementAndLabel(myArtistLevelInput, true);
                 break;
         }
     }
@@ -169,30 +151,6 @@ public class General {
     public class ServerInfoButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent) {
             new ServerInfo().display(MyTunesRss.ROOT_FRAME, myPortInput.getText());
-        }
-    }
-
-    public class PasswordInputListener implements FocusListener {
-        private boolean myPreviousPasswordSet;
-
-        public void focusGained(FocusEvent focusEvent) {
-            myPreviousPasswordSet = myPasswordInput.getPassword().length > 0;
-            setPasswordHidden();
-        }
-
-        public void focusLost(FocusEvent focusEvent) {
-            String password = new String(myPasswordInput.getPassword()).trim();
-            if (StringUtils.isNotEmpty(password)) {
-                User user = MyTunesRss.CONFIG.getUser("default");
-                if (user == null) {
-                    user = new User("default");
-                    MyTunesRss.CONFIG.addUser(user);
-                }
-                user.setPassword(password);
-                setPasswordVisible();
-            } else if (myPreviousPasswordSet) {
-                setPasswordVisible();
-            }
         }
     }
 }

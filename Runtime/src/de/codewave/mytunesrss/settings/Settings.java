@@ -15,6 +15,7 @@ public class Settings {
     private JPanel myRootPanel;
     private General myGeneralForm;
     private Options myOptionsForm;
+    private UserManagement myUserManagementForm;
     private Info myInfoForm;
     private JButton myStartServerButton;
     private JButton myStopServerButton;
@@ -50,6 +51,7 @@ public class Settings {
         });
         myGeneralForm.init();
         myOptionsForm.init();
+        myUserManagementForm.init();
         myInfoForm.init();
     }
 
@@ -76,6 +78,7 @@ public class Settings {
         }
         myGeneralForm.setGuiMode(mode);
         myOptionsForm.setGuiMode(mode);
+        myUserManagementForm.setGuiMode(mode);
         myRootPanel.validate();
     }
 
