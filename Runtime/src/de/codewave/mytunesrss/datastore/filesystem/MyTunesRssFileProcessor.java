@@ -55,7 +55,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     statement.clear();
                     statement.setId(fileId);
                     Id3Tag tag = null;
-                    if ("mp3".equals(IOUtils.getSuffix(file))) {
+                    if ("mp3".equalsIgnoreCase(IOUtils.getSuffix(file))) {
                         try {
                             tag = Mp3Utils.readId3Tag(file);
                         } catch (Exception e) {
