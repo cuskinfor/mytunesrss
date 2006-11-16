@@ -103,6 +103,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("servletUrl", MyTunesRssWebUtils.getServletUrl(getRequest()));
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
         getRequest().setAttribute("mytunesrssVersion", MyTunesRss.VERSION);
+        getRequest().setAttribute("sessionCreationTime", getSession().getCreationTime());
         getWebConfig();// result not needed, method also fills the request attribute "config"
     }
 
