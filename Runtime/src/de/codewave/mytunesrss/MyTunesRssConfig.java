@@ -261,22 +261,11 @@ public class MyTunesRssConfig {
                 }
             }
         }
-        checkAndCreateDefaultUser();
         setSupportName(Preferences.userRoot().node(PREF_ROOT).get("supportName", getSupportName()));
         setSupportEmail(Preferences.userRoot().node(PREF_ROOT).get("supportEmail", getSupportEmail()));
         setProxyServer(Preferences.userRoot().node(PREF_ROOT).getBoolean("proxyServer", isProxyServer()));
         setProxyHost(Preferences.userRoot().node(PREF_ROOT).get("proxyHost", getProxyHost()));
         setProxyPort(Preferences.userRoot().node(PREF_ROOT).getInt("proxyPort", getProxyPort()));
-    }
-
-    private void checkAndCreateDefaultUser() {
-        if (getUsers().isEmpty()) {
-            User user = new User("default");
-            user.setRss(true);
-            user.setM3u(true);
-            user.setDownload(true);
-            addUser(user);
-        }
     }
 
     public void loadFromXml(URL xmlUrl) {
@@ -314,7 +303,6 @@ public class MyTunesRssConfig {
                 break;
             }
         }
-        checkAndCreateDefaultUser();
         // http proxy
         setProxyServer(context.getValue("/mytunesrss/proxy") != null);
         setProxyHost(JXPathUtils.getStringValue(context, "/mytunesrss/proxy/host", getProxyHost()));

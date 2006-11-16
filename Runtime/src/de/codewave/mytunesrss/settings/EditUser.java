@@ -116,20 +116,19 @@ public class EditUser {
                     if (StringUtils.isNotEmpty(myPassword)) {
                         myUser.setPassword(myPassword);
                     }
-                    // name change => remove/change/add because of hash set in config
+                    // name change => remove user with old name
                     if (!myUser.getName().equals(myUserNameInput.getText())) {
                         MyTunesRss.CONFIG.removeUser(myUser.getName());
-                        myUser.setName(myUserNameInput.getText());
-                        MyTunesRss.CONFIG.addUser(myUser);
                     }
                 } else {
-                    myUser = new User(myUserNameInput.getText());
-                    MyTunesRss.CONFIG.addUser(myUser);
+                    myUser = new User("");
                     myUser.setPassword(myPassword);
                 }
+                myUser.setName(myUserNameInput.getText());
                 myUser.setRss(myPermRssInput.isSelected());
                 myUser.setM3u(myPermM3uInput.isSelected());
                 myUser.setDownload(myPermDownloadInput.isSelected());
+                MyTunesRss.CONFIG.addUser(myUser);
                 myDialog.dispose();
             }
         }

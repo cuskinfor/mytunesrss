@@ -4,17 +4,13 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.settings.EditUser;
-import de.codewave.mytunesrss.settings.GuiMode;
-import de.codewave.utils.swing.SwingUtils;
+import de.codewave.mytunesrss.settings.*;
+import de.codewave.utils.swing.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.awt.event.*;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -41,21 +37,56 @@ public class UserManagement {
             }
         });
         for (User user : users) {
-            addUser(user, users.size() > 1);
+            addUser(user);
         }
-        addPanelComponent(new JLabel(""),
-                          new GridBagConstraints(GridBagConstraints.RELATIVE, GridBagConstraints.RELATIVE, 3, 1, 1.0, 1.0, GridBagConstraints.WEST,
-                                                 GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        addPanelComponent(new JLabel(""), new GridBagConstraints(GridBagConstraints.RELATIVE,
+                                                                 GridBagConstraints.RELATIVE,
+                                                                 3,
+                                                                 1,
+                                                                 1.0,
+                                                                 1.0,
+                                                                 GridBagConstraints.WEST,
+                                                                 GridBagConstraints.BOTH,
+                                                                 new Insets(0, 0, 0, 0),
+                                                                 0,
+                                                                 0));
         myUserPanel.validate();
     }
 
-    private void addUser(User user, boolean deleteEnabled) {
-        GridBagConstraints gbcName = new GridBagConstraints(GridBagConstraints.RELATIVE, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0, GridBagConstraints.WEST,
-                                                            GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 0), 0, 0);
-        GridBagConstraints gbcEdit = new GridBagConstraints(GridBagConstraints.RELATIVE, GridBagConstraints.RELATIVE, 1, 1, 0, 0, GridBagConstraints.WEST,
-                                                            GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 0), 0, 0);
-        GridBagConstraints gbcDelete = new GridBagConstraints(GridBagConstraints.RELATIVE, GridBagConstraints.RELATIVE, GridBagConstraints.REMAINDER, 1, 0, 0,
-                                                              GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0);
+    private void addUser(User user) {
+        GridBagConstraints gbcName = new GridBagConstraints(GridBagConstraints.RELATIVE,
+                                                            GridBagConstraints.RELATIVE,
+                                                            1,
+                                                            1,
+                                                            1.0,
+                                                            0,
+                                                            GridBagConstraints.WEST,
+                                                            GridBagConstraints.HORIZONTAL,
+                                                            new Insets(5, 5, 0, 0),
+                                                            0,
+                                                            0);
+        GridBagConstraints gbcEdit = new GridBagConstraints(GridBagConstraints.RELATIVE,
+                                                            GridBagConstraints.RELATIVE,
+                                                            1,
+                                                            1,
+                                                            0,
+                                                            0,
+                                                            GridBagConstraints.WEST,
+                                                            GridBagConstraints.HORIZONTAL,
+                                                            new Insets(5, 5, 0, 0),
+                                                            0,
+                                                            0);
+        GridBagConstraints gbcDelete = new GridBagConstraints(GridBagConstraints.RELATIVE,
+                                                              GridBagConstraints.RELATIVE,
+                                                              GridBagConstraints.REMAINDER,
+                                                              1,
+                                                              0,
+                                                              0,
+                                                              GridBagConstraints.WEST,
+                                                              GridBagConstraints.HORIZONTAL,
+                                                              new Insets(5, 5, 0, 5),
+                                                              0,
+                                                              0);
         JLabel name = new JLabel(user.getName());
         name.setOpaque(false);
         JButton edit = new JButton(MyTunesRss.BUNDLE.getString("settings.editUser"));
@@ -66,12 +97,7 @@ public class UserManagement {
         addPanelComponent(name, gbcName);
         addPanelComponent(edit, gbcEdit);
         JButton delete = new JButton(MyTunesRss.BUNDLE.getString("settings.deleteUser"));
-        if (deleteEnabled) {
-            delete.setToolTipText(MyTunesRssUtils.getBundleString("settings.deleteUserTooltip", user.getName()));
-        } else {
-            delete.setToolTipText(MyTunesRssUtils.getBundleString("settings.deleteUserDisabledTooltip", user.getName()));
-            delete.setEnabled(false);
-        }
+        delete.setToolTipText(MyTunesRssUtils.getBundleString("settings.deleteUserTooltip", user.getName()));
         delete.addActionListener(myDeleteUserActionListener);
         delete.setActionCommand(user.getName());
         delete.setOpaque(false);
@@ -118,8 +144,10 @@ public class UserManagement {
     public class DeleteUserActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             User user = MyTunesRss.CONFIG.getUser(e.getActionCommand());
-            int result = JOptionPane.showConfirmDialog(myRootPanel, MyTunesRssUtils.getBundleString("confirmation.deleteUser", user.getName()),
-                                                       MyTunesRss.BUNDLE.getString("confirmation.titleDeleteUser"), JOptionPane.YES_NO_OPTION);
+            int result = JOptionPane.showConfirmDialog(myRootPanel,
+                                                       MyTunesRssUtils.getBundleString("confirmation.deleteUser", user.getName()),
+                                                       MyTunesRss.BUNDLE.getString("confirmation.titleDeleteUser"),
+                                                       JOptionPane.YES_NO_OPTION);
             if (result == JOptionPane.YES_OPTION) {
                 MyTunesRss.CONFIG.removeUser(user.getName());
             }
