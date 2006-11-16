@@ -38,6 +38,14 @@
 
     <jsp:include page="/incl_error.jsp" />
 
+  <ul class="links">
+    <c:if test="${!empty param.backUrl}">
+      <li>
+        <a href="${param.backUrl}"><fmt:message key="back" /></a>
+      </li>
+    </c:if>
+  </ul>
+
     <table cellspacing="0">
         <tr>
             <th colspan="2" class="active">
@@ -106,13 +114,6 @@
               width="200" style="display: block; margin: 10px auto;"/>
           </td>
         </tr>
-        <c:if test="${!empty param.backUrl}">
-            <tr <c:if test="${authUser.download || config.showDownload}">class="odd"</c:if>>
-              <td colspan="2">
-                <a href="${param.backUrl}"><fmt:message key="back" /></a>
-              </td>
-            </tr>
-        </c:if>
     </table>
 
 </div>
