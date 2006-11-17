@@ -20,10 +20,12 @@ public class UserManagement {
     private JPanel myRootPanel;
     private JButton myCreateButton;
     private JPanel myUserPanel;
+    private JScrollPane myScrollPane;
     private EditUserActionListener myEditUserActionListener = new EditUserActionListener();
     private DeleteUserActionListener myDeleteUserActionListener = new DeleteUserActionListener();
 
     public void init() {
+        myScrollPane.getViewport().setOpaque(false);
         myCreateButton.addActionListener(new CreateUserActionListener());
         refreshUserList();
     }
@@ -50,7 +52,7 @@ public class UserManagement {
                                                                  new Insets(0, 0, 0, 0),
                                                                  0,
                                                                  0));
-        myUserPanel.validate();
+        myUserPanel.revalidate();
     }
 
     private void addUser(User user) {
@@ -104,9 +106,9 @@ public class UserManagement {
         addPanelComponent(delete, gbcDelete);
     }
 
-    private void addPanelComponent(JComponent name, GridBagConstraints gbcName) {
-        myUserPanel.add(name);
-        ((GridBagLayout)myUserPanel.getLayout()).setConstraints(name, gbcName);
+    private void addPanelComponent(JComponent component, GridBagConstraints gbcName) {
+        myUserPanel.add(component);
+        ((GridBagLayout)myUserPanel.getLayout()).setConstraints(component, gbcName);
     }
 
     public void setGuiMode(GuiMode mode) {

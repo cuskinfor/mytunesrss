@@ -60,6 +60,14 @@ public class MigrationStatement implements DataStoreStatement {
             connection.createStatement().execute("UPDATE system_information SET version = '2.3'");
             version = "2.3";
         }
+        if (version.compareTo("3.0") < 0) {
+            // update to 3.0
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Migrating database to version 3.0");
+            }
+            connection.createStatement().execute("ALTER TABLE system_information DELETE COLUMN basedir_id");
+            version = "3.0";
+        }
     }
 
     private String getVersion(Connection connection) throws SQLException {

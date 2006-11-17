@@ -11,7 +11,6 @@ public class SystemInformation {
     private long myLastUpdate = Long.MIN_VALUE;
     private String myVersion;
     private String myItunesLibraryId;
-    private String myBaseDirId;
 
     public String getItunesLibraryId() {
         return myItunesLibraryId;
@@ -35,13 +34,5 @@ public class SystemInformation {
 
     public void setVersion(String version) {
         myVersion = version;
-    }
-
-    public String getBaseDirId() {
-        return myBaseDirId;
-    }
-
-    public void setBaseDirId(String baseDirId) {
-        myBaseDirId = baseDirId;
     }
 }

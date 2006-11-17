@@ -16,6 +16,8 @@ import org.apache.commons.logging.*;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * de.codewave.mytunesrss.task.DatabaseBuilderTaskk
@@ -24,7 +26,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
 
     private URL myLibraryXmlUrl;
-    private File myBaseDir;
+    private List<File> myBaseDirs = new ArrayList<File>();
 
     public DatabaseBuilderTask() {
         try {
@@ -35,12 +37,21 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 LOG.error("Could not create URL from iTunes XML file.", e);
             }
         }
-        myBaseDir = StringUtils.isNotEmpty(MyTunesRss.CONFIG.getBaseDir()) ? new File(MyTunesRss.CONFIG.getBaseDir().trim()) : null;
+        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getBaseDir())) {
+            myBaseDirs.add(new File(MyTunesRss.CONFIG.getBaseDir().trim()));
+        }
+        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getUploadDir())) {
+            myBaseDirs.add(new File(MyTunesRss.CONFIG.getUploadDir().trim()));
+        }
     }
 
     public boolean needsUpdate() throws SQLException {
-        if (myBaseDir != null && myBaseDir.isDirectory() && myBaseDir.exists()) {
-            return true;
+        if (myBaseDirs != null) {
+            for (File baseDir : myBaseDirs) {
+                if (baseDir.isDirectory() && baseDir.exists()) {
+                    return true;
+                }
+            }
         }
         if (myLibraryXmlUrl != null) {
             SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
@@ -78,7 +89,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                                                                  storeSession,
                                                                  systemInformation.getItunesLibraryId(),
                                                                  timeLastUpdate);
-            final String baseDirId = FileSystemLoader.loadFromFileSystem(myBaseDir, storeSession, systemInformation.getBaseDirId(), timeLastUpdate);
+            FileSystemLoader.loadFromFileSystem(myBaseDirs, storeSession, timeLastUpdate);
             storeSession.commitAndContinue();
             long timeAfterTracks = System.currentTimeMillis();
             if (LOG.isDebugEnabled()) {
@@ -97,7 +108,6 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 public void execute(Connection connection) throws SQLException {
                     connection.createStatement().execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
                     connection.createStatement().execute("UPDATE system_information SET itunes_library_id = '" + libraryId + "'");
-                    connection.createStatement().execute("UPDATE system_information SET basedir_id = '" + baseDirId + "'");
                 }
             });
             if (LOG.isDebugEnabled()) {

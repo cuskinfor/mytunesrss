@@ -41,6 +41,9 @@ public class MyTunesRssConfig {
     private boolean myProxyServer;
     private String myProxyHost = "";
     private int myProxyPort = -1;
+    private boolean myItunesDeleteMissingFiles = true;
+    private String myUploadDir = "";
+    private boolean myUploadCreateUserDir = true;
 
     public String getLibraryXml() {
         return myLibraryXml;
@@ -128,6 +131,30 @@ public class MyTunesRssConfig {
 
     public void setFileSystemArtistNameFolder(int fileSystemArtistNameFolder) {
         myFileSystemArtistNameFolder = fileSystemArtistNameFolder;
+    }
+
+    public boolean isItunesDeleteMissingFiles() {
+        return myItunesDeleteMissingFiles;
+    }
+
+    public void setItunesDeleteMissingFiles(boolean itunesDeleteMissingFiles) {
+        myItunesDeleteMissingFiles = itunesDeleteMissingFiles;
+    }
+
+    public boolean isUploadCreateUserDir() {
+        return myUploadCreateUserDir;
+    }
+
+    public void setUploadCreateUserDir(boolean uploadCreateUserDir) {
+        myUploadCreateUserDir = uploadCreateUserDir;
+    }
+
+    public String getUploadDir() {
+        return myUploadDir;
+    }
+
+    public void setUploadDir(String uploadDir) {
+        myUploadDir = uploadDir;
     }
 
     public Collection<User> getUsers() {
@@ -244,6 +271,9 @@ public class MyTunesRssConfig {
         setBaseDir(Preferences.userRoot().node(PREF_ROOT).get("baseDir", getBaseDir()));
         setFileSystemArtistNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("artistFolder", getFileSystemArtistNameFolder()));
         setFileSystemAlbumNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("albumFolder", getFileSystemAlbumNameFolder()));
+        setItunesDeleteMissingFiles(Preferences.userRoot().node(PREF_ROOT).getBoolean("iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
+        setUploadDir(Preferences.userRoot().node(PREF_ROOT).get("uploadDir", getUploadDir()));
+        setUploadCreateUserDir(Preferences.userRoot().node(PREF_ROOT).getBoolean("uploadCreateUserDir", isUploadCreateUserDir()));
         Preferences userNode = Preferences.userRoot().node(PREF_ROOT + "/user");
         if (userNode != null) {
             try {
@@ -283,6 +313,9 @@ public class MyTunesRssConfig {
         setBaseDir(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/basedir", getBaseDir()));
         setFileSystemAlbumNameFolder(JXPathUtils.getIntValue(context, "/mytunesrss/datasource/basedir/@album", getFileSystemAlbumNameFolder()));
         setFileSystemArtistNameFolder(JXPathUtils.getIntValue(context, "/mytunesrss/datasource/basedir/@artist", getFileSystemArtistNameFolder()));
+        setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(context, "/mytunesrss/datasource/itunesxml/@deletemissing", isItunesDeleteMissingFiles()));
+        setUploadDir(JXPathUtils.getStringValue(context, "/mytunesrss/upload/basedir", getUploadDir()));
+        setUploadCreateUserDir(JXPathUtils.getBooleanValue(context, "/mytunesrss/upload/@userdir", isUploadCreateUserDir()));
         // misc
         setCheckUpdateOnStart(JXPathUtils.getBooleanValue(context, "/mytunesrss/updatecheck", isCheckUpdateOnStart()));
         setVersion(MyTunesRss.VERSION);
@@ -323,6 +356,9 @@ public class MyTunesRssConfig {
             Preferences.userRoot().node(PREF_ROOT).put("baseDir", myBaseDir);
             Preferences.userRoot().node(PREF_ROOT).putInt("artistFolder", myFileSystemArtistNameFolder);
             Preferences.userRoot().node(PREF_ROOT).putInt("albumFolder", myFileSystemAlbumNameFolder);
+            Preferences.userRoot().node(PREF_ROOT).putBoolean("iTunesDeleteMissingFiles", myItunesDeleteMissingFiles);
+            Preferences.userRoot().node(PREF_ROOT).put("uploadDir", myUploadDir);
+            Preferences.userRoot().node(PREF_ROOT).putBoolean("uploadCreateUserDir", myUploadCreateUserDir);
             Preferences userNode = Preferences.userRoot().node(PREF_ROOT + "/user");
             try {
                 // remove obsolete users

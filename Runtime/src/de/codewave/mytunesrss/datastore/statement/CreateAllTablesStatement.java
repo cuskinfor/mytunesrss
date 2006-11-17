@@ -23,8 +23,8 @@ public class CreateAllTablesStatement implements DataStoreStatement {
         connection.createStatement().execute(
                 "CREATE CACHED TABLE link_track_playlist ( index INTEGER, track_id VARCHAR(20) NOT NULL, playlist_id VARCHAR(20) NOT NULL, CONSTRAINT fk_linktrackplaylist_trackid FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE, CONSTRAINT fk_linktrackplaylist_playlistid FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE )");
         connection.createStatement().execute(
-                "CREATE CACHED TABLE system_information ( lastupdate BIGINT, version VARCHAR(20) NOT NULL, itunes_library_id VARCHAR(20), basedir_id VARCHAR(2000) )");
-        connection.createStatement().execute("INSERT INTO system_information VALUES ( null, '" + MyTunesRss.VERSION + "', null, null )");
+                "CREATE CACHED TABLE system_information ( lastupdate BIGINT, version VARCHAR(20) NOT NULL, itunes_library_id VARCHAR(20) )");
+        connection.createStatement().execute("INSERT INTO system_information VALUES ( null, '" + MyTunesRss.VERSION + "', null )");
         connection.createStatement().execute(
                 "CREATE CACHED TABLE album ( name VARCHAR(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, artist_count INTEGER, artist VARCHAR(255) )");
         connection.createStatement().execute(

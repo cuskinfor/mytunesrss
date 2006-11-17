@@ -14,7 +14,7 @@ import java.util.prefs.*;
 public class Settings {
     private JPanel myRootPanel;
     private General myGeneralForm;
-    private Options myOptionsForm;
+    private Directories myDirectoriesForm;
     private UserManagement myUserManagementForm;
     private Info myInfoForm;
     private JButton myStartServerButton;
@@ -25,8 +25,8 @@ public class Settings {
         return myGeneralForm;
     }
 
-    public Options getOptionsForm() {
-        return myOptionsForm;
+    public Directories getOptionsForm() {
+        return myDirectoriesForm;
     }
 
     public JPanel getRootPanel() {
@@ -50,14 +50,14 @@ public class Settings {
             }
         });
         myGeneralForm.init();
-        myOptionsForm.init();
+        myDirectoriesForm.init();
         myUserManagementForm.init();
         myInfoForm.init();
     }
 
     public void updateConfigFromGui() {
         myGeneralForm.updateConfigFromGui();
-        myOptionsForm.updateConfigFromGui();
+        myDirectoriesForm.updateConfigFromGui();
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -77,14 +77,14 @@ public class Settings {
                 myStopServerButton.setEnabled(false);
         }
         myGeneralForm.setGuiMode(mode);
-        myOptionsForm.setGuiMode(mode);
+        myDirectoriesForm.setGuiMode(mode);
         myUserManagementForm.setGuiMode(mode);
         myRootPanel.validate();
     }
 
     public void doStartServer() {
         updateConfigFromGui();
-        DatabaseBuilderTask databaseBuilderTask = new GuiDatabaseBuilderTask(myOptionsForm);
+        DatabaseBuilderTask databaseBuilderTask = new GuiDatabaseBuilderTask(myGeneralForm);
         MyTunesRss.startWebserver(databaseBuilderTask);
         if (MyTunesRss.WEBSERVER.isRunning()) {
             setGuiMode(GuiMode.ServerRunning);

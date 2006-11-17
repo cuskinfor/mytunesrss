@@ -24,10 +24,10 @@
           <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.createUserTooltip"/>
         </properties>
       </component>
-      <scrollpane id="c926">
+      <scrollpane id="3d120" binding="myScrollPane">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="350" height="250"/>
+            <preferred-size width="350" height="300"/>
           </grid>
         </constraints>
         <properties>
@@ -35,7 +35,7 @@
         </properties>
         <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.existingUsers"/>
         <children>
-          <grid id="4fca5" binding="myUserPanel" layout-manager="GridBagLayout">
+          <grid id="8d5b2" binding="myUserPanel" layout-manager="GridBagLayout">
             <constraints/>
             <properties>
               <opaque value="false"/>

@@ -1,14 +1,21 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.utils.io.*;
-import de.codewave.utils.sql.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.datastore.statement.DeleteTrackStatement;
+import de.codewave.mytunesrss.datastore.statement.FindTrackIdsQuery;
+import de.codewave.mytunesrss.datastore.statement.TrackSource;
+import de.codewave.utils.io.FileProcessor;
+import de.codewave.utils.io.IOUtils;
+import de.codewave.utils.sql.DataStoreSession;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Set;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.datastore.filesystem.FileSystemLoaderr
@@ -16,36 +23,35 @@ import java.util.*;
 public class FileSystemLoader {
     private static final Log LOG = LogFactory.getLog(FileSystemLoader.class);
 
-    public static String loadFromFileSystem(File baseDir, DataStoreSession storeSession, String previousBaseId, long lastUpdateTime)
-            throws IOException, SQLException {
+    public static void loadFromFileSystem(List<File> baseDirs, DataStoreSession storeSession, long lastUpdateTime)
+        throws IOException, SQLException {
         Set<String> databaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.FileSystem.name()));
-        String baseDirId = null;
+        int trackCount = 0;
         MyTunesRssFileProcessor fileProcessor = null;
-        if (baseDir != null) {
-            baseDirId = IOUtils.getFileIdentifier(baseDir);
-            if (baseDirId != null) {
-                if (!baseDirId.equals(previousBaseId)) {
-                    lastUpdateTime = Long.MIN_VALUE;// new base directory, update everything regardless of timestamps
-                }
-                fileProcessor = new MyTunesRssFileProcessor(baseDir, storeSession, lastUpdateTime);
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Processing files from: \"" + baseDir + "\".");
-                }
-                IOUtils.processFiles(baseDir, fileProcessor, new FileFilter() {
-                    public boolean accept(File file) {
-                        return file.isDirectory() || FileSupportUtils.isSupported(file.getName());
+        if (baseDirs != null) {
+            for (File baseDir : baseDirs) {
+                if (baseDir != null && baseDir.exists() && baseDir.isDirectory()) {
+                    fileProcessor = new MyTunesRssFileProcessor(baseDir, storeSession, lastUpdateTime);
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("Processing files from: \"" + baseDir + "\".");
                     }
-                });
-                FileProcessor playlistFileProcessor = new PlaylistFileProcessor(baseDir, storeSession);
-                IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
-                    public boolean accept(File file) {
-                        return file.isDirectory() || file.getName().toLowerCase().endsWith(".m3u");
+                    IOUtils.processFiles(baseDir, fileProcessor, new FileFilter() {
+                        public boolean accept(File file) {
+                            return file.isDirectory() || FileSupportUtils.isSupported(file.getName());
+                        }
+                    });
+                    FileProcessor playlistFileProcessor = new PlaylistFileProcessor(baseDir, storeSession);
+                    IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
+                        public boolean accept(File file) {
+                            return file.isDirectory() || file.getName().toLowerCase().endsWith(".m3u");
+                        }
+                    });
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("Inserted/updated " + fileProcessor.getUpdatedCount() + " file system tracks.");
                     }
-                });
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Inserted/updated " + fileProcessor.getUpdatedCount() + " file system tracks.");
+                    databaseIds.removeAll(fileProcessor.getExistingIds());
+                    trackCount += fileProcessor.getExistingIds().size();
                 }
-                databaseIds.removeAll(fileProcessor.getExistingIds());
             }
         }
         if (!databaseIds.isEmpty()) {
@@ -59,8 +65,7 @@ public class FileSystemLoader {
             }
         }
         if (fileProcessor != null && LOG.isDebugEnabled()) {
-            LOG.info(fileProcessor.getExistingIds().size() + " file system tracks in the database.");
+            LOG.info(trackCount + " file system tracks in the database.");
         }
-        return baseDirId;
     }
 }
