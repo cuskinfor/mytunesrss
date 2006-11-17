@@ -39,7 +39,7 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
         for (int i = 0; i < (searchTerms != null && searchTerms.length > 0 ? searchTerms.length : 1); i++) {
             String sqlTerm = null;
             if (searchTerms != null && searchTerms.length > 0) {
-                sqlTerm = "%" + SQLUtils.escapeLikeString(searchTerms[i].toLowerCase()) + "%";
+                sqlTerm = "%" + SQLUtils.escapeLikeString(searchTerms[i].toLowerCase(), "\\") + "%";
             } else {
                 sqlTerm = "%";
             }
@@ -54,7 +54,7 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
     private static String createLikeQuery(String[] searchTerms, String artistSort) {
         StringBuffer likes = new StringBuffer();
         for (int i = 0; i < (searchTerms != null && searchTerms.length > 0 ? searchTerms.length : 1); i++) {
-            likes.append("AND ( LCASE(name) LIKE ? ESCAPE '\\' OR LCASE(album) LIKE ? ESCAPE '\\' OR LCASE(artist) LIKE ? ESCAPE '\\' ) ");
+            likes.append("AND ( ( LCASE(name) LIKE ? ESCAPE '\\' ) OR ( LCASE(album) LIKE ? ESCAPE '\\' ) OR ( LCASE(artist) LIKE ? ESCAPE '\\' ) ) ");
         }
         return "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE" + likes.substring(3) + "ORDER BY " +
                 artistSort + "album, track_number, name";

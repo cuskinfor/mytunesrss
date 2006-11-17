@@ -143,9 +143,11 @@ public class MyTunesRss {
     }
 
     private static boolean isOtherInstanceRunning(long timeoutMillis) {
-        RandomAccessFile file;
+        RandomAccessFile lockFile;
         try {
-            file = new RandomAccessFile(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/MyTunesRSS.lck", "rw");
+            File file = new File(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/MyTunesRSS.lck");
+            file.deleteOnExit();
+            lockFile = new RandomAccessFile(file, "rw");
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not check for other running instance.", e);
@@ -155,7 +157,7 @@ public class MyTunesRss {
         long endTime = System.currentTimeMillis() + timeoutMillis;
         do {
             try {
-                if (file.getChannel().tryLock() != null) {
+                if (lockFile.getChannel().tryLock() != null) {
                     return false;
                 }
                 Thread.sleep(500);

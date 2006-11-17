@@ -8,13 +8,14 @@ import de.codewave.mytunesrss.*;
 import de.codewave.utils.sql.*;
 
 import java.sql.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement
  */
 public class CreateAllTablesStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
-        connection.createStatement().execute("SET DATABASE COLLATION \"Latin1_General\"");
+        connection.createStatement().execute("SET DATABASE COLLATION en_US");
         connection.createStatement().execute(
                 "CREATE CACHED TABLE track ( id VARCHAR(2000) NOT NULL, name VARCHAR(255) NOT NULL, artist VARCHAR(255) NOT NULL, album VARCHAR(255) NOT NULL, time INTEGER, track_number INTEGER, file VARCHAR(1024) NOT NULL, protected BOOLEAN, video BOOLEAN, source VARCHAR(20), UNIQUE ( id ) )");
         connection.createStatement().execute(

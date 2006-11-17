@@ -10,7 +10,6 @@ import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.pool.*;
 import org.apache.commons.pool.impl.*;
-import org.hsqldb.*;
 
 import java.io.*;
 import java.sql.*;
@@ -20,11 +19,11 @@ import java.sql.*;
  */
 public class MyTunesRssDataStore extends DataStore {
     private static final Log LOG = LogFactory.getLog(MyTunesRssDataStore.class);
-    public static final String DIRNAME = "hsqldb";
+    public static final String DIRNAME = "h2";
 
     static {
         try {
-            Class.forName("org.hsqldb.jdbcDriver");
+            Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not load database driver.", e);
@@ -35,7 +34,7 @@ public class MyTunesRssDataStore extends DataStore {
     public void init() throws IOException {
         String filename = DIRNAME + "/MyTunesRSS";
         String pathname = PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
-        final String connectString = "jdbc:hsqldb:file:" + pathname + "/" + filename;
+        final String connectString = "jdbc:h2:file:" + pathname + "/" + filename;
         setConnectionPool(new GenericObjectPool(new BasePoolableObjectFactory() {
             public Object makeObject() throws Exception {
                 long endTime = System.currentTimeMillis() + 10000;
