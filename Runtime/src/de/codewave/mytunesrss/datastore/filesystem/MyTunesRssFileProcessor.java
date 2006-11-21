@@ -123,18 +123,27 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     }
 
     private String getAncestorAlbumName(File file) {
-        int level = MyTunesRss.CONFIG.getFileSystemAlbumNameFolder();
+        return getAncestorName(file, MyTunesRss.CONFIG.getFileSystemAlbumNameFolder());
+    }
+
+    private String getAncestorName(File file, int level) {
         if (level > 0) {
-            return IOUtils.getAncestor(file, level).getName();
+            File ancestor = IOUtils.getAncestor(file, level);
+            try {
+                if (ancestor != null && IOUtils.isContained(myBaseDir, ancestor)) {
+                    return ancestor.getName();
+                }
+            } catch (IOException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not check if ancestor folder is inside base folder.", e);
+                }
+                return null;
+            }
         }
         return null;
     }
 
     private String getAncestorArtistName(File file) {
-        int level = MyTunesRss.CONFIG.getFileSystemArtistNameFolder();
-        if (level > 0) {
-            return IOUtils.getAncestor(file, level).getName();
-        }
-        return null;
+        return getAncestorName(file, MyTunesRss.CONFIG.getFileSystemArtistNameFolder());
     }
 }
