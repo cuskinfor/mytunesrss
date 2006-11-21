@@ -71,6 +71,11 @@
                             </a>
                         </c:otherwise>
                     </c:choose>
+                    <c:if test="${uploadLink}">
+                        <a href="${servletUrl}/showUpload">
+                        <fmt:message key="showUpload" />
+                    </c:if>
+                    </a>
                 </td>
             </tr>
         </table>

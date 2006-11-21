@@ -36,7 +36,7 @@ public class PlaylistFileProcessor implements FileProcessor {
                         if (!trackFile.exists()) {
                             trackFile = new File(track.trim()); // absolute track path
                         }
-                        String trackId = IOUtils.getFileIdentifier(myBaseDir, trackFile);
+                        String trackId = IOUtils.getFileIdentifier(trackFile);
                         if (StringUtils.isNotEmpty(trackId)) {
                             trackIds.add(trackId);
                         }

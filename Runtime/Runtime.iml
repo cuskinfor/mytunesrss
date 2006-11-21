@@ -402,7 +402,9 @@
           <root url="jar://$MODULE_DIR$/../lib/codewave-utils-25.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../CodewaveUtils/src" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntryProperties />

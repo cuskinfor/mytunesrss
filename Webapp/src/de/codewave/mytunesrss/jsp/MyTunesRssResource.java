@@ -19,7 +19,8 @@ public enum MyTunesRssResource {
     TemplateM3u("/m3u.jsp"),
     TemplateRss("/rss.jsp"),
     TrackInfo("/track_info.jsp"),
-    FatalError("/fatal_error.jsp");
+    FatalError("/fatal_error.jsp"),
+    ShowUpload("/upload.jsp");
 
     private String myValue;
 

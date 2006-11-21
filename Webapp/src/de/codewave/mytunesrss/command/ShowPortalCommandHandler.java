@@ -14,6 +14,8 @@ import java.sql.*;
 import java.text.*;
 import java.util.*;
 
+import org.apache.commons.lang.*;
+
 /**
  * de.codewave.mytunesrss.command.ShowPortalCommandHandler
  */
@@ -46,6 +48,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
             playlists = playlists.subList(current * pageSize, Math.min((current * pageSize) + pageSize, playlists.size()));
         }
         getRequest().setAttribute("playlists", playlists);
+        getRequest().setAttribute("uploadLink", StringUtils.isNotEmpty(MyTunesRss.CONFIG.getUploadDir()));
         forward(MyTunesRssResource.Portal);
     }
 
