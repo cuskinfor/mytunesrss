@@ -61,7 +61,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private void saveFile(String fileName, InputStream inputStream) throws IOException {
-        if (StringUtils.isNotEmpty(fileName) && !fileName.endsWith("/") && !fileName.endsWith("\\") && !fileName.contains("/__MACOSX/")) {
+        if (StringUtils.isNotEmpty(fileName) && !fileName.endsWith("/") && !fileName.endsWith("\\") && !fileName.contains("__MACOSX/")) {
             String uploadDirName = MyTunesRss.CONFIG.getUploadDir();
             if (MyTunesRss.CONFIG.isUploadCreateUserDir()) {
                 uploadDirName += "/" + getWebConfig().getUserName();
