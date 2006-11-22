@@ -141,23 +141,27 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     public void execute() throws Exception {
-        try {
-            if (needsAuthorization() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
-                                                                                       getWebConfig().getPasswordHash())) {
-                authorize(getWebConfig().getUserName());
-                executeAuthorized();
-            } else if (needsAuthorization()) {
-                handleSingleUser();
-                forward(MyTunesRssResource.Login);
-            } else {
-                executeAuthorized();
+        if (!MyTunesRss.DATABASE_BUILDER_TASK.isRunning()) {
+            try {
+                if (needsAuthorization() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
+                                                                                           getWebConfig().getPasswordHash())) {
+                    authorize(getWebConfig().getUserName());
+                    executeAuthorized();
+                } else if (needsAuthorization()) {
+                    handleSingleUser();
+                    forward(MyTunesRssResource.Login);
+                } else {
+                    executeAuthorized();
+                }
+            } catch (Exception e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Unhandled exception: ", e);
+                }
+                getSession().removeAttribute("errors");
+                redirect(ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss" + "/" + MyTunesRssCommand.ShowFatalError.getName());
             }
-        } catch (Exception e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Unhandled exception: ", e);
-            }
-            getSession().removeAttribute("errors");
-            redirect(ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss" + "/" + MyTunesRssCommand.ShowFatalError.getName());
+        } else {
+            forward(MyTunesRssResource.DatabaseUpdating);
         }
     }
 

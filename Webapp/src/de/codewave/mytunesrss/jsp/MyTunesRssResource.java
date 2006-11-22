@@ -20,7 +20,8 @@ public enum MyTunesRssResource {
     TemplateRss("/rss.jsp"),
     TrackInfo("/track_info.jsp"),
     FatalError("/fatal_error.jsp"),
-    ShowUpload("/upload.jsp");
+    ShowUpload("/upload.jsp"),
+    DatabaseUpdating("/database_updating.jsp");
 
     private String myValue;
 

@@ -59,6 +59,7 @@ public class MyTunesRss {
     public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
     public static int OPTION_PANE_MAX_MESSAGE_LENGTH = 100;
     public static boolean HEADLESS;
+    public static DatabaseBuilderTask DATABASE_BUILDER_TASK = new DatabaseBuilderTask();
 
     static {
         try {
@@ -182,6 +183,7 @@ public class MyTunesRss {
             ClassNotFoundException, IOException, InterruptedException {
         showNewVersionInfo();
         final Settings settings = new Settings();
+        DATABASE_BUILDER_TASK = new GuiDatabaseBuilderTask(settings.getGeneralForm());
         MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
         executeApple(settings);
         executeWindows(settings);
@@ -236,7 +238,7 @@ public class MyTunesRss {
             LOG.info("Headless mode");
         }
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
-        startWebserver(new DatabaseBuilderTask());
+        startWebserver();
         if (!WEBSERVER.isRunning()) {
             CONFIG.save();
             DATABASE_WATCHDOG.cancel();
@@ -244,8 +246,8 @@ public class MyTunesRss {
         }
     }
 
-    public static void startWebserver(DatabaseBuilderTask databaseBuilderTask) {
-        MyTunesRssUtils.executeTask(null, BUNDLE.getString("settings.buildDatabase"), null, false, databaseBuilderTask);
+    public static void startWebserver() {
+        MyTunesRssUtils.executeTask(null, BUNDLE.getString("settings.buildDatabase"), null, false, MyTunesRss.DATABASE_BUILDER_TASK);
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.serverstarting"), null, false, new MyTunesRssTask() {
             public void execute() throws Exception {
                 WEBSERVER.start();
@@ -254,8 +256,7 @@ public class MyTunesRss {
         if (WEBSERVER.isRunning()) {
             if (CONFIG.isAutoUpdateDatabase()) {
                 DatabaseWatchdogTask databaseWatchdogTask = new DatabaseWatchdogTask(DATABASE_WATCHDOG,
-                                                                                     CONFIG.getAutoUpdateDatabaseInterval(),
-                                                                                     databaseBuilderTask);
+                                                                                     CONFIG.getAutoUpdateDatabaseInterval());
                 DATABASE_WATCHDOG.schedule(databaseWatchdogTask, 60000 * CONFIG.getAutoUpdateDatabaseInterval());
             }
         }

@@ -16,19 +16,17 @@ public class DatabaseWatchdogTask extends TimerTask {
     private static final Log LOG = LogFactory.getLog(DatabaseWatchdogTask.class);
 
     private int myInterval;
-    private DatabaseBuilderTask myDatabaseBuilderTask;
     private Timer myTimer;
 
-    public DatabaseWatchdogTask(Timer timer, int interval, DatabaseBuilderTask task) {
+    public DatabaseWatchdogTask(Timer timer, int interval) {
         myTimer = timer;
         myInterval = interval;
-        myDatabaseBuilderTask = task;
     }
 
     public void run() {
         try {
-            if (myDatabaseBuilderTask.needsUpdate()) {
-                myDatabaseBuilderTask.execute();
+            if (MyTunesRss.DATABASE_BUILDER_TASK.needsUpdate()) {
+                MyTunesRss.DATABASE_BUILDER_TASK.execute();
             }
         } catch (Exception e) {
             if (LOG.isErrorEnabled()) {

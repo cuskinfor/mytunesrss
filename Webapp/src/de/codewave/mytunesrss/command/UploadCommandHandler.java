@@ -8,6 +8,9 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.utils.io.*;
+import de.codewave.utils.swing.TaskExecutor;
+import de.codewave.utils.swing.TaskFinishedListener;
+import de.codewave.utils.swing.Task;
 import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.*;
 import org.apache.commons.fileupload.servlet.*;
@@ -32,6 +35,11 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
         for (FileItem item : items) {
             processItem(item);
         }
+        TaskExecutor.execute(MyTunesRss.DATABASE_BUILDER_TASK, new TaskFinishedListener() {
+            public void taskFinished(Task task) {
+                // intentionally left blank
+            }
+        });
         forward(MyTunesRssCommand.ShowPortal);
     }
 

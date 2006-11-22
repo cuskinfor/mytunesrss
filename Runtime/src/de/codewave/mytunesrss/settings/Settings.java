@@ -84,8 +84,7 @@ public class Settings {
 
     public void doStartServer() {
         updateConfigFromGui();
-        DatabaseBuilderTask databaseBuilderTask = new GuiDatabaseBuilderTask(myGeneralForm);
-        MyTunesRss.startWebserver(databaseBuilderTask);
+        MyTunesRss.startWebserver();
         if (MyTunesRss.WEBSERVER.isRunning()) {
             setGuiMode(GuiMode.ServerRunning);
             myGeneralForm.setServerRunningStatus(MyTunesRss.CONFIG.getPort());

@@ -27,6 +27,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
     private URL myLibraryXmlUrl;
     private List<File> myBaseDirs = new ArrayList<File>();
+    private boolean myRunning;
 
     public DatabaseBuilderTask() {
         try {
@@ -69,6 +70,25 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     }
 
     public void execute() throws Exception {
+        boolean execute = false;
+        if (!myRunning) {
+            synchronized (DatabaseBuilderTask.class) {
+                if (!myRunning) {
+                    myRunning = true;
+                    execute = true;
+                }
+            }
+        }
+        if (execute) {
+            try {
+                internalExecute();
+            } finally {
+                myRunning = false;
+            }
+        }
+    }
+
+    public void internalExecute() throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Database builder task started.");
         }
@@ -113,22 +133,12 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Committing transaction.");
             }
-            storeSession.commitAndContinue();
+            storeSession.commit();
             long timeAfterCommit = System.currentTimeMillis();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Time for commit: " + (timeAfterCommit - timeAfterHelpTables));
                 LOG.debug("Creating database checkpoint.");
             }
-            storeSession.executeStatement(new DataStoreStatement() {
-                public void execute(Connection connection) throws SQLException {
-                    connection.createStatement().execute("CHECKPOINT");
-                }
-            });
-            long timeAfterCheckpoint = System.currentTimeMillis();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("time for creating checkpoint: " + (timeAfterCheckpoint - timeAfterCommit));
-            }
-            storeSession.commit();
         } catch (Exception e) {
             storeSession.rollback();
             throw e;
@@ -192,5 +202,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         storeSession.begin();
         storeSession.executeStatement(new DeleteAllContentStatement());
         storeSession.commit();
+    }
+
+    public boolean isRunning() {
+        return myRunning;
     }
 }

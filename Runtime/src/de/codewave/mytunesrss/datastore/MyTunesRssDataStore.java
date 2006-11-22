@@ -53,7 +53,7 @@ public class MyTunesRssDataStore extends DataStore {
                     }
                 } while (System.currentTimeMillis() < endTime);
                 try {
-                return DriverManager.getConnection(connectString, "sa", "");
+                    return DriverManager.getConnection(connectString, "sa", "");
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not get a database connection.", e);

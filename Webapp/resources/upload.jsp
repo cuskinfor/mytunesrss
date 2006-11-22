@@ -1,3 +1,9 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -19,7 +25,7 @@
 
 <div class="body">
     <form name="upload" enctype="multipart/form-data" method="post" action="${servletUrl}/upload">
-        <input type="text" name="firstName" /> <input type="text" name="lastName" /> <input type="file" name="file" /> <input type="submit" value="go" />
+        <input type="file" name="file" /> <input type="submit" value="go" />
     </form>
 </div>
 
