@@ -10,6 +10,10 @@
         <attribute name="method" value="1" />
         <attribute name="URI" value="/" />
       </containerElement>
+      <containerElement type="module" name="ZipPatch">
+        <attribute name="method" value="5" />
+        <attribute name="URI" value="/lib/ZipPatch.jar" />
+      </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
         <attribute name="URI" value="/lib/codewave-utils-25.jar" />
@@ -160,6 +164,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="AppleExtensions" />
+    <orderEntry type="module" module-name="ZipPatch" exported="" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>

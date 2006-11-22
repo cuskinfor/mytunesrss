@@ -5,12 +5,8 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.jsp.*;
-import de.codewave.utils.io.*;
-import de.codewave.utils.swing.TaskExecutor;
-import de.codewave.utils.swing.TaskFinishedListener;
-import de.codewave.utils.swing.Task;
+import de.codewave.utils.swing.*;
 import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.*;
 import org.apache.commons.fileupload.servlet.*;
@@ -40,7 +36,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 // intentionally left blank
             }
         });
-        forward(MyTunesRssCommand.ShowPortal);
+        forward(MyTunesRssResource.DatabaseUpdating);
     }
 
     private void processItem(FileItem item) throws IOException {
@@ -50,7 +46,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Extracting zip file \"" + item.getName() + "\".");
                     }
-                    ZipInputStream zipInputStream = new ZipInputStream(item.getInputStream());
+                    MyTunesRssZipInputStream zipInputStream = new MyTunesRssZipInputStream(item.getInputStream());
                     for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
                         saveFile(entry.getName(), zipInputStream);
                     }
@@ -65,33 +61,35 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private void saveFile(String fileName, InputStream inputStream) throws IOException {
-        String uploadDirName = MyTunesRss.CONFIG.getUploadDir();
-        if (MyTunesRss.CONFIG.isUploadCreateUserDir()) {
-            uploadDirName += "/" + getWebConfig().getUserName();
-        }
-        if (fileName.contains("/")) {
-            uploadDirName += "/" + fileName.substring(0, fileName.lastIndexOf("/"));
-            fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
-        } else if (fileName.contains("\\")) {
-            uploadDirName += "/" + fileName.substring(0, fileName.lastIndexOf("\\"));
-            fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
-        }
-        File uploadDir = new File(uploadDirName);
-        if (!uploadDir.exists()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating upload directory \"" + uploadDir + "\".");
+        if (StringUtils.isNotEmpty(fileName) && !fileName.endsWith("/") && !fileName.endsWith("\\") && !fileName.contains("/__MACOSX/")) {
+            String uploadDirName = MyTunesRss.CONFIG.getUploadDir();
+            if (MyTunesRss.CONFIG.isUploadCreateUserDir()) {
+                uploadDirName += "/" + getWebConfig().getUserName();
             }
-            uploadDir.mkdirs();
-        }
-        if (uploadDir.exists() && uploadDir.isDirectory()) {
-            FileOutputStream targetStream = new FileOutputStream(new File(uploadDir, fileName));
-            byte[] buffer = new byte[10240];
-            for (int count = inputStream.read(buffer); count != -1; count = inputStream.read(buffer)) {
-                if (count > 0) {
-                    targetStream.write(buffer, 0, count);
+            if (fileName.contains("/")) {
+                uploadDirName += "/" + fileName.substring(0, fileName.lastIndexOf("/"));
+                fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+            } else if (fileName.contains("\\")) {
+                uploadDirName += "/" + fileName.substring(0, fileName.lastIndexOf("\\"));
+                fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
+            }
+            File uploadDir = new File(uploadDirName);
+            if (!uploadDir.exists()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Creating upload directory \"" + uploadDir + "\".");
                 }
+                uploadDir.mkdirs();
             }
-            targetStream.close();
+            if (uploadDir.exists() && uploadDir.isDirectory()) {
+                FileOutputStream targetStream = new FileOutputStream(new File(uploadDir, fileName));
+                byte[] buffer = new byte[10240];
+                for (int count = inputStream.read(buffer); count != -1; count = inputStream.read(buffer)) {
+                    if (count > 0) {
+                        targetStream.write(buffer, 0, count);
+                    }
+                }
+                targetStream.close();
+            }
         }
     }
 }

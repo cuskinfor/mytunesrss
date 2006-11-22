@@ -15,6 +15,7 @@
     <title><fmt:message key="applicationTitle" /> v${mytunesrssVersion}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css?ts=${sessionCreationTime}" />
+    <meta http-equiv="refresh" content="5; URL=${servletUrl}/showPortal" />
     <!--[if IE]>
 		<link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css?ts=${sessionCreationTime}" />
 	<![endif]-->
@@ -27,13 +28,11 @@
 
     <form id="login" action="${servletUrl}/login" method="post">
 
-        <h2 class="fatalError"><fmt:message key="fatalError"/></h2>
+        <h2 class="fatalError"><fmt:message key="info.databaseUpdating.title"/></h2>
 
 				<div class="fatalError">
 
-					<fmt:message key="error.databaseUpdating"/>
-
-					<p><a href="${servletUrl}/showPortal"><fmt:message key="gotoPortal"/></a></p>
+					<fmt:message key="info.databaseUpdating.message"/>
 
 				</div>
 
