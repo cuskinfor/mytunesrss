@@ -2,9 +2,9 @@
  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.settings;
 
-import de.codewave.mytunesrss.settings.*;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.swing.*;
 
 import javax.swing.*;
@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.List;
 
 /**
- * de.codewave.mytunesrss.UserManagement
+ * de.codewave.mytunesrss.settings.UserManagement
  */
 public class UserManagement {
     private JPanel myRootPanel;

@@ -90,7 +90,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             if (trackCount > 0) {
                 ZipEntry m3uPlaylistEntry = new ZipEntry(baseName + "/" + baseName + ".m3u");
                 zipStream.putNextEntry(m3uPlaylistEntry);
-                zipStream.write(m3uPlaylist.toString().getBytes());
+                zipStream.write(m3uPlaylist.toString().getBytes("UTF-8"));
                 zipStream.closeEntry();
             }
             zipStream.close();

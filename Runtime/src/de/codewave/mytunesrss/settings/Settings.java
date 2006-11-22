@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.task.*;
 
 import javax.swing.*;
 import java.awt.event.*;
