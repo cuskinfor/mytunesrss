@@ -18,6 +18,11 @@
     <target name="idea.after-compile" description="target to execute after compilation in idea">
         <antcall target="generate.moduleinfo"/>
         <antcall target="copy.tomcat-config"/>
+        <copy todir="distribution/lib">
+            <fileset dir="Runtime/lib">
+                <include name="codewave-zis.jar"/>
+            </fileset>
+        </copy>
     </target>
 
     <target name="generate.moduleinfo" description="generate the model information files">

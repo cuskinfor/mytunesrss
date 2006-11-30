@@ -5,7 +5,6 @@ import de.codewave.mytunesrss.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.Timer;
-import java.util.prefs.*;
 
 /**
  * de.codewave.mytunesrss.settings.Settings
@@ -57,6 +56,7 @@ public class Settings {
     public void updateConfigFromGui() {
         myGeneralForm.updateConfigFromGui();
         myDirectoriesForm.updateConfigFromGui();
+        myInfoForm.updateConfigFromGui();
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -101,8 +101,8 @@ public class Settings {
             myGeneralForm.setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
             myRootPanel.validate();
             if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
-                MyTunesRss.DATABASE_WATCHDOG.cancel();
-                MyTunesRss.DATABASE_WATCHDOG = new Timer("MyTunesRSSDatabaseWatchdog");
+                MyTunesRss.SERVER_RUNNING_TIMER.cancel();
+                MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
             }
         }
     }
@@ -112,11 +112,10 @@ public class Settings {
             doStopServer();
         }
         if (!MyTunesRss.WEBSERVER.isRunning()) {
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_x", MyTunesRss.ROOT_FRAME.getLocation().x);
-            Preferences.userRoot().node("/de/codewave/mytunesrss").putInt("window_y", MyTunesRss.ROOT_FRAME.getLocation().y);
+            MyTunesRss.CONFIG.saveWindowPosition(MyTunesRss.ROOT_FRAME.getLocation());
             updateConfigFromGui();
             MyTunesRss.CONFIG.save();
-            MyTunesRss.DATABASE_WATCHDOG.cancel();
+            MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
                 public void execute() {
                     MyTunesRss.STORE.destroy();

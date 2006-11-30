@@ -9,7 +9,6 @@ import de.codewave.mytunesrss.datastore.filesystem.*;
 import de.codewave.mytunesrss.datastore.itunes.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.*;
-import de.codewave.utils.swing.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -24,10 +23,11 @@ import java.util.ArrayList;
  */
 public class DatabaseBuilderTask extends MyTunesRssTask {
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
+    private static boolean CURRENTLY_RUNNING;
 
     private URL myLibraryXmlUrl;
     private List<File> myBaseDirs = new ArrayList<File>();
-    private boolean myRunning;
+    private boolean myExecuted;
 
     public DatabaseBuilderTask() {
         try {
@@ -71,10 +71,10 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
     public void execute() throws Exception {
         boolean execute = false;
-        if (!myRunning) {
+        if (!CURRENTLY_RUNNING) {
             synchronized (DatabaseBuilderTask.class) {
-                if (!myRunning) {
-                    myRunning = true;
+                if (!CURRENTLY_RUNNING) {
+                    CURRENTLY_RUNNING = true;
                     execute = true;
                 }
             }
@@ -82,10 +82,15 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         if (execute) {
             try {
                 internalExecute();
+                myExecuted = true;
             } finally {
-                myRunning = false;
+                CURRENTLY_RUNNING = false;
             }
         }
+    }
+
+    public boolean isExecuted() {
+        return myExecuted;
     }
 
     public void internalExecute() throws Exception {
@@ -205,6 +210,6 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     }
 
     public boolean isRunning() {
-        return myRunning;
+        return CURRENTLY_RUNNING;
     }
 }

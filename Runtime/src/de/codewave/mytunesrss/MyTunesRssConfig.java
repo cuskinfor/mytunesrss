@@ -15,6 +15,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.prefs.*;
+import java.awt.geom.*;
+import java.awt.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssConfig
@@ -44,6 +46,8 @@ public class MyTunesRssConfig {
     private boolean myItunesDeleteMissingFiles = true;
     private String myUploadDir = "";
     private boolean myUploadCreateUserDir = true;
+    private String myMyTunesRssComUser = "";
+    private byte[] myMyTunesRssComPasswordHash = null;
 
     public String getLibraryXml() {
         return myLibraryXml;
@@ -219,6 +223,22 @@ public class MyTunesRssConfig {
         myProxyServer = proxyServer;
     }
 
+    public byte[] getMyTunesRssComPasswordHash() {
+        return myMyTunesRssComPasswordHash;
+    }
+
+    public void setMyTunesRssComPasswordHash(byte[] myTunesRssComPasswordHash) {
+        myMyTunesRssComPasswordHash = myTunesRssComPasswordHash;
+    }
+
+    public String getMyTunesRssComUser() {
+        return myMyTunesRssComUser;
+    }
+
+    public void setMyTunesRssComUser(String myTunesRssComUser) {
+        myMyTunesRssComUser = myTunesRssComUser;
+    }
+
     private String findItunesLibraryXml(Trigger trigger) {
         String userHome = System.getProperty("user.home");
         if (StringUtils.isNotEmpty(userHome)) {
@@ -283,6 +303,7 @@ public class MyTunesRssConfig {
                     user.setRss(userNode.node(userName).getBoolean("featureRss", true));
                     user.setM3u(userNode.node(userName).getBoolean("featureM3u", true));
                     user.setDownload(userNode.node(userName).getBoolean("featureDownload", true));
+                    user.setUpload(userNode.node(userName).getBoolean("featureUpload", false));
                     addUser(user);
                 }
             } catch (BackingStoreException e) {
@@ -296,6 +317,8 @@ public class MyTunesRssConfig {
         setProxyServer(Preferences.userRoot().node(PREF_ROOT).getBoolean("proxyServer", isProxyServer()));
         setProxyHost(Preferences.userRoot().node(PREF_ROOT).get("proxyHost", getProxyHost()));
         setProxyPort(Preferences.userRoot().node(PREF_ROOT).getInt("proxyPort", getProxyPort()));
+        setMyTunesRssComUser(Preferences.userRoot().node(PREF_ROOT).get("myTunesRssComUser", getMyTunesRssComUser()));
+        setMyTunesRssComPasswordHash(Preferences.userRoot().node(PREF_ROOT).getByteArray("myTunesRssComPassword", getMyTunesRssComPasswordHash()));
     }
 
     public void loadFromXml(URL xmlUrl) {
@@ -331,6 +354,7 @@ public class MyTunesRssConfig {
             user.setRss(JXPathUtils.getBooleanValue(userContext, "features/@rss", true));
             user.setM3u(JXPathUtils.getBooleanValue(userContext, "features/@m3u", true));
             user.setDownload(JXPathUtils.getBooleanValue(userContext, "features/@download", true));
+            user.setUpload(JXPathUtils.getBooleanValue(userContext, "features/@upload", false));
             addUser(user);
             if (!MyTunesRss.REGISTRATION.isRegistered()) {
                 break;
@@ -340,6 +364,8 @@ public class MyTunesRssConfig {
         setProxyServer(context.getValue("/mytunesrss/proxy") != null);
         setProxyHost(JXPathUtils.getStringValue(context, "/mytunesrss/proxy/host", getProxyHost()));
         setProxyPort(JXPathUtils.getIntValue(context, "/mytunesrss/proxy/port", getProxyPort()));
+        setMyTunesRssComUser(JXPathUtils.getStringValue(context, "/mytunesrss/mytunesrsscom/@username", ""));
+        setMyTunesRssComPasswordHash(MyTunesRssBase64Utils.decode(JXPathUtils.getStringValue(context, "/mytunesrss/mytunesrsscom/@password", null)));
     }
 
     public void save() {
@@ -377,6 +403,7 @@ public class MyTunesRssConfig {
                     userNode.node(user.getName()).putBoolean("featureRss", user.isRss());
                     userNode.node(user.getName()).putBoolean("featureM3u", user.isM3u());
                     userNode.node(user.getName()).putBoolean("featureDownload", user.isDownload());
+                    userNode.node(user.getName()).putBoolean("featureUpload", user.isUpload());
                 }
             } catch (BackingStoreException e) {
                 if (LOG.isErrorEnabled()) {
@@ -388,6 +415,12 @@ public class MyTunesRssConfig {
             Preferences.userRoot().node(PREF_ROOT).putBoolean("proxyServer", myProxyServer);
             Preferences.userRoot().node(PREF_ROOT).put("proxyHost", myProxyHost);
             Preferences.userRoot().node(PREF_ROOT).putInt("proxyPort", myProxyPort);
+            Preferences.userRoot().node(PREF_ROOT).put("myTunesRssComUser", myMyTunesRssComUser);
+            if (myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0) {
+                Preferences.userRoot().node(PREF_ROOT).putByteArray("myTunesRssComPassword", myMyTunesRssComPasswordHash);
+            } else {
+                Preferences.userRoot().node(PREF_ROOT).remove("myTunesRssComPassword");
+            }
         }
     }
 
@@ -428,5 +461,16 @@ public class MyTunesRssConfig {
                 }
             }
         }
+    }
+
+    public Point loadWindowPosition() {
+        Preferences preferences = Preferences.userRoot().node(PREF_ROOT);
+        return new Point(preferences.getInt("window_x", Integer.MAX_VALUE), preferences.getInt("window_y", Integer.MAX_VALUE));
+    }
+
+    public void saveWindowPosition(Point point) {
+        Preferences preferences = Preferences.userRoot().node(PREF_ROOT);
+        preferences.putInt("window_x", point.x);
+        preferences.putInt("window_y", point.y);
     }
 }

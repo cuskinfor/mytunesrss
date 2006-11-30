@@ -16,6 +16,7 @@ public class User {
     private boolean myDownload;
     private boolean myRss;
     private boolean myM3u;
+    private boolean myUpload;
 
     public User(String name) {
         myName = name;
@@ -35,20 +36,6 @@ public class User {
 
     public void setPasswordHash(byte[] passwordHash) {
         myPasswordHash = passwordHash;
-    }
-
-    public void setPassword(String password) {
-        if (StringUtils.isNotEmpty(StringUtils.trim(password))) {
-            try {
-                myPasswordHash = MyTunesRss.MESSAGE_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not create password hash.", e);
-                }
-            }
-        } else {
-            myPasswordHash = null;
-        }
     }
 
     public boolean isDownload() {
@@ -73,6 +60,14 @@ public class User {
 
     public void setRss(boolean rss) {
         myRss = rss;
+    }
+
+    public boolean isUpload() {
+        return myUpload;
+    }
+
+    public void setUpload(boolean upload) {
+        myUpload = upload;
     }
 
     @Override

@@ -24,7 +24,7 @@ public class ShutdownServlet extends HttpServlet {
     private void doAction(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         if (MyTunesRss.HEADLESS && NetworkUtils.isLocalAddress(httpServletRequest.getRemoteAddr())) {
             MyTunesRss.CONFIG.save();
-            MyTunesRss.DATABASE_WATCHDOG.cancel();
+            MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             MyTunesRss.STORE.destroy();
             MyTunesRss.WEBSERVER.stop();
         } else {

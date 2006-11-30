@@ -20,6 +20,7 @@ public class SysTray {
     private SysTrayMenu myMenu;
     private SysTrayMenuItem myQuit;
     private SysTrayMenuItem myShow;
+    private SysTrayMenuItem myUpdate;
     private SysTrayMenuItem myStartServer;
     private SysTrayMenuItem myStopServer;
 
@@ -36,6 +37,10 @@ public class SysTray {
         myShow.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myShow);
         myMenu.addSeparator();
+        myUpdate = new SysTrayMenuItem(MyTunesRss.BUNDLE.getString("systray.updateDatabase"), "update");
+        myUpdate.addSysTrayMenuListener(menuListener);
+        myMenu.addItem(myUpdate);
+        myMenu.addSeparator();
         myStopServer = new SysTrayMenuItem(MyTunesRss.BUNDLE.getString("systray.stopServer"), "stop_server");
         myStopServer.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myStopServer);
@@ -49,6 +54,7 @@ public class SysTray {
     public void disableAll() {
         myQuit.setEnabled(false);
         myShow.setEnabled(false);
+        myUpdate.setEnabled(false);
         myStartServer.setEnabled(false);
         myStopServer.setEnabled(false);
     }
@@ -56,6 +62,7 @@ public class SysTray {
     public void setServerRunning() {
         myQuit.setEnabled(true);
         myShow.setEnabled(true);
+        myUpdate.setEnabled(true);
         myStartServer.setEnabled(false);
         myStopServer.setEnabled(true);
     }
@@ -63,6 +70,7 @@ public class SysTray {
     public void setServerStopped() {
         myQuit.setEnabled(true);
         myShow.setEnabled(true);
+        myUpdate.setEnabled(true);
         myStartServer.setEnabled(true);
         myStopServer.setEnabled(false);
     }
@@ -99,12 +107,21 @@ public class SysTray {
                 mySettingsForm.doQuitApplication();
             } else if ("show".equals(sysTrayMenuEvent.getActionCommand())) {
                 showFrame();
+            } else if ("update".equals(sysTrayMenuEvent.getActionCommand())) {
+                updateDatabase();
             } else if ("stop_server".equals(sysTrayMenuEvent.getActionCommand())) {
                 mySettingsForm.doStopServer();
             } else if ("start_server".equals(sysTrayMenuEvent.getActionCommand())) {
                 mySettingsForm.doStartServer();
             }
         }
-    }
 
+        private void updateDatabase() {
+            DatabaseBuilderTask task = MyTunesRss.createDatabaseBuilderTask();
+            MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.buildDatabase"), null, false, task);
+            if (!task.isExecuted()) {
+                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.updateNotRun"));
+            }
+        }
+    }
 }

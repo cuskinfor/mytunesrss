@@ -33,9 +33,11 @@
 		<key>MainClass</key>
 		<string>de.codewave.mytunesrss.MyTunesRss</string>
 		<key>VMOptions</key>
-		<string>-Xms32m -Xmx128m -Xbootclasspath/p:lib/ZipPatch.jar</string>
+		<string>-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar</string>
 		<key>WorkingDirectory</key>
 		<string>$APP_PACKAGE/Contents/Resources/Java</string>
+		<key>Arguments</key>
+		<string>-debug</string>
 	</dict>
 </dict>
 </plist>

@@ -25,8 +25,8 @@ public class DatabaseWatchdogTask extends TimerTask {
 
     public void run() {
         try {
-            if (MyTunesRss.DATABASE_BUILDER_TASK.needsUpdate()) {
-                MyTunesRss.DATABASE_BUILDER_TASK.execute();
+            if (MyTunesRss.createDatabaseBuilderTask().needsUpdate()) {
+                MyTunesRss.createDatabaseBuilderTask().execute();
             }
         } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
@@ -34,9 +34,11 @@ public class DatabaseWatchdogTask extends TimerTask {
             }
         }
         try {
-            myTimer.schedule(this, myInterval * 60000);
+            myTimer.schedule(new DatabaseWatchdogTask(myTimer, myInterval), myInterval * 60000);
         } catch (IllegalStateException e) {
-            // timer was cancelled, so we just don't schedule any further tasks
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Could not re-schedule task!", e);
+            }
         }
     }
 }

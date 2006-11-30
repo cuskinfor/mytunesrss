@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.UpdateUtils;
 import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.task.RecreateDatabaseTask;
+import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.swing.SwingUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +43,7 @@ public class General {
     private JButton myProgramUpdateButton;
     private JCheckBox myAutoUpdateDatabaseInput;
     private JSpinner myAutoUpdateDatabaseIntervalInput;
+    private JButton myUpdateDatabaseButton;
     private boolean myUpdateOnStartInputCache;
 
     public void init() {
@@ -49,6 +51,7 @@ public class General {
         myAutoStartServerInput.addActionListener(new AutoStartServerInputListener());
         myAutoUpdateDatabaseInput.addActionListener(new AutoUpdateDatabaseInputListener());
         myDeleteDatabaseButton.addActionListener(new DeleteDatabaseButtonListener());
+        myUpdateDatabaseButton.addActionListener(new UpdateDatabaseButtonListener());
         myUpdateOnStartInput.setSelected(MyTunesRss.CONFIG.isCheckUpdateOnStart());
         myAutoStartServerInput.setSelected(MyTunesRss.CONFIG.isAutoStartServer());
         if (myAutoStartServerInput.isSelected()) {
@@ -190,6 +193,16 @@ public class General {
                                             null,
                                             false,
                                             new RecreateDatabaseTask());
+            }
+        }
+    }
+
+    public class UpdateDatabaseButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            DatabaseBuilderTask task = MyTunesRss.createDatabaseBuilderTask();
+            MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.buildDatabase"), null, false, task);
+            if (!task.isExecuted()) {
+                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.updateNotRun"));
             }
         }
     }

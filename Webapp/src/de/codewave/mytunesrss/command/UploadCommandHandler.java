@@ -6,7 +6,6 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.jsp.*;
-import de.codewave.utils.swing.*;
 import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.*;
 import org.apache.commons.fileupload.servlet.*;
@@ -31,11 +30,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
         for (FileItem item : items) {
             processItem(item);
         }
-        TaskExecutor.execute(MyTunesRss.DATABASE_BUILDER_TASK, new TaskFinishedListener() {
-            public void taskFinished(Task task) {
-                // intentionally left blank
-            }
-        });
+        runDatabaseUpdate();
         forward(MyTunesRssResource.DatabaseUpdating);
     }
 
@@ -46,7 +41,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Extracting zip file \"" + item.getName() + "\".");
                     }
-                    MyTunesRssZipInputStream zipInputStream = new MyTunesRssZipInputStream(item.getInputStream());
+                    CodewaveZipInputStream zipInputStream = new CodewaveZipInputStream(item.getInputStream());
                     for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
                         saveFile(entry.getName(), zipInputStream);
                     }

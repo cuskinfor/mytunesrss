@@ -16,6 +16,8 @@ public class GuiDatabaseBuilderTask extends DatabaseBuilderTask {
     @Override
     public void execute() throws Exception {
         super.execute();
-        myGeneral.refreshLastUpdate();
+        if (isExecuted()) {
+            myGeneral.refreshLastUpdate();
+        }
     }
 }

@@ -4,12 +4,12 @@
 
 package de.codewave.mytunesrss.settings;
 
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.*;
+import de.codewave.utils.swing.components.*;
+import org.apache.commons.lang.*;
 
 import javax.swing.*;
 import java.awt.event.*;
-
-import de.codewave.mytunesrss.*;
 
 /**
  * de.codewave.mytunesrss.settings.Info
@@ -17,9 +17,24 @@ import de.codewave.mytunesrss.*;
 public class Info {
     private JButton mySupportContactButton;
     private JPanel myRootPanel;
+    private JTextField myUsernameInput;
+    private PasswordHashField myPasswordInput;
 
     public void init() {
         mySupportContactButton.addActionListener(new SupportContactActionListener());
+        myUsernameInput.setText(MyTunesRss.CONFIG.getMyTunesRssComUser());
+        myPasswordInput.setPasswordHash(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash());
+    }
+
+    private void createUIComponents() {
+        myPasswordInput = new PasswordHashField(MyTunesRss. BUNDLE.getString("passwordHasBeenSet"), MyTunesRss.MESSAGE_DIGEST);
+    }
+
+    public void updateConfigFromGui() {
+        MyTunesRss.CONFIG.setMyTunesRssComUser(myUsernameInput.getText());
+        if (myPasswordInput.getPasswordHash() != null) {
+            MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(myPasswordInput.getPasswordHash());
+        }
     }
 
     public static class SupportContactActionListener implements ActionListener {

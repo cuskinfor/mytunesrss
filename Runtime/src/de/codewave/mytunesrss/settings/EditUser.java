@@ -1,37 +1,30 @@
 package de.codewave.mytunesrss.settings;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.User;
-import de.codewave.utils.swing.SwingUtils;
-import org.apache.commons.lang.StringUtils;
+import de.codewave.mytunesrss.*;
+import de.codewave.utils.swing.*;
+import de.codewave.utils.swing.components.*;
+import org.apache.commons.lang.*;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 
 /**
- * <b>Description:</b>   <br>
- * <b>Copyright:</b>     Copyright (c) 2006<br>
- * <b>Company:</b>       daGama Business Travel GmbH<br>
- * <b>Creation Date:</b> 16.11.2006
+ * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
+ * 16.11.2006
  *
  * @author Michael Descher
  * @version $Id:$
  */
 public class EditUser {
     private JTextField myUserNameInput;
-    private JPasswordField myPasswordInput;
+    private PasswordHashField myPasswordInput;
     private JPanel myRootPanel;
     private JButton mySaveButton;
     private JButton myCancelButton;
     private JCheckBox myPermRssInput;
     private JCheckBox myPermM3uInput;
     private JCheckBox myPermDownloadInput;
-    private String myPassword;
+    private JCheckBox myPermUploadInput;
     private User myUser;
 
     public void display(final JFrame parent, User user) {
@@ -45,55 +38,21 @@ public class EditUser {
 
     private void init(JDialog dialog) {
         myUserNameInput.setText(myUser != null ? myUser.getName() : "");
-        myPasswordInput.addFocusListener(new PasswordInputListener());
-        if (myUser != null && myUser.getPasswordHash() != null && myUser.getPasswordHash().length > 0) {
-            setPasswordVisible();
-        } else {
-            setPasswordHidden();
+        if (myUser != null) {
+            myPasswordInput.setPasswordHash(myUser.getPasswordHash());
         }
         if (myUser != null) {
             myPermRssInput.setSelected(myUser.isRss());
             myPermM3uInput.setSelected(myUser.isM3u());
             myPermDownloadInput.setSelected(myUser.isDownload());
+            myPermUploadInput.setSelected(myUser.isUpload());
         }
         mySaveButton.addActionListener(new SaveButtonActionListener(dialog));
         myCancelButton.addActionListener(new CancelButtonActionListener(dialog));
     }
 
-    private void setPasswordVisible() {
-        myPasswordInput.setText("");
-        myPasswordInput.setEchoChar((char)0);
-        Font font = myPasswordInput.getFont();
-        myPasswordInput.setFont(new Font(font.getName(), font.getStyle() | Font.ITALIC, font.getSize()));
-        myPasswordInput.setForeground(Color.LIGHT_GRAY);
-        myPasswordInput.setText(MyTunesRss.BUNDLE.getString("editUser.passwordHasBeenSet"));
-    }
-
-    private void setPasswordHidden() {
-        myPasswordInput.setText("");
-        myPasswordInput.setEchoChar('*');
-        Font font = myPasswordInput.getFont();
-        myPasswordInput.setFont(new Font(font.getName(), font.getStyle() & (Integer.MAX_VALUE - Font.ITALIC), font.getSize()));
-        myPasswordInput.setForeground(Color.BLACK);
-    }
-
-    public class PasswordInputListener implements FocusListener {
-        private boolean myPreviousPasswordSet;
-
-        public void focusGained(FocusEvent focusEvent) {
-            myPreviousPasswordSet = myPasswordInput.getPassword().length > 0;
-            setPasswordHidden();
-        }
-
-        public void focusLost(FocusEvent focusEvent) {
-            String password = new String(myPasswordInput.getPassword()).trim();
-            if (StringUtils.isNotEmpty(password)) {
-                myPassword = password;
-                setPasswordVisible();
-            } else if (myPreviousPasswordSet) {
-                setPasswordVisible();
-            }
-        }
+    private void createUIComponents() {
+        myPasswordInput = new PasswordHashField(MyTunesRss.BUNDLE.getString("passwordHasBeenSet"), MyTunesRss.MESSAGE_DIGEST);
     }
 
     public class SaveButtonActionListener implements ActionListener {
@@ -106,15 +65,15 @@ public class EditUser {
         public void actionPerformed(ActionEvent e) {
             if (StringUtils.isEmpty(myUserNameInput.getText())) {
                 MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.missingUserName"));
-            } else if (myUser == null && StringUtils.isEmpty(myPassword)) {
+            } else if (myUser == null && myPasswordInput.getPasswordHash() == null) {
                 MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.missingUserPassword"));
             } else if ((myUser == null || (!myUser.getName().equals(myUserNameInput.getText()))) && MyTunesRss.CONFIG.getUsers()
-                .contains(new User(myUserNameInput.getText()))) {
+                    .contains(new User(myUserNameInput.getText()))) {
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.duplicateUserName", myUserNameInput.getText()));
             } else {
                 if (myUser != null) {
-                    if (StringUtils.isNotEmpty(myPassword)) {
-                        myUser.setPassword(myPassword);
+                    if (myPasswordInput.getPasswordHash() != null) {
+                        myUser.setPasswordHash(myPasswordInput.getPasswordHash());
                     }
                     // name change => remove user with old name
                     if (!myUser.getName().equals(myUserNameInput.getText())) {
@@ -122,12 +81,13 @@ public class EditUser {
                     }
                 } else {
                     myUser = new User("");
-                    myUser.setPassword(myPassword);
+                    myUser.setPasswordHash(myPasswordInput.getPasswordHash());
                 }
                 myUser.setName(myUserNameInput.getText());
                 myUser.setRss(myPermRssInput.isSelected());
                 myUser.setM3u(myPermM3uInput.isSelected());
                 myUser.setDownload(myPermDownloadInput.isSelected());
+                myUser.setUpload(myPermUploadInput.isSelected());
                 MyTunesRss.CONFIG.addUser(myUser);
                 myDialog.dispose();
             }
@@ -142,9 +102,11 @@ public class EditUser {
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (JOptionPane.showConfirmDialog(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("confirm.cancelEditUser"),
-                                              MyTunesRss.BUNDLE.getString("confirm.cancelEditUserTitle"), JOptionPane.YES_NO_OPTION) == JOptionPane
-                .YES_OPTION) {
+            if (JOptionPane.showConfirmDialog(MyTunesRss.ROOT_FRAME,
+                                              MyTunesRss.BUNDLE.getString("confirm.cancelEditUser"),
+                                              MyTunesRss.BUNDLE.getString("confirm.cancelEditUserTitle"),
+                                              JOptionPane.YES_NO_OPTION) == JOptionPane
+                    .YES_OPTION) {
                 myDialog.dispose();
             }
         }

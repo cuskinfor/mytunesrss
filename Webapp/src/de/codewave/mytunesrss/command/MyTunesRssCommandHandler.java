@@ -5,12 +5,15 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.servlet.*;
-import de.codewave.utils.*;
 import de.codewave.utils.servlet.*;
+import de.codewave.utils.swing.TaskExecutor;
+import de.codewave.utils.swing.TaskFinishedListener;
+import de.codewave.utils.swing.Task;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -23,9 +26,21 @@ import java.util.*;
  */
 public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private static final Log LOG = LogFactory.getLog(MyTunesRssCommandHandler.class);
+    private static boolean SCHEDULE_DATABASE_UPDATE;
 
     protected MyTunesRssConfig getMyTunesRssConfig() {
         return (MyTunesRssConfig)getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
+    }
+
+    protected void runDatabaseUpdate() {
+        SCHEDULE_DATABASE_UPDATE = false;
+        TaskExecutor.execute(MyTunesRss.createDatabaseBuilderTask(), new TaskFinishedListener() {
+            public void taskFinished(Task task) {
+                if (!((DatabaseBuilderTask)task).isExecuted()) {
+                    SCHEDULE_DATABASE_UPDATE = true;
+                }
+            }
+        });
     }
 
     protected boolean isAuthorized(String userName, byte[] passwordHash) {
@@ -141,7 +156,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     public void execute() throws Exception {
-        if (!MyTunesRss.DATABASE_BUILDER_TASK.isRunning()) {
+        if (SCHEDULE_DATABASE_UPDATE) {
+            runDatabaseUpdate();
+        }
+        if (!MyTunesRss.createDatabaseBuilderTask().isRunning()) {
             try {
                 if (needsAuthorization() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
                                                                                            getWebConfig().getPasswordHash())) {

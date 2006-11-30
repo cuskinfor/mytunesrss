@@ -48,7 +48,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
             playlists = playlists.subList(current * pageSize, Math.min((current * pageSize) + pageSize, playlists.size()));
         }
         getRequest().setAttribute("playlists", playlists);
-        getRequest().setAttribute("uploadLink", StringUtils.isNotEmpty(MyTunesRss.CONFIG.getUploadDir()));
+        getRequest().setAttribute("uploadLink", getAuthUser().isUpload() && StringUtils.isNotEmpty(MyTunesRss.CONFIG.getUploadDir()));
         forward(MyTunesRssResource.Portal);
     }
 
