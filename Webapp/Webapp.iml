@@ -76,11 +76,6 @@
       <attribute name="URI" value="/WEB-INF/classes" />
     </containerElement>
     <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/codewave-utils-25.jar" />
-      <url>jar://$MODULE_DIR$/../lib/codewave-utils-25.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
       <attribute name="method" value="0" />
       <attribute name="URI" value="/WEB-INF/lib/camel-0.3.jar" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/camel-0.3.jar!/</url>
@@ -94,6 +89,16 @@
       <attribute name="method" value="0" />
       <attribute name="URI" value="/WEB-INF/lib/catalina.jar" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/catalina.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/codewave-utils-26.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/codewave-utils-26.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/codewave-zis.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/codewave-zis.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />

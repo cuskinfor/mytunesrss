@@ -164,7 +164,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="AppleExtensions" />
-    <orderEntry type="module" module-name="ZipPatch" exported="" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
@@ -404,12 +403,19 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/codewave-utils-25.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/codewave-zis.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../CodewaveUtils/src" />
-        </SOURCES>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/codewave-utils-26.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntryProperties />
