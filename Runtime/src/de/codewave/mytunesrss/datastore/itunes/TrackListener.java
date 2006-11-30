@@ -81,7 +81,7 @@ public class TrackListener implements PListHandlerListener {
         String trackId = track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
         String name = (String)track.get("Name");
         String trackType = (String)track.get("Track Type");
-        if ("File".equals(trackType)) {
+        if (trackType == null || "File".equals(trackType)) {
             File file = ItunesLoader.getFileForLocation((String)track.get("Location"));
             if (trackId != null && StringUtils.isNotEmpty(name) && file != null && new SupportedFileFilter().accept(file.getParentFile(),
                                                                                                                     file.getName())) {
