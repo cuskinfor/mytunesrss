@@ -50,13 +50,16 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         if (myBaseDirs != null) {
             for (File baseDir : myBaseDirs) {
                 if (baseDir.isDirectory() && baseDir.exists()) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Database update needed.");
+                    }
                     return true;
                 }
             }
         }
         if (myLibraryXmlUrl != null) {
             SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
-            if (new File(myLibraryXmlUrl.getPath()).lastModified() > systemInformation.getLastUpdate()) {
+            if (MyTunesRss.CONFIG.isIgnoreTimestamps() || new File(myLibraryXmlUrl.getPath()).lastModified() > systemInformation.getLastUpdate()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Database update needed.");
                 }
