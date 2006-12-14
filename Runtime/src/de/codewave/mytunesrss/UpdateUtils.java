@@ -14,6 +14,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.net.URL;
+import java.net.Proxy;
+import java.net.InetSocketAddress;
 import java.util.prefs.Preferences;
 
 /**
@@ -143,7 +145,11 @@ public class UpdateUtils {
             long startTime = System.currentTimeMillis();
             new Thread(new Runnable() {
                 public void run() {
-                    myUpdateInfo = NetworkUtils.getCurrentUpdateInfo(MyTunesRss.UPDATE_URL, MyTunesRss.BUNDLE.getLocale(), READ_TIMEOUT);
+                  Proxy proxy = null;
+                  if (MyTunesRss.CONFIG.isProxyServer()) {
+                    proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(MyTunesRss.CONFIG.getProxyHost(), MyTunesRss.CONFIG.getProxyPort()));
+                  }
+                  myUpdateInfo = NetworkUtils.getCurrentUpdateInfo(MyTunesRss.UPDATE_URL, MyTunesRss.BUNDLE.getLocale(), READ_TIMEOUT, proxy);
                     myDone = true;
                 }
             }, "UpdateInfoGetter").start();

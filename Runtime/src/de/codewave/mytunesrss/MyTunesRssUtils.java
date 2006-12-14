@@ -3,6 +3,8 @@ package de.codewave.mytunesrss;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.pleasewait.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HostConfiguration;
 
 import javax.swing.*;
 import java.text.MessageFormat;
@@ -61,4 +63,14 @@ public class MyTunesRssUtils {
         }
         return MessageFormat.format(MyTunesRss.BUNDLE.getString(key), parameters);
     }
+
+  public static HttpClient createHttpClient() {
+    HttpClient httpClient = new HttpClient();
+    if (MyTunesRss.CONFIG.isProxyServer()) {
+        HostConfiguration hostConfiguration = new HostConfiguration();
+        hostConfiguration.setProxy(MyTunesRss.CONFIG.getProxyHost(), MyTunesRss.CONFIG.getProxyPort());
+        httpClient.setHostConfiguration(hostConfiguration);
+    }
+    return httpClient;
+  }
 }

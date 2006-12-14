@@ -61,8 +61,9 @@ public class Info {
       }
     }
 
-    public static class SupportContactActionListener implements ActionListener {
+    public class SupportContactActionListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent) {
+            updateConfigFromGui();
             new SupportContact().display(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("dialog.supportRequest"), MyTunesRss.BUNDLE.getString(
                     "settings.supportInfo"));
         }

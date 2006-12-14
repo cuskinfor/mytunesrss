@@ -117,12 +117,7 @@ public class SupportContact {
                                           new FilePart("archive", partSource)};
                 MultipartRequestEntity multipartRequestEntity = new MultipartRequestEntity(part, postMethod.getParams());
                 postMethod.setRequestEntity(multipartRequestEntity);
-                HttpClient httpClient = new HttpClient();
-                if (MyTunesRss.CONFIG.isProxyServer()) {
-                    HostConfiguration hostConfiguration = new HostConfiguration();
-                    hostConfiguration.setProxy(MyTunesRss.CONFIG.getProxyHost(), MyTunesRss.CONFIG.getProxyPort());
-                    httpClient.setHostConfiguration(hostConfiguration);
-                }
+                HttpClient httpClient = MyTunesRssUtils.createHttpClient();
                 httpClient.executeMethod(postMethod);
                 int statusCode = postMethod.getStatusCode();
                 if (statusCode == 200) {

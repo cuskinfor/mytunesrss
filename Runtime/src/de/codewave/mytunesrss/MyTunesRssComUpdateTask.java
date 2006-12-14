@@ -41,7 +41,7 @@ public class MyTunesRssComUpdateTask extends TimerTask {
         postMethod.addParameter("user", myUsername);
         postMethod.addParameter("pass", base64Hash);
         postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getPort()));
-        HttpClient client = new HttpClient();
+        HttpClient client = MyTunesRssUtils.createHttpClient();
         try {
             client.executeMethod(postMethod);
         } catch (IOException e) {
