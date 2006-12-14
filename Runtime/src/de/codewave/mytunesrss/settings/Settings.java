@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.event.*;
 import java.util.Timer;
 
@@ -18,8 +19,9 @@ public class Settings {
     private JButton myStartServerButton;
     private JButton myStopServerButton;
     private JButton myQuitButton;
+  private JTabbedPane myTabbedPane;
 
-    public General getGeneralForm() {
+  public General getGeneralForm() {
         return myGeneralForm;
     }
 
@@ -51,6 +53,7 @@ public class Settings {
         myDirectoriesForm.init();
         myUserManagementForm.init();
         myInfoForm.init();
+      myTabbedPane.addChangeListener(new TabSwitchListener());
     }
 
     public void updateConfigFromGui() {
@@ -125,4 +128,11 @@ public class Settings {
             System.exit(0);
         }
     }
+
+  public class TabSwitchListener implements ChangeListener {
+    public void stateChanged(ChangeEvent e) {
+      updateConfigFromGui();
+    }
+  }
+
 }

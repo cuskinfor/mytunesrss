@@ -30,9 +30,6 @@ public class SupportContact {
     private JTextArea myCommentInput;
     private JCheckBox myItunesXmlInput;
     private JTextArea myInfoText;
-    private JTextField myProxyHostInput;
-    private JTextField myProxyPortInput;
-    private JCheckBox myUseProxyInput;
 
     public void display(JFrame parent, String title, String infoText) {
         final JDialog dialog = new JDialog(parent, title, true);
@@ -47,23 +44,12 @@ public class SupportContact {
         myInfoText.setText(infoText);
         myNameInput.setText(MyTunesRss.CONFIG.getSupportName());
         myEmailInput.setText(MyTunesRss.CONFIG.getSupportEmail());
-        myUseProxyInput.setSelected(MyTunesRss.CONFIG.isProxyServer());
-        myUseProxyInput.addActionListener(new UseProxyActionListener());
-        SwingUtils.enableElementAndLabel(myProxyHostInput, myUseProxyInput.isSelected());
-        SwingUtils.enableElementAndLabel(myProxyPortInput, myUseProxyInput.isSelected());
-        myProxyHostInput.setText(MyTunesRss.CONFIG.getProxyHost());
-        int port = MyTunesRss.CONFIG.getProxyPort();
-        if (port > 0 && port < 65536) {
-            myProxyPortInput.setText(Integer.toString(port));
-        } else {
-            myProxyPortInput.setText("");
-        }
         myRootPanel.validate();
         mySendButton.addActionListener(new SendButtonActionListener(dialog));
         myCancelButton.addActionListener(new CancelButtonActionListener(dialog));
     }
 
-    public class CancelButtonActionListener implements ActionListener {
+    public static class CancelButtonActionListener implements ActionListener {
         private JDialog myDialog;
 
         public CancelButtonActionListener(JDialog dialog) {
@@ -86,13 +72,6 @@ public class SupportContact {
         public void actionPerformed(ActionEvent e) {
             MyTunesRss.CONFIG.setSupportName(myNameInput.getText());
             MyTunesRss.CONFIG.setSupportEmail(myEmailInput.getText());
-            MyTunesRss.CONFIG.setProxyServer(myUseProxyInput.isSelected());
-            MyTunesRss.CONFIG.setProxyHost(myProxyHostInput.getText());
-            try {
-                MyTunesRss.CONFIG.setProxyPort(Integer.parseInt(myProxyPortInput.getText()));
-            } catch (NumberFormatException e1) {
-                MyTunesRss.CONFIG.setProxyPort(-1);
-            }
             SendSupportRequestTask requestTask = new SendSupportRequestTask();
             if (!MyTunesRss.CONFIG.isProxyServer() ||
                     (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getProxyHost()) && MyTunesRss.CONFIG.getProxyPort() > 0)) {
@@ -172,13 +151,6 @@ public class SupportContact {
                 }
             }
 
-        }
-    }
-
-    public class UseProxyActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent actionEvent) {
-            SwingUtils.enableElementAndLabel(myProxyHostInput, myUseProxyInput.isSelected());
-            SwingUtils.enableElementAndLabel(myProxyPortInput, myUseProxyInput.isSelected());
         }
     }
 }

@@ -31,7 +31,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <tabbedpane id="5c03">
+          <tabbedpane id="5c03" binding="myTabbedPane">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="0" anchor="9" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
