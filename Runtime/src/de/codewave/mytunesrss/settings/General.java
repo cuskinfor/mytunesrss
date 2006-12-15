@@ -44,7 +44,8 @@ public class General {
     private JCheckBox myAutoUpdateDatabaseInput;
     private JSpinner myAutoUpdateDatabaseIntervalInput;
     private JButton myUpdateDatabaseButton;
-    private boolean myUpdateOnStartInputCache;
+  private JCheckBox myUpdateDatabaseOnServerStart;
+  private boolean myUpdateOnStartInputCache;
 
     public void init() {
         myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
@@ -71,6 +72,7 @@ public class General {
                                                                        1);
         myAutoUpdateDatabaseIntervalInput.setModel(spinnerNumberModel);
         myAutoUpdateDatabaseInput.setSelected(MyTunesRss.CONFIG.isAutoUpdateDatabase());
+        myUpdateDatabaseOnServerStart.setSelected(MyTunesRss.CONFIG.isUpdateOnServerStart());
         myIgnoreTimestampsInput.setSelected(MyTunesRss.CONFIG.isIgnoreTimestamps());
         SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, MyTunesRss.CONFIG.isAutoUpdateDatabase());
         myServerInfoButton.addActionListener(new ServerInfoButtonListener());
@@ -115,6 +117,7 @@ public class General {
         }
         MyTunesRss.CONFIG.setCheckUpdateOnStart(myUpdateOnStartInput.isSelected());
         MyTunesRss.CONFIG.setAutoStartServer(myAutoStartServerInput.isSelected());
+        MyTunesRss.CONFIG.setUpdateOnServerStart(myUpdateDatabaseOnServerStart.isSelected());
         MyTunesRss.CONFIG.setAutoUpdateDatabase(myAutoUpdateDatabaseInput.isSelected());
         MyTunesRss.CONFIG.setAutoUpdateDatabaseInterval((Integer)myAutoUpdateDatabaseIntervalInput.getValue());
         MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestampsInput.isSelected());
@@ -128,6 +131,7 @@ public class General {
                 myUpdateOnStartInput.setEnabled(false);
                 myProgramUpdateButton.setEnabled(false);
                 myAutoUpdateDatabaseInput.setEnabled(false);
+                myUpdateDatabaseOnServerStart.setEnabled(false);
                 myIgnoreTimestampsInput.setEnabled(false);
                 myDeleteDatabaseButton.setEnabled(false);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, false);
@@ -137,6 +141,7 @@ public class General {
                 myAutoStartServerInput.setEnabled(true);
                 myUpdateOnStartInput.setEnabled(!myAutoStartServerInput.isSelected());
                 myProgramUpdateButton.setEnabled(true);
+                myUpdateDatabaseOnServerStart.setEnabled(true);
                 myAutoUpdateDatabaseInput.setEnabled(true);
                 myIgnoreTimestampsInput.setEnabled(true);
                 myDeleteDatabaseButton.setEnabled(true);

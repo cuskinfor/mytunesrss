@@ -15,7 +15,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.prefs.*;
-import java.awt.geom.*;
 import java.awt.*;
 
 /**
@@ -48,6 +47,7 @@ public class MyTunesRssConfig {
     private boolean myUploadCreateUserDir = true;
     private String myMyTunesRssComUser = "";
     private byte[] myMyTunesRssComPasswordHash = null;
+    private boolean myUpdateDatabaseOnServerStart = true;
 
     public String getLibraryXml() {
         return myLibraryXml;
@@ -239,7 +239,15 @@ public class MyTunesRssConfig {
         myMyTunesRssComUser = myTunesRssComUser;
     }
 
-    private String findItunesLibraryXml(Trigger trigger) {
+  public boolean isUpdateOnServerStart() {
+    return myUpdateDatabaseOnServerStart;
+  }
+
+  public void setUpdateOnServerStart(boolean updateOnServerStart) {
+    myUpdateDatabaseOnServerStart = updateOnServerStart;
+  }
+
+  private String findItunesLibraryXml(Trigger trigger) {
         String userHome = System.getProperty("user.home");
         if (StringUtils.isNotEmpty(userHome)) {
             if (!userHome.endsWith("/") && !userHome.endsWith("\\")) {
@@ -285,6 +293,7 @@ public class MyTunesRssConfig {
         setCheckUpdateOnStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("checkUpdateOnStart", isCheckUpdateOnStart()));
         setAutoStartServer(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoStartServer", isAutoStartServer()));
         setAutoUpdateDatabase(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoUpdateDatabase", isAutoUpdateDatabase()));
+        setUpdateOnServerStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("updateDatabaseOnServerStart", isUpdateOnServerStart()));
         setAutoUpdateDatabaseInterval(Preferences.userRoot().node(PREF_ROOT).getInt("autoUpdateDatabaseInterval",
                                                                                                     getAutoUpdateDatabaseInterval()));
         setIgnoreTimestamps(Preferences.userRoot().node(PREF_ROOT).getBoolean("ignoreTimestamps", isIgnoreTimestamps()));
@@ -343,6 +352,7 @@ public class MyTunesRssConfig {
         setCheckUpdateOnStart(JXPathUtils.getBooleanValue(context, "/mytunesrss/updatecheck", isCheckUpdateOnStart()));
         setVersion(MyTunesRss.VERSION);
         // database
+        setUpdateOnServerStart(JXPathUtils.getBooleanValue(context, "/mytunesrss/database/@updateonstart", isUpdateOnServerStart()));
         setAutoUpdateDatabase(JXPathUtils.getBooleanValue(context, "/mytunesrss/database/@autoupdate", isAutoUpdateDatabase()));
         setAutoUpdateDatabaseInterval(JXPathUtils.getIntValue(context, "/mytunesrss/database/@updateinterval", getAutoUpdateDatabaseInterval()));
         setIgnoreTimestamps(JXPathUtils.getBooleanValue(context, "/mytunesrss/database/@ignoretimestamps", isIgnoreTimestamps()));
@@ -375,6 +385,7 @@ public class MyTunesRssConfig {
             Preferences.userRoot().node(PREF_ROOT).put("iTunesLibrary", myLibraryXml);
             Preferences.userRoot().node(PREF_ROOT).putBoolean("checkUpdateOnStart", myCheckUpdateOnStart);
             Preferences.userRoot().node(PREF_ROOT).putBoolean("autoStartServer", myAutoStartServer);
+            Preferences.userRoot().node(PREF_ROOT).putBoolean("updateDatabaseOnServerStart", myUpdateDatabaseOnServerStart);
             Preferences.userRoot().node(PREF_ROOT).putBoolean("autoUpdateDatabase", myAutoUpdateDatabase);
             Preferences.userRoot().node(PREF_ROOT).putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
             Preferences.userRoot().node(PREF_ROOT).put("version", myVersion);
