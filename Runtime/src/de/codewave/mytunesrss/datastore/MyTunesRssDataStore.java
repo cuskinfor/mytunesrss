@@ -60,7 +60,7 @@ public class MyTunesRssDataStore extends DataStore {
                     }
                 }
                 MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.noDatabaseConnection"));
-                System.exit(0);
+                MyTunesRssUtils.shutdown();
                 return null;
             }
         }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 5, false, false, 10000, 2, 20000, false, 20000));

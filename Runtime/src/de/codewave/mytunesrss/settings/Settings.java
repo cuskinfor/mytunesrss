@@ -94,11 +94,7 @@ public class Settings {
     }
 
     public void doStopServer() {
-        MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.serverstopping"), null, false, new MyTunesRssTask() {
-            public void execute() throws Exception {
-                MyTunesRss.WEBSERVER.stop();
-            }
-        });
+      MyTunesRss.stopWebserver();
         if (!MyTunesRss.WEBSERVER.isRunning()) {
             setGuiMode(GuiMode.ServerIdle);
             myGeneralForm.setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
@@ -111,22 +107,8 @@ public class Settings {
     }
 
     public void doQuitApplication() {
-        if (MyTunesRss.WEBSERVER.isRunning()) {
-            doStopServer();
-        }
-        if (!MyTunesRss.WEBSERVER.isRunning()) {
-            MyTunesRss.CONFIG.saveWindowPosition(MyTunesRss.ROOT_FRAME.getLocation());
-            updateConfigFromGui();
-            MyTunesRss.CONFIG.save();
-            MyTunesRss.SERVER_RUNNING_TIMER.cancel();
-            MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
-                public void execute() {
-                    MyTunesRss.STORE.destroy();
-                }
-            });
-            MyTunesRss.ROOT_FRAME.dispose();
-            System.exit(0);
-        }
+        updateConfigFromGui();
+        MyTunesRssUtils.shutdownGracefully();
     }
 
   public class TabSwitchListener implements ChangeListener {

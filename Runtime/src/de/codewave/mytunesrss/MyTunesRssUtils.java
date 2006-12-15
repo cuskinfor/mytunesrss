@@ -2,6 +2,7 @@ package de.codewave.mytunesrss;
 
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.pleasewait.*;
+import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import org.apache.commons.logging.*;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -72,5 +73,41 @@ public class MyTunesRssUtils {
         httpClient.setHostConfiguration(hostConfiguration);
     }
     return httpClient;
+  }
+
+  public static void shutdown() {
+    System.exit(0);
+  }
+
+  public static void shutdownGracefully() {
+    if (MyTunesRss.WEBSERVER.isRunning()) {
+        MyTunesRss.stopWebserver();
+    }
+    if (!MyTunesRss.WEBSERVER.isRunning()) {
+        MyTunesRss.CONFIG.saveWindowPosition(MyTunesRss.ROOT_FRAME.getLocation());
+        MyTunesRss.CONFIG.save();
+        MyTunesRss.SERVER_RUNNING_TIMER.cancel();
+      final DatabaseBuilderTask databaseBuilderTask = MyTunesRss.createDatabaseBuilderTask();
+      if (databaseBuilderTask.isRunning()) {
+        MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.finishingUpdate"), null, false, new MyTunesRssTask() {
+              public void execute() {
+                  while (databaseBuilderTask.isRunning()) {
+                    try {
+                      Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                      // intentionally left blank
+                    }
+                  }
+              }
+          });
+      }
+      MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
+            public void execute() {
+                MyTunesRss.STORE.destroy();
+            }
+        });
+        MyTunesRss.ROOT_FRAME.dispose();
+    }
+    shutdown();
   }
 }

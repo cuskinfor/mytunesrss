@@ -125,13 +125,13 @@ public class MyTunesRss {
         }
         if (isOtherInstanceRunning(3000)) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
-            System.exit(0);
+            MyTunesRssUtils.shutdown();
         }
         REGISTRATION.init();
         if (REGISTRATION.isExpired()) {
             if (REGISTRATION.isDefaultData()) {
                 MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.defaulRegistrationExpired"));
-                System.exit(0);
+                MyTunesRssUtils.shutdown();
             } else {
                 MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
             }
@@ -287,6 +287,15 @@ public class MyTunesRss {
             }
         }
     }
+
+  public static void stopWebserver() {
+    MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.serverstopping"), null, false, new MyTunesRssTask() {
+        public void execute() throws Exception {
+            MyTunesRss.WEBSERVER.stop();
+        }
+    });
+
+  }
 
     private static void loadConfiguration(Map<String, String[]> arguments) throws MalformedURLException {
         if (arguments.containsKey("config")) {
