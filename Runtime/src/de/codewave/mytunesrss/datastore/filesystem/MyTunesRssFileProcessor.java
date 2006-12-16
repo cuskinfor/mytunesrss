@@ -49,8 +49,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             String canonicalFilePath = file.getCanonicalPath();
             if (file.isFile()) {
                 String fileId = IOUtils.getFileIdentifier(file);
-                myExistingIds.add(fileId);
-                if (file.lastModified() >= myLastUpdateTime || !myDatabaseIds.contains(fileId)) {
+                if (file.lastModified() >= myLastUpdateTime || (!myDatabaseIds.contains(fileId) && !myExistingIds.contains(fileId))) {
                     InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(fileId) ? myUpdateStatement : myInsertStatement;
                     statement.clear();
                     statement.setId(fileId);
@@ -108,6 +107,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                 }
                             }
                         }
+                        myExistingIds.add(fileId);
                     } catch (SQLException e) {
                         if (LOG.isErrorEnabled()) {
                             LOG.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
