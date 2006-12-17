@@ -10,15 +10,6 @@
         <attribute name="method" value="1" />
         <attribute name="URI" value="/" />
       </containerElement>
-      <containerElement type="module" name="ZipPatch">
-        <attribute name="method" value="5" />
-        <attribute name="URI" value="/lib/ZipPatch.jar" />
-      </containerElement>
-      <containerElement type="library" level="module">
-        <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib/codewave-utils-25.jar" />
-        <url>jar://$MODULE_DIR$/../lib/codewave-utils-25.jar!/</url>
-      </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
         <attribute name="URI" value="/lib/camel-0.3.jar" />
@@ -33,6 +24,11 @@
         <attribute name="method" value="2" />
         <attribute name="URI" value="/lib/catalina.jar" />
         <url>jar://$MODULE_DIR$/lib/catalina.jar!/</url>
+      </containerElement>
+      <containerElement type="library" level="module">
+        <attribute name="method" value="2" />
+        <attribute name="URI" value="/lib/codewave-utils-26.jar" />
+        <url>jar://$MODULE_DIR$/lib/codewave-utils-26.jar!/</url>
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
