@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
     <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="256" height="4499"/>
+      <xy x="20" y="20" width="267" height="4499"/>
     </constraints>
     <properties>
       <opaque value="false"/>
@@ -151,7 +151,7 @@
             </constraints>
             <properties>
               <font swing-font="Label.font"/>
-              <labelFor value="94b2c"/>
+              <labelFor value="ef573"/>
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.proxyHost"/>
             </properties>
           </component>
@@ -161,7 +161,7 @@
             </constraints>
             <properties>
               <font swing-font="Label.font"/>
-              <labelFor value="b3b83"/>
+              <labelFor value="1fe3e"/>
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.proxyPort"/>
             </properties>
           </component>
