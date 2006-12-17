@@ -49,68 +49,70 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             String canonicalFilePath = file.getCanonicalPath();
             if (file.isFile()) {
                 String fileId = IOUtils.getFileIdentifier(file);
-                if (file.lastModified() >= myLastUpdateTime || (!myDatabaseIds.contains(fileId) && !myExistingIds.contains(fileId))) {
-                    InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(fileId) ? myUpdateStatement : myInsertStatement;
-                    statement.clear();
-                    statement.setId(fileId);
-                    Id3Tag tag = null;
-                    if ("mp3".equalsIgnoreCase(IOUtils.getSuffix(file))) {
-                        try {
-                            tag = Mp3Utils.readId3Tag(file);
-                        } catch (Exception e) {
-                            if (LOG.isErrorEnabled()) {
-                                LOG.error("Could not get ID3 information from file.", e);
-                            }
-                        }
-                    }
-                    if (tag == null) {
-                        statement.setName(IOUtils.getNameWithoutSuffix(file));
-                        statement.setAlbum(getAncestorAlbumName(file));
-                        statement.setArtist(getAncestorArtistName(file));
-                    } else {
-                        String album = tag.getAlbum();
-                        if (StringUtils.isEmpty(album)) {
-                            album = getAncestorAlbumName(file);
-                        }
-                        statement.setAlbum(album);
-                        String artist = tag.getArtist();
-                        if (StringUtils.isEmpty(artist)) {
-                            artist = getAncestorArtistName(file);
-                        }
-                        statement.setArtist(artist);
-                        String name = tag.getTitle();
-                        if (StringUtils.isEmpty(name)) {
-                            name = IOUtils.getNameWithoutSuffix(file);
-                        }
-                        statement.setName(name);
-                        if (tag.isId3v2()) {
-                            statement.setTime(((Id3v2Tag)tag).getTimeSeconds());
-                            statement.setTrackNumber(((Id3v2Tag)tag).getTrackNumber());
-                        }
-                    }
-                    FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
-                    statement.setProtected(fileSuffixInfo.isProtected());
-                    statement.setVideo(fileSuffixInfo.isVideo());
-                    statement.setFileName(canonicalFilePath);
-                    try {
-                        myStoreSession.executeStatement(statement);
-                        myUpdatedCount++;
-                        if (myUpdatedCount % 5000 == 0) {// commit every 5000 tracks to not run out of memory
+                if (!myExistingIds.contains(fileId)) {
+                    if (file.lastModified() >= myLastUpdateTime || !myDatabaseIds.contains(fileId)) {
+                        InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(fileId) ? myUpdateStatement : myInsertStatement;
+                        statement.clear();
+                        statement.setId(fileId);
+                        Id3Tag tag = null;
+                        if ("mp3".equalsIgnoreCase(IOUtils.getSuffix(file))) {
                             try {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Committing transaction after 5000 inserted/updated tracks.");
-                                }
-                                myStoreSession.commitAndContinue();
-                            } catch (SQLException e) {
+                                tag = Mp3Utils.readId3Tag(file);
+                            } catch (Exception e) {
                                 if (LOG.isErrorEnabled()) {
-                                    LOG.error("Could not commit block of track updates.", e);
+                                    LOG.error("Could not get ID3 information from file.", e);
                                 }
                             }
                         }
-                        myExistingIds.add(fileId);
-                    } catch (SQLException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
+                        if (tag == null) {
+                            statement.setName(IOUtils.getNameWithoutSuffix(file));
+                            statement.setAlbum(getAncestorAlbumName(file));
+                            statement.setArtist(getAncestorArtistName(file));
+                        } else {
+                            String album = tag.getAlbum();
+                            if (StringUtils.isEmpty(album)) {
+                                album = getAncestorAlbumName(file);
+                            }
+                            statement.setAlbum(album);
+                            String artist = tag.getArtist();
+                            if (StringUtils.isEmpty(artist)) {
+                                artist = getAncestorArtistName(file);
+                            }
+                            statement.setArtist(artist);
+                            String name = tag.getTitle();
+                            if (StringUtils.isEmpty(name)) {
+                                name = IOUtils.getNameWithoutSuffix(file);
+                            }
+                            statement.setName(name);
+                            if (tag.isId3v2()) {
+                                statement.setTime(((Id3v2Tag)tag).getTimeSeconds());
+                                statement.setTrackNumber(((Id3v2Tag)tag).getTrackNumber());
+                            }
+                        }
+                        FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
+                        statement.setProtected(fileSuffixInfo.isProtected());
+                        statement.setVideo(fileSuffixInfo.isVideo());
+                        statement.setFileName(canonicalFilePath);
+                        try {
+                            myStoreSession.executeStatement(statement);
+                            myUpdatedCount++;
+                            if (myUpdatedCount % 5000 == 0) {// commit every 5000 tracks to not run out of memory
+                                try {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Committing transaction after 5000 inserted/updated tracks.");
+                                    }
+                                    myStoreSession.commitAndContinue();
+                                } catch (SQLException e) {
+                                    if (LOG.isErrorEnabled()) {
+                                        LOG.error("Could not commit block of track updates.", e);
+                                    }
+                                }
+                            }
+                            myExistingIds.add(fileId);
+                        } catch (SQLException e) {
+                            if (LOG.isErrorEnabled()) {
+                                LOG.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
+                            }
                         }
                     }
                 }
