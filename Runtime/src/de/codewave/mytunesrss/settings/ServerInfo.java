@@ -72,7 +72,6 @@ public class ServerInfo {
     private void init() {
         myExternalAddress.setText(MyTunesRss.BUNDLE.getString("serverStatus.fetching"));
         myInternalAddresses.setText(MyTunesRss.BUNDLE.getString("serverStatus.fetching"));
-        myRootPanel.validate();
     }
 
     private void fetchLocalAddresses() {
@@ -91,7 +90,6 @@ public class ServerInfo {
                 } else {
                     myInternalAddresses.setText(MyTunesRss.BUNDLE.getString("serverStatus.unavailable"));
                 }
-                myRootPanel.validate();
             }
         });
     }
@@ -105,7 +103,6 @@ public class ServerInfo {
                 } else {
                     myExternalAddress.setText(MyTunesRss.BUNDLE.getString("serverStatus.unavailable"));
                 }
-                myRootPanel.validate();
             }
         });
     }

@@ -19,9 +19,9 @@ public class Settings {
     private JButton myStartServerButton;
     private JButton myStopServerButton;
     private JButton myQuitButton;
-  private JTabbedPane myTabbedPane;
+    private JTabbedPane myTabbedPane;
 
-  public General getGeneralForm() {
+    public General getGeneralForm() {
         return myGeneralForm;
     }
 
@@ -53,7 +53,7 @@ public class Settings {
         myDirectoriesForm.init();
         myUserManagementForm.init();
         myInfoForm.init();
-      myTabbedPane.addChangeListener(new TabSwitchListener());
+        myTabbedPane.addChangeListener(new TabSwitchListener());
     }
 
     public void updateConfigFromGui() {
@@ -81,7 +81,6 @@ public class Settings {
         myGeneralForm.setGuiMode(mode);
         myDirectoriesForm.setGuiMode(mode);
         myUserManagementForm.setGuiMode(mode);
-        myRootPanel.validate();
     }
 
     public void doStartServer() {
@@ -94,11 +93,10 @@ public class Settings {
     }
 
     public void doStopServer() {
-      MyTunesRss.stopWebserver();
+        MyTunesRss.stopWebserver();
         if (!MyTunesRss.WEBSERVER.isRunning()) {
             setGuiMode(GuiMode.ServerIdle);
             myGeneralForm.setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
-            myRootPanel.validate();
             if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
                 MyTunesRss.SERVER_RUNNING_TIMER.cancel();
                 MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
@@ -111,10 +109,10 @@ public class Settings {
         MyTunesRssUtils.shutdownGracefully();
     }
 
-  public class TabSwitchListener implements ChangeListener {
-    public void stateChanged(ChangeEvent e) {
-      updateConfigFromGui();
+    public class TabSwitchListener implements ChangeListener {
+        public void stateChanged(ChangeEvent e) {
+            updateConfigFromGui();
+        }
     }
-  }
 
 }

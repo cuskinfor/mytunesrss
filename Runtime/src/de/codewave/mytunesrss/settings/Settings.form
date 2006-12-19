@@ -19,7 +19,8 @@
           <foreground color="-65485"/>
           <horizontalAlignment value="0"/>
           <horizontalTextPosition value="0"/>
-          <text value="MyTunesRSS 3.0 PUBLIC BETA"/>
+          <icon value="de/codewave/mytunesrss/settings/MyTunesRSS.png"/>
+          <text value=""/>
           <toolTipText value=""/>
         </properties>
       </component>

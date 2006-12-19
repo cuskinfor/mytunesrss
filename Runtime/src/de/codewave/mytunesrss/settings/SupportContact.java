@@ -44,7 +44,6 @@ public class SupportContact {
         myInfoText.setText(infoText);
         myNameInput.setText(MyTunesRss.CONFIG.getSupportName());
         myEmailInput.setText(MyTunesRss.CONFIG.getSupportEmail());
-        myRootPanel.validate();
         mySendButton.addActionListener(new SendButtonActionListener(dialog));
         myCancelButton.addActionListener(new CancelButtonActionListener(dialog));
     }

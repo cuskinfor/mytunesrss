@@ -40,7 +40,6 @@ public class Info {
     } else {
         myProxyPortInput.setText("");
     }
-    myRootPanel.validate();
     }
 
     private void createUIComponents() {
