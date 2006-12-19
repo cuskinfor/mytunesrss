@@ -13,6 +13,8 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
+import com.intellij.uiDesigner.core.*;
+
 /**
  * de.codewave.mytunesrss.settings.UserManagement
  */
@@ -28,6 +30,13 @@ public class UserManagement {
         myScrollPane.getViewport().setOpaque(false);
         myCreateButton.addActionListener(new CreateUserActionListener());
         refreshUserList();
+    }
+
+    public void resizeMainPanel(Dimension dimension) {
+        dimension.height -= myCreateButton.getHeight();
+        AbstractLayout layoutManager = (AbstractLayout)myRootPanel.getLayout();
+        dimension.height -= layoutManager.getVGap();
+        myScrollPane.setPreferredSize(dimension);
     }
 
     private void refreshUserList() {

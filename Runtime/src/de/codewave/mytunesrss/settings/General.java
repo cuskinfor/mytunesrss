@@ -4,23 +4,20 @@
 
 package de.codewave.mytunesrss.settings;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.UpdateUtils;
-import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
-import de.codewave.mytunesrss.datastore.statement.SystemInformation;
-import de.codewave.mytunesrss.task.RecreateDatabaseTask;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
-import de.codewave.utils.swing.SwingUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.task.*;
+import de.codewave.utils.swing.*;
+import org.apache.commons.logging.*;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
+import java.awt.event.*;
+import java.awt.*;
+import java.sql.*;
+import java.text.*;
 import java.util.Date;
+
+import com.intellij.uiDesigner.core.*;
 
 /**
  * General settings panel
@@ -44,8 +41,9 @@ public class General {
     private JCheckBox myAutoUpdateDatabaseInput;
     private JSpinner myAutoUpdateDatabaseIntervalInput;
     private JButton myUpdateDatabaseButton;
-  private JCheckBox myUpdateDatabaseOnServerStart;
-  private boolean myUpdateOnStartInputCache;
+    private JCheckBox myUpdateDatabaseOnServerStart;
+    private JPanel myServerPanel;
+    private boolean myUpdateOnStartInputCache;
 
     public void init() {
         myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
@@ -66,10 +64,7 @@ public class General {
         } else if (interval > MAX_UPDATE_INTERVAL) {
             interval = MAX_UPDATE_INTERVAL;
         }
-        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(interval,
-                                                                       MIN_UPDATE_INTERVAL,
-                                                                       MAX_UPDATE_INTERVAL,
-                                                                       1);
+        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(interval, MIN_UPDATE_INTERVAL, MAX_UPDATE_INTERVAL, 1);
         myAutoUpdateDatabaseIntervalInput.setModel(spinnerNumberModel);
         myAutoUpdateDatabaseInput.setSelected(MyTunesRss.CONFIG.isAutoUpdateDatabase());
         myUpdateDatabaseOnServerStart.setSelected(MyTunesRss.CONFIG.isUpdateOnServerStart());
@@ -80,6 +75,11 @@ public class General {
         setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
     }
 
+    public Dimension getContentDimension() {
+        Insets insets = ((AbstractLayout)myRootPanel.getLayout()).getMargin();
+        return new Dimension(myRootPanel.getWidth() - insets.left - insets.right, myRootPanel.getHeight() - insets.top - insets.bottom);
+    }
+
     public void refreshLastUpdate() {
         try {
             final SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
@@ -88,8 +88,8 @@ public class General {
                     if (systemInformation.getLastUpdate() > 0) {
                         Date date = new Date(systemInformation.getLastUpdate());
                         myLastUpdatedLabel.setText(
-                            MyTunesRss.BUNDLE.getString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRss.BUNDLE.getString(
-                                "settings.lastDatabaseUpdateDateFormat")).format(date));
+                                MyTunesRss.BUNDLE.getString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRss.BUNDLE.getString(
+                                        "settings.lastDatabaseUpdateDateFormat")).format(date));
                     } else {
                         myLastUpdatedLabel.setText(MyTunesRss.BUNDLE.getString("settings.databaseNotYetCreated"));
                     }
@@ -191,7 +191,7 @@ public class General {
             String optionOk = MyTunesRss.BUNDLE.getString("ok");
             String optionCancel = MyTunesRss.BUNDLE.getString("cancel");
             Object option = SwingUtils.showOptionsMessage(MyTunesRss.ROOT_FRAME, JOptionPane.QUESTION_MESSAGE, null, MyTunesRss.BUNDLE.getString(
-                "question.deleteDatabase"), MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH, new Object[]{optionCancel, optionOk});
+                    "question.deleteDatabase"), MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH, new Object[] {optionCancel, optionOk});
             if (optionOk.equals(option)) {
                 MyTunesRssUtils.executeTask(null,
                                             MyTunesRss.BUNDLE.getString("pleaseWait.recreatingDatabase"),

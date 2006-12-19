@@ -52,6 +52,7 @@ public class Settings {
         myGeneralForm.init();
         myDirectoriesForm.init();
         myUserManagementForm.init();
+        myUserManagementForm.resizeMainPanel(myGeneralForm.getContentDimension());
         myInfoForm.init();
         myTabbedPane.addChangeListener(new TabSwitchListener());
     }
