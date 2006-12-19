@@ -52,6 +52,7 @@ public class UserManagement {
                                                                  new Insets(0, 0, 0, 0),
                                                                  0,
                                                                  0));
+        myUserPanel.validate();
     }
 
     private void addUser(User user) {
