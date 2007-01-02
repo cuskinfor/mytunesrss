@@ -100,14 +100,14 @@ public class MyTunesRss {
         if (arguments.containsKey("debug")) {
             Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
         }
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Operating system: " + ProgramUtils.guessOperatingSystem().name());
-            LOG.info("Java: " + getJavaEnvironment());
-        }
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
         VERSION = modulesInfo != null ? modulesInfo.getVersion() : System.getProperty("MyTunesRSS.version", "0.0.0");
         if (LOG.isInfoEnabled()) {
+            LOG.info("Operating system: " + ProgramUtils.guessOperatingSystem().name());
+            LOG.info("Java: " + getJavaEnvironment());
             LOG.info("Application version: " + VERSION);
+            LOG.info("Cache data path: " + PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER));
+            LOG.info("Preferences data path: " + PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER));
         }
         if (!HEADLESS) {
             Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(ROOT_FRAME, false));
