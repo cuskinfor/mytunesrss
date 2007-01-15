@@ -63,6 +63,13 @@ public class MyTunesRssDataStore extends DataStore {
                 MyTunesRssUtils.shutdown();
                 return null;
             }
-        }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 5, false, false, 10000, 2, 20000, false, 20000));
+
+            @Override
+            public void destroyObject(Object object) throws Exception {
+                if (object instanceof Connection) {
+                    ((Connection)object).close();
+                }
+            }
+        }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 1, false, false, 10000, 2, 20000, false, 20000));
     }
 }
