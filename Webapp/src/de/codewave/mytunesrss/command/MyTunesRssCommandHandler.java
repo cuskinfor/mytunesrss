@@ -46,7 +46,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected boolean isAuthorized(String userName, byte[] passwordHash) {
         MyTunesRssConfig config = getMyTunesRssConfig();
         User user = config.getUser(userName);
-        return user != null && Arrays.equals(user.getPasswordHash(), passwordHash);
+        return user != null && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
     }
 
     protected void authorize(String userName) {
@@ -62,7 +62,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected boolean needsAuthorization() {
-        if (getSession().getAttribute("auth") != null) {
+        if (getSession().getAttribute("auth") != null && ((User)getSession().getAttribute("authUser")).isActive()) {
             return false;
         } else {
             if (StringUtils.isNotEmpty(getRequest().getParameter("auth"))) {

@@ -308,6 +308,7 @@ public class MyTunesRssConfig {
             try {
                 for (String userName : userNode.childrenNames()) {
                     User user = new User(userName);
+                    user.setActive(userNode.node(userName).getBoolean("active", true));
                     user.setPasswordHash(userNode.node(userName).getByteArray("password", null));
                     user.setRss(userNode.node(userName).getBoolean("featureRss", true));
                     user.setM3u(userNode.node(userName).getBoolean("featureM3u", true));
@@ -360,6 +361,7 @@ public class MyTunesRssConfig {
         for (Iterator<JXPathContext> iterator = JXPathUtils.getContextIterator(context, "/mytunesrss/user"); iterator.hasNext();) {
             JXPathContext userContext = iterator.next();
             User user = new User(JXPathUtils.getStringValue(userContext, "@name", null));
+            user.setActive(JXPathUtils.getBooleanValue(userContext, "@active", true));
             user.setPasswordHash(MyTunesRssBase64Utils.decode(JXPathUtils.getStringValue(userContext, "@password", null)));
             user.setRss(JXPathUtils.getBooleanValue(userContext, "features/@rss", true));
             user.setM3u(JXPathUtils.getBooleanValue(userContext, "features/@m3u", true));
@@ -411,6 +413,7 @@ public class MyTunesRssConfig {
                     } else {
                         userNode.node(user.getName()).remove("password");
                     }
+                    userNode.node(user.getName()).putBoolean("active", user.isActive());
                     userNode.node(user.getName()).putBoolean("featureRss", user.isRss());
                     userNode.node(user.getName()).putBoolean("featureM3u", user.isM3u());
                     userNode.node(user.getName()).putBoolean("featureDownload", user.isDownload());

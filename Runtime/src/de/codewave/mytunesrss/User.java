@@ -9,8 +9,7 @@ import java.io.*;
  * de.codewave.mytunesrss.User
  */
 public class User {
-    private static final Log LOG = LogFactory.getLog(User.class);
-
+    private boolean myActive = true;
     private String myName;
     private byte[] myPasswordHash;
     private boolean myDownload;
@@ -20,6 +19,14 @@ public class User {
 
     public User(String name) {
         myName = name;
+    }
+
+    public boolean isActive() {
+        return myActive;
+    }
+
+    public void setActive(boolean active) {
+        myActive = active;
     }
 
     public String getName() {

@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.utils.swing.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -64,7 +65,18 @@ public class UserManagement {
         myUserPanel.validate();
     }
 
-    private void addUser(User user) {
+    private void addUser(final User user) {
+        GridBagConstraints gbcActive = new GridBagConstraints(GridBagConstraints.RELATIVE,
+                                                            GridBagConstraints.RELATIVE,
+                                                            1,
+                                                            1,
+                                                            0,
+                                                            0,
+                                                            GridBagConstraints.WEST,
+                                                            GridBagConstraints.HORIZONTAL,
+                                                            new Insets(5, 5, 0, 0),
+                                                            0,
+                                                            0);
         GridBagConstraints gbcName = new GridBagConstraints(GridBagConstraints.RELATIVE,
                                                             GridBagConstraints.RELATIVE,
                                                             1,
@@ -98,14 +110,23 @@ public class UserManagement {
                                                               new Insets(5, 5, 0, 5),
                                                               0,
                                                               0);
+        final JCheckBox active = new JCheckBox();
+        active.setOpaque(false);
+        active.setSelected(user.isActive());
+        active.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                user.setActive(active.isSelected());
+            }
+        });
+        addPanelComponent(active, gbcActive);
         JLabel name = new JLabel(user.getName());
         name.setOpaque(false);
+        addPanelComponent(name, gbcName);
         JButton edit = new JButton(MyTunesRss.BUNDLE.getString("settings.editUser"));
         edit.setToolTipText(MyTunesRssUtils.getBundleString("settings.editUserTooltip", user.getName()));
         edit.addActionListener(myEditUserActionListener);
         edit.setActionCommand(user.getName());
         edit.setOpaque(false);
-        addPanelComponent(name, gbcName);
         addPanelComponent(edit, gbcEdit);
         JButton delete = new JButton(MyTunesRss.BUNDLE.getString("settings.deleteUser"));
         delete.setToolTipText(MyTunesRssUtils.getBundleString("settings.deleteUserTooltip", user.getName()));
@@ -121,20 +142,20 @@ public class UserManagement {
     }
 
     public void setGuiMode(GuiMode mode) {
-        switch (mode) {
-            case ServerRunning:
-                SwingUtils.enableElementAndLabel(myCreateButton, false);
-                for (Component component : myUserPanel.getComponents()) {
-                    if (component instanceof JButton) {
-                        component.setEnabled(false);
-                    }
-                }
-                break;
-            case ServerIdle:
-                SwingUtils.enableElementAndLabel(myCreateButton, true);
-                refreshUserList();
-                break;
-        }
+//        switch (mode) {
+//            case ServerRunning:
+//                SwingUtils.enableElementAndLabel(myCreateButton, false);
+//                for (Component component : myUserPanel.getComponents()) {
+//                    if (component instanceof JButton) {
+//                        component.setEnabled(false);
+//                    }
+//                }
+//                break;
+//            case ServerIdle:
+//                SwingUtils.enableElementAndLabel(myCreateButton, true);
+//                refreshUserList();
+//                break;
+//        }
     }
 
     public class CreateUserActionListener implements ActionListener {
