@@ -5,12 +5,10 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.components.*;
-import de.codewave.utils.swing.SwingUtils;
 
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 import java.awt.event.*;
 
 /**
@@ -21,29 +19,51 @@ public class Info {
     private JPanel myRootPanel;
     private JTextField myUsernameInput;
     private PasswordHashField myPasswordInput;
-  private JTextField myProxyHostInput;
-  private JTextField myProxyPortInput;
-  private JCheckBox myUseProxyInput;
+    private JTextField myProxyHostInput;
+    private JTextField myProxyPortInput;
+    private JCheckBox myUseProxyInput;
+    private JLabel myPasswordLabel;
 
-  public void init() {
+    public void init() {
         mySupportContactButton.addActionListener(new SupportContactActionListener());
         myUsernameInput.setText(MyTunesRss.CONFIG.getMyTunesRssComUser());
         myPasswordInput.setPasswordHash(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash());
-    myUseProxyInput.setSelected(MyTunesRss.CONFIG.isProxyServer());
-    myUseProxyInput.addActionListener(new UseProxyActionListener());
-    SwingUtils.enableElementAndLabel(myProxyHostInput, myUseProxyInput.isSelected());
-    SwingUtils.enableElementAndLabel(myProxyPortInput, myUseProxyInput.isSelected());
-    myProxyHostInput.setText(MyTunesRss.CONFIG.getProxyHost());
-    int port = MyTunesRss.CONFIG.getProxyPort();
-    if (port > 0 && port < 65536) {
-        myProxyPortInput.setText(Integer.toString(port));
-    } else {
-        myProxyPortInput.setText("");
-    }
+        myUseProxyInput.setSelected(MyTunesRss.CONFIG.isProxyServer());
+        myUseProxyInput.addActionListener(new UseProxyActionListener());
+        SwingUtils.enableElementAndLabel(myProxyHostInput, myUseProxyInput.isSelected());
+        SwingUtils.enableElementAndLabel(myProxyPortInput, myUseProxyInput.isSelected());
+        myProxyHostInput.setText(MyTunesRss.CONFIG.getProxyHost());
+        int port = MyTunesRss.CONFIG.getProxyPort();
+        if (port > 0 && port < 65536) {
+            myProxyPortInput.setText(Integer.toString(port));
+        } else {
+            myProxyPortInput.setText("");
+        }
     }
 
     private void createUIComponents() {
-        myPasswordInput = new PasswordHashField(MyTunesRss. BUNDLE.getString("passwordHasBeenSet"), MyTunesRss.MESSAGE_DIGEST);
+        myPasswordInput = new PasswordHashField(MyTunesRss.BUNDLE.getString("passwordHasBeenSet"), MyTunesRss.MESSAGE_DIGEST);
+    }
+
+    public void setGuiMode(GuiMode mode) {
+        switch (mode) {
+            case ServerRunning:
+                SwingUtils.enableElementAndLabel(myProxyHostInput, false);
+                SwingUtils.enableElementAndLabel(myProxyPortInput, false);
+                myUseProxyInput.setEnabled(false);
+                SwingUtils.enableElementAndLabel(myUsernameInput, false);
+                myPasswordLabel.setEnabled(false);
+                myPasswordInput.setEnabled(false);
+                break;
+            case ServerIdle:
+                SwingUtils.enableElementAndLabel(myProxyHostInput, myUseProxyInput.isSelected());
+                SwingUtils.enableElementAndLabel(myProxyPortInput, myUseProxyInput.isSelected());
+                myUseProxyInput.setEnabled(true);
+                SwingUtils.enableElementAndLabel(myUsernameInput, true);
+                myPasswordLabel.setEnabled(true);
+                myPasswordInput.setEnabled(true);
+                break;
+        }
     }
 
     public void updateConfigFromGui() {
@@ -51,13 +71,13 @@ public class Info {
         if (myPasswordInput.getPasswordHash() != null) {
             MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(myPasswordInput.getPasswordHash());
         }
-      MyTunesRss.CONFIG.setProxyServer(myUseProxyInput.isSelected());
-      MyTunesRss.CONFIG.setProxyHost(myProxyHostInput.getText());
-      try {
-          MyTunesRss.CONFIG.setProxyPort(Integer.parseInt(myProxyPortInput.getText()));
-      } catch (NumberFormatException e1) {
-          MyTunesRss.CONFIG.setProxyPort(-1);
-      }
+        MyTunesRss.CONFIG.setProxyServer(myUseProxyInput.isSelected());
+        MyTunesRss.CONFIG.setProxyHost(myProxyHostInput.getText());
+        try {
+            MyTunesRss.CONFIG.setProxyPort(Integer.parseInt(myProxyPortInput.getText()));
+        } catch (NumberFormatException e1) {
+            MyTunesRss.CONFIG.setProxyPort(-1);
+        }
     }
 
     public class SupportContactActionListener implements ActionListener {
@@ -68,10 +88,10 @@ public class Info {
         }
     }
 
-  public class UseProxyActionListener implements ActionListener {
-      public void actionPerformed(ActionEvent actionEvent) {
-          SwingUtils.enableElementAndLabel(myProxyHostInput, myUseProxyInput.isSelected());
-          SwingUtils.enableElementAndLabel(myProxyPortInput, myUseProxyInput.isSelected());
-      }
-  }
+    public class UseProxyActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent actionEvent) {
+            SwingUtils.enableElementAndLabel(myProxyHostInput, myUseProxyInput.isSelected());
+            SwingUtils.enableElementAndLabel(myProxyPortInput, myUseProxyInput.isSelected());
+        }
+    }
 }

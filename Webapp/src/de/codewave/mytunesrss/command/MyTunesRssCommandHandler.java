@@ -62,9 +62,12 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected boolean needsAuthorization() {
-        if (getSession().getAttribute("auth") != null && ((User)getSession().getAttribute("authUser")).isActive()) {
-            return false;
-        } else {
+        if (getSession().getAttribute("auth") != null) {
+            User user = (User)getSession().getAttribute("authUser");
+            if (user.isActive() && getMyTunesRssConfig().getUser(user.getName()) != null) {
+                return false;
+            }
+        }
             if (StringUtils.isNotEmpty(getRequest().getParameter("auth"))) {
                 try {
                     String auth = getRequestParameter("auth", "");
@@ -82,7 +85,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 }
             }
             return true;
-        }
     }
 
     protected void addError(Error error) {

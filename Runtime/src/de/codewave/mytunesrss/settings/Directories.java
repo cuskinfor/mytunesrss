@@ -42,6 +42,10 @@ public class Directories {
     private JCheckBox myCreateUserDir;
     private JComboBox myFolderStructureGrandparent;
     private JComboBox myFolderStructureParent;
+    private JLabel myStructureLabel;
+    private JLabel mySeparatorLabel1;
+    private JLabel mySeparatorLabel2;
+    private JLabel myTrackLabel;
 
     public void init() {
         myFolderStructureGrandparent.addItem(FolderStructureRole.None);
@@ -102,6 +106,10 @@ public class Directories {
                 SwingUtils.enableElementAndLabel(myUploadDirInput, false);
                 myUploadDirLookupButton.setEnabled(false);
                 myCreateUserDir.setEnabled(false);
+                myStructureLabel.setEnabled(false);
+                mySeparatorLabel1.setEnabled(false);
+                mySeparatorLabel2.setEnabled(false);
+                myTrackLabel.setEnabled(false);
                 break;
             case ServerIdle:
                 SwingUtils.enableElementAndLabel(myTunesXmlPathInput, true);
@@ -114,6 +122,10 @@ public class Directories {
                 SwingUtils.enableElementAndLabel(myUploadDirInput, true);
                 myUploadDirLookupButton.setEnabled(true);
                 myCreateUserDir.setEnabled(true);
+                myStructureLabel.setEnabled(true);
+                mySeparatorLabel1.setEnabled(true);
+                mySeparatorLabel2.setEnabled(true);
+                myTrackLabel.setEnabled(true);
                 break;
         }
     }
