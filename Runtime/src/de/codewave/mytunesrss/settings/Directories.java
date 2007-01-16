@@ -4,53 +4,57 @@
 
 package de.codewave.mytunesrss.settings;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.utils.swing.SwingUtils;
+import de.codewave.mytunesrss.*;
+import de.codewave.utils.swing.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
+import java.awt.event.*;
+import java.io.*;
 
 /**
  * de.codewave.mytunesrss.settings.Options
  */
 public class Directories {
+    private enum FolderStructureRole {
+        Artist, Album, None;
+
+        public String toString() {
+            switch (this) {
+                case Album:
+                    return MyTunesRss.BUNDLE.getString("settings.folderStructureRoleAlbum");
+                case Artist:
+                    return MyTunesRss.BUNDLE.getString("settings.folderStructureRoleArtist");
+                default:
+                    return MyTunesRss.BUNDLE.getString("settings.folderStructureRoleNone");
+            }
+        }
+    }
+
     private JPanel myRootPanel;
     private JTextField myTunesXmlPathInput;
     private JButton myTunesXmlPathLookupButton;
     private JTextField myBaseDirInput;
     private JButton myBaseDirLookupButton;
-    private JSpinner myArtistLevelInput;
-    private JSpinner myAlbumLevelInput;
     private JCheckBox myDeleteMissingFiles;
     private JTextField myUploadDirInput;
     private JButton myUploadDirLookupButton;
     private JCheckBox myCreateUserDir;
+    private JComboBox myFolderStructureGrandparent;
+    private JComboBox myFolderStructureParent;
 
     public void init() {
+        myFolderStructureGrandparent.addItem(FolderStructureRole.None);
+        myFolderStructureGrandparent.addItem(FolderStructureRole.Album);
+        myFolderStructureGrandparent.addItem(FolderStructureRole.Artist);
+        myFolderStructureParent.addItem(FolderStructureRole.None);
+        myFolderStructureParent.addItem(FolderStructureRole.Album);
+        myFolderStructureParent.addItem(FolderStructureRole.Artist);
         myTunesXmlPathLookupButton.addActionListener(new TunesXmlPathLookupButtonListener());
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
         myBaseDirInput.setText(MyTunesRss.CONFIG.getBaseDir());
-        int artistValue = MyTunesRss.CONFIG.getFileSystemArtistNameFolder();
-        if (artistValue < 0) {
-            artistValue = 0;
-        } else if (artistValue > 5) {
-            artistValue = 5;
-        }
-        SpinnerNumberModel artistModel = new SpinnerNumberModel(artistValue, 0, 5, 1);
-        int albumValue = MyTunesRss.CONFIG.getFileSystemAlbumNameFolder();
-        if (albumValue < 0) {
-            albumValue = 0;
-        } else if (albumValue > 5) {
-            albumValue = 5;
-        }
-        SpinnerNumberModel albumModel = new SpinnerNumberModel(albumValue, 0, 5, 1);
-        myArtistLevelInput.setModel(artistModel);
-        myAlbumLevelInput.setModel(albumModel);
+        setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemArtistNameFolder(), FolderStructureRole.Artist);
+        setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemAlbumNameFolder(), FolderStructureRole.Album);
         myBaseDirLookupButton.addActionListener(new BaseDirLookupButtonListener(myBaseDirInput));
         myUploadDirLookupButton.addActionListener(new BaseDirLookupButtonListener(myUploadDirInput));
         myDeleteMissingFiles.setSelected(MyTunesRss.CONFIG.isItunesDeleteMissingFiles());
@@ -58,11 +62,28 @@ public class Directories {
         myCreateUserDir.setSelected(MyTunesRss.CONFIG.isUploadCreateUserDir());
     }
 
+    private void setFolderStructureRole(int level, FolderStructureRole role) {
+        if (level == 1) {
+            myFolderStructureParent.setSelectedItem(role);
+        } else if (level == 2) {
+            myFolderStructureGrandparent.setSelectedItem(role);
+        }
+    }
+
+    private int getFolderStructureRole(FolderStructureRole role) {
+        if (myFolderStructureGrandparent.getSelectedItem().equals(role)) {
+            return 2;
+        } else if (myFolderStructureParent.getSelectedItem().equals(role)) {
+            return 1;
+        }
+        return 0;
+    }
+
     public void updateConfigFromGui() {
         MyTunesRss.CONFIG.setLibraryXml(myTunesXmlPathInput.getText().trim());
         MyTunesRss.CONFIG.setBaseDir(myBaseDirInput.getText());
-        MyTunesRss.CONFIG.setFileSystemArtistNameFolder((Integer)myArtistLevelInput.getValue());
-        MyTunesRss.CONFIG.setFileSystemAlbumNameFolder((Integer)myAlbumLevelInput.getValue());
+        MyTunesRss.CONFIG.setFileSystemArtistNameFolder(getFolderStructureRole(FolderStructureRole.Artist));
+        MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(getFolderStructureRole(FolderStructureRole.Album));
         MyTunesRss.CONFIG.setItunesDeleteMissingFiles(myDeleteMissingFiles.isSelected());
         MyTunesRss.CONFIG.setUploadDir(myUploadDirInput.getText());
         MyTunesRss.CONFIG.setUploadCreateUserDir(myCreateUserDir.isSelected());
@@ -75,8 +96,8 @@ public class Directories {
                 SwingUtils.enableElementAndLabel(myBaseDirInput, false);
                 myTunesXmlPathLookupButton.setEnabled(false);
                 myBaseDirLookupButton.setEnabled(false);
-                SwingUtils.enableElementAndLabel(myAlbumLevelInput, false);
-                SwingUtils.enableElementAndLabel(myArtistLevelInput, false);
+                myFolderStructureGrandparent.setEnabled(false);
+                myFolderStructureParent.setEnabled(false);
                 myDeleteMissingFiles.setEnabled(false);
                 SwingUtils.enableElementAndLabel(myUploadDirInput, false);
                 myUploadDirLookupButton.setEnabled(false);
@@ -87,8 +108,8 @@ public class Directories {
                 SwingUtils.enableElementAndLabel(myBaseDirInput, true);
                 myTunesXmlPathLookupButton.setEnabled(true);
                 myBaseDirLookupButton.setEnabled(true);
-                SwingUtils.enableElementAndLabel(myAlbumLevelInput, true);
-                SwingUtils.enableElementAndLabel(myArtistLevelInput, true);
+                myFolderStructureGrandparent.setEnabled(true);
+                myFolderStructureParent.setEnabled(true);
                 myDeleteMissingFiles.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myUploadDirInput, true);
                 myUploadDirLookupButton.setEnabled(true);

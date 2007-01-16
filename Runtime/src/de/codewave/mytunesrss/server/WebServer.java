@@ -7,7 +7,9 @@ package de.codewave.mytunesrss.server;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.utils.servlet.*;
+import de.codewave.utils.*;
 import org.apache.catalina.*;
+import org.apache.catalina.core.*;
 import org.apache.catalina.realm.*;
 import org.apache.catalina.connector.*;
 import org.apache.catalina.session.*;
@@ -134,6 +136,7 @@ public class WebServer {
         engine.setName("engine." + name);
         engine.setDefaultHost("host." + name);
         Host host = server.createHost("host." + name, new File(catalinaBasePath, "webapps").getCanonicalPath());
+        ((StandardHost)host).setWorkDir(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/tomcat-work");
         engine.addChild(host);
         myContext = server.createContext(webAppContext, webAppName);
         StandardManager sessionManager = new StandardManager();
