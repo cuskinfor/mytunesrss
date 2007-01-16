@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.server;
 
 import de.codewave.utils.servlet.*;
+import de.codewave.mytunesrss.*;
 
 import javax.servlet.http.*;
 
@@ -9,6 +10,7 @@ import javax.servlet.http.*;
  */
 public class MyTunesRssSessionInfo extends SessionManager.SessionInfo implements FileSender.ByteSentCounter {
     private long myBytesStreamed;
+    private User myUser;
 
     public MyTunesRssSessionInfo(HttpServletRequest servletRequest) {
         super(servletRequest);
@@ -24,5 +26,13 @@ public class MyTunesRssSessionInfo extends SessionManager.SessionInfo implements
 
     public void add(int i) {
         addBytesStreamed(i);
+    }
+
+    public User getUser() {
+        return myUser;
+    }
+
+    public void setUser(User user) {
+        myUser = user;
     }
 }

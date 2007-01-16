@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.jsp.Error;
@@ -54,6 +55,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         if (user != null) {
             getSession().setAttribute("auth", MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash()));
             getSession().setAttribute("authUser", getMyTunesRssConfig().getUser(userName));
+            ((MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest())).setUser(user);
         }
     }
 

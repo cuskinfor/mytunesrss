@@ -159,7 +159,7 @@ public class ServerInfo {
         }
 
         public int getColumnCount() {
-            return 4;
+            return 5;
         }
 
         @Override
@@ -168,15 +168,18 @@ public class ServerInfo {
         }
 
         public Object getValueAt(int row, int column) {
+            MyTunesRssSessionInfo info = sessions.get(row);
             switch (column) {
                 case 0:
-                    return sessions.get(row).getRemoteAddress();
+                    return info.getRemoteAddress();
                 case 1:
-                    return formatDate(sessions.get(row).getConnectTime());
+                    return info.getUser() != null ? info.getUser().getName() : "";
                 case 2:
-                    return formatDate(sessions.get(row).getLastAccessTime());
+                    return formatDate(info.getConnectTime());
                 case 3:
-                    double bytes = sessions.get(row).getBytesStreamed();
+                    return formatDate(info.getLastAccessTime());
+                case 4:
+                    double bytes = info.getBytesStreamed();
                     if (bytes > GBYTE) {
                         return GBYTE_STREAMED_FORMAT.format(bytes / GBYTE) + " GB";
                     } else if (bytes > MBYTE) {

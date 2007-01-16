@@ -17,6 +17,7 @@ import org.apache.catalina.startup.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
+import javax.servlet.http.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
