@@ -20,14 +20,14 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
     public static final String PSEUDO_ID_RANDOM = "PlaylistRandom";
 
     private static final String QUERY_RANDOM =
-            "SELECT LIMIT 0 ? RAND() AS rnd, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video FROM track t ORDER BY rnd";
+            "SELECT LIMIT 0 ? RAND() AS rnd, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video, t.genre AS genre FROM track t ORDER BY rnd";
     private static final String QUERY_ALL_BY_ALBUM =
-            "SELECT t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video FROM track t ORDER BY album, track_number";
+            "SELECT t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video, t.genre AS genre FROM track t ORDER BY album, track_number";
     private static final String QUERY_ALL_BY_ARTIST =
-            "SELECT t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video FROM track t ORDER BY artist, album, track_number";
+            "SELECT t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video, t.genre AS genre FROM track t ORDER BY artist, album, track_number";
 
     private static final String BASE_SQL =
-            "SELECT ltp.index AS index, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video FROM link_track_playlist ltp, track t WHERE t.id = ltp.track_id AND ltp.playlist_id = ?";
+            "SELECT ltp.index AS index, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video, t.genre AS genre FROM link_track_playlist ltp, track t WHERE t.id = ltp.track_id AND ltp.playlist_id = ?";
     private static final String BASE_SQL_WITH_LIMIT = BASE_SQL + " AND ltp.index >= ? AND ltp.index <= ?";
 
     private static final String ORDER_PLAYLIST = " ORDER BY index";
@@ -38,7 +38,6 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
     private static final String QUERY_LIMITED_PLAYLIST_ORDER = BASE_SQL_WITH_LIMIT + ORDER_PLAYLIST;
     private static final String QUERY_ALBUM_ORDER = BASE_SQL + ORDER_ALBUM;
     private static final String QUERY_LIMITED_ALBUM_ORDER = BASE_SQL_WITH_LIMIT + ORDER_ALBUM;
-    ;
     private static final String QUERY_ARTIST_ORDER = BASE_SQL + ORDER_ARTIST;
     private static final String QUERY_LIMITED_ARTIST_ORDER = BASE_SQL_WITH_LIMIT + ORDER_ARTIST;
 
@@ -88,6 +87,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
             track.setFile(new File(resultSet.getString("FILE")));
             track.setProtected(resultSet.getBoolean("PROTECTED"));
             track.setVideo(resultSet.getBoolean("VIDEO"));
+            track.setGenre(resultSet.getString("GENRE"));
             return track;
         }
     }

@@ -19,10 +19,10 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
         FindTrackQuery query = new FindTrackQuery();
         if (trackIds.length > 1) {
             query.myQuery =
-                    "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE id IN (" + SQLUtils.createParameters(
+                    "SELECT id, name, artist, album, time, track_number, file, protected, video, genre FROM track WHERE id IN (" + SQLUtils.createParameters(
                             trackIds.length) + ")";
         } else {
-            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE id = ?";
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video, genre FROM track WHERE id = ?";
         }
         query.myParameters = trackIds;
         query.myIdSortOrder = trackIds;
@@ -56,7 +56,7 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
         for (int i = 0; i < (searchTerms != null && searchTerms.length > 0 ? searchTerms.length : 1); i++) {
             likes.append("AND ( ( LCASE(name) LIKE ? ESCAPE '\\' ) OR ( LCASE(album) LIKE ? ESCAPE '\\' ) OR ( LCASE(artist) LIKE ? ESCAPE '\\' ) ) ");
         }
-        return "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE" + likes.substring(3) + "ORDER BY " +
+        return "SELECT id, name, artist, album, time, track_number, file, protected, video, genre FROM track WHERE" + likes.substring(3) + "ORDER BY " +
                 artistSort + "album, track_number, name";
     }
 
@@ -64,10 +64,10 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
         FindTrackQuery query = new FindTrackQuery();
         String artistSort = sortByArtistFirst ? "artist, " : "";
         if (albums.length > 1) {
-            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE album IN (" +
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video, genre FROM track WHERE album IN (" +
                     SQLUtils.createParameters(albums.length) + ") ORDER BY " + artistSort + "album, track_number, name";
         } else {
-            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE album = ? ORDER BY " +
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video, genre FROM track WHERE album = ? ORDER BY " +
                     artistSort + "album, track_number, name";
         }
         query.myParameters = albums;
@@ -78,10 +78,10 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
         FindTrackQuery query = new FindTrackQuery();
         String artistSort = sortByArtistFirst ? "artist, " : "";
         if (artists.length > 1) {
-            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE artist IN (" +
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video, genre FROM track WHERE artist IN (" +
                     SQLUtils.createParameters(artists.length) + ") ORDER BY " + artistSort + "album, track_number, name";
         } else {
-            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video FROM track WHERE artist = ? ORDER BY " +
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video, genre FROM track WHERE artist = ? ORDER BY " +
                     artistSort + "album, track_number, name";
         }
         query.myParameters = artists;
@@ -130,6 +130,7 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
             track.setFile(StringUtils.isNotEmpty(pathname) ? new File(pathname) : null);
             track.setProtected(resultSet.getBoolean("PROTECTED"));
             track.setVideo(resultSet.getBoolean("VIDEO"));
+            track.setGenre(resultSet.getString("GENRE"));
             return track;
         }
     }

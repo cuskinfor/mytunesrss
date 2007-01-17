@@ -28,5 +28,7 @@ public interface InsertOrUpdateTrackStatement extends DataStoreStatement {
 
     void setVideo(boolean video);
 
+    void setGenre(String genre);
+
     void clear();
 }

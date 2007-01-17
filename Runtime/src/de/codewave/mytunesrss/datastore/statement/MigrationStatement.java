@@ -67,6 +67,7 @@ public class MigrationStatement implements DataStoreStatement {
             }
             connection.createStatement().execute("ALTER TABLE system_information DROP COLUMN basedir_id");
             connection.createStatement().execute("ALTER TABLE link_track_playlist ALTER COLUMN track_id VARCHAR(2000) NOT NULL");
+            connection.createStatement().execute("ALTER TABLE track ADD COLUMN genre VARCHAR(255)");
             version = "3.0";
         }
     }

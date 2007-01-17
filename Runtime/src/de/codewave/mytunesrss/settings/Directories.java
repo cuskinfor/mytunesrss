@@ -12,6 +12,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
+import org.apache.commons.lang.*;
+
 /**
  * de.codewave.mytunesrss.settings.Options
  */
@@ -133,6 +135,9 @@ public class Directories {
     public class TunesXmlPathLookupButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("dialog.loadITunes"), FileDialog.LOAD);
+            if (StringUtils.isNotEmpty(myTunesXmlPathInput.getText())) {
+                fileDialog.setFile(myTunesXmlPathInput.getText());
+            }
             fileDialog.setVisible(true);
             if (fileDialog.getFile() != null) {
                 File sourceFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
@@ -156,6 +161,9 @@ public class Directories {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle(MyTunesRss.BUNDLE.getString("dialog.lookupBaseDir"));
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            if (StringUtils.isNotEmpty(myTarget.getText())) {
+                fileChooser.setCurrentDirectory(new File(myTarget.getText()));
+            }
             int result = fileChooser.showOpenDialog(MyTunesRss.ROOT_FRAME);
             if (result == JFileChooser.APPROVE_OPTION) {
                 try {

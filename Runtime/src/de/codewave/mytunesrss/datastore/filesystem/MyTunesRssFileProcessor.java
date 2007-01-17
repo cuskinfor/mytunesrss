@@ -26,6 +26,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private UpdateTrackStatement myUpdateStatement;
     private int myUpdatedCount;
     private Set<String> myExistingIds = new HashSet<String>();
+    private Set<String> myFoundIds = new HashSet<String>();
 
     public MyTunesRssFileProcessor(File baseDir, DataStoreSession storeSession, long lastUpdateTime) throws SQLException {
         myBaseDir = baseDir;
@@ -49,7 +50,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             String canonicalFilePath = file.getCanonicalPath();
             if (file.isFile()) {
                 String fileId = IOUtils.getFileIdentifier(file);
-                if (!myExistingIds.contains(fileId)) {
+                if (!myFoundIds.contains(fileId)) {
                     if (file.lastModified() >= myLastUpdateTime || !myDatabaseIds.contains(fileId)) {
                         InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(fileId) ? myUpdateStatement : myInsertStatement;
                         statement.clear();
@@ -88,6 +89,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                 statement.setTime(((Id3v2Tag)tag).getTimeSeconds());
                                 statement.setTrackNumber(((Id3v2Tag)tag).getTrackNumber());
                             }
+                            statement.setGenre(StringUtils.trimToNull(tag.getGenreAsString()));
                         }
                         FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
                         statement.setProtected(fileSuffixInfo.isProtected());
@@ -108,12 +110,15 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                     }
                                 }
                             }
+                            myFoundIds.add(fileId);
                             myExistingIds.add(fileId);
                         } catch (SQLException e) {
                             if (LOG.isErrorEnabled()) {
                                 LOG.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
                             }
                         }
+                    } else if (myDatabaseIds.contains(fileId)) {
+                        myExistingIds.add(fileId);
                     }
                 }
             }

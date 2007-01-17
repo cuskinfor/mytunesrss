@@ -21,6 +21,7 @@ public class Track {
     private File myFile;
     private boolean myProtected;
     private boolean myVideo;
+    private String myGenre;
 
     public String getAlbum() {
         return myAlbum;
@@ -92,6 +93,14 @@ public class Track {
 
     public void setVideo(boolean video) {
         myVideo = video;
+    }
+
+    public String getGenre() {
+        return myGenre;
+    }
+
+    public void setGenre(String genre) {
+        myGenre = genre;
     }
 
     public String getContentType() {
