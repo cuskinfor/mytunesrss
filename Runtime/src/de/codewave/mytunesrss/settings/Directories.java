@@ -48,6 +48,7 @@ public class Directories {
     private JLabel mySeparatorLabel1;
     private JLabel mySeparatorLabel2;
     private JLabel myTrackLabel;
+    private JTextField myWatchFolderFileTypes;
 
     public void init() {
         myFolderStructureGrandparent.addItem(FolderStructureRole.None);
@@ -66,6 +67,7 @@ public class Directories {
         myDeleteMissingFiles.setSelected(MyTunesRss.CONFIG.isItunesDeleteMissingFiles());
         myUploadDirInput.setText(MyTunesRss.CONFIG.getUploadDir());
         myCreateUserDir.setSelected(MyTunesRss.CONFIG.isUploadCreateUserDir());
+        myWatchFolderFileTypes.setText(MyTunesRss.CONFIG.getWatchFolderFileTypes());
     }
 
     private void setFolderStructureRole(int level, FolderStructureRole role) {
@@ -93,6 +95,7 @@ public class Directories {
         MyTunesRss.CONFIG.setItunesDeleteMissingFiles(myDeleteMissingFiles.isSelected());
         MyTunesRss.CONFIG.setUploadDir(myUploadDirInput.getText());
         MyTunesRss.CONFIG.setUploadCreateUserDir(myCreateUserDir.isSelected());
+        MyTunesRss.CONFIG.setWatchFolderFileTypes(myWatchFolderFileTypes.getText());
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -112,6 +115,7 @@ public class Directories {
                 mySeparatorLabel1.setEnabled(false);
                 mySeparatorLabel2.setEnabled(false);
                 myTrackLabel.setEnabled(false);
+                SwingUtils.enableElementAndLabel(myWatchFolderFileTypes, false);
                 break;
             case ServerIdle:
                 SwingUtils.enableElementAndLabel(myTunesXmlPathInput, true);
@@ -128,6 +132,7 @@ public class Directories {
                 mySeparatorLabel1.setEnabled(true);
                 mySeparatorLabel2.setEnabled(true);
                 myTrackLabel.setEnabled(true);
+                SwingUtils.enableElementAndLabel(myWatchFolderFileTypes, true);
                 break;
         }
     }

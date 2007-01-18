@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
-import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.DeleteTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.FindTrackIdsQuery;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
@@ -14,8 +14,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Set;
-import java.util.List;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.datastore.filesystem.FileSystemLoaderr
@@ -35,9 +34,13 @@ public class FileSystemLoader {
                     if (LOG.isInfoEnabled()) {
                         LOG.info("Processing files from: \"" + baseDir + "\".");
                     }
+                    final Set<String> allowedTypes = new HashSet<String>();
+                    for (StringTokenizer tokenizer = new StringTokenizer(MyTunesRss.CONFIG.getWatchFolderFileTypes().toLowerCase(), ","); tokenizer.hasMoreTokens();) {
+                        allowedTypes.add(tokenizer.nextToken());
+                    }
                     IOUtils.processFiles(baseDir, fileProcessor, new FileFilter() {
                         public boolean accept(File file) {
-                            return file.isDirectory() || FileSupportUtils.isSupported(file.getName());
+                            return file.isDirectory() || (FileSupportUtils.isSupported(file.getName()) && (allowedTypes.isEmpty() || allowedTypes.contains(IOUtils.getSuffix(file).toLowerCase())));
                         }
                     });
                     FileProcessor playlistFileProcessor = new PlaylistFileProcessor(baseDir, storeSession);

@@ -67,7 +67,7 @@ public class General {
         SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(interval, MIN_UPDATE_INTERVAL, MAX_UPDATE_INTERVAL, 1);
         myAutoUpdateDatabaseIntervalInput.setModel(spinnerNumberModel);
         myAutoUpdateDatabaseInput.setSelected(MyTunesRss.CONFIG.isAutoUpdateDatabase());
-        myUpdateDatabaseOnServerStart.setSelected(MyTunesRss.CONFIG.isUpdateOnServerStart());
+        myUpdateDatabaseOnServerStart.setSelected(MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart());
         myIgnoreTimestampsInput.setSelected(MyTunesRss.CONFIG.isIgnoreTimestamps());
         SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, MyTunesRss.CONFIG.isAutoUpdateDatabase());
         myServerInfoButton.addActionListener(new ServerInfoButtonListener());
@@ -117,7 +117,7 @@ public class General {
         }
         MyTunesRss.CONFIG.setCheckUpdateOnStart(myUpdateOnStartInput.isSelected());
         MyTunesRss.CONFIG.setAutoStartServer(myAutoStartServerInput.isSelected());
-        MyTunesRss.CONFIG.setUpdateOnServerStart(myUpdateDatabaseOnServerStart.isSelected());
+        MyTunesRss.CONFIG.setUpdateDatabaseOnServerStart(myUpdateDatabaseOnServerStart.isSelected());
         MyTunesRss.CONFIG.setAutoUpdateDatabase(myAutoUpdateDatabaseInput.isSelected());
         MyTunesRss.CONFIG.setAutoUpdateDatabaseInterval((Integer)myAutoUpdateDatabaseIntervalInput.getValue());
         MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestampsInput.isSelected());

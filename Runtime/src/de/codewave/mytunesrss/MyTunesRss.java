@@ -269,7 +269,7 @@ public class MyTunesRss {
     }
 
     public static void startWebserver() {
-      if (MyTunesRss.CONFIG.isUpdateOnServerStart()) {
+      if (MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart()) {
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.buildDatabase"), null, false, MyTunesRss.createDatabaseBuilderTask());
       }
       MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.serverstarting"), null, false, new MyTunesRssTask() {

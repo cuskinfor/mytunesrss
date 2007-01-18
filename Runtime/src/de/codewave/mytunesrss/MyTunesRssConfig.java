@@ -48,6 +48,7 @@ public class MyTunesRssConfig {
     private String myMyTunesRssComUser = "";
     private byte[] myMyTunesRssComPasswordHash = null;
     private boolean myUpdateDatabaseOnServerStart = true;
+    private String myWatchFolderFileTypes = "";
 
     public String getLibraryXml() {
         return myLibraryXml;
@@ -161,6 +162,14 @@ public class MyTunesRssConfig {
         myUploadDir = uploadDir;
     }
 
+    public String getWatchFolderFileTypes() {
+        return myWatchFolderFileTypes;
+    }
+
+    public void setWatchFolderFileTypes(String watchFolderFileTypes) {
+        myWatchFolderFileTypes = watchFolderFileTypes;
+    }
+
     public Collection<User> getUsers() {
         return new HashSet<User>(myUsers);
     }
@@ -239,11 +248,11 @@ public class MyTunesRssConfig {
         myMyTunesRssComUser = myTunesRssComUser;
     }
 
-  public boolean isUpdateOnServerStart() {
+  public boolean isUpdateDatabaseOnServerStart() {
     return myUpdateDatabaseOnServerStart;
   }
 
-  public void setUpdateOnServerStart(boolean updateOnServerStart) {
+  public void setUpdateDatabaseOnServerStart(boolean updateOnServerStart) {
     myUpdateDatabaseOnServerStart = updateOnServerStart;
   }
 
@@ -293,7 +302,7 @@ public class MyTunesRssConfig {
         setCheckUpdateOnStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("checkUpdateOnStart", isCheckUpdateOnStart()));
         setAutoStartServer(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoStartServer", isAutoStartServer()));
         setAutoUpdateDatabase(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoUpdateDatabase", isAutoUpdateDatabase()));
-        setUpdateOnServerStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("updateDatabaseOnServerStart", isUpdateOnServerStart()));
+        setUpdateDatabaseOnServerStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
         setAutoUpdateDatabaseInterval(Preferences.userRoot().node(PREF_ROOT).getInt("autoUpdateDatabaseInterval",
                                                                                                     getAutoUpdateDatabaseInterval()));
         setIgnoreTimestamps(Preferences.userRoot().node(PREF_ROOT).getBoolean("ignoreTimestamps", isIgnoreTimestamps()));
@@ -329,6 +338,7 @@ public class MyTunesRssConfig {
         setProxyPort(Preferences.userRoot().node(PREF_ROOT).getInt("proxyPort", getProxyPort()));
         setMyTunesRssComUser(Preferences.userRoot().node(PREF_ROOT).get("myTunesRssComUser", getMyTunesRssComUser()));
         setMyTunesRssComPasswordHash(Preferences.userRoot().node(PREF_ROOT).getByteArray("myTunesRssComPassword", getMyTunesRssComPasswordHash()));
+        setWatchFolderFileTypes(Preferences.userRoot().node(PREF_ROOT).get("watchFolderFileTypes", getWatchFolderFileTypes()));
     }
 
     public void loadFromXml(URL xmlUrl) {
@@ -346,6 +356,7 @@ public class MyTunesRssConfig {
         setBaseDir(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/basedir", getBaseDir()));
         setFileSystemAlbumNameFolder(JXPathUtils.getIntValue(context, "/mytunesrss/datasource/basedir/@album", getFileSystemAlbumNameFolder()));
         setFileSystemArtistNameFolder(JXPathUtils.getIntValue(context, "/mytunesrss/datasource/basedir/@artist", getFileSystemArtistNameFolder()));
+        setWatchFolderFileTypes(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/basedir/@types", getWatchFolderFileTypes()));
         setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(context, "/mytunesrss/datasource/itunesxml/@deletemissing", isItunesDeleteMissingFiles()));
         setUploadDir(JXPathUtils.getStringValue(context, "/mytunesrss/upload/basedir", getUploadDir()));
         setUploadCreateUserDir(JXPathUtils.getBooleanValue(context, "/mytunesrss/upload/@userdir", isUploadCreateUserDir()));
@@ -353,7 +364,7 @@ public class MyTunesRssConfig {
         setCheckUpdateOnStart(JXPathUtils.getBooleanValue(context, "/mytunesrss/updatecheck", isCheckUpdateOnStart()));
         setVersion(MyTunesRss.VERSION);
         // database
-        setUpdateOnServerStart(JXPathUtils.getBooleanValue(context, "/mytunesrss/database/@updateonstart", isUpdateOnServerStart()));
+        setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(context, "/mytunesrss/database/@updateonstart", isUpdateDatabaseOnServerStart()));
         setAutoUpdateDatabase(JXPathUtils.getBooleanValue(context, "/mytunesrss/database/@autoupdate", isAutoUpdateDatabase()));
         setAutoUpdateDatabaseInterval(JXPathUtils.getIntValue(context, "/mytunesrss/database/@updateinterval", getAutoUpdateDatabaseInterval()));
         setIgnoreTimestamps(JXPathUtils.getBooleanValue(context, "/mytunesrss/database/@ignoretimestamps", isIgnoreTimestamps()));
@@ -435,6 +446,7 @@ public class MyTunesRssConfig {
             } else {
                 Preferences.userRoot().node(PREF_ROOT).remove("myTunesRssComPassword");
             }
+            Preferences.userRoot().node(PREF_ROOT).put("watchFolderFileTypes", myWatchFolderFileTypes);
         }
     }
 
