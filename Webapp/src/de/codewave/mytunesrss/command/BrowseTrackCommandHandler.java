@@ -87,8 +87,8 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         int sectionCount = 0;
         for (Track track : tracks) {
             EnhancedTrack enhancedTrack = new EnhancedTrack(track);
-            boolean newAlbum = !lastAlbum.equals(track.getAlbum());
-            boolean newArtist = !lastArtist.equals(track.getArtist());
+            boolean newAlbum = !lastAlbum.equalsIgnoreCase(track.getAlbum());
+            boolean newArtist = !lastArtist.equalsIgnoreCase(track.getArtist());
             if ((sortOrder == SortOrder.Album && newAlbum) || (sortOrder == SortOrder.Artist && newArtist)) {// new section begins
                 sectionCount++;
                 enhancedTrack.setNewSection(true);

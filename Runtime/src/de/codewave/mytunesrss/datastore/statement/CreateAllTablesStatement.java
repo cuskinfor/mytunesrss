@@ -17,7 +17,7 @@ public class CreateAllTablesStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
         connection.createStatement().execute("SET DATABASE COLLATION en_US");
         connection.createStatement().execute(
-                "CREATE CACHED TABLE track ( id VARCHAR(2000) NOT NULL, name VARCHAR(255) NOT NULL, artist VARCHAR(255) NOT NULL, album VARCHAR(255) NOT NULL, time INTEGER, track_number INTEGER, file VARCHAR(1024) NOT NULL, protected BOOLEAN, video BOOLEAN, source VARCHAR(20), genre VARCHAR(255), UNIQUE ( id ) )");
+                "CREATE CACHED TABLE track ( id VARCHAR(2000) NOT NULL, name VARCHAR(255) NOT NULL, artist VARCHAR_IGNORECASE(255) NOT NULL, album VARCHAR_IGNORECASE(255) NOT NULL, time INTEGER, track_number INTEGER, file VARCHAR(1024) NOT NULL, protected BOOLEAN, video BOOLEAN, source VARCHAR(20), genre VARCHAR(255), UNIQUE ( id ) )");
         connection.createStatement().execute(
                 "CREATE CACHED TABLE playlist ( id VARCHAR(20) NOT NULL, name VARCHAR(255) NOT NULL, type VARCHAR(20) NOT NULL, track_count INTEGER, UNIQUE ( id ) )");
         connection.createStatement().execute(
@@ -26,9 +26,9 @@ public class CreateAllTablesStatement implements DataStoreStatement {
                 "CREATE CACHED TABLE system_information ( lastupdate BIGINT, version VARCHAR(20) NOT NULL, itunes_library_id VARCHAR(20) )");
         connection.createStatement().execute("INSERT INTO system_information VALUES ( null, '" + MyTunesRss.VERSION + "', null )");
         connection.createStatement().execute(
-                "CREATE CACHED TABLE album ( name VARCHAR(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, artist_count INTEGER, artist VARCHAR(255) )");
+                "CREATE CACHED TABLE album ( name VARCHAR_IGNORECASE(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, artist_count INTEGER, artist VARCHAR(255) )");
         connection.createStatement().execute(
-                "CREATE CACHED TABLE artist ( name VARCHAR(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, album_count INTEGER )");
+                "CREATE CACHED TABLE artist ( name VARCHAR_IGNORECASE(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, album_count INTEGER )");
         connection.createStatement().execute(
                 "CREATE CACHED TABLE pager ( type VARCHAR(20) NOT NULL, index INTEGER NOT NULL, condition VARCHAR(255) NOT NULL, value VARCHAR(255) NOT NULL, content_count INTEGER NOT NULL, UNIQUE ( type, index ) )");
 
