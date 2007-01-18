@@ -34,13 +34,9 @@ public class FileSystemLoader {
                     if (LOG.isInfoEnabled()) {
                         LOG.info("Processing files from: \"" + baseDir + "\".");
                     }
-                    final Set<String> allowedTypes = new HashSet<String>();
-                    for (StringTokenizer tokenizer = new StringTokenizer(MyTunesRss.CONFIG.getWatchFolderFileTypes().toLowerCase(), ","); tokenizer.hasMoreTokens();) {
-                        allowedTypes.add(tokenizer.nextToken());
-                    }
                     IOUtils.processFiles(baseDir, fileProcessor, new FileFilter() {
                         public boolean accept(File file) {
-                            return file.isDirectory() || (FileSupportUtils.isSupported(file.getName()) && (allowedTypes.isEmpty() || allowedTypes.contains(IOUtils.getSuffix(file).toLowerCase())));
+                            return file.isDirectory() || FileSupportUtils.isSupported(file.getName());
                         }
                     });
                     FileProcessor playlistFileProcessor = new PlaylistFileProcessor(baseDir, storeSession);

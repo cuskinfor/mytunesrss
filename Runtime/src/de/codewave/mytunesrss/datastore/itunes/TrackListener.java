@@ -68,6 +68,9 @@ public class TrackListener implements PListHandlerListener {
                         }
                     }
                 }
+            } else {
+                myExistingIds.remove(trackId);
+                myTrackIdToPersId.remove(track.get("Track ID"));
             }
         }
         return false;

@@ -5,10 +5,12 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
 import java.sql.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackStatement
@@ -87,6 +89,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
 
     public void execute(Connection connection) throws SQLException {
         try {
+            myArtist = dropWordsFromArtist(myArtist);
             PreparedStatement statement = myStatement != null ? myStatement : connection.prepareStatement(UpdateTrackStatement.SQL);
             statement.clearParameters();
             statement.setString(1, StringUtils.isNotEmpty(myName) ? myName : UpdateTrackStatement.UNKNOWN);
@@ -105,6 +108,19 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
                 UpdateTrackStatement.LOG.error(String.format("Could not update track with ID \"%s\" in database.", myId), e);
             }
         }
+    }
+
+    static String dropWordsFromArtist(String artist) {
+        String dropWords = MyTunesRss.CONFIG.getArtistDropWords();
+        if (StringUtils.isNotEmpty(dropWords) && StringUtils.isNotEmpty(artist)) {
+            for (StringTokenizer tokenizer = new StringTokenizer(dropWords, ","); tokenizer.hasMoreTokens(); ) {
+                String word = tokenizer.nextToken().toLowerCase();
+                while (artist.toLowerCase().startsWith(word + " ")) {
+                    artist = artist.substring(word.length() + 1);
+                }
+            }
+        }
+        return artist;
     }
 
     public void clear() {

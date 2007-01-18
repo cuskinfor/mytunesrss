@@ -89,6 +89,7 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
 
     public void execute(Connection connection) throws SQLException {
         try {
+            myArtist = UpdateTrackStatement.dropWordsFromArtist(myArtist);
             PreparedStatement statement = myStatement != null ? myStatement : connection.prepareStatement(SQL);
             statement.clearParameters();
             statement.setString(1, myId);

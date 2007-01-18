@@ -48,7 +48,8 @@ public class MyTunesRssConfig {
     private String myMyTunesRssComUser = "";
     private byte[] myMyTunesRssComPasswordHash = null;
     private boolean myUpdateDatabaseOnServerStart = true;
-    private String myWatchFolderFileTypes = "";
+    private String myFileTypes = "";
+    private String myArtistDropWords = "";
 
     public String getLibraryXml() {
         return myLibraryXml;
@@ -162,12 +163,20 @@ public class MyTunesRssConfig {
         myUploadDir = uploadDir;
     }
 
-    public String getWatchFolderFileTypes() {
-        return myWatchFolderFileTypes;
+    public String getFileTypes() {
+        return myFileTypes;
     }
 
-    public void setWatchFolderFileTypes(String watchFolderFileTypes) {
-        myWatchFolderFileTypes = watchFolderFileTypes;
+    public void setFileTypes(String fileTypes) {
+        myFileTypes = fileTypes;
+    }
+
+    public String getArtistDropWords() {
+        return myArtistDropWords;
+    }
+
+    public void setArtistDropWords(String artistDropWords) {
+        myArtistDropWords = artistDropWords;
     }
 
     public Collection<User> getUsers() {
@@ -338,7 +347,8 @@ public class MyTunesRssConfig {
         setProxyPort(Preferences.userRoot().node(PREF_ROOT).getInt("proxyPort", getProxyPort()));
         setMyTunesRssComUser(Preferences.userRoot().node(PREF_ROOT).get("myTunesRssComUser", getMyTunesRssComUser()));
         setMyTunesRssComPasswordHash(Preferences.userRoot().node(PREF_ROOT).getByteArray("myTunesRssComPassword", getMyTunesRssComPasswordHash()));
-        setWatchFolderFileTypes(Preferences.userRoot().node(PREF_ROOT).get("watchFolderFileTypes", getWatchFolderFileTypes()));
+        setFileTypes(Preferences.userRoot().node(PREF_ROOT).get("fileTypes", getFileTypes()));
+        setArtistDropWords(Preferences.userRoot().node(PREF_ROOT).get("artistDropWords", getArtistDropWords()));
     }
 
     public void loadFromXml(URL xmlUrl) {
@@ -356,7 +366,8 @@ public class MyTunesRssConfig {
         setBaseDir(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/basedir", getBaseDir()));
         setFileSystemAlbumNameFolder(JXPathUtils.getIntValue(context, "/mytunesrss/datasource/basedir/@album", getFileSystemAlbumNameFolder()));
         setFileSystemArtistNameFolder(JXPathUtils.getIntValue(context, "/mytunesrss/datasource/basedir/@artist", getFileSystemArtistNameFolder()));
-        setWatchFolderFileTypes(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/basedir/@types", getWatchFolderFileTypes()));
+        setFileTypes(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/filetypes", getFileTypes()));
+        setArtistDropWords(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/artistdropwords", getArtistDropWords()));
         setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(context, "/mytunesrss/datasource/itunesxml/@deletemissing", isItunesDeleteMissingFiles()));
         setUploadDir(JXPathUtils.getStringValue(context, "/mytunesrss/upload/basedir", getUploadDir()));
         setUploadCreateUserDir(JXPathUtils.getBooleanValue(context, "/mytunesrss/upload/@userdir", isUploadCreateUserDir()));
@@ -446,7 +457,8 @@ public class MyTunesRssConfig {
             } else {
                 Preferences.userRoot().node(PREF_ROOT).remove("myTunesRssComPassword");
             }
-            Preferences.userRoot().node(PREF_ROOT).put("watchFolderFileTypes", myWatchFolderFileTypes);
+            Preferences.userRoot().node(PREF_ROOT).put("fileTypes", myFileTypes);
+            Preferences.userRoot().node(PREF_ROOT).put("artistDropWords", myArtistDropWords);
         }
     }
 

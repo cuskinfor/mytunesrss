@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss;
 
+import org.apache.commons.lang.*;
+
 import java.util.*;
 
 /**
@@ -19,11 +21,31 @@ public class FileSupportUtils {
     }
 
     public static boolean isSupported(String filename) {
-        return SUPPORTED_SUFFIXES.contains(getFileSuffix(filename));
+        if (SUPPORTED_SUFFIXES.contains(getFileSuffix(filename))) {
+            if (StringUtils.isEmpty(MyTunesRss.CONFIG.getFileTypes())) {
+                return true;
+            }
+            for (StringTokenizer tokenizer = new StringTokenizer(MyTunesRss.CONFIG.getFileTypes().toLowerCase(), ","); tokenizer.hasMoreTokens();) {
+                if (filename.toLowerCase().endsWith("." + tokenizer.nextToken())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static boolean isSuffixSupported(String suffix) {
-        return SUPPORTED_SUFFIXES.contains(suffix);
+        if (SUPPORTED_SUFFIXES.contains(suffix)) {
+            if (StringUtils.isEmpty(MyTunesRss.CONFIG.getFileTypes())) {
+                return true;
+            }
+            for (StringTokenizer tokenizer = new StringTokenizer(MyTunesRss.CONFIG.getFileTypes().toLowerCase(), ","); tokenizer.hasMoreTokens();) {
+                if (suffix.equalsIgnoreCase(tokenizer.nextToken())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static FileSuffixInfo getFileSuffixInfo(String filename) {
