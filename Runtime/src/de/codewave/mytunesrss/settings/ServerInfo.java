@@ -22,13 +22,6 @@ import java.util.Timer;
 
 public class ServerInfo {
     private static final Log LOG = LogFactory.getLog(ServerInfo.class);
-    public static final double KBYTE = 1024;
-    public static final double MBYTE = 1024 * KBYTE;
-    public static final double GBYTE = 1024 * MBYTE;
-    public static final NumberFormat BYTE_STREAMED_FORMAT = new DecimalFormat("0");
-    public static final NumberFormat KBYTE_STREAMED_FORMAT = new DecimalFormat("0");
-    public static final NumberFormat MBYTE_STREAMED_FORMAT = new DecimalFormat("0.000");
-    public static final NumberFormat GBYTE_STREAMED_FORMAT = new DecimalFormat("0.000");
 
     private JPanel myRootPanel;
     private JTable myConnections;
@@ -180,14 +173,7 @@ public class ServerInfo {
                     return formatDate(info.getLastAccessTime());
                 case 4:
                     double bytes = info.getBytesStreamed();
-                    if (bytes > GBYTE) {
-                        return GBYTE_STREAMED_FORMAT.format(bytes / GBYTE) + " GB";
-                    } else if (bytes > MBYTE) {
-                        return MBYTE_STREAMED_FORMAT.format(bytes / MBYTE) + " MB";
-                    } else if (bytes > KBYTE) {
-                        return KBYTE_STREAMED_FORMAT.format(bytes / KBYTE) + " KB";
-                    }
-                    return BYTE_STREAMED_FORMAT.format(bytes) + " Byte";
+                    return MyTunesRssUtils.getMemorySizeForDisplay((long)bytes);
                 default:
                     throw new IllegalArgumentException("no such column: " + column);
             }

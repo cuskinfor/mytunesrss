@@ -1,14 +1,18 @@
 package de.codewave.mytunesrss;
 
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
-
-import java.io.*;
-
 /**
  * de.codewave.mytunesrss.User
  */
 public class User {
+    public enum QuotaType {
+        None, Day, Week, Month;
+
+        @Override
+        public String toString() {
+            return MyTunesRss.BUNDLE.getString("editUser.quotaType." + name());
+        }
+    }
+
     private boolean myActive = true;
     private String myName;
     private byte[] myPasswordHash;
@@ -16,6 +20,16 @@ public class User {
     private boolean myRss;
     private boolean myM3u;
     private boolean myUpload;
+    private QuotaType myQuotaType;
+    private int myDownFiles;
+    private long myDownBytes;
+    private int myQuotaDownFiles;
+    private long myQuotaDownBytes;
+    private int myFileQuota;
+    private long myBytesQuota;
+    private long myResetTime;
+    private long myQuotaResetTime;
+    private int myMaximumZipEntries;
 
     public User(String name) {
         myName = name;
@@ -75,6 +89,86 @@ public class User {
 
     public void setUpload(boolean upload) {
         myUpload = upload;
+    }
+
+    public long getBytesQuota() {
+        return myBytesQuota;
+    }
+
+    public void setBytesQuota(long bytesQuota) {
+        myBytesQuota = bytesQuota;
+    }
+
+    public long getDownBytes() {
+        return myDownBytes;
+    }
+
+    public void setDownBytes(long downBytes) {
+        myDownBytes = downBytes;
+    }
+
+    public int getDownFiles() {
+        return myDownFiles;
+    }
+
+    public void setDownFiles(int downFiles) {
+        myDownFiles = downFiles;
+    }
+
+    public int getFileQuota() {
+        return myFileQuota;
+    }
+
+    public void setFileQuota(int fileQuota) {
+        myFileQuota = fileQuota;
+    }
+
+    public long getQuotaDownBytes() {
+        return myQuotaDownBytes;
+    }
+
+    public void setQuotaDownBytes(long quotaDownBytes) {
+        myQuotaDownBytes = quotaDownBytes;
+    }
+
+    public int getQuotaDownFiles() {
+        return myQuotaDownFiles;
+    }
+
+    public void setQuotaDownFiles(int quotaDownFiles) {
+        myQuotaDownFiles = quotaDownFiles;
+    }
+
+    public long getQuotaResetTime() {
+        return myQuotaResetTime;
+    }
+
+    public void setQuotaResetTime(long quotaResetTime) {
+        myQuotaResetTime = quotaResetTime;
+    }
+
+    public QuotaType getQuotaType() {
+        return myQuotaType;
+    }
+
+    public void setQuotaType(QuotaType quotaType) {
+        myQuotaType = quotaType;
+    }
+
+    public long getResetTime() {
+        return myResetTime;
+    }
+
+    public void setResetTime(long resetTime) {
+        myResetTime = resetTime;
+    }
+
+    public int getMaximumZipEntries() {
+        return myMaximumZipEntries;
+    }
+
+    public void setMaximumZipEntries(int maximumZipEntries) {
+        myMaximumZipEntries = maximumZipEntries;
     }
 
     @Override

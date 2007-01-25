@@ -59,7 +59,7 @@ public class MyTunesRssRegistration {
                 LOG.debug("Registration data:");
                 LOG.debug("name=" + getName());
                 LOG.debug("registered=" + isRegistered());
-                LOG.debug("expiration=" + getExpiration(MyTunesRss.BUNDLE.getString("registrationDateFormat")));
+                LOG.debug("expiration=" + getExpiration(MyTunesRss.BUNDLE.getString("common.dateFormat")));
             }
         }
     }

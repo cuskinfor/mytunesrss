@@ -1,14 +1,13 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.pleasewait.*;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.logging.*;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HostConfiguration;
 
 import javax.swing.*;
-import java.text.MessageFormat;
+import java.text.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -65,49 +64,68 @@ public class MyTunesRssUtils {
         return MessageFormat.format(MyTunesRss.BUNDLE.getString(key), parameters);
     }
 
-  public static HttpClient createHttpClient() {
-    HttpClient httpClient = new HttpClient();
-    if (MyTunesRss.CONFIG.isProxyServer()) {
-        HostConfiguration hostConfiguration = new HostConfiguration();
-        hostConfiguration.setProxy(MyTunesRss.CONFIG.getProxyHost(), MyTunesRss.CONFIG.getProxyPort());
-        httpClient.setHostConfiguration(hostConfiguration);
+    public static HttpClient createHttpClient() {
+        HttpClient httpClient = new HttpClient();
+        if (MyTunesRss.CONFIG.isProxyServer()) {
+            HostConfiguration hostConfiguration = new HostConfiguration();
+            hostConfiguration.setProxy(MyTunesRss.CONFIG.getProxyHost(), MyTunesRss.CONFIG.getProxyPort());
+            httpClient.setHostConfiguration(hostConfiguration);
+        }
+        return httpClient;
     }
-    return httpClient;
-  }
 
-  public static void shutdown() {
-    System.exit(0);
-  }
-
-  public static void shutdownGracefully() {
-    if (MyTunesRss.WEBSERVER.isRunning()) {
-        MyTunesRss.stopWebserver();
+    public static void shutdown() {
+        System.exit(0);
     }
-    if (!MyTunesRss.WEBSERVER.isRunning()) {
-        MyTunesRss.CONFIG.saveWindowPosition(MyTunesRss.ROOT_FRAME.getLocation());
-        MyTunesRss.CONFIG.save();
-        MyTunesRss.SERVER_RUNNING_TIMER.cancel();
-      final DatabaseBuilderTask databaseBuilderTask = MyTunesRss.createDatabaseBuilderTask();
-      if (databaseBuilderTask.isRunning()) {
-        MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.finishingUpdate"), null, false, new MyTunesRssTask() {
-              public void execute() {
-                  while (databaseBuilderTask.isRunning()) {
-                    try {
-                      Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                      // intentionally left blank
+
+    public static void shutdownGracefully() {
+        if (MyTunesRss.WEBSERVER.isRunning()) {
+            MyTunesRss.stopWebserver();
+        }
+        if (!MyTunesRss.WEBSERVER.isRunning()) {
+            MyTunesRss.CONFIG.saveWindowPosition(MyTunesRss.ROOT_FRAME.getLocation());
+            MyTunesRss.CONFIG.save();
+            MyTunesRss.SERVER_RUNNING_TIMER.cancel();
+            final DatabaseBuilderTask databaseBuilderTask = MyTunesRss.createDatabaseBuilderTask();
+            if (databaseBuilderTask.isRunning()) {
+                MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.finishingUpdate"), null, false, new MyTunesRssTask() {
+                    public void execute() {
+                        while (databaseBuilderTask.isRunning()) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                // intentionally left blank
+                            }
+                        }
                     }
-                  }
-              }
-          });
-      }
-      MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
-            public void execute() {
-                MyTunesRss.STORE.destroy();
+                });
             }
-        });
-        MyTunesRss.ROOT_FRAME.dispose();
+            MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
+                public void execute() {
+                    MyTunesRss.STORE.destroy();
+                }
+            });
+            MyTunesRss.ROOT_FRAME.dispose();
+        }
+        shutdown();
     }
-    shutdown();
-  }
+
+    private static final double KBYTE = 1024;
+    private static final double MBYTE = 1024 * KBYTE;
+    private static final double GBYTE = 1024 * MBYTE;
+    private static final NumberFormat BYTE_STREAMED_FORMAT = new DecimalFormat("0");
+    private static final NumberFormat KBYTE_STREAMED_FORMAT = new DecimalFormat("0");
+    private static final NumberFormat MBYTE_STREAMED_FORMAT = new DecimalFormat("0.000");
+    private static final NumberFormat GBYTE_STREAMED_FORMAT = new DecimalFormat("0.000");
+
+    public static String getMemorySizeForDisplay(long bytes) {
+        if (bytes > GBYTE) {
+            return GBYTE_STREAMED_FORMAT.format(bytes / GBYTE) + " GB";
+        } else if (bytes > MBYTE) {
+            return MBYTE_STREAMED_FORMAT.format(bytes / MBYTE) + " MB";
+        } else if (bytes > KBYTE) {
+            return KBYTE_STREAMED_FORMAT.format(bytes / KBYTE) + " KB";
+        }
+        return BYTE_STREAMED_FORMAT.format(bytes) + " Byte";
+    }
 }

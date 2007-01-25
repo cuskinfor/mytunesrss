@@ -332,6 +332,16 @@ public class MyTunesRssConfig {
                     user.setM3u(userNode.node(userName).getBoolean("featureM3u", true));
                     user.setDownload(userNode.node(userName).getBoolean("featureDownload", true));
                     user.setUpload(userNode.node(userName).getBoolean("featureUpload", false));
+                    user.setResetTime(userNode.node(userName).getLong("resetTime", System.currentTimeMillis()));
+                    user.setQuotaResetTime(userNode.node(userName).getLong("quotaResetTime", System.currentTimeMillis()));
+                    user.setDownBytes(userNode.node(userName).getLong("downBytes", 0));
+                    user.setDownFiles(userNode.node(userName).getInt("downFiles", 0));
+                    user.setQuotaDownBytes(userNode.node(userName).getLong("quotaDownBytes", 0));
+                    user.setQuotaDownFiles(userNode.node(userName).getInt("quotaDownFiles", 0));
+                    user.setBytesQuota(userNode.node(userName).getLong("bytesQuota", 0));
+                    user.setFileQuota(userNode.node(userName).getInt("filesQuota", 0));
+                    user.setQuotaType(User.QuotaType.valueOf(userNode.node(userName).get("quotaType", User.QuotaType.None.name())));
+                    user.setMaximumZipEntries(userNode.node(userName).getInt("maximumZipEntries", 0));
                     addUser(user);
                 }
             } catch (BackingStoreException e) {
@@ -389,6 +399,7 @@ public class MyTunesRssConfig {
             user.setM3u(JXPathUtils.getBooleanValue(userContext, "features/@m3u", true));
             user.setDownload(JXPathUtils.getBooleanValue(userContext, "features/@download", true));
             user.setUpload(JXPathUtils.getBooleanValue(userContext, "features/@upload", false));
+            user.setMaximumZipEntries(JXPathUtils.getIntValue(userContext, "maximumZipEntries", 0));
             addUser(user);
             if (!MyTunesRss.REGISTRATION.isRegistered()) {
                 break;
@@ -440,6 +451,16 @@ public class MyTunesRssConfig {
                     userNode.node(user.getName()).putBoolean("featureM3u", user.isM3u());
                     userNode.node(user.getName()).putBoolean("featureDownload", user.isDownload());
                     userNode.node(user.getName()).putBoolean("featureUpload", user.isUpload());
+                    userNode.node(user.getName()).putLong("resetTime", user.getResetTime());
+                    userNode.node(user.getName()).putLong("quotaResetTime", user.getQuotaResetTime());
+                    userNode.node(user.getName()).putLong("downBytes", user.getDownBytes());
+                    userNode.node(user.getName()).putInt("downFiles", user.getDownFiles());
+                    userNode.node(user.getName()).putLong("quotaDownBytes", user.getQuotaDownBytes());
+                    userNode.node(user.getName()).putInt("quotaDownFiles", user.getQuotaDownFiles());
+                    userNode.node(user.getName()).putLong("bytesQuota", user.getBytesQuota());
+                    userNode.node(user.getName()).putInt("filesQuota", user.getFileQuota());
+                    userNode.node(user.getName()).put("quotaType", user.getQuotaType().name());
+                    userNode.node(user.getName()).putInt("maximumZipEntries", user.getMaximumZipEntries());
                 }
             } catch (BackingStoreException e) {
                 if (LOG.isErrorEnabled()) {
