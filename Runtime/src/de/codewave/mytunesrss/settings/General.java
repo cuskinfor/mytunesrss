@@ -25,7 +25,7 @@ import com.intellij.uiDesigner.core.*;
 public class General {
     private static final Log LOG = LogFactory.getLog(General.class);
 
-    private static final int MAX_UPDATE_INTERVAL = 60;
+    private static final int MAX_UPDATE_INTERVAL = 1440;
     private static final int MIN_UPDATE_INTERVAL = 1;
 
     private JPanel myRootPanel;
