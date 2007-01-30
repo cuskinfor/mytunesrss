@@ -70,7 +70,16 @@ public class EditUser {
             myBytesQuotaInput.setText(myUser.getBytesQuota() > 0 ? Long.toString(myUser.getBytesQuota()) : "");
             myFileQuotaInput.setText(myUser.getFileQuota() > 0 ? Integer.toString(myUser.getFileQuota()) : "");
             myMaxZipEntriesInput.setText(myUser.getMaximumZipEntries() > 0 ? Integer.toString(myUser.getMaximumZipEntries()) : "");
+            myInfoReset.setText(new SimpleDateFormat(MyTunesRss.BUNDLE.getString("common.dateFormat")).format(new Date(myUser.getResetTime())));
+            myInfoDownBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(myUser.getDownBytes()));
+            myInfoDownFiles.setText(DecimalFormat.getIntegerInstance().format(myUser.getDownFiles()));
+            myInfoReset.setVisible(true);
+            myInfoDownBytes.setVisible(true);
+            myInfoDownFiles.setVisible(true);
         } else {
+            myInfoReset.setVisible(false);
+            myInfoDownBytes.setVisible(false);
+            myInfoDownFiles.setVisible(false);
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
         }
         if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
@@ -79,22 +88,19 @@ public class EditUser {
         }
         mySaveButton.addActionListener(new SaveButtonActionListener(dialog));
         myCancelButton.addActionListener(new CancelButtonActionListener(dialog));
-        myInfoReset.setText(new SimpleDateFormat(MyTunesRss.BUNDLE.getString("common.dateFormat")).format(new Date(myUser.getResetTime())));
-        myInfoDownBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(myUser.getDownBytes()));
-        myInfoDownFiles.setText(DecimalFormat.getIntegerInstance().format(myUser.getDownFiles()));
-        if (myUser.getQuotaType() != User.QuotaType.None && (myUser.getBytesQuota() > 0  || myUser.getFileQuota() > 0)) {
+        if (myUser != null && myUser.getQuotaType() != User.QuotaType.None && (myUser.getBytesQuota() > 0  || myUser.getFileQuota() > 0)) {
             myInfoLimitHeading.setText(MyTunesRss.BUNDLE.getString("editUser.info.limitHeading"));
             myInfoLimitHeading.setVisible(true);
         } else {
             myInfoLimitHeading.setVisible(false);
         }
-        if (myUser.getBytesQuota() > 0) {
+        if (myUser != null && myUser.getBytesQuota() > 0) {
             myInfoRemainBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(myUser.getBytesQuota() - myUser.getQuotaDownBytes()));
             myInfoRemainBytes.setVisible(true);
         } else {
             myInfoRemainBytes.setVisible(false);
         }
-        if (myUser.getFileQuota() > 0) {
+        if (myUser != null && myUser.getFileQuota() > 0) {
             myInfoRemainFiles.setText(DecimalFormat.getIntegerInstance().format(myUser.getFileQuota() - myUser.getQuotaDownFiles()));
             myInfoRemainFiles.setVisible(true);
         } else {

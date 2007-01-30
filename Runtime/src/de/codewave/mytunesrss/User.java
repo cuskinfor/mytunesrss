@@ -33,6 +33,8 @@ public class User {
 
     public User(String name) {
         myName = name;
+        myResetTime = System.currentTimeMillis();
+        myQuotaResetTime = myResetTime;
     }
 
     public boolean isActive() {
