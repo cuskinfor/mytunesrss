@@ -113,7 +113,7 @@
           </hspacer>
         </children>
       </grid>
-      <grid id="368b" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+      <grid id="368b" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -123,22 +123,13 @@
         <children>
           <component id="8949e" class="javax.swing.JComboBox" binding="myQuotaTypeInput">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>
-          <component id="2d432" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="95faf"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.fileQuota"/>
-            </properties>
-          </component>
           <component id="56491" class="javax.swing.JLabel">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <labelFor value="feb53"/>
@@ -154,7 +145,7 @@
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.limitType"/>
             </properties>
           </component>
-          <component id="95faf" class="javax.swing.JTextField" binding="myFileQuotaInput">
+          <component id="feb53" class="javax.swing.JTextField" binding="myBytesQuotaInput">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -162,13 +153,13 @@
             </constraints>
             <properties/>
           </component>
-          <component id="feb53" class="javax.swing.JTextField" binding="myBytesQuotaInput">
+          <component id="35189" class="javax.swing.JLabel">
             <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <text value="MB"/>
+            </properties>
           </component>
         </children>
       </grid>
@@ -242,7 +233,7 @@
           </component>
         </children>
       </grid>
-      <grid id="35170" layout-manager="GridLayoutManager" row-count="9" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+      <grid id="35170" binding="myInformationPanel" layout-manager="GridLayoutManager" row-count="8" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
           <grid row="0" column="1" row-span="4" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -258,11 +249,6 @@
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.info.lastReset"/>
             </properties>
           </component>
-          <vspacer id="3166e">
-            <constraints>
-              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </vspacer>
           <component id="f8ba2" class="javax.swing.JLabel" binding="myInfoReset">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -271,25 +257,9 @@
               <text value="2007-01-01"/>
             </properties>
           </component>
-          <component id="da39f" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.info.downFiles"/>
-            </properties>
-          </component>
-          <component id="d9690" class="javax.swing.JLabel" binding="myInfoDownFiles">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="1234"/>
-            </properties>
-          </component>
           <component id="893ad" class="javax.swing.JLabel">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.info.downBytes"/>
@@ -297,7 +267,7 @@
           </component>
           <component id="6ae41" class="javax.swing.JLabel" binding="myInfoDownBytes">
             <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="463 MB"/>
@@ -305,7 +275,7 @@
           </component>
           <component id="d35b6" class="javax.swing.JButton" binding="myResetHistoryButton" default-binding="true">
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.info.resetHistory"/>
@@ -313,51 +283,65 @@
           </component>
           <vspacer id="f0424">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                <preferred-size width="-1" height="5"/>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                <preferred-size width="-1" height="15"/>
               </grid>
             </constraints>
           </vspacer>
-          <component id="39d7e" class="javax.swing.JLabel" binding="myInfoLimitHeading">
+          <vspacer id="3166e">
             <constraints>
-              <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties>
-              <text value="Limits for current month"/>
-            </properties>
-          </component>
-          <component id="5c47a" class="javax.swing.JLabel">
+          </vspacer>
+          <grid id="a6ef9" binding="myQuotaInfoPanel" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="3" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.info.remainFiles"/>
-            </properties>
-          </component>
-          <component id="efa4c" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.info.remainBytes"/>
-            </properties>
-          </component>
-          <component id="e7e2d" class="javax.swing.JLabel" binding="myInfoRemainFiles">
-            <constraints>
-              <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="unlimited"/>
-            </properties>
-          </component>
-          <component id="bb864" class="javax.swing.JLabel" binding="myInfoRemainBytes">
-            <constraints>
-              <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="561 MB"/>
-            </properties>
-          </component>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="39d7e" class="javax.swing.JLabel" binding="myInfoLimitHeading">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Limits for current month"/>
+                </properties>
+              </component>
+              <component id="efa4c" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.info.remainBytes"/>
+                </properties>
+              </component>
+              <component id="bb864" class="javax.swing.JLabel" binding="myInfoRemainBytes">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="561 MB"/>
+                </properties>
+              </component>
+              <component id="25bc" class="javax.swing.JButton" binding="myRefreshButton">
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.refreshInfo"/>
+                </properties>
+              </component>
+              <vspacer id="af7c4">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                    <preferred-size width="-1" height="15"/>
+                  </grid>
+                </constraints>
+              </vspacer>
+            </children>
+          </grid>
         </children>
       </grid>
     </children>

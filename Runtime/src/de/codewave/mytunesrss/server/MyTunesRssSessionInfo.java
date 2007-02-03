@@ -22,6 +22,8 @@ public class MyTunesRssSessionInfo extends SessionManager.SessionInfo implements
 
     public void addBytesStreamed(long bytes) {
         myBytesStreamed += bytes;
+        getUser().setDownBytes(getUser().getDownBytes() + bytes);
+        getUser().setQuotaDownBytes(getUser().getQuotaDownBytes() + bytes);
     }
 
     public void add(int i) {

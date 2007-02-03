@@ -57,10 +57,22 @@ public class Settings {
         myTabbedPane.addChangeListener(new TabSwitchListener());
     }
 
-    public void updateConfigFromGui() {
-        myGeneralForm.updateConfigFromGui();
-        myDirectoriesForm.updateConfigFromGui();
-        myInfoForm.updateConfigFromGui();
+    public String updateConfigFromGui() {
+        StringBuffer messages = new StringBuffer();
+        String message = myGeneralForm.updateConfigFromGui();
+        if (message != null) {
+            messages.append(message).append(" ");
+        }
+        message = myDirectoriesForm.updateConfigFromGui();
+        if (message != null) {
+            messages.append(message). append(" ");
+        }
+        message = myInfoForm.updateConfigFromGui();
+        if (message != null) {
+            messages.append(message). append(" ");
+        }
+        String returnValue = messages.toString().trim();
+        return returnValue.length() > 0 ? returnValue : null;
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -86,11 +98,15 @@ public class Settings {
     }
 
     public void doStartServer() {
-        updateConfigFromGui();
-        MyTunesRss.startWebserver();
-        if (MyTunesRss.WEBSERVER.isRunning()) {
-            setGuiMode(GuiMode.ServerRunning);
-            myGeneralForm.setServerRunningStatus(MyTunesRss.CONFIG.getPort());
+        String messages = updateConfigFromGui();
+        if (messages == null) {
+            MyTunesRss.startWebserver();
+            if (MyTunesRss.WEBSERVER.isRunning()) {
+                setGuiMode(GuiMode.ServerRunning);
+                myGeneralForm.setServerRunningStatus(MyTunesRss.CONFIG.getPort());
+            }
+        } else {
+            MyTunesRssUtils.showErrorMessage(messages);
         }
     }
 
@@ -107,8 +123,12 @@ public class Settings {
     }
 
     public void doQuitApplication() {
-        updateConfigFromGui();
-        MyTunesRssUtils.shutdownGracefully();
+        String messages = updateConfigFromGui();
+        if (messages == null) {
+            MyTunesRssUtils.shutdownGracefully();
+        } else {
+            MyTunesRssUtils.showErrorMessage(messages);
+        }
     }
 
     public class TabSwitchListener implements ChangeListener {

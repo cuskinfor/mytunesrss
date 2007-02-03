@@ -357,11 +357,8 @@ public class MyTunesRssConfig {
                     user.setResetTime(userNode.node(userName).getLong("resetTime", System.currentTimeMillis()));
                     user.setQuotaResetTime(userNode.node(userName).getLong("quotaResetTime", System.currentTimeMillis()));
                     user.setDownBytes(userNode.node(userName).getLong("downBytes", 0));
-                    user.setDownFiles(userNode.node(userName).getInt("downFiles", 0));
                     user.setQuotaDownBytes(userNode.node(userName).getLong("quotaDownBytes", 0));
-                    user.setQuotaDownFiles(userNode.node(userName).getInt("quotaDownFiles", 0));
                     user.setBytesQuota(userNode.node(userName).getLong("bytesQuota", 0));
-                    user.setFileQuota(userNode.node(userName).getInt("filesQuota", 0));
                     user.setQuotaType(User.QuotaType.valueOf(userNode.node(userName).get("quotaType", User.QuotaType.None.name())));
                     user.setMaximumZipEntries(userNode.node(userName).getInt("maximumZipEntries", 0));
                     addUser(user);
@@ -480,11 +477,8 @@ public class MyTunesRssConfig {
                     userNode.node(user.getName()).putLong("resetTime", user.getResetTime());
                     userNode.node(user.getName()).putLong("quotaResetTime", user.getQuotaResetTime());
                     userNode.node(user.getName()).putLong("downBytes", user.getDownBytes());
-                    userNode.node(user.getName()).putInt("downFiles", user.getDownFiles());
                     userNode.node(user.getName()).putLong("quotaDownBytes", user.getQuotaDownBytes());
-                    userNode.node(user.getName()).putInt("quotaDownFiles", user.getQuotaDownFiles());
                     userNode.node(user.getName()).putLong("bytesQuota", user.getBytesQuota());
-                    userNode.node(user.getName()).putInt("filesQuota", user.getFileQuota());
                     userNode.node(user.getName()).put("quotaType", user.getQuotaType().name());
                     userNode.node(user.getName()).putInt("maximumZipEntries", user.getMaximumZipEntries());
                 }

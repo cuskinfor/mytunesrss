@@ -92,6 +92,9 @@ public class General {
                 SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected() && !MyTunesRss.WEBSERVER.isRunning());
             }
         });
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myPortInput, 1, 65535, false, MyTunesRss.BUNDLE.getString(
+                "error.illegalServerPort")));
+        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myServerNameInput, MyTunesRss.BUNDLE.getString("error.emptyServerName")));
     }
 
     public Dimension getContentDimension() {
@@ -128,20 +131,22 @@ public class General {
         myRootPanel.validate();
     }
 
-    public void updateConfigFromGui() {
-        try {
-            MyTunesRss.CONFIG.setPort(Integer.parseInt(myPortInput.getText().trim()));
-        } catch (NumberFormatException e) {
-            MyTunesRss.CONFIG.setPort(-1);
+    public String updateConfigFromGui() {
+        String messages = JTextFieldValidation.getAllValidationFailureMessage(myRootPanel);
+        if (messages != null) {
+            return messages;
+        } else {
+            MyTunesRss.CONFIG.setPort(MyTunesRssUtils.getTextFieldInteger(myPortInput, -1));
+            MyTunesRss.CONFIG.setCheckUpdateOnStart(myUpdateOnStartInput.isSelected());
+            MyTunesRss.CONFIG.setAutoStartServer(myAutoStartServerInput.isSelected());
+            MyTunesRss.CONFIG.setUpdateDatabaseOnServerStart(myUpdateDatabaseOnServerStart.isSelected());
+            MyTunesRss.CONFIG.setAutoUpdateDatabase(myAutoUpdateDatabaseInput.isSelected());
+            MyTunesRss.CONFIG.setAutoUpdateDatabaseInterval((Integer)myAutoUpdateDatabaseIntervalInput.getValue());
+            MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestampsInput.isSelected());
+            MyTunesRss.CONFIG.setServerName(myServerNameInput.getText());
+            MyTunesRss.CONFIG.setAvailableOnLocalNet(myAvailableOnLocalNetInput.isSelected());
         }
-        MyTunesRss.CONFIG.setCheckUpdateOnStart(myUpdateOnStartInput.isSelected());
-        MyTunesRss.CONFIG.setAutoStartServer(myAutoStartServerInput.isSelected());
-        MyTunesRss.CONFIG.setUpdateDatabaseOnServerStart(myUpdateDatabaseOnServerStart.isSelected());
-        MyTunesRss.CONFIG.setAutoUpdateDatabase(myAutoUpdateDatabaseInput.isSelected());
-        MyTunesRss.CONFIG.setAutoUpdateDatabaseInterval((Integer)myAutoUpdateDatabaseIntervalInput.getValue());
-        MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestampsInput.isSelected());
-        MyTunesRss.CONFIG.setServerName(myServerNameInput.getText());
-        MyTunesRss.CONFIG.setAvailableOnLocalNet(myAvailableOnLocalNetInput.isSelected());
+        return null;
     }
 
     public void setGuiMode(GuiMode mode) {

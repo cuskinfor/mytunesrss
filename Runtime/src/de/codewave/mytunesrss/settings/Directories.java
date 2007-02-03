@@ -89,7 +89,7 @@ public class Directories {
         return 0;
     }
 
-    public void updateConfigFromGui() {
+    public String updateConfigFromGui() {
         MyTunesRss.CONFIG.setLibraryXml(myTunesXmlPathInput.getText().trim());
         MyTunesRss.CONFIG.setBaseDir(myBaseDirInput.getText());
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(getFolderStructureRole(FolderStructureRole.Artist));
@@ -99,6 +99,7 @@ public class Directories {
         MyTunesRss.CONFIG.setUploadCreateUserDir(myCreateUserDir.isSelected());
         MyTunesRss.CONFIG.setFileTypes(myFileTypes.getText());
         MyTunesRss.CONFIG.setArtistDropWords(myArtistDropWords.getText());
+        return null;
     }
 
     public void setGuiMode(GuiMode mode) {

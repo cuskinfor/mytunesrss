@@ -33,17 +33,24 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
             if (!tracks.isEmpty()) {
                 Track track = tracks.iterator().next();
-                File file = track.getFile();
-                String contentType = track.getContentType();
-                if (!file.exists()) {
+                if (!getAuthUser().isQuotaExceeded()) {
+                    File file = track.getFile();
+                    String contentType = track.getContentType();
+                    if (!file.exists()) {
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");
+                        }
+                        fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
+                    } else {
+                        fileSender = new FileSender(file, contentType, (int)file.length());
+                    }
+                    fileSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
+                } else {
                     if (LOG.isWarnEnabled()) {
-                        LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");
+                        LOG.warn("User limit exceeded, sending response code SC_NO_CONTENT instead.");
                     }
                     fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
-                } else {
-                    fileSender = new FileSender(file, contentType, (int)file.length());
                 }
-                fileSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
             } else {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("No tracks recognized in request, sending response code SC_NO_CONTENT instead.");

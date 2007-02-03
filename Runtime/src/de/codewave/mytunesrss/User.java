@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss;
 
+import java.util.*;
+
 /**
  * de.codewave.mytunesrss.User
  */
@@ -21,11 +23,8 @@ public class User {
     private boolean myM3u;
     private boolean myUpload;
     private QuotaType myQuotaType;
-    private int myDownFiles;
     private long myDownBytes;
-    private int myQuotaDownFiles;
     private long myQuotaDownBytes;
-    private int myFileQuota;
     private long myBytesQuota;
     private long myResetTime;
     private long myQuotaResetTime;
@@ -62,7 +61,7 @@ public class User {
     }
 
     public boolean isDownload() {
-        return myDownload;
+        return myDownload && !isQuotaExceeded();
     }
 
     public void setDownload(boolean download) {
@@ -109,36 +108,12 @@ public class User {
         myDownBytes = downBytes;
     }
 
-    public int getDownFiles() {
-        return myDownFiles;
-    }
-
-    public void setDownFiles(int downFiles) {
-        myDownFiles = downFiles;
-    }
-
-    public int getFileQuota() {
-        return myFileQuota;
-    }
-
-    public void setFileQuota(int fileQuota) {
-        myFileQuota = fileQuota;
-    }
-
     public long getQuotaDownBytes() {
         return myQuotaDownBytes;
     }
 
     public void setQuotaDownBytes(long quotaDownBytes) {
         myQuotaDownBytes = quotaDownBytes;
-    }
-
-    public int getQuotaDownFiles() {
-        return myQuotaDownFiles;
-    }
-
-    public void setQuotaDownFiles(int quotaDownFiles) {
-        myQuotaDownFiles = quotaDownFiles;
     }
 
     public long getQuotaResetTime() {
@@ -181,5 +156,40 @@ public class User {
     @Override
     public int hashCode() {
         return getName() != null ? getName().hashCode() : 0;
+    }
+
+    public boolean isQuotaExceeded() {
+        if (myQuotaType != QuotaType.None && myBytesQuota > 0) {
+            checkQuotaReset();
+            return myBytesQuota > 0 && myQuotaDownBytes >= myBytesQuota;
+        }
+        return false;
+    }
+
+    private void checkQuotaReset() {
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(new Date(myQuotaResetTime));
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        switch (myQuotaType) {
+            case Month:
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.add(Calendar.MONTH, 1);
+                break;
+            case Week:
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+                calendar.add(Calendar.DAY_OF_MONTH, 7);
+                break;
+            case Day:
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                break;
+        }
+        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
+            myQuotaDownBytes = 0;
+            myQuotaResetTime = System.currentTimeMillis();
+        }
     }
 }

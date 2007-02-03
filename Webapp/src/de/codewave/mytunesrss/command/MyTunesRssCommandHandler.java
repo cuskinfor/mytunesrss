@@ -5,16 +5,14 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.server.*;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.servlet.*;
+import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.servlet.*;
-import de.codewave.utils.swing.TaskExecutor;
-import de.codewave.utils.swing.TaskFinishedListener;
-import de.codewave.utils.swing.Task;
+import de.codewave.utils.swing.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -53,7 +51,8 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected void authorize(String userName) {
         User user = getMyTunesRssConfig().getUser(userName);
         if (user != null) {
-            getSession().setAttribute("auth", MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash()));
+            getSession().setAttribute("auth",
+                                      MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash()));
             getSession().setAttribute("authUser", getMyTunesRssConfig().getUser(userName));
             ((MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest())).setUser(user);
         }
@@ -70,23 +69,23 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 return false;
             }
         }
-            if (StringUtils.isNotEmpty(getRequest().getParameter("auth"))) {
-                try {
-                    String auth = getRequestParameter("auth", "");
-                    int i = auth.indexOf(" ");
-                    if (i >= 1 && i < auth.length() - 1) {
-                        byte[] requestAuthHash = MyTunesRssBase64Utils.decode(auth.substring(i + 1));
-                        String userName = MyTunesRssBase64Utils.decodeToString(auth.substring(0, i));
-                        if (isAuthorized(userName, requestAuthHash)) {
-                            authorize(userName);
-                            return false;
-                        }
+        if (StringUtils.isNotEmpty(getRequest().getParameter("auth"))) {
+            try {
+                String auth = getRequestParameter("auth", "");
+                int i = auth.indexOf(" ");
+                if (i >= 1 && i < auth.length() - 1) {
+                    byte[] requestAuthHash = MyTunesRssBase64Utils.decode(auth.substring(i + 1));
+                    String userName = MyTunesRssBase64Utils.decodeToString(auth.substring(0, i));
+                    if (isAuthorized(userName, requestAuthHash)) {
+                        authorize(userName);
+                        return false;
                     }
-                } catch (NumberFormatException e) {
-                    // intentionally left blank
                 }
+            } catch (NumberFormatException e) {
+                // intentionally left blank
             }
-            return true;
+        }
+        return true;
     }
 
     protected void addError(Error error) {

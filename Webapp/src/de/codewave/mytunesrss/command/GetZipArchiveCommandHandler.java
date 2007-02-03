@@ -5,15 +5,12 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.server.*;
-import de.codewave.utils.*;
-import de.codewave.utils.jsp.CodewaveFunctions;
 import de.codewave.utils.io.*;
 import de.codewave.utils.servlet.*;
 import org.apache.commons.lang.*;
-import org.apache.commons.jxpath.ClassFunctions;
 
 import javax.servlet.http.*;
 import java.io.*;
@@ -26,7 +23,7 @@ import java.util.zip.*;
 public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        if (getAuthUser().isDownload()) {
+        if (!needsAuthorization() && getAuthUser().isDownload()) {
             String baseName = getRequest().getPathInfo();
             baseName = baseName.substring(baseName.lastIndexOf("/") + 1, baseName.lastIndexOf("."));
             String album = MyTunesRssBase64Utils.decodeToString(getRequestParameter("album", null));
@@ -60,7 +57,8 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                         trackAlbum = "unknown";
                     }
                     int number = 1;
-                    String entryNameWithoutSuffix = MyTunesFunctions.getLegalFileName(trackArtist) + "/" + MyTunesFunctions.getLegalFileName(trackAlbum) + "/";
+                    String entryNameWithoutSuffix = MyTunesFunctions.getLegalFileName(trackArtist) + "/" + MyTunesFunctions.getLegalFileName(
+                            trackAlbum) + "/";
                     if (track.getTrackNumber() > 0) {
                         entryNameWithoutSuffix += StringUtils.leftPad(Integer.toString(track.getTrackNumber()), 2, "0") + " ";
                     }
@@ -81,7 +79,8 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     }
                     file.close();
                     zipStream.closeEntry();
-                    m3uPlaylist.append("#EXTINF:").append(track.getTime()).append(",").append(trackArtist).append(" - ").append(track.getName()).append(lineSeparator);
+                    m3uPlaylist.append("#EXTINF:").append(track.getTime()).append(",").append(trackArtist).append(" - ").append(track.getName())
+                            .append(lineSeparator);
                     m3uPlaylist.append(entryName).append(lineSeparator);
                     trackCount++;
                     sessionInfo.addBytesStreamed(entry.getCompressedSize());

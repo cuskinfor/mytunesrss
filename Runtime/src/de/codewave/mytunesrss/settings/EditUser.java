@@ -3,9 +3,9 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.components.*;
-import org.apache.commons.lang.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
@@ -19,6 +19,8 @@ import java.util.*;
  * @version $Id:$
  */
 public class EditUser {
+    private static final int MEGABYTE = 1024 * 1024;
+
     private JTextField myUserNameInput;
     private PasswordHashField myPasswordInput;
     private JPanel myRootPanel;
@@ -29,17 +31,17 @@ public class EditUser {
     private JCheckBox myPermDownloadInput;
     private JCheckBox myPermUploadInput;
     private JComboBox myQuotaTypeInput;
-    private JTextField myFileQuotaInput;
     private JTextField myBytesQuotaInput;
     private JTextField myMaxZipEntriesInput;
     private JScrollPane myPermissionScrollPane;
     private JButton myResetHistoryButton;
     private JLabel myInfoReset;
-    private JLabel myInfoDownFiles;
     private JLabel myInfoDownBytes;
-    private JLabel myInfoRemainFiles;
     private JLabel myInfoRemainBytes;
     private JLabel myInfoLimitHeading;
+    private JButton myRefreshButton;
+    private JPanel myInformationPanel;
+    private JPanel myQuotaInfoPanel;
     private User myUser;
 
     public void display(final JFrame parent, User user) {
@@ -52,11 +54,20 @@ public class EditUser {
     }
 
     private void init(JDialog dialog) {
+        myInformationPanel.setVisible(myUser != null);
         myPermissionScrollPane.getViewport().setPreferredSize(new Dimension(300, 150));
         myQuotaTypeInput.addItem(User.QuotaType.None);
         myQuotaTypeInput.addItem(User.QuotaType.Day);
         myQuotaTypeInput.addItem(User.QuotaType.Week);
         myQuotaTypeInput.addItem(User.QuotaType.Month);
+        myQuotaTypeInput.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                SwingUtils.enableElementAndLabel(myBytesQuotaInput, myQuotaTypeInput.getSelectedItem() != User.QuotaType.None);
+                if (myUser != null) {
+                    refreshInfo();
+                }
+            }
+        });
         myUserNameInput.setText(myUser != null ? myUser.getName() : "");
         if (myUser != null) {
             myPasswordInput.setPasswordHash(myUser.getPasswordHash());
@@ -67,45 +78,72 @@ public class EditUser {
             myPermDownloadInput.setSelected(myUser.isDownload());
             myPermUploadInput.setSelected(myUser.isUpload());
             myQuotaTypeInput.setSelectedItem(myUser.getQuotaType());
-            myBytesQuotaInput.setText(myUser.getBytesQuota() > 0 ? Long.toString(myUser.getBytesQuota()) : "");
-            myFileQuotaInput.setText(myUser.getFileQuota() > 0 ? Integer.toString(myUser.getFileQuota()) : "");
+            myBytesQuotaInput.setText(myUser.getBytesQuota() > 0 ? Long.toString(myUser.getBytesQuota() / MEGABYTE) : "");
             myMaxZipEntriesInput.setText(myUser.getMaximumZipEntries() > 0 ? Integer.toString(myUser.getMaximumZipEntries()) : "");
-            myInfoReset.setText(new SimpleDateFormat(MyTunesRss.BUNDLE.getString("common.dateFormat")).format(new Date(myUser.getResetTime())));
-            myInfoDownBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(myUser.getDownBytes()));
-            myInfoDownFiles.setText(DecimalFormat.getIntegerInstance().format(myUser.getDownFiles()));
-            myInfoReset.setVisible(true);
-            myInfoDownBytes.setVisible(true);
-            myInfoDownFiles.setVisible(true);
         } else {
-            myInfoReset.setVisible(false);
-            myInfoDownBytes.setVisible(false);
-            myInfoDownFiles.setVisible(false);
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
         }
         if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
-            SwingUtils.enableElementAndLabel(myFileQuotaInput, false);
             SwingUtils.enableElementAndLabel(myBytesQuotaInput, false);
         }
         mySaveButton.addActionListener(new SaveButtonActionListener(dialog));
-        myCancelButton.addActionListener(new CancelButtonActionListener(dialog));
-        if (myUser != null && myUser.getQuotaType() != User.QuotaType.None && (myUser.getBytesQuota() > 0  || myUser.getFileQuota() > 0)) {
+        myCancelButton.addActionListener(new SupportContact.CancelButtonActionListener(dialog));
+        myResetHistoryButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                myUser.setDownBytes(0);
+                myUser.setResetTime(System.currentTimeMillis());
+                refreshInfo();
+            }
+        });
+        myRefreshButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                refreshInfo();
+            }
+        });
+        if (myUser != null) {
+            refreshInfo();
+            myBytesQuotaInput.getDocument().addDocumentListener(new DocumentListener() {
+                public void insertUpdate(DocumentEvent e) {
+                    refreshInfo();
+                }
+
+                public void removeUpdate(DocumentEvent e) {
+                    refreshInfo();
+                }
+
+                public void changedUpdate(DocumentEvent e) {
+                    // intentionally left blank
+                }
+            });
+        }
+        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myUserNameInput, MyTunesRss.BUNDLE.getString("error.missingUserName")));
+        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myPasswordInput,
+                                                                           MyTunesRss.BUNDLE.getString("error.missingUserPassword")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myBytesQuotaInput,
+                                                                              1,
+                                                                              Long.MAX_VALUE,
+                                                                              false,
+                                                                              MyTunesRss.BUNDLE.getString("error.illegalBytesQuota")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myMaxZipEntriesInput,
+                                                                              1,
+                                                                              Integer.MAX_VALUE,
+                                                                              true,
+                                                                              MyTunesRss.BUNDLE.getString("error.illegalMaxZipEntries")));
+        JTextFieldValidation.validateAll(myRootPanel);
+    }
+
+    private void refreshInfo() {
+        myInfoReset.setText(new SimpleDateFormat(MyTunesRss.BUNDLE.getString("common.dateFormat")).format(new Date(myUser.getResetTime())));
+        myInfoDownBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(myUser.getDownBytes()));
+        myInfoDownBytes.setVisible(true);
+        if (myQuotaTypeInput.getSelectedItem() != User.QuotaType.None && MyTunesRssUtils.getTextFieldInteger(myBytesQuotaInput, 0) > 0) {
             myInfoLimitHeading.setText(MyTunesRss.BUNDLE.getString("editUser.info.limitHeading"));
-            myInfoLimitHeading.setVisible(true);
+            myInfoRemainBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(Math.max(myUser.getBytesQuota() - myUser.getQuotaDownBytes(), 0)));
+            myQuotaInfoPanel.setVisible(true);
         } else {
-            myInfoLimitHeading.setVisible(false);
+            myQuotaInfoPanel.setVisible(false);
         }
-        if (myUser != null && myUser.getBytesQuota() > 0) {
-            myInfoRemainBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(myUser.getBytesQuota() - myUser.getQuotaDownBytes()));
-            myInfoRemainBytes.setVisible(true);
-        } else {
-            myInfoRemainBytes.setVisible(false);
-        }
-        if (myUser != null && myUser.getFileQuota() > 0) {
-            myInfoRemainFiles.setText(DecimalFormat.getIntegerInstance().format(myUser.getFileQuota() - myUser.getQuotaDownFiles()));
-            myInfoRemainFiles.setVisible(true);
-        } else {
-            myInfoRemainFiles.setVisible(false);
-        }
+        myRootPanel.validate();
     }
 
     private void createUIComponents() {
@@ -120,51 +158,37 @@ public class EditUser {
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (StringUtils.isEmpty(myUserNameInput.getText())) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.missingUserName"));
-            } else if (myUser == null && myPasswordInput.getPasswordHash() == null) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.missingUserPassword"));
-            } else if ((myUser == null || (!myUser.getName().equals(myUserNameInput.getText()))) && MyTunesRss.CONFIG.getUsers()
-                    .contains(new User(myUserNameInput.getText()))) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.duplicateUserName", myUserNameInput.getText()));
+            String messages = JTextFieldValidation.getAllValidationFailureMessage(myRootPanel);
+            if (messages != null) {
+                MyTunesRssUtils.showErrorMessage(messages);
             } else {
-                if (myUser != null) {
-                    if (myPasswordInput.getPasswordHash() != null) {
+                if ((myUser == null || (!myUser.getName().equals(myUserNameInput.getText()))) && MyTunesRss.CONFIG.getUsers()
+                        .contains(new User(myUserNameInput.getText()))) {
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.duplicateUserName", myUserNameInput.getText()));
+                } else {
+                    if (myUser != null) {
+                        if (myPasswordInput.getPasswordHash() != null) {
+                            myUser.setPasswordHash(myPasswordInput.getPasswordHash());
+                        }
+                        // name change => remove user with old name
+                        if (!myUser.getName().equals(myUserNameInput.getText())) {
+                            MyTunesRss.CONFIG.removeUser(myUser.getName());
+                        }
+                    } else {
+                        myUser = new User("");
                         myUser.setPasswordHash(myPasswordInput.getPasswordHash());
                     }
-                    // name change => remove user with old name
-                    if (!myUser.getName().equals(myUserNameInput.getText())) {
-                        MyTunesRss.CONFIG.removeUser(myUser.getName());
-                    }
-                } else {
-                    myUser = new User("");
-                    myUser.setPasswordHash(myPasswordInput.getPasswordHash());
+                    myUser.setName(myUserNameInput.getText());
+                    myUser.setRss(myPermRssInput.isSelected());
+                    myUser.setM3u(myPermM3uInput.isSelected());
+                    myUser.setDownload(myPermDownloadInput.isSelected());
+                    myUser.setUpload(myPermUploadInput.isSelected());
+                    myUser.setQuotaType((User.QuotaType)myQuotaTypeInput.getSelectedItem());
+                    myUser.setBytesQuota(MyTunesRssUtils.getTextFieldInteger(myBytesQuotaInput, 0) * MEGABYTE);
+                    myUser.setMaximumZipEntries(MyTunesRssUtils.getTextFieldInteger(myMaxZipEntriesInput, 0));
+                    MyTunesRss.CONFIG.addUser(myUser);
+                    myDialog.dispose();
                 }
-                myUser.setName(myUserNameInput.getText());
-                myUser.setRss(myPermRssInput.isSelected());
-                myUser.setM3u(myPermM3uInput.isSelected());
-                myUser.setDownload(myPermDownloadInput.isSelected());
-                myUser.setUpload(myPermUploadInput.isSelected());
-                myUser.setQuotaType((User.QuotaType)myQuotaTypeInput.getSelectedItem());
-                try {
-                    myUser.setBytesQuota(Long.parseLong(myBytesQuotaInput.getText()));
-                    myUser.setQuotaDownBytes(Math.min(myUser.getQuotaDownBytes(), myUser.getBytesQuota()));
-                } catch (NumberFormatException exception) {
-                    myUser.setBytesQuota(0);
-                }
-                try {
-                    myUser.setFileQuota(Integer.parseInt(myFileQuotaInput.getText()));
-                    myUser.setQuotaDownFiles(Math.min(myUser.getQuotaDownFiles(), myUser.getFileQuota()));
-                } catch (NumberFormatException exception) {
-                    myUser.setFileQuota(0);
-                }
-                try {
-                    myUser.setMaximumZipEntries(Integer.parseInt(myMaxZipEntriesInput.getText()));
-                } catch (NumberFormatException exception) {
-                    myUser.setMaximumZipEntries(0);
-                }
-                MyTunesRss.CONFIG.addUser(myUser);
-                myDialog.dispose();
             }
         }
     }

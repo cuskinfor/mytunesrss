@@ -39,6 +39,9 @@ public class Info {
         } else {
             myProxyPortInput.setText("");
         }
+        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput, MyTunesRss.BUNDLE.getString("error.emptyProxyHost")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myProxyPortInput, 1, 65535, false, MyTunesRss.BUNDLE.getString(
+                "error.illegalProxyPort")));
     }
 
     private void createUIComponents() {
@@ -66,25 +69,31 @@ public class Info {
         }
     }
 
-    public void updateConfigFromGui() {
-        MyTunesRss.CONFIG.setMyTunesRssComUser(myUsernameInput.getText());
-        if (myPasswordInput.getPasswordHash() != null) {
-            MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(myPasswordInput.getPasswordHash());
+    public String updateConfigFromGui() {
+        String messages = JTextFieldValidation.getAllValidationFailureMessage(myRootPanel);
+        if (messages != null) {
+            return messages;
+        } else {
+            MyTunesRss.CONFIG.setMyTunesRssComUser(myUsernameInput.getText());
+            if (myPasswordInput.getPasswordHash() != null) {
+                MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(myPasswordInput.getPasswordHash());
+            }
+            MyTunesRss.CONFIG.setProxyServer(myUseProxyInput.isSelected());
+            MyTunesRss.CONFIG.setProxyHost(myProxyHostInput.getText());
+            MyTunesRss.CONFIG.setProxyPort(MyTunesRssUtils.getTextFieldInteger(myProxyPortInput, -1));
         }
-        MyTunesRss.CONFIG.setProxyServer(myUseProxyInput.isSelected());
-        MyTunesRss.CONFIG.setProxyHost(myProxyHostInput.getText());
-        try {
-            MyTunesRss.CONFIG.setProxyPort(Integer.parseInt(myProxyPortInput.getText()));
-        } catch (NumberFormatException e1) {
-            MyTunesRss.CONFIG.setProxyPort(-1);
-        }
+        return null;
     }
 
     public class SupportContactActionListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent) {
-            updateConfigFromGui();
-            new SupportContact().display(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("dialog.supportRequest"), MyTunesRss.BUNDLE.getString(
-                    "settings.supportInfo"));
+            String messages = updateConfigFromGui();
+            if (messages == null) {
+                new SupportContact().display(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("dialog.supportRequest"), MyTunesRss.BUNDLE.getString(
+                        "settings.supportInfo"));
+            } else {
+                MyTunesRssUtils.showErrorMessage(messages);
+            }
         }
     }
 

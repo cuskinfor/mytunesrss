@@ -115,8 +115,13 @@ public class MyTunesRssUtils {
     private static final double GBYTE = 1024 * MBYTE;
     private static final NumberFormat BYTE_STREAMED_FORMAT = new DecimalFormat("0");
     private static final NumberFormat KBYTE_STREAMED_FORMAT = new DecimalFormat("0");
-    private static final NumberFormat MBYTE_STREAMED_FORMAT = new DecimalFormat("0.000");
-    private static final NumberFormat GBYTE_STREAMED_FORMAT = new DecimalFormat("0.000");
+    private static final DecimalFormat MBYTE_STREAMED_FORMAT = new DecimalFormat("0.###");
+    private static final DecimalFormat GBYTE_STREAMED_FORMAT = new DecimalFormat("0.###");
+
+    static {
+        MBYTE_STREAMED_FORMAT.setDecimalSeparatorAlwaysShown(false);
+        GBYTE_STREAMED_FORMAT.setDecimalSeparatorAlwaysShown(false);
+    }
 
     public static String getMemorySizeForDisplay(long bytes) {
         if (bytes > GBYTE) {
@@ -127,5 +132,13 @@ public class MyTunesRssUtils {
             return KBYTE_STREAMED_FORMAT.format(bytes / KBYTE) + " KB";
         }
         return BYTE_STREAMED_FORMAT.format(bytes) + " Byte";
+    }
+
+    public static int getTextFieldInteger(JTextField textField, int defaultValue) {
+        try {
+            return Integer.parseInt(textField.getText());
+        } catch (NumberFormatException exception) {
+            return defaultValue;
+        }
     }
 }
