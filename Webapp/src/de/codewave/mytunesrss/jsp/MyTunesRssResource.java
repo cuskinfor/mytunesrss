@@ -21,6 +21,7 @@ public enum MyTunesRssResource {
     TrackInfo("/track_info.jsp"),
     FatalError("/fatal_error.jsp"),
     ShowUpload("/upload.jsp"),
+    BrowseServers("/browse_servers.jsp"),
     DatabaseUpdating("/database_updating.jsp");
 
     private String myValue;
@@ -38,6 +39,9 @@ public enum MyTunesRssResource {
         if (this != EditPlaylist && (states == null || !Boolean.TRUE.equals(states.get("addToPlaylistMode")))) {
             request.getSession().removeAttribute("playlist");
             request.getSession().removeAttribute("playlistContent");
+        }
+        if (this != BrowseServers) {
+            request.getSession().removeAttribute("remoteServers");
         }
     }
 }

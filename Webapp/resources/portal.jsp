@@ -37,6 +37,9 @@
         <li><a href="${servletUrl}/showSettings">
             <fmt:message key="doSettings" />
         </a></li>
+        <li><a href="${servletUrl}/browseServers">
+            <fmt:message key="browseServers" />
+        </a></li>
         <li style="float:right"><a href="${servletUrl}/logout">
             <fmt:message key="doLogout" />
         </a></li>

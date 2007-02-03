@@ -13,6 +13,7 @@ import de.codewave.mytunesrss.settings.Settings;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.task.DeleteDatabaseTask;
 import de.codewave.mytunesrss.task.InitializeDatabaseTask;
+import de.codewave.mytunesrss.network.*;
 import de.codewave.utils.OperatingSystem;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
@@ -75,6 +76,7 @@ public class MyTunesRss {
     public static int OPTION_PANE_MAX_MESSAGE_LENGTH = 100;
     public static boolean HEADLESS;
     private static General GENERAL_FORM;
+    public static final String THREAD_PREFIX = "MyTunesRSS: ";
 
     static {
         try {
@@ -95,6 +97,7 @@ public class MyTunesRss {
 
     public static void main(final String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException,
         InstantiationException, ClassNotFoundException, IOException, SQLException {
+        new Thread(new MulticastService(), MyTunesRss.THREAD_PREFIX + "Multicast Server Discovery Listener").start();
         final Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
         HEADLESS = arguments.containsKey("headless");
         if (arguments.containsKey("debug")) {

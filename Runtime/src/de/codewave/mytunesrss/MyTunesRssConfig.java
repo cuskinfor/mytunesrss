@@ -25,6 +25,7 @@ public class MyTunesRssConfig {
     private static final String PREF_ROOT = "/de/codewave/mytunesrss30beta";
 
     private int myPort = 8080;
+    private String myServerName = "MyTunesRSS";
     private String myLibraryXml = "";
     private String myBaseDir = "";
     private boolean myCheckUpdateOnStart = true;
@@ -73,6 +74,16 @@ public class MyTunesRssConfig {
 
     public void setPort(int port) {
         myPort = port;
+    }
+
+    public String getServerName() {
+        return myServerName;
+    }
+
+    public void setServerName(String serverName) {
+        if (StringUtils.isNotEmpty(serverName)) {
+            myServerName = serverName;
+        }
     }
 
     public boolean isCheckUpdateOnStart() {
@@ -307,6 +318,7 @@ public class MyTunesRssConfig {
         } catch (BackingStoreException e) {
             // intentionally left blank
         }
+        setServerName(Preferences.userRoot().node(PREF_ROOT).get("serverName", getServerName()));
         setLibraryXml(Preferences.userRoot().node(PREF_ROOT).get("iTunesLibrary", getLibraryXml()));
         setCheckUpdateOnStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("checkUpdateOnStart", isCheckUpdateOnStart()));
         setAutoStartServer(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoStartServer", isAutoStartServer()));
@@ -370,6 +382,7 @@ public class MyTunesRssConfig {
         mySaveEnabled = JXPathUtils.getBooleanValue(context, "/mytunesrss/preferences/@save", false);
         // server
         setPort(JXPathUtils.getIntValue(context, "/mytunesrss/server/@port", getPort()));
+        setServerName(JXPathUtils.getStringValue(context, "/mytunesrss/server/@name", getServerName()));
         setAutoStartServer(JXPathUtils.getBooleanValue(context, "/mytunesrss/server/@autostart", isAutoStartServer()));
         // data sources
         setLibraryXml(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/itunesxml", getLibraryXml()));
@@ -417,6 +430,7 @@ public class MyTunesRssConfig {
         if (mySaveEnabled) {
             Preferences.userRoot().node(PREF_ROOT).put("version", MyTunesRss.VERSION);
             Preferences.userRoot().node(PREF_ROOT).putInt("serverPort", myPort);
+            Preferences.userRoot().node(PREF_ROOT).put("serverName", myServerName);
             Preferences.userRoot().node(PREF_ROOT).put("iTunesLibrary", myLibraryXml);
             Preferences.userRoot().node(PREF_ROOT).putBoolean("checkUpdateOnStart", myCheckUpdateOnStart);
             Preferences.userRoot().node(PREF_ROOT).putBoolean("autoStartServer", myAutoStartServer);

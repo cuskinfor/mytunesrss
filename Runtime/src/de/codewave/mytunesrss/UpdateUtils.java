@@ -152,7 +152,7 @@ public class UpdateUtils {
                   myUpdateInfo = NetworkUtils.getCurrentUpdateInfo(MyTunesRss.UPDATE_URL, MyTunesRss.BUNDLE.getLocale(), READ_TIMEOUT, proxy);
                     myDone = true;
                 }
-            }, "UpdateInfoGetter").start();
+            }, MyTunesRss.THREAD_PREFIX + "UpdateInfoGetter").start();
             while (!myDone && !myCancelled) {
                 setPercentage((int)Math.min(((System.currentTimeMillis() - startTime) * 100) / READ_TIMEOUT, 100));
                 try {

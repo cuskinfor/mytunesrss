@@ -43,6 +43,7 @@ public class General {
     private JButton myUpdateDatabaseButton;
     private JCheckBox myUpdateDatabaseOnServerStart;
     private JPanel myServerPanel;
+    private JTextField myServerNameInput;
     private boolean myUpdateOnStartInputCache;
 
     public void init() {
@@ -72,6 +73,7 @@ public class General {
         SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, MyTunesRss.CONFIG.isAutoUpdateDatabase());
         myServerInfoButton.addActionListener(new ServerInfoButtonListener());
         myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
+        myServerNameInput.setText(MyTunesRss.CONFIG.getServerName());
         setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
     }
 
@@ -121,6 +123,7 @@ public class General {
         MyTunesRss.CONFIG.setAutoUpdateDatabase(myAutoUpdateDatabaseInput.isSelected());
         MyTunesRss.CONFIG.setAutoUpdateDatabaseInterval((Integer)myAutoUpdateDatabaseIntervalInput.getValue());
         MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestampsInput.isSelected());
+        MyTunesRss.CONFIG.setServerName(myServerNameInput.getText());
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -135,6 +138,7 @@ public class General {
                 myIgnoreTimestampsInput.setEnabled(false);
                 myDeleteDatabaseButton.setEnabled(false);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, false);
+                SwingUtils.enableElementAndLabel(myServerNameInput, false);
                 break;
             case ServerIdle:
                 SwingUtils.enableElementAndLabel(myPortInput, true);
@@ -146,6 +150,7 @@ public class General {
                 myIgnoreTimestampsInput.setEnabled(true);
                 myDeleteDatabaseButton.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
+                SwingUtils.enableElementAndLabel(myServerNameInput, true);
                 break;
         }
     }

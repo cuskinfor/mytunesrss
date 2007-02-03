@@ -54,12 +54,12 @@ public class ServerInfo {
             public void run() {
                 fetchLocalAddresses();
             }
-        }, "FetchLocalAddresses").start();
+        }, MyTunesRss.THREAD_PREFIX + "FetchLocalAddresses").start();
         new Thread(new Runnable() {
             public void run() {
                 fetchExternalAddress();
             }
-        }, "FetchExternalAddress").start();
+        }, MyTunesRss.THREAD_PREFIX + "FetchExternalAddress").start();
     }
 
     private void init() {
