@@ -4,46 +4,31 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
-import de.codewave.mytunesrss.server.WebServer;
-import de.codewave.mytunesrss.settings.General;
-import de.codewave.mytunesrss.settings.GuiDatabaseBuilderTask;
-import de.codewave.mytunesrss.settings.GuiMode;
-import de.codewave.mytunesrss.settings.Settings;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
-import de.codewave.mytunesrss.task.DeleteDatabaseTask;
-import de.codewave.mytunesrss.task.InitializeDatabaseTask;
+import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.network.*;
-import de.codewave.utils.OperatingSystem;
-import de.codewave.utils.PrefsUtils;
-import de.codewave.utils.ProgramUtils;
-import de.codewave.utils.moduleinfo.ModuleInfo;
-import de.codewave.utils.moduleinfo.ModuleInfoUtils;
-import de.codewave.utils.swing.SwingUtils;
-import org.apache.catalina.LifecycleException;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import snoozesoft.systray4j.SysTrayMenu;
+import de.codewave.mytunesrss.server.*;
+import de.codewave.mytunesrss.settings.*;
+import de.codewave.mytunesrss.task.*;
+import de.codewave.utils.*;
+import de.codewave.utils.moduleinfo.*;
+import de.codewave.utils.swing.*;
+import org.apache.catalina.*;
+import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
+import org.apache.log4j.*;
+import snoozesoft.systray4j.*;
 
-import javax.imageio.ImageIO;
+import javax.imageio.*;
 import javax.swing.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
+import java.awt.event.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.net.*;
+import java.security.*;
+import java.sql.*;
 import java.util.*;
 import java.util.Timer;
-import java.util.prefs.Preferences;
+import java.util.prefs.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -96,8 +81,7 @@ public class MyTunesRss {
     }
 
     public static void main(final String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException,
-        InstantiationException, ClassNotFoundException, IOException, SQLException {
-        new Thread(new MulticastService(), MyTunesRss.THREAD_PREFIX + "Multicast Server Discovery Listener").start();
+            InstantiationException, ClassNotFoundException, IOException, SQLException {
         final Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
         HEADLESS = arguments.containsKey("headless");
         if (arguments.containsKey("debug")) {
@@ -205,7 +189,7 @@ public class MyTunesRss {
     }
 
     private static void executeGuiMode() throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
-        ClassNotFoundException, IOException, InterruptedException {
+            ClassNotFoundException, IOException, InterruptedException {
         showNewVersionInfo();
         final Settings settings = new Settings();
         GENERAL_FORM = settings.getGeneralForm();
@@ -272,35 +256,41 @@ public class MyTunesRss {
     }
 
     public static void startWebserver() {
-      if (MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart()) {
-        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.buildDatabase"), null, false, MyTunesRss.createDatabaseBuilderTask());
-      }
-      MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.serverstarting"), null, false, new MyTunesRssTask() {
+        if (MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart()) {
+            MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.buildDatabase"), null, false, MyTunesRss.createDatabaseBuilderTask());
+        }
+        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.serverstarting"), null, false, new MyTunesRssTask() {
             public void execute() throws Exception {
                 WEBSERVER.start();
             }
         });
         if (WEBSERVER.isRunning()) {
             if (CONFIG.isAutoUpdateDatabase()) {
-                DatabaseWatchdogTask databaseWatchdogTask = new DatabaseWatchdogTask(SERVER_RUNNING_TIMER,
-                                                                                     CONFIG.getAutoUpdateDatabaseInterval());
+                DatabaseWatchdogTask databaseWatchdogTask = new DatabaseWatchdogTask(SERVER_RUNNING_TIMER, CONFIG.getAutoUpdateDatabaseInterval());
                 SERVER_RUNNING_TIMER.schedule(databaseWatchdogTask, 60000 * CONFIG.getAutoUpdateDatabaseInterval());
             }
-            if (StringUtils.isNotEmpty(CONFIG.getMyTunesRssComUser()) && CONFIG.getMyTunesRssComPasswordHash() != null && CONFIG.getMyTunesRssComPasswordHash().length > 0) {
-                MyTunesRssComUpdateTask myTunesRssComUpdater = new MyTunesRssComUpdateTask(SERVER_RUNNING_TIMER, 60000, CONFIG.getMyTunesRssComUser(), CONFIG.getMyTunesRssComPasswordHash());
+            if (StringUtils.isNotEmpty(CONFIG.getMyTunesRssComUser()) && CONFIG.getMyTunesRssComPasswordHash() != null &&
+                    CONFIG.getMyTunesRssComPasswordHash().length > 0) {
+                MyTunesRssComUpdateTask myTunesRssComUpdater = new MyTunesRssComUpdateTask(SERVER_RUNNING_TIMER,
+                                                                                           60000,
+                                                                                           CONFIG.getMyTunesRssComUser(),
+                                                                                           CONFIG.getMyTunesRssComPasswordHash());
                 SERVER_RUNNING_TIMER.schedule(myTunesRssComUpdater, 0);
+            }
+            if (MyTunesRss.CONFIG.isAvailableOnLocalNet()) {
+                MulticastService.startListener();
             }
         }
     }
 
-  public static void stopWebserver() {
-    MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.serverstopping"), null, false, new MyTunesRssTask() {
-        public void execute() throws Exception {
-            MyTunesRss.WEBSERVER.stop();
-        }
-    });
-
-  }
+    public static void stopWebserver() {
+        MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.serverstopping"), null, false, new MyTunesRssTask() {
+            public void execute() throws Exception {
+                MyTunesRss.WEBSERVER.stop();
+            }
+        });
+        MulticastService.stopListener();
+    }
 
     private static void loadConfiguration(Map<String, String[]> arguments) throws MalformedURLException {
         if (arguments.containsKey("config")) {

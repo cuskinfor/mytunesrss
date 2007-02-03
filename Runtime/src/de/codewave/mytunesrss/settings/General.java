@@ -5,12 +5,14 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.network.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.swing.*;
 import org.apache.commons.logging.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.sql.*;
@@ -44,6 +46,7 @@ public class General {
     private JCheckBox myUpdateDatabaseOnServerStart;
     private JPanel myServerPanel;
     private JTextField myServerNameInput;
+    private JCheckBox myAvailableOnLocalNetInput;
     private boolean myUpdateOnStartInputCache;
 
     public void init() {
@@ -74,7 +77,21 @@ public class General {
         myServerInfoButton.addActionListener(new ServerInfoButtonListener());
         myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
         myServerNameInput.setText(MyTunesRss.CONFIG.getServerName());
+        myAvailableOnLocalNetInput.setSelected(MyTunesRss.CONFIG.isAvailableOnLocalNet());
+        SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected());
         setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
+        myAvailableOnLocalNetInput.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                if (MyTunesRss.WEBSERVER.isRunning()) {
+                    if (myAvailableOnLocalNetInput.isSelected()) {
+                        MulticastService.startListener();
+                    } else  {
+                        MulticastService.stopListener();
+                    }
+                }
+                SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected() && !MyTunesRss.WEBSERVER.isRunning());
+            }
+        });
     }
 
     public Dimension getContentDimension() {
@@ -124,6 +141,7 @@ public class General {
         MyTunesRss.CONFIG.setAutoUpdateDatabaseInterval((Integer)myAutoUpdateDatabaseIntervalInput.getValue());
         MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestampsInput.isSelected());
         MyTunesRss.CONFIG.setServerName(myServerNameInput.getText());
+        MyTunesRss.CONFIG.setAvailableOnLocalNet(myAvailableOnLocalNetInput.isSelected());
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -150,7 +168,7 @@ public class General {
                 myIgnoreTimestampsInput.setEnabled(true);
                 myDeleteDatabaseButton.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
-                SwingUtils.enableElementAndLabel(myServerNameInput, true);
+                SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected());
                 break;
         }
     }

@@ -26,6 +26,7 @@ public class MyTunesRssConfig {
 
     private int myPort = 8080;
     private String myServerName = "MyTunesRSS";
+    private boolean myAvailableOnLocalNet = true;
     private String myLibraryXml = "";
     private String myBaseDir = "";
     private boolean myCheckUpdateOnStart = true;
@@ -84,6 +85,14 @@ public class MyTunesRssConfig {
         if (StringUtils.isNotEmpty(serverName)) {
             myServerName = serverName;
         }
+    }
+
+    public boolean isAvailableOnLocalNet() {
+        return myAvailableOnLocalNet;
+    }
+
+    public void setAvailableOnLocalNet(boolean availableOnLocalNet) {
+        myAvailableOnLocalNet = availableOnLocalNet;
     }
 
     public boolean isCheckUpdateOnStart() {
@@ -319,6 +328,7 @@ public class MyTunesRssConfig {
             // intentionally left blank
         }
         setServerName(Preferences.userRoot().node(PREF_ROOT).get("serverName", getServerName()));
+        setAvailableOnLocalNet(Preferences.userRoot().node(PREF_ROOT).getBoolean("availableOnLocalNet", isAvailableOnLocalNet()));
         setLibraryXml(Preferences.userRoot().node(PREF_ROOT).get("iTunesLibrary", getLibraryXml()));
         setCheckUpdateOnStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("checkUpdateOnStart", isCheckUpdateOnStart()));
         setAutoStartServer(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoStartServer", isAutoStartServer()));
@@ -383,6 +393,7 @@ public class MyTunesRssConfig {
         // server
         setPort(JXPathUtils.getIntValue(context, "/mytunesrss/server/@port", getPort()));
         setServerName(JXPathUtils.getStringValue(context, "/mytunesrss/server/@name", getServerName()));
+        setAvailableOnLocalNet((JXPathUtils.getBooleanValue(context, "/mytunesrss/server/@availableonlocalnet", isAvailableOnLocalNet())));
         setAutoStartServer(JXPathUtils.getBooleanValue(context, "/mytunesrss/server/@autostart", isAutoStartServer()));
         // data sources
         setLibraryXml(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/itunesxml", getLibraryXml()));
@@ -431,6 +442,7 @@ public class MyTunesRssConfig {
             Preferences.userRoot().node(PREF_ROOT).put("version", MyTunesRss.VERSION);
             Preferences.userRoot().node(PREF_ROOT).putInt("serverPort", myPort);
             Preferences.userRoot().node(PREF_ROOT).put("serverName", myServerName);
+            Preferences.userRoot().node(PREF_ROOT).putBoolean("availableOnLocalNet", myAvailableOnLocalNet);
             Preferences.userRoot().node(PREF_ROOT).put("iTunesLibrary", myLibraryXml);
             Preferences.userRoot().node(PREF_ROOT).putBoolean("checkUpdateOnStart", myCheckUpdateOnStart);
             Preferences.userRoot().node(PREF_ROOT).putBoolean("autoStartServer", myAutoStartServer);

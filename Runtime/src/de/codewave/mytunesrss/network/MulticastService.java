@@ -4,23 +4,51 @@
 
 package de.codewave.mytunesrss.network;
 
+import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import de.codewave.mytunesrss.*;
-
 /**
  * de.codewave.mytunesrss.network.MulticastService
  */
-public class MulticastService implements Runnable {
+public class MulticastService extends Thread {
     private static final Log LOG = LogFactory.getLog(MulticastService.class);
 
-    private static final String QUERY = "mtr-qs";
+    private static final String QUERY = "mtrqs";
     private static final String MULTICAST_IP = "225.24.2.72";
-    private static final int MULTICAST_PORT = 24272;
+    private static final int MULTICAST_PORT = 8072;
+    private static MulticastService THREAD;
+
+    private boolean myStopRequested;
+
+
+    public MulticastService() {
+        super(MyTunesRss.THREAD_PREFIX + "Multicast Server Discovery Listener");
+    }
+
+    public static synchronized void startListener() {
+        if (THREAD == null) {
+            THREAD = new MulticastService();
+            THREAD.start();
+        }
+    }
+
+    public static synchronized void stopListener() {
+        if (THREAD != null) {
+            THREAD.myStopRequested = true;
+            while (THREAD.isAlive()) {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    // intentionally left blank
+                }
+            }
+            THREAD = null;
+        }
+    }
 
     public static List<RemoteServer> getOtherInstances() {
         List<RemoteServer> otherInstances = new ArrayList<RemoteServer>();
@@ -29,23 +57,29 @@ public class MulticastService implements Runnable {
             socket = new MulticastSocket();
             byte[] buffer = QUERY.getBytes("UTF-8");
             DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(MULTICAST_IP), MULTICAST_PORT);
-            //socket.setLoopbackMode(true);
-            socket.send(sendPacket);
-            try {
-                socket.setSoTimeout(3000);
-                buffer = new byte[1024];
-                DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
-                while (true) {
-                    socket.receive(receivePacket);
-                    String answer = new String(receivePacket.getData(), 0, receivePacket.getLength(), "UTF-8");
-                    String name = answer.substring(answer.indexOf(':') + 1);
-                    int port = Integer.parseInt(answer.substring(0, answer.indexOf(':')));
-                    String address = receivePacket.getAddress().getHostName();
-                    otherInstances.add(new RemoteServer(name, address, port));
+            socket.setLoopbackMode(true);
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            if (interfaces != null) {
+                while (interfaces.hasMoreElements()) {
+                    socket.setNetworkInterface(interfaces.nextElement());
+                    socket.send(sendPacket);
                 }
-            } catch (SocketTimeoutException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("No more remote servers found.", e);
+                try {
+                    socket.setSoTimeout(2000);
+                    buffer = new byte[1024];
+                    DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+                    while (true) {
+                        socket.receive(receivePacket);
+                        String answer = new String(receivePacket.getData(), 0, receivePacket.getLength(), "UTF-8");
+                        String name = answer.substring(answer.indexOf(':') + 1);
+                        int port = Integer.parseInt(answer.substring(0, answer.indexOf(':')));
+                        String address = receivePacket.getAddress().getHostName();
+                        otherInstances.add(new RemoteServer(name, address, port));
+                    }
+                } catch (SocketTimeoutException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("No more remote servers found.", e);
+                    }
                 }
             }
         } catch (IOException e) {
@@ -64,9 +98,10 @@ public class MulticastService implements Runnable {
         MulticastSocket socket = null;
         try {
             socket = new MulticastSocket(MULTICAST_PORT);
+            socket.setSoTimeout(1000);
             socket.joinGroup(InetAddress.getByName(MULTICAST_IP));
             byte[] buffer = new byte[1024];
-            while (true) {
+            while (!myStopRequested) {
                 try {
                     DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
                     socket.receive(receivePacket);
