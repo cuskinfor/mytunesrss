@@ -104,8 +104,16 @@
                             </c:if>
                             <c:if test="${authUser.download && config.showDownload}">
                                 <td class="icon">
-                                    <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(cwfn:encode64(artist.name))}/${mtfn:virtualArtistName(artist)}.zip">
-                                        <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
+                                    <c:choose>
+                                        <c:when test="${authUser.maximumZipEntries <= 0 || artist.trackCount <= authUser.maximumZipEntries}">
+                                            <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(cwfn:encode64(artist.name))}/${mtfn:virtualArtistName(artist)}.zip">
+                                                <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <a href="#" onclick="alert('<fmt:message key="error.zipLimit"/>')">
+                                                <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </td>
                             </c:if>
                         </c:when>
