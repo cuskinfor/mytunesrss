@@ -30,6 +30,8 @@ public class CreateAllTablesStatement implements DataStoreStatement {
         connection.createStatement().execute(
                 "CREATE CACHED TABLE artist ( name VARCHAR_IGNORECASE(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, album_count INTEGER )");
         connection.createStatement().execute(
+                "CREATE CACHED TABLE genre ( name VARCHAR_IGNORECASE(255) NOT NULL, first_char VARCHAR(1), track_count INTEGER, album_count INTEGER, artist_count INTEGER )");
+        connection.createStatement().execute(
                 "CREATE CACHED TABLE pager ( type VARCHAR(20) NOT NULL, index INTEGER NOT NULL, condition VARCHAR(255) NOT NULL, value VARCHAR(255) NOT NULL, content_count INTEGER NOT NULL, UNIQUE ( type, index ) )");
 
         connection.createStatement().execute("CREATE INDEX idx_track_name ON track ( name )");
@@ -39,6 +41,7 @@ public class CreateAllTablesStatement implements DataStoreStatement {
         connection.createStatement().execute("CREATE INDEX idx_album_first ON album ( first_char )");
         connection.createStatement().execute("CREATE INDEX idx_album_artist ON album ( artist )");
         connection.createStatement().execute("CREATE INDEX idx_artist_first ON artist ( first_char )");
+        connection.createStatement().execute("CREATE INDEX idx_genre_first ON genre ( first_char )");
         connection.createStatement().execute("CREATE INDEX idx_playlist_id ON playlist ( id )");
 
         connection.createStatement().execute("CREATE SEQUENCE playlist_id_sequence");

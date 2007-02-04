@@ -10,7 +10,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?playlist=${cwfn:encodeUrl(param.playlist)}&amp;fullAlbums=${param.fullAlbums}&amp;album=${cwfn:encodeUrl(param.album)}&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;searchTerm=${cwfn:encodeUrl(param.searchTerm)}&amp;index=${param.index}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}&amp;sortOrder=${sortOrder}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?playlist=${cwfn:encodeUrl(param.playlist)}&amp;fullAlbums=${param.fullAlbums}&amp;album=${cwfn:encodeUrl(param.album)}&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;genre=${cwfn:encodeUrl(param.genre)}&amp;searchTerm=${cwfn:encodeUrl(param.searchTerm)}&amp;index=${param.index}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}&amp;sortOrder=${sortOrder}</c:set>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -63,6 +63,7 @@
 <input type="hidden" name="searchTerm" value="${param.searchTerm}" />
 <input type="hidden" name="album" value="${param.album}" />
 <input type="hidden" name="artist" value="${param.artist}" />
+<input type="hidden" name="genre" value="${param.genre}" />
 <input type="hidden" name="playlist" value="${param.playlist}" />
 <input type="hidden" name="backUrl" value="${param.backUrl}" />
 <input type="hidden" name="fullAlbums" value="${param.fullAlbums}" />

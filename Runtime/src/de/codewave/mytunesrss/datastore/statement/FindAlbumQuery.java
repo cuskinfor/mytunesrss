@@ -14,16 +14,31 @@ import java.util.*;
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
  */
 public class FindAlbumQuery extends DataStoreQuery<Collection<Album>> {
+    public static FindAlbumQuery getForGenre(String genre) {
+        FindAlbumQuery query = new FindAlbumQuery();
+        query.myGenre = genre;
+        return query;
+    }
+
+    public static FindAlbumQuery getForArtist(String artist) {
+        FindAlbumQuery query = new FindAlbumQuery();
+        query.myArtist = artist;
+        return query;
+    }
+
+    public static FindAlbumQuery getForPagerIndex(int index) {
+        FindAlbumQuery query = new FindAlbumQuery();
+        query.myIndex = index;
+        return query;
+    }
+
     private String myArtist;
+    private String myGenre;
     private int myIndex = -1;
     private AlbumResultBuilder myBuilder = new AlbumResultBuilder();
 
-    public FindAlbumQuery(String artist) {
-        myArtist = artist;
-    }
-
-    public FindAlbumQuery(int index) {
-        myIndex = index;
+    private FindAlbumQuery() {
+        // intentionally left blank
     }
 
     public Collection<Album> execute(Connection connection) throws SQLException {
@@ -32,6 +47,10 @@ public class FindAlbumQuery extends DataStoreQuery<Collection<Album>> {
             statement = connection.prepareStatement(
                     "SELECT name, track_count, artist_count, artist FROM album WHERE name IN ( SELECT DISTINCT(album) FROM track WHERE artist = ? ) ORDER BY name");
             return execute(statement, myBuilder, myArtist);
+        } else if (StringUtils.isNotEmpty(myGenre)) {
+            statement = connection.prepareStatement(
+                    "SELECT name, track_count, artist_count, artist FROM album WHERE name IN ( SELECT DISTINCT(album) FROM track WHERE genre = ? ) ORDER BY name");
+            return execute(statement, myBuilder, myGenre);
         } else if (myIndex > -1) {
             ResultSet resultSet = connection.createStatement().executeQuery(
                     "SELECT condition AS condition FROM pager WHERE type = '" + InsertPageStatement.PagerType.Album + "' AND index = " + myIndex);

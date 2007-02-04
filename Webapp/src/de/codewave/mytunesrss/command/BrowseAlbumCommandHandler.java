@@ -21,16 +21,16 @@ import java.util.*;
 public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws IOException, ServletException, SQLException {
         String artist = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("artist"));
+        String genre = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("genre"));
         String page = getRequest().getParameter("page");
-        List<Pager.Page> albumPages = (List<Pager.Page>)getDataStore().executeQuery(new FindPagesQuery(InsertPageStatement.PagerType.Album));
-        if (albumPages != null) {
-            getRequest().setAttribute("albumPager", new Pager(albumPages, albumPages.size()));
-        }
+        getRequest().setAttribute("albumPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
         Collection<Album> albums;
         if (StringUtils.isNotEmpty(page)) {
-            albums = getDataStore().executeQuery(new FindAlbumQuery(Integer.parseInt(page)));
+            albums = getDataStore().executeQuery(FindAlbumQuery.getForPagerIndex(Integer.parseInt(page)));
+        } else if (StringUtils.isNotEmpty(artist)) {
+            albums = getDataStore().executeQuery(FindAlbumQuery.getForArtist(artist));
         } else {
-            albums = getDataStore().executeQuery(new FindAlbumQuery(artist));
+            albums = getDataStore().executeQuery(FindAlbumQuery.getForGenre(genre));
         }
         int pageSize = getWebConfig().getEffectivePageSize();
         if (pageSize > 0 && albums.size() > pageSize) {
@@ -40,7 +40,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
             albums = ((List<Album>)albums).subList(current * pageSize, Math.min((current * pageSize) + pageSize, albums.size()));
         }
         getRequest().setAttribute("albums", albums);
-        Boolean singleArtist = Boolean.valueOf(StringUtils.isNotEmpty(artist));
+        Boolean singleArtist = Boolean.valueOf(StringUtils.isNotEmpty(artist) || StringUtils.isNotEmpty(genre));
         getRequest().setAttribute("singleArtist", singleArtist);
         if (singleArtist) {
             int singleArtistTrackCount = 0;

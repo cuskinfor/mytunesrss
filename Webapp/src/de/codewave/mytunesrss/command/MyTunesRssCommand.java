@@ -37,6 +37,7 @@ public enum MyTunesRssCommand implements Command {
     PlayTrack("playTrack", PlayTrackCommandHandler.class),
     ShowUpload("showUpload", ShowUploadCommandHandler.class),
     BrowseServers("browseServers", BrowseServersCommandHandler.class),
+    BrowseGenre("browseGenre", BrowseGenreCommandHandler.class),
     Upload("upload", UploadCommandHandler.class);
 
     private String myName;

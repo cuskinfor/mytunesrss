@@ -8,7 +8,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(param.artist)}&amp;page=${param.page}&amp;index=${param.index}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(param.artist)}&amp;genre=${cwfn:encodeUrl(param.genre)}&amp;page=${param.page}&amp;index=${param.index}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -38,7 +38,10 @@
 
 <ul class="links">
     <li>
-        <a href="${servletUrl}/browseArtist?page=${cwfn:choose(empty param.page && empty param.artist, '', '1')}"><fmt:message key="browseArtist"/></a>
+        <a href="${servletUrl}/browseArtist?page=${cwfn:choose(empty param.artist, param.page, '1')}"><fmt:message key="browseArtist"/></a>
+    </li>
+    <li>
+        <a href="${servletUrl}/browseGenre?page=${param.page}"><fmt:message key="browseGenres"/></a>
     </li>
     <c:if test="${empty sessionScope.playlist}">
         <li>
@@ -51,7 +54,7 @@
 
 <c:set var="pager" scope="request" value="${albumPager}" />
 <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseAlbum?page={index}" />
-<c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.artist, '*', param.page)}" />
+<c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.artist || !empty param.genre, '*', param.page)}" />
 <jsp:include page="incl_pager.jsp" />
 
 <form id="browse" action="" method="post">
@@ -68,6 +71,7 @@
             <th class="active">
                 <fmt:message key="albums"/>
                 <c:if test="${!empty param.artist}"> <fmt:message key="with"/> "${cwfn:decode64(param.artist)}"</c:if>
+                <c:if test="${!empty param.genre}"> <fmt:message key="in"/> "${cwfn:decode64(param.genre)}"</c:if>
             </th>
             <th><fmt:message key="artist"/></th>
             <th colspan="${cwfn:choose(config.showDownload, 2, 1) + config.feedTypeCount}"><fmt:message key="tracks"/></th>
@@ -149,20 +153,20 @@
                 </c:if>
                 <td colspan="2"><em><fmt:message key="allTracksOfAboveAlbums"/></em></td>
                 <td class="tracks">
-                    <a href="${servletUrl}/browseTrack?fullAlbums=true&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">${singleArtistTrackCount}</a>
+                    <a href="${servletUrl}/browseTrack?fullAlbums=true&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;genre=${cwfn:encodeUrl(param.genre)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">${singleArtistTrackCount}</a>
                 </td>
                 <c:choose>
                     <c:when test="${empty sessionScope.playlist}">
                         <c:if test="${authUser.rss && config.showRss}">
                             <td class="icon">
-                                <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/${mtfn:webSafeFileName(cwfn:decode64(param.artist))}.xml">
+                                <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/${mtfn:webSafeFileName(cwfn:decode64(param.artist))}.xml">
                                     <img src="${appUrl}/images/rss${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
                                          alt="rss" /> </a>
                             </td>
                         </c:if>
                         <c:if test="${authUser.m3u && config.showM3u}">
                             <td class="icon">
-                                <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/${mtfn:webSafeFileName(cwfn:decode64(param.artist))}.m3u">
+                                <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/${mtfn:webSafeFileName(cwfn:decode64(param.artist))}.m3u">
                                     <img src="${appUrl}/images/m3u${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
                                          alt="m3u" /> </a>
                             </td>
@@ -171,7 +175,7 @@
                             <td class="icon">
                                 <c:choose>
                                     <c:when test="${authUser.maximumZipEntries <= 0 || singleArtistTrackCount.trackCount <= authUser.maximumZipEntries}">
-                                        <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(param.artist)}/${mtfn:webSafeFileName(cwfn:decode64(param.artist))}.zip">
+                                        <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/${mtfn:webSafeFileName(cwfn:decode64(param.artist))}.zip">
                                             <img src="${appUrl}/images/download${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                                     </c:when>
                                     <c:otherwise>
@@ -184,7 +188,7 @@
                     </c:when>
                     <c:otherwise>
                         <td class="icon">
-                            <a href="${servletUrl}/addToPlaylist?fullAlbums=true&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
+                            <a href="${servletUrl}/addToPlaylist?fullAlbums=true&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;genre=${cwfn:encodeUrl(param.genre)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
                                 <img src="${appUrl}/images/add${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                         </td>
                     </c:otherwise>
@@ -195,7 +199,7 @@
 
     <c:if test="${!empty indexPager}">
         <c:set var="pager" scope="request" value="${indexPager}" />
-        <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseAlbum?page=${param.page}&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;index={index}" />
+        <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseAlbum?page=${param.page}&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;genre=${cwfn:encodeUrl(param.genre)}&amp;index={index}" />
         <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
         <jsp:include page="incl_bottomPager.jsp" />
     </c:if>

@@ -21,16 +21,16 @@ import java.util.*;
 public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws SQLException, IOException, ServletException {
         String album = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("album"));
+        String genre = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("genre"));
         String page = getRequest().getParameter("page");
-        List<Pager.Page> artistPages = (List<Pager.Page>)getDataStore().executeQuery(new FindPagesQuery(InsertPageStatement.PagerType.Artist));
-        if (artistPages != null) {
-            getRequest().setAttribute("artistPager", new Pager(artistPages, artistPages.size()));
-        }
+        getRequest().setAttribute("artistPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
         Collection<Artist> artists;
         if (StringUtils.isNotEmpty(page)) {
-            artists = getDataStore().executeQuery(new FindArtistQuery(Integer.parseInt(page)));
+            artists = getDataStore().executeQuery(FindArtistQuery.getForPagerIndex(Integer.parseInt(page)));
+        } else if (StringUtils.isNotEmpty(album)) {
+            artists = getDataStore().executeQuery(FindArtistQuery.getForAlbum(album));
         } else {
-            artists = getDataStore().executeQuery(new FindArtistQuery(album));
+            artists = getDataStore().executeQuery(FindArtistQuery.getForGenre(genre));
         }
         int pageSize = getWebConfig().getEffectivePageSize();
         if (pageSize > 0 && artists.size() > pageSize) {

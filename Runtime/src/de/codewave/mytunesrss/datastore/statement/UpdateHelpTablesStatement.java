@@ -26,5 +26,7 @@ public class UpdateHelpTablesStatement implements DataStoreStatement {
             statement.setString(2, mapping.getKey());
             statement.execute();
         }
+        connection.createStatement().execute(
+                "INSERT INTO genre SELECT DISTINCT(genre), LOWER(SUBSTR(genre, 1, 1)), COUNT(id), COUNT(DISTINCT(album)), COUNT(DISTINCT(artist)) FROM track WHERE genre IS NOT NULL GROUP BY genre");
     }
 }

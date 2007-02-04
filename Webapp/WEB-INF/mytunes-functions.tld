@@ -73,6 +73,18 @@
 
     <function>
         <description>
+            Create a virtual name from a genre.
+        </description>
+        <name>virtualGenreName</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String virtualGenreName(de.codewave.mytunesrss.datastore.statement.Genre)</function-signature>
+        <example>
+            &lt;c:out value="${mtfn:virtualGenreName(genre)}"/&gt;
+        </example>
+    </function>
+
+    <function>
+        <description>
             Get the suffix for the file of a track.
         </description>
         <name>suffix</name>

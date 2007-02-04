@@ -266,6 +266,10 @@ td.tracks {
     width: 45px;
 }
 
+td.genreartist {
+    width: 55px;
+}
+
 td.playlistTracks {
     width: 45px;
     padding: 0 0 0 28px;
@@ -282,13 +286,19 @@ td.album a {
     background: url( "../images/albums.gif" ) 0 0 no-repeat;
 }
 
+td.genreartist a {
+    display: block;
+    padding: 0 0 2px 20px;
+    background: url( "../images/artists.gif" ) 0 0 no-repeat;
+}
+
 td.tracks a {
     display: block;
     padding: 0 0 2px 20px;
     background: url( "../images/tracks.gif" ) 0 0 no-repeat;
 }
 
-tr.odd td.album a, tr.odd td.tracks a {
+tr.odd td.album a, tr.odd td.genreartist a, tr.odd td.tracks a {
     background-position: 0 -84px;
 }
 

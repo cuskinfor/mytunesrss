@@ -37,7 +37,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             query = FindTrackQuery.getForAlbum(new String[] {album}, sortOrderValue == SortOrder.Artist);
         } else if (StringUtils.isNotEmpty(artist)) {
             if (getBooleanRequestParameter("fullAlbums", false)) {
-                Collection<Album> albumsWithArtist = getDataStore().executeQuery(new FindAlbumQuery(artist));
+                Collection<Album> albumsWithArtist = getDataStore().executeQuery(FindAlbumQuery.getForArtist(artist));
                 List<String> albumNames = new ArrayList<String>();
                 for (Album albumWithArtist : albumsWithArtist) {
                     albumNames.add(albumWithArtist.getName());

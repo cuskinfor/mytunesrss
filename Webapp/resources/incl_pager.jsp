@@ -12,7 +12,8 @@
         <c:forEach items="${pager.currentPages}" var="page">
             <td>
                 <c:choose>
-                    <c:when test="${page.userData > 0}">
+                    <%-- <c:when test="${page.userData > 0}"> --%>
+                    <c:when test="${true}">
                         <a href="${cwfn:choose(pagerCurrent == page.key, '#', mtfn:replace(pagerCommand, '{index}', page.key))}"
                                 <c:if test="${pagerCurrent == page.key}">class="active"</c:if>>
                             <c:out value="${page.value}" />

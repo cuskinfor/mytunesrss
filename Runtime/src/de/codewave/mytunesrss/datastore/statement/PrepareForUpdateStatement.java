@@ -17,6 +17,7 @@ public class PrepareForUpdateStatement implements DataStoreStatement {
         connection.createStatement().execute("DELETE FROM playlist WHERE type = '" + PlaylistType.M3uFile + "'");
         connection.createStatement().execute("DELETE FROM album");
         connection.createStatement().execute("DELETE FROM artist");
+        connection.createStatement().execute("DELETE FROM genre");
         connection.createStatement().execute("DELETE FROM pager");
     }
 }

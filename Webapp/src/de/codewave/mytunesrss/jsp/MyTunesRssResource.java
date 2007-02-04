@@ -22,7 +22,8 @@ public enum MyTunesRssResource {
     FatalError("/fatal_error.jsp"),
     ShowUpload("/upload.jsp"),
     BrowseServers("/browse_servers.jsp"),
-    DatabaseUpdating("/database_updating.jsp");
+    DatabaseUpdating("/database_updating.jsp"),
+    BrowseGenre("/browse_genre.jsp");
 
     private String myValue;
 

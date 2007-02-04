@@ -77,9 +77,7 @@ public class MulticastService extends Thread {
                         otherInstances.add(new RemoteServer(name, address, port));
                     }
                 } catch (SocketTimeoutException e) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("No more remote servers found.", e);
-                    }
+                    // intentionally left blank
                 }
             }
         } catch (IOException e) {
@@ -111,6 +109,8 @@ public class MulticastService extends Thread {
                         DatagramPacket sendPacket = new DatagramPacket(answer, answer.length, receivePacket.getAddress(), receivePacket.getPort());
                         socket.send(sendPacket);
                     }
+                } catch (SocketTimeoutException e) {
+                    // intentionally left blank
                 } catch (IOException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not send multicas answer.", e);

@@ -63,6 +63,10 @@ public class MyTunesFunctions {
         return webSafeFileName(artist.getName());
     }
 
+    public static String virtualGenreName(Genre genre) {
+        return webSafeFileName(genre.getName());
+    }
+
     public static String suffix(Track track) {
         return IOUtils.getSuffix(track.getFile());
     }
