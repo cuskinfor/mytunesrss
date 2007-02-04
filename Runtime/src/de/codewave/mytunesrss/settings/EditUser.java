@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
 import java.util.*;
+import java.util.Timer;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
@@ -39,17 +40,26 @@ public class EditUser {
     private JLabel myInfoDownBytes;
     private JLabel myInfoRemainBytes;
     private JLabel myInfoLimitHeading;
-    private JButton myRefreshButton;
     private JPanel myInformationPanel;
     private JPanel myQuotaInfoPanel;
+    private JButton myApplyButton;
     private User myUser;
+    private Timer myTimer = new Timer("EditUserRefreshTimer");
+
 
     public void display(final JFrame parent, User user) {
         myUser = user;
         JDialog dialog = new JDialog(parent, MyTunesRss.BUNDLE.getString(user != null ? "editUser.editUserTitle" : "editUser.newUserTitle"), true);
+        dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                myTimer.cancel();
+            }
+        });
         dialog.add(myRootPanel);
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         init(dialog);
+        myTimer.schedule(new RefreshTask(), 1000);
         SwingUtils.packAndShowRelativeTo(dialog, parent);
     }
 
@@ -86,17 +96,13 @@ public class EditUser {
         if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
             SwingUtils.enableElementAndLabel(myBytesQuotaInput, false);
         }
-        mySaveButton.addActionListener(new SaveButtonActionListener(dialog));
+        mySaveButton.addActionListener(new SaveButtonActionListener(dialog, true));
+        myApplyButton.addActionListener(new SaveButtonActionListener(dialog, false));
         myCancelButton.addActionListener(new SupportContact.CancelButtonActionListener(dialog));
         myResetHistoryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 myUser.setDownBytes(0);
                 myUser.setResetTime(System.currentTimeMillis());
-                refreshInfo();
-            }
-        });
-        myRefreshButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
                 refreshInfo();
             }
         });
@@ -115,6 +121,8 @@ public class EditUser {
                     // intentionally left blank
                 }
             });
+        } else {
+            myApplyButton.setVisible(false);
         }
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myUserNameInput, MyTunesRss.BUNDLE.getString("error.missingUserName")));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myPasswordInput,
@@ -136,8 +144,7 @@ public class EditUser {
         myInfoReset.setText(new SimpleDateFormat(MyTunesRss.BUNDLE.getString("common.dateFormat")).format(new Date(myUser.getResetTime())));
         myInfoDownBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(myUser.getDownBytes()));
         myInfoDownBytes.setVisible(true);
-        if (myQuotaTypeInput.getSelectedItem() != User.QuotaType.None && MyTunesRssUtils.getTextFieldInteger(myBytesQuotaInput, 0) > 0) {
-            myInfoLimitHeading.setText(MyTunesRss.BUNDLE.getString("editUser.info.limitHeading"));
+        if (myUser.getQuotaType() != User.QuotaType.None) {
             myInfoRemainBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(Math.max(myUser.getBytesQuota() - myUser.getQuotaDownBytes(), 0)));
             myQuotaInfoPanel.setVisible(true);
         } else {
@@ -152,9 +159,11 @@ public class EditUser {
 
     public class SaveButtonActionListener implements ActionListener {
         private JDialog myDialog;
+        private boolean myClose;
 
-        public SaveButtonActionListener(JDialog dialog) {
+        public SaveButtonActionListener(JDialog dialog, boolean closeAfterSave) {
             myDialog = dialog;
+            myClose = closeAfterSave;
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -187,7 +196,9 @@ public class EditUser {
                     myUser.setBytesQuota(MyTunesRssUtils.getTextFieldInteger(myBytesQuotaInput, 0) * MEGABYTE);
                     myUser.setMaximumZipEntries(MyTunesRssUtils.getTextFieldInteger(myMaxZipEntriesInput, 0));
                     MyTunesRss.CONFIG.addUser(myUser);
-                    myDialog.dispose();
+                    if (myClose) {
+                        myDialog.dispose();
+                    }
                 }
             }
         }
@@ -207,6 +218,19 @@ public class EditUser {
                                               JOptionPane.YES_NO_OPTION) == JOptionPane
                     .YES_OPTION) {
                 myDialog.dispose();
+            }
+        }
+    }
+
+    public class RefreshTask extends TimerTask {
+        public void run() {
+            if (myUser != null) {
+                refreshInfo();
+            }
+            try {
+                myTimer.schedule(new RefreshTask(), 1000);
+            } catch (IllegalStateException e) {
+                // timer was cancelled, so we just don't schedule any further tasks
             }
         }
     }

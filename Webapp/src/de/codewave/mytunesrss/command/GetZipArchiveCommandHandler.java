@@ -23,7 +23,7 @@ import java.util.zip.*;
 public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        if (!needsAuthorization() && getAuthUser().isDownload()) {
+        if (!needsAuthorization() && getAuthUser().isDownload() && !getAuthUser().isQuotaExceeded()) {
             String baseName = getRequest().getPathInfo();
             baseName = baseName.substring(baseName.lastIndexOf("/") + 1, baseName.lastIndexOf("."));
             String album = MyTunesRssBase64Utils.decodeToString(getRequestParameter("album", null));
@@ -46,8 +46,9 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             String lineSeparator = System.getProperty("line.separator");
             StringBuffer m3uPlaylist = new StringBuffer("#EXTM3U").append(lineSeparator);
             int trackCount = 0;
+            boolean quotaExceeded = false;
             for (Track track : tracks) {
-                if (track.getFile().exists()) {
+                if (track.getFile().exists() && !getAuthUser().isQuotaExceeded()) {
                     String trackArtist = track.getArtist();
                     if (trackArtist.equals(InsertTrackStatement.UNKNOWN)) {
                         trackArtist = "unknown";
@@ -84,12 +85,20 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     m3uPlaylist.append(entryName).append(lineSeparator);
                     trackCount++;
                     sessionInfo.addBytesStreamed(entry.getCompressedSize());
+                } else if (getAuthUser().isQuotaExceeded()) {
+                    quotaExceeded = true;
                 }
             }
             if (trackCount > 0) {
                 ZipEntry m3uPlaylistEntry = new ZipEntry(baseName + "/" + baseName + ".m3u");
                 zipStream.putNextEntry(m3uPlaylistEntry);
                 zipStream.write(m3uPlaylist.toString().getBytes("UTF-8"));
+                zipStream.closeEntry();
+            }
+            if (quotaExceeded) {
+                ZipEntry quotaExceededInfo = new ZipEntry(baseName + "/Readme.txt");
+                zipStream.putNextEntry(quotaExceededInfo);
+                zipStream.write("This archive is not complete since your download limit has been reached!".getBytes("UTF-8"));
                 zipStream.closeEntry();
             }
             zipStream.close();

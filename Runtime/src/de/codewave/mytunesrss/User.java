@@ -61,7 +61,7 @@ public class User {
     }
 
     public boolean isDownload() {
-        return myDownload && !isQuotaExceeded();
+        return myDownload;
     }
 
     public void setDownload(boolean download) {
@@ -175,7 +175,6 @@ public class User {
         calendar.set(Calendar.MILLISECOND, 0);
         switch (myQuotaType) {
             case Month:
-                calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 calendar.add(Calendar.MONTH, 1);
                 break;
