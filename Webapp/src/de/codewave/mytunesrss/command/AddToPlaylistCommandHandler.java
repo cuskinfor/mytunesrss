@@ -29,6 +29,7 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
         decodeBase64(albums);
         String[] artists = getNonEmptyParameterValues("artist");
         decodeBase64(artists);
+        String genre = MyTunesRssBase64Utils.decodeToString(getRequestParameter("genre", null));
         DataStoreQuery<Collection<Track>> query = null;
         if (trackIds != null && trackIds.length > 0) {
             query = FindTrackQuery.getForId(trackIds);
@@ -36,6 +37,8 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
             query = FindTrackQuery.getForAlbum(albums, false);
         } else if (artists != null && artists.length > 0) {
             query = FindTrackQuery.getForArtist(artists, false);
+        } else if (StringUtils.isNotEmpty(genre)) {
+            query = FindTrackQuery.getForGenre(new String[] {genre}, false);
         }
         if (query != null) {
             playlist.addAll(getDataStore().executeQuery(query));

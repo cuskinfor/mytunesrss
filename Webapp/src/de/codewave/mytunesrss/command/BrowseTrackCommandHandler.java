@@ -26,6 +26,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         String searchTerm = getRequestParameter("searchTerm", null);
         String album = MyTunesRssBase64Utils.decodeToString(getRequestParameter("album", null));
         String artist = MyTunesRssBase64Utils.decodeToString(getRequestParameter("artist", null));
+        String genre = MyTunesRssBase64Utils.decodeToString(getRequestParameter("genre", null));
         String playlistId = getRequestParameter("playlist", null);
         String sortOrderName = getRequestParameter("sortOrder", SortOrder.Album.name());
         SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);
@@ -45,6 +46,17 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                 query = FindTrackQuery.getForAlbum(albumNames.toArray(new String[albumsWithArtist.size()]), sortOrderValue == SortOrder.Artist);
             } else {
                 query = FindTrackQuery.getForArtist(new String[] {artist}, sortOrderValue == SortOrder.Artist);
+            }
+        } else if (StringUtils.isNotEmpty(genre)) {
+            if (getBooleanRequestParameter("fullAlbums", false)) {
+                Collection<Album> albumsWithGenre = getDataStore().executeQuery(FindAlbumQuery.getForGenre(genre));
+                List<String> albumNames = new ArrayList<String>();
+                for (Album albumWithGenre : albumsWithGenre) {
+                    albumNames.add(albumWithGenre.getName());
+                }
+                query = FindTrackQuery.getForAlbum(albumNames.toArray(new String[albumsWithGenre.size()]), sortOrderValue == SortOrder.Artist);
+            } else {
+                query = FindTrackQuery.getForGenre(new String[] {genre}, sortOrderValue == SortOrder.Artist);
             }
         } else if (StringUtils.isNotEmpty(playlistId)) {
             query = new FindPlaylistTracksQuery(playlistId, sortOrderValue == SortOrder.Artist);

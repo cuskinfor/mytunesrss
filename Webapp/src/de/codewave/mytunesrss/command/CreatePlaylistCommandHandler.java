@@ -22,6 +22,7 @@ public class CreatePlaylistCommandHandler extends MyTunesRssCommandHandler {
         String playlistId = getRequest().getParameter("playlist");
         String album = MyTunesRssBase64Utils.decodeToString(getRequestParameter("album", null));
         String artist = MyTunesRssBase64Utils.decodeToString(getRequestParameter("artist", null));
+        String genre = MyTunesRssBase64Utils.decodeToString(getRequestParameter("genre", null));
         String[] trackIds = getNonEmptyParameterValues("track");
         String trackList = getRequestParameter("tracklist", null);
         if ((trackIds == null || trackIds.length == 0) && StringUtils.isNotEmpty(trackList)) {
@@ -36,6 +37,8 @@ public class CreatePlaylistCommandHandler extends MyTunesRssCommandHandler {
             tracks = getDataStore().executeQuery(FindTrackQuery.getForAlbum(new String[] {album}, false));
         } else if (StringUtils.isNotEmpty(artist)) {
             tracks = getDataStore().executeQuery(FindTrackQuery.getForArtist(new String[] {artist}, false));
+        } else if (StringUtils.isNotEmpty(genre)) {
+            tracks = getDataStore().executeQuery(FindTrackQuery.getForGenre(new String[] {genre}, false));
         }
         return tracks;
     }

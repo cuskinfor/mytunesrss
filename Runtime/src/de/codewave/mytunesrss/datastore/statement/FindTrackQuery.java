@@ -88,6 +88,20 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
         return query;
     }
 
+    public static FindTrackQuery getForGenre(String[] genres, boolean sortByArtistFirst) {
+        FindTrackQuery query = new FindTrackQuery();
+        String artistSort = sortByArtistFirst ? "artist, " : "";
+        if (genres.length > 1) {
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video, genre FROM track WHERE genre IN (" +
+                    SQLUtils.createParameters(genres.length) + ") ORDER BY " + artistSort + "album, track_number, name";
+        } else {
+            query.myQuery = "SELECT id, name, artist, album, time, track_number, file, protected, video, genre FROM track WHERE genre = ? ORDER BY " +
+                    artistSort + "album, track_number, name";
+        }
+        query.myParameters = genres;
+        return query;
+    }
+
     private TrackResultBuilder myBuilder = new TrackResultBuilder();
     private String myQuery;
     private Object[] myParameters;
