@@ -78,10 +78,10 @@
                         <c:out value="${genre.name}" />
                     </td>
                     <td class="album">
-                        <a href="${servletUrl}/browseAlbum?genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}"> ${genre.albumCount} </a>
+                        <a href="${servletUrl}/browseAlbum?genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${genre.albumCount} </a>
                     </td>
                     <td class="genreartist">
-                        <a href="${servletUrl}/browseArtist?genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}"> ${genre.artistCount} </a>
+                        <a href="${servletUrl}/browseArtist?genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${genre.artistCount} </a>
                     </td>
                     <td class="tracks">
                         <a href="${servletUrl}/browseTrack?genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${genre.trackCount} </a>

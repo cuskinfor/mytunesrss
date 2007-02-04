@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
-import de.codewave.utils.*;
 import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 
@@ -17,49 +16,18 @@ import java.util.*;
  * de.codewave.mytunesrss.command.BrowseTrackCommandHandler
  */
 public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
-    public static enum SortOrder {
-        Album(), Artist();
-    }
 
     @Override
     public void executeAuthorized() throws Exception {
         String searchTerm = getRequestParameter("searchTerm", null);
-        String album = MyTunesRssBase64Utils.decodeToString(getRequestParameter("album", null));
-        String artist = MyTunesRssBase64Utils.decodeToString(getRequestParameter("artist", null));
-        String genre = MyTunesRssBase64Utils.decodeToString(getRequestParameter("genre", null));
-        String playlistId = getRequestParameter("playlist", null);
-        String sortOrderName = getRequestParameter("sortOrder", SortOrder.Album.name());
-        SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);
+        String sortOrderName = getRequestParameter("sortOrder", TrackRetrieveUtils.SortOrder.Album.name());
+        TrackRetrieveUtils.SortOrder sortOrderValue = TrackRetrieveUtils.SortOrder.valueOf(sortOrderName);
 
         DataStoreQuery<Collection<Track>> query = null;
         if (StringUtils.isNotEmpty(searchTerm)) {
-            query = FindTrackQuery.getForSearchTerm(searchTerm, sortOrderValue == SortOrder.Artist);
-        } else if (StringUtils.isNotEmpty(album)) {
-            query = FindTrackQuery.getForAlbum(new String[] {album}, sortOrderValue == SortOrder.Artist);
-        } else if (StringUtils.isNotEmpty(artist)) {
-            if (getBooleanRequestParameter("fullAlbums", false)) {
-                Collection<Album> albumsWithArtist = getDataStore().executeQuery(FindAlbumQuery.getForArtist(artist));
-                List<String> albumNames = new ArrayList<String>();
-                for (Album albumWithArtist : albumsWithArtist) {
-                    albumNames.add(albumWithArtist.getName());
-                }
-                query = FindTrackQuery.getForAlbum(albumNames.toArray(new String[albumsWithArtist.size()]), sortOrderValue == SortOrder.Artist);
-            } else {
-                query = FindTrackQuery.getForArtist(new String[] {artist}, sortOrderValue == SortOrder.Artist);
-            }
-        } else if (StringUtils.isNotEmpty(genre)) {
-            if (getBooleanRequestParameter("fullAlbums", false)) {
-                Collection<Album> albumsWithGenre = getDataStore().executeQuery(FindAlbumQuery.getForGenre(genre));
-                List<String> albumNames = new ArrayList<String>();
-                for (Album albumWithGenre : albumsWithGenre) {
-                    albumNames.add(albumWithGenre.getName());
-                }
-                query = FindTrackQuery.getForAlbum(albumNames.toArray(new String[albumsWithGenre.size()]), sortOrderValue == SortOrder.Artist);
-            } else {
-                query = FindTrackQuery.getForGenre(new String[] {genre}, sortOrderValue == SortOrder.Artist);
-            }
-        } else if (StringUtils.isNotEmpty(playlistId)) {
-            query = new FindPlaylistTracksQuery(playlistId, sortOrderValue == SortOrder.Artist);
+            query = FindTrackQuery.getForSearchTerm(searchTerm, sortOrderValue == TrackRetrieveUtils.SortOrder.Artist);
+        } else {
+            query = TrackRetrieveUtils.getQuery(getRequest(), false);
         }
         getRequest().setAttribute("sortOrder", sortOrderName);
         List<EnhancedTrack> tracks = null;
@@ -89,7 +57,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    private EnhancedTracks getTracks(Collection<Track> tracks, SortOrder sortOrder) {
+    private EnhancedTracks getTracks(Collection<Track> tracks, TrackRetrieveUtils.SortOrder sortOrder) {
         EnhancedTracks enhancedTracks = new EnhancedTracks();
         enhancedTracks.setTracks(new ArrayList<EnhancedTrack>(tracks.size()));
         String lastAlbum = getClass().getName();
@@ -101,14 +69,14 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             EnhancedTrack enhancedTrack = new EnhancedTrack(track);
             boolean newAlbum = !lastAlbum.equalsIgnoreCase(track.getAlbum());
             boolean newArtist = !lastArtist.equalsIgnoreCase(track.getArtist());
-            if ((sortOrder == SortOrder.Album && newAlbum) || (sortOrder == SortOrder.Artist && newArtist)) {// new section begins
+            if ((sortOrder == TrackRetrieveUtils.SortOrder.Album && newAlbum) || (sortOrder == TrackRetrieveUtils.SortOrder.Artist && newArtist)) {// new section begins
                 sectionCount++;
                 enhancedTrack.setNewSection(true);
                 finishSection(sectionTracks, variousPerSection);
                 sectionTracks.clear();
                 variousPerSection = false;
             } else {
-                if ((sortOrder == SortOrder.Album && newArtist) || (sortOrder == SortOrder.Artist && newAlbum)) {
+                if ((sortOrder == TrackRetrieveUtils.SortOrder.Album && newArtist) || (sortOrder == TrackRetrieveUtils.SortOrder.Artist && newAlbum)) {
                     variousPerSection = true;
                 }
             }

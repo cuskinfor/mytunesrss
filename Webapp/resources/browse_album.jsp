@@ -48,6 +48,11 @@
             <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:encodeUrl(backUrl)}"><fmt:message key="newPlaylist"/></a>
         </li>
     </c:if>
+    <c:if test="${!empty param.backUrl}">
+        <li style="float:right;">
+            <a href="${param.backUrl}"><fmt:message key="back"/></a>
+        </li>
+    </c:if>
 </ul>
 
 <jsp:include page="incl_playlist.jsp" />
@@ -94,7 +99,7 @@
                                     <c:out value="${cwfn:choose(mtfn:unknown(album.artist), '(unknown)', album.artist)}" />
                                 </c:when>
                                 <c:otherwise>
-                                    <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(cwfn:encode64(album.artist))}">
+                                    <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(cwfn:encode64(album.artist))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
                                         <c:out value="${cwfn:choose(mtfn:unknown(album.artist), '(unknown)', album.artist)}" /></a>
                                 </c:otherwise>
                             </c:choose>
@@ -199,7 +204,7 @@
 
     <c:if test="${!empty indexPager}">
         <c:set var="pager" scope="request" value="${indexPager}" />
-        <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseAlbum?page=${param.page}&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;genre=${cwfn:encodeUrl(param.genre)}&amp;index={index}" />
+        <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseAlbum?page=${param.page}&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;genre=${cwfn:encodeUrl(param.genre)}&amp;index={index}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}" />
         <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
         <jsp:include page="incl_bottomPager.jsp" />
     </c:if>
