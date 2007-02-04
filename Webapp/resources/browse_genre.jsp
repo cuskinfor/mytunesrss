@@ -81,7 +81,7 @@
                         <a href="${servletUrl}/browseAlbum?genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}"> ${genre.albumCount} </a>
                     </td>
                     <td class="genreartist">
-                        <a href="${servletUrl}/browseArtist?genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}"> ${genre.albumCount} </a>
+                        <a href="${servletUrl}/browseArtist?genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}"> ${genre.artistCount} </a>
                     </td>
                     <td class="tracks">
                         <a href="${servletUrl}/browseTrack?genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${genre.trackCount} </a>
