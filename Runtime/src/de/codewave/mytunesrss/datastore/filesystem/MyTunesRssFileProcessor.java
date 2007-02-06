@@ -61,35 +61,42 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                 tag = Mp3Utils.readId3Tag(file);
                             } catch (Exception e) {
                                 if (LOG.isErrorEnabled()) {
-                                    LOG.error("Could not get ID3 information from file.", e);
+                                    LOG.error("Could not get ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
                                 }
                             }
                         }
                         if (tag == null) {
-                            statement.setName(IOUtils.getNameWithoutSuffix(file));
-                            statement.setAlbum(getAncestorAlbumName(file));
-                            statement.setArtist(getAncestorArtistName(file));
+                            setSimpleInfo(statement, file);
                         } else {
-                            String album = tag.getAlbum();
-                            if (StringUtils.isEmpty(album)) {
-                                album = getAncestorAlbumName(file);
+                            try {
+                                String album = tag.getAlbum();
+                                if (StringUtils.isEmpty(album)) {
+                                    album = getAncestorAlbumName(file);
+                                }
+                                statement.setAlbum(album);
+                                String artist = tag.getArtist();
+                                if (StringUtils.isEmpty(artist)) {
+                                    artist = getAncestorArtistName(file);
+                                }
+                                statement.setArtist(artist);
+                                String name = tag.getTitle();
+                                if (StringUtils.isEmpty(name)) {
+                                    name = IOUtils.getNameWithoutSuffix(file);
+                                }
+                                statement.setName(name);
+                                if (tag.isId3v2()) {
+                                    statement.setTime(((Id3v2Tag)tag).getTimeSeconds());
+                                    statement.setTrackNumber(((Id3v2Tag)tag).getTrackNumber());
+                                }
+                                statement.setGenre(StringUtils.trimToNull(tag.getGenreAsString()));
+                            } catch (Exception e) {
+                                if (LOG.isErrorEnabled()) {
+                                    LOG.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
+                                }
+                                statement.clear();
+                                statement.setId(fileId);
+                                setSimpleInfo(statement, file);
                             }
-                            statement.setAlbum(album);
-                            String artist = tag.getArtist();
-                            if (StringUtils.isEmpty(artist)) {
-                                artist = getAncestorArtistName(file);
-                            }
-                            statement.setArtist(artist);
-                            String name = tag.getTitle();
-                            if (StringUtils.isEmpty(name)) {
-                                name = IOUtils.getNameWithoutSuffix(file);
-                            }
-                            statement.setName(name);
-                            if (tag.isId3v2()) {
-                                statement.setTime(((Id3v2Tag)tag).getTimeSeconds());
-                                statement.setTrackNumber(((Id3v2Tag)tag).getTrackNumber());
-                            }
-                            statement.setGenre(StringUtils.trimToNull(tag.getGenreAsString()));
                         }
                         FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
                         statement.setProtected(fileSuffixInfo.isProtected());
@@ -127,6 +134,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 LOG.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
             }
         }
+    }
+
+    private void setSimpleInfo(InsertOrUpdateTrackStatement statement, File file) {
+        statement.setName(IOUtils.getNameWithoutSuffix(file));
+        statement.setAlbum(getAncestorAlbumName(file));
+        statement.setArtist(getAncestorArtistName(file));
     }
 
     private String getAncestorAlbumName(File file) {
