@@ -8,6 +8,8 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.*;
 import de.codewave.utils.io.*;
 
+import javax.servlet.http.*;
+
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
  */
@@ -94,5 +96,23 @@ public class MyTunesFunctions {
             return "0" + value;
         }
         return Integer.toString(value);
+    }
+
+    public static void initializeFlipFlop(HttpServletRequest request, String value1, String value2) {
+        request.setAttribute("flipFlop_value1", value1);
+        request.setAttribute("flipFlop_value2", value2);
+        request.setAttribute("flipFlop_currentValue", value1);
+    }
+
+    public static String flipFlop(HttpServletRequest request) {
+        String value1 = (String)request.getAttribute("flipFlop_value1");
+        String value2 = (String)request.getAttribute("flipFlop_value2");
+        String currentValue = (String)request.getAttribute("flipFlop_currentValue");
+        if (value1.equals(currentValue)) {
+            request.setAttribute("flipFlop_currentValue", value2);
+        } else {
+            request.setAttribute("flipFlop_currentValue", value1);
+        }
+        return currentValue;
     }
 }

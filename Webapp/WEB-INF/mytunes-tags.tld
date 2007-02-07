@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
+
+    <description>MyTunesRSS tag library</description>
+    <display-name>MyTunesRSS tags</display-name>
+    <tlib-version>1.0</tlib-version>
+    <short-name>mt</short-name>
+    <uri>http://www.codewave.de/mytunesrss/jsp/tags</uri>
+
+    <tag>
+        <description>
+            Initialize the flip flop values.
+        </description>
+        <name>initFlipFlop</name>
+        <tag-class>de.codewave.mytunesrss.jsp.InitFlipFlopTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <description>First value for the flip flop.</description>
+            <name>value1</name>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>Alternative value for the flip flop.</description>
+            <name>value2</name>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <description>
+            Get the next value for the flip flop and switch values.
+        </description>
+        <name>flipFlop</name>
+        <tag-class>de.codewave.mytunesrss.jsp.FlipFlopTag</tag-class>
+        <body-content>empty</body-content>
+    </tag>
+
+</taglib>

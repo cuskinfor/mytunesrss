@@ -352,8 +352,9 @@ public class MyTunesRssConfig {
                     user.setPasswordHash(userNode.node(userName).getByteArray("password", null));
                     user.setRss(userNode.node(userName).getBoolean("featureRss", true));
                     user.setM3u(userNode.node(userName).getBoolean("featureM3u", true));
-                    user.setDownload(userNode.node(userName).getBoolean("featureDownload", true));
+                    user.setDownload(userNode.node(userName).getBoolean("featureDownload", false));
                     user.setUpload(userNode.node(userName).getBoolean("featureUpload", false));
+                    user.setChangePassword(userNode.node(userName).getBoolean("featureChangePassword", true));
                     user.setResetTime(userNode.node(userName).getLong("resetTime", System.currentTimeMillis()));
                     user.setQuotaResetTime(userNode.node(userName).getLong("quotaResetTime", System.currentTimeMillis()));
                     user.setDownBytes(userNode.node(userName).getLong("downBytes", 0));
@@ -419,8 +420,9 @@ public class MyTunesRssConfig {
             user.setRss(JXPathUtils.getBooleanValue(userContext, "features/@rss", true));
             user.setM3u(JXPathUtils.getBooleanValue(userContext, "features/@m3u", true));
             user.setDownload(JXPathUtils.getBooleanValue(userContext, "features/@download", true));
+            user.setChangePassword(JXPathUtils.getBooleanValue(userContext, "features/@changepassword", true));
             user.setUpload(JXPathUtils.getBooleanValue(userContext, "features/@upload", false));
-            user.setMaximumZipEntries(JXPathUtils.getIntValue(userContext, "maximumZipEntries", 0));
+            user.setMaximumZipEntries(JXPathUtils.getIntValue(userContext, "maximumzipentries", 0));
             addUser(user);
             if (!MyTunesRss.REGISTRATION.isRegistered()) {
                 break;
@@ -474,6 +476,7 @@ public class MyTunesRssConfig {
                     userNode.node(user.getName()).putBoolean("featureM3u", user.isM3u());
                     userNode.node(user.getName()).putBoolean("featureDownload", user.isDownload());
                     userNode.node(user.getName()).putBoolean("featureUpload", user.isUpload());
+                    userNode.node(user.getName()).putBoolean("featureChangePassword", user.isChangePassword());
                     userNode.node(user.getName()).putLong("resetTime", user.getResetTime());
                     userNode.node(user.getName()).putLong("quotaResetTime", user.getQuotaResetTime());
                     userNode.node(user.getName()).putLong("downBytes", user.getDownBytes());

@@ -6,11 +6,17 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.servlet.*;
+import de.codewave.mytunesrss.*;
+import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
+
+import java.io.*;
 
 /**
  * de.codewave.mytunesrss.command.SaveSettingsCommandHandler
  */
 public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
+    private static final Log LOG = LogFactory.getLog(SaveSettingsCommandHandler.class);
 
     @Override
     public void executeAuthorized() throws Exception {
@@ -32,7 +38,28 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         error |= transferAndValidatePageSize(webConfig);
         error |= transferAndValidateRssFeedLimit(webConfig);
         error |= transferAndValidateRandomTrackCount(webConfig);
+        error |= transferAndValidatePassword();
         return !error;
+    }
+
+    private boolean transferAndValidatePassword() {
+        String password1 = getRequestParameter("password1", null);
+        String password2 = getRequestParameter("password2", null);
+        if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
+            if (StringUtils.equals(password1, password2)) {
+                try {
+                    getAuthUser().setPasswordHash(MyTunesRss.MESSAGE_DIGEST.digest(password1.getBytes("UTF-8")));
+                } catch (UnsupportedEncodingException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not get bytes from password string.", e);
+                    }
+                }
+            } else {
+                addError(new BundleError("error.settingsPasswordMismatch"));
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean transferAndValidateRandomTrackCount(WebConfig webConfig) {

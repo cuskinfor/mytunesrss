@@ -39,10 +39,10 @@ public class EditUser {
     private JLabel myInfoReset;
     private JLabel myInfoDownBytes;
     private JLabel myInfoRemainBytes;
-    private JLabel myInfoLimitHeading;
     private JPanel myInformationPanel;
     private JPanel myQuotaInfoPanel;
     private JButton myApplyButton;
+    private JCheckBox myPermChangePasswordInput;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -87,11 +87,15 @@ public class EditUser {
             myPermM3uInput.setSelected(myUser.isM3u());
             myPermDownloadInput.setSelected(myUser.isDownload());
             myPermUploadInput.setSelected(myUser.isUpload());
+            myPermChangePasswordInput.setSelected(myUser.isChangePassword());
             myQuotaTypeInput.setSelectedItem(myUser.getQuotaType());
             myBytesQuotaInput.setText(myUser.getBytesQuota() > 0 ? Long.toString(myUser.getBytesQuota() / MEGABYTE) : "");
             myMaxZipEntriesInput.setText(myUser.getMaximumZipEntries() > 0 ? Integer.toString(myUser.getMaximumZipEntries()) : "");
         } else {
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
+            myPermRssInput.setSelected(true);
+            myPermM3uInput.setSelected(true);
+            myPermChangePasswordInput.setSelected(true);
         }
         if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
             SwingUtils.enableElementAndLabel(myBytesQuotaInput, false);
@@ -192,6 +196,7 @@ public class EditUser {
                     myUser.setM3u(myPermM3uInput.isSelected());
                     myUser.setDownload(myPermDownloadInput.isSelected());
                     myUser.setUpload(myPermUploadInput.isSelected());
+                    myUser.setChangePassword(myPermChangePasswordInput.isSelected());
                     myUser.setQuotaType((User.QuotaType)myQuotaTypeInput.getSelectedItem());
                     myUser.setBytesQuota(MyTunesRssUtils.getTextFieldInteger(myBytesQuotaInput, 0) * MEGABYTE);
                     myUser.setMaximumZipEntries(MyTunesRssUtils.getTextFieldInteger(myMaxZipEntriesInput, 0));

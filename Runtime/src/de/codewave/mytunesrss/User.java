@@ -22,6 +22,7 @@ public class User {
     private boolean myRss;
     private boolean myM3u;
     private boolean myUpload;
+    private boolean myChangePassword;
     private QuotaType myQuotaType;
     private long myDownBytes;
     private long myQuotaDownBytes;
@@ -90,6 +91,14 @@ public class User {
 
     public void setUpload(boolean upload) {
         myUpload = upload;
+    }
+
+    public boolean isChangePassword() {
+        return myChangePassword;
+    }
+
+    public void setChangePassword(boolean changePassword) {
+        myChangePassword = changePassword;
     }
 
     public long getBytesQuota() {

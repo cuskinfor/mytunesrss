@@ -2,6 +2,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
@@ -33,12 +34,46 @@
     <jsp:include page="/incl_error.jsp" />
 
     <form action="${servletUrl}/saveSettings" method="post">
+        <mt:initFlipFlop value1="" value2="class=\"odd\""/>
         <table cellspacing="0">
-            <tr>
+            <tr <mt:flipFlop/>>
                 <th class="active"><fmt:message key="settings" /></th>
                 <th>&nbsp;</th>
             </tr>
-            <tr class="odd">
+            <tr <mt:flipFlop/>>
+                <td><fmt:message key="settings.username" /></td>
+                <td><c:out value="${authUser.name}"/></td>
+            </tr>
+            <c:choose>
+                <c:when test="${authUser.changePassword}">
+                    <tr <mt:flipFlop/>>
+                        <td><fmt:message key="settings.password" /></td>
+                        <td>
+                            <input type="password"
+                                   name="password1"
+                                   maxlength="30"
+                                   value="<c:out value="${param.password1}"/>"
+                                   style="width: 170px;" />
+                        </td>
+                    </tr>
+                    <tr <mt:flipFlop/>>
+                        <td><fmt:message key="settings.retypePassword" /></td>
+                        <td>
+                            <input type="password"
+                                   name="password2"
+                                   maxlength="30"
+                                   value="<c:out value="${param.password2}"/>"
+                                   style="width: 170px;" />
+                        </td>
+                    </tr>
+                </c:when>
+                <c:otherwise>
+                    <tr <mt:flipFlop/>>
+                        <td colspan="2"><fmt:message key="settings.passwordNotChangeable"/></td>
+                    </tr>
+                </c:otherwise>
+            </c:choose>
+            <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.itemsPerPage" /></td>
                 <td><input type="text"
                            name="pageSize"
@@ -46,7 +81,7 @@
                            value="<c:out value="${cwfn:choose(config.pageSize > 0, config.pageSize, '')}"/>"
                            style="width: 50px;" /></td>
             </tr>
-            <tr>
+            <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.rssFeedLimit" /></td>
                 <td>
                     <input type="text"
@@ -56,7 +91,7 @@
                            style="width: 50px;" />
                 </td>
             </tr>
-            <tr class="odd">
+            <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.randomPlaylistSize" /></td>
                 <td>
                     <input type="text"
@@ -66,7 +101,7 @@
                            style="width: 50px;" />
                 </td>
             </tr>
-            <tr>
+            <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.playlistTypes" /></td>
                 <td>
                     <input type="checkbox" name="feedType" value="rss" <c:if test="${config.showRss}">
@@ -76,14 +111,14 @@
                         checked="checked"</c:if> style="margin-left: 15px;" />
                     <img src="${appUrl}/images/m3u_odd.gif" alt="M3U" style="vertical-align:text-top;" /> M3U </td>
             </tr>
-            <tr class="odd">
+            <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.showDownload" /></td>
                 <td>
                     <input type="checkbox" name="showDownload" value="true" <c:if test="${config.showDownload}">checked="checked"</c:if> />
                     <img src="${appUrl}/images/download.gif" alt="M3U" style="vertical-align:text-top;" />
                 </td>
             </tr>
-            <tr>
+            <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.rssArtwork" /></td>
                 <td>
                     <input type="checkbox" name="rssArtwork" value="true" <c:if test="${config.rssArtwork}">checked="checked"</c:if> />

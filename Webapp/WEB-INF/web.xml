@@ -92,5 +92,9 @@
             <taglib-uri>http://www.codewave.de/mytunesrss/jsp/functions</taglib-uri>
             <taglib-location>/WEB-INF/mytunes-functions.tld</taglib-location>
         </taglib>
+        <taglib>
+            <taglib-uri>http://www.codewave.de/mytunesrss/jsp/tags</taglib-uri>
+            <taglib-location>/WEB-INF/mytunes-tags.tld</taglib-location>
+        </taglib>
     </jsp-config>
 </web-app>
