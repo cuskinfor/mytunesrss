@@ -119,7 +119,7 @@
                                                 <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                                         </c:when>
                                         <c:otherwise>
-                                            <a href="#" onclick="alert('<fmt:message key="error.zipLimit"/>')">
+                                            <a href="#" onclick="alert('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>')">
                                                 <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                                         </c:otherwise>
                                     </c:choose>

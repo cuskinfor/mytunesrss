@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.*;
 import de.codewave.utils.io.*;
 
@@ -114,5 +115,9 @@ public class MyTunesFunctions {
             request.setAttribute("flipFlop_currentValue", value1);
         }
         return currentValue;
+    }
+
+    public static String getMemorySizeForDisplay(long bytes) {
+        return MyTunesRssUtils.getMemorySizeForDisplay(bytes);
     }
 }

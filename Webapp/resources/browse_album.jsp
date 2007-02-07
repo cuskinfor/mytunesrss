@@ -135,7 +135,7 @@
                                             <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                                     </c:when>
                                     <c:otherwise>
-                                        <a href="#" onclick="alert('<fmt:message key="error.zipLimit"/>')">
+                                        <a href="#" onclick="alert('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>')">
                                             <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                                     </c:otherwise>
                                 </c:choose>
@@ -179,12 +179,12 @@
                         <c:if test="${authUser.download && config.showDownload}">
                             <td class="icon">
                                 <c:choose>
-                                    <c:when test="${authUser.maximumZipEntries <= 0 || singleArtistTrackCount.trackCount <= authUser.maximumZipEntries}">
+                                    <c:when test="${authUser.maximumZipEntries <= 0 || singleArtistTrackCount <= authUser.maximumZipEntries}">
                                         <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/${mtfn:webSafeFileName(cwfn:decode64(param.artist))}.zip">
                                             <img src="${appUrl}/images/download${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                                     </c:when>
                                     <c:otherwise>
-                                        <a href="#" onclick="alert('<fmt:message key="error.zipLimit"/>')">
+                                        <a href="#" onclick="alert('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>')">
                                             <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                                     </c:otherwise>
                                 </c:choose>

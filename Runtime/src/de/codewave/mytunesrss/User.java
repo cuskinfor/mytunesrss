@@ -141,6 +141,10 @@ public class User {
         myQuotaType = quotaType;
     }
 
+    public boolean isQuota() {
+        return myQuotaType != QuotaType.None;
+    }
+
     public long getResetTime() {
         return myResetTime;
     }
@@ -173,6 +177,14 @@ public class User {
             return myBytesQuota > 0 && myQuotaDownBytes >= myBytesQuota;
         }
         return false;
+    }
+
+    public long getQuotaRemaining() {
+        if (myQuotaType != QuotaType.None && myBytesQuota > 0) {
+            checkQuotaReset();
+            return Math.max(myBytesQuota - myQuotaDownBytes, 0);
+        }
+        return 0;
     }
 
     private void checkQuotaReset() {

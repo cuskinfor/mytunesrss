@@ -122,4 +122,17 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Get a memory size in the best form as possible for a number of bytes.
+        </description>
+        <name>memory</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String getMemorySizeForDisplay(long)
+        </function-signature>
+        <example>
+            &lt;c:out value="${mtfn:memory(memSizeInBytes)}"/&gt;
+        </example>
+    </function>
+
 </taglib>

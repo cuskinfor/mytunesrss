@@ -5,6 +5,7 @@
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
 
@@ -34,16 +35,31 @@
     <jsp:include page="/incl_error.jsp" />
 
     <form action="${servletUrl}/saveSettings" method="post">
-        <mt:initFlipFlop value1="" value2="class=\"odd\""/>
         <table cellspacing="0">
-            <tr <mt:flipFlop/>>
-                <th class="active"><fmt:message key="settings" /></th>
+            <tr>
+                <th class="active"><fmt:message key="settings.info" /></th>
                 <th>&nbsp;</th>
             </tr>
+            <mt:initFlipFlop value1="" value2="class=\"odd\""/>
             <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.username" /></td>
                 <td><c:out value="${authUser.name}"/></td>
             </tr>
+            <c:if test="${authUser.quota}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.quota" /></td>
+                    <td><c:out value="${mtfn:memory(authUser.bytesQuota)}"/> ${authUser.quotaType}</td>
+                </tr>
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.quotaRemain" /></td>
+                    <td><c:out value="${mtfn:memory(authUser.quotaRemaining)}"/></td>
+                </tr>
+            </c:if>
+            <tr>
+                <th class="active"><fmt:message key="settings" /></th>
+                <th>&nbsp;</th>
+            </tr>
+            <mt:initFlipFlop value1="" value2="class=\"odd\""/>
             <c:choose>
                 <c:when test="${authUser.changePassword}">
                     <tr <mt:flipFlop/>>

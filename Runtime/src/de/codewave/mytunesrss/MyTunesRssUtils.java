@@ -115,8 +115,8 @@ public class MyTunesRssUtils {
     private static final double GBYTE = 1024 * MBYTE;
     private static final NumberFormat BYTE_STREAMED_FORMAT = new DecimalFormat("0");
     private static final NumberFormat KBYTE_STREAMED_FORMAT = new DecimalFormat("0");
-    private static final DecimalFormat MBYTE_STREAMED_FORMAT = new DecimalFormat("0.###");
-    private static final DecimalFormat GBYTE_STREAMED_FORMAT = new DecimalFormat("0.###");
+    private static final DecimalFormat MBYTE_STREAMED_FORMAT = new DecimalFormat("0.##");
+    private static final DecimalFormat GBYTE_STREAMED_FORMAT = new DecimalFormat("0.#");
 
     static {
         MBYTE_STREAMED_FORMAT.setDecimalSeparatorAlwaysShown(false);
@@ -124,11 +124,11 @@ public class MyTunesRssUtils {
     }
 
     public static String getMemorySizeForDisplay(long bytes) {
-        if (bytes > GBYTE) {
+        if (bytes >= GBYTE) {
             return GBYTE_STREAMED_FORMAT.format(bytes / GBYTE) + " GB";
-        } else if (bytes > MBYTE) {
+        } else if (bytes >= MBYTE) {
             return MBYTE_STREAMED_FORMAT.format(bytes / MBYTE) + " MB";
-        } else if (bytes > KBYTE) {
+        } else if (bytes >= KBYTE) {
             return KBYTE_STREAMED_FORMAT.format(bytes / KBYTE) + " KB";
         }
         return BYTE_STREAMED_FORMAT.format(bytes) + " Byte";
