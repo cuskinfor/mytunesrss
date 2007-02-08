@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -30,7 +31,7 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
     private TrackSource mySource;
     private PreparedStatement myStatement;
     private static final String SQL =
-            "INSERT INTO track ( id, name, artist, album, time, track_number, file, protected, video, source, genre ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+            "INSERT INTO track ( id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
     public InsertTrackStatement() {
         // intentionally left blank
@@ -103,6 +104,7 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
             statement.setBoolean(9, myVideo);
             statement.setString(10, mySource.name());
             statement.setString(11, myGenre);
+            statement.setString(12, FileSupportUtils.getFileSuffix(myFileName));
             statement.executeUpdate();
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {

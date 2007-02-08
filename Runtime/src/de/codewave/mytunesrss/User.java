@@ -30,6 +30,7 @@ public class User {
     private long myResetTime;
     private long myQuotaResetTime;
     private int myMaximumZipEntries;
+    private String myFileTypes;
 
     public User(String name) {
         myName = name;
@@ -159,6 +160,14 @@ public class User {
 
     public void setMaximumZipEntries(int maximumZipEntries) {
         myMaximumZipEntries = maximumZipEntries;
+    }
+
+    public String getFileTypes() {
+        return myFileTypes;
+    }
+
+    public void setFileTypes(String fileTypes) {
+        myFileTypes = fileTypes;
     }
 
     @Override

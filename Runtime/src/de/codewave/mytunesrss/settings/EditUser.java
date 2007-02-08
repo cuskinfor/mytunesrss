@@ -43,6 +43,7 @@ public class EditUser {
     private JPanel myQuotaInfoPanel;
     private JButton myApplyButton;
     private JCheckBox myPermChangePasswordInput;
+    private JTextField myFileTypesInput;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -91,6 +92,7 @@ public class EditUser {
             myQuotaTypeInput.setSelectedItem(myUser.getQuotaType());
             myBytesQuotaInput.setText(myUser.getBytesQuota() > 0 ? Long.toString(myUser.getBytesQuota() / MEGABYTE) : "");
             myMaxZipEntriesInput.setText(myUser.getMaximumZipEntries() > 0 ? Integer.toString(myUser.getMaximumZipEntries()) : "");
+            myFileTypesInput.setText(myUser.getFileTypes());
         } else {
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
             myPermRssInput.setSelected(true);
@@ -200,6 +202,7 @@ public class EditUser {
                     myUser.setQuotaType((User.QuotaType)myQuotaTypeInput.getSelectedItem());
                     myUser.setBytesQuota(MyTunesRssUtils.getTextFieldInteger(myBytesQuotaInput, 0) * MEGABYTE);
                     myUser.setMaximumZipEntries(MyTunesRssUtils.getTextFieldInteger(myMaxZipEntriesInput, 0));
+                    myUser.setFileTypes(myFileTypesInput.getText());
                     MyTunesRss.CONFIG.addUser(myUser);
                     if (myClose) {
                         myDialog.dispose();

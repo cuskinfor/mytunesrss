@@ -17,7 +17,7 @@ public class CreateAllTablesStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
         connection.createStatement().execute("SET DATABASE COLLATION en_US");
         connection.createStatement().execute(
-                "CREATE CACHED TABLE track ( id VARCHAR(2000) NOT NULL, name VARCHAR(255) NOT NULL, artist VARCHAR_IGNORECASE(255) NOT NULL, album VARCHAR_IGNORECASE(255) NOT NULL, time INTEGER, track_number INTEGER, file VARCHAR(1024) NOT NULL, protected BOOLEAN, video BOOLEAN, source VARCHAR(20), genre VARCHAR(255), UNIQUE ( id ) )");
+                "CREATE CACHED TABLE track ( id VARCHAR(2000) NOT NULL, name VARCHAR(255) NOT NULL, artist VARCHAR_IGNORECASE(255) NOT NULL, album VARCHAR_IGNORECASE(255) NOT NULL, time INTEGER, track_number INTEGER, file VARCHAR(1024) NOT NULL, suffix VARCHAR_IGNORECASE(10) NOT NULL, protected BOOLEAN, video BOOLEAN, source VARCHAR(20), genre VARCHAR(255), UNIQUE ( id ) )");
         connection.createStatement().execute(
                 "CREATE CACHED TABLE playlist ( id VARCHAR(20) NOT NULL, name VARCHAR(255) NOT NULL, type VARCHAR(20) NOT NULL, track_count INTEGER, UNIQUE ( id ) )");
         connection.createStatement().execute(

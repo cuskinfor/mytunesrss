@@ -362,6 +362,7 @@ public class MyTunesRssConfig {
                     user.setBytesQuota(userNode.node(userName).getLong("bytesQuota", 0));
                     user.setQuotaType(User.QuotaType.valueOf(userNode.node(userName).get("quotaType", User.QuotaType.None.name())));
                     user.setMaximumZipEntries(userNode.node(userName).getInt("maximumZipEntries", 0));
+                    user.setFileTypes(userNode.node(userName).get("fileTypes", null));
                     addUser(user);
                 }
             } catch (BackingStoreException e) {
@@ -422,7 +423,10 @@ public class MyTunesRssConfig {
             user.setDownload(JXPathUtils.getBooleanValue(userContext, "features/@download", true));
             user.setChangePassword(JXPathUtils.getBooleanValue(userContext, "features/@changepassword", true));
             user.setUpload(JXPathUtils.getBooleanValue(userContext, "features/@upload", false));
-            user.setMaximumZipEntries(JXPathUtils.getIntValue(userContext, "maximumzipentries", 0));
+            user.setMaximumZipEntries(JXPathUtils.getIntValue(userContext, "restrictions/@maximumzipentries", 0));
+            user.setFileTypes(JXPathUtils.getStringValue(userContext, "restrictions/@filetypes", null));
+            user.setBytesQuota(JXPathUtils.getIntValue(userContext, "restrictions/quota/@size", 0));
+            user.setQuotaType(User.QuotaType.valueOf(JXPathUtils.getStringValue(userContext, "restrictions/quota/@type", "None")));
             addUser(user);
             if (!MyTunesRss.REGISTRATION.isRegistered()) {
                 break;
@@ -484,6 +488,7 @@ public class MyTunesRssConfig {
                     userNode.node(user.getName()).putLong("bytesQuota", user.getBytesQuota());
                     userNode.node(user.getName()).put("quotaType", user.getQuotaType().name());
                     userNode.node(user.getName()).putInt("maximumZipEntries", user.getMaximumZipEntries());
+                    userNode.node(user.getName()).put("fileTypes", user.getFileTypes());
                 }
             } catch (BackingStoreException e) {
                 if (LOG.isErrorEnabled()) {

@@ -56,7 +56,7 @@ public class FileSupportUtils {
         return null;
     }
 
-    private static String getFileSuffix(String filename) {
+    public static String getFileSuffix(String filename) {
         int i = filename.lastIndexOf(".");
         if (i != -1 && i + 1 < filename.length()) {
             return filename.substring(i + 1).trim().toLowerCase();
