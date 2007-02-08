@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.utils.swing.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -15,6 +14,7 @@ import java.util.*;
 import java.util.List;
 
 import com.intellij.uiDesigner.core.*;
+import org.apache.commons.lang.*;
 
 /**
  * de.codewave.mytunesrss.settings.UserManagement
@@ -139,23 +139,6 @@ public class UserManagement {
     private void addPanelComponent(JComponent component, GridBagConstraints gbcName) {
         myUserPanel.add(component);
         ((GridBagLayout)myUserPanel.getLayout()).setConstraints(component, gbcName);
-    }
-
-    public void setGuiMode(GuiMode mode) {
-//        switch (mode) {
-//            case ServerRunning:
-//                SwingUtils.enableElementAndLabel(myCreateButton, false);
-//                for (Component component : myUserPanel.getComponents()) {
-//                    if (component instanceof JButton) {
-//                        component.setEnabled(false);
-//                    }
-//                }
-//                break;
-//            case ServerIdle:
-//                SwingUtils.enableElementAndLabel(myCreateButton, true);
-//                refreshUserList();
-//                break;
-//        }
     }
 
     public class CreateUserActionListener implements ActionListener {

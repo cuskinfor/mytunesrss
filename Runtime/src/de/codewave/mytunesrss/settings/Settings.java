@@ -93,7 +93,6 @@ public class Settings {
         }
         myGeneralForm.setGuiMode(mode);
         myDirectoriesForm.setGuiMode(mode);
-        myUserManagementForm.setGuiMode(mode);
         myInfoForm.setGuiMode(mode);
     }
 

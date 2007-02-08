@@ -6,7 +6,6 @@ import de.codewave.utils.swing.components.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
 import java.util.*;
@@ -34,7 +33,6 @@ public class EditUser {
     private JComboBox myQuotaTypeInput;
     private JTextField myBytesQuotaInput;
     private JTextField myMaxZipEntriesInput;
-    private JScrollPane myPermissionScrollPane;
     private JButton myResetHistoryButton;
     private JLabel myInfoReset;
     private JLabel myInfoDownBytes;
@@ -66,7 +64,6 @@ public class EditUser {
 
     private void init(JDialog dialog) {
         myInformationPanel.setVisible(myUser != null);
-        myPermissionScrollPane.getViewport().setPreferredSize(new Dimension(300, 150));
         myQuotaTypeInput.addItem(User.QuotaType.None);
         myQuotaTypeInput.addItem(User.QuotaType.Day);
         myQuotaTypeInput.addItem(User.QuotaType.Week);
