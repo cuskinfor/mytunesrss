@@ -488,7 +488,7 @@ public class MyTunesRssConfig {
                     userNode.node(user.getName()).putLong("bytesQuota", user.getBytesQuota());
                     userNode.node(user.getName()).put("quotaType", user.getQuotaType().name());
                     userNode.node(user.getName()).putInt("maximumZipEntries", user.getMaximumZipEntries());
-                    userNode.node(user.getName()).put("fileTypes", user.getFileTypes());
+                    userNode.node(user.getName()).put("fileTypes", user.getFileTypes() != null ? user.getFileTypes() : "");
                 }
             } catch (BackingStoreException e) {
                 if (LOG.isErrorEnabled()) {
