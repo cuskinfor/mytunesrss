@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.network.*;
 import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.settings.*;
 import de.codewave.mytunesrss.task.*;
+import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.utils.*;
 import de.codewave.utils.moduleinfo.*;
 import de.codewave.utils.swing.*;
@@ -216,6 +217,7 @@ public class MyTunesRss {
         }
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
         settings.init();
+      MyTunesRssJmxUtils.startJmxServer(0);
         if (CONFIG.isAutoStartServer()) {
             settings.doStartServer();
             if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
@@ -247,7 +249,8 @@ public class MyTunesRss {
             LOG.info("Headless mode");
         }
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
-        startWebserver();
+      MyTunesRssJmxUtils.startJmxServer(0);
+      startWebserver();
         if (!WEBSERVER.isRunning()) {
             CONFIG.save();
             SERVER_RUNNING_TIMER.cancel();
