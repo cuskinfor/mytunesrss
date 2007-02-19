@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.settings.*;
 
 /**
  * <b>Description:</b>   <br>
@@ -36,16 +37,24 @@ public class ServerConfig implements ServerConfigMBean {
     MyTunesRss.CONFIG.setServerName(name);
   }
 
-  public String getServerStatus() {
-    throw new UnsupportedOperationException("Method  of class  is not yet implemented.");
+  public boolean isRunning() {
+    return MyTunesRss.WEBSERVER.isRunning();
   }
 
-  public void startServer() {
-    throw new UnsupportedOperationException("Method  of class  is not yet implemented.");
+  public String startServer() {
+      MyTunesRss.ERROR_QUEUE.clear();
+      if (!MyTunesRss.WEBSERVER.isRunning()) {
+          MyTunesRss.startWebserver();
+      }
+      return MyTunesRss.ERROR_QUEUE.popLastError();
   }
 
-  public void stopServer() {
-    throw new UnsupportedOperationException("Method  of class  is not yet implemented.");
+  public String stopServer() {
+      MyTunesRss.ERROR_QUEUE.clear();
+      if (MyTunesRss.WEBSERVER.isRunning()) {
+          MyTunesRss.stopWebserver();
+      }
+      return MyTunesRss.ERROR_QUEUE.popLastError();
   }
 
   public boolean isAutostart() {

@@ -5,11 +5,11 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.datastore.*;
+import de.codewave.mytunesrss.jmx.*;
 import de.codewave.mytunesrss.network.*;
 import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.settings.*;
 import de.codewave.mytunesrss.task.*;
-import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.utils.*;
 import de.codewave.utils.moduleinfo.*;
 import de.codewave.utils.swing.*;
@@ -63,6 +63,8 @@ public class MyTunesRss {
     public static boolean HEADLESS;
     private static General GENERAL_FORM;
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
+    public static final ErrorQueue ERROR_QUEUE = new ErrorQueue();
+    public static boolean QUIT_REQUEST = false;
 
     static {
         try {
@@ -217,7 +219,7 @@ public class MyTunesRss {
         }
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
         settings.init();
-      MyTunesRssJmxUtils.startJmxServer(0);
+        // MyTunesRssJmxUtils.startJmxServer("localhost", 9500);
         if (CONFIG.isAutoStartServer()) {
             settings.doStartServer();
             if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
@@ -249,13 +251,22 @@ public class MyTunesRss {
             LOG.info("Headless mode");
         }
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
-      MyTunesRssJmxUtils.startJmxServer(0);
-      startWebserver();
-        if (!WEBSERVER.isRunning()) {
-            CONFIG.save();
-            SERVER_RUNNING_TIMER.cancel();
-            STORE.destroy();
+        MyTunesRssJmxUtils.startJmxServer();
+        if (CONFIG.isAutoStartServer()) {
+            startWebserver();
         }
+        while (!QUIT_REQUEST) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // intentionally left blank
+
+            }
+        }
+        MyTunesRssJmxUtils.stopJmxServer();
+        CONFIG.save();
+        SERVER_RUNNING_TIMER.cancel();
+        STORE.destroy();
     }
 
     public static void startWebserver() {

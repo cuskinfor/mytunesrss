@@ -21,6 +21,7 @@ public class MyTunesRssUtils {
                 LOG.error(message);
             }
             System.err.println(message);
+            MyTunesRss.ERROR_QUEUE.setLastError(message);
         } else {
             showErrorMessage(MyTunesRss.ROOT_FRAME, message);
         }

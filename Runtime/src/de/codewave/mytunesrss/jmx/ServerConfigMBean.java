@@ -16,9 +16,9 @@ public interface ServerConfigMBean {
   void setShowOnLocalNetwork(boolean showOnLocalNetwork);
   String getServerName();
   void setServerName(String name);
-  String getServerStatus();
-  void startServer();
-  void stopServer();
+  boolean isRunning();
+  String startServer();
+  String stopServer();
   boolean isAutostart();
   void setAutostart(boolean autostart);
 }
