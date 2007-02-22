@@ -47,6 +47,7 @@ public class General {
     private JPanel myServerPanel;
     private JTextField myServerNameInput;
     private JCheckBox myAvailableOnLocalNetInput;
+    private JCheckBox myTempZipArchivesInput;
     private boolean myUpdateOnStartInputCache;
 
     public void init() {
@@ -92,6 +93,7 @@ public class General {
                 SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected() && !MyTunesRss.WEBSERVER.isRunning());
             }
         });
+        myTempZipArchivesInput.setSelected(MyTunesRss.CONFIG.isLocalTempArchive());
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myPortInput, 1, 65535, false, MyTunesRss.BUNDLE.getString(
                 "error.illegalServerPort")));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myServerNameInput, MyTunesRss.BUNDLE.getString("error.emptyServerName")));
@@ -145,6 +147,7 @@ public class General {
             MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestampsInput.isSelected());
             MyTunesRss.CONFIG.setServerName(myServerNameInput.getText());
             MyTunesRss.CONFIG.setAvailableOnLocalNet(myAvailableOnLocalNetInput.isSelected());
+            MyTunesRss.CONFIG.setLocalTempArchive(myTempZipArchivesInput.isSelected());
         }
         return null;
     }
@@ -160,6 +163,7 @@ public class General {
                 myUpdateDatabaseOnServerStart.setEnabled(false);
                 myIgnoreTimestampsInput.setEnabled(false);
                 myDeleteDatabaseButton.setEnabled(false);
+                myTempZipArchivesInput.setEnabled(false);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, false);
                 SwingUtils.enableElementAndLabel(myServerNameInput, false);
                 break;
@@ -172,6 +176,7 @@ public class General {
                 myAutoUpdateDatabaseInput.setEnabled(true);
                 myIgnoreTimestampsInput.setEnabled(true);
                 myDeleteDatabaseButton.setEnabled(true);
+                myTempZipArchivesInput.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
                 SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected());
                 break;
