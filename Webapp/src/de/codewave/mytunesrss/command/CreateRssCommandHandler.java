@@ -12,14 +12,13 @@ import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
 import javax.servlet.http.*;
-import java.net.*;
 import java.text.*;
 import java.util.*;
 
 /**
  * de.codewave.mytunesrss.command.CreateRssCommandHandler
  */
-public class CreateRssCommandHandler extends CreatePlaylistCommandHandler {
+public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
     private static final Log LOG = LogFactory.getLog(CreateRssCommandHandler.class);
     private static final SimpleDateFormat PUBLISH_DATE_FORMAT = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US);
 

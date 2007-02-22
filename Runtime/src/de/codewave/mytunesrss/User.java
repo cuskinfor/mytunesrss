@@ -20,7 +20,7 @@ public class User {
     private byte[] myPasswordHash;
     private boolean myDownload;
     private boolean myRss;
-    private boolean myM3u;
+    private boolean myPlaylist;
     private boolean myUpload;
     private boolean myChangePassword;
     private QuotaType myQuotaType;
@@ -70,12 +70,12 @@ public class User {
         myDownload = download;
     }
 
-    public boolean isM3u() {
-        return myM3u;
+    public boolean isPlaylist() {
+        return myPlaylist;
     }
 
-    public void setM3u(boolean m3u) {
-        myM3u = m3u;
+    public void setPlaylist(boolean playlist) {
+        myPlaylist = playlist;
     }
 
     public boolean isRss() {

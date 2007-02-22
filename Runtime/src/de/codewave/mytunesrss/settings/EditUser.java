@@ -27,7 +27,7 @@ public class EditUser {
     private JButton mySaveButton;
     private JButton myCancelButton;
     private JCheckBox myPermRssInput;
-    private JCheckBox myPermM3uInput;
+    private JCheckBox myPermPlaylistInput;
     private JCheckBox myPermDownloadInput;
     private JCheckBox myPermUploadInput;
     private JComboBox myQuotaTypeInput;
@@ -82,7 +82,7 @@ public class EditUser {
         }
         if (myUser != null) {
             myPermRssInput.setSelected(myUser.isRss());
-            myPermM3uInput.setSelected(myUser.isM3u());
+            myPermPlaylistInput.setSelected(myUser.isPlaylist());
             myPermDownloadInput.setSelected(myUser.isDownload());
             myPermUploadInput.setSelected(myUser.isUpload());
             myPermChangePasswordInput.setSelected(myUser.isChangePassword());
@@ -93,7 +93,7 @@ public class EditUser {
         } else {
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
             myPermRssInput.setSelected(true);
-            myPermM3uInput.setSelected(true);
+            myPermPlaylistInput.setSelected(true);
             myPermChangePasswordInput.setSelected(true);
         }
         if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
@@ -192,7 +192,7 @@ public class EditUser {
                     }
                     myUser.setName(myUserNameInput.getText());
                     myUser.setRss(myPermRssInput.isSelected());
-                    myUser.setM3u(myPermM3uInput.isSelected());
+                    myUser.setPlaylist(myPermPlaylistInput.isSelected());
                     myUser.setDownload(myPermDownloadInput.isSelected());
                     myUser.setUpload(myPermUploadInput.isSelected());
                     myUser.setChangePassword(myPermChangePasswordInput.isSelected());

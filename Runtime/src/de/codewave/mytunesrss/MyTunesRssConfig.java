@@ -4,18 +4,18 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.utils.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.xml.*;
-import de.codewave.utils.*;
 import org.apache.commons.jxpath.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
+import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.prefs.*;
-import java.awt.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssConfig
@@ -52,6 +52,7 @@ public class MyTunesRssConfig {
     private boolean myUpdateDatabaseOnServerStart = true;
     private String myFileTypes = "";
     private String myArtistDropWords = "";
+    private boolean myLocalTempArchive;
 
     public String getLibraryXml() {
         return myLibraryXml;
@@ -199,6 +200,14 @@ public class MyTunesRssConfig {
         myArtistDropWords = artistDropWords;
     }
 
+    public boolean isLocalTempArchive() {
+        return myLocalTempArchive;
+    }
+
+    public void setLocalTempArchive(boolean localTempArchive) {
+        myLocalTempArchive = localTempArchive;
+    }
+
     public Collection<User> getUsers() {
         return new HashSet<User>(myUsers);
     }
@@ -277,15 +286,15 @@ public class MyTunesRssConfig {
         myMyTunesRssComUser = myTunesRssComUser;
     }
 
-  public boolean isUpdateDatabaseOnServerStart() {
-    return myUpdateDatabaseOnServerStart;
-  }
+    public boolean isUpdateDatabaseOnServerStart() {
+        return myUpdateDatabaseOnServerStart;
+    }
 
-  public void setUpdateDatabaseOnServerStart(boolean updateOnServerStart) {
-    myUpdateDatabaseOnServerStart = updateOnServerStart;
-  }
+    public void setUpdateDatabaseOnServerStart(boolean updateOnServerStart) {
+        myUpdateDatabaseOnServerStart = updateOnServerStart;
+    }
 
-  private String findItunesLibraryXml(Trigger trigger) {
+    private String findItunesLibraryXml(Trigger trigger) {
         String userHome = System.getProperty("user.home");
         if (StringUtils.isNotEmpty(userHome)) {
             if (!userHome.endsWith("/") && !userHome.endsWith("\\")) {
@@ -311,18 +320,22 @@ public class MyTunesRssConfig {
         setPort(Preferences.userRoot().node(PREF_ROOT).getInt("serverPort", getPort()));
         try {
             if (!Arrays.asList(Preferences.userRoot().node(PREF_ROOT).keys()).contains("iTunesLibrary")) {
-                MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.searchingItunesXml"), MyTunesRss.BUNDLE.getString("cancel"), false, new MyTunesRssTask() {
-                    private Trigger myCancelTrigger = new Trigger();
+                MyTunesRssUtils.executeTask(null,
+                                            MyTunesRss.BUNDLE.getString("pleaseWait.searchingItunesXml"),
+                                            MyTunesRss.BUNDLE.getString("cancel"),
+                                            false,
+                                            new MyTunesRssTask() {
+                                                private Trigger myCancelTrigger = new Trigger();
 
-                    public void execute() throws Exception {
-                        setLibraryXml(findItunesLibraryXml(myCancelTrigger));
-                    }
+                                                public void execute() throws Exception {
+                                                    setLibraryXml(findItunesLibraryXml(myCancelTrigger));
+                                                }
 
-                    @Override
-                    protected void cancel() {
-                        myCancelTrigger.trigger();
-                    }
-                });
+                                                @Override
+                                                protected void cancel() {
+                                                    myCancelTrigger.trigger();
+                                                }
+                                            });
             }
         } catch (BackingStoreException e) {
             // intentionally left blank
@@ -333,9 +346,9 @@ public class MyTunesRssConfig {
         setCheckUpdateOnStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("checkUpdateOnStart", isCheckUpdateOnStart()));
         setAutoStartServer(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoStartServer", isAutoStartServer()));
         setAutoUpdateDatabase(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoUpdateDatabase", isAutoUpdateDatabase()));
-        setUpdateDatabaseOnServerStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
-        setAutoUpdateDatabaseInterval(Preferences.userRoot().node(PREF_ROOT).getInt("autoUpdateDatabaseInterval",
-                                                                                                    getAutoUpdateDatabaseInterval()));
+        setUpdateDatabaseOnServerStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("updateDatabaseOnServerStart",
+                                                                                         isUpdateDatabaseOnServerStart()));
+        setAutoUpdateDatabaseInterval(Preferences.userRoot().node(PREF_ROOT).getInt("autoUpdateDatabaseInterval", getAutoUpdateDatabaseInterval()));
         setIgnoreTimestamps(Preferences.userRoot().node(PREF_ROOT).getBoolean("ignoreTimestamps", isIgnoreTimestamps()));
         setBaseDir(Preferences.userRoot().node(PREF_ROOT).get("baseDir", getBaseDir()));
         setFileSystemArtistNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("artistFolder", getFileSystemArtistNameFolder()));
@@ -343,6 +356,7 @@ public class MyTunesRssConfig {
         setItunesDeleteMissingFiles(Preferences.userRoot().node(PREF_ROOT).getBoolean("iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
         setUploadDir(Preferences.userRoot().node(PREF_ROOT).get("uploadDir", getUploadDir()));
         setUploadCreateUserDir(Preferences.userRoot().node(PREF_ROOT).getBoolean("uploadCreateUserDir", isUploadCreateUserDir()));
+        setLocalTempArchive(Preferences.userRoot().node(PREF_ROOT).getBoolean("localTempArchive", isLocalTempArchive()));
         Preferences userNode = Preferences.userRoot().node(PREF_ROOT + "/user");
         if (userNode != null) {
             try {
@@ -351,7 +365,7 @@ public class MyTunesRssConfig {
                     user.setActive(userNode.node(userName).getBoolean("active", true));
                     user.setPasswordHash(userNode.node(userName).getByteArray("password", null));
                     user.setRss(userNode.node(userName).getBoolean("featureRss", true));
-                    user.setM3u(userNode.node(userName).getBoolean("featureM3u", true));
+                    user.setPlaylist(userNode.node(userName).getBoolean("featurePlaylist", true));
                     user.setDownload(userNode.node(userName).getBoolean("featureDownload", false));
                     user.setUpload(userNode.node(userName).getBoolean("featureUpload", false));
                     user.setChangePassword(userNode.node(userName).getBoolean("featureChangePassword", true));
@@ -401,7 +415,9 @@ public class MyTunesRssConfig {
         setFileSystemArtistNameFolder(JXPathUtils.getIntValue(context, "/mytunesrss/datasource/basedir/@artist", getFileSystemArtistNameFolder()));
         setFileTypes(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/filetypes", getFileTypes()));
         setArtistDropWords(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/artistdropwords", getArtistDropWords()));
-        setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(context, "/mytunesrss/datasource/itunesxml/@deletemissing", isItunesDeleteMissingFiles()));
+        setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(context,
+                                                                "/mytunesrss/datasource/itunesxml/@deletemissing",
+                                                                isItunesDeleteMissingFiles()));
         setUploadDir(JXPathUtils.getStringValue(context, "/mytunesrss/upload/basedir", getUploadDir()));
         setUploadCreateUserDir(JXPathUtils.getBooleanValue(context, "/mytunesrss/upload/@userdir", isUploadCreateUserDir()));
         // misc
@@ -419,7 +435,7 @@ public class MyTunesRssConfig {
             user.setActive(JXPathUtils.getBooleanValue(userContext, "@active", true));
             user.setPasswordHash(MyTunesRssBase64Utils.decode(JXPathUtils.getStringValue(userContext, "@password", null)));
             user.setRss(JXPathUtils.getBooleanValue(userContext, "features/@rss", true));
-            user.setM3u(JXPathUtils.getBooleanValue(userContext, "features/@m3u", true));
+            user.setPlaylist(JXPathUtils.getBooleanValue(userContext, "features/@playlist", true));
             user.setDownload(JXPathUtils.getBooleanValue(userContext, "features/@download", true));
             user.setChangePassword(JXPathUtils.getBooleanValue(userContext, "features/@changepassword", true));
             user.setUpload(JXPathUtils.getBooleanValue(userContext, "features/@upload", false));
@@ -460,6 +476,7 @@ public class MyTunesRssConfig {
             Preferences.userRoot().node(PREF_ROOT).putBoolean("iTunesDeleteMissingFiles", myItunesDeleteMissingFiles);
             Preferences.userRoot().node(PREF_ROOT).put("uploadDir", myUploadDir);
             Preferences.userRoot().node(PREF_ROOT).putBoolean("uploadCreateUserDir", myUploadCreateUserDir);
+            Preferences.userRoot().node(PREF_ROOT).putBoolean("localTempArchive", myLocalTempArchive);
             Preferences userNode = Preferences.userRoot().node(PREF_ROOT + "/user");
             try {
                 // remove obsolete users
@@ -477,7 +494,7 @@ public class MyTunesRssConfig {
                     }
                     userNode.node(user.getName()).putBoolean("active", user.isActive());
                     userNode.node(user.getName()).putBoolean("featureRss", user.isRss());
-                    userNode.node(user.getName()).putBoolean("featureM3u", user.isM3u());
+                    userNode.node(user.getName()).putBoolean("featurePlaylist", user.isPlaylist());
                     userNode.node(user.getName()).putBoolean("featureDownload", user.isDownload());
                     userNode.node(user.getName()).putBoolean("featureUpload", user.isUpload());
                     userNode.node(user.getName()).putBoolean("featureChangePassword", user.isChangePassword());
@@ -537,7 +554,7 @@ public class MyTunesRssConfig {
                     byte[] hash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
                     Preferences.userRoot().node(PREF_ROOT + "/user/default").putByteArray("password", hash);
                     Preferences.userRoot().node(PREF_ROOT + "/user/default").putBoolean("featureRss", true);
-                    Preferences.userRoot().node(PREF_ROOT + "/user/default").putBoolean("featureM3u", true);
+                    Preferences.userRoot().node(PREF_ROOT + "/user/default").putBoolean("featurePlaylist", true);
                     Preferences.userRoot().node(PREF_ROOT + "/user/default").putBoolean("featureDownload", true);
                     Preferences.userRoot().node(PREF_ROOT).remove("serverPassword");
                     setVersion("2.3");
@@ -546,6 +563,24 @@ public class MyTunesRssConfig {
                         LOG.error("Could not create password hash.", e);
                     }
                 }
+            }
+        }
+        if (getVersion().compareTo("3.0") < 0) {
+            Preferences userNode = Preferences.userRoot().node(PREF_ROOT + "/user");
+            if (userNode != null) {
+                try {
+                    for (String userName : userNode.childrenNames()) {
+                        userNode.node(userName).putBoolean("featurePlaylist", userNode.node(userName).getBoolean("featureM3u", true));
+                        if (userNode.node(userName).nodeExists("featureM3u")) {
+                            userNode.node(userName).remove("featureM3u");
+                        }
+                    }
+                } catch (BackingStoreException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not read users.", e);
+                    }
+                }
+                setVersion("3.0");
             }
         }
     }

@@ -30,13 +30,13 @@
               <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permRssTooltip"/>
             </properties>
           </component>
-          <component id="1be5b" class="javax.swing.JCheckBox" binding="myPermM3uInput" default-binding="true">
+          <component id="1be5b" class="javax.swing.JCheckBox" binding="myPermPlaylistInput" default-binding="true">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permM3u"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permM3uTooltip"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permPlaylist"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permPlaylistTooltip"/>
             </properties>
           </component>
           <component id="1e03a" class="javax.swing.JCheckBox" binding="myPermDownloadInput" default-binding="true">

@@ -4,8 +4,8 @@
 
 package de.codewave.mytunesrss.servlet;
 
-import de.codewave.utils.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.jsp.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -23,15 +23,42 @@ public class WebConfig {
     private static final String CFG_PASSWORD_HASH = "passwordHash";
     private static final String CFG_LOGIN_STORED = "rememberLogin";
     private static final String CFG_FEED_TYPE_RSS = "feedTypeRss";
-    private static final String CFG_FEED_TYPE_M3U = "feedTypeM3u";
+    private static final String CFG_FEED_TYPE_PLAYLIST = "feedTypePlaylist";
     private static final String CFG_RSS_LIMIT = "rssLimit";
     private static final String CFG_PAGE_SIZE = "pageSize";
     private static final String CFG_SHOW_DOWNLOAD = "showDownload";
     private static final String CFG_RSS_ARTWORK = "rssArtwork";
     private static final String CFG_RANDOM_PLAYLIST_SIZE = "randomPlaylistSize";
+    private static final String CFG_PLAYLIST_TYPE = "playlistType";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
-    Map<String, String> myConfigValues = new HashMap<String, String>();
+    private static enum PlaylistType {
+        M3u(), Xspf();
+
+        String getFileSuffix() {
+            switch (this) {
+                case M3u:
+                    return "m3u";
+                case Xspf:
+                    return "xml";
+                default:
+                    throw new IllegalArgumentException("illegal playlist type: " + this.name());
+            }
+        }
+
+        public MyTunesRssResource getTemplateResource() {
+            switch (this) {
+                case M3u:
+                    return MyTunesRssResource.TemplateM3u;
+                case Xspf:
+                    return MyTunesRssResource.TemplateXspf;
+                default:
+                    throw new IllegalArgumentException("illegal playlist type: " + this.name());
+            }
+        }
+    }
+
+    private Map<String, String> myConfigValues = new HashMap<String, String>();
 
     public void clear() {
         myConfigValues.clear();
@@ -48,7 +75,7 @@ public class WebConfig {
 
     private void initWithDefaults() {
         myConfigValues.put(CFG_FEED_TYPE_RSS, "true");
-        myConfigValues.put(CFG_FEED_TYPE_M3U, "true");
+        myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "true");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
         myConfigValues.put(CFG_LOGIN_STORED, "false");
         myConfigValues.put(CFG_PASSWORD_HASH, "");
@@ -56,6 +83,7 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
         myConfigValues.put(CFG_RSS_ARTWORK, "true");
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
+        myConfigValues.put(CFG_PLAYLIST_TYPE, "m3u");
     }
 
     public void load(HttpServletRequest request) {
@@ -151,17 +179,26 @@ public class WebConfig {
         myConfigValues.put(CFG_FEED_TYPE_RSS, Boolean.toString(showRss));
     }
 
-    public boolean isShowM3u() {
-        return Boolean.valueOf(myConfigValues.get(CFG_FEED_TYPE_M3U));
+    public boolean isShowPlaylist() {
+        return Boolean.valueOf(myConfigValues.get(CFG_FEED_TYPE_PLAYLIST));
     }
 
-    public void setShowM3u(boolean showM3u) {
-        myConfigValues.put(CFG_FEED_TYPE_M3U, Boolean.toString(showM3u));
+    public void setShowPlaylist(boolean showPlaylist) {
+        myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, Boolean.toString(showPlaylist));
+    }
+
+    public String getPlaylistType() {
+        String type = myConfigValues.get(CFG_PLAYLIST_TYPE);
+        return StringUtils.isNotEmpty(type) ? type : PlaylistType.M3u.name();
+    }
+
+    public void setPlaylistType(String playlistType) {
+        myConfigValues.put(CFG_PLAYLIST_TYPE, playlistType);
     }
 
     public int getFeedTypeCount() {
         int count = isShowRss() ? 1 : 0;
-        count += (isShowM3u() ? 1 : 0);
+        count += (isShowPlaylist() ? 1 : 0);
         return count;
     }
 
@@ -208,5 +245,13 @@ public class WebConfig {
 
     public void setRandomPlaylistSize(int count) {
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, Integer.toString(count));
+    }
+
+    public String getPlaylistFileSuffix() {
+        return PlaylistType.valueOf(getPlaylistType()).getFileSuffix();
+    }
+
+    public MyTunesRssResource getPlaylistTemplateResource() {
+        return PlaylistType.valueOf(getPlaylistType()).getTemplateResource();
     }
 }

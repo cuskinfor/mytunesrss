@@ -128,10 +128,10 @@
                             <img src="${appUrl}/images/rss_th.gif" alt="rss" /> </a>
                     </th>
                 </c:if>
-                <c:if test="${authUser.m3u && config.showM3u}">
+                <c:if test="${authUser.playlist && config.showPlaylist}">
                     <th class="icon">
-                        <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:webSafeFileName(sectionFileName)}.m3u">
-                            <img src="${appUrl}/images/m3u_th.gif" alt="m3u" /> </a>
+                        <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:webSafeFileName(sectionFileName)}.${config.playlistFileSuffix}">
+                            <img src="${appUrl}/images/playlist_th.gif" alt="playlist" /> </a>
                     </th>
                 </c:if>
                 <c:if test="${authUser.download && config.showDownload}">
@@ -185,10 +185,10 @@
                         <img src="${appUrl}/images/rss${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="rss" /> </a>
                 </td>
             </c:if>
-            <c:if test="${authUser.m3u && config.showM3u}">
+            <c:if test="${authUser.playlist && config.showPlaylist}">
                 <td class="icon">
-                    <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.m3u">
-                        <img src="${appUrl}/images/m3u${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="m3u" /> </a>
+                    <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}">
+                        <img src="${appUrl}/images/playlist${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="playlist" /> </a>
                 </td>
             </c:if>
             <c:if test="${authUser.download && config.showDownload}">

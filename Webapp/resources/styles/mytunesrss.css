@@ -322,16 +322,16 @@ tr.odd a.rss {
     background-position: 0 -83px;
 }
 
-a.m3u {
+a.playlist {
     display: block;
     height: 18px;
     width: 16px;
     overflow: hidden;
-    background: url( "../images/m3u.gif" ) 0 2px no-repeat;
+    background: url( "../images/playlist.gif" ) 0 2px no-repeat;
     text-decoration: none;
 }
 
-tr.odd a.m3u {
+tr.odd a.playlist {
     background-position: 0 -83px;
 }
 

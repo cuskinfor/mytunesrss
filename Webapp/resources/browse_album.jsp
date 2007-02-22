@@ -120,11 +120,11 @@
                                          alt="rss" /> </a>
                             </td>
                         </c:if>
-                        <c:if test="${authUser.m3u && config.showM3u}">
+                        <c:if test="${authUser.playlist && config.showPlaylist}">
                             <td class="icon">
-                                <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/album=${cwfn:encodeUrl(cwfn:encode64(album.name))}/${mtfn:virtualAlbumName(album)}.m3u">
-                                    <img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                         alt="m3u" /> </a>
+                                <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/album=${cwfn:encodeUrl(cwfn:encode64(album.name))}/${mtfn:virtualAlbumName(album)}.${config.playlistFileSuffix}">
+                                    <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                         alt="playlist" /> </a>
                             </td>
                         </c:if>
                         <c:if test="${authUser.download && config.showDownload}">
@@ -169,11 +169,11 @@
                                          alt="rss" /> </a>
                             </td>
                         </c:if>
-                        <c:if test="${authUser.m3u && config.showM3u}">
+                        <c:if test="${authUser.playlist && config.showPlaylist}">
                             <td class="icon">
-                                <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/${mtfn:webSafeFileName(cwfn:decode64(param.artist))}.m3u">
-                                    <img src="${appUrl}/images/m3u${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
-                                         alt="m3u" /> </a>
+                                <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/${mtfn:webSafeFileName(cwfn:decode64(param.artist))}.${config.playlistFileSuffix}">
+                                    <img src="${appUrl}/images/playlist${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
+                                         alt="playlist" /> </a>
                             </td>
                         </c:if>
                         <c:if test="${authUser.download && config.showDownload}">

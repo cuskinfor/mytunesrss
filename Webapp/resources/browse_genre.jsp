@@ -95,11 +95,11 @@
                                              alt="rss" /> </a>
                                 </td>
                             </c:if>
-                            <c:if test="${authUser.m3u && config.showM3u}">
+                            <c:if test="${authUser.playlist && config.showPlaylist}">
                                 <td class="icon">
-                                    <a href="${servletUrl}/createM3U/auth=${cwfn:encodeUrl(auth)}/genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}/${mtfn:virtualGenreName(genre)}.m3u">
-                                        <img src="${appUrl}/images/m3u${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                             alt="m3u" /> </a>
+                                    <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}/${mtfn:virtualGenreName(genre)}.${config.playlistFileSuffix}">
+                                        <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                             alt="playlist" /> </a>
                                 </td>
                             </c:if>
                             <c:if test="${authUser.download && config.showDownload}">

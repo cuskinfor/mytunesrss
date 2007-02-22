@@ -4,7 +4,6 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
@@ -15,9 +14,9 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * de.codewave.mytunesrss.command.CreateM3uCommandHandler
+ * de.codewave.mytunesrss.command.CreatePlaylistCommandHandler
  */
-public class CreatePlaylistCommandHandler extends MyTunesRssCommandHandler {
+public class CreatePlaylistBaseCommandHandler extends MyTunesRssCommandHandler {
     protected Collection<Track> getTracks() throws SQLException, IOException, ServletException {
         String[] trackIds = getNonEmptyParameterValues("track");
         String trackList = getRequestParameter("tracklist", null);
