@@ -83,7 +83,7 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
         myConfigValues.put(CFG_RSS_ARTWORK, "true");
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
-        myConfigValues.put(CFG_PLAYLIST_TYPE, "m3u");
+        myConfigValues.put(CFG_PLAYLIST_TYPE, "M3u");
     }
 
     public void load(HttpServletRequest request) {

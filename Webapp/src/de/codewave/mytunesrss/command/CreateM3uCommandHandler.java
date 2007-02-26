@@ -20,7 +20,7 @@ public class CreateM3uCommandHandler extends CreatePlaylistCommandHandler {
 
     @Override
     public void executeAuthorized() throws SQLException, IOException, ServletException {
-        if (getAuthUser().isM3u()) {
+        if (getAuthUser().isPlaylist()) {
             Collection<Track> tracks = getTracks();
             if (tracks != null && !tracks.isEmpty()) {
                 getRequest().setAttribute("tracks", tracks);
