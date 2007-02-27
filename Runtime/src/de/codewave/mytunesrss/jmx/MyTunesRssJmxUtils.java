@@ -68,7 +68,7 @@ public class MyTunesRssJmxUtils {
         }
     }
 
-    private static void registerUsers()
+    static void registerUsers()
             throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         for (User user : MyTunesRss.CONFIG.getUsers()) {
@@ -95,18 +95,7 @@ public class MyTunesRssJmxUtils {
         }
     }
 
-    static void reregisterUsers() {
-        try {
-            unregisterUsers();
-            registerUsers();
-        } catch (Exception e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not re-register users.", e);
-            }
-        }
-    }
-
-    private static void unregisterUsers() throws InstanceNotFoundException, MBeanRegistrationException, MalformedObjectNameException {
+    static void unregisterUsers() throws InstanceNotFoundException, MBeanRegistrationException, MalformedObjectNameException {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         for (User user : MyTunesRss.CONFIG.getUsers()) {
             server.unregisterMBean(new ObjectName("MyTunesRSS:user=" + user.getName()));
