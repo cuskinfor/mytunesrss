@@ -6,6 +6,8 @@ import org.apache.commons.logging.*;
 import javax.management.*;
 import java.lang.management.*;
 
+import de.codewave.mytunesrss.*;
+
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
  * 13.02.2007
@@ -18,13 +20,17 @@ public class MyTunesRssJmxUtils {
     private static ObjectName HTTP_ADAPTOR_NAME;
     private static ObjectName SERVER_CONFIG_NAME;
     private static ObjectName APPLICATION_NAME;
+    private static ObjectName DATABASE_CONFIG_NAME;
+    private static ObjectName DIRECTORIES_CONFIG_NAME;
     private static boolean INITIALIZED;
 
     static {
         try {
-            HTTP_ADAPTOR_NAME = new ObjectName("de.codewave.mytunesrss:name=HttpAdaptor");
-            SERVER_CONFIG_NAME = new ObjectName("de.codewave.mytunesrss:name=Server");
-            APPLICATION_NAME = new ObjectName("de.codewave.mytunesrss:name=Application");
+            HTTP_ADAPTOR_NAME = new ObjectName("MyTunesRSS:type=HttpAdaptor");
+            SERVER_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Server");
+            APPLICATION_NAME = new ObjectName("MyTunesRSS:config=Application");
+            DATABASE_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Database");
+            DIRECTORIES_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Directories");
             INITIALIZED = true;
         } catch (MalformedObjectNameException e) {
             if (LOG.isErrorEnabled()) {
@@ -39,6 +45,11 @@ public class MyTunesRssJmxUtils {
                 MBeanServer server = ManagementFactory.getPlatformMBeanServer();
                 server.registerMBean(new Application(), APPLICATION_NAME);
                 server.registerMBean(new ServerConfig(), SERVER_CONFIG_NAME);
+                server.registerMBean(new DatabaseConfig(), DATABASE_CONFIG_NAME);
+                server.registerMBean(new DirectoriesConfig(), DIRECTORIES_CONFIG_NAME);
+                for (User user : MyTunesRss.CONFIG.getUsers()) {
+                    server.registerMBean(new UserConfig(user.getName()), new ObjectName("MyTunesRSS:user=" + user.getName()));
+                }
                 HttpAdaptor adaptor = new HttpAdaptor();
                 ObjectName name = HTTP_ADAPTOR_NAME;
                 server.registerMBean(adaptor, name);
@@ -68,6 +79,11 @@ public class MyTunesRssJmxUtils {
                 server.unregisterMBean(HTTP_ADAPTOR_NAME);
                 server.unregisterMBean(SERVER_CONFIG_NAME);
                 server.unregisterMBean(APPLICATION_NAME);
+                server.unregisterMBean(DATABASE_CONFIG_NAME);
+                server.unregisterMBean(DIRECTORIES_CONFIG_NAME);
+                for (User user : MyTunesRss.CONFIG.getUsers()) {
+                    server.unregisterMBean(new ObjectName("MyTunesRSS:user=" + user.getName()));
+                }
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not start JMX server.", e);

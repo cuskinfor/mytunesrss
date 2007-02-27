@@ -64,6 +64,14 @@ public class ServerConfig implements ServerConfigMBean {
   public void setAutostart(boolean autostart) {
     MyTunesRss.CONFIG.setAutoStartServer(autostart);
   }
+
+    public boolean isCreateTempZipArchives() {
+        return MyTunesRss.CONFIG.isLocalTempArchive();
+    }
+
+    public void setCreateTempArchives(boolean createTempArchives) {
+        MyTunesRss.CONFIG.setLocalTempArchive(createTempArchives);
+    }
 }
 
 

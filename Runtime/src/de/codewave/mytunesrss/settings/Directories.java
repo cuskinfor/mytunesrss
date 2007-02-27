@@ -18,7 +18,7 @@ import org.apache.commons.lang.*;
  * de.codewave.mytunesrss.settings.Options
  */
 public class Directories {
-    private enum FolderStructureRole {
+    public enum FolderStructureRole {
         Artist, Album, None;
 
         public String toString() {
