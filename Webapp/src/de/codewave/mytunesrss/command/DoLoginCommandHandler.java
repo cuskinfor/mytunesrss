@@ -31,11 +31,9 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                 forward(MyTunesRssCommand.ShowPortal);
             } else {
                 addError(new BundleError("error.loginDenied"));
-                handleSingleUser();
                 forward(MyTunesRssResource.Login);
             }
         } else if (needsAuthorization()) {
-            handleSingleUser();
             forward(MyTunesRssResource.Login);
         } else {
             forward(MyTunesRssCommand.ShowPortal);

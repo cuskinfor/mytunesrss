@@ -170,7 +170,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                     authorize(getWebConfig().getUserName());
                     executeAuthorized();
                 } else if (needsAuthorization()) {
-                    handleSingleUser();
                     forward(MyTunesRssResource.Login);
                 } else {
                     executeAuthorized();
@@ -210,12 +209,5 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected String getBundleString(String key) {
         ResourceBundle bundle = ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRSSWeb", getRequest().getLocale());
         return bundle.getString(key);
-    }
-
-    protected void handleSingleUser() {
-        Collection<User> users = getMyTunesRssConfig().getUsers();
-        if (users != null && users.size() == 1) {
-            getRequest().setAttribute("singleUserName", users.iterator().next().getName());
-        }
     }
 }

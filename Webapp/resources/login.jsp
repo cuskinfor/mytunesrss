@@ -33,10 +33,6 @@
 
   <form id="login" action="${servletUrl}/login" method="post">
 
-    <c:if test="${!empty singleUserName}">
-      <fieldset><input type="hidden" name="username" value="${singleUserName}"/></fieldset>
-    </c:if>
-
     <h2>
       <fmt:message key="loginCaption"/>
     </h2>
@@ -44,17 +40,15 @@
     <div class="login">
 
       <table class="login" cellspacing="0">
-        <c:if test="${empty singleUserName}">
-          <tr>
-            <td>
-              <fmt:message key="userName"/>
-            </td>
-            <td>
-              <input class="text" type="text" name="username" value="<c:out value="${param.username}"/>"/>
-            </td>
-            <td>&nbsp;</td>
-          </tr>
-        </c:if>
+      <tr>
+        <td>
+          <fmt:message key="userName"/>
+        </td>
+        <td>
+          <input class="text" type="text" name="username" value="<c:out value="${param.username}"/>"/>
+        </td>
+        <td>&nbsp;</td>
+      </tr>
         <tr>
           <td>
             <fmt:message key="password"/>
