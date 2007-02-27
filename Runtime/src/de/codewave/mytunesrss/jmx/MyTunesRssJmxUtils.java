@@ -1,12 +1,11 @@
 package de.codewave.mytunesrss.jmx;
 
+import de.codewave.mytunesrss.*;
 import mx4j.tools.adaptor.http.*;
 import org.apache.commons.logging.*;
 
 import javax.management.*;
 import java.lang.management.*;
-
-import de.codewave.mytunesrss.*;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
@@ -47,9 +46,7 @@ public class MyTunesRssJmxUtils {
                 server.registerMBean(new ServerConfig(), SERVER_CONFIG_NAME);
                 server.registerMBean(new DatabaseConfig(), DATABASE_CONFIG_NAME);
                 server.registerMBean(new DirectoriesConfig(), DIRECTORIES_CONFIG_NAME);
-                for (User user : MyTunesRss.CONFIG.getUsers()) {
-                    server.registerMBean(new UserConfig(user.getName()), new ObjectName("MyTunesRSS:user=" + user.getName()));
-                }
+                registerUsers();
                 HttpAdaptor adaptor = new HttpAdaptor();
                 ObjectName name = HTTP_ADAPTOR_NAME;
                 server.registerMBean(adaptor, name);
@@ -71,6 +68,14 @@ public class MyTunesRssJmxUtils {
         }
     }
 
+    private static void registerUsers()
+            throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException {
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        for (User user : MyTunesRss.CONFIG.getUsers()) {
+            server.registerMBean(new UserConfig(user.getName()), new ObjectName("MyTunesRSS:user=" + user.getName()));
+        }
+    }
+
     public static void stopJmxServer() {
         if (INITIALIZED) {
             try {
@@ -81,14 +86,30 @@ public class MyTunesRssJmxUtils {
                 server.unregisterMBean(APPLICATION_NAME);
                 server.unregisterMBean(DATABASE_CONFIG_NAME);
                 server.unregisterMBean(DIRECTORIES_CONFIG_NAME);
-                for (User user : MyTunesRss.CONFIG.getUsers()) {
-                    server.unregisterMBean(new ObjectName("MyTunesRSS:user=" + user.getName()));
-                }
+                unregisterUsers();
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not start JMX server.", e);
                 }
             }
+        }
+    }
+
+    static void reregisterUsers() {
+        try {
+            unregisterUsers();
+            registerUsers();
+        } catch (Exception e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not re-register users.", e);
+            }
+        }
+    }
+
+    private static void unregisterUsers() throws InstanceNotFoundException, MBeanRegistrationException, MalformedObjectNameException {
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        for (User user : MyTunesRss.CONFIG.getUsers()) {
+            server.unregisterMBean(new ObjectName("MyTunesRSS:user=" + user.getName()));
         }
     }
 }
