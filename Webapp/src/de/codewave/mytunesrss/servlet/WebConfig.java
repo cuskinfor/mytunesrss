@@ -189,7 +189,16 @@ public class WebConfig {
 
     public String getPlaylistType() {
         String type = myConfigValues.get(CFG_PLAYLIST_TYPE);
-        return StringUtils.isNotEmpty(type) ? type : PlaylistType.M3u.name();
+        if (StringUtils.isNotEmpty(type)) {
+            try {
+                PlaylistType.valueOf(type); // check if we have a valid value
+                return type;
+            } catch (IllegalArgumentException e) {
+                // set default value and return it
+                setPlaylistType(PlaylistType.M3u.name());
+            }
+        }
+        return PlaylistType.M3u.name();
     }
 
     public void setPlaylistType(String playlistType) {
