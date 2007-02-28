@@ -22,7 +22,7 @@ import java.util.prefs.*;
  */
 public class MyTunesRssConfig {
     private static final Log LOG = LogFactory.getLog(MyTunesRssConfig.class);
-    private static final String PREF_ROOT = "/de/codewave/mytunesrss30beta";
+    public static final String PREF_ROOT = "/de/codewave/mytunesrss30beta";
 
     private int myPort = 8080;
     private String myServerName = "MyTunesRSS";

@@ -232,7 +232,7 @@ public class MyTunesRss {
     }
 
     private static void showNewVersionInfo() {
-        String lastNewVersionInfo = Preferences.userRoot().node("/de/codewave/mytunesrss").get("lastNewVersionInfo", "0");
+        String lastNewVersionInfo = Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).get("lastNewVersionInfo", "0");
         if (!VERSION.equals(lastNewVersionInfo)) {
             try {
                 String message = BUNDLE.getString("info.newVersion");
@@ -242,7 +242,7 @@ public class MyTunesRss {
             } catch (MissingResourceException e) {
                 // intentionally left blank
             }
-            Preferences.userRoot().node("/de/codewave/mytunesrss").put("lastNewVersionInfo", VERSION);
+            Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).put("lastNewVersionInfo", VERSION);
         }
     }
 
