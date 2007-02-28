@@ -36,6 +36,7 @@ public class User {
         myName = name;
         myResetTime = System.currentTimeMillis();
         myQuotaResetTime = myResetTime;
+        myQuotaType = QuotaType.None;
     }
 
     public boolean isActive() {

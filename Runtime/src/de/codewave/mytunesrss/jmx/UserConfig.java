@@ -17,42 +17,20 @@ import java.io.*;
 public class UserConfig implements UserConfigMBean {
     private static final Log LOG = LogFactory.getLog(UserConfig.class);
 
-    private String myUsername;
-
-    public UserConfig(String username) {
-        myUsername = username;
-    }
-
-    public void activate() {
-        MyTunesRss.CONFIG.getUser(myUsername).setActive(true);
-    }
-
-    public void deactivate() {
-        MyTunesRss.CONFIG.getUser(myUsername).setActive(false);
-    }
-
-    public boolean isActive() {
-        return MyTunesRss.CONFIG.getUser(myUsername).isActive();
-    }
-
-    public String getName() {
-        return MyTunesRss.CONFIG.getUser(myUsername).getName();
-    }
-
-    public void setName(String name) throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException,
+    public String addUser(String name, String password) throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException,
             NotCompliantMBeanException, InstanceAlreadyExistsException {
-        MyTunesRssJmxUtils.unregisterUsers();
-        MyTunesRss.CONFIG.getUser(myUsername).setName(name);
-        MyTunesRssJmxUtils.registerUsers();
-    }
-
-    public void setPassword(String password) {
+        User user = new User(name);
         try {
-            MyTunesRss.CONFIG.getUser(myUsername).setPasswordHash(MyTunesRss.MESSAGE_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
+            user.setPasswordHash(MyTunesRss.MESSAGE_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
+            MyTunesRssJmxUtils.unregisterUsers();
+            MyTunesRss.CONFIG.addUser(user);
+            MyTunesRssJmxUtils.registerUsers();
+            return MyTunesRss.BUNDLE.getString("ok");
         } catch (UnsupportedEncodingException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not create password hash.", e);
             }
+            return e.getMessage();
         }
     }
 }
