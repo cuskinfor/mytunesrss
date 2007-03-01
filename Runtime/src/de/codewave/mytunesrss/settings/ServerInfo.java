@@ -68,13 +68,13 @@ public class ServerInfo {
     }
 
     private void fetchLocalAddresses() {
-        final String[] localAddresses = NetworkUtils.getLocalNetworkAddresses();
+        final String[] localAddresses = getLocalAddresses(myServerPort);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 StringBuffer info = new StringBuffer();
                 if (localAddresses != null && localAddresses.length > 0) {
                     for (int i = 0; i < localAddresses.length; i++) {
-                        info.append("http://").append(localAddresses[i]).append(":").append(myServerPort);
+                        info.append(localAddresses[i]);
                         if (i + 1 < localAddresses.length) {
                             info.append("\n");
                         }
@@ -87,12 +87,20 @@ public class ServerInfo {
         });
     }
 
-    private void fetchExternalAddress() {
-        final String externalAddress = getExternalAddress();
+  public static String[] getLocalAddresses(String serverPort) {
+    String[] addresses = NetworkUtils.getLocalNetworkAddresses();
+    for (int i = 0; i < addresses.length; i++) {
+      addresses[i] = "http:/" + addresses[i] + ":" + serverPort;
+    }
+    return addresses;
+  }
+
+  private void fetchExternalAddress() {
+        final String externalAddress = getExternalAddress(myServerPort);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (StringUtils.isNotEmpty(externalAddress) && !"unreachable".equals(externalAddress)) {
-                    myExternalAddress.setText("http://" + externalAddress + ":" + myServerPort);
+                    myExternalAddress.setText(externalAddress);
                 } else {
                     myExternalAddress.setText(MyTunesRss.BUNDLE.getString("serverStatus.unavailable"));
                 }
@@ -100,14 +108,14 @@ public class ServerInfo {
         });
     }
 
-    private String getExternalAddress() {
+    public static String getExternalAddress(String serverPort) {
         BufferedReader reader = null;
         try {
             URLConnection connection = new URL("http://www.codewave.de/tools/getip.php").openConnection();
             if (connection != null) {
                 reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
                 if (reader != null) {
-                    return reader.readLine();
+                    return "http://" + reader.readLine() + ":" + serverPort;
                 }
             }
         } catch (IOException e) {

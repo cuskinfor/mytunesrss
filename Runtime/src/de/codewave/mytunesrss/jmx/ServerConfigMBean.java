@@ -30,9 +30,13 @@ public interface ServerConfigMBean {
 
     void setAutostart(boolean autostart);
 
-    boolean isCreateTempZipArchives();
+    boolean isCreateTempArchives();
 
     void setCreateTempArchives(boolean createTempArchives);
+
+    Object getLocalAddresses();
+
+    String getExternalAddress();
 }
 
 

@@ -1,7 +1,7 @@
 package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.settings.*;
+import de.codewave.mytunesrss.settings.ServerInfo;
 
 /**
  * <b>Description:</b>   <br>
@@ -65,13 +65,22 @@ public class ServerConfig implements ServerConfigMBean {
     MyTunesRss.CONFIG.setAutoStartServer(autostart);
   }
 
-    public boolean isCreateTempZipArchives() {
+    public boolean isCreateTempArchives() {
         return MyTunesRss.CONFIG.isLocalTempArchive();
     }
 
     public void setCreateTempArchives(boolean createTempArchives) {
         MyTunesRss.CONFIG.setLocalTempArchive(createTempArchives);
     }
+
+  public String getExternalAddress() {
+    return ServerInfo.getExternalAddress(Integer.toString(getPort()));
+  }
+
+  public Object getLocalAddresses() {
+    String[] addresses = ServerInfo.getLocalAddresses(Integer.toString(getPort()));
+    return addresses.length == 1 ? addresses[0] : addresses;
+  }
 }
 
 
