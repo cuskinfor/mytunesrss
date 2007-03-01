@@ -51,6 +51,7 @@ public class MyTunesRss {
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
     public static MyTunesRssConfig CONFIG = new MyTunesRssConfig();
     public static ResourceBundle BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
+    public static ResourceBundle JMX_BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.jmx.MyTunesRssJmx");
     public static WebServer WEBSERVER = new WebServer();
     public static Timer SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
     public static SysTray SYSTRAYMENU;
