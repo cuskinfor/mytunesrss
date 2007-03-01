@@ -14,8 +14,12 @@ import java.io.*;
 /**
  * de.codewave.mytunesrss.jmx.UserConfig
  */
-public class UserConfig implements UserConfigMBean {
-    private static final Log LOG = LogFactory.getLog(UserConfig.class);
+public class UserConfig extends MyTunesRssMBean implements UserConfigMBean {
+  UserConfig() throws NotCompliantMBeanException {
+    super(UserConfigMBean.class);
+  }
+
+  private static final Log LOG = LogFactory.getLog(UserConfig.class);
 
     public String addUser(String name, String password) throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException,
             NotCompliantMBeanException, InstanceAlreadyExistsException {

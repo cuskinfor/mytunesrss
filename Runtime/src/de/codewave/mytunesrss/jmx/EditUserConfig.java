@@ -16,12 +16,13 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.jmx.EditUserConfig
  */
-public class EditUserConfig implements EditUserConfigMBean {
+public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBean {
     private static final Log LOG = LogFactory.getLog(EditUserConfig.class);
 
     private String myUsername;
 
-    public EditUserConfig(String username) {
+    EditUserConfig(String username) throws NotCompliantMBeanException {
+      super(EditUserConfigMBean.class);
         myUsername = username;
     }
 

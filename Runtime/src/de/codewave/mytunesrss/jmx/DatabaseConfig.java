@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
 
+import javax.management.NotCompliantMBeanException;
 import java.sql.*;
 import java.text.*;
 import java.util.Date;
@@ -15,9 +16,13 @@ import java.util.Date;
 /**
  * de.codewave.mytunesrss.jmx.DatabaseConfig
  */
-public class DatabaseConfig implements DatabaseConfigMBean {
+public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBean {
 
-    public boolean isIgnoreTimestampsOnUpdate() {
+  DatabaseConfig() throws NotCompliantMBeanException {
+    super(DatabaseConfigMBean.class);
+  }
+
+  public boolean isIgnoreTimestampsOnUpdate() {
         return MyTunesRss.CONFIG.isIgnoreTimestamps();
     }
 

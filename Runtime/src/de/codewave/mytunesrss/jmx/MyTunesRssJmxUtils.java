@@ -22,6 +22,7 @@ public class MyTunesRssJmxUtils {
     private static ObjectName DATABASE_CONFIG_NAME;
     private static ObjectName DIRECTORIES_CONFIG_NAME;
     private static ObjectName USER_CONFIG_NAME;
+    private static ObjectName MISC_CONFIG_NAME;
     private static boolean INITIALIZED;
 
     static {
@@ -32,6 +33,7 @@ public class MyTunesRssJmxUtils {
             DATABASE_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Database");
             DIRECTORIES_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Directories");
             USER_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Users");
+            MISC_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Miscellaneous");
             INITIALIZED = true;
         } catch (MalformedObjectNameException e) {
             if (LOG.isErrorEnabled()) {
@@ -49,6 +51,7 @@ public class MyTunesRssJmxUtils {
                 server.registerMBean(new DatabaseConfig(), DATABASE_CONFIG_NAME);
                 server.registerMBean(new DirectoriesConfig(), DIRECTORIES_CONFIG_NAME);
                 server.registerMBean(new UserConfig(), USER_CONFIG_NAME);
+                server.registerMBean(new MiscConfig(), MISC_CONFIG_NAME);
                 registerUsers();
                 HttpAdaptor adaptor = new HttpAdaptor();
                 ObjectName name = HTTP_ADAPTOR_NAME;
@@ -90,6 +93,7 @@ public class MyTunesRssJmxUtils {
                 server.unregisterMBean(DATABASE_CONFIG_NAME);
                 server.unregisterMBean(DIRECTORIES_CONFIG_NAME);
                 server.unregisterMBean(USER_CONFIG_NAME);
+                server.unregisterMBean(MISC_CONFIG_NAME);
                 unregisterUsers();
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {

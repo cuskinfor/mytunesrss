@@ -7,11 +7,17 @@ package de.codewave.mytunesrss.jmx;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.settings.*;
 
+import javax.management.NotCompliantMBeanException;
+
 /**
  * de.codewave.mytunesrss.jmx.DirectoriesConfig
  */
-public class DirectoriesConfig implements DirectoriesConfigMBean {
-    public String getArtistDropWords() {
+public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesConfigMBean {
+  DirectoriesConfig() throws NotCompliantMBeanException {
+    super(DirectoriesConfigMBean.class);
+  }
+
+  public String getArtistDropWords() {
         return MyTunesRss.CONFIG.getArtistDropWords();
     }
 

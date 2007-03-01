@@ -3,6 +3,8 @@ package de.codewave.mytunesrss.jmx;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.settings.ServerInfo;
 
+import javax.management.NotCompliantMBeanException;
+
 /**
  * <b>Description:</b>   <br>
  * <b>Copyright:</b>     Copyright (c) 2007<br>
@@ -12,7 +14,11 @@ import de.codewave.mytunesrss.settings.ServerInfo;
  * @author Michael Descher
  * @version $Id:$
  */
-public class ServerConfig implements ServerConfigMBean {
+public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
+  ServerConfig() throws NotCompliantMBeanException {
+    super(ServerConfigMBean.class);
+  }
+
   public int getPort() {
     return MyTunesRss.CONFIG.getPort();
   }
