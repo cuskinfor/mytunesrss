@@ -29,4 +29,15 @@ public class RemoteServer {
     public int getPort() {
         return myPort;
     }
+
+
+    @Override
+    public int hashCode() {
+        return (myAddress + ":" + myPort).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return (myAddress + ":" + myPort).equals(((RemoteServer)other).myAddress + ":" + ((RemoteServer)other).myPort);
+    }
 }

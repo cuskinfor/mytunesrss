@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.network;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.settings.*;
 import org.apache.commons.logging.*;
 
 import java.io.*;
@@ -50,8 +51,8 @@ public class MulticastService extends Thread {
         }
     }
 
-    public static List<RemoteServer> getOtherInstances() {
-        List<RemoteServer> otherInstances = new ArrayList<RemoteServer>();
+    public static Collection<RemoteServer> getOtherInstances() {
+        Set<RemoteServer> otherInstances = new HashSet<RemoteServer>();
         MulticastSocket socket = null;
         try {
             socket = new MulticastSocket();
@@ -61,10 +62,15 @@ public class MulticastService extends Thread {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
             if (interfaces != null) {
                 while (interfaces.hasMoreElements()) {
-                    socket.setNetworkInterface(interfaces.nextElement());
+                    NetworkInterface networkInterface = interfaces.nextElement();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Sending discovery packet to \"" + networkInterface.getDisplayName() + "\"");
+                    }
+                    socket.setNetworkInterface(networkInterface);
                     socket.send(sendPacket);
                 }
                 try {
+                    Collection<String> localAddresses = Arrays.asList(ServerInfo.getLocalAddresses(String.valueOf(MyTunesRss.CONFIG.getPort())));
                     socket.setSoTimeout(2000);
                     buffer = new byte[1024];
                     DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
@@ -74,7 +80,9 @@ public class MulticastService extends Thread {
                         String name = answer.substring(answer.indexOf(':') + 1);
                         int port = Integer.parseInt(answer.substring(0, answer.indexOf(':')));
                         String address = receivePacket.getAddress().getHostName();
-                        otherInstances.add(new RemoteServer(name, address, port));
+                        if (!localAddresses.contains(address + ":" + port)) {
+                            otherInstances.add(new RemoteServer(name, address, port));
+                        }
                     }
                 } catch (SocketTimeoutException e) {
                     // intentionally left blank

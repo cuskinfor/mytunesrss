@@ -19,7 +19,12 @@ public class BrowseServersCommandHandler extends MyTunesRssCommandHandler {
     public void execute() throws Exception {
         List<RemoteServer> servers = (List<RemoteServer>)getSession().getAttribute("remoteServers");
         if (servers == null) {
-            servers = MulticastService.getOtherInstances();
+            servers = new ArrayList<RemoteServer>(MulticastService.getOtherInstances());
+            Collections.sort(servers, new Comparator<RemoteServer>() {
+                public int compare(RemoteServer server1, RemoteServer server2) {
+                    return server1.getName().compareTo(server2.getName());
+                }
+            });
             getSession().setAttribute("remoteServers", servers);
         }
         if (servers != null && servers.size() > 0) {
