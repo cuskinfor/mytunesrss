@@ -65,6 +65,6 @@ public interface EditUserConfigMBean {
 
     String getQuotaInfo();
 
-    void delete() throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException, NotCompliantMBeanException,
+    String delete() throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException, NotCompliantMBeanException,
             InstanceAlreadyExistsException;
 }

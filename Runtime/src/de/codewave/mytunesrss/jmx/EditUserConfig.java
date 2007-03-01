@@ -152,10 +152,11 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         return MyTunesRss.CONFIG.getUser(myUsername).getQuotaType().toString();
     }
 
-    public void delete() throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException, NotCompliantMBeanException,
+    public String delete() throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException, NotCompliantMBeanException,
             InstanceAlreadyExistsException {
         MyTunesRssJmxUtils.unregisterUsers();
         MyTunesRss.CONFIG.removeUser(myUsername);
         MyTunesRssJmxUtils.registerUsers();
+        return MyTunesRss.BUNDLE.getString("jmx.userDeleted");
     }
 }
