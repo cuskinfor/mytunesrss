@@ -58,6 +58,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         Id3Tag tag = null;
                         if ("mp3".equalsIgnoreCase(IOUtils.getSuffix(file))) {
                             try {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Reading ID3 information from file \"" + file.getAbsolutePath() + "\".");
+                                }
                                 tag = Mp3Utils.readId3Tag(file);
                             } catch (Exception e) {
                                 if (LOG.isErrorEnabled()) {
