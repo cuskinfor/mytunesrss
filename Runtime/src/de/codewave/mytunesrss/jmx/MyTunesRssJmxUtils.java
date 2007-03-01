@@ -2,7 +2,9 @@ package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.*;
 import mx4j.tools.adaptor.http.*;
+import mx4j.tools.adaptor.ssl.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.lang.*;
 
 import javax.management.*;
 import java.lang.management.*;
@@ -27,7 +29,7 @@ public class MyTunesRssJmxUtils {
 
     static {
         try {
-            HTTP_ADAPTOR_NAME = new ObjectName("MyTunesRSS:type=HttpAdaptor");
+            HTTP_ADAPTOR_NAME = new ObjectName("mx4j:name=HttpAdaptor");
             SERVER_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Server");
             APPLICATION_NAME = new ObjectName("MyTunesRSS:config=Application");
             DATABASE_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Database");
@@ -58,12 +60,18 @@ public class MyTunesRssJmxUtils {
                 server.registerMBean(adaptor, name);
                 int port;
                 try {
-                    port = Integer.parseInt(System.getProperty("jmx.port"));
+                    port = Integer.parseInt(System.getProperty("jmx.port", "8500"));
                 } catch (NumberFormatException e) {
                     port = 8500;
                 }
                 adaptor.setPort(port);
-                adaptor.setHost("0.0.0.0");
+                adaptor.setHost(System.getProperty("jmx.host", "0.0.0.0"));
+                String username = System.getProperty("jmx.username");
+                String password = System.getProperty("jmx.password");
+                if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+                    adaptor.setAuthenticationMethod("basic");
+                    adaptor.addAuthorization(username, password);
+                }
                 adaptor.setProcessor(new XSLTProcessor());
                 adaptor.start();
             } catch (Exception e) {
