@@ -90,7 +90,7 @@ public class ServerInfo {
   public static String[] getLocalAddresses(String serverPort) {
     String[] addresses = NetworkUtils.getLocalNetworkAddresses();
     for (int i = 0; i < addresses.length; i++) {
-      addresses[i] = "http:/" + addresses[i] + ":" + serverPort;
+      addresses[i] = "http://" + addresses[i] + ":" + serverPort;
     }
     return addresses;
   }
