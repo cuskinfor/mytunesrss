@@ -9,7 +9,7 @@ public class ErrorQueue {
     private String myLastError;
 
     public ErrorQueue() {
-        clearError();
+        clear();
     }
 
     public void setLastError(String lastError) {
@@ -17,18 +17,21 @@ public class ErrorQueue {
     }
 
     public void clear() {
-        clearError();
-    }
-
-    private void clearError() {
-        myLastError = MyTunesRss.BUNDLE.getString("ok");
+        myLastError = null;
     }
 
     public String popLastError() {
-        try {
-            return myLastError;
-        } finally {
-            clearError();
+        if (!isEmpty()) {
+            try {
+                return myLastError;
+            } finally {
+                clear();
+            }
         }
+        return MyTunesRss.BUNDLE.getString("ok");
+    }
+
+    public boolean isEmpty() {
+        return myLastError == null;
     }
 }

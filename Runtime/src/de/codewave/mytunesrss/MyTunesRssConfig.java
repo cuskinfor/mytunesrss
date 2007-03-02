@@ -6,14 +6,11 @@ package de.codewave.mytunesrss;
 
 import de.codewave.utils.*;
 import de.codewave.utils.io.*;
-import de.codewave.utils.xml.*;
-import org.apache.commons.jxpath.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
 import java.awt.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import java.util.prefs.*;
 
@@ -304,7 +301,7 @@ public class MyTunesRssConfig {
             if (!files.isEmpty()) {
                 for (File file : files) {
                     File parentFile = file.getParentFile();
-                    if (parentFile != null && parentFile.getName().equals("iTunes")) {
+                    if (parentFile != null && "iTunes".equals(parentFile.getName())) {
                         return file.getAbsolutePath();
                     }
                 }
@@ -394,66 +391,6 @@ public class MyTunesRssConfig {
         setMyTunesRssComPasswordHash(Preferences.userRoot().node(PREF_ROOT).getByteArray("myTunesRssComPassword", getMyTunesRssComPasswordHash()));
         setFileTypes(Preferences.userRoot().node(PREF_ROOT).get("fileTypes", getFileTypes()));
         setArtistDropWords(Preferences.userRoot().node(PREF_ROOT).get("artistDropWords", getArtistDropWords()));
-    }
-
-    public void loadFromXml(URL xmlUrl) {
-        JXPathContext context = JXPathUtils.getContext(xmlUrl);
-        // preferences
-        if (JXPathUtils.getBooleanValue(context, "/mytunesrss/preferences/@load", false)) {
-            loadFromPrefs();
-        }
-        mySaveEnabled = JXPathUtils.getBooleanValue(context, "/mytunesrss/preferences/@save", false);
-        // server
-        setPort(JXPathUtils.getIntValue(context, "/mytunesrss/server/@port", getPort()));
-        setServerName(JXPathUtils.getStringValue(context, "/mytunesrss/server/@name", getServerName()));
-        setAvailableOnLocalNet((JXPathUtils.getBooleanValue(context, "/mytunesrss/server/@availableonlocalnet", isAvailableOnLocalNet())));
-        setAutoStartServer(JXPathUtils.getBooleanValue(context, "/mytunesrss/server/@autostart", isAutoStartServer()));
-        // data sources
-        setLibraryXml(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/itunesxml", getLibraryXml()));
-        setBaseDir(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/basedir", getBaseDir()));
-        setFileSystemAlbumNameFolder(JXPathUtils.getIntValue(context, "/mytunesrss/datasource/basedir/@album", getFileSystemAlbumNameFolder()));
-        setFileSystemArtistNameFolder(JXPathUtils.getIntValue(context, "/mytunesrss/datasource/basedir/@artist", getFileSystemArtistNameFolder()));
-        setFileTypes(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/filetypes", getFileTypes()));
-        setArtistDropWords(JXPathUtils.getStringValue(context, "/mytunesrss/datasource/artistdropwords", getArtistDropWords()));
-        setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(context,
-                                                                "/mytunesrss/datasource/itunesxml/@deletemissing",
-                                                                isItunesDeleteMissingFiles()));
-        setUploadDir(JXPathUtils.getStringValue(context, "/mytunesrss/upload/basedir", getUploadDir()));
-        setUploadCreateUserDir(JXPathUtils.getBooleanValue(context, "/mytunesrss/upload/@userdir", isUploadCreateUserDir()));
-        // misc
-        setCheckUpdateOnStart(JXPathUtils.getBooleanValue(context, "/mytunesrss/updatecheck", isCheckUpdateOnStart()));
-        setVersion(MyTunesRss.VERSION);
-        // database
-        setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(context, "/mytunesrss/database/@updateonstart", isUpdateDatabaseOnServerStart()));
-        setAutoUpdateDatabase(JXPathUtils.getBooleanValue(context, "/mytunesrss/database/@autoupdate", isAutoUpdateDatabase()));
-        setAutoUpdateDatabaseInterval(JXPathUtils.getIntValue(context, "/mytunesrss/database/@updateinterval", getAutoUpdateDatabaseInterval()));
-        setIgnoreTimestamps(JXPathUtils.getBooleanValue(context, "/mytunesrss/database/@ignoretimestamps", isIgnoreTimestamps()));
-        // users
-        for (Iterator<JXPathContext> iterator = JXPathUtils.getContextIterator(context, "/mytunesrss/user"); iterator.hasNext();) {
-            JXPathContext userContext = iterator.next();
-            User user = new User(JXPathUtils.getStringValue(userContext, "@name", null));
-            user.setActive(JXPathUtils.getBooleanValue(userContext, "@active", true));
-            user.setPasswordHash(MyTunesRssBase64Utils.decode(JXPathUtils.getStringValue(userContext, "@password", null)));
-            user.setRss(JXPathUtils.getBooleanValue(userContext, "features/@rss", true));
-            user.setPlaylist(JXPathUtils.getBooleanValue(userContext, "features/@playlist", true));
-            user.setDownload(JXPathUtils.getBooleanValue(userContext, "features/@download", true));
-            user.setChangePassword(JXPathUtils.getBooleanValue(userContext, "features/@changepassword", true));
-            user.setUpload(JXPathUtils.getBooleanValue(userContext, "features/@upload", false));
-            user.setMaximumZipEntries(JXPathUtils.getIntValue(userContext, "restrictions/@maximumzipentries", 0));
-            user.setFileTypes(JXPathUtils.getStringValue(userContext, "restrictions/@filetypes", null));
-            user.setBytesQuota(JXPathUtils.getIntValue(userContext, "restrictions/quota/@size", 0));
-            user.setQuotaType(User.QuotaType.valueOf(JXPathUtils.getStringValue(userContext, "restrictions/quota/@type", "None")));
-            addUser(user);
-            if (!MyTunesRss.REGISTRATION.isRegistered()) {
-                break;
-            }
-        }
-        // http proxy
-        setProxyServer(context.getValue("/mytunesrss/proxy") != null);
-        setProxyHost(JXPathUtils.getStringValue(context, "/mytunesrss/proxy/host", getProxyHost()));
-        setProxyPort(JXPathUtils.getIntValue(context, "/mytunesrss/proxy/port", getProxyPort()));
-        setMyTunesRssComUser(JXPathUtils.getStringValue(context, "/mytunesrss/mytunesrsscom/@username", ""));
-        setMyTunesRssComPasswordHash(MyTunesRssBase64Utils.decode(JXPathUtils.getStringValue(context, "/mytunesrss/mytunesrsscom/@password", null)));
     }
 
     public void save() {

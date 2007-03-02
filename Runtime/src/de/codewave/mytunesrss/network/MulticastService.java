@@ -80,7 +80,7 @@ public class MulticastService extends Thread {
                         String name = answer.substring(answer.indexOf(':') + 1);
                         int port = Integer.parseInt(answer.substring(0, answer.indexOf(':')));
                         String address = receivePacket.getAddress().getHostName();
-                        if (!localAddresses.contains(address + ":" + port)) {
+                        if (!localAddresses.contains("http://" + address + ":" + port)) {
                             otherInstances.add(new RemoteServer(name, address, port));
                         }
                     }

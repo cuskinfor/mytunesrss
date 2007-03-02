@@ -308,11 +308,7 @@ public class MyTunesRss {
     }
 
     private static void loadConfiguration(Map<String, String[]> arguments) throws MalformedURLException {
-        if (arguments.containsKey("config")) {
-            CONFIG.loadFromXml(new File(arguments.get("config")[0]).toURL());
-        } else {
-            CONFIG.loadFromPrefs();
-        }
+        CONFIG.loadFromPrefs();
     }
 
     private static void executeWindows(Settings settingsForm) {

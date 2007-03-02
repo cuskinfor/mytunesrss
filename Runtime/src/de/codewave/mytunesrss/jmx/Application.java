@@ -19,7 +19,12 @@ public class Application extends MyTunesRssMBean implements ApplicationMBean {
 
     public String quit() {
         MyTunesRss.ERROR_QUEUE.clear();
-        MyTunesRss.QUIT_REQUEST = true;
+        if (MyTunesRss.WEBSERVER.isRunning()) {
+            MyTunesRss.stopWebserver();
+        }
+        if (MyTunesRss.ERROR_QUEUE.isEmpty()) {
+            MyTunesRss.QUIT_REQUEST = true;
+        }
         return MyTunesRss.ERROR_QUEUE.popLastError();
     }
 }

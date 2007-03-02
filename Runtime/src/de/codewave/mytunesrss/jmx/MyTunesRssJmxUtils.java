@@ -29,13 +29,13 @@ public class MyTunesRssJmxUtils {
 
     static {
         try {
-            HTTP_ADAPTOR_NAME = new ObjectName("mx4j:name=HttpAdaptor");
-            SERVER_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Server");
-            APPLICATION_NAME = new ObjectName("MyTunesRSS:config=Application");
-            DATABASE_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Database");
-            DIRECTORIES_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Directories");
-            USER_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Users");
-            MISC_CONFIG_NAME = new ObjectName("MyTunesRSS:config=Miscellaneous");
+            HTTP_ADAPTOR_NAME = new ObjectName("MyTunesRSS:type=jmxAdaptor,name=HttpAdaptor");
+            SERVER_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Server");
+            APPLICATION_NAME = new ObjectName("MyTunesRSS:type=config,name=Application");
+            DATABASE_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Database");
+            DIRECTORIES_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Directories");
+            USER_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Users");
+            MISC_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Miscellaneous");
             INITIALIZED = true;
         } catch (MalformedObjectNameException e) {
             if (LOG.isErrorEnabled()) {
@@ -86,7 +86,7 @@ public class MyTunesRssJmxUtils {
             throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         for (User user : MyTunesRss.CONFIG.getUsers()) {
-            server.registerMBean(new EditUserConfig(user.getName()), new ObjectName("MyTunesRSS:user=" + user.getName()));
+            server.registerMBean(new EditUserConfig(user.getName()), new ObjectName("MyTunesRSS:type=user,name=" + user.getName()));
         }
     }
 
