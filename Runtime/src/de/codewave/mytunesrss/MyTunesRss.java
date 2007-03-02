@@ -336,6 +336,15 @@ public class MyTunesRss {
     }
 
     private static class MyTunesRssMainWindowListener extends WindowAdapter {
+        enum QuitConfirmOption {
+            Yes(), No(), NoButMinimize();
+
+            @Override
+            public String toString() {
+                return MyTunesRss.BUNDLE.getString("confirmation.quitMyTunesRss.option" + name());
+            }
+        }
+
         private Settings mySettingsForm;
 
         public MyTunesRssMainWindowListener(Settings settingsForm) {
@@ -344,6 +353,23 @@ public class MyTunesRss {
 
         @Override
         public void windowClosing(WindowEvent e) {
+            if (CONFIG.isQuitConfirmation()) {
+                int result = JOptionPane.showOptionDialog(ROOT_FRAME,
+                                                          MyTunesRss.BUNDLE.getString("confirmation.quitMyTunesRss"),
+                                                          MyTunesRss.BUNDLE.getString("pleaseWait.defaultTitle"),
+                                                          JOptionPane.YES_NO_OPTION,
+                                                          JOptionPane.QUESTION_MESSAGE,
+                                                          null,
+                                                          new QuitConfirmOption[] {QuitConfirmOption.NoButMinimize, QuitConfirmOption.No,
+                                                                                   QuitConfirmOption.Yes},
+                                                          QuitConfirmOption.No);
+                if (result == 1) {
+                    return;
+                } else if (result == 0) {
+                    ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
+                    return;
+                }
+            }
             mySettingsForm.doQuitApplication();
         }
 

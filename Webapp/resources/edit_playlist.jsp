@@ -6,7 +6,7 @@
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
-<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
+<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
 
 <c:set var="backUrl">${servletUrl}/editPlaylist?allowEditEmpty=${param.allowEditEmpty}&amp;index=${param.index}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}</c:set>
 

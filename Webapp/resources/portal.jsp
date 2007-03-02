@@ -6,7 +6,7 @@
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
-<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
+<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
 
 <c:set var="backUrl" scope="request">${servletUrl}/showPortal&amp;index=${param.index}</c:set>
 

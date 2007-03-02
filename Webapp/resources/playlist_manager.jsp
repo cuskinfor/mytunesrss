@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
-<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
+<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
 
 <c:set var="backUrl" scope="request">${servletUrl}/showPlaylistManager?index=${param.index}</c:set>
 <c:set var="browseArtistUrl" scope="request">${servletUrl}/browseArtist?page=1</c:set>

@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
-<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRSSWeb" />
+<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
 
 <fmt:message var="newPlaylistName" key="newPlaylistName" />
 

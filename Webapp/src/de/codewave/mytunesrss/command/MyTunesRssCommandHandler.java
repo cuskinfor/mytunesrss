@@ -207,7 +207,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected String getBundleString(String key) {
-        ResourceBundle bundle = ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRSSWeb", getRequest().getLocale());
+        ResourceBundle bundle = ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb", getRequest().getLocale());
         return bundle.getString(key);
     }
 }

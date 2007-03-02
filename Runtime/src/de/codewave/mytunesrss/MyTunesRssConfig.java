@@ -34,7 +34,6 @@ public class MyTunesRssConfig {
     private boolean myIgnoreTimestamps = false;
     private int myFileSystemAlbumNameFolder = 1;
     private int myFileSystemArtistNameFolder = 2;
-    private boolean mySaveEnabled = true;
     private Collection<User> myUsers = new HashSet<User>();
     private String mySupportName = "";
     private String mySupportEmail = "";
@@ -50,6 +49,7 @@ public class MyTunesRssConfig {
     private String myFileTypes = "";
     private String myArtistDropWords = "";
     private boolean myLocalTempArchive;
+    private boolean myQuitConfirmation;
 
     public String getLibraryXml() {
         return myLibraryXml;
@@ -203,6 +203,14 @@ public class MyTunesRssConfig {
 
     public void setLocalTempArchive(boolean localTempArchive) {
         myLocalTempArchive = localTempArchive;
+    }
+
+    public boolean isQuitConfirmation() {
+        return myQuitConfirmation;
+    }
+
+    public void setQuitConfirmation(boolean quitConfirmation) {
+        myQuitConfirmation = quitConfirmation;
     }
 
     public Collection<User> getUsers() {
@@ -391,78 +399,78 @@ public class MyTunesRssConfig {
         setMyTunesRssComPasswordHash(Preferences.userRoot().node(PREF_ROOT).getByteArray("myTunesRssComPassword", getMyTunesRssComPasswordHash()));
         setFileTypes(Preferences.userRoot().node(PREF_ROOT).get("fileTypes", getFileTypes()));
         setArtistDropWords(Preferences.userRoot().node(PREF_ROOT).get("artistDropWords", getArtistDropWords()));
+        setQuitConfirmation(Preferences.userRoot().node(PREF_ROOT).getBoolean("quitConfirmation", isQuitConfirmation()));
     }
 
     public void save() {
-        if (mySaveEnabled) {
-            Preferences.userRoot().node(PREF_ROOT).put("version", MyTunesRss.VERSION);
-            Preferences.userRoot().node(PREF_ROOT).putInt("serverPort", myPort);
-            Preferences.userRoot().node(PREF_ROOT).put("serverName", myServerName);
-            Preferences.userRoot().node(PREF_ROOT).putBoolean("availableOnLocalNet", myAvailableOnLocalNet);
-            Preferences.userRoot().node(PREF_ROOT).put("iTunesLibrary", myLibraryXml);
-            Preferences.userRoot().node(PREF_ROOT).putBoolean("checkUpdateOnStart", myCheckUpdateOnStart);
-            Preferences.userRoot().node(PREF_ROOT).putBoolean("autoStartServer", myAutoStartServer);
-            Preferences.userRoot().node(PREF_ROOT).putBoolean("updateDatabaseOnServerStart", myUpdateDatabaseOnServerStart);
-            Preferences.userRoot().node(PREF_ROOT).putBoolean("autoUpdateDatabase", myAutoUpdateDatabase);
-            Preferences.userRoot().node(PREF_ROOT).putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
-            Preferences.userRoot().node(PREF_ROOT).put("version", myVersion);
-            Preferences.userRoot().node(PREF_ROOT).putBoolean("ignoreTimestamps", myIgnoreTimestamps);
-            Preferences.userRoot().node(PREF_ROOT).put("baseDir", myBaseDir);
-            Preferences.userRoot().node(PREF_ROOT).putInt("artistFolder", myFileSystemArtistNameFolder);
-            Preferences.userRoot().node(PREF_ROOT).putInt("albumFolder", myFileSystemAlbumNameFolder);
-            Preferences.userRoot().node(PREF_ROOT).putBoolean("iTunesDeleteMissingFiles", myItunesDeleteMissingFiles);
-            Preferences.userRoot().node(PREF_ROOT).put("uploadDir", myUploadDir);
-            Preferences.userRoot().node(PREF_ROOT).putBoolean("uploadCreateUserDir", myUploadCreateUserDir);
-            Preferences.userRoot().node(PREF_ROOT).putBoolean("localTempArchive", myLocalTempArchive);
-            Preferences userNode = Preferences.userRoot().node(PREF_ROOT + "/user");
-            try {
-                // remove obsolete users
-                for (String username : userNode.childrenNames()) {
-                    if (!myUsers.contains(new User(username))) {
-                        userNode.node(username).removeNode();
-                    }
-                }
-                // create and update existing users
-                for (User user : myUsers) {
-                    if (user.getPasswordHash() != null && user.getPasswordHash().length > 0) {
-                        userNode.node(user.getName()).putByteArray("password", user.getPasswordHash());
-                    } else {
-                        userNode.node(user.getName()).remove("password");
-                    }
-                    userNode.node(user.getName()).putBoolean("active", user.isActive());
-                    userNode.node(user.getName()).putBoolean("featureRss", user.isRss());
-                    userNode.node(user.getName()).putBoolean("featurePlaylist", user.isPlaylist());
-                    userNode.node(user.getName()).putBoolean("featureDownload", user.isDownload());
-                    userNode.node(user.getName()).putBoolean("featureUpload", user.isUpload());
-                    userNode.node(user.getName()).putBoolean("featureChangePassword", user.isChangePassword());
-                    userNode.node(user.getName()).putLong("resetTime", user.getResetTime());
-                    userNode.node(user.getName()).putLong("quotaResetTime", user.getQuotaResetTime());
-                    userNode.node(user.getName()).putLong("downBytes", user.getDownBytes());
-                    userNode.node(user.getName()).putLong("quotaDownBytes", user.getQuotaDownBytes());
-                    userNode.node(user.getName()).putLong("bytesQuota", user.getBytesQuota());
-                    userNode.node(user.getName()).put("quotaType", user.getQuotaType().name());
-                    userNode.node(user.getName()).putInt("maximumZipEntries", user.getMaximumZipEntries());
-                    userNode.node(user.getName()).put("fileTypes", user.getFileTypes() != null ? user.getFileTypes() : "");
-                }
-            } catch (BackingStoreException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not read users.", e);
+        Preferences.userRoot().node(PREF_ROOT).put("version", MyTunesRss.VERSION);
+        Preferences.userRoot().node(PREF_ROOT).putInt("serverPort", myPort);
+        Preferences.userRoot().node(PREF_ROOT).put("serverName", myServerName);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("availableOnLocalNet", myAvailableOnLocalNet);
+        Preferences.userRoot().node(PREF_ROOT).put("iTunesLibrary", myLibraryXml);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("checkUpdateOnStart", myCheckUpdateOnStart);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("autoStartServer", myAutoStartServer);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("updateDatabaseOnServerStart", myUpdateDatabaseOnServerStart);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("autoUpdateDatabase", myAutoUpdateDatabase);
+        Preferences.userRoot().node(PREF_ROOT).putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
+        Preferences.userRoot().node(PREF_ROOT).put("version", myVersion);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("ignoreTimestamps", myIgnoreTimestamps);
+        Preferences.userRoot().node(PREF_ROOT).put("baseDir", myBaseDir);
+        Preferences.userRoot().node(PREF_ROOT).putInt("artistFolder", myFileSystemArtistNameFolder);
+        Preferences.userRoot().node(PREF_ROOT).putInt("albumFolder", myFileSystemAlbumNameFolder);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("iTunesDeleteMissingFiles", myItunesDeleteMissingFiles);
+        Preferences.userRoot().node(PREF_ROOT).put("uploadDir", myUploadDir);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("uploadCreateUserDir", myUploadCreateUserDir);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("localTempArchive", myLocalTempArchive);
+        Preferences userNode = Preferences.userRoot().node(PREF_ROOT + "/user");
+        try {
+            // remove obsolete users
+            for (String username : userNode.childrenNames()) {
+                if (!myUsers.contains(new User(username))) {
+                    userNode.node(username).removeNode();
                 }
             }
-            Preferences.userRoot().node(PREF_ROOT).put("supportName", mySupportName);
-            Preferences.userRoot().node(PREF_ROOT).put("supportEmail", mySupportEmail);
-            Preferences.userRoot().node(PREF_ROOT).putBoolean("proxyServer", myProxyServer);
-            Preferences.userRoot().node(PREF_ROOT).put("proxyHost", myProxyHost);
-            Preferences.userRoot().node(PREF_ROOT).putInt("proxyPort", myProxyPort);
-            Preferences.userRoot().node(PREF_ROOT).put("myTunesRssComUser", myMyTunesRssComUser);
-            if (myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0) {
-                Preferences.userRoot().node(PREF_ROOT).putByteArray("myTunesRssComPassword", myMyTunesRssComPasswordHash);
-            } else {
-                Preferences.userRoot().node(PREF_ROOT).remove("myTunesRssComPassword");
+            // create and update existing users
+            for (User user : myUsers) {
+                if (user.getPasswordHash() != null && user.getPasswordHash().length > 0) {
+                    userNode.node(user.getName()).putByteArray("password", user.getPasswordHash());
+                } else {
+                    userNode.node(user.getName()).remove("password");
+                }
+                userNode.node(user.getName()).putBoolean("active", user.isActive());
+                userNode.node(user.getName()).putBoolean("featureRss", user.isRss());
+                userNode.node(user.getName()).putBoolean("featurePlaylist", user.isPlaylist());
+                userNode.node(user.getName()).putBoolean("featureDownload", user.isDownload());
+                userNode.node(user.getName()).putBoolean("featureUpload", user.isUpload());
+                userNode.node(user.getName()).putBoolean("featureChangePassword", user.isChangePassword());
+                userNode.node(user.getName()).putLong("resetTime", user.getResetTime());
+                userNode.node(user.getName()).putLong("quotaResetTime", user.getQuotaResetTime());
+                userNode.node(user.getName()).putLong("downBytes", user.getDownBytes());
+                userNode.node(user.getName()).putLong("quotaDownBytes", user.getQuotaDownBytes());
+                userNode.node(user.getName()).putLong("bytesQuota", user.getBytesQuota());
+                userNode.node(user.getName()).put("quotaType", user.getQuotaType().name());
+                userNode.node(user.getName()).putInt("maximumZipEntries", user.getMaximumZipEntries());
+                userNode.node(user.getName()).put("fileTypes", user.getFileTypes() != null ? user.getFileTypes() : "");
             }
-            Preferences.userRoot().node(PREF_ROOT).put("fileTypes", myFileTypes);
-            Preferences.userRoot().node(PREF_ROOT).put("artistDropWords", myArtistDropWords);
+        } catch (BackingStoreException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not read users.", e);
+            }
         }
+        Preferences.userRoot().node(PREF_ROOT).put("supportName", mySupportName);
+        Preferences.userRoot().node(PREF_ROOT).put("supportEmail", mySupportEmail);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("proxyServer", myProxyServer);
+        Preferences.userRoot().node(PREF_ROOT).put("proxyHost", myProxyHost);
+        Preferences.userRoot().node(PREF_ROOT).putInt("proxyPort", myProxyPort);
+        Preferences.userRoot().node(PREF_ROOT).put("myTunesRssComUser", myMyTunesRssComUser);
+        if (myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0) {
+            Preferences.userRoot().node(PREF_ROOT).putByteArray("myTunesRssComPassword", myMyTunesRssComPasswordHash);
+        } else {
+            Preferences.userRoot().node(PREF_ROOT).remove("myTunesRssComPassword");
+        }
+        Preferences.userRoot().node(PREF_ROOT).put("fileTypes", myFileTypes);
+        Preferences.userRoot().node(PREF_ROOT).put("artistDropWords", myArtistDropWords);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("quitConfirmation", myQuitConfirmation);
     }
 
     private void checkPrefsVersion() {

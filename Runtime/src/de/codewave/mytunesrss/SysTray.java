@@ -15,8 +15,6 @@ import javax.swing.*;
  * de.codewave.mytunesrss.SysTray
  */
 public class SysTray {
-    private static final Log LOG = LogFactory.getLog(SysTray.class);
-
     private SysTrayMenu myMenu;
     private SysTrayMenuItem myQuit;
     private SysTrayMenuItem myShow;

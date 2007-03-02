@@ -23,6 +23,7 @@ public class Info {
     private JTextField myProxyPortInput;
     private JCheckBox myUseProxyInput;
     private JLabel myPasswordLabel;
+    private JCheckBox myQuitConfirmationInput;
 
     public void init() {
         mySupportContactButton.addActionListener(new SupportContactActionListener());
@@ -39,6 +40,7 @@ public class Info {
         } else {
             myProxyPortInput.setText("");
         }
+        myQuitConfirmationInput.setSelected(MyTunesRss.CONFIG.isQuitConfirmation());
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput, MyTunesRss.BUNDLE.getString("error.emptyProxyHost")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myProxyPortInput, 1, 65535, false, MyTunesRss.BUNDLE.getString(
                 "error.illegalProxyPort")));
@@ -57,6 +59,7 @@ public class Info {
                 SwingUtils.enableElementAndLabel(myUsernameInput, false);
                 myPasswordLabel.setEnabled(false);
                 myPasswordInput.setEnabled(false);
+                myQuitConfirmationInput.setEnabled(false);
                 break;
             case ServerIdle:
                 SwingUtils.enableElementAndLabel(myProxyHostInput, myUseProxyInput.isSelected());
@@ -65,6 +68,7 @@ public class Info {
                 SwingUtils.enableElementAndLabel(myUsernameInput, true);
                 myPasswordLabel.setEnabled(true);
                 myPasswordInput.setEnabled(true);
+                myQuitConfirmationInput.setEnabled(true);
                 break;
         }
     }
@@ -81,6 +85,7 @@ public class Info {
             MyTunesRss.CONFIG.setProxyServer(myUseProxyInput.isSelected());
             MyTunesRss.CONFIG.setProxyHost(myProxyHostInput.getText());
             MyTunesRss.CONFIG.setProxyPort(MyTunesRssUtils.getTextFieldInteger(myProxyPortInput, -1));
+            MyTunesRss.CONFIG.setQuitConfirmation(myQuitConfirmationInput.isSelected());
         }
         return null;
     }
