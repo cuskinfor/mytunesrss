@@ -37,7 +37,7 @@
     <form action="${servletUrl}/saveSettings" method="post">
         <table cellspacing="0">
             <tr>
-                <th class="active"><fmt:message key="settings.info" /></th>
+                <th class="active"><fmt:message key="settings.misc" /></th>
                 <th>&nbsp;</th>
             </tr>
             <mt:initFlipFlop value1="" value2="class=\"odd\""/>

@@ -15,7 +15,7 @@ public class Settings {
     private Server myServerForm;
     private Directories myDirectoriesForm;
     private UserManagement myUserManagementForm;
-    private Info myInfoForm;
+    private Misc myMiscForm;
     private JButton myStartServerButton;
     private JButton myStopServerButton;
     private JButton myQuitButton;
@@ -49,9 +49,8 @@ public class Settings {
         myServerForm.init();
         myDatabaseForm.init();
         myDirectoriesForm.init();
+        myMiscForm.init();
         myUserManagementForm.init();
-        myUserManagementForm.resizeMainPanel(myServerForm.getContentDimension());
-        myInfoForm.init();
         myTabbedPane.addChangeListener(new TabSwitchListener());
     }
 
@@ -69,7 +68,7 @@ public class Settings {
         if (message != null) {
             messages.append(message). append(" ");
         }
-        message = myInfoForm.updateConfigFromGui();
+        message = myMiscForm.updateConfigFromGui();
         if (message != null) {
             messages.append(message). append(" ");
         }
@@ -96,7 +95,7 @@ public class Settings {
         myServerForm.setGuiMode(mode);
         myDatabaseForm.setGuiMode(mode);
         myDirectoriesForm.setGuiMode(mode);
-        myInfoForm.setGuiMode(mode);
+        myMiscForm.setGuiMode(mode);
     }
 
     public void doStartServer() {

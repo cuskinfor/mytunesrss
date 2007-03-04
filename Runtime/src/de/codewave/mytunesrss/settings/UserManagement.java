@@ -33,13 +33,6 @@ public class UserManagement {
         refreshUserList();
     }
 
-    public void resizeMainPanel(Dimension dimension) {
-        dimension.height -= myCreateButton.getHeight();
-        AbstractLayout layoutManager = (AbstractLayout)myRootPanel.getLayout();
-        dimension.height -= layoutManager.getVGap();
-        myScrollPane.setPreferredSize(dimension);
-    }
-
     private void refreshUserList() {
         myUserPanel.removeAll();
         List<User> users = new ArrayList<User>(MyTunesRss.CONFIG.getUsers());

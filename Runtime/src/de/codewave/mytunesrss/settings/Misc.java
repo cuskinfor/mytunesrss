@@ -12,9 +12,9 @@ import javax.swing.*;
 import java.awt.event.*;
 
 /**
- * de.codewave.mytunesrss.settings.Info
+ * de.codewave.mytunesrss.settings.Misc
  */
-public class Info implements MyTunesRssEventListener {
+public class Misc implements MyTunesRssEventListener {
     private JButton mySupportContactButton;
     private JPanel myRootPanel;
     private JTextField myUsernameInput;
@@ -29,7 +29,7 @@ public class Info implements MyTunesRssEventListener {
     private boolean myUpdateOnStartInputCache;
     private boolean myAutoStartServer;
 
-    public Info() {
+    public Misc() {
         MyTunesRssEventManager.getInstance().addListener(this);
     }
 
