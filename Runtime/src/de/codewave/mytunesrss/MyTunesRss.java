@@ -62,7 +62,7 @@ public class MyTunesRss {
     public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
     public static int OPTION_PANE_MAX_MESSAGE_LENGTH = 100;
     public static boolean HEADLESS;
-    private static General GENERAL_FORM;
+    private static Database DATABASE_FORM;
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
     public static final ErrorQueue ERROR_QUEUE = new ErrorQueue();
     public static boolean QUIT_REQUEST = false;
@@ -150,10 +150,10 @@ public class MyTunesRss {
     }
 
     public static DatabaseBuilderTask createDatabaseBuilderTask() {
-        if (GENERAL_FORM == null) {
+        if (DATABASE_FORM == null) {
             return new DatabaseBuilderTask();
         }
-        return new GuiDatabaseBuilderTask(GENERAL_FORM);
+        return new GuiDatabaseBuilderTask(DATABASE_FORM);
     }
 
     private static boolean isOtherInstanceRunning(long timeoutMillis) {
@@ -196,7 +196,7 @@ public class MyTunesRss {
             ClassNotFoundException, IOException, InterruptedException {
         showNewVersionInfo();
         final Settings settings = new Settings();
-        GENERAL_FORM = settings.getGeneralForm();
+        DATABASE_FORM = settings.getDatabaseForm();
         MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
         executeApple(settings);
         executeWindows(settings);

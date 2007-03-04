@@ -14,7 +14,7 @@ import java.awt.event.*;
 /**
  * de.codewave.mytunesrss.settings.Info
  */
-public class Info {
+public class Info implements MyTunesRssEventListener {
     private JButton mySupportContactButton;
     private JPanel myRootPanel;
     private JTextField myUsernameInput;
@@ -24,6 +24,14 @@ public class Info {
     private JCheckBox myUseProxyInput;
     private JLabel myPasswordLabel;
     private JCheckBox myQuitConfirmationInput;
+    private JCheckBox myUpdateOnStartInput;
+    private JButton myProgramUpdateButton;
+    private boolean myUpdateOnStartInputCache;
+    private boolean myAutoStartServer;
+
+    public Info() {
+        MyTunesRssEventManager.getInstance().addListener(this);
+    }
 
     public void init() {
         mySupportContactButton.addActionListener(new SupportContactActionListener());
@@ -41,6 +49,8 @@ public class Info {
             myProxyPortInput.setText("");
         }
         myQuitConfirmationInput.setSelected(MyTunesRss.CONFIG.isQuitConfirmation());
+        myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
+        myUpdateOnStartInput.setSelected(MyTunesRss.CONFIG.isCheckUpdateOnStart());
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput, MyTunesRss.BUNDLE.getString("error.emptyProxyHost")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myProxyPortInput, 1, 65535, false, MyTunesRss.BUNDLE.getString(
                 "error.illegalProxyPort")));
@@ -60,6 +70,8 @@ public class Info {
                 myPasswordLabel.setEnabled(false);
                 myPasswordInput.setEnabled(false);
                 myQuitConfirmationInput.setEnabled(false);
+                myUpdateOnStartInput.setEnabled(false);
+                myProgramUpdateButton.setEnabled(false);
                 break;
             case ServerIdle:
                 SwingUtils.enableElementAndLabel(myProxyHostInput, myUseProxyInput.isSelected());
@@ -69,6 +81,8 @@ public class Info {
                 myPasswordLabel.setEnabled(true);
                 myPasswordInput.setEnabled(true);
                 myQuitConfirmationInput.setEnabled(true);
+                myUpdateOnStartInput.setEnabled(!myAutoStartServer);
+                myProgramUpdateButton.setEnabled(true);
                 break;
         }
     }
@@ -86,8 +100,25 @@ public class Info {
             MyTunesRss.CONFIG.setProxyHost(myProxyHostInput.getText());
             MyTunesRss.CONFIG.setProxyPort(MyTunesRssUtils.getTextFieldInteger(myProxyPortInput, -1));
             MyTunesRss.CONFIG.setQuitConfirmation(myQuitConfirmationInput.isSelected());
+            MyTunesRss.CONFIG.setCheckUpdateOnStart(myUpdateOnStartInput.isSelected());
         }
         return null;
+    }
+
+    public void handleEvent(MyTunesRssEvent event) {
+        switch (event) {
+            case EnableAutoStartServer:
+                myUpdateOnStartInputCache = myUpdateOnStartInput.isSelected();
+                myUpdateOnStartInput.setSelected(false);
+                myUpdateOnStartInput.setEnabled(false);
+                myAutoStartServer = true;
+                break;
+            case DisableAutoStartServer:
+                myUpdateOnStartInput.setSelected(myUpdateOnStartInputCache);
+                myUpdateOnStartInput.setEnabled(true);
+                myAutoStartServer = false;
+                break;
+        }
     }
 
     public class SupportContactActionListener implements ActionListener {
@@ -106,6 +137,12 @@ public class Info {
         public void actionPerformed(ActionEvent actionEvent) {
             SwingUtils.enableElementAndLabel(myProxyHostInput, myUseProxyInput.isSelected());
             SwingUtils.enableElementAndLabel(myProxyPortInput, myUseProxyInput.isSelected());
+        }
+    }
+
+    public class ProgramUpdateButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            UpdateUtils.checkForUpdate(false);
         }
     }
 }

@@ -12,7 +12,7 @@ import java.util.Timer;
  */
 public class Settings {
     private JPanel myRootPanel;
-    private General myGeneralForm;
+    private Server myServerForm;
     private Directories myDirectoriesForm;
     private UserManagement myUserManagementForm;
     private Info myInfoForm;
@@ -20,13 +20,10 @@ public class Settings {
     private JButton myStopServerButton;
     private JButton myQuitButton;
     private JTabbedPane myTabbedPane;
+    private Database myDatabaseForm;
 
-    public General getGeneralForm() {
-        return myGeneralForm;
-    }
-
-    public Directories getOptionsForm() {
-        return myDirectoriesForm;
+    public Database getDatabaseForm() {
+        return myDatabaseForm;
     }
 
     public JPanel getRootPanel() {
@@ -49,17 +46,22 @@ public class Settings {
                 doQuitApplication();
             }
         });
-        myGeneralForm.init();
+        myServerForm.init();
+        myDatabaseForm.init();
         myDirectoriesForm.init();
         myUserManagementForm.init();
-        myUserManagementForm.resizeMainPanel(myGeneralForm.getContentDimension());
+        myUserManagementForm.resizeMainPanel(myServerForm.getContentDimension());
         myInfoForm.init();
         myTabbedPane.addChangeListener(new TabSwitchListener());
     }
 
     public String updateConfigFromGui() {
         StringBuffer messages = new StringBuffer();
-        String message = myGeneralForm.updateConfigFromGui();
+        String message = myServerForm.updateConfigFromGui();
+        if (message != null) {
+            messages.append(message).append(" ");
+        }
+        message = myDatabaseForm.updateConfigFromGui();
         if (message != null) {
             messages.append(message).append(" ");
         }
@@ -91,7 +93,8 @@ public class Settings {
                 myStartServerButton.setEnabled(true);
                 myStopServerButton.setEnabled(false);
         }
-        myGeneralForm.setGuiMode(mode);
+        myServerForm.setGuiMode(mode);
+        myDatabaseForm.setGuiMode(mode);
         myDirectoriesForm.setGuiMode(mode);
         myInfoForm.setGuiMode(mode);
     }
@@ -102,7 +105,7 @@ public class Settings {
             MyTunesRss.startWebserver();
             if (MyTunesRss.WEBSERVER.isRunning()) {
                 setGuiMode(GuiMode.ServerRunning);
-                myGeneralForm.setServerRunningStatus(MyTunesRss.CONFIG.getPort());
+                myServerForm.setServerRunningStatus(MyTunesRss.CONFIG.getPort());
             }
         } else {
             MyTunesRssUtils.showErrorMessage(messages);
@@ -113,7 +116,7 @@ public class Settings {
         MyTunesRss.stopWebserver();
         if (!MyTunesRss.WEBSERVER.isRunning()) {
             setGuiMode(GuiMode.ServerIdle);
-            myGeneralForm.setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
+            myServerForm.setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
             if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
                 MyTunesRss.SERVER_RUNNING_TIMER.cancel();
                 MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");

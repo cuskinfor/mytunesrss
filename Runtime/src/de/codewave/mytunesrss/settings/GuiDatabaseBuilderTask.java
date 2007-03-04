@@ -6,18 +6,18 @@ import de.codewave.mytunesrss.task.*;
  * de.codewave.mytunesrss.settings.GuiDatabaseBuilderTask
  */
 public class GuiDatabaseBuilderTask extends DatabaseBuilderTask {
-    General myGeneral;
+    Database myDatabase;
 
-    public GuiDatabaseBuilderTask(General general) {
+    public GuiDatabaseBuilderTask(Database database) {
         super();
-        myGeneral = general;
+        myDatabase = database;
     }
 
     @Override
     public void execute() throws Exception {
         super.execute();
         if (isExecuted()) {
-            myGeneral.refreshLastUpdate();
+            myDatabase.refreshLastUpdate();
         }
     }
 }

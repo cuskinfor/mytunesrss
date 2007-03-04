@@ -6,13 +6,12 @@ package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.swing.*;
+import org.apache.commons.lang.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-
-import org.apache.commons.lang.*;
 
 /**
  * de.codewave.mytunesrss.settings.Options
@@ -38,7 +37,6 @@ public class Directories {
     private JButton myTunesXmlPathLookupButton;
     private JTextField myBaseDirInput;
     private JButton myBaseDirLookupButton;
-    private JCheckBox myDeleteMissingFiles;
     private JTextField myUploadDirInput;
     private JButton myUploadDirLookupButton;
     private JCheckBox myCreateUserDir;
@@ -48,8 +46,6 @@ public class Directories {
     private JLabel mySeparatorLabel1;
     private JLabel mySeparatorLabel2;
     private JLabel myTrackLabel;
-    private JTextField myFileTypes;
-    private JTextField myArtistDropWords;
 
     public void init() {
         myFolderStructureGrandparent.addItem(FolderStructureRole.None);
@@ -65,11 +61,8 @@ public class Directories {
         setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemAlbumNameFolder(), FolderStructureRole.Album);
         myBaseDirLookupButton.addActionListener(new BaseDirLookupButtonListener(myBaseDirInput));
         myUploadDirLookupButton.addActionListener(new BaseDirLookupButtonListener(myUploadDirInput));
-        myDeleteMissingFiles.setSelected(MyTunesRss.CONFIG.isItunesDeleteMissingFiles());
         myUploadDirInput.setText(MyTunesRss.CONFIG.getUploadDir());
         myCreateUserDir.setSelected(MyTunesRss.CONFIG.isUploadCreateUserDir());
-        myFileTypes.setText(MyTunesRss.CONFIG.getFileTypes());
-        myArtistDropWords.setText(MyTunesRss.CONFIG.getArtistDropWords());
     }
 
     private void setFolderStructureRole(int level, FolderStructureRole role) {
@@ -94,11 +87,8 @@ public class Directories {
         MyTunesRss.CONFIG.setBaseDir(myBaseDirInput.getText());
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(getFolderStructureRole(FolderStructureRole.Artist));
         MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(getFolderStructureRole(FolderStructureRole.Album));
-        MyTunesRss.CONFIG.setItunesDeleteMissingFiles(myDeleteMissingFiles.isSelected());
         MyTunesRss.CONFIG.setUploadDir(myUploadDirInput.getText());
         MyTunesRss.CONFIG.setUploadCreateUserDir(myCreateUserDir.isSelected());
-        MyTunesRss.CONFIG.setFileTypes(myFileTypes.getText());
-        MyTunesRss.CONFIG.setArtistDropWords(myArtistDropWords.getText());
         return null;
     }
 
@@ -111,7 +101,6 @@ public class Directories {
                 myBaseDirLookupButton.setEnabled(false);
                 myFolderStructureGrandparent.setEnabled(false);
                 myFolderStructureParent.setEnabled(false);
-                myDeleteMissingFiles.setEnabled(false);
                 SwingUtils.enableElementAndLabel(myUploadDirInput, false);
                 myUploadDirLookupButton.setEnabled(false);
                 myCreateUserDir.setEnabled(false);
@@ -119,8 +108,6 @@ public class Directories {
                 mySeparatorLabel1.setEnabled(false);
                 mySeparatorLabel2.setEnabled(false);
                 myTrackLabel.setEnabled(false);
-                SwingUtils.enableElementAndLabel(myFileTypes, false);
-                SwingUtils.enableElementAndLabel(myArtistDropWords, false);
                 break;
             case ServerIdle:
                 SwingUtils.enableElementAndLabel(myTunesXmlPathInput, true);
@@ -129,7 +116,6 @@ public class Directories {
                 myBaseDirLookupButton.setEnabled(true);
                 myFolderStructureGrandparent.setEnabled(true);
                 myFolderStructureParent.setEnabled(true);
-                myDeleteMissingFiles.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myUploadDirInput, true);
                 myUploadDirLookupButton.setEnabled(true);
                 myCreateUserDir.setEnabled(true);
@@ -137,8 +123,6 @@ public class Directories {
                 mySeparatorLabel1.setEnabled(true);
                 mySeparatorLabel2.setEnabled(true);
                 myTrackLabel.setEnabled(true);
-                SwingUtils.enableElementAndLabel(myFileTypes, true);
-                SwingUtils.enableElementAndLabel(myArtistDropWords, true);
                 break;
         }
     }
