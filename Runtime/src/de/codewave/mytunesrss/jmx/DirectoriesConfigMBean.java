@@ -8,10 +8,6 @@ package de.codewave.mytunesrss.jmx;
  * de.codewave.mytunesrss.jmx.DirectoriesConfigMBean
  */
 public interface DirectoriesConfigMBean {
-    String getArtistDropWords();
-
-    void setArtistDropWords(String artistDropWords);
-
     String getBaseDir();
 
     void setBaseDir(String baseDir);
@@ -19,10 +15,6 @@ public interface DirectoriesConfigMBean {
     boolean isCreateUserSubdir();
 
     void setCreateUserSubdir(boolean createUserSubdir);
-
-    String getFileTypes();
-
-    void setFileTypes(String fileTypes);
 
     String getFolderStructure();
 
@@ -35,10 +27,6 @@ public interface DirectoriesConfigMBean {
     void setFolderStructureToNoneAndAlbum();
 
     void setFolderStructureToNoneAndArtist();
-
-    boolean isRemoveMissingItunesTracks();
-
-    void setRemoveMissingItunesTracks(boolean removeMissingTracks);
 
     String getUploadDir();
 

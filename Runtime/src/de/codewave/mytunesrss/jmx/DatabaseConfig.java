@@ -8,7 +8,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
 
-import javax.management.NotCompliantMBeanException;
+import javax.management.*;
 import java.sql.*;
 import java.text.*;
 import java.util.Date;
@@ -18,11 +18,11 @@ import java.util.Date;
  */
 public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBean {
 
-  DatabaseConfig() throws NotCompliantMBeanException {
-    super(DatabaseConfigMBean.class);
-  }
+    DatabaseConfig() throws NotCompliantMBeanException {
+        super(DatabaseConfigMBean.class);
+    }
 
-  public boolean isIgnoreTimestampsOnUpdate() {
+    public boolean isIgnoreTimestampsOnUpdate() {
         return MyTunesRss.CONFIG.isIgnoreTimestamps();
     }
 
@@ -89,5 +89,29 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
 
     public void setAutoUpdateIntervalMinutes(int minutes) {
         MyTunesRss.CONFIG.setAutoUpdateDatabaseInterval(minutes);
+    }
+
+    public String getArtistDropWords() {
+        return MyTunesRss.CONFIG.getArtistDropWords();
+    }
+
+    public void setArtistDropWords(String artistDropWords) {
+        MyTunesRss.CONFIG.setArtistDropWords(artistDropWords);
+    }
+
+    public String getFileTypes() {
+        return MyTunesRss.CONFIG.getFileTypes();
+    }
+
+    public void setFileTypes(String fileTypes) {
+        MyTunesRss.CONFIG.setFileTypes(fileTypes);
+    }
+
+    public boolean isRemoveMissingItunesTracks() {
+        return MyTunesRss.CONFIG.isItunesDeleteMissingFiles();
+    }
+
+    public void setRemoveMissingItunesTracks(boolean removeMissingTracks) {
+        MyTunesRss.CONFIG.setItunesDeleteMissingFiles(removeMissingTracks);
     }
 }

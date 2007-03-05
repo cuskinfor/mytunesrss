@@ -22,7 +22,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     private String myUsername;
 
     EditUserConfig(String username) throws NotCompliantMBeanException {
-      super(EditUserConfigMBean.class);
+        super(EditUserConfigMBean.class);
         myUsername = username;
     }
 
@@ -50,11 +50,13 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     }
 
     public void setPassword(String password) {
-        try {
-            MyTunesRss.CONFIG.getUser(myUsername).setPasswordHash(MyTunesRss.MESSAGE_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
-        } catch (UnsupportedEncodingException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create password hash.", e);
+        if (StringUtils.isNotEmpty(password)) {
+            try {
+                MyTunesRss.CONFIG.getUser(myUsername).setPasswordHash(MyTunesRss.MESSAGE_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
+            } catch (UnsupportedEncodingException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not create password hash.", e);
+                }
             }
         }
     }
@@ -158,5 +160,13 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         MyTunesRss.CONFIG.removeUser(myUsername);
         MyTunesRssJmxUtils.registerUsers();
         return MyTunesRss.BUNDLE.getString("jmx.userDeleted");
+    }
+
+    public int getSessionTimeout() {
+        return MyTunesRss.CONFIG.getUser(myUsername).getSessionTimeout();
+    }
+
+    public void setSessionTimeout(int minutes) {
+        MyTunesRss.CONFIG.getUser(myUsername).setSessionTimeout(minutes);
     }
 }

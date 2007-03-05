@@ -17,14 +17,6 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
     super(DirectoriesConfigMBean.class);
   }
 
-  public String getArtistDropWords() {
-        return MyTunesRss.CONFIG.getArtistDropWords();
-    }
-
-    public void setArtistDropWords(String artistDropWords) {
-        MyTunesRss.CONFIG.setArtistDropWords(artistDropWords);
-    }
-
     public String getBaseDir() {
         return MyTunesRss.CONFIG.getBaseDir();
     }
@@ -39,22 +31,6 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
 
     public void setCreateUserSubdir(boolean createUserSubdir) {
         MyTunesRss.CONFIG.setUploadCreateUserDir(createUserSubdir);
-    }
-
-    public String getFileTypes() {
-        return MyTunesRss.CONFIG.getFileTypes();
-    }
-
-    public void setFileTypes(String fileTypes) {
-        MyTunesRss.CONFIG.setFileTypes(fileTypes);
-    }
-
-    public boolean isRemoveMissingItunesTracks() {
-        return MyTunesRss.CONFIG.isItunesDeleteMissingFiles();
-    }
-
-    public void setRemoveMissingItunesTracks(boolean removeMissingTracks) {
-        MyTunesRss.CONFIG.setItunesDeleteMissingFiles(removeMissingTracks);
     }
 
     public String getUploadDir() {

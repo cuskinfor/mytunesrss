@@ -67,4 +67,8 @@ public interface EditUserConfigMBean {
 
     String delete() throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException, NotCompliantMBeanException,
             InstanceAlreadyExistsException;
+
+    int getSessionTimeout();
+
+    void setSessionTimeout(int minutes);
 }
