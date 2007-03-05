@@ -37,7 +37,7 @@
     <form action="${servletUrl}/saveSettings" method="post">
         <table cellspacing="0">
             <tr>
-                <th class="active"><fmt:message key="settings.misc" /></th>
+                <th class="active"><fmt:message key="settings.info" /></th>
                 <th>&nbsp;</th>
             </tr>
             <mt:initFlipFlop value1="" value2="class=\"odd\""/>
@@ -140,8 +140,8 @@
                     <td><fmt:message key="settings.playlistType" /></td>
                     <td>
                         <select name="playlistType">
-                            <option value="M3u">m3u</option>
-                            <option value="Xspf">xspf</option>
+                            <option value="M3u" <c:if test="${config.playlistType eq 'M3u'}">selected="selected"</c:if>>m3u</option>
+                            <option value="Xspf" <c:if test="${config.playlistType eq 'Xspf'}">selected="selected"</c:if>>xspf</option>
                         </select>
                     </td>
                 </tr>

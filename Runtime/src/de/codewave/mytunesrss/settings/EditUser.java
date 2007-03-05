@@ -42,6 +42,7 @@ public class EditUser {
     private JButton myApplyButton;
     private JCheckBox myPermChangePasswordInput;
     private JTextField myFileTypesInput;
+    private JTextField mySessionTimeoutInput;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -90,11 +91,13 @@ public class EditUser {
             myBytesQuotaInput.setText(myUser.getBytesQuota() > 0 ? Long.toString(myUser.getBytesQuota() / MEGABYTE) : "");
             myMaxZipEntriesInput.setText(myUser.getMaximumZipEntries() > 0 ? Integer.toString(myUser.getMaximumZipEntries()) : "");
             myFileTypesInput.setText(myUser.getFileTypes());
+            mySessionTimeoutInput.setText(Integer.toString(myUser.getSessionTimeout()));
         } else {
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
             myPermRssInput.setSelected(true);
             myPermPlaylistInput.setSelected(true);
             myPermChangePasswordInput.setSelected(true);
+            mySessionTimeoutInput.setText("10");
         }
         if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
             SwingUtils.enableElementAndLabel(myBytesQuotaInput, false);
@@ -140,6 +143,11 @@ public class EditUser {
                                                                               Integer.MAX_VALUE,
                                                                               true,
                                                                               MyTunesRss.BUNDLE.getString("error.illegalMaxZipEntries")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(mySessionTimeoutInput,
+                                                                              1,
+                                                                              1440,
+                                                                              true,
+                                                                              MyTunesRss.BUNDLE.getString("error.illegalSessionTimeout")));
         JTextFieldValidation.validateAll(myRootPanel);
     }
 
@@ -200,6 +208,7 @@ public class EditUser {
                     myUser.setBytesQuota(MyTunesRssUtils.getTextFieldInteger(myBytesQuotaInput, 0) * MEGABYTE);
                     myUser.setMaximumZipEntries(MyTunesRssUtils.getTextFieldInteger(myMaxZipEntriesInput, 0));
                     myUser.setFileTypes(myFileTypesInput.getText());
+                    myUser.setSessionTimeout(MyTunesRssUtils.getTextFieldInteger(mySessionTimeoutInput, 10));
                     MyTunesRss.CONFIG.addUser(myUser);
                     if (myClose) {
                         myDialog.dispose();

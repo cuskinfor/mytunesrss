@@ -10,7 +10,7 @@
                 <album><c:out value="${item.album}"/></album>
                 <title><c:out value="${item.name}"/></title>
                 <c:if test="${!empty item.genre}"><annotation><c:out value="${item.genre}"/></annotation></c:if>
-                <duration>${item.time}</duration>
+                <duration>${item.time * 1000}</duration>
                 <image>${servletUrl}/showTrackImage/track=${cwfn:encodeUrl(item.id)}</image>
                 <info>${servletUrl}/showTrackInfo/track=${cwfn:encodeUrl(item.id)}/auth=${cwfn:encodeUrl(auth)}</info>
             </track>

@@ -31,6 +31,7 @@ public class User {
     private long myQuotaResetTime;
     private int myMaximumZipEntries;
     private String myFileTypes;
+    private int mySessionTimeout = 10;
 
     public User(String name) {
         myName = name;
@@ -169,6 +170,14 @@ public class User {
 
     public void setFileTypes(String fileTypes) {
         myFileTypes = fileTypes;
+    }
+
+    public int getSessionTimeout() {
+        return mySessionTimeout;
+    }
+
+    public void setSessionTimeout(int sessionTimeout) {
+        mySessionTimeout = sessionTimeout;
     }
 
     @Override

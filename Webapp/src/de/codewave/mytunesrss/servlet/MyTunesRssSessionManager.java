@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.servlet;
 import de.codewave.utils.servlet.*;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpSessionEvent;
 import java.io.*;
 
 /**

@@ -40,7 +40,7 @@ public class WebConfig {
                 case M3u:
                     return "m3u";
                 case Xspf:
-                    return "xml";
+                    return "xspf";
                 default:
                     throw new IllegalArgumentException("illegal playlist type: " + this.name());
             }
