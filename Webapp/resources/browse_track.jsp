@@ -136,7 +136,7 @@
                 </c:if>
                 <c:if test="${authUser.player && config.showPlayer}">
                     <th class="icon">
-                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/type=Xspf/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:webSafeFileName(sectionFileName)}.xspf')">
+                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/type=Xspf/playerRequest=true/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:webSafeFileName(sectionFileName)}.xspf')">
                             <img src="${appUrl}/images/player_th.gif" alt="playlist" /> </a>
                     </th>
                 </c:if>
@@ -199,7 +199,7 @@
             </c:if>
             <c:if test="${authUser.player && config.showPlayer}">
                 <td class="icon">
-                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/type=Xspf/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.xspf')">
+                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/type=Xspf/playerRequest=true/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.xspf')">
                         <img src="${appUrl}/images/player${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="playlist" /> </a>
                 </td>
             </c:if>
