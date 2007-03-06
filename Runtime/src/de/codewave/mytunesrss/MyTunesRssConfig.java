@@ -373,6 +373,7 @@ public class MyTunesRssConfig {
                     user.setPlaylist(userNode.node(userName).getBoolean("featurePlaylist", true));
                     user.setDownload(userNode.node(userName).getBoolean("featureDownload", false));
                     user.setUpload(userNode.node(userName).getBoolean("featureUpload", false));
+                    user.setPlayer(userNode.node(userName).getBoolean("featurePlayer", true));
                     user.setChangePassword(userNode.node(userName).getBoolean("featureChangePassword", true));
                     user.setResetTime(userNode.node(userName).getLong("resetTime", System.currentTimeMillis()));
                     user.setQuotaResetTime(userNode.node(userName).getLong("quotaResetTime", System.currentTimeMillis()));
@@ -442,6 +443,7 @@ public class MyTunesRssConfig {
                 userNode.node(user.getName()).putBoolean("featurePlaylist", user.isPlaylist());
                 userNode.node(user.getName()).putBoolean("featureDownload", user.isDownload());
                 userNode.node(user.getName()).putBoolean("featureUpload", user.isUpload());
+                userNode.node(user.getName()).putBoolean("featurePlayer", user.isPlayer());
                 userNode.node(user.getName()).putBoolean("featureChangePassword", user.isChangePassword());
                 userNode.node(user.getName()).putLong("resetTime", user.getResetTime());
                 userNode.node(user.getName()).putLong("quotaResetTime", user.getQuotaResetTime());

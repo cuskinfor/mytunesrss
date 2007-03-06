@@ -22,3 +22,7 @@ function selectAll(prefix, ids, checkbox) {
         }
     }
 }
+
+function openPlayer(url) {
+    window.open(url, 'MyTunesRssFlashPlayer', 'width=500,height=400,resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no')
+}

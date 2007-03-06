@@ -43,6 +43,7 @@ public class EditUser {
     private JCheckBox myPermChangePasswordInput;
     private JTextField myFileTypesInput;
     private JTextField mySessionTimeoutInput;
+    private JCheckBox myPermPlayerInput;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -86,6 +87,7 @@ public class EditUser {
             myPermPlaylistInput.setSelected(myUser.isPlaylist());
             myPermDownloadInput.setSelected(myUser.isDownload());
             myPermUploadInput.setSelected(myUser.isUpload());
+            myPermPlayerInput.setSelected(myUser.isPlayer());
             myPermChangePasswordInput.setSelected(myUser.isChangePassword());
             myQuotaTypeInput.setSelectedItem(myUser.getQuotaType());
             myBytesQuotaInput.setText(myUser.getBytesQuota() > 0 ? Long.toString(myUser.getBytesQuota() / MEGABYTE) : "");
@@ -96,6 +98,7 @@ public class EditUser {
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
             myPermRssInput.setSelected(true);
             myPermPlaylistInput.setSelected(true);
+            myPermPlayerInput.setSelected(true);
             myPermChangePasswordInput.setSelected(true);
             mySessionTimeoutInput.setText("10");
         }
@@ -203,6 +206,7 @@ public class EditUser {
                     myUser.setPlaylist(myPermPlaylistInput.isSelected());
                     myUser.setDownload(myPermDownloadInput.isSelected());
                     myUser.setUpload(myPermUploadInput.isSelected());
+                    myUser.setPlayer(myPermPlayerInput.isSelected());
                     myUser.setChangePassword(myPermChangePasswordInput.isSelected());
                     myUser.setQuotaType((User.QuotaType)myQuotaTypeInput.getSelectedItem());
                     myUser.setBytesQuota(MyTunesRssUtils.getTextFieldInteger(myBytesQuotaInput, 0) * MEGABYTE);

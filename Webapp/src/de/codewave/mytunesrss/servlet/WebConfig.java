@@ -27,15 +27,16 @@ public class WebConfig {
     private static final String CFG_RSS_LIMIT = "rssLimit";
     private static final String CFG_PAGE_SIZE = "pageSize";
     private static final String CFG_SHOW_DOWNLOAD = "showDownload";
+    private static final String CFG_SHOW_PLAYER = "showPlayer";
     private static final String CFG_RSS_ARTWORK = "rssArtwork";
     private static final String CFG_RANDOM_PLAYLIST_SIZE = "randomPlaylistSize";
     private static final String CFG_PLAYLIST_TYPE = "playlistType";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
-    private static enum PlaylistType {
+    public static enum PlaylistType {
         M3u(), Xspf();
 
-        String getFileSuffix() {
+        public String getFileSuffix() {
             switch (this) {
                 case M3u:
                     return "m3u";
@@ -81,6 +82,7 @@ public class WebConfig {
         myConfigValues.put(CFG_PASSWORD_HASH, "");
         myConfigValues.put(CFG_PAGE_SIZE, "0");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
+        myConfigValues.put(CFG_SHOW_PLAYER, "true");
         myConfigValues.put(CFG_RSS_ARTWORK, "true");
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_PLAYLIST_TYPE, "M3u");
@@ -136,6 +138,14 @@ public class WebConfig {
 
     public boolean isShowDownload() {
         return Boolean.valueOf(myConfigValues.get(CFG_SHOW_DOWNLOAD));
+    }
+
+    public void setShowPlayer(boolean showPlayer) {
+        myConfigValues.put(CFG_SHOW_PLAYER, Boolean.toString(showPlayer));
+    }
+
+    public boolean isShowPlayer() {
+        return Boolean.valueOf(myConfigValues.get(CFG_SHOW_PLAYER));
     }
 
     public boolean isLoginStored() {

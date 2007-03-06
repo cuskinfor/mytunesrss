@@ -24,6 +24,7 @@
     <!--[if IE]>
     <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css?ts=${sessionCreationTime}" />
   <![endif]-->
+    <script src="${appUrl}/js/functions.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 
 </head>
 
@@ -93,7 +94,7 @@
                 <fmt:message key="playlists" />
             </th>
             <c:if test="${!empty playlists}">
-                <th colspan="${cwfn:choose(config.showDownload, 2, 1) + config.feedTypeCount}">
+                <th colspan="${1 + mtfn:buttonColumns(authUser, config)}">
                     <fmt:message key="tracks" />
                 </th>
             </c:if>
@@ -123,6 +124,12 @@
                     <td class="icon">
                         <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:webSafeFileName(playlist.name)}.${config.playlistFileSuffix}">
                             <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="playlist" /> </a>
+                    </td>
+                </c:if>
+                <c:if test="${authUser.player && config.showPlayer}">
+                    <td class="icon">
+                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/type=Xspf/${mtfn:webSafeFileName(playlist.name)}.xspf')">
+                            <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="playlist" /> </a>
                     </td>
                 </c:if>
                 <c:if test="${authUser.download && config.showDownload}">

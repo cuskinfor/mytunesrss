@@ -6,6 +6,8 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.servlet.*;
+import org.apache.commons.lang.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -24,7 +26,12 @@ public class CreatePlaylistCommandHandler extends CreatePlaylistBaseCommandHandl
             Collection<Track> tracks = getTracks();
             if (tracks != null && !tracks.isEmpty()) {
                 getRequest().setAttribute("tracks", tracks);
-                forward(getWebConfig().getPlaylistTemplateResource());
+                String playlistType = getRequestParameter("type", null);
+                if (StringUtils.isEmpty(playlistType)) {
+                    forward(getWebConfig().getPlaylistTemplateResource());
+                } else {
+                    forward(WebConfig.PlaylistType.valueOf(playlistType).getTemplateResource());
+                }
             } else {
                 addError(new BundleError("error.emptyFeed"));
                 forward(MyTunesRssCommand.ShowPortal);// todo: redirect to backUrl

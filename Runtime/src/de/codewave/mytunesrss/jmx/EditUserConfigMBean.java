@@ -35,6 +35,10 @@ public interface EditUserConfigMBean {
 
     void setPermissionPlaylist(boolean permissionPlaylist);
 
+    boolean isPermissionPlayer();
+
+    void setPermissionPlayer(boolean permissionPlayer);
+
     boolean isPermissionRss();
 
     void setPermissionRss(boolean permissionRss);

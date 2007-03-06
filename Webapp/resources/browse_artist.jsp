@@ -79,7 +79,7 @@
                     <c:if test="${!empty param.genre}"> <fmt:message key="in"/> "<c:out value="${cwfn:decode64(param.genre)}" />"</c:if>
                 </th>
                 <th><fmt:message key="albums"/></th>
-                <th colspan="${cwfn:choose(config.showDownload, 2, 1) + config.feedTypeCount}"><fmt:message key="tracks"/></th>
+                <th colspan="${1 + mtfn:buttonColumns(authUser, config)}"><fmt:message key="tracks"/></th>
             </tr>
             <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
                 <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -108,6 +108,13 @@
                                 <td class="icon">
                                     <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(cwfn:encode64(artist.name))}/${mtfn:virtualArtistName(artist)}.${config.playlistFileSuffix}">
                                         <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                             alt="playlist" /> </a>
+                                </td>
+                            </c:if>
+                            <c:if test="${authUser.player && config.showPlayer}">
+                                <td class="icon">
+                                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/type=Xspf/artist=${cwfn:encodeUrl(cwfn:encode64(artist.name))}/${mtfn:virtualArtistName(artist)}.xspf')">
+                                        <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="playlist" /> </a>
                                 </td>
                             </c:if>

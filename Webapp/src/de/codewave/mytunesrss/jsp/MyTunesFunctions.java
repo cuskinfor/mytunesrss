@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.servlet.*;
 import de.codewave.utils.*;
 import de.codewave.utils.io.*;
 
@@ -119,5 +120,22 @@ public class MyTunesFunctions {
 
     public static String getMemorySizeForDisplay(long bytes) {
         return MyTunesRssUtils.getMemorySizeForDisplay(bytes);
+    }
+
+    public static int getButtonColumns(User user, WebConfig config) {
+        int count = 0;
+        if (user.isRss() && config.isShowRss()) {
+            count++;
+        }
+        if (user.isPlaylist() && config.isShowPlaylist()) {
+            count++;
+        }
+        if (user.isDownload() && config.isShowDownload()) {
+            count++;
+        }
+        if (user.isPlayer() && config.isShowPlayer()) {
+            count++;
+        }
+        return count;
     }
 }

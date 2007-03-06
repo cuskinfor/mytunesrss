@@ -85,6 +85,14 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         MyTunesRss.CONFIG.getUser(myUsername).setPlaylist(permissionPlaylist);
     }
 
+    public boolean isPermissionPlayer() {
+        return MyTunesRss.CONFIG.getUser(myUsername).isPlayer();
+    }
+
+    public void setPermissionPlayer(boolean permissionPlayer) {
+        MyTunesRss.CONFIG.getUser(myUsername).setPlayer(permissionPlayer);
+    }
+
     public boolean isPermissionRss() {
         return MyTunesRss.CONFIG.getUser(myUsername).isRss();
     }

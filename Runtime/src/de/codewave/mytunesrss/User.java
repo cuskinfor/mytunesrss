@@ -22,6 +22,7 @@ public class User {
     private boolean myRss;
     private boolean myPlaylist;
     private boolean myUpload;
+    private boolean myPlayer;
     private boolean myChangePassword;
     private QuotaType myQuotaType;
     private long myDownBytes;
@@ -94,6 +95,14 @@ public class User {
 
     public void setUpload(boolean upload) {
         myUpload = upload;
+    }
+
+    public boolean isPlayer() {
+        return myPlayer;
+    }
+
+    public void setPlayer(boolean player) {
+        myPlayer = player;
     }
 
     public boolean isChangePassword() {

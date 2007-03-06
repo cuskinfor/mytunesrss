@@ -79,7 +79,7 @@
                 <c:if test="${!empty param.genre}"> <fmt:message key="in"/> "${cwfn:decode64(param.genre)}"</c:if>
             </th>
             <th><fmt:message key="artist"/></th>
-            <th colspan="${cwfn:choose(config.showDownload, 2, 1) + config.feedTypeCount}"><fmt:message key="tracks"/></th>
+            <th colspan="${1 + mtfn:buttonColumns(authUser, config)}"><fmt:message key="tracks"/></th>
         </tr>
         <c:forEach items="${albums}" var="album" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -106,7 +106,6 @@
                         </c:when>
                         <c:otherwise><fmt:message key="variousArtists"/></c:otherwise>
                     </c:choose>
-
                 </td>
                 <td class="tracks">
                     <a href="${servletUrl}/browseTrack?album=${cwfn:encodeUrl(cwfn:encode64(album.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${album.trackCount} </a>
@@ -124,6 +123,13 @@
                             <td class="icon">
                                 <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/album=${cwfn:encodeUrl(cwfn:encode64(album.name))}/${mtfn:virtualAlbumName(album)}.${config.playlistFileSuffix}">
                                     <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                         alt="playlist" /> </a>
+                            </td>
+                        </c:if>
+                        <c:if test="${authUser.player && config.showPlayer}">
+                            <td class="icon">
+                                <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/album=${cwfn:encodeUrl(cwfn:encode64(album.name))}/type=Xspf/${mtfn:virtualAlbumName(album)}.xspf')">
+                                    <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="playlist" /> </a>
                             </td>
                         </c:if>
@@ -173,6 +179,13 @@
                             <td class="icon">
                                 <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/${mtfn:webSafeFileName(cwfn:decode64(param.artist))}.${config.playlistFileSuffix}">
                                     <img src="${appUrl}/images/playlist${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
+                                         alt="playlist" /> </a>
+                            </td>
+                        </c:if>
+                        <c:if test="${authUser.player && config.showPlayer}">
+                            <td class="icon">
+                                <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/type=Xspf/${mtfn:webSafeFileName(cwfn:decode64(param.artist))}.xspf')">
+                                    <img src="${appUrl}/images/player${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
                                          alt="playlist" /> </a>
                             </td>
                         </c:if>

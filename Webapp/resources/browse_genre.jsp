@@ -70,7 +70,7 @@
                 </th>
                 <th><fmt:message key="albums"/></th>
                 <th><fmt:message key="artists"/></th>
-                <th colspan="${cwfn:choose(config.showDownload, 2, 1) + config.feedTypeCount}"><fmt:message key="tracks"/></th>
+                <th colspan="${1 + mtfn:buttonColumns(authUser, config)}"><fmt:message key="tracks"/></th>
             </tr>
             <c:forEach items="${genres}" var="genre" varStatus="loopStatus">
                 <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -99,6 +99,13 @@
                                 <td class="icon">
                                     <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}/${mtfn:virtualGenreName(genre)}.${config.playlistFileSuffix}">
                                         <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                             alt="playlist" /> </a>
+                                </td>
+                            </c:if>
+                            <c:if test="${authUser.player && config.showPlayer}">
+                                <td class="icon">
+                                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/genre=${cwfn:encodeUrl(cwfn:encode64(genre.name))}/type=Xspf/${mtfn:virtualGenreName(genre)}.xspf')">
+                                        <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="playlist" /> </a>
                                 </td>
                             </c:if>
