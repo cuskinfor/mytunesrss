@@ -38,8 +38,10 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 LOG.error("Could not create URL from iTunes XML file.", e);
             }
         }
-        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getBaseDir())) {
-            myBaseDirs.add(new File(MyTunesRss.CONFIG.getBaseDir().trim()));
+        if (MyTunesRss.CONFIG.getBaseDirs() != null && MyTunesRss.CONFIG.getBaseDirs().length > 0) {
+            for (String baseDir : MyTunesRss.CONFIG.getBaseDirs()) {
+                myBaseDirs.add(new File(baseDir));
+            }
         }
         if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getUploadDir())) {
             myBaseDirs.add(new File(MyTunesRss.CONFIG.getUploadDir().trim()));

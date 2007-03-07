@@ -17,12 +17,12 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
     super(DirectoriesConfigMBean.class);
   }
 
-    public String getBaseDir() {
-        return MyTunesRss.CONFIG.getBaseDir();
+    public String[] getBaseDirs() {
+        return MyTunesRss.CONFIG.getBaseDirs();
     }
 
-    public void setBaseDir(String baseDir) {
-        MyTunesRss.CONFIG.setBaseDir(baseDir);
+    public void setBaseDirs(String[] baseDir) {
+        MyTunesRss.CONFIG.setBaseDirs(baseDir);
     }
 
     public boolean isCreateUserSubdir() {

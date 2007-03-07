@@ -13,9 +13,6 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.*;
-
-import com.intellij.uiDesigner.core.*;
 
 /**
  * de.codewave.mytunesrss.settings.Options
@@ -75,7 +72,9 @@ public class Directories {
         myFolderStructureParent.addItem(FolderStructureRole.Artist);
         myTunesXmlPathLookupButton.addActionListener(new TunesXmlPathLookupButtonListener());
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
-        myListModel.addElement(MyTunesRss.CONFIG.getBaseDir());
+        for (String baseDir : MyTunesRss.CONFIG.getBaseDirs()) {
+            myListModel.addElement(baseDir);
+        }
         myBaseDirsList.setModel(myListModel);
         myBaseDirsList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
@@ -115,7 +114,11 @@ public class Directories {
 
     public String updateConfigFromGui() {
         MyTunesRss.CONFIG.setLibraryXml(myTunesXmlPathInput.getText().trim());
-        MyTunesRss.CONFIG.setBaseDir(myListModel.get(0).toString());
+        String[] baseDirs = new String[myListModel.getSize()];
+        for (int i = 0; i < baseDirs.length; i++) {
+            baseDirs[i] = myListModel.get(i).toString();
+        }
+        MyTunesRss.CONFIG.setBaseDirs(baseDirs);
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(getFolderStructureRole(FolderStructureRole.Artist));
         MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(getFolderStructureRole(FolderStructureRole.Album));
         MyTunesRss.CONFIG.setUploadDir(myUploadDirInput.getText());
@@ -194,7 +197,9 @@ public class Directories {
         }
 
         protected void handleChosenFile(File file) throws IOException {
-            myListModel.addElement(file.getCanonicalPath());
+            if (!myListModel.contains(file.getCanonicalPath())) {
+                myListModel.addElement(file.getCanonicalPath());
+            }
         }
     }
 

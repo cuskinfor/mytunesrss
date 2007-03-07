@@ -25,7 +25,7 @@ public class MyTunesRssConfig {
     private String myServerName = "MyTunesRSS";
     private boolean myAvailableOnLocalNet = true;
     private String myLibraryXml = "";
-    private String myBaseDir = "";
+    private String[] myBaseDirs = new String[0];
     private boolean myCheckUpdateOnStart = true;
     private boolean myAutoStartServer = false;
     private boolean myAutoUpdateDatabase = false;
@@ -59,12 +59,15 @@ public class MyTunesRssConfig {
         myLibraryXml = StringUtils.trim(libraryXml);
     }
 
-    public String getBaseDir() {
-        return myBaseDir;
+    public String[] getBaseDirs() {
+        return myBaseDirs;
     }
 
-    public void setBaseDir(String baseDir) {
-        myBaseDir = StringUtils.trim(baseDir);
+    public void setBaseDirs(String[] baseDirs) {
+        myBaseDirs = new String[baseDirs.length];
+        for (int i = 0; i < baseDirs.length; i++) {
+            myBaseDirs[i] = baseDirs[i].trim();
+        }
     }
 
     public int getPort() {
@@ -355,7 +358,11 @@ public class MyTunesRssConfig {
                                                                                          isUpdateDatabaseOnServerStart()));
         setAutoUpdateDatabaseInterval(Preferences.userRoot().node(PREF_ROOT).getInt("autoUpdateDatabaseInterval", getAutoUpdateDatabaseInterval()));
         setIgnoreTimestamps(Preferences.userRoot().node(PREF_ROOT).getBoolean("ignoreTimestamps", isIgnoreTimestamps()));
-        setBaseDir(Preferences.userRoot().node(PREF_ROOT).get("baseDir", getBaseDir()));
+        String[] baseDirs = new String[Preferences.userRoot().node(PREF_ROOT).getInt("baseDirCount", 0)];
+        for (int i = 0; i < baseDirs.length; i++) {
+            baseDirs[i] = Preferences.userRoot().node(PREF_ROOT + "/basedir").get(Integer.toString(i), "");
+        }
+        setBaseDirs(baseDirs);
         setFileSystemArtistNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("artistFolder", getFileSystemArtistNameFolder()));
         setFileSystemAlbumNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("albumFolder", getFileSystemAlbumNameFolder()));
         setItunesDeleteMissingFiles(Preferences.userRoot().node(PREF_ROOT).getBoolean("iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
@@ -416,7 +423,18 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node(PREF_ROOT).putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
         Preferences.userRoot().node(PREF_ROOT).put("version", myVersion);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("ignoreTimestamps", myIgnoreTimestamps);
-        Preferences.userRoot().node(PREF_ROOT).put("baseDir", myBaseDir);
+        Preferences.userRoot().node(PREF_ROOT).putInt("baseDirCount", myBaseDirs.length);
+        try {
+            Preferences.userRoot().node(PREF_ROOT + "/basedir").removeNode();
+            for (int i = 0; i < myBaseDirs.length; i++) {
+                Preferences.userRoot().node(PREF_ROOT + "/basedir").put(Integer.toString(i), myBaseDirs[i]);
+            }
+        } catch (BackingStoreException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not write base directories.", e);
+            }
+
+        }
         Preferences.userRoot().node(PREF_ROOT).putInt("artistFolder", myFileSystemArtistNameFolder);
         Preferences.userRoot().node(PREF_ROOT).putInt("albumFolder", myFileSystemAlbumNameFolder);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("iTunesDeleteMissingFiles", myItunesDeleteMissingFiles);
@@ -456,7 +474,7 @@ public class MyTunesRssConfig {
             }
         } catch (BackingStoreException e) {
             if (LOG.isErrorEnabled()) {
-                LOG.error("Could not read users.", e);
+                LOG.error("Could not write users.", e);
             }
         }
         Preferences.userRoot().node(PREF_ROOT).put("supportName", mySupportName);

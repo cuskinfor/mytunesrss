@@ -8,9 +8,9 @@ package de.codewave.mytunesrss.jmx;
  * de.codewave.mytunesrss.jmx.DirectoriesConfigMBean
  */
 public interface DirectoriesConfigMBean {
-    String getBaseDir();
+    String[] getBaseDirs();
 
-    void setBaseDir(String baseDir);
+    void setBaseDirs(String[] baseDir);
 
     boolean isCreateUserSubdir();
 
