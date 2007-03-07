@@ -12,6 +12,7 @@ import org.apache.commons.logging.*;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.prefs.*;
 
 /**
@@ -25,13 +26,13 @@ public class MyTunesRssConfig {
     private String myServerName = "MyTunesRSS";
     private boolean myAvailableOnLocalNet = true;
     private String myLibraryXml = "";
-    private String[] myBaseDirs = new String[0];
+    private List<String> myWatchFolders = new ArrayList<String>();
     private boolean myCheckUpdateOnStart = true;
-    private boolean myAutoStartServer = false;
-    private boolean myAutoUpdateDatabase = false;
+    private boolean myAutoStartServer;
+    private boolean myAutoUpdateDatabase;
     private int myAutoUpdateDatabaseInterval = 10;
     private String myVersion;
-    private boolean myIgnoreTimestamps = false;
+    private boolean myIgnoreTimestamps;
     private int myFileSystemAlbumNameFolder = 1;
     private int myFileSystemArtistNameFolder = 2;
     private Collection<User> myUsers = new HashSet<User>();
@@ -59,15 +60,48 @@ public class MyTunesRssConfig {
         myLibraryXml = StringUtils.trim(libraryXml);
     }
 
-    public String[] getBaseDirs() {
-        return myBaseDirs;
+    public String[] getWatchFolders() {
+        return myWatchFolders.toArray(new String[myWatchFolders.size()]);
     }
 
-    public void setBaseDirs(String[] baseDirs) {
-        myBaseDirs = new String[baseDirs.length];
-        for (int i = 0; i < baseDirs.length; i++) {
-            myBaseDirs[i] = baseDirs[i].trim();
+    public void setWatchFolders(String[] watchFolders) {
+        myWatchFolders = new ArrayList<String>();
+        for (String watchFolder : watchFolders) {
+            myWatchFolders.add(watchFolder.trim());
         }
+        Collections.sort(myWatchFolders);
+    }
+
+    public String addWatchFolder(String watchFolder) {
+        if (new File(watchFolder).exists()) {
+            for (String folder : myWatchFolders) {
+                try {
+                    if (watchFolder.equals(folder)) {
+                        return MyTunesRssUtils.getBundleString("error.watchFolderAlreadyExists", folder);
+                    } else if (IOUtils.isContained(new File(folder), new File(watchFolder))) {
+                        return MyTunesRssUtils.getBundleString("error.existingWatchFolderContainsNewOne", folder);
+                    } else if (IOUtils.isContained(new File(watchFolder), new File(folder))) {
+                        return MyTunesRssUtils.getBundleString("error.newWatchFolderContainsExistingOne", folder);
+                    }
+                } catch (IOException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not check if existing folder contains new folder or vice versa, assuming everything is okay.", e);
+                    }
+                }
+            }
+            myWatchFolders.add(watchFolder);
+            Collections.sort(myWatchFolders);
+            return null;
+        }
+        return MyTunesRss.BUNDLE.getString("error.watchFolderDoesNotExist");
+    }
+
+    public String removeWatchFolder(String watchFolder) {
+        if (myWatchFolders.contains(watchFolder)) {
+            myWatchFolders.remove(watchFolder);
+            return null;
+        }
+        return MyTunesRss.BUNDLE.getString("error.watchFolderDoesNotExist");
     }
 
     public int getPort() {
@@ -362,7 +396,7 @@ public class MyTunesRssConfig {
         for (int i = 0; i < baseDirs.length; i++) {
             baseDirs[i] = Preferences.userRoot().node(PREF_ROOT + "/basedir").get(Integer.toString(i), "");
         }
-        setBaseDirs(baseDirs);
+        setWatchFolders(baseDirs);
         setFileSystemArtistNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("artistFolder", getFileSystemArtistNameFolder()));
         setFileSystemAlbumNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("albumFolder", getFileSystemAlbumNameFolder()));
         setItunesDeleteMissingFiles(Preferences.userRoot().node(PREF_ROOT).getBoolean("iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
@@ -423,11 +457,11 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node(PREF_ROOT).putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
         Preferences.userRoot().node(PREF_ROOT).put("version", myVersion);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("ignoreTimestamps", myIgnoreTimestamps);
-        Preferences.userRoot().node(PREF_ROOT).putInt("baseDirCount", myBaseDirs.length);
+        Preferences.userRoot().node(PREF_ROOT).putInt("baseDirCount", myWatchFolders.size());
         try {
             Preferences.userRoot().node(PREF_ROOT + "/basedir").removeNode();
-            for (int i = 0; i < myBaseDirs.length; i++) {
-                Preferences.userRoot().node(PREF_ROOT + "/basedir").put(Integer.toString(i), myBaseDirs[i]);
+            for (int i = 0; i < myWatchFolders.size(); i++) {
+                Preferences.userRoot().node(PREF_ROOT + "/basedir").put(Integer.toString(i), myWatchFolders.get(i));
             }
         } catch (BackingStoreException e) {
             if (LOG.isErrorEnabled()) {

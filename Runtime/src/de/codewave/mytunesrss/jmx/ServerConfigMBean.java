@@ -34,7 +34,7 @@ public interface ServerConfigMBean {
 
     void setCreateTempArchives(boolean createTempArchives);
 
-    String getLocalAddresses();
+    String[] getLocalAddresses();
 
     String getExternalAddress();
 }

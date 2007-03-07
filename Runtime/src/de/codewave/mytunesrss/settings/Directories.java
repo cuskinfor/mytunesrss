@@ -72,9 +72,7 @@ public class Directories {
         myFolderStructureParent.addItem(FolderStructureRole.Artist);
         myTunesXmlPathLookupButton.addActionListener(new TunesXmlPathLookupButtonListener());
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
-        for (String baseDir : MyTunesRss.CONFIG.getBaseDirs()) {
-            myListModel.addElement(baseDir);
-        }
+        addAllToListModel();
         myBaseDirsList.setModel(myListModel);
         myBaseDirsList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
@@ -83,9 +81,9 @@ public class Directories {
         });
         setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemArtistNameFolder(), FolderStructureRole.Artist);
         setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemAlbumNameFolder(), FolderStructureRole.Album);
-        myAddBaseDirButton.addActionListener(new AddBaseDirButtonListener());
-        myDeleteBaseDirButton.addActionListener(new DeleteBaseDirButtonListener());
-        myUploadDirLookupButton.addActionListener(new AddBaseDirButtonListener() {
+        myAddBaseDirButton.addActionListener(new AddWatchFolderButtonListener());
+        myDeleteBaseDirButton.addActionListener(new DeleteWatchFolderButtonListener());
+        myUploadDirLookupButton.addActionListener(new AddWatchFolderButtonListener() {
             @Override
             protected void handleChosenFile(File file) throws IOException {
                 myUploadDirInput.setText(file.getCanonicalPath());
@@ -93,6 +91,12 @@ public class Directories {
         });
         myUploadDirInput.setText(MyTunesRss.CONFIG.getUploadDir());
         myCreateUserDir.setSelected(MyTunesRss.CONFIG.isUploadCreateUserDir());
+    }
+
+    private void addAllToListModel() {
+        for (String baseDir : MyTunesRss.CONFIG.getWatchFolders()) {
+            myListModel.addElement(baseDir);
+        }
     }
 
     private void setFolderStructureRole(int level, FolderStructureRole role) {
@@ -114,11 +118,6 @@ public class Directories {
 
     public String updateConfigFromGui() {
         MyTunesRss.CONFIG.setLibraryXml(myTunesXmlPathInput.getText().trim());
-        String[] baseDirs = new String[myListModel.getSize()];
-        for (int i = 0; i < baseDirs.length; i++) {
-            baseDirs[i] = myListModel.get(i).toString();
-        }
-        MyTunesRss.CONFIG.setBaseDirs(baseDirs);
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(getFolderStructureRole(FolderStructureRole.Artist));
         MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(getFolderStructureRole(FolderStructureRole.Album));
         MyTunesRss.CONFIG.setUploadDir(myUploadDirInput.getText());
@@ -181,7 +180,7 @@ public class Directories {
         }
     }
 
-    public class AddBaseDirButtonListener implements ActionListener {
+    public class AddWatchFolderButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle(MyTunesRss.BUNDLE.getString("dialog.lookupBaseDir"));
@@ -197,17 +196,26 @@ public class Directories {
         }
 
         protected void handleChosenFile(File file) throws IOException {
-            if (!myListModel.contains(file.getCanonicalPath())) {
-                myListModel.addElement(file.getCanonicalPath());
+            String error = MyTunesRss.CONFIG.addWatchFolder(file.getCanonicalPath());
+            if (error == null) {
+                myListModel.clear();
+                addAllToListModel();
+            } else {
+                MyTunesRssUtils.showErrorMessage(error);
             }
         }
     }
 
-    public class DeleteBaseDirButtonListener implements ActionListener {
+    public class DeleteWatchFolderButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int index = myBaseDirsList.getSelectedIndex();
             if (index > -1 && index < myListModel.getSize()) {
-                myListModel.remove(index);
+                String error = MyTunesRss.CONFIG.removeWatchFolder(myListModel.get(index).toString());
+                if (error == null) {
+                    myListModel.remove(index);
+                } else {
+                    MyTunesRssUtils.showErrorMessage(error);
+                }
             }
         }
     }

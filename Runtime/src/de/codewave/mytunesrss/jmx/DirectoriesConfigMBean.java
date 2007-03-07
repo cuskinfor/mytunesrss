@@ -8,9 +8,7 @@ package de.codewave.mytunesrss.jmx;
  * de.codewave.mytunesrss.jmx.DirectoriesConfigMBean
  */
 public interface DirectoriesConfigMBean {
-    String[] getBaseDirs();
-
-    void setBaseDirs(String[] baseDir);
+    String[] getWatchFolders();
 
     boolean isCreateUserSubdir();
 
@@ -35,4 +33,8 @@ public interface DirectoriesConfigMBean {
     String getItunesMusicLibraryXmlPath();
 
     void setItunesMusicLibraryXmlPath(String path);
+
+    String addWatchFolder(String watchFolder);
+
+    String removeWatchFolder(String watchFolder);
 }

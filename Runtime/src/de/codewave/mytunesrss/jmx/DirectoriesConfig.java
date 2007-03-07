@@ -17,12 +17,8 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
     super(DirectoriesConfigMBean.class);
   }
 
-    public String[] getBaseDirs() {
-        return MyTunesRss.CONFIG.getBaseDirs();
-    }
-
-    public void setBaseDirs(String[] baseDir) {
-        MyTunesRss.CONFIG.setBaseDirs(baseDir);
+    public String[] getWatchFolders() {
+        return MyTunesRss.CONFIG.getWatchFolders();
     }
 
     public boolean isCreateUserSubdir() {
@@ -93,5 +89,15 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
     public void setFolderStructureToNoneAndArtist() {
         MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(0);
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(1);
+    }
+
+    public String addWatchFolder(String watchFolder) {
+        String error = MyTunesRss.CONFIG.addWatchFolder(watchFolder);
+        return error != null ? error : MyTunesRss.BUNDLE.getString("ok");
+    }
+
+    public String removeWatchFolder(String watchFolder) {
+        String error = MyTunesRss.CONFIG.removeWatchFolder(watchFolder);
+        return error != null ? error : MyTunesRss.BUNDLE.getString("ok");
     }
 }

@@ -81,13 +81,8 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
         return ServerInfo.getExternalAddress(Integer.toString(getPort()));
     }
 
-    public String getLocalAddresses() {
-        String[] addresses = ServerInfo.getLocalAddresses(Integer.toString(getPort()));
-        StringBuffer concat = new StringBuffer();
-        for (String address : addresses) {
-            concat.append(address).append(", ");
-        }
-        return concat.substring(0, concat.length() - 2);
+    public String[] getLocalAddresses() {
+        return ServerInfo.getLocalAddresses(Integer.toString(getPort()));
     }
 }
 
