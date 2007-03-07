@@ -59,12 +59,6 @@ public class Directories {
         myBaseDirsList = new JList() {
             @Override
             public Dimension getPreferredScrollableViewportSize() {
-                if (myScrollPane != null) {
-                    Dimension size = myScrollPane.getViewport().getSize();
-                    Insets insets = myScrollPane.getViewport().getInsets();
-                    size.width -= (insets.left + insets.right);
-                    size.height -= (insets.top + insets.bottom);
-                }
                 return new Dimension(0, 0);
             }
         };

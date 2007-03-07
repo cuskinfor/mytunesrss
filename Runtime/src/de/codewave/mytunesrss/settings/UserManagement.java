@@ -29,11 +29,7 @@ public class UserManagement {
 
     public void init() {
         myScrollPane.getViewport().setOpaque(false);
-//        Dimension size = myScrollPane.getViewport().getSize();
-//        Insets insets = myScrollPane.getViewport().getInsets();
-//        size.width -= (insets.left + insets.right);
-//        size.height -= (insets.top + insets.bottom);
-//        myScrollPane.getViewport().setPreferredSize(size);
+        myScrollPane.getViewport().setPreferredSize(new Dimension(0, 0));
         myCreateButton.addActionListener(new CreateUserActionListener());
         refreshUserList();
     }
