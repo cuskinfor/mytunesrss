@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.codewave.mytunesrss.settings.Directories">
-  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
     <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="425" height="422"/>
+      <xy x="20" y="20" width="425" height="486"/>
     </constraints>
     <properties>
       <opaque value="false"/>
     </properties>
     <border type="none"/>
     <children>
-      <vspacer id="433c0">
-        <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </vspacer>
       <grid id="1bf05" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
@@ -27,9 +22,7 @@
         <children>
           <component id="51c6b" class="javax.swing.JTextField" binding="myTunesXmlPathInput">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="250" height="-1"/>
-              </grid>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font swing-font="TextField.font"/>
@@ -68,7 +61,7 @@
           </component>
         </children>
       </grid>
-      <grid id="6240a" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+      <grid id="6240a" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -78,47 +71,17 @@
         </properties>
         <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.watchfolder"/>
         <children>
-          <component id="bd398" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="c0149"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.baseDir"/>
-            </properties>
-          </component>
-          <component id="c0149" class="javax.swing.JTextField" binding="myBaseDirInput">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="250" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <font swing-font="TextField.font"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.baseDirTooltip"/>
-            </properties>
-          </component>
           <hspacer id="936ff">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false">
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="5" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="5" height="-1"/>
               </grid>
             </constraints>
           </hspacer>
-          <component id="dff3d" class="javax.swing.JButton" binding="myBaseDirLookupButton">
-            <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <opaque value="false"/>
-              <text value="..."/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.baseDirLookupTooltip"/>
-            </properties>
-          </component>
           <grid id="ea2b5" layout-manager="GridLayoutManager" row-count="1" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <opaque value="false"/>
@@ -177,6 +140,67 @@
               </component>
             </children>
           </grid>
+          <grid id="f16b3" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="5" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <opaque value="false"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="dff3d" class="javax.swing.JButton" binding="myAddBaseDirButton">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <opaque value="false"/>
+                  <text value="..."/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.baseDirLookupTooltip"/>
+                </properties>
+              </component>
+              <component id="ede1e" class="javax.swing.JButton" binding="myDeleteBaseDirButton">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <opaque value="false"/>
+                  <text value="Button"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="b25cb" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <scrollpane id="4ff05" binding="myScrollPane">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <opaque value="false"/>
+                </properties>
+                <border type="etched"/>
+                <children>
+                  <component id="d6f20" class="javax.swing.JList" binding="myBaseDirsList" custom-create="true">
+                    <constraints/>
+                    <properties>
+                      <font swing-font="TextField.font"/>
+                      <opaque value="true"/>
+                      <selectionMode value="0"/>
+                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.baseDirTooltip"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+            </children>
+          </grid>
         </children>
       </grid>
       <grid id="1cede" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
@@ -200,9 +224,7 @@
           </component>
           <component id="66e0f" class="javax.swing.JTextField" binding="myUploadDirInput">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="250" height="-1"/>
-              </grid>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font swing-font="TextField.font"/>

@@ -7,9 +7,12 @@ import de.codewave.utils.swing.components.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
+import java.awt.*;
 import java.text.*;
 import java.util.*;
 import java.util.Timer;
+
+import com.intellij.uiDesigner.core.*;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
@@ -133,7 +136,11 @@ public class EditUser {
         } else {
             myApplyButton.setVisible(false);
         }
-        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myUserNameInput, MyTunesRss.BUNDLE.getString("error.missingUserName")));
+        JTextFieldValidation.setValidation(new CompositeTextFieldValidation(myUserNameInput,
+                                                                            new NotEmptyTextFieldValidation(myUserNameInput, MyTunesRss.BUNDLE.getString(
+                                                                                    "error.missingUserName")),
+                                                                            new MaxLengthTextFieldValidation(myUserNameInput, 30, MyTunesRssUtils.getBundleString(
+                                                                                    "error.userNameTooLong", 30))));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myPasswordInput,
                                                                            MyTunesRss.BUNDLE.getString("error.missingUserPassword")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myBytesQuotaInput,
@@ -146,11 +153,8 @@ public class EditUser {
                                                                               Integer.MAX_VALUE,
                                                                               true,
                                                                               MyTunesRss.BUNDLE.getString("error.illegalMaxZipEntries")));
-        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(mySessionTimeoutInput,
-                                                                              1,
-                                                                              1440,
-                                                                              true,
-                                                                              MyTunesRss.BUNDLE.getString("error.illegalSessionTimeout")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(mySessionTimeoutInput, 1, 1440, true, MyTunesRss.BUNDLE.getString(
+                "error.illegalSessionTimeout")));
         JTextFieldValidation.validateAll(myRootPanel);
     }
 

@@ -9,14 +9,19 @@ import de.codewave.utils.swing.*;
 import org.apache.commons.lang.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.*;
+
+import com.intellij.uiDesigner.core.*;
 
 /**
  * de.codewave.mytunesrss.settings.Options
  */
 public class Directories {
+
     public enum FolderStructureRole {
         Artist, Album, None;
 
@@ -35,8 +40,8 @@ public class Directories {
     private JPanel myRootPanel;
     private JTextField myTunesXmlPathInput;
     private JButton myTunesXmlPathLookupButton;
-    private JTextField myBaseDirInput;
-    private JButton myBaseDirLookupButton;
+    private JList myBaseDirsList;
+    private JButton myAddBaseDirButton;
     private JTextField myUploadDirInput;
     private JButton myUploadDirLookupButton;
     private JCheckBox myCreateUserDir;
@@ -46,8 +51,28 @@ public class Directories {
     private JLabel mySeparatorLabel1;
     private JLabel mySeparatorLabel2;
     private JLabel myTrackLabel;
+    private JButton myDeleteBaseDirButton;
+    private JScrollPane myScrollPane;
+    private DefaultListModel myListModel = new DefaultListModel();
+
+    private void createUIComponents() {
+        myBaseDirsList = new JList() {
+            @Override
+            public Dimension getPreferredScrollableViewportSize() {
+                if (myScrollPane != null) {
+                    Dimension size = myScrollPane.getViewport().getSize();
+                    Insets insets = myScrollPane.getViewport().getInsets();
+                    size.width -= (insets.left + insets.right);
+                    size.height -= (insets.top + insets.bottom);
+                }
+                return new Dimension(0, 0);
+            }
+        };
+    }
 
     public void init() {
+        myScrollPane.setMaximumSize(myScrollPane.getPreferredSize());
+        myScrollPane.getViewport().setOpaque(false);
         myFolderStructureGrandparent.addItem(FolderStructureRole.None);
         myFolderStructureGrandparent.addItem(FolderStructureRole.Album);
         myFolderStructureGrandparent.addItem(FolderStructureRole.Artist);
@@ -56,11 +81,23 @@ public class Directories {
         myFolderStructureParent.addItem(FolderStructureRole.Artist);
         myTunesXmlPathLookupButton.addActionListener(new TunesXmlPathLookupButtonListener());
         myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
-        myBaseDirInput.setText(MyTunesRss.CONFIG.getBaseDir());
+        myListModel.addElement(MyTunesRss.CONFIG.getBaseDir());
+        myBaseDirsList.setModel(myListModel);
+        myBaseDirsList.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                myDeleteBaseDirButton.setEnabled(myBaseDirsList.getSelectedIndex() > -1);
+            }
+        });
         setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemArtistNameFolder(), FolderStructureRole.Artist);
         setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemAlbumNameFolder(), FolderStructureRole.Album);
-        myBaseDirLookupButton.addActionListener(new BaseDirLookupButtonListener(myBaseDirInput));
-        myUploadDirLookupButton.addActionListener(new BaseDirLookupButtonListener(myUploadDirInput));
+        myAddBaseDirButton.addActionListener(new AddBaseDirButtonListener());
+        myDeleteBaseDirButton.addActionListener(new DeleteBaseDirButtonListener());
+        myUploadDirLookupButton.addActionListener(new AddBaseDirButtonListener() {
+            @Override
+            protected void handleChosenFile(File file) throws IOException {
+                myUploadDirInput.setText(file.getCanonicalPath());
+            }
+        });
         myUploadDirInput.setText(MyTunesRss.CONFIG.getUploadDir());
         myCreateUserDir.setSelected(MyTunesRss.CONFIG.isUploadCreateUserDir());
     }
@@ -84,7 +121,7 @@ public class Directories {
 
     public String updateConfigFromGui() {
         MyTunesRss.CONFIG.setLibraryXml(myTunesXmlPathInput.getText().trim());
-        MyTunesRss.CONFIG.setBaseDir(myBaseDirInput.getText());
+        MyTunesRss.CONFIG.setBaseDir(myListModel.get(0).toString());
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(getFolderStructureRole(FolderStructureRole.Artist));
         MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(getFolderStructureRole(FolderStructureRole.Album));
         MyTunesRss.CONFIG.setUploadDir(myUploadDirInput.getText());
@@ -96,9 +133,10 @@ public class Directories {
         switch (mode) {
             case ServerRunning:
                 SwingUtils.enableElementAndLabel(myTunesXmlPathInput, false);
-                SwingUtils.enableElementAndLabel(myBaseDirInput, false);
+                SwingUtils.enableElementAndLabel(myBaseDirsList, false);
                 myTunesXmlPathLookupButton.setEnabled(false);
-                myBaseDirLookupButton.setEnabled(false);
+                myAddBaseDirButton.setEnabled(false);
+                myDeleteBaseDirButton.setEnabled(false);
                 myFolderStructureGrandparent.setEnabled(false);
                 myFolderStructureParent.setEnabled(false);
                 SwingUtils.enableElementAndLabel(myUploadDirInput, false);
@@ -111,9 +149,10 @@ public class Directories {
                 break;
             case ServerIdle:
                 SwingUtils.enableElementAndLabel(myTunesXmlPathInput, true);
-                SwingUtils.enableElementAndLabel(myBaseDirInput, true);
+                SwingUtils.enableElementAndLabel(myBaseDirsList, true);
                 myTunesXmlPathLookupButton.setEnabled(true);
-                myBaseDirLookupButton.setEnabled(true);
+                myAddBaseDirButton.setEnabled(true);
+                myDeleteBaseDirButton.setEnabled(myBaseDirsList.getSelectedIndex() > -1);
                 myFolderStructureGrandparent.setEnabled(true);
                 myFolderStructureParent.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myUploadDirInput, true);
@@ -145,27 +184,31 @@ public class Directories {
         }
     }
 
-    public class BaseDirLookupButtonListener implements ActionListener {
-        JTextField myTarget;
-
-        public BaseDirLookupButtonListener(JTextField myTarget) {
-            this.myTarget = myTarget;
-        }
-
+    public class AddBaseDirButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle(MyTunesRss.BUNDLE.getString("dialog.lookupBaseDir"));
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if (StringUtils.isNotEmpty(myTarget.getText())) {
-                fileChooser.setCurrentDirectory(new File(myTarget.getText()));
-            }
             int result = fileChooser.showOpenDialog(MyTunesRss.ROOT_FRAME);
             if (result == JFileChooser.APPROVE_OPTION) {
                 try {
-                    myTarget.setText(fileChooser.getSelectedFile().getCanonicalPath());
+                    handleChosenFile(fileChooser.getSelectedFile());
                 } catch (IOException e) {
                     MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.lookupBaseDir") + e.getMessage());
                 }
+            }
+        }
+
+        protected void handleChosenFile(File file) throws IOException {
+            myListModel.addElement(file.getCanonicalPath());
+        }
+    }
+
+    public class DeleteBaseDirButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int index = myBaseDirsList.getSelectedIndex();
+            if (index > -1 && index < myListModel.getSize()) {
+                myListModel.remove(index);
             }
         }
     }

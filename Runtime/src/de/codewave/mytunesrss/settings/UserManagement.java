@@ -29,6 +29,11 @@ public class UserManagement {
 
     public void init() {
         myScrollPane.getViewport().setOpaque(false);
+//        Dimension size = myScrollPane.getViewport().getSize();
+//        Insets insets = myScrollPane.getViewport().getInsets();
+//        size.width -= (insets.left + insets.right);
+//        size.height -= (insets.top + insets.bottom);
+//        myScrollPane.getViewport().setPreferredSize(size);
         myCreateButton.addActionListener(new CreateUserActionListener());
         refreshUserList();
     }
@@ -59,17 +64,11 @@ public class UserManagement {
     }
 
     private void addUser(final User user) {
-        GridBagConstraints gbcActive = new GridBagConstraints(GridBagConstraints.RELATIVE,
-                                                            GridBagConstraints.RELATIVE,
-                                                            1,
-                                                            1,
-                                                            0,
-                                                            0,
-                                                            GridBagConstraints.WEST,
-                                                            GridBagConstraints.HORIZONTAL,
-                                                            new Insets(5, 5, 0, 0),
-                                                            0,
-                                                            0);
+        GridBagConstraints gbcActive = new GridBagConstraints(GridBagConstraints.RELATIVE, GridBagConstraints.RELATIVE, 1, 1, 0, 0, GridBagConstraints.WEST,
+                                                              GridBagConstraints.HORIZONTAL,
+                                                              new Insets(5, 5, 0, 0),
+                                                              0,
+                                                              0);
         GridBagConstraints gbcName = new GridBagConstraints(GridBagConstraints.RELATIVE,
                                                             GridBagConstraints.RELATIVE,
                                                             1,

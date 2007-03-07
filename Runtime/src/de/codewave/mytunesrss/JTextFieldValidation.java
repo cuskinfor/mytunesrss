@@ -70,8 +70,8 @@ public abstract class JTextFieldValidation implements DocumentListener, Property
         if (textFields != null && textFields.length > 0) {
             for (JTextField textField : textFields) {
                 JTextFieldValidation validation = LISTENERS.get(textField);
-                if (validation != null && validation.myValidationFailedMessage != null && validation.myValidationFailedMessage.length() > 0 && !validation.isValid()) {
-                    messages.append(validation.myValidationFailedMessage).append(" ");
+                if (validation != null && validation.getValidationFailedMessage() != null && validation.getValidationFailedMessage().length() > 0 && !validation.isValid()) {
+                    messages.append(validation.getValidationFailedMessage()).append(" ");
                 }
             }
         }
@@ -82,8 +82,8 @@ public abstract class JTextFieldValidation implements DocumentListener, Property
         StringBuffer messages = new StringBuffer();
         if (component instanceof JTextField) {
             JTextFieldValidation validation = LISTENERS.get(component);
-            if (validation != null && validation.myValidationFailedMessage != null && validation.myValidationFailedMessage.length() > 0 && !validation.isValid()) {
-                messages.append(validation.myValidationFailedMessage).append(" ");
+            if (validation != null && validation.getValidationFailedMessage() != null && validation.getValidationFailedMessage().length() > 0 && !validation.isValid()) {
+                messages.append(validation.getValidationFailedMessage()).append(" ");
             }
         }
         Component[] childComponents = component.getComponents();
@@ -113,6 +113,10 @@ public abstract class JTextFieldValidation implements DocumentListener, Property
         myTextField = textField;
         myValidColor = textField.getBackground();
         myValidationFailedMessage = validationFailedMessage;
+    }
+
+    String getValidationFailedMessage() {
+        return myValidationFailedMessage;
     }
 
     protected JTextField getTextField() {

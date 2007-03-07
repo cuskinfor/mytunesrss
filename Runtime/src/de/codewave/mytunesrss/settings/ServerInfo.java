@@ -14,11 +14,15 @@ import org.apache.commons.logging.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.event.*;
+import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.text.*;
 import java.util.*;
 import java.util.Timer;
+import java.util.List;
+
+import com.intellij.uiDesigner.core.*;
 
 public class ServerInfo {
     private static final Log LOG = LogFactory.getLog(ServerInfo.class);
@@ -87,15 +91,15 @@ public class ServerInfo {
         });
     }
 
-  public static String[] getLocalAddresses(String serverPort) {
-    String[] addresses = NetworkUtils.getLocalNetworkAddresses();
-    for (int i = 0; i < addresses.length; i++) {
-      addresses[i] = "http://" + addresses[i] + ":" + serverPort;
+    public static String[] getLocalAddresses(String serverPort) {
+        String[] addresses = NetworkUtils.getLocalNetworkAddresses();
+        for (int i = 0; i < addresses.length; i++) {
+            addresses[i] = "http://" + addresses[i] + ":" + serverPort;
+        }
+        return addresses;
     }
-    return addresses;
-  }
 
-  private void fetchExternalAddress() {
+    private void fetchExternalAddress() {
         final String externalAddress = getExternalAddress(myServerPort);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {

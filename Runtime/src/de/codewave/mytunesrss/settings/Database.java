@@ -12,9 +12,13 @@ import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.*;
 import java.sql.*;
 import java.text.*;
+import java.util.*;
 import java.util.Date;
+
+import com.intellij.uiDesigner.core.*;
 
 /**
  * de.codewave.mytunesrss.settings.Database

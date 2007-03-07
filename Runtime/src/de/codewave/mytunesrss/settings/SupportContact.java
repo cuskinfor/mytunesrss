@@ -12,8 +12,12 @@ import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.*;
 import java.io.*;
 import java.util.zip.*;
+import java.util.*;
+
+import com.intellij.uiDesigner.core.*;
 
 /**
  * de.codewave.mytunesrss.settings.SupportContact
@@ -100,7 +104,8 @@ public class SupportContact {
             try {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 zipOutput = new ZipOutputStream(baos);
-                ZipUtils.addToZip("MyTunesRSS_Support/MyTunesRSS-" + MyTunesRss.VERSION + ".log", new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.log"), zipOutput);
+                ZipUtils.addToZip("MyTunesRSS_Support/MyTunesRSS-" + MyTunesRss.VERSION + ".log", new File(
+                        PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.log"), zipOutput);
                 String iTunesXml = MyTunesRss.CONFIG.getLibraryXml();
                 if (myItunesXmlInput.isSelected() && StringUtils.isNotEmpty(iTunesXml)) {
                     File file = new File(iTunesXml);
@@ -111,9 +116,9 @@ public class SupportContact {
                 zipOutput.close();
                 postMethod = new PostMethod(System.getProperty("MyTunesRSS.supportUrl", SUPPORT_URL));
                 PartSource partSource = new ByteArrayPartSource("MyTunesRSS-" + MyTunesRss.VERSION + "-Support.zip", baos.toByteArray());
-                Part[] part = new Part[] {new StringPart("mailSubject", "MyTunesRSS v" + MyTunesRss.VERSION + " Support Request"), new StringPart("name", myNameInput.getText()),
-                                          new StringPart("email", myEmailInput.getText()), new StringPart("comment", myCommentInput.getText()),
-                                          new FilePart("archive", partSource)};
+                Part[] part = new Part[] {new StringPart("mailSubject", "MyTunesRSS v" + MyTunesRss.VERSION + " Support Request"), new StringPart(
+                        "name", myNameInput.getText()), new StringPart("email", myEmailInput.getText()), new StringPart("comment", myCommentInput.getText()),
+                                                        new FilePart("archive", partSource)};
                 MultipartRequestEntity multipartRequestEntity = new MultipartRequestEntity(part, postMethod.getParams());
                 postMethod.setRequestEntity(multipartRequestEntity);
                 HttpClient httpClient = MyTunesRssUtils.createHttpClient();

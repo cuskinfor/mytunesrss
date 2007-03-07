@@ -5,7 +5,11 @@ import de.codewave.mytunesrss.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
+import java.awt.*;
+import java.util.*;
 import java.util.Timer;
+
+import com.intellij.uiDesigner.core.*;
 
 /**
  * de.codewave.mytunesrss.settings.Settings
@@ -66,11 +70,11 @@ public class Settings {
         }
         message = myDirectoriesForm.updateConfigFromGui();
         if (message != null) {
-            messages.append(message). append(" ");
+            messages.append(message).append(" ");
         }
         message = myMiscForm.updateConfigFromGui();
         if (message != null) {
-            messages.append(message). append(" ");
+            messages.append(message).append(" ");
         }
         String returnValue = messages.toString().trim();
         return returnValue.length() > 0 ? returnValue : null;
