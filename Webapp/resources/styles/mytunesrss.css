@@ -140,6 +140,13 @@ h1.manager {
     margin: 0;
 }
 
+h1.upload {
+    background: url( "../images/manage_playlists.gif" ) center center no-repeat;
+    height: 30px;
+    padding: 0;
+    margin: 0;
+}
+
 h1.manager span {
     display: none;
 }

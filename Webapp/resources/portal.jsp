@@ -76,10 +76,10 @@
                         </c:otherwise>
                     </c:choose>
                     <c:if test="${uploadLink}">
-                        <a href="${servletUrl}/showUpload">
-                        <fmt:message key="showUpload" />
+                        <a href="${servletUrl}/showUpload" style="background-image:url('${appUrl}/images/upload_small.gif');">
+                            <fmt:message key="showUpload" />
+                        </a>
                     </c:if>
-                    </a>
                 </td>
             </tr>
         </table>

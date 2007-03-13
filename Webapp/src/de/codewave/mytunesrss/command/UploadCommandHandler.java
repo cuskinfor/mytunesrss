@@ -56,7 +56,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private void saveFile(String fileName, InputStream inputStream) throws IOException {
-        if (StringUtils.isNotEmpty(fileName) && !fileName.endsWith("/") && !fileName.endsWith("\\") && !fileName.contains("__MACOSX/")) {
+        if (isAccepted(fileName)) {
             String uploadDirName = MyTunesRss.CONFIG.getUploadDir();
             if (MyTunesRss.CONFIG.isUploadCreateUserDir()) {
                 uploadDirName += "/" + getWebConfig().getUserName();
@@ -86,5 +86,15 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 targetStream.close();
             }
         }
+    }
+
+    private boolean isAccepted(String fileName) {
+        if (StringUtils.isEmpty(fileName) || fileName.endsWith("/") || fileName.endsWith("\\")) {
+            return false; // do no accept empty names or directory names
+        }
+        if (fileName.contains("__MACOSX/")) {
+            return false; // do not accept special OS X file
+        }
+        return FileSupportUtils.isSupported(fileName);
     }
 }
