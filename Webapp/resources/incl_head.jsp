@@ -1,0 +1,12 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
+
+<title><fmt:message key="applicationTitle" /> v${mytunesrssVersion}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css?ts=${sessionCreationTime}" />
+<!--[if IE]>
+  <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css?ts=${sessionCreationTime}" />
+<![endif]-->
+<link rel="shortcut icon" href="${appUrl}/images/favicon.ico" type="image/x-icon" />
+<script src="${appUrl}/js/functions.js?ts=${sessionCreationTime}" type="text/javascript"></script>

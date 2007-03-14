@@ -16,12 +16,7 @@
 
 <head>
 
-    <title><fmt:message key="applicationTitle" /> v${mytunesrssVersion}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css?ts=${sessionCreationTime}" />
-    <!--[if IE]>
-      <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css?ts=${sessionCreationTime}" />
-    <![endif]-->
+    <jsp:include page="incl_head.jsp"/>
 
 </head>
 
