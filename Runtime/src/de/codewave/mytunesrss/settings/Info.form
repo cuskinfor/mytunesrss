@@ -92,7 +92,7 @@
               <text value=""/>
             </properties>
           </component>
-          <component id="7c7" class="javax.swing.JLabel" binding="myRigistrationNameLabel">
+          <component id="7c7" class="javax.swing.JLabel" binding="myRegistrationNameLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -127,7 +127,7 @@
               <wrapStyleWord value="true"/>
             </properties>
           </component>
-          <component id="dfda0" class="javax.swing.JButton" binding="MyRegisterButton">
+          <component id="dfda0" class="javax.swing.JButton" binding="myRegisterButton">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

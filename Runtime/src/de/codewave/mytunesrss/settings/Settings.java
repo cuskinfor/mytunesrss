@@ -55,6 +55,7 @@ public class Settings {
         myDatabaseForm.init();
         myDirectoriesForm.init();
         myMiscForm.init();
+        myInfoForm.init();
         myUserManagementForm.init();
         myTabbedPane.addChangeListener(new TabSwitchListener());
     }

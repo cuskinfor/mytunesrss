@@ -24,20 +24,34 @@ public class MyTunesRssRegistration {
     private boolean myRegistered;
     private boolean myDefaultData;
 
-    public void init() throws IOException {
+    public static boolean isValidRegistration(File file) {
+        try {
+            return RegistrationUtils.getRegistrationData(file.toURL(), getPublicKey()) != null;
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not check registration file, assuming it is invalid.", e);
+            }
+        }
+        return false;
+    }
+
+    private static URL getPublicKey() throws IOException {
+        return MyTunesRssRegistration.class.getResource("/MyTunesRSS.public");
+    }
+
+    public void init(File file, boolean allowDefaultLicense) throws IOException {
         String path = PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
-        URL publicKey = getClass().getResource("/MyTunesRSS.public");
-        String registration = RegistrationUtils.getRegistrationData(new File(path + "/MyTunesRSS.key").toURL(), publicKey);
+        String registration = RegistrationUtils.getRegistrationData(file != null ? file.toURL() : new File(path + "/MyTunesRSS.key").toURL(), getPublicKey());
         if (registration != null) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Using registration data from preferences.");
             }
             handleRegistration(registration);
-        } else {
+        } else if (allowDefaultLicense) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Using default registration data.");
             }
-            handleRegistration(RegistrationUtils.getRegistrationData(getClass().getResource("/MyTunesRSS.key"), publicKey));
+            handleRegistration(RegistrationUtils.getRegistrationData(getClass().getResource("/MyTunesRSS.key"), getPublicKey()));
             myDefaultData = true;
         }
     }
@@ -77,6 +91,10 @@ public class MyTunesRssRegistration {
 
     public boolean isExpired() {
         return myExpiration > 0 && myExpiration <= System.currentTimeMillis();
+    }
+
+    public boolean isExpirationDate() {
+        return myExpiration > 0;
     }
 
     public String getName() {

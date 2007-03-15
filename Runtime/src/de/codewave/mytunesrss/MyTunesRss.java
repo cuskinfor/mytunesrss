@@ -118,7 +118,7 @@ public class MyTunesRss {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
             MyTunesRssUtils.shutdown();
         }
-        REGISTRATION.init();
+        REGISTRATION.init(null, true);
         if (REGISTRATION.isExpired()) {
             if (REGISTRATION.isDefaultData()) {
                 MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.defaulRegistrationExpired"));
