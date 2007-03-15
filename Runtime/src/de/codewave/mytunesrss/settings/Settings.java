@@ -25,6 +25,7 @@ public class Settings {
     private JButton myQuitButton;
     private JTabbedPane myTabbedPane;
     private Database myDatabaseForm;
+    private Info myInfoForm;
 
     public Database getDatabaseForm() {
         return myDatabaseForm;
