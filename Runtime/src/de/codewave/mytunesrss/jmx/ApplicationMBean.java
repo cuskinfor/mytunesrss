@@ -6,4 +6,5 @@ package de.codewave.mytunesrss.jmx;
 public interface ApplicationMBean {
     String getVersion();
     String quit();
+    String getLicense();
 }

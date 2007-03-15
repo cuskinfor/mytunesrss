@@ -64,53 +64,7 @@ public class Info {
             FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("dialog.loadLicense"), FileDialog.LOAD);
             fileDialog.setVisible(true);
             if (fileDialog.getFile() != null) {
-                File registrationFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
-                try {
-                    if (MyTunesRssRegistration.isValidRegistration(registrationFile)) {
-                        MyTunesRssRegistration registration = new MyTunesRssRegistration();
-                        registration.init(registrationFile, false);
-                        if (registration.isExpired()) {
-                            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicenseExpired", registration.getExpiration(
-                                    MyTunesRss.BUNDLE.getString("common.dateFormat"))));
-                        } else if (!registration.isRegistered()) {
-                            MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.loadLicense"));
-                        } else {
-                            copyFile(registrationFile, new File(
-                                    PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.key"));
-                            MyTunesRssUtils.showInfoMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("error.loadLicenseOk",
-                                                                                                                   registration.getName()));
-                        }
-                    } else {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.loadLicense"));
-                    }
-                } catch (IOException e) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.loadLicense"));
-                }
-            }
-        }
-    }
-
-    private void copyFile(File source, File destination) throws IOException {
-        BufferedInputStream inputStream = null;
-        BufferedOutputStream outputStream = null;
-        byte[] buffer = new byte[8196];
-        try {
-            inputStream = new BufferedInputStream(new FileInputStream(source));
-            outputStream = new BufferedOutputStream(new FileOutputStream(destination));
-            for (int byteRead = inputStream.read(buffer); byteRead != -1; byteRead = inputStream.read(buffer)) {
-                if (byteRead > 0) {
-                    outputStream.write(buffer, 0, byteRead);
-                }
-            }
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } finally {
-                    if (outputStream != null) {
-                        outputStream.close();
-                    }
-                }
+                MyTunesRssRegistration.register(new File(fileDialog.getDirectory(), fileDialog.getFile()));
             }
         }
     }
