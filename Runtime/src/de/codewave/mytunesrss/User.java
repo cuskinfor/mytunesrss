@@ -90,7 +90,7 @@ public class User {
     }
 
     public boolean isUpload() {
-        return myUpload;
+        return MyTunesRss.REGISTRATION.isRegistered() && myUpload;
     }
 
     public void setUpload(boolean upload) {
@@ -98,7 +98,7 @@ public class User {
     }
 
     public boolean isPlayer() {
-        return myPlayer;
+        return MyTunesRss.REGISTRATION.isRegistered() && myPlayer;
     }
 
     public void setPlayer(boolean player) {
@@ -106,7 +106,7 @@ public class User {
     }
 
     public boolean isChangePassword() {
-        return myChangePassword;
+        return MyTunesRss.REGISTRATION.isRegistered() && myChangePassword;
     }
 
     public void setChangePassword(boolean changePassword) {
@@ -146,7 +146,7 @@ public class User {
     }
 
     public QuotaType getQuotaType() {
-        return myQuotaType;
+        return MyTunesRss.REGISTRATION.isRegistered() ? myQuotaType : QuotaType.None;
     }
 
     public void setQuotaType(QuotaType quotaType) {

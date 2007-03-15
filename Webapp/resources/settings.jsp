@@ -55,35 +55,28 @@
                 <th>&nbsp;</th>
             </tr>
             <mt:initFlipFlop value1="" value2="class=\"odd\""/>
-            <c:choose>
-                <c:when test="${authUser.changePassword}">
-                    <tr <mt:flipFlop/>>
-                        <td><fmt:message key="settings.password" /></td>
-                        <td>
-                            <input type="password"
-                                   name="password1"
-                                   maxlength="30"
-                                   value="<c:out value="${param.password1}"/>"
-                                   style="width: 170px;" />
-                        </td>
-                    </tr>
-                    <tr <mt:flipFlop/>>
-                        <td><fmt:message key="settings.retypePassword" /></td>
-                        <td>
-                            <input type="password"
-                                   name="password2"
-                                   maxlength="30"
-                                   value="<c:out value="${param.password2}"/>"
-                                   style="width: 170px;" />
-                        </td>
-                    </tr>
-                </c:when>
-                <c:otherwise>
-                    <tr <mt:flipFlop/>>
-                        <td colspan="2"><fmt:message key="settings.passwordNotChangeable"/></td>
-                    </tr>
-                </c:otherwise>
-            </c:choose>
+            <c:if test="${authUser.changePassword}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.password" /></td>
+                    <td>
+                        <input type="password"
+                               name="password1"
+                               maxlength="30"
+                               value="<c:out value="${param.password1}"/>"
+                               style="width: 170px;" />
+                    </td>
+                </tr>
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.retypePassword" /></td>
+                    <td>
+                        <input type="password"
+                               name="password2"
+                               maxlength="30"
+                               value="<c:out value="${param.password2}"/>"
+                               style="width: 170px;" />
+                    </td>
+                </tr>
+            </c:if>
             <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.itemsPerPage" /></td>
                 <td><input type="text"

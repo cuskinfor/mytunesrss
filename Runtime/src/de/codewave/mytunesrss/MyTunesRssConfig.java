@@ -123,7 +123,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isAvailableOnLocalNet() {
-        return myAvailableOnLocalNet;
+        return MyTunesRss.REGISTRATION.isRegistered() && myAvailableOnLocalNet;
     }
 
     public void setAvailableOnLocalNet(boolean availableOnLocalNet) {
@@ -211,7 +211,7 @@ public class MyTunesRssConfig {
     }
 
     public String getUploadDir() {
-        return myUploadDir;
+        return MyTunesRss.REGISTRATION.isRegistered() ? myUploadDir : null;
     }
 
     public void setUploadDir(String uploadDir) {
@@ -255,7 +255,7 @@ public class MyTunesRssConfig {
     }
 
     public User getUser(String name) {
-        for (User user : myUsers) {
+        for (User user : getUsers()) {
             if (user.getName().equals(name)) {
                 return user;
             }
@@ -321,7 +321,7 @@ public class MyTunesRssConfig {
     }
 
     public String getMyTunesRssComUser() {
-        return myMyTunesRssComUser;
+        return MyTunesRss.REGISTRATION.isRegistered() ? myMyTunesRssComUser : null;
     }
 
     public void setMyTunesRssComUser(String myTunesRssComUser) {
@@ -395,6 +395,9 @@ public class MyTunesRssConfig {
         String[] baseDirs = new String[Preferences.userRoot().node(PREF_ROOT).getInt("baseDirCount", 0)];
         for (int i = 0; i < baseDirs.length; i++) {
             baseDirs[i] = Preferences.userRoot().node(PREF_ROOT + "/basedir").get(Integer.toString(i), "");
+            if (!MyTunesRss.REGISTRATION.isRegistered() && i + 1 == MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
+                break;
+            }
         }
         setWatchFolders(baseDirs);
         setFileSystemArtistNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("artistFolder", getFileSystemArtistNameFolder()));
@@ -425,6 +428,9 @@ public class MyTunesRssConfig {
                     user.setMaximumZipEntries(userNode.node(userName).getInt("maximumZipEntries", 0));
                     user.setFileTypes(userNode.node(userName).get("fileTypes", null));
                     addUser(user);
+                    if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
+                        break;
+                    }
                 }
             } catch (BackingStoreException e) {
                 if (LOG.isErrorEnabled()) {

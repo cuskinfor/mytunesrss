@@ -66,7 +66,7 @@
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.availableOnLocalNet"/>
             </properties>
           </component>
-          <component id="b33c9" class="javax.swing.JLabel">
+          <component id="b33c9" class="javax.swing.JLabel" binding="myServerNameLabel">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

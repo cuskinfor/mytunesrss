@@ -30,6 +30,7 @@ public class Misc implements MyTunesRssEventListener {
     private JCheckBox myQuitConfirmationInput;
     private JCheckBox myUpdateOnStartInput;
     private JButton myProgramUpdateButton;
+    private JPanel myMyTunesRssComPanel;
     private boolean myUpdateOnStartInputCache;
     private boolean myAutoStartServer;
 
@@ -38,6 +39,7 @@ public class Misc implements MyTunesRssEventListener {
     }
 
     public void init() {
+        initRegistration();
         mySupportContactButton.addActionListener(new SupportContactActionListener());
         myUsernameInput.setText(MyTunesRss.CONFIG.getMyTunesRssComUser());
         myPasswordInput.setPasswordHash(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash());
@@ -58,6 +60,10 @@ public class Misc implements MyTunesRssEventListener {
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput, MyTunesRss.BUNDLE.getString("error.emptyProxyHost")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myProxyPortInput, 1, 65535, false, MyTunesRss.BUNDLE.getString(
                 "error.illegalProxyPort")));
+    }
+
+    private void initRegistration() {
+        myMyTunesRssComPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
     }
 
     private void createUIComponents() {

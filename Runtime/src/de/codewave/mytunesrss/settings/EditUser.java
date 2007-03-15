@@ -47,6 +47,7 @@ public class EditUser {
     private JTextField myFileTypesInput;
     private JTextField mySessionTimeoutInput;
     private JCheckBox myPermPlayerInput;
+    private JPanel myRestrictionsPanel;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -68,6 +69,7 @@ public class EditUser {
     }
 
     private void init(JDialog dialog) {
+        initRegistration();
         myInformationPanel.setVisible(myUser != null);
         myQuotaTypeInput.addItem(User.QuotaType.None);
         myQuotaTypeInput.addItem(User.QuotaType.Day);
@@ -156,6 +158,14 @@ public class EditUser {
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(mySessionTimeoutInput, 1, 1440, true, MyTunesRss.BUNDLE.getString(
                 "error.illegalSessionTimeout")));
         JTextFieldValidation.validateAll(myRootPanel);
+    }
+
+    private void initRegistration() {
+        myPermUploadInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myPermChangePasswordInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myPermPlayerInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myRestrictionsPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myQuotaInfoPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
     }
 
     private void refreshInfo() {

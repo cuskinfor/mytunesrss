@@ -18,6 +18,8 @@ import java.util.*;
 public class MyTunesRssRegistration {
     private static final Log LOG = LogFactory.getLog(MyTunesRssRegistration.class);
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    public static final int UNREGISTERED_MAX_USERS = 3;
+    public static final int UNREGISTERED_MAX_WATCHFOLDERS = 1;
 
     private String myName;
     private long myExpiration;

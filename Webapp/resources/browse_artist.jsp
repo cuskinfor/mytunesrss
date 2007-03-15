@@ -34,9 +34,11 @@
         <li>
             <a href="${servletUrl}/browseAlbum?page=${cwfn:choose(empty param.album, param.page, '1')}"><fmt:message key="browseAlbums"/></a>
         </li>
-        <li>
-            <a href="${servletUrl}/browseGenre?page=${param.page}"><fmt:message key="browseGenres"/></a>
-        </li>
+        <c:if test="${registered}">
+            <li>
+                <a href="${servletUrl}/browseGenre?page=${param.page}"><fmt:message key="browseGenres"/></a>
+            </li>
+        </c:if>
         <c:if test="${empty sessionScope.playlist}">
             <li>
                 <a href="${servletUrl}/startNewPlaylist?backUrl=${cwfn:encodeUrl(backUrl)}"><fmt:message key="newPlaylist"/></a>

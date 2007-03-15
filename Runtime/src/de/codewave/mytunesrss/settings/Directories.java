@@ -50,6 +50,7 @@ public class Directories {
     private JLabel myTrackLabel;
     private JButton myDeleteBaseDirButton;
     private JScrollPane myScrollPane;
+    private JPanel myUploadPanel;
     private DefaultListModel myListModel = new DefaultListModel();
 
     private void createUIComponents() {
@@ -62,6 +63,7 @@ public class Directories {
     }
 
     public void init() {
+        initRegistration();
         myScrollPane.setMaximumSize(myScrollPane.getPreferredSize());
         myScrollPane.getViewport().setOpaque(false);
         myFolderStructureGrandparent.addItem(FolderStructureRole.None);
@@ -91,6 +93,10 @@ public class Directories {
         });
         myUploadDirInput.setText(MyTunesRss.CONFIG.getUploadDir());
         myCreateUserDir.setSelected(MyTunesRss.CONFIG.isUploadCreateUserDir());
+    }
+
+    private void initRegistration() {
+        myUploadPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
     }
 
     private void addAllToListModel() {
@@ -182,16 +188,20 @@ public class Directories {
 
     public class AddWatchFolderButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle(MyTunesRss.BUNDLE.getString("dialog.lookupBaseDir"));
-            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            int result = fileChooser.showOpenDialog(MyTunesRss.ROOT_FRAME);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                try {
-                    handleChosenFile(fileChooser.getSelectedFile());
-                } catch (IOException e) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.lookupBaseDir") + e.getMessage());
+            if (MyTunesRss.REGISTRATION.isRegistered() || MyTunesRss.CONFIG.getWatchFolders().length < MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle(MyTunesRss.BUNDLE.getString("dialog.lookupBaseDir"));
+                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int result = fileChooser.showOpenDialog(MyTunesRss.ROOT_FRAME);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        handleChosenFile(fileChooser.getSelectedFile());
+                    } catch (IOException e) {
+                        MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.lookupBaseDir") + e.getMessage());
+                    }
                 }
+            } else {
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.unregisteredMaxWatchFolders", MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS));
             }
         }
 

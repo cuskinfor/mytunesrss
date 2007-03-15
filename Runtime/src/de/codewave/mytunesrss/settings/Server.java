@@ -30,8 +30,10 @@ public class Server {
     private JTextField myServerNameInput;
     private JCheckBox myAvailableOnLocalNetInput;
     private JCheckBox myTempZipArchivesInput;
+    private JLabel myServerNameLabel;
 
     public void init() {
+        initRegistration();
         myAutoStartServerInput.addActionListener(new AutoStartServerInputListener());
         myAutoStartServerInput.setSelected(MyTunesRss.CONFIG.isAutoStartServer());
         myServerInfoButton.addActionListener(new ServerInfoButtonListener());
@@ -61,6 +63,12 @@ public class Server {
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myPortInput, 1, 65535, false, MyTunesRss.BUNDLE.getString(
                 "error.illegalServerPort")));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myServerNameInput, MyTunesRss.BUNDLE.getString("error.emptyServerName")));
+    }
+
+    private void initRegistration() {
+        myAvailableOnLocalNetInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myServerNameLabel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myServerNameInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
     }
 
     public Dimension getContentDimension() {

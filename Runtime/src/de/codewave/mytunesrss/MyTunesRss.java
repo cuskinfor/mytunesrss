@@ -208,6 +208,11 @@ public class MyTunesRss {
         SwingUtils.removeEmptyTooltips(ROOT_FRAME.getRootPane());
         int x = CONFIG.loadWindowPosition().x;
         int y = CONFIG.loadWindowPosition().y;
+        if (CONFIG.isCheckUpdateOnStart()) {
+            UpdateUtils.checkForUpdate(true);
+        }
+        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
+        settings.init();
         DUMMY_FRAME.dispose();
         if (x != Integer.MAX_VALUE && y != Integer.MAX_VALUE) {
             ROOT_FRAME.setLocation(x, y);
@@ -215,12 +220,6 @@ public class MyTunesRss {
         } else {
             SwingUtils.packAndShowRelativeTo(ROOT_FRAME, null);
         }
-        if (CONFIG.isCheckUpdateOnStart()) {
-            UpdateUtils.checkForUpdate(true);
-        }
-        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
-        settings.init();
-        // MyTunesRssJmxUtils.startJmxServer("localhost", 9500);
         if (CONFIG.isAutoStartServer()) {
             settings.doStartServer();
             if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
@@ -251,21 +250,25 @@ public class MyTunesRss {
         if (LOG.isInfoEnabled()) {
             LOG.info("Headless mode");
         }
-        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
-        MyTunesRssJmxUtils.startJmxServer();
-        if (CONFIG.isAutoStartServer()) {
-            startWebserver();
-        }
-        while (!QUIT_REQUEST) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                // intentionally left blank
-
+        if (MyTunesRss.REGISTRATION.isRegistered()) {
+            MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
+            MyTunesRssJmxUtils.startJmxServer();
+            if (CONFIG.isAutoStartServer()) {
+                startWebserver();
             }
+            while (!QUIT_REQUEST) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // intentionally left blank
+
+                }
+            }
+            MyTunesRssJmxUtils.stopJmxServer();
+            CONFIG.save();
+        } else {
+            MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.unregisteredNoHeadlessMode"));
         }
-        MyTunesRssJmxUtils.stopJmxServer();
-        CONFIG.save();
         SERVER_RUNNING_TIMER.cancel();
         STORE.destroy();
     }
