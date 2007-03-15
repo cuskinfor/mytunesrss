@@ -90,7 +90,7 @@ public class Info {
         }
     }
 
-    private void copyFile(File source, File destination) {
+    private void copyFile(File source, File destination) throws IOException {
         BufferedInputStream inputStream = null;
         BufferedOutputStream outputStream = null;
         byte[] buffer = new byte[8196];
@@ -102,23 +102,14 @@ public class Info {
                     outputStream.write(buffer, 0, byteRead);
                 }
             }
-        } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not copy file.", e);
-            }
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (IOException e) {
-                    // intentionally left blank
-                }
-            }
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    // intentionally left blank
+                } finally {
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
                 }
             }
         }
