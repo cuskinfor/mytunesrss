@@ -93,11 +93,14 @@ public class Info {
     private void copyFile(File source, File destination) {
         BufferedInputStream inputStream = null;
         BufferedOutputStream outputStream = null;
+        byte[] buffer = new byte[8196];
         try {
             inputStream = new BufferedInputStream(new FileInputStream(source));
             outputStream = new BufferedOutputStream(new FileOutputStream(destination));
-            for (int v = inputStream.read(); v != -1; v = inputStream.read()) {
-                outputStream.write(v);
+            for (int byteRead = inputStream.read(buffer); byteRead != -1; byteRead = inputStream.read(buffer)) {
+                if (byteRead > 0) {
+                    outputStream.write(buffer, 0, byteRead);
+                }
             }
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
