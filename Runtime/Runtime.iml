@@ -62,8 +62,8 @@
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib/commons-modeler.jar" />
-        <url>jar://$MODULE_DIR$/lib/commons-modeler.jar!/</url>
+        <attribute name="URI" value="/lib/commons-modeler-2.0.jar" />
+        <url>jar://$MODULE_DIR$/lib/commons-modeler-2.0.jar!/</url>
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
@@ -307,15 +307,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/commons-modeler.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/servlet-api.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -414,6 +405,15 @@
         <SOURCES>
           <root url="file://$MODULE_DIR$/../../Camel/src" />
         </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/commons-modeler-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntryProperties />

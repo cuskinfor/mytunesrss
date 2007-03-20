@@ -142,8 +142,8 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-modeler.jar" />
-      <url>jar://$MODULE_DIR$/../Runtime/lib/commons-modeler.jar!/</url>
+      <attribute name="URI" value="/WEB-INF/lib/commons-modeler-2.0.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/commons-modeler-2.0.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />

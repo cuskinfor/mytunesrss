@@ -12,6 +12,8 @@ public enum FileSuffixInfo {
     wmv("x-ms-wmv", true, false),
     mpg("mpeg", false, false),
     mpeg("mpeg", false, false),
+    flac("application/flac", false, false),
+    ogg("application/ogg", false, false),
     m4v("x-m4v", true, false);
 
     private String myMimeType;
@@ -25,6 +27,9 @@ public enum FileSuffixInfo {
     }
 
     public String getMimeType(boolean video) {
+        if (myMimeType.contains("/")) {
+            return myMimeType;
+        }
         return video ? "video/" + myMimeType : "audio/" + myMimeType;
     }
 

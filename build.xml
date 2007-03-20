@@ -4,6 +4,7 @@
 
     <import file="${user.home}/.ant/svn-macros.xml"/>
     <import file="${user.home}/.ant/moduleinfo-macros.xml"/>
+    <import file="${user.home}/.ant/web-macros.xml"/>
 
     <target name="generate.keypair" description="generate a key pair for registration">
         <taskdef name="keypair" classname="de.codewave.ant.task.registration.GenerateKeyPairTask"/>
@@ -97,6 +98,14 @@
                 <include name="*.zip"/>
             </fileset>
         </copy>
+    </target>
+
+    <target name="compile.jsp" description="compile all JSPs">
+        <jspc dir="distribution/webapps/ROOT" tomcat-home="${codewave.tomcat-home}">
+            <additional-classpath>
+                <pathelement location="Runtime/classes"/>
+            </additional-classpath>
+        </jspc>
     </target>
 
 </project>

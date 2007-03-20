@@ -9,7 +9,9 @@
       <antReference projectDefault="true" />
       <customJdkName value="" />
       <maximumHeapSize value="128" />
-      <properties />
+      <properties>
+        <property name="codewave.tomcat-home" value="$PROJECT_DIR$/../../Java/apache-tomcat-5.5.23" />
+      </properties>
       <executeOn event="afterCompilation" target="idea.after-compile" />
     </buildFile>
   </component>
