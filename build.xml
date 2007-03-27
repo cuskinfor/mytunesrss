@@ -52,7 +52,12 @@
     </target>
 
     <target name="zip.distribution" description="generate a zip archive of the whole distribution">
-        <antcall target="compile.jsp"/>
+        <jspc dir="distribution/webapps/ROOT">
+            <cp>
+                <fileset dir="distribution/lib" excludes="*log4j*.jar"/>
+                <pathelement location="Runtime/classes"/>
+            </cp>
+        </jspc>
         <svn.propget property="version" path="." name="codewave:version"/>
         <zip destfile="distribution/MyTunesRSS-${version}.zip">
             <zipfileset dir="distribution" prefix="MyTunesRSS-${version}">
@@ -113,13 +118,8 @@
         </copy>
     </target>
 
-    <target name="compile.jsp" description="compile all JSPs">
-        <jspc dir="distribution/webapps/ROOT">
-            <cp>
-                <fileset dir="distribution/lib" excludes="*log4j*.jar"/>
-                <pathelement location="Runtime/classes"/>
-            </cp>
-        </jspc>
+    <target name="remove.distribution" description="completely remove the distribution folder">
+        <delete dir="distribution" includeemptydirs="true"/>
     </target>
 
 </project>
