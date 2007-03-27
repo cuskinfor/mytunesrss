@@ -65,7 +65,7 @@ public class MyTunesRss {
     private static Database DATABASE_FORM;
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
     public static final ErrorQueue ERROR_QUEUE = new ErrorQueue();
-    public static boolean QUIT_REQUEST = false;
+    public static boolean QUIT_REQUEST;
 
     static {
         try {
