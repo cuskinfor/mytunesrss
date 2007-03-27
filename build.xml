@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="MyTunesRSS Runtime" basedir="." default="zip.distribution">
+<project name="mytunesrss" basedir="." default="zip.distribution">
 
-    <import file="../AntSystem/svn-macros.xml"/>
-    <import file="../AntSystem/moduleinfo-macros.xml"/>
-    <import file="../AntSystem//web-macros.xml"/>
+    <property file="${user.home}/codewave-ant.properties"/>
+    <property name="codewave.ant" value="${codewave.mytunesrss.ant}"/>
+    
+    <import file="${codewave.ant}/general.xml"/>
+    <import file="${codewave.ant}/svn-macros.xml"/>
+    <import file="${codewave.ant}/moduleinfo-macros.xml"/>
+    <import file="${codewave.ant}/web-macros.xml"/>
+
+    <path id="codewave.ant.taskdefs.classpath">
+        <fileset dir="${codewave.ant}/lib"/>
+    </path>
 
     <target name="generate.keypair" description="generate a key pair for registration">
-        <taskdef name="keypair" classname="de.codewave.ant.task.registration.GenerateKeyPairTask"/>
+        <taskdef name="keypair" classname="de.codewave.ant.task.registration.GenerateKeyPairTask">
+            <classpath refid="codewave.ant.taskdefs.classpath"/>
+        </taskdef>
         <keypair applicationname="MyTunesRSSv3" publickey="Runtime/src/MyTunesRSS.public" privatekey="etc/registration/MyTunesRSS.private"/>
     </target>
 
     <target name="create.registration" description="create a registration file">
-        <taskdef name="signregistration" classname="de.codewave.ant.task.registration.CreateSignedRegistration"/>
+        <taskdef name="signregistration" classname="de.codewave.ant.task.registration.CreateSignedRegistration">
+            <classpath refid="codewave.ant.taskdefs.classpath"/>
+        </taskdef>
         <signregistration privatekey="etc/registration/MyTunesRSS.private" registrationdata="etc/registration/MyTunesRSS.xml" signeddata="etc/registration/MyTunesRSS.key"/>
     </target>
 
@@ -103,7 +115,6 @@
     <target name="compile.jsp" description="compile all JSPs">
         <jspc dir="distribution/webapps/ROOT">
             <cp>
-                <pathelement location="{java.home}/../lib/tools.jar"/>
                 <fileset dir="distribution/lib" excludes="*log4j*.jar"/>
                 <pathelement location="Runtime/classes"/>
             </cp>
