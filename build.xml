@@ -52,6 +52,7 @@
     </target>
 
     <target name="zip.distribution" description="generate a zip archive of the whole distribution">
+        <antcall target="compile.jsp"/>
         <svn.propget property="version" path="." name="codewave:version"/>
         <zip destfile="distribution/MyTunesRSS-${version}.zip">
             <zipfileset dir="distribution" prefix="MyTunesRSS-${version}">
