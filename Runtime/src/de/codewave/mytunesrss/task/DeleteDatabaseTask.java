@@ -24,7 +24,7 @@ public class DeleteDatabaseTask extends MyTunesRssTask {
 
     public void execute() throws IOException, SQLException {
         String pathname = PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
-        if (deleteRecursivly(new File(pathname + "/" + MyTunesRssDataStore.DIRNAME))) {
+        if (MyTunesRssUtils.deleteRecursivly(new File(pathname + "/" + MyTunesRssDataStore.DIRNAME))) {
             Preferences.userRoot().node("/de/codewave/mytunesrss").putBoolean("deleteDatabaseOnNextStartOnError", false);
         } else {
             if (myDeleteOnNextStartOnError) {
@@ -33,21 +33,4 @@ public class DeleteDatabaseTask extends MyTunesRssTask {
             }
         }
     }
-
-    private boolean deleteRecursivly(File file) {
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                for (File subFile : file.listFiles()) {
-                    if (!deleteRecursivly(subFile)) {
-                        return false;
-                    }
-                }
-                file.delete();
-            } else {
-                return file.delete();
-            }
-        }
-        return true;
-    }
-
 }

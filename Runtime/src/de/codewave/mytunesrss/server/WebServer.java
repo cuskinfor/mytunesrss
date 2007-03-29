@@ -6,18 +6,17 @@ package de.codewave.mytunesrss.server;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.*;
-import de.codewave.utils.servlet.*;
 import de.codewave.utils.*;
+import de.codewave.utils.io.*;
+import de.codewave.utils.servlet.*;
 import org.apache.catalina.*;
-import org.apache.catalina.core.*;
-import org.apache.catalina.realm.*;
 import org.apache.catalina.connector.*;
+import org.apache.catalina.core.*;
 import org.apache.catalina.session.*;
 import org.apache.catalina.startup.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
-import javax.servlet.http.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -44,7 +43,9 @@ public class WebServer {
                     final Map<String, Object> contextEntries = new HashMap<String, Object>();
                     contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
                     contextEntries.put(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
-                    myEmbeddedTomcat = createServer("mytunesrss", null, MyTunesRss.CONFIG.getPort(), new File("."), "ROOT", System.getProperty("webapp.context", ""), contextEntries);
+                    myEmbeddedTomcat = createServer("mytunesrss", null, MyTunesRss.CONFIG.getPort(), new File("."), "ROOT", System.getProperty(
+                            "webapp.context",
+                            ""), contextEntries);
                     if (myEmbeddedTomcat != null) {
                         myEmbeddedTomcat.start();
                         byte health = checkServerHealth(MyTunesRss.CONFIG.getPort(), true);
@@ -86,11 +87,8 @@ public class WebServer {
     private byte checkServerHealth(int port, boolean logging) {
         HttpURLConnection connection = null;
         try {
-          String context = System.getProperty("webapp.context", "");
-//          if (StringUtils.isNotEmpty(context)) {
-//            context = "/" + context;
-//          }
-          URL targetUrl = new URL("http://127.0.0.1:" + port + context + "/mytunesrss/checkHealth?ignoreSession=true");
+            URL targetUrl = new URL("http://127.0.0.1:" + port + System.getProperty("webapp.context", "") +
+                    "/mytunesrss/checkHealth?ignoreSession=true");
             if (LOG.isInfoEnabled() && logging) {
                 LOG.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             }
@@ -141,6 +139,10 @@ public class WebServer {
         engine.setName("engine." + name);
         engine.setDefaultHost("host." + name);
         Host host = server.createHost("host." + name, new File(catalinaBasePath, "webapps").getCanonicalPath());
+        File workDir = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/tomcat-work");
+        if (workDir.exists()) {
+            MyTunesRssUtils.deleteRecursivly(workDir); // at least try to delete the working directory before starting the server to dump outdated stuff
+        }
         ((StandardHost)host).setWorkDir(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/tomcat-work");
         engine.addChild(host);
         myContext = server.createContext(webAppContext, webAppName);
@@ -153,15 +155,15 @@ public class WebServer {
         httpConnector.setURIEncoding("UTF-8");
         server.addConnector(httpConnector);
         if (StringUtils.isNotEmpty(System.getProperty("ajp.port"))) {
-          Connector ajpConnector = null;
-          try {
-            ajpConnector = server.createConnector(listenAddress, Integer.parseInt(System.getProperty("ajp.port")), "ajp");
-            server.addConnector(ajpConnector);
-          } catch (Exception e) {
-            if (LOG.isErrorEnabled()) {
-              LOG.error("Illegal AJP port \"" + System.getProperty("ajp.port") + "\" specified. Connector not added.");
+            Connector ajpConnector = null;
+            try {
+                ajpConnector = server.createConnector(listenAddress, Integer.parseInt(System.getProperty("ajp.port")), "ajp");
+                server.addConnector(ajpConnector);
+            } catch (Exception e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Illegal AJP port \"" + System.getProperty("ajp.port") + "\" specified. Connector not added.");
+                }
             }
-          }
         }
         for (Map.Entry<String, Object> contextEntry : contextEntries.entrySet()) {
             myContext.getServletContext().setAttribute(contextEntry.getKey(), contextEntry.getValue());

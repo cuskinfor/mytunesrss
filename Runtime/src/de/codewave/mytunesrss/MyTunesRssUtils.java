@@ -8,6 +8,7 @@ import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.text.*;
+import java.io.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -141,5 +142,21 @@ public class MyTunesRssUtils {
         } catch (NumberFormatException exception) {
             return defaultValue;
         }
+    }
+
+    public static boolean deleteRecursivly(File file) {
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                for (File subFile : file.listFiles()) {
+                    if (!deleteRecursivly(subFile)) {
+                        return false;
+                    }
+                }
+                file.delete();
+            } else {
+                return file.delete();
+            }
+        }
+        return true;
     }
 }
