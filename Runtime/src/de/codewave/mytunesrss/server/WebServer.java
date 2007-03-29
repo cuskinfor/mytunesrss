@@ -44,7 +44,7 @@ public class WebServer {
                     final Map<String, Object> contextEntries = new HashMap<String, Object>();
                     contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
                     contextEntries.put(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
-                    myEmbeddedTomcat = createServer("mytunesrss", null, MyTunesRss.CONFIG.getPort(), new File("."), "ROOT", "", contextEntries);
+                    myEmbeddedTomcat = createServer("mytunesrss", null, MyTunesRss.CONFIG.getPort(), new File("."), "ROOT", System.getProperty("webapp.context", ""), contextEntries);
                     if (myEmbeddedTomcat != null) {
                         myEmbeddedTomcat.start();
                         byte health = checkServerHealth(MyTunesRss.CONFIG.getPort(), true);
@@ -86,7 +86,11 @@ public class WebServer {
     private byte checkServerHealth(int port, boolean logging) {
         HttpURLConnection connection = null;
         try {
-            URL targetUrl = new URL("http://127.0.0.1:" + port + "/mytunesrss/checkHealth?ignoreSession=true");
+          String context = System.getProperty("webapp.context", "");
+//          if (StringUtils.isNotEmpty(context)) {
+//            context = "/" + context;
+//          }
+          URL targetUrl = new URL("http://127.0.0.1:" + port + context + "/mytunesrss/checkHealth?ignoreSession=true");
             if (LOG.isInfoEnabled() && logging) {
                 LOG.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             }
@@ -145,9 +149,20 @@ public class WebServer {
         myContext.setManager(sessionManager);
         host.addChild(myContext);
         server.addEngine(engine);
-        Connector connector = server.createConnector(listenAddress, listenPort, false);
-        connector.setURIEncoding("UTF-8");
-        server.addConnector(connector);
+        Connector httpConnector = server.createConnector(listenAddress, listenPort, "http");
+        httpConnector.setURIEncoding("UTF-8");
+        server.addConnector(httpConnector);
+        if (StringUtils.isNotEmpty(System.getProperty("ajp.port"))) {
+          Connector ajpConnector = null;
+          try {
+            ajpConnector = server.createConnector(listenAddress, Integer.parseInt(System.getProperty("ajp.port")), "ajp");
+            server.addConnector(ajpConnector);
+          } catch (Exception e) {
+            if (LOG.isErrorEnabled()) {
+              LOG.error("Illegal AJP port \"" + System.getProperty("ajp.port") + "\" specified. Connector not added.");
+            }
+          }
+        }
         for (Map.Entry<String, Object> contextEntry : contextEntries.entrySet()) {
             myContext.getServletContext().setAttribute(contextEntry.getKey(), contextEntry.getValue());
         }

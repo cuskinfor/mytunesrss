@@ -13,7 +13,7 @@
 
     <title><fmt:message key="applicationTitle" /></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="refresh" content="0; URL=/mytunesrss/" />
+    <meta http-equiv="refresh" content="0; URL=mytunesrss/" />
 
 </head>
 
