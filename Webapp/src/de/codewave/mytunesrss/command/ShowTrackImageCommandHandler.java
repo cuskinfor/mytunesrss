@@ -79,6 +79,9 @@ public class ShowTrackImageCommandHandler extends MyTunesRssCommandHandler {
                 getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
         } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending image with mime type \"" + image.getMimeType() + "\".");
+            }
             getResponse().setContentType(image.getMimeType());
             getResponse().setContentLength(image.getData().length);
             getResponse().getOutputStream().write(image.getData());

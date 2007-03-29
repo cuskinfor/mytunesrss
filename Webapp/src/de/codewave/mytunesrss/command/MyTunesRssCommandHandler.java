@@ -110,13 +110,17 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
         prepareRequestForResource();
         resource.beforeForward(getRequest(), getResponse());
-        String userAgent = getRequest().getHeader("User-Agent");
-        if (StringUtils.isNotEmpty(userAgent) && userAgent.contains("PSP")) {
+        if (isUserAgentPSP()) {
             getResponse().setHeader("Cache-Control", "no-cache");
             getResponse().setHeader("Pragma", "no-cache");
             getResponse().setDateHeader("Expires", 0);
         }
         forward(resource.getValue());
+    }
+
+    protected boolean isUserAgentPSP() {
+        String userAgent = getRequest().getHeader("User-Agent");
+        return StringUtils.isNotEmpty(userAgent) && userAgent.contains("PSP");
     }
 
     private void prepareRequestForResource() {
