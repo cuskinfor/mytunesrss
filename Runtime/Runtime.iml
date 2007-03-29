@@ -132,6 +132,11 @@
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
+        <attribute name="URI" value="/lib/tomcat-ajp.jar" />
+        <url>jar://$MODULE_DIR$/lib/tomcat-ajp.jar!/</url>
+      </containerElement>
+      <containerElement type="library" level="module">
+        <attribute name="method" value="2" />
         <attribute name="URI" value="/lib/tomcat-coyote.jar" />
         <url>jar://$MODULE_DIR$/lib/tomcat-coyote.jar!/</url>
       </containerElement>
@@ -411,6 +416,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/commons-modeler-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/tomcat-ajp.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
