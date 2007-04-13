@@ -578,3 +578,16 @@ h1.info {
 h1.info span {
     visibility: hidden;
 }
+
+/* Upload Page `*/
+
+h1.upload {
+    background: url( "../images/upload.gif" ) center center no-repeat;
+    height: 60px;
+    padding: 0;
+    margin: 0;
+}
+
+h1.upload span {
+	visibility: hidden;
+}
