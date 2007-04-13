@@ -97,8 +97,9 @@ public class TrackListener implements PListHandlerListener {
                     statement.setAlbum(StringUtils.trimToNull((String)track.get("Album")));
                     statement.setTime((int)(track.get("Total Time") != null ? (Long)track.get("Total Time") / 1000 : 0));
                     statement.setTrackNumber((int)(track.get("Track Number") != null ? (Long)track.get("Track Number") : 0));
-                    statement.setFileName(file.getAbsolutePath());
-                    statement.setProtected(track.get("Protected") != null && ((Boolean)track.get("Protected")).booleanValue());
+                    String fileName = file.getAbsolutePath();
+                    statement.setFileName(fileName);
+                    statement.setProtected(FileSupportUtils.isProtected(fileName));
                     statement.setVideo(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue());
                     statement.setGenre(StringUtils.trimToNull((String)track.get("Genre")));
                     myDataStoreSession.executeStatement(statement);
