@@ -18,7 +18,7 @@
 
 <div class="body">
 
-    <h1 class="manager">
+    <h1 class="upload">
         <a class="portal" href="${servletUrl}/showPortal"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
     </h1>
 
