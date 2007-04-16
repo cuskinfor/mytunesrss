@@ -54,6 +54,7 @@
             </constraints>
             <properties>
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permUpload"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permUploadTooltip"/>
             </properties>
           </component>
           <component id="86d00" class="javax.swing.JCheckBox" binding="myPermChangePasswordInput">
@@ -71,6 +72,7 @@
             </constraints>
             <properties>
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permPlayer"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permPlayerTooltip"/>
             </properties>
           </component>
         </children>
@@ -112,6 +114,7 @@
             </constraints>
             <properties>
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.apply"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.applyTooltip"/>
             </properties>
           </component>
         </children>
@@ -128,7 +131,9 @@
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.limitTypeTooltip"/>
+            </properties>
           </component>
           <component id="56491" class="javax.swing.JLabel">
             <constraints>
@@ -154,7 +159,9 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.byteLimitTooltip"/>
+            </properties>
           </component>
           <component id="35189" class="javax.swing.JLabel">
             <constraints>
@@ -179,7 +186,9 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.maxZipEntriesTooltip"/>
+            </properties>
           </component>
           <component id="88e0a" class="javax.swing.JLabel">
             <constraints>
@@ -214,7 +223,9 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.sessionTimeoutTooltip"/>
+            </properties>
           </component>
           <component id="20870" class="javax.swing.JLabel">
             <constraints>
@@ -265,7 +276,9 @@
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.passwordTooltip"/>
+            </properties>
           </component>
         </children>
       </grid>
@@ -315,6 +328,7 @@
             </constraints>
             <properties>
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.info.resetHistory"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.info.resetHistoryTooltip"/>
             </properties>
           </component>
           <vspacer id="f0424">

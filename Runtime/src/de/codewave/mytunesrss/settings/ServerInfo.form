@@ -67,6 +67,7 @@
               <enabled value="true"/>
               <font swing-font="Label.font"/>
               <opaque value="true"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="serverStatus.internalAddressesTooltip"/>
             </properties>
           </component>
         </children>
@@ -103,6 +104,7 @@
           <editable value="false"/>
           <enabled value="true"/>
           <font swing-font="TextField.font"/>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="serverStatus.externalAddressTooltip"/>
         </properties>
       </component>
     </children>
