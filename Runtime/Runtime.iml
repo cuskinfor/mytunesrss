@@ -150,6 +150,11 @@
         <attribute name="URI" value="/lib/tomcat-util.jar" />
         <url>jar://$MODULE_DIR$/lib/tomcat-util.jar!/</url>
       </containerElement>
+      <containerElement type="library" level="module">
+        <attribute name="method" value="2" />
+        <attribute name="URI" value="/lib/xercesImpl.jar" />
+        <url>jar://$MODULE_DIR$/lib/xercesImpl.jar!/</url>
+      </containerElement>
     </containerInfo>
     <setting name="jarUrl" value="file://$MODULE_DIR$/../distribution/MyTunesRSS.jar" />
     <setting name="buildJar" value="true" />
@@ -425,6 +430,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/tomcat-ajp.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/xercesImpl.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
