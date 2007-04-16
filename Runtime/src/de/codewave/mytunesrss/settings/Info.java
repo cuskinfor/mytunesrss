@@ -20,8 +20,8 @@ public class Info {
     private static final Log LOG = LogFactory.getLog(Info.class);
 
     private JPanel myRootPanel;
-    private JTextField myRegistrationNameInput;
-    private JTextField myExpirationInput;
+    private JLabel myRegistrationNameInput;
+    private JLabel myExpirationInput;
     private JTextArea myUnregisteredTextArea;
     private JLabel myRegistrationNameLabel;
     private JLabel myExpirationLabel;

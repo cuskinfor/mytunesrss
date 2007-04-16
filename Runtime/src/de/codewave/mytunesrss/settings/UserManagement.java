@@ -106,6 +106,7 @@ public class UserManagement {
                 user.setActive(active.isSelected());
             }
         });
+        active.setToolTipText(MyTunesRssUtils.getBundleString("settings.activateUserTooltip", user.getName()));
         addPanelComponent(active, gbcActive);
         JLabel name = new JLabel(user.getName());
         name.setOpaque(false);
