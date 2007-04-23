@@ -35,7 +35,7 @@ import java.util.prefs.*;
  * de.codewave.mytunesrss.MyTunesRss
  */
 public class MyTunesRss {
-    public static final String APPLICATION_IDENTIFIER = "MyTunesRSS30Beta";
+    public static final String APPLICATION_IDENTIFIER = "MyTunesRSS3";
 
     static {
         try {

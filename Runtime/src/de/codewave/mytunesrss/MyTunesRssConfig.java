@@ -20,7 +20,7 @@ import java.util.prefs.*;
  */
 public class MyTunesRssConfig {
     private static final Log LOG = LogFactory.getLog(MyTunesRssConfig.class);
-    public static final String PREF_ROOT = "/de/codewave/mytunesrss30beta";
+    public static final String PREF_ROOT = "/de/codewave/mytunesrss3";
 
     private int myPort = 8080;
     private String myServerName = "MyTunesRSS";
@@ -545,49 +545,7 @@ public class MyTunesRssConfig {
     }
 
     private void migrate() {
-        if (getVersion().compareTo("2.1") < 0) {
-            // migrate to 2.1
-            int interval = Preferences.userRoot().node(PREF_ROOT).getInt("autoUpdateDatabaseInterval", 600) / 60;
-            Preferences.userRoot().node(PREF_ROOT).putInt("autoUpdateDatabaseInterval", interval);
-            setVersion("2.1");
-        }
-        if (getVersion().compareTo("2.3") < 0) {
-            // migrate to 2.3
-            String password = Preferences.userRoot().node(PREF_ROOT).get("serverPassword", "");
-            if (StringUtils.isNotEmpty(password)) {
-                try {
-                    byte[] hash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
-                    Preferences.userRoot().node(PREF_ROOT + "/user/default").putByteArray("password", hash);
-                    Preferences.userRoot().node(PREF_ROOT + "/user/default").putBoolean("featureRss", true);
-                    Preferences.userRoot().node(PREF_ROOT + "/user/default").putBoolean("featurePlaylist", true);
-                    Preferences.userRoot().node(PREF_ROOT + "/user/default").putBoolean("featureDownload", true);
-                    Preferences.userRoot().node(PREF_ROOT).remove("serverPassword");
-                    setVersion("2.3");
-                } catch (UnsupportedEncodingException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not create password hash.", e);
-                    }
-                }
-            }
-        }
-        if (getVersion().compareTo("3.0") < 0) {
-            Preferences userNode = Preferences.userRoot().node(PREF_ROOT + "/user");
-            if (userNode != null) {
-                try {
-                    for (String userName : userNode.childrenNames()) {
-                        userNode.node(userName).putBoolean("featurePlaylist", userNode.node(userName).getBoolean("featureM3u", true));
-                        if (userNode.node(userName).nodeExists("featureM3u")) {
-                            userNode.node(userName).remove("featureM3u");
-                        }
-                    }
-                } catch (BackingStoreException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not read users.", e);
-                    }
-                }
-                setVersion("3.0");
-            }
-        }
+        setVersion("3.0-rc1");
     }
 
     public Point loadWindowPosition() {
