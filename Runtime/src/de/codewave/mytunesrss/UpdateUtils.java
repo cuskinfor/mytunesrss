@@ -30,7 +30,7 @@ public class UpdateUtils {
         if (!checkUpdateTask.isCancelled()) {
             UpdateInfo updateInfo = checkUpdateTask.getUpdateInfo();
             if (updateInfo != null) {
-                String noNagVersion = Preferences.userRoot().node("/de/codewave/mytunesrss").get("updateIgnoreVersion", MyTunesRss.VERSION);
+                String noNagVersion = Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).get("updateIgnoreVersion", MyTunesRss.VERSION);
                 if (!updateInfo.getVersion().equals(MyTunesRss.VERSION) && (!autoCheck || !noNagVersion.equals(updateInfo.getVersion()))) {
                     if (askForUpdate(updateInfo, autoCheck)) {
                         File targetFile = new File(updateInfo.getFileName());
@@ -84,7 +84,7 @@ public class UpdateUtils {
             }
         } while (pane.getValue() == moreInfo);
         if (pane.getValue() == stopNagging) {
-            Preferences.userRoot().node("/de/codewave/mytunesrss").put("updateIgnoreVersion", updateInfo.getVersion());
+            Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).put("updateIgnoreVersion", updateInfo.getVersion());
         }
         return pane.getValue() == download;
     }

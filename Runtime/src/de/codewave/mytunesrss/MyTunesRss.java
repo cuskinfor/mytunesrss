@@ -127,7 +127,7 @@ public class MyTunesRss {
                 MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
             }
         }
-        if (Preferences.userRoot().node("/de/codewave/mytunesrss").getBoolean("deleteDatabaseOnNextStartOnError", false)) {
+        if (Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).getBoolean("deleteDatabaseOnNextStartOnError", false)) {
             new DeleteDatabaseTask(false).execute();
         }
         loadConfiguration(arguments);
