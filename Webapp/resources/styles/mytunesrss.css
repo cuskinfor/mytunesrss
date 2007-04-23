@@ -140,13 +140,6 @@ h1.manager {
     margin: 0;
 }
 
-h1.upload {
-    background: url( "../images/manage_playlists.gif" ) center center no-repeat;
-    height: 30px;
-    padding: 0;
-    margin: 0;
-}
-
 h1.manager span {
     display: none;
 }
@@ -589,5 +582,18 @@ h1.upload {
 }
 
 h1.upload span {
+	visibility: hidden;
+}
+
+/* Browse Servers Page `*/
+
+h1.serverbrowser {
+    background: url( "../images/browse_servers.gif" ) center center no-repeat;
+    height: 30px;
+    padding: 0;
+    margin: 0;
+}
+
+h1.serverbrowser span {
 	visibility: hidden;
 }

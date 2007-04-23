@@ -24,7 +24,7 @@
 
 <div class="body">
 
-<h1 class="browse">
+<h1 class="serverbrowser">
     <a class="portal" href="${servletUrl}/showPortal"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
 </h1>
 
