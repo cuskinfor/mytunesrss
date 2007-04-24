@@ -398,17 +398,6 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/codewave-utils-26.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../CodewaveUtils/src" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/camel-0.7.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -439,6 +428,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/xercesImpl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/codewave-utils-26.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

@@ -212,6 +212,11 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/tomcat-ajp.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/tomcat-ajp.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
       <attribute name="URI" value="/WEB-INF/lib/tomcat-coyote.jar" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/tomcat-coyote.jar!/</url>
     </containerElement>
@@ -224,6 +229,11 @@
       <attribute name="method" value="0" />
       <attribute name="URI" value="/WEB-INF/lib/tomcat-util.jar" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/tomcat-util.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/xercesImpl.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/xercesImpl.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />
