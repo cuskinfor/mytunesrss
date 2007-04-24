@@ -148,7 +148,7 @@
                     <td><fmt:message key="settings.showPlayer" /></td>
                     <td>
                         <input type="checkbox" name="showPlayer" value="true" <c:if test="${config.showPlayer}">checked="checked"</c:if> />
-                        <img src="${appUrl}/images/player.gif" alt="playlist" style="vertical-align:text-top;" />
+                        <img src="${appUrl}/images/player.gif" alt="player" style="vertical-align:text-top;" />
                     </td>
                 </tr>
             </c:if>

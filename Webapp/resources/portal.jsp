@@ -123,7 +123,7 @@
                 <c:if test="${authUser.player && config.showPlayer}">
                     <td class="icon">
                         <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/type=Xspf/playerRequest=true/${mtfn:webSafeFileName(playlist.name)}.xspf')">
-                            <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="playlist" /> </a>
+                            <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="player" /> </a>
                     </td>
                 </c:if>
                 <c:if test="${authUser.download && config.showDownload}">

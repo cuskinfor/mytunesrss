@@ -126,7 +126,7 @@
                             <td class="icon">
                                 <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/album=${cwfn:encodeUrl(cwfn:encode64(album.name))}/type=Xspf/playerRequest=true/${mtfn:virtualAlbumName(album)}.xspf')">
                                     <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                         alt="playlist" /> </a>
+                                         alt="player" /> </a>
                             </td>
                         </c:if>
                         <c:if test="${authUser.download && config.showDownload}">
@@ -182,7 +182,7 @@
                             <td class="icon">
                                 <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/type=Xspf/playerRequest=true/${mtfn:webSafeFileName(cwfn:decode64(param.artist))}.xspf')">
                                     <img src="${appUrl}/images/player${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
-                                         alt="playlist" /> </a>
+                                         alt="player" /> </a>
                             </td>
                         </c:if>
                         <c:if test="${authUser.download && config.showDownload}">
