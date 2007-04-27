@@ -29,7 +29,6 @@ public class UserManagement {
 
     public void init() {
         myScrollPane.getViewport().setOpaque(false);
-        myScrollPane.getViewport().setPreferredSize(new Dimension(0, 0));
         myCreateButton.addActionListener(new CreateUserActionListener());
         refreshUserList();
     }

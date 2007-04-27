@@ -49,6 +49,8 @@ public class EditUser {
     private JCheckBox myPermPlayerInput;
     private JPanel myRestrictionsPanel;
     private JCheckBox myPermSpecialPlaylists;
+    private JPanel myPermissionsPanel;
+    private JScrollPane myScrollPane;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -71,6 +73,7 @@ public class EditUser {
 
     private void init(JDialog dialog) {
         initRegistration();
+        myScrollPane.getViewport().setOpaque(false);
         myInformationPanel.setVisible(myUser != null);
         myQuotaTypeInput.addItem(User.QuotaType.None);
         myQuotaTypeInput.addItem(User.QuotaType.Day);
