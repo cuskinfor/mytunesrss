@@ -16,6 +16,7 @@ import org.apache.catalina.session.*;
 import org.apache.catalina.startup.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.apache.tomcat.util.*;
 
 import java.io.*;
 import java.net.*;
@@ -60,6 +61,7 @@ public class WebServer {
                             myEmbeddedTomcat = null;
                             return false;
                         }
+                        MyTunesRss.CONFIG.save(); // save on successful server start
                         return true;
                     } else {
                         MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.serverStart"));
@@ -151,24 +153,52 @@ public class WebServer {
         myContext.setManager(sessionManager);
         host.addChild(myContext);
         server.addEngine(engine);
-        Connector httpConnector = server.createConnector(listenAddress, listenPort, "http");
-        httpConnector.setURIEncoding("UTF-8");
-        server.addConnector(httpConnector);
-        if (StringUtils.isNotEmpty(System.getProperty("ajp.port"))) {
-            Connector ajpConnector = null;
+        Connector httpConnector = createConnector(server, listenAddress, listenPort, "http");
+        if (httpConnector != null) {
+            httpConnector.setURIEncoding("UTF-8");
+            server.addConnector(httpConnector);
+            if (StringUtils.isNotEmpty(System.getProperty("ajp.port"))) {
+                Connector ajpConnector = null;
+                try {
+                    ajpConnector = createConnector(server, listenAddress, Integer.parseInt(System.getProperty("ajp.port")), "ajp");
+                    if (ajpConnector != null) {
+                        server.addConnector(ajpConnector);
+                    }
+                } catch (Exception e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Illegal AJP port \"" + System.getProperty("ajp.port") + "\" specified. Connector not added.");
+                    }
+                }
+            }
+            for (Map.Entry<String, Object> contextEntry : contextEntries.entrySet()) {
+                myContext.getServletContext().setAttribute(contextEntry.getKey(), contextEntry.getValue());
+            }
+            return server;
+        }
+        return null;
+    }
+
+    private Connector createConnector(Embedded server, InetAddress listenAddress, int listenPort, String protocol) {
+        Connector connector = server.createConnector(listenAddress, listenPort, protocol);
+        if (connector == null) {
+            // there are quite some internet sites which mention that the above method always returns NULL and
+            // provide the following workaround. The above method seems to work in general but on some systems
+            // it really seems to return NULL for whatever reason, so I provide the workaround as a fallback solution.
             try {
-                ajpConnector = server.createConnector(listenAddress, Integer.parseInt(System.getProperty("ajp.port")), "ajp");
-                server.addConnector(ajpConnector);
+                connector = new Connector();
+                connector.setSecure(false);
+                connector.setProtocol(protocol);
+                if (listenAddress != null) {
+                    IntrospectionUtils.setProperty(connector, "address", listenAddress.getHostAddress());
+                }
+                IntrospectionUtils.setProperty(connector, "port", Integer.toString(listenPort));
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {
-                    LOG.error("Illegal AJP port \"" + System.getProperty("ajp.port") + "\" specified. Connector not added.");
+                    LOG.error("Could not create connector for \"" + protocol + "\", \"" + listenAddress + "\", \"" + listenPort + "\".", e);
                 }
             }
         }
-        for (Map.Entry<String, Object> contextEntry : contextEntries.entrySet()) {
-            myContext.getServletContext().setAttribute(contextEntry.getKey(), contextEntry.getValue());
-        }
-        return server;
+        return connector;
     }
 
     public synchronized boolean stop() {
@@ -185,6 +215,7 @@ public class WebServer {
                 return false;
             }
         }
+        MyTunesRss.CONFIG.save(); // save on successful server stop
         return true;
     }
 
