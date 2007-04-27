@@ -47,6 +47,10 @@ public interface EditUserConfigMBean {
 
     void setPermissionUpload(boolean permissionUpload);
 
+    boolean isPermissionSpecialPlaylists();
+
+    void setPermissionSpecialPlaylists(boolean permissionSpecialPlaylists);
+
     void disableQuota();
 
     void setQuotaTypeToDay();

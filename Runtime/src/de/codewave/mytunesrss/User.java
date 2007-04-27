@@ -33,6 +33,7 @@ public class User {
     private int myMaximumZipEntries;
     private String myFileTypes;
     private int mySessionTimeout = 10;
+    private boolean mySpecialPlaylists;
 
     public User(String name) {
         myName = name;
@@ -187,6 +188,14 @@ public class User {
 
     public void setSessionTimeout(int sessionTimeout) {
         mySessionTimeout = sessionTimeout;
+    }
+
+    public boolean isSpecialPlaylists() {
+        return mySpecialPlaylists;
+    }
+
+    public void setSpecialPlaylists(boolean specialPlaylists) {
+        mySpecialPlaylists = specialPlaylists;
     }
 
     @Override

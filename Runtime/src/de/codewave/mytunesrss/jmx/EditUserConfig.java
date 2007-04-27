@@ -109,6 +109,14 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         MyTunesRss.CONFIG.getUser(myUsername).setUpload(permissionUpload);
     }
 
+    public boolean isPermissionSpecialPlaylists() {
+        return MyTunesRss.CONFIG.getUser(myUsername).isSpecialPlaylists();
+    }
+
+    public void setPermissionSpecialPlaylists(boolean permissionSpecialPlaylists) {
+        MyTunesRss.CONFIG.getUser(myUsername).setSpecialPlaylists(permissionSpecialPlaylists);
+    }
+
     public void setQuotaTypeToDay() {
         MyTunesRss.CONFIG.getUser(myUsername).setQuotaType(User.QuotaType.Day);
     }

@@ -48,6 +48,7 @@ public class EditUser {
     private JTextField mySessionTimeoutInput;
     private JCheckBox myPermPlayerInput;
     private JPanel myRestrictionsPanel;
+    private JCheckBox myPermSpecialPlaylists;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -94,6 +95,7 @@ public class EditUser {
             myPermUploadInput.setSelected(myUser.isUpload());
             myPermPlayerInput.setSelected(myUser.isPlayer());
             myPermChangePasswordInput.setSelected(myUser.isChangePassword());
+            myPermSpecialPlaylists.setSelected(myUser.isSpecialPlaylists());
             myQuotaTypeInput.setSelectedItem(myUser.getQuotaType());
             myBytesQuotaInput.setText(myUser.getBytesQuota() > 0 ? Long.toString(myUser.getBytesQuota() / MEGABYTE) : "");
             myMaxZipEntriesInput.setText(myUser.getMaximumZipEntries() > 0 ? Integer.toString(myUser.getMaximumZipEntries()) : "");
@@ -105,6 +107,7 @@ public class EditUser {
             myPermPlaylistInput.setSelected(true);
             myPermPlayerInput.setSelected(true);
             myPermChangePasswordInput.setSelected(true);
+            myPermSpecialPlaylists.setSelected(true);
             mySessionTimeoutInput.setText("10");
         }
         if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
@@ -222,6 +225,7 @@ public class EditUser {
                     myUser.setUpload(myPermUploadInput.isSelected());
                     myUser.setPlayer(myPermPlayerInput.isSelected());
                     myUser.setChangePassword(myPermChangePasswordInput.isSelected());
+                    myUser.setSpecialPlaylists(myPermSpecialPlaylists.isSelected());
                     myUser.setQuotaType((User.QuotaType)myQuotaTypeInput.getSelectedItem());
                     myUser.setBytesQuota(MyTunesRssUtils.getTextFieldInteger(myBytesQuotaInput, 0) * MEGABYTE);
                     myUser.setMaximumZipEntries(MyTunesRssUtils.getTextFieldInteger(myMaxZipEntriesInput, 0));

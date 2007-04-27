@@ -130,7 +130,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("sessionCreationTime", getSession().getCreationTime());
         getRequest().setAttribute("registered", MyTunesRss.REGISTRATION.isRegistered());
         getWebConfig();// result not needed, method also fills the request attribute "config"
-        if (getAuthUser().isQuotaExceeded()) {
+        if (getAuthUser() != null && getAuthUser().isQuotaExceeded()) {
             addError(new BundleError("error.quotaExceeded." + getAuthUser().getQuotaType().name()));
         }
     }

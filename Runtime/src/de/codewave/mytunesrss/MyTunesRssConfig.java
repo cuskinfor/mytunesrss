@@ -413,12 +413,13 @@ public class MyTunesRssConfig {
                     User user = new User(userName);
                     user.setActive(userNode.node(userName).getBoolean("active", true));
                     user.setPasswordHash(userNode.node(userName).getByteArray("password", null));
-                    user.setRss(userNode.node(userName).getBoolean("featureRss", true));
-                    user.setPlaylist(userNode.node(userName).getBoolean("featurePlaylist", true));
+                    user.setRss(userNode.node(userName).getBoolean("featureRss", false));
+                    user.setPlaylist(userNode.node(userName).getBoolean("featurePlaylist", false));
                     user.setDownload(userNode.node(userName).getBoolean("featureDownload", false));
                     user.setUpload(userNode.node(userName).getBoolean("featureUpload", false));
-                    user.setPlayer(userNode.node(userName).getBoolean("featurePlayer", true));
-                    user.setChangePassword(userNode.node(userName).getBoolean("featureChangePassword", true));
+                    user.setPlayer(userNode.node(userName).getBoolean("featurePlayer", false));
+                    user.setChangePassword(userNode.node(userName).getBoolean("featureChangePassword", false));
+                    user.setSpecialPlaylists(userNode.node(userName).getBoolean("featureSpecialPlaylists", false));
                     user.setResetTime(userNode.node(userName).getLong("resetTime", System.currentTimeMillis()));
                     user.setQuotaResetTime(userNode.node(userName).getLong("quotaResetTime", System.currentTimeMillis()));
                     user.setDownBytes(userNode.node(userName).getLong("downBytes", 0));
@@ -503,6 +504,7 @@ public class MyTunesRssConfig {
                 userNode.node(user.getName()).putBoolean("featureUpload", user.isUpload());
                 userNode.node(user.getName()).putBoolean("featurePlayer", user.isPlayer());
                 userNode.node(user.getName()).putBoolean("featureChangePassword", user.isChangePassword());
+                userNode.node(user.getName()).putBoolean("featureSpecialPlaylists", user.isSpecialPlaylists());
                 userNode.node(user.getName()).putLong("resetTime", user.getResetTime());
                 userNode.node(user.getName()).putLong("quotaResetTime", user.getQuotaResetTime());
                 userNode.node(user.getName()).putLong("downBytes", user.getDownBytes());
