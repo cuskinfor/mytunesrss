@@ -80,36 +80,36 @@
             <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
                 <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                     <c:if test="${!empty sessionScope.playlist}">
-                        <td class="check"><input type="checkbox" name="artist" id="artist${loopStatus.count}" value="${cwfn:encode64(artist.name)}" /></td>
+                        <td class="check"><input type="checkbox" name="artist" id="artist${loopStatus.count}" value="${mtfn:encode64(artist.name)}" /></td>
                     </c:if>
                     <td class="artist">
                         <c:out value="${cwfn:choose(mtfn:unknown(artist.name), '(unknown)', artist.name)}" />
                     </td>
                     <td class="album">
-                        <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(cwfn:encode64(artist.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${artist.albumCount} </a>
+                        <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${artist.albumCount} </a>
                     </td>
                     <td class="tracks">
-                        <a href="${servletUrl}/browseTrack?artist=${cwfn:encodeUrl(cwfn:encode64(artist.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${artist.trackCount} </a>
+                        <a href="${servletUrl}/browseTrack?artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${artist.trackCount} </a>
                     </td>
                     <c:choose>
                         <c:when test="${empty sessionScope.playlist}">
                             <c:if test="${authUser.rss && config.showRss}">
                                 <td class="icon">
-                                    <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(cwfn:encode64(artist.name))}/${mtfn:virtualArtistName(artist)}.xml">
+                                    <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/${mtfn:virtualArtistName(artist)}.xml">
                                         <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="rss" /> </a>
                                 </td>
                             </c:if>
                             <c:if test="${authUser.playlist && config.showPlaylist}">
                                 <td class="icon">
-                                    <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(cwfn:encode64(artist.name))}/${mtfn:virtualArtistName(artist)}.${config.playlistFileSuffix}">
+                                    <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/${mtfn:virtualArtistName(artist)}.${config.playlistFileSuffix}">
                                         <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="playlist" /> </a>
                                 </td>
                             </c:if>
                             <c:if test="${authUser.player && config.showPlayer}">
                                 <td class="icon">
-                                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/type=Xspf/playerRequest=true/artist=${cwfn:encodeUrl(cwfn:encode64(artist.name))}/${mtfn:virtualArtistName(artist)}.xspf')">
+                                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/type=Xspf/playerRequest=true/artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/${mtfn:virtualArtistName(artist)}.xspf')">
                                         <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="player" /> </a>
                                 </td>
@@ -118,7 +118,7 @@
                                 <td class="icon">
                                     <c:choose>
                                         <c:when test="${authUser.maximumZipEntries <= 0 || artist.trackCount <= authUser.maximumZipEntries}">
-                                            <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(cwfn:encode64(artist.name))}/${mtfn:virtualArtistName(artist)}.zip">
+                                            <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/${mtfn:virtualArtistName(artist)}.zip">
                                                 <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                                         </c:when>
                                         <c:otherwise>
@@ -131,7 +131,7 @@
                         </c:when>
                         <c:otherwise>
                             <td class="icon">
-                                <a href="${servletUrl}/addToPlaylist?artist=${cwfn:encodeUrl(cwfn:encode64(artist.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
+                                <a href="${servletUrl}/addToPlaylist?artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
                                     <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                             </td>
                         </c:otherwise>

@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
-import de.codewave.utils.*;
 import org.apache.commons.lang.*;
 
 import javax.servlet.*;
@@ -40,14 +39,16 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
             albums = ((List<Album>)albums).subList(current * pageSize, Math.min((current * pageSize) + pageSize, albums.size()));
         }
         getRequest().setAttribute("albums", albums);
-        Boolean singleArtist = Boolean.valueOf(StringUtils.isNotEmpty(artist) || StringUtils.isNotEmpty(genre));
+        Boolean singleGenre = Boolean.valueOf(StringUtils.isNotEmpty(genre));
+        Boolean singleArtist = Boolean.valueOf(StringUtils.isNotEmpty(artist));
+        getRequest().setAttribute("singleGenre", singleGenre);
         getRequest().setAttribute("singleArtist", singleArtist);
-        if (singleArtist) {
-            int singleArtistTrackCount = 0;
+        if (singleArtist || singleGenre) {
+            int trackCount = 0;
             for (Album album : albums) {
-                singleArtistTrackCount += album.getTrackCount();
+                trackCount += album.getTrackCount();
             }
-            getRequest().setAttribute("singleArtistTrackCount", singleArtistTrackCount);
+            getRequest().setAttribute("allAlbumsTrackCount", trackCount);
         }
         forward(MyTunesRssResource.BrowseAlbum);
     }

@@ -148,4 +148,17 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Get a base64 encoded string.
+        </description>
+        <name>encode64</name>
+        <function-class>de.codewave.mytunesrss.MyTunesRssBase64Utils</function-class>
+        <function-signature>java.lang.String encode(java.lang.String)
+        </function-signature>
+        <example>
+            &lt;c:out value="${cwfn:encode64('please encode me')}"/&gt;
+        </example>
+    </function>
+
 </taglib>

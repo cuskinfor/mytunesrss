@@ -77,13 +77,13 @@
                 <c:when test="${sortOrder == 'Album'}">
                     <c:if test="${track.simple}">
                         <c:set var="sectionFileName">${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)} -</c:set>
-                        <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(cwfn:encode64(track.artist))}">
+                        <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(mtfn:encode64(track.artist))}">
                             <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                         </a> -</c:if>
                     <c:set var="sectionFileName">${sectionFileName} ${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}</c:set>
                     <c:choose>
                         <c:when test="${empty param.album}">
-                            <a href="${servletUrl}/browseTrack?album=${cwfn:encodeUrl(cwfn:encode64(track.album))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
+                            <a href="${servletUrl}/browseTrack?album=${cwfn:encodeUrl(mtfn:encode64(track.album))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
                                 <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
                             </a>
                         </c:when>
@@ -93,7 +93,7 @@
                     </c:choose>
                 </c:when>
                 <c:otherwise>
-                    <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(cwfn:encode64(track.artist))}">
+                    <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(mtfn:encode64(track.artist))}">
                         <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                     </a>
                     <c:set var="sectionFileName" value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
@@ -102,7 +102,7 @@
                         -
                         <c:choose>
                             <c:when test="${empty param.album}">
-                                <a href="${servletUrl}/browseTrack?album=${cwfn:encodeUrl(cwfn:encode64(track.album))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
+                                <a href="${servletUrl}/browseTrack?album=${cwfn:encodeUrl(mtfn:encode64(track.album))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
                                     <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
                                 </a>
                             </c:when>
@@ -172,7 +172,7 @@
     </td>
     <c:if test="${sortOrder == 'Album' && !track.simple}">
         <td>
-            <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(cwfn:encode64(track.artist))}">
+            <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(mtfn:encode64(track.artist))}">
                 <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
             </a>
         </td>
