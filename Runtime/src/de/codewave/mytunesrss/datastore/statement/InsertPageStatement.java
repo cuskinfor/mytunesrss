@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.*;
 
 import java.sql.*;
 
@@ -31,13 +32,13 @@ public class InsertPageStatement implements DataStoreStatement {
     }
 
     public void execute(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO pager VALUES ( ?, ?, ?, ?, ? )");
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "insertPagerPage");
         statement.clearParameters();
-        statement.setString(1, myType.name());
-        statement.setInt(2, myIndex);
-        statement.setString(3, myCondition);
-        statement.setString(4, myValue);
-        statement.setInt(5, myContentCount);
+        statement.setString("type", myType.name());
+        statement.setInt("index", myIndex);
+        statement.setString("condition", myCondition);
+        statement.setString("value", myValue);
+        statement.setInt("count", myContentCount);
         statement.execute();
     }
 }

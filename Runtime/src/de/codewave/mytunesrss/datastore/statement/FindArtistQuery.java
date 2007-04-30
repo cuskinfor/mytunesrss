@@ -32,6 +32,10 @@ public class FindArtistQuery extends DataStoreQuery<Collection<Artist>> {
         return query;
     }
 
+    public static FindArtistQuery getAll() {
+        return new FindArtistQuery();
+    }
+
     private String myAlbum;
     private String myGenre;
     private int myIndex = -1;

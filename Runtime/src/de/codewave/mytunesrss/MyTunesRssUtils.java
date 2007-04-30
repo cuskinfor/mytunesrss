@@ -3,12 +3,14 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.pleasewait.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.text.*;
 import java.io.*;
+import java.sql.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -158,5 +160,9 @@ public class MyTunesRssUtils {
             }
         }
         return true;
+    }
+
+    public static SmartStatement createStatement(Connection connection, String name) throws SQLException {
+        return MyTunesRss.STORE.getSmartStatementFactory().createStatement(connection, name);
     }
 }

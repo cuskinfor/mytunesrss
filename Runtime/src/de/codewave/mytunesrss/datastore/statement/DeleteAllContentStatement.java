@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 
 import java.sql.*;
@@ -15,21 +16,13 @@ import java.sql.*;
 public class DeleteAllContentStatement implements DataStoreStatement {
     private static final Log LOG = LogFactory.getLog(DeleteAllContentStatement.class);
 
-    public void execute(Connection connection) {
-        deleteCatchException(connection, "playlist");
-        deleteCatchException(connection, "album");
-        deleteCatchException(connection, "artist");
-        deleteCatchException(connection, "track");
-        deleteCatchException(connection, "pager");
-    }
-
-    private void deleteCatchException(Connection connection, String tableName) {
-        try {
-            connection.createStatement().execute("DELETE FROM " + tableName);
-        } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not delete contents from table \"" + tableName + "\".", e);
+    public void execute(Connection connection) throws SQLException {
+        MyTunesRssUtils.createStatement(connection, "deleteAllContent").execute(new SmartStatementExceptionHandler() {
+            public void handleException(SQLException sqlException, boolean b) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not delete contents from table.", sqlException);
+                }
             }
-        }
+        });
     }
 }

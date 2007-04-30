@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<statements>
+    <statement name="insertPagerPage">
+        <sql>
+            INSERT INTO pager (type, index, condition, value, content_count)
+            VALUES (:type, :index, :condition, :value, :count)
+        </sql>
+    </statement>
+</statements>

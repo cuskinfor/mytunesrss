@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 
 import java.sql.*;
@@ -23,7 +24,7 @@ public class MigrationStatement implements DataStoreStatement {
     }
 
     private String getVersion(Connection connection) throws SQLException {
-        ResultSet resultSet = connection.createStatement().executeQuery("SELECT version AS version FROM system_information");
+        ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "getVersion").executeQuery();
         if (resultSet.next()) {
             return resultSet.getString("version");
         }

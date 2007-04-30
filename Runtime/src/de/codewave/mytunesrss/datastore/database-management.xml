@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<statements>
+    <statement name="createAllTables">
+        <sql>SET DATABASE COLLATION en_US</sql>
+        <sql>
+            CREATE CACHED TABLE track (
+                id VARCHAR(2000) NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                artist VARCHAR_IGNORECASE(255) NOT NULL,
+                album VARCHAR_IGNORECASE(255) NOT NULL,
+                time INTEGER,
+                track_number INTEGER,
+                file VARCHAR(1024) NOT NULL,
+                suffix VARCHAR_IGNORECASE(10) NOT NULL,
+                protected BOOLEAN,
+                video BOOLEAN,
+                source VARCHAR(20),
+                genre VARCHAR(255),
+                UNIQUE (id)
+            )
+        </sql>
+        <sql>
+            CREATE CACHED TABLE playlist (
+                id VARCHAR(20) NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                type VARCHAR(20) NOT NULL,
+                track_count INTEGER,
+                UNIQUE (id)
+            )
+        </sql>
+        <sql>
+            CREATE CACHED TABLE link_track_playlist (
+                index INTEGER,
+                track_id VARCHAR(2000) NOT NULL,
+                playlist_id VARCHAR(20) NOT NULL,
+                CONSTRAINT fk_linktrackplaylist_trackid FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE,
+                CONSTRAINT fk_linktrackplaylist_playlistid FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
+            )
+        </sql>
+        <sql>
+            CREATE CACHED TABLE system_information (
+                lastupdate BIGINT,
+                version VARCHAR(20) NOT NULL,
+                itunes_library_id VARCHAR(20)
+            )
+        </sql>
+        <sql>
+            CREATE CACHED TABLE album (
+                name VARCHAR_IGNORECASE(255) NOT NULL,
+                first_char VARCHAR(1),
+                track_count INTEGER,
+                artist_count INTEGER,
+                artist VARCHAR(255)
+            )
+        </sql>
+        <sql>
+            CREATE CACHED TABLE artist (
+                name VARCHAR_IGNORECASE(255) NOT NULL,
+                first_char VARCHAR(1),
+                track_count INTEGER,
+                album_count INTEGER
+            )
+        </sql>
+        <sql>
+            CREATE CACHED TABLE genre (
+                name VARCHAR_IGNORECASE(255) NOT NULL,
+                first_char VARCHAR(1),
+                track_count INTEGER,
+                album_count INTEGER,
+                artist_count INTEGER
+            )
+        </sql>
+        <sql>
+            CREATE CACHED TABLE pager (
+                type VARCHAR(20) NOT NULL,
+                index INTEGER NOT NULL,
+                condition VARCHAR(255) NOT NULL,
+                value VARCHAR(255) NOT NULL,
+                content_count INTEGER NOT NULL,
+                UNIQUE (type, index)
+            )
+        </sql>
+        <sql>CREATE INDEX idx_track_name ON track (name)</sql>
+        <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
+        <sql>CREATE INDEX idx_track_album ON track (album)</sql>
+        <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
+        <sql>CREATE INDEX idx_album_first ON album (first_char)</sql>
+        <sql>CREATE INDEX idx_album_artist ON album (artist)</sql>
+        <sql>CREATE INDEX idx_artist_first ON artist (first_char)</sql>
+        <sql>CREATE INDEX idx_genre_first ON genre (first_char)</sql>
+        <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
+        <sql>CREATE SEQUENCE playlist_id_sequence</sql>
+    </statement>
+
+    <statement name="initializeAllTables">
+        <sql>INSERT INTO system_information (version) VALUES (:version)</sql>
+    </statement>
+
+    <statement name="deleteAllContent">
+        <sql>DELETE FROM playlist</sql>
+        <sql>DELETE FROM album</sql>
+        <sql>DELETE FROM artist</sql>
+        <sql>DELETE FROM track</sql>
+        <sql>DELETE FROM pager</sql>
+    </statement>
+</statements>

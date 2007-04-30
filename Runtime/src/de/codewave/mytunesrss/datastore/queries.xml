@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<statements>
+    <statement name="findAlbums">
+        <sql>
+            <![CDATA[
+            SELECT name AS name, track_count AS track_count, artist_count AS artist_count, artist AS artist
+            FROM album
+            WHERE (:artist IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
+            OR (:artist IS NOT NULL AND name IN (SELECT DISTINCT(album) FROM track WHERE artist = :artist))
+            OR (:genre IS NOT NULL AND name IN (SELECT DISTINCT(album) FROM track WHERE genre = :genre))
+            OR {letterRegionByIndex}
+            ORDER BY name
+            ]]>
+        </sql>
+    </statement>
+
+    <!-- reusable sql fragments -->
+    <fragment name="letterRegionByIndex">
+        <![CDATA[
+        (:index = 0 AND (first_char < 'a' OR first_char > 'z'))
+        OR (:index = 1 AND first_char >= 'a' AND first_char < 'd')
+        OR (:index = 2 AND first_char >= 'd' AND first_char < 'g')
+        OR (:index = 3 AND first_char >= 'g' AND first_char < 'j')
+        OR (:index = 4 AND first_char >= 'j' AND first_char < 'm')
+        OR (:index = 5 AND first_char >= 'm' AND first_char < 'p')
+        OR (:index = 6 AND first_char >= 'p' AND first_char < 't')
+        OR (:index = 7 AND first_char >= 't' AND first_char < 'w')
+        OR (:index = 8 AND first_char >= 'w' AND first_char <= 'z')
+        ]]>
+    </fragment>
+</statements>

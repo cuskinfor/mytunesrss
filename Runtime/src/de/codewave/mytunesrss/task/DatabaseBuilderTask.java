@@ -169,7 +169,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
     private void insertAlbumPage(DataStoreSession storeSession, final int index, String condition, String value) throws SQLException {
         storeSession.executeStatement(new InsertPageStatement(InsertPageStatement.PagerType.Album, index, condition, value, 0));
-        final int count = storeSession.executeQuery(FindAlbumQuery.getForPagerIndex(index)).size();
+        FindAlbumQuery findAlbumQuery = new FindAlbumQuery();
+        findAlbumQuery.setIndex(index);
+        final int count = storeSession.executeQuery(findAlbumQuery).size();
         storeSession.executeStatement(new DataStoreStatement() {
             public void execute(Connection connection) throws SQLException {
                 PreparedStatement update = connection.prepareStatement("UPDATE pager SET content_count = ? WHERE index = ? AND type = ?");

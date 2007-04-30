@@ -4,9 +4,10 @@
 
 package de.codewave.mytunesrss.datastore;
 
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.*;
 import de.codewave.utils.sql.*;
-import de.codewave.mytunesrss.*;
+import de.codewave.utils.xml.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.pool.*;
 import org.apache.commons.pool.impl.*;
@@ -31,7 +32,14 @@ public class MyTunesRssDataStore extends DataStore {
         }
     }
 
+    private SmartStatementFactory mySmartStatementFactory;
+
     public void init() throws IOException {
+        mySmartStatementFactory = SmartStatementFactory.getInstance(
+                JXPathUtils.getContext(getClass().getResource("database-management.xml")),
+                JXPathUtils.getContext(getClass().getResource("migration.xml")),
+                JXPathUtils.getContext(getClass().getResource("inserts-updates.xml")),
+                JXPathUtils.getContext(getClass().getResource("queries.xml")));
         String filename = DIRNAME + "/MyTunesRSS";
         String pathname = PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
         final String connectString = "jdbc:h2:file:" + pathname + "/" + filename;
@@ -71,5 +79,9 @@ public class MyTunesRssDataStore extends DataStore {
                 }
             }
         }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 1, false, false, 10000, 2, 20000, false, 20000));
+    }
+
+    public SmartStatementFactory getSmartStatementFactory() {
+        return mySmartStatementFactory;
     }
 }

@@ -29,8 +29,10 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
             artists = getDataStore().executeQuery(FindArtistQuery.getForPagerIndex(Integer.parseInt(page)));
         } else if (StringUtils.isNotEmpty(album)) {
             artists = getDataStore().executeQuery(FindArtistQuery.getForAlbum(album));
-        } else {
+        } else if (StringUtils.isNotEmpty(genre)) {
             artists = getDataStore().executeQuery(FindArtistQuery.getForGenre(genre));
+        } else {
+            artists = getDataStore().executeQuery(FindArtistQuery.getAll());
         }
         int pageSize = getWebConfig().getEffectivePageSize();
         if (pageSize > 0 && artists.size() > pageSize) {
