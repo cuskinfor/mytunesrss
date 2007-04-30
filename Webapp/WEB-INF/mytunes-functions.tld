@@ -157,7 +157,20 @@
         <function-signature>java.lang.String encode(java.lang.String)
         </function-signature>
         <example>
-            &lt;c:out value="${cwfn:encode64('please encode me')}"/&gt;
+            &lt;c:out value="${mtfn:encode64('please encode me')}"/&gt;
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Decode a base64 encoded string.
+        </description>
+        <name>decode64</name>
+        <function-class>de.codewave.mytunesrss.MyTunesRssBase64Utils</function-class>
+        <function-signature>java.lang.String decodeToString(java.lang.String)
+        </function-signature>
+        <example>
+            &lt;c:out value="${mtfn:decode64('please decode me')}"/&gt;
         </example>
     </function>
 
