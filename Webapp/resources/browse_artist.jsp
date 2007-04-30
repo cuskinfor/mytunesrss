@@ -71,8 +71,8 @@
                 </c:if>
                 <th class="active">
                     <fmt:message key="artists"/>
-                    <c:if test="${!empty param.album}"> <fmt:message key="on"/> "<c:out value="${cwfn:decode64(param.album)}" />"</c:if>
-                    <c:if test="${!empty param.genre}"> <fmt:message key="in"/> "<c:out value="${cwfn:decode64(param.genre)}" />"</c:if>
+                    <c:if test="${!empty param.album}"> <fmt:message key="on"/> "<c:out value="${mtfn:decode64(param.album)}" />"</c:if>
+                    <c:if test="${!empty param.genre}"> <fmt:message key="in"/> "<c:out value="${mtfn:decode64(param.genre)}" />"</c:if>
                 </th>
                 <th><fmt:message key="albums"/></th>
                 <th colspan="${1 + mtfn:buttonColumns(authUser, config)}"><fmt:message key="tracks"/></th>
