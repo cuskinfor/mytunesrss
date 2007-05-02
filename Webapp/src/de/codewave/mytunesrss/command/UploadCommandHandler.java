@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.jsp.*;
 import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.*;
@@ -26,12 +27,12 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     public void execute() throws Exception {
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
-        List<FileItem> items = upload.parseRequest(getRequest());
+        List<FileItem> items = upload.parseRequest(new ProgressRequestWrapper(getRequest()));
         for (FileItem item : items) {
             processItem(item);
         }
         runDatabaseUpdate();
-        forward(MyTunesRssResource.DatabaseUpdating);
+        forward(MyTunesRssResource.UploadFinished);
     }
 
     private void processItem(FileItem item) throws IOException {

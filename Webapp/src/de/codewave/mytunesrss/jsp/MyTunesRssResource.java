@@ -24,6 +24,8 @@ public enum MyTunesRssResource {
     ShowUpload("/upload.jsp"),
     BrowseServers("/browse_servers.jsp"),
     DatabaseUpdating("/database_updating.jsp"),
+    UploadFinished("/upload_finished.jsp"),
+    UploadProgress("/upload_progress.jsp"),
     BrowseGenre("/browse_genre.jsp");
 
     private String myValue;
