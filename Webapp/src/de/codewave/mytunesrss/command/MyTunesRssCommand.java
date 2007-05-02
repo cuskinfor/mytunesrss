@@ -9,6 +9,8 @@ import de.codewave.utils.servlet.*;
 public enum MyTunesRssCommand implements Command {
     Login("login", DoLoginCommandHandler.class),
     ShowFatalError("showFatalError", ShowFatalErrorCommandHandler.class),
+    ShowDatabaseUpdating("showDatabaseUpdating", ShowDatabaseUpdatingCommandHandler.class),
+    ShowUploadProgress("showUploadProgress", ShowUploadProgressCommandHandler.class),
     Logout("logout", DoLogoutCommandHandler.class),
     ShowPortal("showPortal", ShowPortalCommandHandler.class),
     CheckHealth("checkHealth", CheckHealthCommandHandler.class),

@@ -12,6 +12,17 @@
 
     <jsp:include page="incl_head.jsp"/>
 
+    <script type="text/javascript">
+        function initProgress() {
+            frames["progressFrame"].location.href = "${servletUrl}/showUploadProgress";
+            document.getElementById("progressDiv").style.display = "block";
+        }
+        function updateProgress(percentage) {
+            var percentage = frames["progressFrame"].document.getElementById("progress").innerHTML;
+            document.getElementById("progressBar").style.width = (3 * percentage) + "px";
+        }
+    </script>
+
 </head>
 
 <body>
@@ -33,14 +44,24 @@
         </tr>
         <tr class="odd">
             <td>
-                <form name="upload" enctype="multipart/form-data" method="post" action="${servletUrl}/upload">
-                    <input type="file" name="file" /> <input type="submit" value="<fmt:message key="doUpload"/>" />
+                <form name="upload" enctype="multipart/form-data" method="post" action="${servletUrl}/upload" target="resultFrame">
+                    <input type="file" name="file" /> <input type="submit" value="<fmt:message key="doUpload"/>" onclick="initProgress()"/>
                 </form>
             </td>
         </tr>
     </table>
 
+    <div id="progressDiv" style="display:none;padding-top:10px">
+        <div style="border:solid 1px black;width:300px">
+            <div id="progressBar" style="background-color:green;width:0;height:15px"/>
+        </div>
+    </div>
+
 </div>
+
+<iframe name="progressFrame" style="visibility:hidden" src=""></iframe>
+
+<iframe name="resultFrame" style="visibility:hidden" src=""></iframe>
 
 </body>
 </html>

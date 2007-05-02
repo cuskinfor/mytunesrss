@@ -428,7 +428,9 @@
           <root url="jar://$MODULE_DIR$/lib/codewave-utils-26.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../CodewaveUtils/src" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
@@ -437,7 +439,9 @@
           <root url="jar://$MODULE_DIR$/lib/camel-0.8.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../Camel/src" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntryProperties />

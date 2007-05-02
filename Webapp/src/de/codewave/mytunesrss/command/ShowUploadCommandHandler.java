@@ -13,6 +13,7 @@ public class ShowUploadCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
+        getSession().setAttribute("uploadPercentage", 0);
         forward(MyTunesRssResource.ShowUpload);
     }
 }
