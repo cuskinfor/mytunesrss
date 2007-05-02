@@ -17,9 +17,10 @@
             frames["progressFrame"].location.href = "${servletUrl}/showUploadProgress";
             document.getElementById("progressDiv").style.display = "block";
         }
-        function updateProgress(percentage) {
+        function updateProgress() {
             var percentage = frames["progressFrame"].document.getElementById("progress").innerHTML;
-            document.getElementById("progressBar").style.width = (3 * percentage) + "px";
+            document.getElementById("progressBar").style.width = (4.78 * percentage) + "px";
+            document.getElementById("progressBar").innerHTML = percentage + "%";
         }
     </script>
 
