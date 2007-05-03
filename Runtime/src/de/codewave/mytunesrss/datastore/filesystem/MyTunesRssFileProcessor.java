@@ -91,7 +91,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                     statement.setTime(((Id3v2Tag)tag).getTimeSeconds());
                                     statement.setTrackNumber(((Id3v2Tag)tag).getTrackNumber());
                                 }
-                                statement.setGenre(StringUtils.trimToNull(tag.getGenreAsString()));
+                                String genre = tag.getGenreAsString();
+                                if (genre != null) {
+                                    statement.setGenre(StringUtils.trimToNull(genre));
+                                }
                             } catch (Exception e) {
                                 if (LOG.isErrorEnabled()) {
                                     LOG.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
