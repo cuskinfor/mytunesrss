@@ -12,8 +12,8 @@
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib/camel-0.8.jar" />
-        <url>jar://$MODULE_DIR$/lib/camel-0.8.jar!/</url>
+        <attribute name="URI" value="/lib/camel-0.9.jar" />
+        <url>jar://$MODULE_DIR$/lib/camel-0.9.jar!/</url>
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
@@ -434,12 +434,10 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/camel-0.8.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/camel-0.9.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../Camel/src" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntryProperties />
