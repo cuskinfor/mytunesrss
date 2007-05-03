@@ -19,7 +19,7 @@
         }
         function updateProgress() {
             var percentage = frames["progressFrame"].document.getElementById("progress").innerHTML;
-            document.getElementById("progressBar").style.width = (4.78 * percentage) + "px";
+            document.getElementById("progressBar").style.width = (percentage) + "%";
             document.getElementById("progressBar").innerHTML = percentage + "%";
         }
     </script>
@@ -52,9 +52,9 @@
         </tr>
     </table>
 
-    <div id="progressDiv" style="display:none;padding-top:10px">
-        <div style="border:solid 1px black;width:478px">
-            <div id="progressBar" style="background-color:green;width:0;height:15px"/>
+    <div id="progressDiv">
+        <div id="progressBackground">
+            <div id="progressBar">0%</div>
         </div>
     </div>
 

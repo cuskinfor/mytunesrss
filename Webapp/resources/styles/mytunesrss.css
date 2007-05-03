@@ -597,3 +597,21 @@ h1.serverbrowser {
 h1.serverbrowser span {
 	visibility: hidden;
 }
+
+/* Progress Bar */
+
+#progressDiv {
+    display: none;
+    padding: 20px;
+}
+
+#progressBackground {
+ 	background: url("../images/progress_background.gif") repeat-x;
+    border: 1px solid #666;
+}
+
+#progressBar {
+    background: url("../images/progress_bar.gif") top right repeat-x;
+    font-weight: bold;
+    text-align: center;
+}
