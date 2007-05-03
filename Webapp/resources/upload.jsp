@@ -53,7 +53,7 @@
     </table>
 
     <div id="progressDiv" style="display:none;padding-top:10px">
-        <div style="border:solid 1px black;width:300px">
+        <div style="border:solid 1px black;width:478px">
             <div id="progressBar" style="background-color:green;width:0;height:15px"/>
         </div>
     </div>
