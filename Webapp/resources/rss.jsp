@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><%@ page contentType="text/xml;charset=UTF-8" language="java" %><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %><%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %><%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %><fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb"/>
-<rss version="2.0">
+<rss version="2.0"<c:if test="${mediaThumbnails}"> xmlns:media="http://search.yahoo.com/mrss/"</c:if>>
     <channel>
         <title><c:out value="${channel}"/></title>
         <link>${feedUrl}</link>
@@ -19,7 +19,7 @@
                 <enclosure url="${servletUrl}/playTrack/track=${cwfn:encodeUrl(track.id)}/auth=${cwfn:encodeUrl(auth)}/${cwfn:encodeUrl(virtualFileName)}"
                            type="${track.contentType}"
                            length="${track.contentLength}"/>
-                <c:if test="${mediaThumbnails}"><media:thumbnail url="${servletUrl}/showTrackImage/track=${cwfn:encodeUrl(track.id)}" width="160"/></c:if>
+                <c:if test="${mediaThumbnails}"><media:thumbnail url="${servletUrl}/showTrackImage/track=${cwfn:encodeUrl(track.id)}/dummy.jpg" width="160"/></c:if>
             </item></c:forEach>
     </channel>
 </rss>
