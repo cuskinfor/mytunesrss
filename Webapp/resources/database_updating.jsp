@@ -14,7 +14,7 @@
 
     <jsp:include page="incl_head.jsp"/>
 
-    <!--meta http-equiv="refresh" content="5; URL=${servletUrl}/showPortal" /-->
+    <meta http-equiv="refresh" content="5; URL=${servletUrl}/showPortal" />
 
 </head>
 
