@@ -19,7 +19,7 @@
                 <enclosure url="${servletUrl}/playTrack/track=${cwfn:encodeUrl(track.id)}/auth=${cwfn:encodeUrl(auth)}/${cwfn:encodeUrl(virtualFileName)}"
                            type="${track.contentType}"
                            length="${track.contentLength}"/>
-                <c:if test="${mediaThumbnails}"><media:thumbnail url="${servletUrl}/showTrackImage/track=${cwfn:encodeUrl(track.id)}/dummy.jpg" width="160"/></c:if>
+                <c:if test="${mediaThumbnails}"><media:thumbnail url="${servletUrl}/showTrackImage/track=${cwfn:encodeUrl(track.id)}" width="160"/></c:if>
             </item></c:forEach>
     </channel>
 </rss>
