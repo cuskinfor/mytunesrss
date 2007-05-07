@@ -14,7 +14,7 @@
 
     <jsp:include page="incl_head.jsp"/>
 
-    <meta http-equiv="refresh" content="5; URL=${servletUrl}/showPortal" />
+    <!--meta http-equiv="refresh" content="5; URL=${servletUrl}/showPortal" /-->
 
 </head>
 
@@ -24,9 +24,9 @@
 
     <form id="login" action="${servletUrl}/login" method="post">
 
-        <h2 class="fatalError"><fmt:message key="info.databaseUpdating.title"/></h2>
+        <h2 class="message"><fmt:message key="info.databaseUpdating.title"/></h2>
 
-				<div class="fatalError">
+				<div class="message">
 
 					<fmt:message key="info.databaseUpdating.message"/>
 

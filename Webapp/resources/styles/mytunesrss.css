@@ -98,6 +98,14 @@ div.error {
     font-weight: bold;
 }
 
+
+div.message {
+    color: #000;
+    padding: 10px;
+    border-bottom: 1px solid #666;
+    background: #ffe;
+}
+
 /* Search Page */
 
 h1.search {
