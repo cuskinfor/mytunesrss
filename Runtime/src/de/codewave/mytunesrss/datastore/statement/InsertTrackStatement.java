@@ -4,8 +4,8 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.utils.sql.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -29,23 +29,10 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
     private boolean myVideo;
     private String myGenre;
     private TrackSource mySource;
-    private PreparedStatement myStatement;
-    private static final String SQL =
-            "INSERT INTO track ( id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+    private SmartStatement myStatement;
 
-    public InsertTrackStatement() {
-        // intentionally left blank
-    }
-
-    public InsertTrackStatement(DataStoreSession storeSession, TrackSource source) {
-        try {
-            myStatement = storeSession.prepare(SQL);
-            mySource = source;
-        } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not prepare statement, trying again during execution.", e);
-            }
-        }
+    public InsertTrackStatement(TrackSource source) {
+        mySource = source;
     }
 
     public void setAlbum(String album) {
@@ -88,24 +75,26 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
         myGenre = genre;
     }
 
-    public void execute(Connection connection) throws SQLException {
+    public synchronized void execute(Connection connection) throws SQLException {
         try {
             myArtist = UpdateTrackStatement.dropWordsFromArtist(myArtist);
-            PreparedStatement statement = myStatement != null ? myStatement : connection.prepareStatement(SQL);
-            statement.clearParameters();
-            statement.setString(1, myId);
-            statement.setString(2, StringUtils.isNotEmpty(myName) ? myName : UNKNOWN);
-            statement.setString(3, StringUtils.isNotEmpty(myArtist) ? myArtist : UNKNOWN);
-            statement.setString(4, StringUtils.isNotEmpty(myAlbum) ? myAlbum : UNKNOWN);
-            statement.setInt(5, myTime);
-            statement.setInt(6, myTrackNumber);
-            statement.setString(7, myFileName);
-            statement.setBoolean(8, myProtected);
-            statement.setBoolean(9, myVideo);
-            statement.setString(10, mySource.name());
-            statement.setString(11, myGenre);
-            statement.setString(12, FileSupportUtils.getFileSuffix(myFileName));
-            statement.executeUpdate();
+            if (myStatement == null) {
+                myStatement = MyTunesRssUtils.createStatement(connection, "insertTrack");
+            }
+            myStatement.clearParameters();
+            myStatement.setString("id", myId);
+            myStatement.setString("name", StringUtils.isNotEmpty(myName) ? myName : UNKNOWN);
+            myStatement.setString("artist", StringUtils.isNotEmpty(myArtist) ? myArtist : UNKNOWN);
+            myStatement.setString("album", StringUtils.isNotEmpty(myAlbum) ? myAlbum : UNKNOWN);
+            myStatement.setInt("time", myTime);
+            myStatement.setInt("track_number", myTrackNumber);
+            myStatement.setString("file", myFileName);
+            myStatement.setBoolean("protected", myProtected);
+            myStatement.setBoolean("video", myVideo);
+            myStatement.setString("source", mySource.name());
+            myStatement.setString("genre", myGenre);
+            myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
+            myStatement.execute();
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error(String.format("Could not insert track with ID \"%s\" into database.", myId), e);

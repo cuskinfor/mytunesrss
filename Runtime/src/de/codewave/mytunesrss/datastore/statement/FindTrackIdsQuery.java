@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.*;
 
 import java.sql.*;
 import java.util.*;
@@ -20,9 +21,9 @@ public class FindTrackIdsQuery extends DataStoreQuery<Collection<String>> {
     }
 
     public Collection<String> execute(Connection connection) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT id AS id FROM track WHERE source = ?");
-        preparedStatement.setString(1, mySource);
-        ResultSet resultSet = preparedStatement.executeQuery();
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findTrackIdsForSource");
+        statement.setString("source", mySource);
+        ResultSet resultSet = statement.executeQuery();
         Set<String> trackIds = new HashSet<String>();
         while (resultSet.next()) {
             trackIds.add(resultSet.getString("ID"));

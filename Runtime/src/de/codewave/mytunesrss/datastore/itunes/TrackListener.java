@@ -20,8 +20,6 @@ public class TrackListener implements PListHandlerListener {
 
     private DataStoreSession myDataStoreSession;
     private LibraryListener myLibraryListener;
-    private InsertTrackStatement myInsertStatement;
-    private UpdateTrackStatement myUpdateStatement;
     private int myUpdatedCount;
     private Set<String> myExistingIds = new HashSet<String>();
     private Set<String> myDatabaseIds = new HashSet<String>();
@@ -30,8 +28,6 @@ public class TrackListener implements PListHandlerListener {
     public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId) throws SQLException {
         myDataStoreSession = dataStoreSession;
         myLibraryListener = libraryListener;
-        myInsertStatement = new InsertTrackStatement(dataStoreSession, TrackSource.ITunes);
-        myUpdateStatement = new UpdateTrackStatement(dataStoreSession);
         myDatabaseIds = (Set<String>)dataStoreSession.executeQuery(new FindTrackIdsQuery(TrackSource.ITunes.name()));
         myTrackIdToPersId = trackIdToPersId;
     }
@@ -89,7 +85,7 @@ public class TrackListener implements PListHandlerListener {
             if (trackId != null && StringUtils.isNotEmpty(name) && file != null && new SupportedFileFilter().accept(file.getParentFile(),
                                                                                                                     file.getName())) {
                 try {
-                    InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(trackId) ? myUpdateStatement : myInsertStatement;
+                    InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(trackId) ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);
                     statement.clear();
                     statement.setId(trackId);
                     statement.setName(name.trim());

@@ -22,8 +22,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private long myLastUpdateTime;
     private DataStoreSession myStoreSession;
     private Set<String> myDatabaseIds;
-    private InsertTrackStatement myInsertStatement;
-    private UpdateTrackStatement myUpdateStatement;
     private int myUpdatedCount;
     private Set<String> myExistingIds = new HashSet<String>();
     private Set<String> myFoundIds = new HashSet<String>();
@@ -33,8 +31,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         myStoreSession = storeSession;
         myLastUpdateTime = lastUpdateTime;
         myDatabaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.FileSystem.name()));
-        myInsertStatement = new InsertTrackStatement(storeSession, TrackSource.FileSystem);
-        myUpdateStatement = new UpdateTrackStatement(storeSession);
     }
 
     public Set<String> getExistingIds() {
@@ -52,7 +48,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 String fileId = IOUtils.getFileIdentifier(file);
                 if (!myFoundIds.contains(fileId)) {
                     if ((file.lastModified() >= myLastUpdateTime || !myDatabaseIds.contains(fileId))) {
-                        InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(fileId) ? myUpdateStatement : myInsertStatement;
+                        InsertOrUpdateTrackStatement statement =
+                                myDatabaseIds.contains(fileId) ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
                         statement.clear();
                         statement.setId(fileId);
                         Id3Tag tag = null;

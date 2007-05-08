@@ -16,11 +16,6 @@ public class SaveITunesPlaylistStatement extends SavePlaylistStatement {
         setType(PlaylistType.ITunes);
     }
 
-    protected SaveITunesPlaylistStatement(DataStoreSession storeSession) throws SQLException {
-        super(storeSession);
-        setType(PlaylistType.ITunes);
-    }
-
     public void execute(Connection connection) throws SQLException {
         executeInsert(connection);
     }

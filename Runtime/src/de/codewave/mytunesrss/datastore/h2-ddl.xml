@@ -93,15 +93,10 @@
         <sql>CREATE SEQUENCE playlist_id_sequence</sql>
     </statement>
 
-    <statement name="initializeAllTables">
-        <sql>INSERT INTO system_information (version) VALUES (:version)</sql>
+    <statement name="initialize">
+        <sql>SET LOG 0</sql>
+        <sql>SET DEFAULT_LOCK_TIMEOUT 5000</sql>
+        <sql>SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'PUBLIC' AND table_name = 'TRACK'</sql>
     </statement>
 
-    <statement name="deleteAllContent">
-        <sql>DELETE FROM playlist</sql>
-        <sql>DELETE FROM album</sql>
-        <sql>DELETE FROM artist</sql>
-        <sql>DELETE FROM track</sql>
-        <sql>DELETE FROM pager</sql>
-    </statement>
 </statements>

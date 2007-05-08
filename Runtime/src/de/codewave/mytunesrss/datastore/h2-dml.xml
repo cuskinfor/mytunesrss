@@ -67,8 +67,8 @@
             FROM link_track_playlist ltp, track t
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
-            AND (:firstIndex == -1 OR ltp.index >= :firstIndex)
-            AND (:lastIndex == -1 OR ltp.index <= :lastIndex)
+            AND (:firstIndex = -1 OR ltp.index >= :firstIndex)
+            AND (:lastIndex = -1 OR ltp.index <= :lastIndex)
             ORDER BY index
             ]]>
         </sql>
@@ -80,8 +80,8 @@
             SELECT {trackColumns}
             FROM link_track_playlist ltp, track t
             WHERE (:id IS NULL OR (t.id = ltp.track_id AND ltp.playlist_id = :id))
-            AND (:firstIndex == -1 OR ltp.index >= :firstIndex)
-            AND (:lastIndex == -1 OR ltp.index <= :lastIndex)
+            AND (:firstIndex = -1 OR ltp.index >= :firstIndex)
+            AND (:lastIndex = -1 OR ltp.index <= :lastIndex)
             ORDER BY album, track_number, name
             ]]>
         </sql>
@@ -93,8 +93,8 @@
             SELECT {trackColumns}
             FROM link_track_playlist ltp, track t
             WHERE (:id IS NULL OR (t.id = ltp.track_id AND ltp.playlist_id = :id))
-            AND (:firstIndex == -1 OR ltp.index >= :firstIndex)
-            AND (:lastIndex == -1 OR ltp.index <= :lastIndex)
+            AND (:firstIndex = -1 OR ltp.index >= :firstIndex)
+            AND (:lastIndex = -1 OR ltp.index <= :lastIndex)
             ORDER BY artist, album, track_number, name
             ]]>
         </sql>
@@ -122,6 +122,86 @@
     <statement name="findAlbumArtistMapping">
         <sql>
             SELECT album AS album, artist AS artist FROM track
+        </sql>
+    </statement>
+
+    <statement name="findTrackIdsForSource">
+        <sql>
+            SELECT id AS id FROM track WHERE source = :source
+        </sql>
+    </statement>
+
+    <statement name="getSystemInformation">
+        <sql>
+            SELECT lastupdate AS lastupdate, version AS version, itunes_library_id AS itunes_library_id FROM system_information
+        </sql>
+    </statement>
+
+    <statement name="initializeAllTables">
+        <sql>INSERT INTO system_information (version) VALUES (:version)</sql>
+    </statement>
+
+    <statement name="deleteAllContent">
+        <sql>DELETE FROM playlist</sql>
+        <sql>DELETE FROM album</sql>
+        <sql>DELETE FROM artist</sql>
+        <sql>DELETE FROM track</sql>
+        <sql>DELETE FROM pager</sql>
+    </statement>
+
+    <statement name="insertTrack">
+        <sql>
+            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix)
+            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix)
+        </sql>
+    </statement>
+
+    <statement name="updateTrack">
+        <sql>
+            UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
+                             file = :file, protected = :protected, video = :video, genre = :genre, suffix = :suffix
+            WHERE id = :id
+        </sql>
+    </statement>
+
+    <statement name="prepareForUpdate">
+        <sql>DELETE FROM playlist WHERE type IN (:itunes, :m3ufile)</sql>
+        <sql>DELETE FROM album</sql>
+        <sql>DELETE FROM artist</sql>
+        <sql>DELETE FROM genre</sql>
+        <sql>DELETE FROM pager</sql>
+    </statement>
+
+    <statement name="insertPlaylist">
+        <sql>INSERT INTO playlist (id, name, type, track_count) VALUES (:id, :name, :type, 0)</sql>
+        <sql loop="track_id">INSERT INTO link_track_playlist (index, playlist_id, track_id) VALUES (:loopindex_track_id, :id, :track_id)</sql>
+        <sql>UPDATE playlist SET track_count = (SELECT COUNT(*) FROM link_track_playlist WHERE playlist_id = :id)</sql>
+    </statement>
+
+    <statement name="updatePlaylist">
+        <sql>UPDATE playlist SET name = :name WHERE id = :id</sql>
+        <sql>DELETE FROM link_track_playlist WHERE playlist_id = :id</sql>
+        <sql loop="track_id">INSERT INTO link_track_playlist (index, playlist_id, track_id) VALUES (:loopindex_track_id, :id, :track_id)</sql>
+        <sql>UPDATE playlist SET track_count = (SELECT COUNT(*) FROM link_track_playlist WHERE playlist_id = :id)</sql>
+    </statement>
+
+    <statement name="nextPlaylistId">
+        <sql>SELECT TOP 1 NEXT VALUE FOR playlist_id_sequence AS id FROM system_information</sql>
+    </statement>
+
+    <statement name="updateHelpTables">
+        <sql>
+            INSERT INTO album (name, first_char, track_count, artist_count)
+            SELECT DISTINCT(album), LOWER(SUBSTR(album, 1, 1)), COUNT(id), COUNT(DISTINCT(artist)) FROM track GROUP BY album
+        </sql>
+        <sql>
+            INSERT INTO artist (name, first_char, track_count, album_count)
+            SELECT DISTINCT(artist), LOWER(SUBSTR(artist, 1, 1)), COUNT(id), COUNT(DISTINCT(album)) FROM track GROUP BY artist
+        </sql>
+        <sql loop="mapping">UPDATE album SET artist = :mapping_value WHERE name = :mapping_key</sql>
+        <sql>
+            INSERT INTO genre (name, first_char, track_count, album_count, artist_count)
+            SELECT DISTINCT(genre), LOWER(SUBSTR(genre, 1, 1)), COUNT(id), COUNT(DISTINCT(album)), COUNT(DISTINCT(artist)) FROM track WHERE genre IS NOT NULL GROUP BY genre
         </sql>
     </statement>
 

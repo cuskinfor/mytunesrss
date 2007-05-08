@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 
 import java.sql.*;
@@ -17,9 +18,7 @@ public class GetSystemInformationQuery extends DataStoreQuery<SystemInformation>
 
     public SystemInformation execute(Connection connection) {
         try {
-            PreparedStatement statement = connection.prepareStatement(
-                    "SELECT lastupdate AS lastupdate, version AS version, itunes_library_id AS itunes_library_id FROM system_information");
-            ResultSet resultSet = statement.executeQuery();
+            ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "getSystemInformation").executeQuery();
             if (resultSet.next()) {
                 SystemInformation systemInformation = new SystemInformation();
                 systemInformation.setLastUpdate(resultSet.getLong("lastupdate"));

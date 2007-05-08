@@ -29,23 +29,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
     private boolean myProtected;
     private boolean myVideo;
     private String myGenre;
-    private PreparedStatement myStatement;
-    private static final String SQL =
-            "UPDATE track SET name = ?, album = ?, artist = ?, time = ?, track_number = ?, file = ?, protected = ?, video = ?, genre = ?, suffix = ? WHERE id = ?";
-
-    public UpdateTrackStatement() {
-        // intentionally left blank
-    }
-
-    public UpdateTrackStatement(DataStoreSession storeSession) {
-        try {
-            myStatement = storeSession.prepare(UpdateTrackStatement.SQL);
-        } catch (SQLException e) {
-            if (UpdateTrackStatement.LOG.isErrorEnabled()) {
-                UpdateTrackStatement.LOG.error("Could not prepare statement, trying again during execution.", e);
-            }
-        }
-    }
+    private SmartStatement myStatement;
 
     public void setAlbum(String album) {
         myAlbum = album;
@@ -87,23 +71,25 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
         myGenre = genre;
     }
 
-    public void execute(Connection connection) throws SQLException {
+    public synchronized void execute(Connection connection) throws SQLException {
         try {
             myArtist = dropWordsFromArtist(myArtist);
-            PreparedStatement statement = myStatement != null ? myStatement : connection.prepareStatement(UpdateTrackStatement.SQL);
-            statement.clearParameters();
-            statement.setString(1, StringUtils.isNotEmpty(myName) ? myName : UpdateTrackStatement.UNKNOWN);
-            statement.setString(2, StringUtils.isNotEmpty(myAlbum) ? myAlbum : UpdateTrackStatement.UNKNOWN);
-            statement.setString(3, StringUtils.isNotEmpty(myArtist) ? myArtist : UpdateTrackStatement.UNKNOWN);
-            statement.setInt(4, myTime);
-            statement.setInt(5, myTrackNumber);
-            statement.setString(6, myFileName);
-            statement.setString(7, myId);
-            statement.setBoolean(8, myProtected);
-            statement.setBoolean(9, myVideo);
-            statement.setString(10, myGenre);
-            statement.setString(11, FileSupportUtils.getFileSuffix(myFileName));
-            statement.executeUpdate();
+            if (myStatement == null) {
+                myStatement = MyTunesRssUtils.createStatement(connection, "updateTrack");
+            }
+            myStatement.clearParameters();
+            myStatement.setString("name", StringUtils.isNotEmpty(myName) ? myName : UpdateTrackStatement.UNKNOWN);
+            myStatement.setString("album", StringUtils.isNotEmpty(myAlbum) ? myAlbum : UpdateTrackStatement.UNKNOWN);
+            myStatement.setString("artist", StringUtils.isNotEmpty(myArtist) ? myArtist : UpdateTrackStatement.UNKNOWN);
+            myStatement.setInt("time", myTime);
+            myStatement.setInt("track_number", myTrackNumber);
+            myStatement.setString("file", myFileName);
+            myStatement.setString("id", myId);
+            myStatement.setBoolean("protected", myProtected);
+            myStatement.setBoolean("video", myVideo);
+            myStatement.setString("genre", myGenre);
+            myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
+            myStatement.execute();
         } catch (SQLException e) {
             if (UpdateTrackStatement.LOG.isErrorEnabled()) {
                 UpdateTrackStatement.LOG.error(String.format("Could not update track with ID \"%s\" in database.", myId), e);

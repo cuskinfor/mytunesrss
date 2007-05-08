@@ -24,10 +24,7 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
         MyTunesRss.STORE.init();
         MyTunesRss.STORE.executeQuery(new DataStoreQuery<Boolean>() {
             public Boolean execute(Connection connection) throws SQLException {
-                connection.createStatement().execute("SET LOG 0");
-                connection.createStatement().execute("SET DEFAULT_LOCK_TIMEOUT 5000");
-                ResultSet resultSet = connection.createStatement().executeQuery(
-                        "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'PUBLIC' AND table_name = 'TRACK'");
+                ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "initialize").executeQuery();
                 if (resultSet.next() && resultSet.getInt(1) == 1) {
                     myExistent = true;
                     return Boolean.TRUE;

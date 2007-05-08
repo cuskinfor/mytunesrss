@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.*;
 import org.apache.commons.lang.*;
 
 import java.sql.*;
@@ -17,15 +18,9 @@ public class SaveMyTunesPlaylistStatement extends SavePlaylistStatement {
         setType(PlaylistType.MyTunes);
     }
 
-    public SaveMyTunesPlaylistStatement(DataStoreSession storeSession) throws SQLException {
-        super(storeSession);
-        setType(PlaylistType.MyTunes);
-    }
-
     public void execute(Connection connection) throws SQLException {
         if (StringUtils.isEmpty(myId)) {
-            ResultSet resultSet = connection.createStatement().executeQuery(
-                    "SELECT TOP 1 NEXT VALUE FOR playlist_id_sequence AS id FROM system_information");
+            ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "nextPlaylistId").executeQuery();
             if (resultSet.next()) {
                 setId("MyTunesRSS" + resultSet.getInt("ID"));
             }
