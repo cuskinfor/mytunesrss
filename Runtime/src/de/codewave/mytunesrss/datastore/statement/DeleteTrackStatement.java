@@ -15,7 +15,7 @@ import java.sql.*;
 public class DeleteTrackStatement implements DataStoreStatement {
     private String myId;
 
-    public DeleteTrackStatement(String id) {
+    public void setId(String id) {
         myId = id;
     }
 

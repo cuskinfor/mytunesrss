@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.*;
 import org.apache.commons.logging.*;
@@ -17,7 +18,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.itunes.ItunesLoaderr
  */
-public class ItunesLoader {
+public class ItunesLoader extends DataLoader {
     private static final Log LOG = LogFactory.getLog(ItunesLoader.class);
 
     static File getFileForLocation(String location) {
@@ -60,12 +61,7 @@ public class ItunesLoader {
             databaseIds.removeAll(trackListener.getExistingIds());
         }
         if (!databaseIds.isEmpty()) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Removing " + databaseIds.size() + " obsolete iTunes tracks.");
-            }
-            for (String id : databaseIds) {
-                storeSession.executeStatement(new DeleteTrackStatement(id));
-            }
+            removeObsoleteTracks(storeSession, databaseIds);
         }
         if (trackListener != null && LOG.isDebugEnabled()) {
             LOG.info(trackListener.getExistingIds().size() + " iTunes tracks in the database.");

@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.DeleteTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.FindTrackIdsQuery;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
+import de.codewave.mytunesrss.datastore.*;
 import de.codewave.utils.io.FileProcessor;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.DataStoreSession;
@@ -19,7 +20,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.filesystem.FileSystemLoaderr
  */
-public class FileSystemLoader {
+public class FileSystemLoader extends DataLoader {
     private static final Log LOG = LogFactory.getLog(FileSystemLoader.class);
 
     public static void loadFromFileSystem(List<File> baseDirs, DataStoreSession storeSession, long lastUpdateTime)
@@ -54,12 +55,7 @@ public class FileSystemLoader {
             }
         }
         if (!databaseIds.isEmpty()) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Removing " + databaseIds.size() + " obsolete file system tracks.");
-            }
-            for (String id : databaseIds) {
-                storeSession.executeStatement(new DeleteTrackStatement(id));
-            }
+            removeObsoleteTracks(storeSession, databaseIds);
         }
         if (fileProcessor != null && LOG.isDebugEnabled()) {
             LOG.info(trackCount + " file system tracks in the database.");
