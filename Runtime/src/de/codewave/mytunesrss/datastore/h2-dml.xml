@@ -54,6 +54,52 @@
         </sql>
     </statement>
 
+    <statement name="findRandomTracks">
+        <sql>
+            SELECT LIMIT 0 :maxCount RAND() AS rnd, {trackColumns} FROM track t ORDER BY rnd
+        </sql>
+    </statement>
+
+    <statement name="findPlaylistTracksOrderedByIndex">
+        <sql>
+            <![CDATA[
+            SELECT ltp.index AS index, {trackColumns}
+            FROM link_track_playlist ltp, track t
+            WHERE t.id = ltp.track_id
+            AND ltp.playlist_id = :id
+            AND (:firstIndex == -1 OR ltp.index >= :firstIndex)
+            AND (:lastIndex == -1 OR ltp.index <= :lastIndex)
+            ORDER BY index
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findPlaylistTracksOrderedByAlbum">
+        <sql>
+            <![CDATA[
+            SELECT {trackColumns}
+            FROM link_track_playlist ltp, track t
+            WHERE (:id IS NULL OR (t.id = ltp.track_id AND ltp.playlist_id = :id))
+            AND (:firstIndex == -1 OR ltp.index >= :firstIndex)
+            AND (:lastIndex == -1 OR ltp.index <= :lastIndex)
+            ORDER BY album, track_number, name
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findPlaylistTracksOrderedByArtist">
+        <sql>
+            <![CDATA[
+            SELECT {trackColumns}
+            FROM link_track_playlist ltp, track t
+            WHERE (:id IS NULL OR (t.id = ltp.track_id AND ltp.playlist_id = :id))
+            AND (:firstIndex == -1 OR ltp.index >= :firstIndex)
+            AND (:lastIndex == -1 OR ltp.index <= :lastIndex)
+            ORDER BY artist, album, track_number, name
+            ]]>
+        </sql>
+    </statement>
+
     <statement name="insertPagerPage">
         <sql>
             INSERT INTO pager (type, index, condition, value, content_count)
@@ -92,5 +138,10 @@
         OR (:index = 7 AND first_char >= 't' AND first_char < 'w')
         OR (:index = 8 AND first_char >= 'w' AND first_char <= 'z')
         ]]>
+    </fragment>
+
+    <fragment name="trackColumns">
+      t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file,
+      t.protected AS protected, t.video AS video, t.genre AS genre
     </fragment>
 </statements>

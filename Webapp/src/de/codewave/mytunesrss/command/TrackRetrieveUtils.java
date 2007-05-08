@@ -18,10 +18,6 @@ import java.util.*;
  * de.codewave.mytunesrss.command.TrackRetrieveUtils
  */
 public class TrackRetrieveUtils {
-    public static enum SortOrder {
-        Album(), Artist();
-    }
-
     private static String getRequestParameter(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);
         return StringUtils.isNotEmpty(value) ? value : defaultValue;
@@ -62,12 +58,12 @@ public class TrackRetrieveUtils {
         decodeBase64(artists);
         String genre = MyTunesRssBase64Utils.decodeToString(getRequestParameter(servletRequest, "genre", null));
         String playlistId = getRequestParameter(servletRequest, "playlist", null);
-        String sortOrderName = getRequestParameter(servletRequest, "sortOrder", SortOrder.Album.name());
-        SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);
+        String sortOrderName = getRequestParameter(servletRequest, "sortOrder", FindPlaylistTracksQuery.SortOrder.Album.name());
+        FindPlaylistTracksQuery.SortOrder sortOrderValue = FindPlaylistTracksQuery.SortOrder.valueOf(sortOrderName);
         boolean fullAlbums = getBooleanRequestParameter(servletRequest, "fullAlbums", false);
 
         if (albums != null && albums.length > 0) {
-            return FindTrackQuery.getForAlbum(albums, sortOrderValue == SortOrder.Artist);
+            return FindTrackQuery.getForAlbum(albums, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
         } else if (artists != null && artists.length > 0) {
             if (fullAlbums) {
                 Collection<String> albumNames = new HashSet<String>();
@@ -78,10 +74,10 @@ public class TrackRetrieveUtils {
                         albumNames.add(albumWithArtist.getName());
                     }
                 }
-                return FindTrackQuery.getForAlbum(albumNames.toArray(new String[albumNames.size()]), sortOrderValue == SortOrder
-                        .Artist);
+                return FindTrackQuery.getForAlbum(albumNames.toArray(new String[albumNames.size()]), sortOrderValue == FindPlaylistTracksQuery.SortOrder
+                    .Artist);
             } else {
-                return FindTrackQuery.getForArtist(artists, sortOrderValue == SortOrder.Artist);
+                return FindTrackQuery.getForArtist(artists, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
             }
         } else if (StringUtils.isNotEmpty(genre)) {
             if (fullAlbums) {
@@ -91,16 +87,16 @@ public class TrackRetrieveUtils {
                 for (Album albumWithGenre : albumsWithGenre) {
                     albumNames.add(albumWithGenre.getName());
                 }
-                return FindTrackQuery.getForAlbum(albumNames.toArray(new String[albumNames.size()]), sortOrderValue == SortOrder
-                        .Artist);
+                return FindTrackQuery.getForAlbum(albumNames.toArray(new String[albumNames.size()]), sortOrderValue == FindPlaylistTracksQuery.SortOrder
+                    .Artist);
             } else {
-                return FindTrackQuery.getForGenre(new String[] {genre}, sortOrderValue == SortOrder.Artist);
+                return FindTrackQuery.getForGenre(new String[] {genre}, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
             }
         } else if (StringUtils.isNotEmpty(playlistId)) {
             if (keepPlaylistOrder) {
-                return new FindPlaylistTracksQuery(playlistId);
+                return new FindPlaylistTracksQuery(playlistId, null);
             } else {
-                return new FindPlaylistTracksQuery(playlistId, sortOrderValue == SortOrder.Artist);
+                return new FindPlaylistTracksQuery(playlistId, sortOrderValue);
             }
         }
         return null;

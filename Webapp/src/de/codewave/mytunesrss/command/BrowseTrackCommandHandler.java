@@ -20,12 +20,12 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         String searchTerm = getRequestParameter("searchTerm", null);
-        String sortOrderName = getRequestParameter("sortOrder", TrackRetrieveUtils.SortOrder.Album.name());
-        TrackRetrieveUtils.SortOrder sortOrderValue = TrackRetrieveUtils.SortOrder.valueOf(sortOrderName);
+        String sortOrderName = getRequestParameter("sortOrder", FindPlaylistTracksQuery.SortOrder.Album.name());
+        FindPlaylistTracksQuery.SortOrder sortOrderValue = FindPlaylistTracksQuery.SortOrder.valueOf(sortOrderName);
 
         DataStoreQuery<Collection<Track>> query = null;
         if (StringUtils.isNotEmpty(searchTerm)) {
-            query = FindTrackQuery.getForSearchTerm(searchTerm, sortOrderValue == TrackRetrieveUtils.SortOrder.Artist);
+            query = FindTrackQuery.getForSearchTerm(searchTerm, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
         } else {
             query = TrackRetrieveUtils.getQuery(getRequest(), false);
         }
@@ -57,7 +57,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    private EnhancedTracks getTracks(Collection<Track> tracks, TrackRetrieveUtils.SortOrder sortOrder) {
+    private EnhancedTracks getTracks(Collection<Track> tracks, FindPlaylistTracksQuery.SortOrder sortOrder) {
         EnhancedTracks enhancedTracks = new EnhancedTracks();
         enhancedTracks.setTracks(new ArrayList<EnhancedTrack>(tracks.size()));
         String lastAlbum = getClass().getName();
@@ -69,14 +69,14 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             EnhancedTrack enhancedTrack = new EnhancedTrack(track);
             boolean newAlbum = !lastAlbum.equalsIgnoreCase(track.getAlbum());
             boolean newArtist = !lastArtist.equalsIgnoreCase(track.getArtist());
-            if ((sortOrder == TrackRetrieveUtils.SortOrder.Album && newAlbum) || (sortOrder == TrackRetrieveUtils.SortOrder.Artist && newArtist)) {// new section begins
+            if ((sortOrder == FindPlaylistTracksQuery.SortOrder.Album && newAlbum) || (sortOrder == FindPlaylistTracksQuery.SortOrder.Artist && newArtist)) {// new section begins
                 sectionCount++;
                 enhancedTrack.setNewSection(true);
                 finishSection(sectionTracks, variousPerSection);
                 sectionTracks.clear();
                 variousPerSection = false;
             } else {
-                if ((sortOrder == TrackRetrieveUtils.SortOrder.Album && newArtist) || (sortOrder == TrackRetrieveUtils.SortOrder.Artist && newAlbum)) {
+                if ((sortOrder == FindPlaylistTracksQuery.SortOrder.Album && newArtist) || (sortOrder == FindPlaylistTracksQuery.SortOrder.Artist && newAlbum)) {
                     variousPerSection = true;
                 }
             }

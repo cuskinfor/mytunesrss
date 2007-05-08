@@ -37,7 +37,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             } else if (StringUtils.isNotEmpty(genre)) {
                 tracks = getDataStore().executeQuery(FindTrackQuery.getForGenre(new String[] {genre}, true));
             } else {
-                tracks = getDataStore().executeQuery(new FindPlaylistTracksQuery(playlist));
+                tracks = getDataStore().executeQuery(new FindPlaylistTracksQuery(playlist, null));
             }
             if (MyTunesRss.CONFIG.isLocalTempArchive()) {
                 File tempFile = File.createTempFile("MyTunesRSS_", null);

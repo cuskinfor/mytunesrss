@@ -5,11 +5,13 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.*;
-import org.apache.commons.lang.*;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
@@ -19,59 +21,48 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
     public static final String PSEUDO_ID_ALL_BY_ALBUM = "PlaylistAllByAlbum";
     public static final String PSEUDO_ID_RANDOM = "PlaylistRandom";
 
-    private static final String QUERY_RANDOM =
-            "SELECT LIMIT 0 ? RAND() AS rnd, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video, t.genre AS genre FROM track t ORDER BY rnd";
-    private static final String QUERY_ALL_BY_ALBUM =
-            "SELECT t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video, t.genre AS genre FROM track t ORDER BY album, track_number";
-    private static final String QUERY_ALL_BY_ARTIST =
-            "SELECT t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video, t.genre AS genre FROM track t ORDER BY artist, album, track_number";
-
-    private static final String BASE_SQL =
-            "SELECT ltp.index AS index, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file, t.protected AS protected, t.video AS video, t.genre AS genre FROM link_track_playlist ltp, track t WHERE t.id = ltp.track_id AND ltp.playlist_id = ?";
-    private static final String BASE_SQL_WITH_LIMIT = BASE_SQL + " AND ltp.index >= ? AND ltp.index <= ?";
-
-    private static final String ORDER_PLAYLIST = " ORDER BY index";
-    private static final String ORDER_ALBUM = " ORDER BY album, track_number, name";
-    private static final String ORDER_ARTIST = " ORDER BY artist, album, track_number, name";
-
-    private static final String QUERY_PLAYLIST_ORDER = BASE_SQL + ORDER_PLAYLIST;
-    private static final String QUERY_LIMITED_PLAYLIST_ORDER = BASE_SQL_WITH_LIMIT + ORDER_PLAYLIST;
-    private static final String QUERY_ALBUM_ORDER = BASE_SQL + ORDER_ALBUM;
-    private static final String QUERY_LIMITED_ALBUM_ORDER = BASE_SQL_WITH_LIMIT + ORDER_ALBUM;
-    private static final String QUERY_ARTIST_ORDER = BASE_SQL + ORDER_ARTIST;
-    private static final String QUERY_LIMITED_ARTIST_ORDER = BASE_SQL_WITH_LIMIT + ORDER_ARTIST;
-
-    private FindPlaylistTracksQuery.TrackResultBuilder myBuilder = new FindPlaylistTracksQuery.TrackResultBuilder();
-    private String mySql;
-    private Object[] myParameters;
-    private int myRandomSize;
-
-    public FindPlaylistTracksQuery(String id) {
-        if (PSEUDO_ID_ALL_BY_ALBUM.equals(id)) {
-            mySql = QUERY_ALL_BY_ALBUM;
-        } else if (PSEUDO_ID_ALL_BY_ARTIST.equals(id)) {
-            mySql = QUERY_ALL_BY_ARTIST;
-        } else if (id.startsWith(PSEUDO_ID_RANDOM)) {
-            mySql = QUERY_RANDOM;
-            myParameters = new Integer[] {Integer.parseInt(StringUtils.split(id, "_")[1])};
-        } else {
-            myParameters = StringUtils.split(id, "_");
-            mySql = myParameters.length == 3 ? QUERY_LIMITED_PLAYLIST_ORDER : QUERY_PLAYLIST_ORDER;
-        }
+    public static enum SortOrder {
+        Album(), Artist()
     }
 
-    public FindPlaylistTracksQuery(String id, boolean sortByArtist) {
-        myParameters = StringUtils.split(id, "_");
-        mySql = sortByArtist ? (myParameters.length == 3 ? QUERY_LIMITED_ARTIST_ORDER : QUERY_ARTIST_ORDER) :
-                (myParameters.length == 3 ? QUERY_LIMITED_ALBUM_ORDER : QUERY_ALBUM_ORDER);
+    private String myId;
+    private SortOrder mySortOrder;
+
+    public FindPlaylistTracksQuery(String id, SortOrder sortOrder) {
+      myId = id;
+      mySortOrder = sortOrder;
     }
 
     public Collection<Track> execute(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(mySql);
-        return execute(statement, myBuilder, myParameters);
+      SmartStatement statement;
+      if (PSEUDO_ID_ALL_BY_ALBUM.equals(myId)) {
+          statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByAlbum");;
+          myId = null;
+      } else if (PSEUDO_ID_ALL_BY_ARTIST.equals(myId)) {
+          statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByArtist");;
+          myId = null;
+      } else if (StringUtils.isNotEmpty(myId) && myId.startsWith(PSEUDO_ID_RANDOM)) {
+          statement = MyTunesRssUtils.createStatement(connection, "findRandomTracks");;
+          statement.setInt("maxCount", Integer.parseInt(myId.split("_")[1]));
+      } else if (mySortOrder == SortOrder.Album) {
+          statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByAlbum");
+      } else if (mySortOrder == SortOrder.Artist) {
+          statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByArtist");
+      } else {
+          statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByIndex");
+      }
+      if (StringUtils.isNotEmpty(myId)) {
+          String[] parts = StringUtils.split(myId);
+          statement.setString("id", parts[0]);
+          if (parts.length == 3) {
+              statement.setInt("firstIndex", Integer.parseInt(parts[1]));
+              statement.setInt("lastIndex", Integer.parseInt(parts[2]));
+          }
+      }
+      return execute(statement, new TrackResultBuilder());
     }
 
-    public static class TrackResultBuilder implements ResultBuilder<Track> {
+  public static class TrackResultBuilder implements ResultBuilder<Track> {
         private TrackResultBuilder() {
             // intentionally left blank
         }
