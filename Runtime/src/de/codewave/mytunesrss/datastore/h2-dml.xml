@@ -174,15 +174,15 @@
 
     <statement name="insertPlaylist">
         <sql>INSERT INTO playlist (id, name, type, track_count) VALUES (:id, :name, :type, 0)</sql>
-        <sql loop="track_id">INSERT INTO link_track_playlist (index, playlist_id, track_id) VALUES (:loopindex_track_id, :id, :track_id)</sql>
-        <sql>UPDATE playlist SET track_count = (SELECT COUNT(*) FROM link_track_playlist WHERE playlist_id = :id)</sql>
+        <sql loop="track_id">{createPlaylistTrackLinks}</sql>
+        <sql>{updatePlaylistCount}</sql>
     </statement>
 
     <statement name="updatePlaylist">
         <sql>UPDATE playlist SET name = :name WHERE id = :id</sql>
         <sql>DELETE FROM link_track_playlist WHERE playlist_id = :id</sql>
-        <sql loop="track_id">INSERT INTO link_track_playlist (index, playlist_id, track_id) VALUES (:loopindex_track_id, :id, :track_id)</sql>
-        <sql>UPDATE playlist SET track_count = (SELECT COUNT(*) FROM link_track_playlist WHERE playlist_id = :id)</sql>
+        <sql loop="track_id">{createPlaylistTrackLinks}</sql>
+        <sql>{updatePlaylistCount}</sql>
     </statement>
 
     <statement name="nextPlaylistId">
@@ -221,7 +221,17 @@
     </fragment>
 
     <fragment name="trackColumns">
-      t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file,
-      t.protected AS protected, t.video AS video, t.genre AS genre
+        t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file,
+        t.protected AS protected, t.video AS video, t.genre AS genre
+    </fragment>
+
+    <fragment name="updatePlaylistCount">
+        UPDATE playlist
+        SET track_count = SELECT COUNT(*) FROM link_track_playlist WHERE playlist_id = :id
+        WHERE id = :id
+    </fragment>
+
+    <fragment name="createPlaylistTrackLinks">
+        INSERT INTO link_track_playlist (index, playlist_id, track_id) VALUES (:loopindex_track_id, :id, :track_id)
     </fragment>
 </statements>
