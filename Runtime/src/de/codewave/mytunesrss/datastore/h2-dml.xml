@@ -60,6 +60,12 @@
         </sql>
     </statement>
 
+    <statement name="findAlbumArtistMapping">
+        <sql>
+            SELECT album AS album, artist AS artist FROM track
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
