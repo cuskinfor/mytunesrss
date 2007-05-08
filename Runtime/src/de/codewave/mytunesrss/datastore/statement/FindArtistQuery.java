@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import org.apache.commons.lang.*;
 
 import java.sql.*;
@@ -14,62 +15,25 @@ import java.util.*;
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
  */
 public class FindArtistQuery extends DataStoreQuery<Collection<Artist>> {
-    public static FindArtistQuery getForAlbum(String album) {
-        FindArtistQuery query = new FindArtistQuery();
-        query.myAlbum = album;
-        return query;
-    }
-
-    public static FindArtistQuery getForGenre(String genre) {
-        FindArtistQuery query = new FindArtistQuery();
-        query.myGenre = genre;
-        return query;
-    }
-
-    public static FindArtistQuery getForPagerIndex(int index) {
-        FindArtistQuery query = new FindArtistQuery();
-        query.myIndex = index;
-        return query;
-    }
-
-    public static FindArtistQuery getAll() {
-        return new FindArtistQuery();
-    }
-
     private String myAlbum;
     private String myGenre;
-    private int myIndex = -1;
-    private ArtistResultBuilder myBuilder = new ArtistResultBuilder();
+    private int myIndex;
 
-    private FindArtistQuery() {
-        // intentionally left blank
+    public FindArtistQuery(String album, String genre, int index) {
+        myAlbum = album;
+        myGenre = genre;
+        myIndex = index;
     }
 
     public Collection<Artist> execute(Connection connection) throws SQLException {
-        PreparedStatement statement = null;
-        if (StringUtils.isNotEmpty(myAlbum)) {
-            statement = connection.prepareStatement(
-                    "SELECT name, track_count, album_count FROM artist WHERE name IN ( SELECT DISTINCT(artist) FROM track WHERE album = ? ) ORDER BY name");
-            return execute(statement, myBuilder, myAlbum);
-        } else if (StringUtils.isNotEmpty(myGenre)) {
-            statement = connection.prepareStatement(
-                    "SELECT name, track_count, album_count FROM artist WHERE name IN ( SELECT DISTINCT(artist) FROM track WHERE genre = ? ) ORDER BY name");
-            return execute(statement, myBuilder, myGenre);
-        } else if (myIndex > -1) {
-            ResultSet resultSet = connection.createStatement().executeQuery(
-                    "SELECT condition AS condition FROM pager WHERE type = '" + InsertPageStatement.PagerType.Artist + "' AND index = " + myIndex);
-            resultSet.next();
-            statement = connection.prepareStatement(
-                    "SELECT name, track_count, album_count FROM artist WHERE " + resultSet.getString("CONDITION") + " ORDER BY name");
-            return execute(statement, myBuilder);
-        } else {
-            statement = connection.prepareStatement("SELECT name, track_count, album_count FROM artist ORDER BY name");
-            return execute(statement, myBuilder);
-        }
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findArtists");
+        statement.setString("album", myAlbum);
+        statement.setString("genre", myGenre);
+        statement.setInt("index", myIndex);
+        return execute(statement, new ArtistResultBuilder());
     }
 
     public static class ArtistResultBuilder implements ResultBuilder<Artist> {
-
         private ArtistResultBuilder() {
             // intentionally left blank
         }

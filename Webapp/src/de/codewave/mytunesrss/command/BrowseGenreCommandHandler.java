@@ -26,7 +26,7 @@ public class BrowseGenreCommandHandler extends MyTunesRssCommandHandler {
         if (StringUtils.isNotEmpty(page)) {
             genres = getDataStore().executeQuery(new FindGenreQuery(Integer.parseInt(page)));
         } else {
-            genres = getDataStore().executeQuery(new FindGenreQuery());
+            genres = getDataStore().executeQuery(new FindGenreQuery(-1));
         }
         int pageSize = getWebConfig().getEffectivePageSize();
         if (pageSize > 0 && genres.size() > pageSize) {

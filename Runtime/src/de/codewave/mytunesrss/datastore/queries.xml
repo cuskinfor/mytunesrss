@@ -15,6 +15,32 @@
         </sql>
     </statement>
 
+    <statement name="findArtists">
+        <sql>
+            <![CDATA[
+            SELECT name AS name, track_count AS track_count, album_count AS album_count
+            FROM artist
+            WHERE (:album IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
+            OR (:album IS NOT NULL AND name IN (SELECT DISTINCT(artist) FROM track WHERE album = :album))
+            OR (:genre IS NOT NULL AND name IN (SELECT DISTINCT(artist) FROM track WHERE genre = :genre))
+            OR {letterRegionByIndex}
+            ORDER BY name
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findGenres">
+        <sql>
+            <![CDATA[
+            SELECT name AS name, track_count AS track_count, artist_count AS artist_count, album_count AS album_count
+            FROM genre
+            WHERE (:index < 0 OR :index > 8)
+            OR {letterRegionByIndex}
+            ORDER BY name
+            ]]>
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[

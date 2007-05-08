@@ -20,19 +20,9 @@ public class FindAlbumQuery extends DataStoreQuery<Collection<Album>> {
     private String myGenre;
     private int myIndex;
 
-    public FindAlbumQuery() {
-        // intentionally left blank
-    }
-
-    public void setArtist(String artist) {
+    public FindAlbumQuery(String artist, String genre, int index) {
         myArtist = artist;
-    }
-
-    public void setGenre(String genre) {
         myGenre = genre;
-    }
-
-    public void setIndex(int index) {
         myIndex = index;
     }
 

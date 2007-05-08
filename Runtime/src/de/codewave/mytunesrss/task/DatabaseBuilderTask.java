@@ -169,8 +169,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
     private void insertAlbumPage(DataStoreSession storeSession, final int index, String condition, String value) throws SQLException {
         storeSession.executeStatement(new InsertPageStatement(InsertPageStatement.PagerType.Album, index, condition, value, 0));
-        FindAlbumQuery findAlbumQuery = new FindAlbumQuery();
-        findAlbumQuery.setIndex(index);
+        FindAlbumQuery findAlbumQuery = new FindAlbumQuery(null, null, index);
         final int count = storeSession.executeQuery(findAlbumQuery).size();
         storeSession.executeStatement(new DataStoreStatement() {
             public void execute(Connection connection) throws SQLException {
@@ -197,7 +196,8 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
     private void insertArtistPage(DataStoreSession storeSession, final int index, String condition, String value) throws SQLException {
         storeSession.executeStatement(new InsertPageStatement(InsertPageStatement.PagerType.Artist, index, condition, value, 0));
-        final int count = storeSession.executeQuery(FindArtistQuery.getForPagerIndex(index)).size();
+        FindArtistQuery findArtistQuery = new FindArtistQuery(null, null, index);
+        final int count = storeSession.executeQuery(findArtistQuery).size();
         storeSession.executeStatement(new DataStoreStatement() {
             public void execute(Connection connection) throws SQLException {
                 PreparedStatement update = connection.prepareStatement("UPDATE pager SET content_count = ? WHERE index = ? AND type = ?");
