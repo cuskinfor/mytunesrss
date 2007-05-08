@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 
 import java.sql.*;
 import java.util.*;
@@ -13,28 +14,19 @@ import java.util.*;
  * de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery
  */
 public class FindPlaylistQuery extends DataStoreQuery<Collection<Playlist>> {
-    private PlaylistResultBuilder myBuilder = new PlaylistResultBuilder();
-    private Object[] myParameters;
-    private String mySql;
+    private String myId;
+    private PlaylistType myType;
 
-    public FindPlaylistQuery() {
-        mySql = "SELECT id AS id, name AS name, type AS type, track_count AS track_count FROM playlist WHERE track_count > 0 ORDER BY name";
-    }
-
-    public FindPlaylistQuery(PlaylistType type) {
-        mySql =
-                "SELECT id AS id, name AS name, type AS type, track_count AS track_count FROM playlist WHERE track_count > 0 AND type = ? ORDER BY name";
-        myParameters = new Object[] {type.name()};
-    }
-
-    public FindPlaylistQuery(String playlistId) {
-        mySql = "SELECT id AS id, name AS name, type AS type, track_count AS track_count FROM playlist WHERE id = ?";
-        myParameters = new Object[] {playlistId};
+    public FindPlaylistQuery(PlaylistType type, String id) {
+        myType = type;
+        myId = id;
     }
 
     public Collection<Playlist> execute(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(mySql);
-        return execute(statement, myBuilder, myParameters);
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findPlaylists");
+        statement.setString("type", myType != null ? myType.name() : null);
+        statement.setString("id", myId);
+        return execute(statement, new PlaylistResultBuilder());
     }
 
     public static class PlaylistResultBuilder implements ResultBuilder<Playlist> {

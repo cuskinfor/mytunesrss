@@ -41,6 +41,19 @@
         </sql>
     </statement>
 
+    <statement name="findPlaylists">
+        <sql>
+            <![CDATA[
+            SELECT id AS id, name AS name, type AS type, track_count AS track_count
+            FROM playlist
+            WHERE (:type IS NULL AND :id IS NULL AND track_count > 0)
+            OR (:type IS NOT NULL AND track_count > 0 AND type = :type)
+            OR (:id IS NOT NULL AND id = :id)
+            ORDER BY name
+            ]]>
+        </sql>
+    </statement>
+
     <statement name="insertPagerPage">
         <sql>
             INSERT INTO pager (type, index, condition, value, content_count)
