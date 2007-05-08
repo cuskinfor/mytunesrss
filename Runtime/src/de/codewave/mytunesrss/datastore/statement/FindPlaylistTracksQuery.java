@@ -4,14 +4,13 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.sql.*;
-import de.codewave.mytunesrss.MyTunesRssUtils;
+import org.apache.commons.lang.*;
 
 import java.io.*;
 import java.sql.*;
 import java.util.*;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
@@ -29,40 +28,44 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
     private SortOrder mySortOrder;
 
     public FindPlaylistTracksQuery(String id, SortOrder sortOrder) {
-      myId = id;
-      mySortOrder = sortOrder;
+        myId = id;
+        mySortOrder = sortOrder;
     }
 
     public Collection<Track> execute(Connection connection) throws SQLException {
-      SmartStatement statement;
-      if (PSEUDO_ID_ALL_BY_ALBUM.equals(myId)) {
-          statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByAlbum");;
-          myId = null;
-      } else if (PSEUDO_ID_ALL_BY_ARTIST.equals(myId)) {
-          statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByArtist");;
-          myId = null;
-      } else if (StringUtils.isNotEmpty(myId) && myId.startsWith(PSEUDO_ID_RANDOM)) {
-          statement = MyTunesRssUtils.createStatement(connection, "findRandomTracks");;
-          statement.setInt("maxCount", Integer.parseInt(myId.split("_")[1]));
-      } else if (mySortOrder == SortOrder.Album) {
-          statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByAlbum");
-      } else if (mySortOrder == SortOrder.Artist) {
-          statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByArtist");
-      } else {
-          statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByIndex");
-      }
-      if (StringUtils.isNotEmpty(myId)) {
-          String[] parts = StringUtils.split(myId);
-          statement.setString("id", parts[0]);
-          if (parts.length == 3) {
-              statement.setInt("firstIndex", Integer.parseInt(parts[1]));
-              statement.setInt("lastIndex", Integer.parseInt(parts[2]));
-          }
-      }
-      return execute(statement, new TrackResultBuilder());
+        SmartStatement statement;
+        if (PSEUDO_ID_ALL_BY_ALBUM.equals(myId)) {
+            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByAlbum");
+            ;
+            myId = null;
+        } else if (PSEUDO_ID_ALL_BY_ARTIST.equals(myId)) {
+            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByArtist");
+            ;
+            myId = null;
+        } else if (StringUtils.isNotEmpty(myId) && myId.startsWith(PSEUDO_ID_RANDOM)) {
+            statement = MyTunesRssUtils.createStatement(connection, "findRandomTracks");
+            ;
+            statement.setInt("maxCount", Integer.parseInt(myId.split("_")[1]));
+            myId = null;
+        } else if (mySortOrder == SortOrder.Album) {
+            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByAlbum");
+        } else if (mySortOrder == SortOrder.Artist) {
+            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByArtist");
+        } else {
+            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByIndex");
+        }
+        if (StringUtils.isNotEmpty(myId)) {
+            String[] parts = StringUtils.split(myId);
+            statement.setString("id", parts[0]);
+            if (parts.length == 3) {
+                statement.setInt("firstIndex", Integer.parseInt(parts[1]));
+                statement.setInt("lastIndex", Integer.parseInt(parts[2]));
+            }
+        }
+        return execute(statement, new TrackResultBuilder());
     }
 
-  public static class TrackResultBuilder implements ResultBuilder<Track> {
+    public static class TrackResultBuilder implements ResultBuilder<Track> {
         private TrackResultBuilder() {
             // intentionally left blank
         }

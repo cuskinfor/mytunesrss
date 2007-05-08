@@ -61,6 +61,9 @@
     </statement>
 
     <statement name="findPlaylistTracksOrderedByIndex">
+        <default name="id"/>
+        <default name="firstIndex" value="-1" type="java.lang.Integer"/>
+        <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
             SELECT ltp.index AS index, {trackColumns}
@@ -75,6 +78,9 @@
     </statement>
 
     <statement name="findPlaylistTracksOrderedByAlbum">
+        <default name="id"/>
+        <default name="firstIndex" value="-1" type="java.lang.Integer"/>
+        <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
             SELECT {trackColumns}
@@ -88,6 +94,9 @@
     </statement>
 
     <statement name="findPlaylistTracksOrderedByArtist">
+        <default name="id"/>
+        <default name="firstIndex" value="-1" type="java.lang.Integer"/>
+        <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
             SELECT {trackColumns}
