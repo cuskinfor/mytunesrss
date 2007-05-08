@@ -64,9 +64,18 @@ public class ItunesLoader {
                 LOG.info("Removing " + databaseIds.size() + " obsolete iTunes tracks.");
             }
             DeleteTrackStatement deleteTrackStatement = new DeleteTrackStatement(storeSession);
+            int count = 0;
             for (String id : databaseIds) {
                 deleteTrackStatement.setId(id);
                 storeSession.executeStatement(deleteTrackStatement);
+                count++;
+                if (count == 5000) {
+                    count = 0;
+                    storeSession.commitAndContinue();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Committing transaction after 5000 deleted tracks.");
+                    }
+                }
             }
         }
         if (trackListener != null && LOG.isDebugEnabled()) {
