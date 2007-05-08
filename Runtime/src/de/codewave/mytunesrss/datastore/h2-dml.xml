@@ -48,6 +48,12 @@
         </sql>
     </statement>
 
+    <statement name="deletePlaylistById">
+        <sql>
+            DELETE FROM playlist WHERE id = :id
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
