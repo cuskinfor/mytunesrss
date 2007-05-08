@@ -57,10 +57,8 @@ public class FileSystemLoader {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Removing " + databaseIds.size() + " obsolete file system tracks.");
             }
-            DeleteTrackStatement deleteTrackStatement = new DeleteTrackStatement(storeSession);
             for (String id : databaseIds) {
-                deleteTrackStatement.setId(id);
-                storeSession.executeStatement(deleteTrackStatement);
+                storeSession.executeStatement(new DeleteTrackStatement(id));
             }
         }
         if (fileProcessor != null && LOG.isDebugEnabled()) {

@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 
 import java.sql.*;
 
@@ -12,26 +13,15 @@ import java.sql.*;
  * de.codewave.mytunesrss.datastore.statement.DeleteTrackStatement
  */
 public class DeleteTrackStatement implements DataStoreStatement {
-    private static final String SQL = "DELETE FROM track WHERE id = ?";
-
-    private PreparedStatement myStatement;
     private String myId;
 
-    public DeleteTrackStatement() {
-        // intentionally left blank
-    }
-
-    public DeleteTrackStatement(DataStoreSession session) throws SQLException {
-        myStatement = session.prepare(SQL);
-    }
-
-    public void setId(String id) {
+    public DeleteTrackStatement(String id) {
         myId = id;
     }
 
     public void execute(Connection connection) throws SQLException {
-        PreparedStatement statement = myStatement != null ? myStatement : connection.prepareStatement(SQL);
-        statement.setString(1, myId);
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "deleteTrackById");
+        statement.setString("id", myId);
         statement.execute();
     }
 }

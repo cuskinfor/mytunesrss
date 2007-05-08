@@ -54,6 +54,12 @@
         </sql>
     </statement>
 
+    <statement name="deleteTrackById">
+        <sql>
+            DELETE FROM track WHERE id = :id
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
