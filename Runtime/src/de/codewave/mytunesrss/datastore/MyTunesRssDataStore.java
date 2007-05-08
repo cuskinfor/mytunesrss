@@ -36,10 +36,9 @@ public class MyTunesRssDataStore extends DataStore {
 
     public void init() throws IOException {
         mySmartStatementFactory = SmartStatementFactory.getInstance(
-                JXPathUtils.getContext(getClass().getResource("database-management.xml")),
-                JXPathUtils.getContext(getClass().getResource("migration.xml")),
-                JXPathUtils.getContext(getClass().getResource("inserts-updates.xml")),
-                JXPathUtils.getContext(getClass().getResource("queries.xml")));
+                JXPathUtils.getContext(getClass().getResource("h2-ddl.xml")),
+                JXPathUtils.getContext(getClass().getResource("h2-dml.xml")),
+                JXPathUtils.getContext(getClass().getResource("h2-migration.xml")));
         String filename = DIRNAME + "/MyTunesRSS";
         String pathname = PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
         final String connectString = "jdbc:h2:file:" + pathname + "/" + filename;
