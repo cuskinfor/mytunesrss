@@ -35,16 +35,13 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
     public Collection<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
         if (PSEUDO_ID_ALL_BY_ALBUM.equals(myId)) {
-            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByAlbum");
-            ;
+            statement = MyTunesRssUtils.createStatement(connection, "findAllTracksOrderedByAlbum");
             myId = null;
         } else if (PSEUDO_ID_ALL_BY_ARTIST.equals(myId)) {
-            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByArtist");
-            ;
+            statement = MyTunesRssUtils.createStatement(connection, "findAllTracksOrderedByArtist");
             myId = null;
-        } else if (StringUtils.isNotEmpty(myId) && myId.startsWith(PSEUDO_ID_RANDOM)) {
+        } else if (myId.startsWith(PSEUDO_ID_RANDOM)) {
             statement = MyTunesRssUtils.createStatement(connection, "findRandomTracks");
-            ;
             statement.setInt("maxCount", Integer.parseInt(myId.split("_")[1]));
             myId = null;
         } else if (mySortOrder == SortOrder.Album) {
@@ -54,13 +51,11 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
         } else {
             statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByIndex");
         }
-        if (StringUtils.isNotEmpty(myId)) {
-            String[] parts = StringUtils.split(myId);
-            statement.setString("id", parts[0]);
-            if (parts.length == 3) {
-                statement.setInt("firstIndex", Integer.parseInt(parts[1]));
-                statement.setInt("lastIndex", Integer.parseInt(parts[2]));
-            }
+        String[] parts = StringUtils.split(myId);
+        statement.setString("id", parts[0]);
+        if (parts.length == 3) {
+            statement.setInt("firstIndex", Integer.parseInt(parts[1]));
+            statement.setInt("lastIndex", Integer.parseInt(parts[2]));
         }
         return execute(statement, new TrackResultBuilder());
     }

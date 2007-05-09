@@ -280,7 +280,7 @@
   <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="Standard" type="Application" factoryName="Application" enabled="false" merge="false">
       <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
-      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1" />
+      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1 -agentlib:yjpagent" />
       <option name="PROGRAM_PARAMETERS" value="-debug" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/distribution" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -288,9 +288,36 @@
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <module name="Runtime" />
       <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="52072" />
+        <option name="DEBUG_PORT" value="53945" />
         <option name="TRANSPORT" value="0" />
         <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Profile ">
+        <option name="myExternalizedOptions" value="&#10;force-jvmti=true&#10;snapshots-dir=&#10;startup=66&#10;" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method>
+        <option name="Make" value="false" />
+      </method>
+    </configuration>
+    <configuration default="false" name="Englisch" type="Application" factoryName="Application" enabled="false" merge="false">
+      <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
+      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1 -Duser.language=en" />
+      <option name="PROGRAM_PARAMETERS" value="-debug" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/distribution" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <module name="Runtime" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="52882" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Profile ">
+        <option name="myExternalizedOptions" value="&#10;snapshots-dir=&#10;" />
       </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
@@ -301,7 +328,7 @@
     </configuration>
     <configuration default="false" name="Headless" type="Application" factoryName="Application" enabled="false" merge="false">
       <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
-      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1" />
+      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1 -Dcom.sun.management.jmxremote" />
       <option name="PROGRAM_PARAMETERS" value="-debug -headless" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/distribution" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -309,9 +336,12 @@
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <module name="Runtime" />
       <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="38008" />
+        <option name="DEBUG_PORT" value="55758" />
         <option name="TRANSPORT" value="0" />
         <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Profile ">
+        <option name="myExternalizedOptions" value="&#10;snapshots-dir=&#10;" />
       </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
@@ -343,30 +373,6 @@
       <method>
         <option name="Make" value="false" />
         <option name="Run ant target" value="false" />
-      </method>
-    </configuration>
-    <configuration default="false" name="Englisch" type="Application" factoryName="Application" enabled="false" merge="false">
-      <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
-      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1 -Duser.language=en" />
-      <option name="PROGRAM_PARAMETERS" value="-debug" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/distribution" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <module name="Runtime" />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="52882" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Profile ">
-        <option name="myExternalizedOptions" value="&#10;snapshots-dir=&#10;" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="false" />
       </method>
     </configuration>
   </component>
