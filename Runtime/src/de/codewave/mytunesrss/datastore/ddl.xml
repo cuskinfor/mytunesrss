@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <statements>
-    <statement name="createAllTables">
-        <sql>SET DATABASE COLLATION en_US</sql>
+
+        <statement name="createAllTables">
         <sql>
-            CREATE CACHED TABLE track (
+            CREATE {cached_table_prefix} TABLE track (
                 id VARCHAR(2000) NOT NULL,
                 name VARCHAR(255) NOT NULL,
-                artist VARCHAR_IGNORECASE(255) NOT NULL,
-                album VARCHAR_IGNORECASE(255) NOT NULL,
+                artist {datatype_varchar_ignorecase}(255) NOT NULL,
+                album {datatype_varchar_ignorecase}(255) NOT NULL,
                 time INTEGER,
                 track_number INTEGER,
                 file VARCHAR(1024) NOT NULL,
-                suffix VARCHAR_IGNORECASE(10) NOT NULL,
+                suffix {datatype_varchar_ignorecase}(10) NOT NULL,
                 protected BOOLEAN,
-                video BOOLEAN,
+                video {datatype_boolean},
                 source VARCHAR(20),
                 genre VARCHAR(255),
                 UNIQUE (id)
             )
         </sql>
         <sql>
-            CREATE CACHED TABLE playlist (
+            CREATE {cached_table_prefix} TABLE playlist (
                 id VARCHAR(20) NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 type VARCHAR(20) NOT NULL,
@@ -30,7 +30,7 @@
             )
         </sql>
         <sql>
-            CREATE CACHED TABLE link_track_playlist (
+            CREATE {cached_table_prefix} TABLE link_track_playlist (
                 index INTEGER,
                 track_id VARCHAR(2000) NOT NULL,
                 playlist_id VARCHAR(20) NOT NULL,
@@ -39,15 +39,15 @@
             )
         </sql>
         <sql>
-            CREATE CACHED TABLE system_information (
+            CREATE {cached_table_prefix} TABLE system_information (
                 lastupdate BIGINT,
                 version VARCHAR(20) NOT NULL,
                 itunes_library_id VARCHAR(20)
             )
         </sql>
         <sql>
-            CREATE CACHED TABLE album (
-                name VARCHAR_IGNORECASE(255) NOT NULL,
+            CREATE {cached_table_prefix} TABLE album (
+                name {datatype_varchar_ignorecase}(255) NOT NULL,
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 artist_count INTEGER,
@@ -55,16 +55,16 @@
             )
         </sql>
         <sql>
-            CREATE CACHED TABLE artist (
-                name VARCHAR_IGNORECASE(255) NOT NULL,
+            CREATE {cached_table_prefix} TABLE artist (
+                name {datatype_varchar_ignorecase}(255) NOT NULL,
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 album_count INTEGER
             )
         </sql>
         <sql>
-            CREATE CACHED TABLE genre (
-                name VARCHAR_IGNORECASE(255) NOT NULL,
+            CREATE {cached_table_prefix} TABLE genre (
+                name {datatype_varchar_ignorecase}(255) NOT NULL,
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 album_count INTEGER,
@@ -72,7 +72,7 @@
             )
         </sql>
         <sql>
-            CREATE CACHED TABLE pager (
+            CREATE {cached_table_prefix} TABLE pager (
                 type VARCHAR(20) NOT NULL,
                 index INTEGER NOT NULL,
                 condition VARCHAR(255) NOT NULL,
@@ -95,12 +95,6 @@
         <sql>CREATE INDEX idx_genre_first ON genre (first_char)</sql>
         <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
         <sql>CREATE SEQUENCE playlist_id_sequence</sql>
-    </statement>
-
-    <statement name="initialize">
-        <sql>SET LOG 0</sql>
-        <sql>SET DEFAULT_LOCK_TIMEOUT 5000</sql>
-        <sql>SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'PUBLIC' AND table_name = 'TRACK'</sql>
     </statement>
 
 </statements>

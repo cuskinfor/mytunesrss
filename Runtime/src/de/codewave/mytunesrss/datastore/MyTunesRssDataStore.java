@@ -8,11 +8,14 @@ import de.codewave.mytunesrss.*;
 import de.codewave.utils.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.*;
+import org.apache.commons.jxpath.*;
+import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.pool.*;
 import org.apache.commons.pool.impl.*;
 
 import java.io.*;
+import java.net.*;
 import java.sql.*;
 
 /**
@@ -24,7 +27,7 @@ public class MyTunesRssDataStore extends DataStore {
 
     static {
         try {
-            Class.forName("org.h2.Driver");
+            Class.forName(System.getProperty("database.driver", "org.h2.Driver"));
         } catch (ClassNotFoundException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not load database driver.", e);
@@ -35,19 +38,18 @@ public class MyTunesRssDataStore extends DataStore {
     private SmartStatementFactory mySmartStatementFactory;
 
     public void init() throws IOException {
-        mySmartStatementFactory = SmartStatementFactory.getInstance(
-                JXPathUtils.getContext(getClass().getResource("h2-ddl.xml")),
-                JXPathUtils.getContext(getClass().getResource("h2-dml.xml")),
-                JXPathUtils.getContext(getClass().getResource("h2-migration.xml")));
+        initSmartStatementFactory();
         String filename = DIRNAME + "/MyTunesRSS";
         String pathname = PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
-        final String connectString = "jdbc:h2:file:" + pathname + "/" + filename;
+        final String connectString = System.getProperty("database.connection", "jdbc:h2:file:" + pathname + "/" + filename);
         setConnectionPool(new GenericObjectPool(new BasePoolableObjectFactory() {
             public Object makeObject() throws Exception {
                 long endTime = System.currentTimeMillis() + 10000;
                 do {
                     try {
-                        return DriverManager.getConnection(connectString, "sa", "");
+                        return DriverManager.getConnection(connectString, System.getProperty("database.user", "sa"), System.getProperty(
+                                "database.password",
+                                ""));
                     } catch (SQLException e1) {
                         if (LOG.isWarnEnabled()) {
                             LOG.warn("Could not get a database connection.");
@@ -60,7 +62,9 @@ public class MyTunesRssDataStore extends DataStore {
                     }
                 } while (System.currentTimeMillis() < endTime);
                 try {
-                    return DriverManager.getConnection(connectString, "sa", "");
+                    return DriverManager.getConnection(connectString, System.getProperty("database.user", "sa"), System.getProperty(
+                            "database.password",
+                            ""));
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not get a database connection.", e);
@@ -78,6 +82,33 @@ public class MyTunesRssDataStore extends DataStore {
                 }
             }
         }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 1, false, false, 10000, 2, 20000, false, 20000));
+    }
+
+    @Override
+    protected void beforeDestroy(Connection connection) throws SQLException {
+        if (System.getProperty("database.connection") == null) {
+            connection.createStatement().execute("SHUTDOWN COMPACT");
+        }
+    }
+
+    private void initSmartStatementFactory() {
+        String databaseType = System.getProperty("database.type", "h2");
+        JXPathContext[] contexts =
+                new JXPathContext[] {JXPathUtils.getContext(getClass().getResource("ddl.xml")), JXPathUtils.getContext(getClass().getResource(
+                        "dml.xml")), JXPathUtils.getContext(getClass().getResource("migration.xml"))};
+        URL url = getClass().getResource("ddl_" + databaseType + ".xml");
+        if (url != null) {
+            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils.getContext(url));
+        }
+        url = getClass().getResource("dml_" + databaseType + ".xml");
+        if (url != null) {
+            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils.getContext(url));
+        }
+        url = getClass().getResource("migration_" + databaseType + ".xml");
+        if (url != null) {
+            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils.getContext(url));
+        }
+        mySmartStatementFactory = SmartStatementFactory.getInstance(contexts);
     }
 
     public SmartStatementFactory getSmartStatementFactory() {

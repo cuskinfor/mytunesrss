@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<statements>
+
+    <statement name="findRandomTracks">
+        <sql>SELECT random() AS rnd, {trackColumns} FROM track t ORDER BY rnd LIMIT :maxCount OFFSET 0</sql>
+    </statement>
+
+    <statement name="nextPlaylistId">
+        <sql>SELECT nextval('playlist_id_sequence') AS id FROM system_information</sql>
+    </statement>
+
+    <!-- reusable sql fragments -->
+    <fragment name="tuneDatabaseAfterHelpTablesUpdate">ANALYZE</fragment>
+
+</statements>
