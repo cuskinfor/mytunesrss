@@ -169,7 +169,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="AppleExtensions" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>

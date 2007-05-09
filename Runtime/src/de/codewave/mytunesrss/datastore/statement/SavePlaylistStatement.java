@@ -52,7 +52,7 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
     }
 
     protected void executeUpdate(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "insertPlaylist");
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updatePlaylist");
         statement.setString("id", myId);
         statement.setString("name", myName);
         statement.setObject("track_id", myTrackIds);

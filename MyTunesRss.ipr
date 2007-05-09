@@ -4,7 +4,7 @@
     <defaultAnt bundledAnt="true" />
     <buildFile url="file://$PROJECT_DIR$/build.xml">
       <additionalClassPath>
-        <entry dir="file://$PROJECT_DIR$/../../.ant/lib" />
+        <entry dir="file://$PROJECT_DIR$/../AntSystem/lib" />
       </additionalClassPath>
       <antReference projectDefault="true" />
       <customJdkName value="" />
@@ -107,101 +107,6 @@
             <option name="myVal" value="100" />
           </server>
         </used_levels>
-        <inspection_tool class="InfiniteLoopStatement" level="WARNING" enabled="false" />
-        <inspection_tool class="TrivialIf" level="WARNING" enabled="false" />
-        <inspection_tool class="EmptyStatementBody" level="WARNING" enabled="false">
-          <option name="m_reportEmptyBlocks" value="false" />
-        </inspection_tool>
-        <inspection_tool class="StringEquality" level="WARNING" enabled="false" />
-        <inspection_tool class="StringToString" level="WARNING" enabled="false" />
-        <inspection_tool class="LiteralAsArgToStringEquals" level="WARNING" enabled="true" />
-        <inspection_tool class="LoopStatementsThatDontLoop" level="WARNING" enabled="false" />
-        <inspection_tool class="ThrowablePrintStackTrace" level="WARNING" enabled="true" />
-        <inspection_tool class="ClassNameDiffersFromFileName" level="WARNING" enabled="true" />
-        <inspection_tool class="MagicNumber" level="WARNING" enabled="true">
-          <option name="m_ignoreInHashCode" value="true" />
-        </inspection_tool>
-        <inspection_tool class="InfiniteRecursion" level="WARNING" enabled="false" />
-        <inspection_tool class="ConstantConditions" level="WARNING" enabled="false">
-          <option name="SUGGEST_NULLABLE_ANNOTATIONS" value="false" />
-        </inspection_tool>
-        <inspection_tool class="MissortedModifiers" level="WARNING" enabled="true">
-          <option name="m_requireAnnotationsFirst" value="true" />
-        </inspection_tool>
-        <inspection_tool class="ThreadDeathRethrown" level="WARNING" enabled="true" />
-        <inspection_tool class="UnnecessaryTemporaryOnConversionFromString" level="WARNING" enabled="false" />
-        <inspection_tool class="ReturnThis" level="WARNING" enabled="true" />
-        <inspection_tool class="UnusedAssignment" level="WARNING" enabled="false">
-          <option name="REPORT_PREFIX_EXPRESSIONS" value="false" />
-          <option name="REPORT_POSTFIX_EXPRESSIONS" value="true" />
-          <option name="REPORT_REDUNDANT_INITIALIZER" value="true" />
-        </inspection_tool>
-        <inspection_tool class="ForCanBeForeach" level="WARNING" enabled="false" />
-        <inspection_tool class="ClassCoupling" level="WARNING" enabled="true">
-          <option name="m_includeJavaClasses" value="false" />
-          <option name="m_includeLibraryClasses" value="false" />
-          <option name="m_limit" value="15" />
-        </inspection_tool>
-        <inspection_tool class="ErrorRethrown" level="WARNING" enabled="true" />
-        <inspection_tool class="FinalizeCallsSuperFinalize" level="WARNING" enabled="false">
-          <option name="m_ignoreForObjectSubclasses" value="false" />
-        </inspection_tool>
-        <inspection_tool class="UnnecessarySemicolon" level="WARNING" enabled="false" />
-        <inspection_tool class="EmptyClass" level="WARNING" enabled="true" />
-        <inspection_tool class="PointlessArithmeticExpression" level="WARNING" enabled="false">
-          <option name="m_ignoreExpressionsContainingConstants" value="false" />
-        </inspection_tool>
-        <inspection_tool class="UnnecessaryTemporaryOnConversionToString" level="WARNING" enabled="false" />
-        <inspection_tool class="UnusedLabel" level="WARNING" enabled="false" />
-        <inspection_tool class="InstanceofThis" level="WARNING" enabled="true" />
-        <inspection_tool class="ThreadDumpStack" level="WARNING" enabled="true" />
-        <inspection_tool class="BooleanConstructor" level="WARNING" enabled="false" />
-        <inspection_tool class="ExtendsObject" level="WARNING" enabled="false" />
-        <inspection_tool class="SystemOutErr" level="WARNING" enabled="true" />
-        <inspection_tool class="UnnecessaryBoxing" level="WARNING" enabled="false" />
-        <inspection_tool class="ReturnFromFinallyBlock" level="WARNING" enabled="false" />
-        <inspection_tool class="CloneCallsSuperClone" level="WARNING" enabled="false" />
-        <inspection_tool class="EmptyTryBlock" level="WARNING" enabled="false" />
-        <inspection_tool class="ManualArrayCopy" level="WARNING" enabled="false" />
-        <inspection_tool class="ClassMayBeInterface" level="WARNING" enabled="true" />
-        <inspection_tool class="ThrowFromFinallyBlock" level="WARNING" enabled="false" />
-        <inspection_tool class="UnusedCatchParameter" level="WARNING" enabled="true">
-          <option name="m_ignoreCatchBlocksWithComments" value="false" />
-          <option name="m_ignoreTestCases" value="false" />
-        </inspection_tool>
-        <inspection_tool class="CloneDeclaresCloneNotSupported" level="WARNING" enabled="false" />
-        <inspection_tool class="StringConstructor" level="WARNING" enabled="false">
-          <option name="ignoreSubstringArguments" value="false" />
-        </inspection_tool>
-        <inspection_tool class="ObsoleteCollection" level="WARNING" enabled="true" />
-        <inspection_tool class="UnnecessaryReturn" level="WARNING" enabled="false" />
-        <inspection_tool class="FinalStaticMethod" level="WARNING" enabled="false" />
-        <inspection_tool class="UnnecessaryUnboxing" level="WARNING" enabled="false" />
-        <inspection_tool class="NoExplicitFinalizeCalls" level="WARNING" enabled="false" />
-        <inspection_tool class="ClassComplexity" level="WARNING" enabled="true">
-          <option name="m_limit" value="80" />
-        </inspection_tool>
-        <inspection_tool class="InstanceofInterfaces" level="WARNING" enabled="true" />
-        <inspection_tool class="FinalPrivateMethod" level="WARNING" enabled="false" />
-        <inspection_tool class="CStyleArrayDeclaration" level="WARNING" enabled="true" />
-        <inspection_tool class="ContinueOrBreakFromFinallyBlock" level="WARNING" enabled="false" />
-        <inspection_tool class="SynchronizeOnNonFinalField" level="WARNING" enabled="false" />
-        <inspection_tool class="InstanceofChain" level="WARNING" enabled="true" />
-        <inspection_tool class="OverlyStrongTypeCast" level="WARNING" enabled="true" />
-        <inspection_tool class="AnonymousClassComplexity" level="WARNING" enabled="true">
-          <option name="m_limit" value="3" />
-        </inspection_tool>
-        <inspection_tool class="ThrowCaughtLocally" level="WARNING" enabled="true">
-          <option name="ignoreRethrownExceptions" value="false" />
-        </inspection_tool>
-        <inspection_tool class="TooBroadCatch" level="WARNING" enabled="true" />
-        <inspection_tool class="IgnoreResultOfCall" level="WARNING" enabled="false">
-          <option name="m_reportAllNonLibraryCalls" value="false" />
-          <option name="callCheckString" value="java.io.InputStream,read,java.io.InputStream,skip,java.lang.StringBuffer,toString,java.lang.StringBuilder,toString,java.lang.String,.*,java.math.BigInteger,.*,java.math.BigDecimal,.*,java.net.InetAddress,.*" />
-        </inspection_tool>
-        <inspection_tool class="JSUnresolvedVariable" level="WARNING" enabled="true" />
-        <inspection_tool class="JSUnresolvedFunction" level="WARNING" enabled="true" />
-        <inspection_tool class="JSUndeclaredVariable" level="WARNING" enabled="true" />
       </profile>
     </profiles>
   </component>
@@ -366,7 +271,6 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AppleExtensions/AppleExtensions.iml" filepath="$PROJECT_DIR$/AppleExtensions/AppleExtensions.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyTunesRSS.iml" filepath="$PROJECT_DIR$/MyTunesRSS.iml" />
       <module fileurl="file://$PROJECT_DIR$/Runtime/Runtime.iml" filepath="$PROJECT_DIR$/Runtime/Runtime.iml" />
       <module fileurl="file://$PROJECT_DIR$/Webapp/Webapp.iml" filepath="$PROJECT_DIR$/Webapp/Webapp.iml" />
@@ -376,7 +280,7 @@
   <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="Standard" type="Application" factoryName="Application" enabled="false" merge="false">
       <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
-      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1 -agentlib:yjpagent" />
+      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1" />
       <option name="PROGRAM_PARAMETERS" value="-debug" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/distribution" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -384,36 +288,9 @@
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <module name="Runtime" />
       <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="53945" />
+        <option name="DEBUG_PORT" value="52072" />
         <option name="TRANSPORT" value="0" />
         <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Profile ">
-        <option name="myExternalizedOptions" value="&#10;force-jvmti=true&#10;snapshots-dir=&#10;startup=66&#10;" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="false" />
-      </method>
-    </configuration>
-    <configuration default="false" name="Englisch" type="Application" factoryName="Application" enabled="false" merge="false">
-      <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
-      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1 -Duser.language=en" />
-      <option name="PROGRAM_PARAMETERS" value="-debug" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/distribution" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <module name="Runtime" />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="52882" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Profile ">
-        <option name="myExternalizedOptions" value="&#10;snapshots-dir=&#10;" />
       </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
@@ -424,7 +301,7 @@
     </configuration>
     <configuration default="false" name="Headless" type="Application" factoryName="Application" enabled="false" merge="false">
       <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
-      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1 -Dcom.sun.management.jmxremote" />
+      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1" />
       <option name="PROGRAM_PARAMETERS" value="-debug -headless" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/distribution" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -432,12 +309,9 @@
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <module name="Runtime" />
       <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="55758" />
+        <option name="DEBUG_PORT" value="38008" />
         <option name="TRANSPORT" value="0" />
         <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Profile ">
-        <option name="myExternalizedOptions" value="&#10;snapshots-dir=&#10;" />
       </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
@@ -469,6 +343,30 @@
       <method>
         <option name="Make" value="false" />
         <option name="Run ant target" value="false" />
+      </method>
+    </configuration>
+    <configuration default="false" name="Englisch" type="Application" factoryName="Application" enabled="false" merge="false">
+      <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
+      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1 -Duser.language=en" />
+      <option name="PROGRAM_PARAMETERS" value="-debug" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/distribution" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <module name="Runtime" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="52882" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Profile ">
+        <option name="myExternalizedOptions" value="&#10;snapshots-dir=&#10;" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method>
+        <option name="Make" value="false" />
       </method>
     </configuration>
   </component>

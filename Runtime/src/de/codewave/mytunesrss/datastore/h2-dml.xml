@@ -109,6 +109,20 @@
         </sql>
     </statement>
 
+    <statement name="findTracks">
+      <sql>
+        {findTracksQuery}
+        ORDER BY album, track_number, name
+      </sql>
+    </statement>
+
+    <statement name="findTracksWithArtistOrder">
+      <sql>
+        {findTracksQuery}
+        ORDER BY artist, album, track_number, name
+      </sql>
+    </statement>
+
     <statement name="insertPagerPage">
         <sql>
             INSERT INTO pager (type, index, condition, value, content_count)
@@ -207,7 +221,7 @@
             INSERT INTO artist (name, first_char, track_count, album_count)
             SELECT DISTINCT(artist), LOWER(SUBSTR(artist, 1, 1)), COUNT(id), COUNT(DISTINCT(album)) FROM track GROUP BY artist
         </sql>
-        <sql loop="mapping">UPDATE album SET artist = :mapping_value WHERE name = :mapping_key</sql>
+        <sql loop="mapping">UPDATE album SET artist = :loopitem_mapping_value WHERE name = :loopitem_mapping_key</sql>
         <sql>
             INSERT INTO genre (name, first_char, track_count, album_count, artist_count)
             SELECT DISTINCT(genre), LOWER(SUBSTR(genre, 1, 1)), COUNT(id), COUNT(DISTINCT(album)), COUNT(DISTINCT(artist)) FROM track WHERE genre IS NOT NULL GROUP BY genre
@@ -241,6 +255,25 @@
     </fragment>
 
     <fragment name="createPlaylistTrackLinks">
-        INSERT INTO link_track_playlist (index, playlist_id, track_id) VALUES (:loopindex_track_id, :id, :track_id)
+        INSERT INTO link_track_playlist (index, playlist_id, track_id) VALUES (:loopindex_track_id, :id, :loopitem_track_id)
     </fragment>
+
+  <fragment name="findTracksQuery">
+    SELECT {trackColumns}
+    FROM track t
+    WHERE (:size_id = 0 OR t.id IN (:id[]))
+    AND (:size_genre = 0 OR t.genre IN (:genre[]))
+    AND (:size_artist = 0 OR t.artist IN (:artist[]))
+    AND (:size_album = 0 OR t.album IN (:album[]))
+    AND (:search[0] IS NULL OR (LCASE(t.name) LIKE :search[0] ESCAPE '\') OR (LCASE(album) LIKE :search[0] ESCAPE '\') OR (LCASE(artist) LIKE :search[0] ESCAPE '\'))
+    AND (:search[1] IS NULL OR (LCASE(t.name) LIKE :search[1] ESCAPE '\') OR (LCASE(album) LIKE :search[1] ESCAPE '\') OR (LCASE(artist) LIKE :search[1] ESCAPE '\'))
+    AND (:search[2] IS NULL OR (LCASE(t.name) LIKE :search[2] ESCAPE '\') OR (LCASE(album) LIKE :search[2] ESCAPE '\') OR (LCASE(artist) LIKE :search[2] ESCAPE '\'))
+    AND (:search[3] IS NULL OR (LCASE(t.name) LIKE :search[3] ESCAPE '\') OR (LCASE(album) LIKE :search[3] ESCAPE '\') OR (LCASE(artist) LIKE :search[3] ESCAPE '\'))
+    AND (:search[4] IS NULL OR (LCASE(t.name) LIKE :search[4] ESCAPE '\') OR (LCASE(album) LIKE :search[4] ESCAPE '\') OR (LCASE(artist) LIKE :search[4] ESCAPE '\'))
+    AND (:search[5] IS NULL OR (LCASE(t.name) LIKE :search[5] ESCAPE '\') OR (LCASE(album) LIKE :search[5] ESCAPE '\') OR (LCASE(artist) LIKE :search[5] ESCAPE '\'))
+    AND (:search[6] IS NULL OR (LCASE(t.name) LIKE :search[6] ESCAPE '\') OR (LCASE(album) LIKE :search[6] ESCAPE '\') OR (LCASE(artist) LIKE :search[6] ESCAPE '\'))
+    AND (:search[7] IS NULL OR (LCASE(t.name) LIKE :search[7] ESCAPE '\') OR (LCASE(album) LIKE :search[7] ESCAPE '\') OR (LCASE(artist) LIKE :search[7] ESCAPE '\'))
+    AND (:search[8] IS NULL OR (LCASE(t.name) LIKE :search[8] ESCAPE '\') OR (LCASE(album) LIKE :search[8] ESCAPE '\') OR (LCASE(artist) LIKE :search[8] ESCAPE '\'))
+    AND (:search[9] IS NULL OR (LCASE(t.name) LIKE :search[9] ESCAPE '\') OR (LCASE(album) LIKE :search[9] ESCAPE '\') OR (LCASE(artist) LIKE :search[9] ESCAPE '\'))
+  </fragment>
 </statements>
