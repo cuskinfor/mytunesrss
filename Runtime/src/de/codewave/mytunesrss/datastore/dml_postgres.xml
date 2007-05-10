@@ -13,4 +13,5 @@
     <!-- reusable sql fragments -->
     <fragment name="tuneDatabaseAfterHelpTablesUpdate">ANALYZE</fragment>
 
+    <fragment name="likeEscape">ESCAPE '\\'</fragment>
 </statements>

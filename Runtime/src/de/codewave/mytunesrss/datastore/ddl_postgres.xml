@@ -2,10 +2,9 @@
 
 <statements>
 
+    <statement name="preCreateAllTables"/>
+
     <statement name="initialize">
-        <!--sql>SET DATABASE COLLATION en_US</sql-->
-        <!--sql>SET LOG 0</sql-->
-        <!--sql>SET DEFAULT_LOCK_TIMEOUT 5000</sql-->
         <sql>SELECT COUNT(*) FROM pg_catalog.pg_stat_user_tables WHERE LOWER(schemaname) = 'public' AND LOWER(relname) = 'track'</sql>
     </statement>
 

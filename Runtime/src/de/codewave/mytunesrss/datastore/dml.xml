@@ -2,6 +2,7 @@
 
 <statements>
     <statement name="findAlbums">
+        <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
             SELECT name AS name, track_count AS track_count, artist_count AS artist_count, artist AS artist
@@ -16,6 +17,7 @@
     </statement>
 
     <statement name="findArtists">
+        <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
             SELECT name AS name, track_count AS track_count, album_count AS album_count
@@ -30,6 +32,7 @@
     </statement>
 
     <statement name="findGenres">
+        <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
             SELECT name AS name, track_count AS track_count, artist_count AS artist_count, album_count AS album_count
@@ -137,6 +140,8 @@
     </statement>
 
     <statement name="insertPagerPage">
+        <parameter name="index" type="java.lang.Integer"/>
+        <parameter name="count" type="java.lang.Integer"/>
         <sql>
             INSERT INTO pager (type, index, condition, value, content_count)
             VALUES (:type, :index, :condition, :value, :count)
@@ -186,6 +191,10 @@
     </statement>
 
     <statement name="insertTrack">
+        <parameter name="time" type="java.lang.Integer"/>
+        <parameter name="track_number" type="java.lang.Integer"/>
+        <parameter name="protected" type="java.lang.Boolean"/>
+        <parameter name="video" type="java.lang.Boolean"/>
         <sql>
             INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix)
             VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix)
@@ -193,6 +202,10 @@
     </statement>
 
     <statement name="updateTrack">
+        <parameter name="time" type="java.lang.Integer"/>
+        <parameter name="track_number" type="java.lang.Integer"/>
+        <parameter name="protected" type="java.lang.Boolean"/>
+        <parameter name="video" type="java.lang.Boolean"/>
         <sql>
             UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, video = :video, genre = :genre, suffix = :suffix
@@ -270,22 +283,24 @@
     </fragment>
 
     <fragment name="findTracksQuery">
+        <![CDATA[
         SELECT {trackColumns}
         FROM track t
-        WHERE (:size_id = 0 OR t.id IN (:id[]))
-        AND (:size_genre = 0 OR t.genre IN (:genre[]))
-        AND (:size_artist = 0 OR t.artist IN (:artist[]))
-        AND (:size_album = 0 OR t.album IN (:album[]))
-        AND (:search[0] IS NULL OR (LOWER(t.name) LIKE :search[0] ESCAPE '\') OR (LCASE(album) LIKE :search[0] ESCAPE '\') OR (LCASE(artist) LIKE :search[0] ESCAPE '\'))
-        AND (:search[1] IS NULL OR (LCASE(t.name) LIKE :search[1] ESCAPE '\') OR (LCASE(album) LIKE :search[1] ESCAPE '\') OR (LCASE(artist) LIKE :search[1] ESCAPE '\'))
-        AND (:search[2] IS NULL OR (LOWER(t.name) LIKE :search[2] ESCAPE '\') OR (LOWER(album) LIKE :search[2] ESCAPE '\') OR (LOWER(artist) LIKE :search[2] ESCAPE '\'))
-        AND (:search[3] IS NULL OR (LOWER(t.name) LIKE :search[3] ESCAPE '\') OR (LOWER(album) LIKE :search[3] ESCAPE '\') OR (LOWER(artist) LIKE :search[3] ESCAPE '\'))
-        AND (:search[4] IS NULL OR (LOWER(t.name) LIKE :search[4] ESCAPE '\') OR (LOWER(album) LIKE :search[4] ESCAPE '\') OR (LOWER(artist) LIKE :search[4] ESCAPE '\'))
-        AND (:search[5] IS NULL OR (LOWER(t.name) LIKE :search[5] ESCAPE '\') OR (LOWER(album) LIKE :search[5] ESCAPE '\') OR (LOWER(artist) LIKE :search[5] ESCAPE '\'))
-        AND (:search[6] IS NULL OR (LOWER(t.name) LIKE :search[6] ESCAPE '\') OR (LOWER(album) LIKE :search[6] ESCAPE '\') OR (LOWER(artist) LIKE :search[6] ESCAPE '\'))
-        AND (:search[7] IS NULL OR (LOWER(t.name) LIKE :search[7] ESCAPE '\') OR (LOWER(album) LIKE :search[7] ESCAPE '\') OR (LOWER(artist) LIKE :search[7] ESCAPE '\'))
-        AND (:search[8] IS NULL OR (LOWER(t.name) LIKE :search[8] ESCAPE '\') OR (LOWER(album) LIKE :search[8] ESCAPE '\') OR (LOWER(artist) LIKE :search[8] ESCAPE '\'))
-        AND (:search[9] IS NULL OR (LOWER(t.name) LIKE :search[9] ESCAPE '\') OR (LOWER(album) LIKE :search[9] ESCAPE '\') OR (LOWER(artist) LIKE :search[9] ESCAPE '\'))
+        WHERE (:size_of_id = 0 OR t.id IN (:id[]))
+        AND (:size_of_genre = 0 OR t.genre IN (:genre[]))
+        AND (:size_of_artist = 0 OR t.artist IN (:artist[]))
+        AND (:size_of_album = 0 OR t.album IN (:album[]))
+        AND (:size_of_search < 1 OR (LOWER(t.name) LIKE :search[0] {likeEscape}) OR (LOWER(album) LIKE :search[0] {likeEscape}) OR (LOWER(artist) LIKE :search[0] {likeEscape}))
+        AND (:size_of_search < 2 OR (LOWER(t.name) LIKE :search[1] {likeEscape}) OR (LOWER(album) LIKE :search[1] {likeEscape}) OR (LOWER(artist) LIKE :search[1] {likeEscape}))
+        AND (:size_of_search < 3 OR (LOWER(t.name) LIKE :search[2] {likeEscape}) OR (LOWER(album) LIKE :search[2] {likeEscape}) OR (LOWER(artist) LIKE :search[2] {likeEscape}))
+        AND (:size_of_search < 4 OR (LOWER(t.name) LIKE :search[3] {likeEscape}) OR (LOWER(album) LIKE :search[3] {likeEscape}) OR (LOWER(artist) LIKE :search[3] {likeEscape}))
+        AND (:size_of_search < 5 OR (LOWER(t.name) LIKE :search[4] {likeEscape}) OR (LOWER(album) LIKE :search[4] {likeEscape}) OR (LOWER(artist) LIKE :search[4] {likeEscape}))
+        AND (:size_of_search < 6 OR (LOWER(t.name) LIKE :search[5] {likeEscape}) OR (LOWER(album) LIKE :search[5] {likeEscape}) OR (LOWER(artist) LIKE :search[5] {likeEscape}))
+        AND (:size_of_search < 7 OR (LOWER(t.name) LIKE :search[6] {likeEscape}) OR (LOWER(album) LIKE :search[6] {likeEscape}) OR (LOWER(artist) LIKE :search[6] {likeEscape}))
+        AND (:size_of_search < 8 OR (LOWER(t.name) LIKE :search[7] {likeEscape}) OR (LOWER(album) LIKE :search[7] {likeEscape}) OR (LOWER(artist) LIKE :search[7] {likeEscape}))
+        AND (:size_of_search < 9 OR (LOWER(t.name) LIKE :search[8] {likeEscape}) OR (LOWER(album) LIKE :search[8] {likeEscape}) OR (LOWER(artist) LIKE :search[8] {likeEscape}))
+        AND (:size_of_search < 10 OR (LOWER(t.name) LIKE :search[9] {likeEscape}) OR (LOWER(album) LIKE :search[9] {likeEscape}) OR (LOWER(artist) LIKE :search[9] {likeEscape}))
+        ]]>
     </fragment>
 
 </statements>

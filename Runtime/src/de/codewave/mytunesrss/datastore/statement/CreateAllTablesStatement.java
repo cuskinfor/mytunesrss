@@ -15,6 +15,7 @@ import java.util.*;
  */
 public class CreateAllTablesStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
+        MyTunesRssUtils.createStatement(connection, "preCreateAllTables").execute();
         MyTunesRssUtils.createStatement(connection, "createAllTables").execute();
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "initializeAllTables");
         statement.setString("version", MyTunesRss.VERSION);

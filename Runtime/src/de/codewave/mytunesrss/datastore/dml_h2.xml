@@ -13,4 +13,6 @@
     <!-- reusable sql fragments -->
     <fragment name="tuneDatabaseAfterHelpTablesUpdate">ANALYZE SAMPLE_SIZE 0</fragment>
 
+    <fragment name="likeEscape">ESCAPE '\'</fragment>
+  
 </statements>

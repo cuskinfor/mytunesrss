@@ -89,15 +89,11 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
     } else {
       statement = MyTunesRssUtils.createStatement(connection, "findTracks");
     }
-    statement.setObject("id", myIds != null && myIds.length > 0 ? Arrays.asList(myIds) : null);
-    statement.setInt("size_id", myIds != null ? myIds.length : 0);
-    statement.setObject("album", myAlbums != null && myAlbums.length > 0 ? Arrays.asList(myAlbums) : null);
-    statement.setInt("size_album", myAlbums != null ? myAlbums.length : 0);
-    statement.setObject("artist", myArtists != null && myArtists.length > 0 ? Arrays.asList(myArtists) : null);
-    statement.setInt("size_artist", myArtists != null ? myArtists.length : 0);
-    statement.setObject("genre", myGenres != null && myGenres.length > 0 ? Arrays.asList(myGenres) : null);
-    statement.setInt("size_genre", myGenres != null ? myGenres.length : 0);
-    statement.setObject("search", mySearchTerms != null && mySearchTerms.length > 0 ? Arrays.asList(mySearchTerms) : null);
+    statement.setItems("id", myIds);
+    statement.setItems("album", myAlbums);
+    statement.setItems("artist", myArtists);
+    statement.setItems("genre", myGenres);
+    statement.setItems("search", mySearchTerms);
     Collection<Track> tracks = execute(statement, new TrackResultBuilder());
     if (myIds != null && myIds.length > 1) {
       Map<String, Track> idToTrack = new HashMap<String, Track>(tracks.size());

@@ -92,6 +92,11 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/camel-0.9.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/camel-0.9.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
       <attribute name="URI" value="&lt;N/A&gt;" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/catalina-optional.jar!/</url>
     </containerElement>
@@ -194,6 +199,11 @@
       <attribute name="method" value="0" />
       <attribute name="URI" value="/WEB-INF/lib/naming-resources.jar" />
       <url>jar://$MODULE_DIR$/../Runtime/lib/naming-resources.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="0" />
+      <attribute name="URI" value="/WEB-INF/lib/postgresql.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/postgresql.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />

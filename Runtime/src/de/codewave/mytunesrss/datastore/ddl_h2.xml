@@ -2,8 +2,11 @@
 
 <statements>
 
-    <statement name="initialize">
+    <statement name="preCreateAllTables">
         <sql>SET DATABASE COLLATION en_US</sql>
+    </statement>
+
+    <statement name="initialize">
         <sql>SET LOG 0</sql>
         <sql>SET DEFAULT_LOCK_TIMEOUT 5000</sql>
         <sql>SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'PUBLIC' AND table_name = 'TRACK'</sql>
