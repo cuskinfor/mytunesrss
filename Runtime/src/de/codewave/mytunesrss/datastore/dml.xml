@@ -274,7 +274,7 @@
 
     <fragment name="updatePlaylistCount">
         UPDATE playlist
-        SET track_count = SELECT COUNT(*) FROM link_track_playlist WHERE playlist_id = :id
+        SET track_count = (SELECT COUNT(*) FROM link_track_playlist WHERE playlist_id = :id)
         WHERE id = :id
     </fragment>
 
