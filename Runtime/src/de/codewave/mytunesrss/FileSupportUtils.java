@@ -21,17 +21,7 @@ public class FileSupportUtils {
     }
 
     public static boolean isSupported(String filename) {
-        if (SUPPORTED_SUFFIXES.contains(getFileSuffix(filename))) {
-            if (StringUtils.isEmpty(MyTunesRss.CONFIG.getFileTypes())) {
-                return true;
-            }
-            for (StringTokenizer tokenizer = new StringTokenizer(MyTunesRss.CONFIG.getFileTypes().toLowerCase(), ","); tokenizer.hasMoreTokens();) {
-                if (filename.toLowerCase().endsWith("." + tokenizer.nextToken())) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return isSuffixSupported(filename);
     }
 
     private static boolean isSuffixSupported(String suffix) {
@@ -49,9 +39,8 @@ public class FileSupportUtils {
     }
 
     public static FileSuffixInfo getFileSuffixInfo(String filename) {
-        String suffix = getFileSuffix(filename);
-        if (isSuffixSupported(suffix)) {
-            return FileSuffixInfo.valueOf(suffix);
+        if (isSupported(filename)) {
+            return FileSuffixInfo.valueOf(getFileSuffix(filename));
         }
         return null;
     }
