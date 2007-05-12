@@ -18,7 +18,7 @@ public class PathInfoDecryptionFilter implements Filter {
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
-        if ("true".equalsIgnoreCase(System.getProperty("encryptPathInfo")) && MyTunesRss.CONFIG.getPathInfoKey() != null) {
+        if (MyTunesRss.CONFIG.getPathInfoKey() != null) {
             servletRequest = new RequestWrapper((HttpServletRequest)servletRequest);
         }
         filterChain.doFilter(servletRequest, servletResponse);

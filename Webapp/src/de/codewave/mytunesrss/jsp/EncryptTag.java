@@ -34,7 +34,7 @@ public class EncryptTag extends BodyTagSupport {
 
     private String encryptPathInfo(String pathInfo) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, BadPaddingException,
             IllegalBlockSizeException, UnsupportedEncodingException {
-        if ("true".equalsIgnoreCase(System.getProperty("encryptPathInfo")) && MyTunesRss.CONFIG.getPathInfoKey() != null) {
+        if (MyTunesRss.CONFIG.getPathInfoKey() != null) {
             Cipher cipher = Cipher.getInstance("DES");
             cipher.init(Cipher.ENCRYPT_MODE, MyTunesRss.CONFIG.getPathInfoKey());
             return MyTunesRssBase64Utils.encode(cipher.doFinal(pathInfo.getBytes("UTF-8")));
