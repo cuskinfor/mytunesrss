@@ -4,8 +4,8 @@
 
 package de.codewave.mytunesrss.jsp;
 
-import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.utils.*;
 import de.codewave.utils.io.*;
@@ -34,7 +34,7 @@ public class MyTunesFunctions {
         name = name.replace('<', '_');
         name = name.replace('>', '_');
         name = name.replace('`', '_');
-//        name = name.replace('´', '_');
+        //        name = name.replace('´', '_');
         name = name.replace('\'', '_');
         return name;
     }
