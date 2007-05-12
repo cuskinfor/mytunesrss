@@ -21,7 +21,7 @@ public class FileSupportUtils {
     }
 
     public static boolean isSupported(String filename) {
-        return isSuffixSupported(filename);
+        return isSuffixSupported(getFileSuffix(filename));
     }
 
     private static boolean isSuffixSupported(String suffix) {
