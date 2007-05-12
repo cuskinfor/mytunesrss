@@ -28,6 +28,12 @@
         </init-param>
     </filter>
     <filter>
+        <description>Filter for decrypting the path info.</description>
+        <display-name>PathInfoDecryptionFilter</display-name>
+        <filter-name>PathInfoDecryptionFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.servlet.PathInfoDecryptionFilter</filter-class>
+    </filter>
+    <filter>
         <description>Filter for adding path info key/value pairs to the request parameters.</description>
         <display-name>PathInfoRequestParameterFilter</display-name>
         <filter-name>PathInfoRequestParameterFilter</filter-name>
@@ -45,6 +51,10 @@
     </filter>
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/mytunesrss/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>PathInfoDecryptionFilter</filter-name>
         <url-pattern>/mytunesrss/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
