@@ -9,11 +9,14 @@ import de.codewave.utils.io.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
+import javax.crypto.*;
+import javax.crypto.spec.*;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
+import java.security.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssConfig
@@ -51,6 +54,7 @@ public class MyTunesRssConfig {
     private String myArtistDropWords = "";
     private boolean myLocalTempArchive;
     private boolean myQuitConfirmation;
+    private SecretKey myPathInfoKey;
 
     public String getLibraryXml() {
         return myLibraryXml;
@@ -248,6 +252,10 @@ public class MyTunesRssConfig {
 
     public void setQuitConfirmation(boolean quitConfirmation) {
         myQuitConfirmation = quitConfirmation;
+    }
+
+    public SecretKey getPathInfoKey() {
+        return myPathInfoKey;
     }
 
     public Collection<User> getUsers() {
@@ -449,6 +457,29 @@ public class MyTunesRssConfig {
         setFileTypes(Preferences.userRoot().node(PREF_ROOT).get("fileTypes", getFileTypes()));
         setArtistDropWords(Preferences.userRoot().node(PREF_ROOT).get("artistDropWords", getArtistDropWords()));
         setQuitConfirmation(Preferences.userRoot().node(PREF_ROOT).getBoolean("quitConfirmation", isQuitConfirmation()));
+        readPathInfoEncryptionKey();
+    }
+
+    private void readPathInfoEncryptionKey() {
+        String pathInfoKey = Preferences.userRoot().node(PREF_ROOT).get("pathInfoKey", null);
+        if (StringUtils.isNotEmpty(pathInfoKey)) {
+            byte[] keyBytes = Base64Utils.decode(pathInfoKey);
+            myPathInfoKey = new SecretKeySpec(keyBytes, "DES");
+        }
+        if (myPathInfoKey == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No path info encryption key found, generating a new one.");
+            }
+            try {
+                KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
+                keyGenerator.init(56);
+                myPathInfoKey = keyGenerator.generateKey();
+            } catch (NoSuchAlgorithmException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not generate path info encryption key.", e);
+                }
+            }
+        }
     }
 
     public void save() {
@@ -533,6 +564,9 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node(PREF_ROOT).put("fileTypes", myFileTypes);
         Preferences.userRoot().node(PREF_ROOT).put("artistDropWords", myArtistDropWords);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("quitConfirmation", myQuitConfirmation);
+        if (myPathInfoKey != null) {
+            Preferences.userRoot().node(PREF_ROOT).put("pathInfoKey", Base64Utils.encode(myPathInfoKey.getEncoded()));
+        }
     }
 
     private void checkPrefsVersion() {
