@@ -2,13 +2,14 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/showPortal&amp;index=${param.index}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/showPortal/<mt:encrypt>index=${param.index}</mt:encrypt></c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -53,7 +54,7 @@
                                                                                      value="<fmt:message key="doSearch"/>" />
                 </td>
                 <td class="links">
-                    <a href="${servletUrl}/browseArtist?page=1" style="background-image:url('${appUrl}/images/library_small.gif');">
+                    <a href="${servletUrl}/browseArtist/<mt:encrypt>page=1</mt:encrypt>" style="background-image:url('${appUrl}/images/library_small.gif');">
                         <fmt:message key="browseLibrary" />
                     </a>
                     <c:choose>
@@ -101,7 +102,7 @@
                 <td class="tracks">
                     <c:choose>
                         <c:when test="${playlist.trackCount >= 0}">
-                            <a href="${servletUrl}/browseTrack?playlist=${cwfn:encodeUrl(playlist.id)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${playlist.trackCount} </a>
+                            <a href="${servletUrl}/browseTrack/<mt:encrypt>playlist=${cwfn:encodeUrl(playlist.id)}</mt:encrypt>?backUrl=${cwfn:encodeUrl(backUrl)}"> ${playlist.trackCount} </a>
                         </c:when>
                         <c:otherwise>
                             &nbsp;
@@ -110,19 +111,19 @@
                 </td>
                 <c:if test="${authUser.rss && config.showRss}">
                     <td class="icon">
-                        <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:webSafeFileName(playlist.name)}.xml">
+                        <a href="${servletUrl}/createRSS/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xml">
                             <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="rss" /> </a>
                     </td>
                 </c:if>
                 <c:if test="${authUser.playlist && config.showPlaylist}">
                     <td class="icon">
-                        <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:webSafeFileName(playlist.name)}.${config.playlistFileSuffix}">
+                        <a href="${servletUrl}/createPlaylist/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.${config.playlistFileSuffix}">
                             <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="playlist" /> </a>
                     </td>
                 </c:if>
                 <c:if test="${authUser.player && config.showPlayer}">
                     <td class="icon">
-                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/type=Xspf/playerRequest=true/${mtfn:webSafeFileName(playlist.name)}.xspf')">
+                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/type=Xspf</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xspf')">
                             <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="player" /> </a>
                     </td>
                 </c:if>
@@ -130,7 +131,7 @@
                     <td class="icon">
                         <c:choose>
                             <c:when test="${authUser.maximumZipEntries <= 0 || playlist.trackCount <= authUser.maximumZipEntries}">
-                                <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}/${mtfn:webSafeFileName(playlist.name)}.zip">
+                                <a href="${servletUrl}/getZipArchive/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/playlist=${cwfn:encodeUrl(playlist.id)}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.zip">
                                     <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="download"/>" /></a>
                             </c:when>

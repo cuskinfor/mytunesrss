@@ -2,13 +2,14 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseGenre?page=${param.page}&amp;index=${param.index}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseGenre/<mt:encrypt>page=${param.page}/index=${param.index}</mt:encrypt></c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -32,10 +33,10 @@
 
     <ul class="links">
         <li>
-            <a href="${servletUrl}/browseArtist?page=${param.page}"><fmt:message key="browseArtist"/></a>
+            <a href="${servletUrl}/browseArtist/<mt:encrypt>page=${param.page}</mt:encrypt>"><fmt:message key="browseArtist"/></a>
         </li>
         <li>
-            <a href="${servletUrl}/browseAlbum?page=${param.page}"><fmt:message key="browseAlbums"/></a>
+            <a href="${servletUrl}/browseAlbum/<mt:encrypt>page=${param.page}</mt:encrypt>"><fmt:message key="browseAlbums"/></a>
         </li>
         <c:if test="${empty sessionScope.playlist}">
             <li>
@@ -47,7 +48,7 @@
     <jsp:include page="incl_playlist.jsp" />
 
     <c:set var="pager" scope="request" value="${genrePager}" />
-    <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseGenre?page={index}" />
+    <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseGenre/page={index}" />
     <c:set var="pagerCurrent" scope="request" value="${param.page}" />
     <jsp:include page="incl_pager.jsp" />
 
@@ -72,33 +73,33 @@
                         <c:out value="${genre.name}" />
                     </td>
                     <td class="album">
-                        <a href="${servletUrl}/browseAlbum?genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${genre.albumCount} </a>
+                        <a href="${servletUrl}/browseAlbum/<mt:encrypt>genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>?backUrl=${cwfn:encodeUrl(backUrl)}"> ${genre.albumCount} </a>
                     </td>
                     <td class="genreartist">
-                        <a href="${servletUrl}/browseArtist?genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${genre.artistCount} </a>
+                        <a href="${servletUrl}/browseArtist/<mt:encrypt>genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>?backUrl=${cwfn:encodeUrl(backUrl)}"> ${genre.artistCount} </a>
                     </td>
                     <td class="tracks">
-                        <a href="${servletUrl}/browseTrack?genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}"> ${genre.trackCount} </a>
+                        <a href="${servletUrl}/browseTrack/<mt:encrypt>genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>?backUrl=${cwfn:encodeUrl(backUrl)}"> ${genre.trackCount} </a>
                     </td>
                     <c:choose>
                         <c:when test="${empty sessionScope.playlist}">
                             <c:if test="${authUser.rss && config.showRss}">
                                 <td class="icon">
-                                    <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/${mtfn:virtualGenreName(genre)}.xml">
+                                    <a href="${servletUrl}/createRSS/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.xml">
                                         <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="rss" /> </a>
                                 </td>
                             </c:if>
                             <c:if test="${authUser.playlist && config.showPlaylist}">
                                 <td class="icon">
-                                    <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/${mtfn:virtualGenreName(genre)}.${config.playlistFileSuffix}">
+                                    <a href="${servletUrl}/createPlaylist/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.${config.playlistFileSuffix}">
                                         <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="playlist" /> </a>
                                 </td>
                             </c:if>
                             <c:if test="${authUser.player && config.showPlayer}">
                                 <td class="icon">
-                                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/type=Xspf/playerRequest=true/${mtfn:virtualGenreName(genre)}.xspf')">
+                                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/type=Xspf</mt:encrypt>/${mtfn:virtualGenreName(genre)}.xspf')">
                                         <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="player" /> </a>
                                 </td>
@@ -107,7 +108,7 @@
                                 <td class="icon">
                                     <c:choose>
                                         <c:when test="${authUser.maximumZipEntries <= 0 || genre.trackCount <= authUser.maximumZipEntries}">
-                                            <a href="${servletUrl}/getZipArchive/auth=${cwfn:encodeUrl(auth)}/genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/${mtfn:virtualGenreName(genre)}.zip">
+                                            <a href="${servletUrl}/getZipArchive/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.zip">
                                                 <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                                         </c:when>
                                         <c:otherwise>
@@ -120,7 +121,7 @@
                         </c:when>
                         <c:otherwise>
                             <td class="icon">
-                                <a href="${servletUrl}/addToPlaylist?genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
+                                <a href="${servletUrl}/addToPlaylist/<mt:encrypt>genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>?backUrl=${cwfn:encodeUrl(backUrl)}">
                                     <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                             </td>
                         </c:otherwise>
@@ -131,7 +132,7 @@
 
         <c:if test="${!empty indexPager}">
             <c:set var="pager" scope="request" value="${indexPager}" />
-            <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseGenre?page=${param.page}&amp;index={index}" />
+            <c:set var="pagerCommand" scope="request">${servletUrl}/browseGenre/<mt:encrypt>page=${param.page}</mt:encrypt>?index={index}</c:set>
             <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
             <jsp:include page="incl_bottomPager.jsp" />
         </c:if>

@@ -2,6 +2,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />

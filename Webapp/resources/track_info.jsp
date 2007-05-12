@@ -2,6 +2,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
@@ -41,7 +42,7 @@
     <table cellspacing="0">
         <tr>
             <th colspan="2" class="active">
-                <c:out value="${track.artist}" />
+                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                 -
                 <c:out value="${track.name}" />
             </th>
@@ -51,7 +52,7 @@
                 <fmt:message key="artist" />:
             </td>
             <td>
-                <c:out value="${track.artist}" />
+                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
             </td>
         </tr>
         <tr class="odd">
@@ -67,7 +68,7 @@
                 <fmt:message key="album" />:
             </td>
             <td>
-                <c:out value="${track.album}" />
+                <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
             </td>
         </tr>
         <tr class="odd">
@@ -92,7 +93,7 @@
                     &nbsp;
                 </td>
                 <td>
-                    <a href="${servletUrl}/playTrack/auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}">
+                    <a href="${servletUrl}/playTrack/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}">
                         <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="download"/>" />
                         <fmt:message key="doDownload"/>
                     </a>
@@ -102,7 +103,7 @@
         <tr <c:if test="${!authUser.download || !config.showDownload}">class="odd"</c:if>>
           <td colspan="2">
             <img alt="${track.name} Album Art"
-              src="${servletUrl}/showTrackImage/auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}"
+              src="${servletUrl}/showTrackImage/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>"
               width="200" style="display: block; margin: 10px auto;"/>
           </td>
         </tr>

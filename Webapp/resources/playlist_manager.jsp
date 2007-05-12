@@ -2,12 +2,13 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/showPlaylistManager?index=${param.index}</c:set>
-<c:set var="browseArtistUrl" scope="request">${servletUrl}/browseArtist?page=1</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/showPlaylistManager/<mt:encrypt>index=${param.index}</mt:encrypt></c:set>
+<c:set var="browseArtistUrl" scope="request">${servletUrl}/browseArtist/page=1</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -43,13 +44,13 @@
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                 <td class="mytunes"><c:out value="${playlist.name}" /></td>
-                <td class="tracks"><a href="${servletUrl}/browseTrack?playlist=${cwfn:encodeUrl(playlist.id)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">${playlist.trackCount}</a></td>
+                <td class="tracks"><a href="${servletUrl}/browseTrack/<mt:encrypt>playlist=${cwfn:encodeUrl(playlist.id)}</mt:encrypt>?backUrl=${cwfn:encodeUrl(backUrl)}">${playlist.trackCount}</a></td>
                 <td class="icon">
-                    <a href="${servletUrl}/loadAndEditPlaylist?allowEditEmpty=true&amp;playlist=${cwfn:encodeUrl(playlist.id)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
+                    <a href="${servletUrl}/loadAndEditPlaylist/<mt:encrypt>allowEditEmpty=true/playlist=${cwfn:encodeUrl(playlist.id)}</mt:encrypt>?backUrl=${cwfn:encodeUrl(backUrl)}">
                         <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                 </td>
                 <td class="icon">
-                    <a href="${servletUrl}/deletePlaylist/playlist=${cwfn:encodeUrl(playlist.id)}">
+                    <a href="${servletUrl}/deletePlaylist/<mt:encrypt>playlist=${cwfn:encodeUrl(playlist.id)}</mt:encrypt>">
                         <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                 </td>
             </tr>

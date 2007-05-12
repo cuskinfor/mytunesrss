@@ -2,6 +2,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
@@ -10,7 +11,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTrack?playlist=${cwfn:encodeUrl(param.playlist)}&amp;fullAlbums=${param.fullAlbums}&amp;album=${cwfn:encodeUrl(param.album)}&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;genre=${cwfn:encodeUrl(param.genre)}&amp;searchTerm=${cwfn:encodeUrl(param.searchTerm)}&amp;index=${param.index}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}&amp;sortOrder=${sortOrder}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseTrack/<mt:encrypt>playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/index=${param.index}/sortOrder=${sortOrder}</mt:encrypt>?backUrl=${cwfn:encodeUrl(param.backUrl)}</c:set>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -77,13 +78,13 @@
                 <c:when test="${sortOrder == 'Album'}">
                     <c:if test="${track.simple}">
                         <c:set var="sectionFileName">${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)} -</c:set>
-                        <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(mtfn:encode64(track.artist))}">
+                        <a href="${servletUrl}/browseAlbum/<mt:encrypt>artist=${cwfn:encodeUrl(mtfn:encode64(track.artist))}</mt:encrypt>">
                             <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                         </a> -</c:if>
                     <c:set var="sectionFileName">${sectionFileName} ${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}</c:set>
                     <c:choose>
                         <c:when test="${empty param.album}">
-                            <a href="${servletUrl}/browseTrack?album=${cwfn:encodeUrl(mtfn:encode64(track.album))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
+                            <a href="${servletUrl}/browseTrack/<mt:encrypt>album=${cwfn:encodeUrl(mtfn:encode64(track.album))}</mt:encrypt>?backUrl=${cwfn:encodeUrl(backUrl)}">
                                 <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
                             </a>
                         </c:when>
@@ -93,7 +94,7 @@
                     </c:choose>
                 </c:when>
                 <c:otherwise>
-                    <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(mtfn:encode64(track.artist))}">
+                    <a href="${servletUrl}/browseAlbum/<mt:encrypt>artist=${cwfn:encodeUrl(mtfn:encode64(track.artist))}</mt:encrypt>">
                         <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                     </a>
                     <c:set var="sectionFileName" value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
@@ -102,7 +103,7 @@
                         -
                         <c:choose>
                             <c:when test="${empty param.album}">
-                                <a href="${servletUrl}/browseTrack?album=${cwfn:encodeUrl(mtfn:encode64(track.album))}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
+                                <a href="${servletUrl}/browseTrack/<mt:encrypt>album=${cwfn:encodeUrl(mtfn:encode64(track.album))}</mt:encrypt>?backUrl=${cwfn:encodeUrl(backUrl)}">
                                     <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
                                 </a>
                             </c:when>
@@ -118,19 +119,19 @@
             <c:when test="${empty sessionScope.playlist}">
                 <c:if test="${authUser.rss && config.showRss}">
                     <th class="icon">
-                        <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:webSafeFileName(sectionFileName)}.xml">
+                        <a href="${servletUrl}/createRSS/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.xml">
                             <img src="${appUrl}/images/rss_th.gif" alt="rss" /> </a>
                     </th>
                 </c:if>
                 <c:if test="${authUser.playlist && config.showPlaylist}">
                     <th class="icon">
-                        <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:webSafeFileName(sectionFileName)}.${config.playlistFileSuffix}">
+                        <a href="${servletUrl}/createPlaylist/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.${config.playlistFileSuffix}">
                             <img src="${appUrl}/images/playlist_th.gif" alt="playlist" /> </a>
                     </th>
                 </c:if>
                 <c:if test="${authUser.player && config.showPlayer}">
                     <th class="icon">
-                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/type=Xspf/playerRequest=true/tracklist=${cwfn:encodeUrl(track.sectionIds)}/${mtfn:webSafeFileName(sectionFileName)}.xspf')">
+                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/type=Xspf/tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.xspf')">
                             <img src="${appUrl}/images/player_th.gif" alt="player" /> </a>
                     </th>
                 </c:if>
@@ -140,7 +141,7 @@
             </c:when>
             <c:otherwise>
                 <th class="icon">
-                    <a href="${servletUrl}/addToPlaylist?tracklist=${cwfn:encodeUrl(track.sectionIds)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
+                    <a href="${servletUrl}/addToPlaylist/<mt:encrypt>tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>?backUrl=${cwfn:encodeUrl(backUrl)}">
                         <img src="${appUrl}/images/add_th.gif" alt="add" /> </a>
                 </th>
             </c:otherwise>
@@ -156,7 +157,7 @@
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
         <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
         <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:if>
-        <a href="${servletUrl}/showTrackInfo?auth=${cwfn:encodeUrl(auth)}&amp;track=${cwfn:encodeUrl(track.id)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
+        <a href="${servletUrl}/showTrackInfo/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>?backUrl=${cwfn:encodeUrl(backUrl)}">
         <c:choose>
             <c:when test="${sortOrder == 'Album'}">
                 <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
@@ -172,7 +173,7 @@
     </td>
     <c:if test="${sortOrder == 'Album' && !track.simple}">
         <td>
-            <a href="${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(mtfn:encode64(track.artist))}">
+            <a href="${servletUrl}/browseAlbum/<mt:encrypt>artist=${cwfn:encodeUrl(mtfn:encode64(track.artist))}</mt:encrypt>">
                 <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
             </a>
         </td>
@@ -181,32 +182,32 @@
         <c:when test="${empty sessionScope.playlist}">
             <c:if test="${authUser.rss && config.showRss}">
                 <td class="icon">
-                    <a href="${servletUrl}/createRSS/auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.xml">
+                    <a href="${servletUrl}/createRSS/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml">
                         <img src="${appUrl}/images/rss${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="rss" /> </a>
                 </td>
             </c:if>
             <c:if test="${authUser.playlist && config.showPlaylist}">
                 <td class="icon">
-                    <a href="${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}">
+                    <a href="${servletUrl}/createPlaylist/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}">
                         <img src="${appUrl}/images/playlist${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="playlist" /> </a>
                 </td>
             </c:if>
             <c:if test="${authUser.player && config.showPlayer}">
                 <td class="icon">
-                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/auth=${cwfn:encodeUrl(auth)}/type=Xspf/playerRequest=true/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.xspf')">
+                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/type=Xspf/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xspf')">
                         <img src="${appUrl}/images/player${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="player" /> </a>
                 </td>
             </c:if>
             <c:if test="${authUser.download && config.showDownload}">
                 <td class="icon">
-                    <a href="${servletUrl}/downloadTrack/auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}/${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}">
+                    <a href="${servletUrl}/downloadTrack/<mt:encrypt>auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}">
                         <img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                 </td>
             </c:if>
         </c:when>
         <c:otherwise>
             <td class="icon">
-                <a href="${servletUrl}/addToPlaylist?track=${cwfn:encodeUrl(track.id)}&amp;backUrl=${cwfn:encodeUrl(backUrl)}">
+                <a href="${servletUrl}/addToPlaylist/<mt:encrypt>track=${cwfn:encodeUrl(track.id)}</mt:encrypt>?backUrl=${cwfn:encodeUrl(backUrl)}">
                     <img src="${appUrl}/images/add${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
             </td>
         </c:otherwise>
@@ -218,8 +219,7 @@
 
 <c:if test="${!empty pager}">
     <c:set var="pagerCommand"
-           scope="request"
-           value="${servletUrl}/browseTrack?playlist=${cwfn:encodeUrl(param.playlist)}&amp;fullAlbums=${param.fullAlbums}&amp;album=${cwfn:encodeUrl(param.album)}&amp;artist=${cwfn:encodeUrl(param.artist)}&amp;genre=${cwfn:encodeUrl(param.genre)}&amp;searchTerm=${cwfn:encodeUrl(param.searchTerm)}&amp;index={index}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}&amp;sortOrder=${sortOrder}" />
+           scope="request">${servletUrl}/browseTrack/<mt:encrypt>playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/sortOrder=${sortOrder}</mt:encrypt>?index={index}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}</c:set>
     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
     <jsp:include page="incl_bottomPager.jsp" />
 </c:if>

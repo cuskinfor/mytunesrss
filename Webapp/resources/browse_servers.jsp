@@ -2,13 +2,14 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseAlbum?artist=${cwfn:encodeUrl(param.artist)}&amp;page=${param.page}&amp;index=${param.index}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseAlbum/<mt:encrypt>artist=${cwfn:encodeUrl(param.artist)}/page=${param.page}/index=${param.index}</mt:encrypt></c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -59,7 +60,7 @@
 
     <c:if test="${!empty indexPager}">
         <c:set var="pager" scope="request" value="${indexPager}" />
-        <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseServers?page=${param.page}&amp;index={index}" />
+        <c:set var="pagerCommand" scope="request">${servletUrl}/browseServers/<mt:encrypt>page=${param.page}</mt:encrypt>?index={index}</c:set>
         <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
         <jsp:include page="incl_bottomPager.jsp" />
     </c:if>
