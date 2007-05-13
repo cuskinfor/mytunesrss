@@ -2,18 +2,14 @@
 <module version="4" relativePaths="true" type="JAVA_MODULE">
   <component name="BuildJarSettings">
     <containerInfo>
-      <containerElement type="module" name="AppleExtensions">
-        <attribute name="method" value="1" />
-        <attribute name="URI" value="/" />
-      </containerElement>
       <containerElement type="module" name="Runtime">
         <attribute name="method" value="1" />
         <attribute name="URI" value="/" />
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
-        <attribute name="URI" value="/lib/camel-0.9.jar" />
-        <url>jar://$MODULE_DIR$/lib/camel-0.9.jar!/</url>
+        <attribute name="URI" value="/lib/camel-0.9.1.jar" />
+        <url>jar://$MODULE_DIR$/lib/camel-0.9.1.jar!/</url>
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
@@ -432,19 +428,19 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/camel-0.9.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/postgresql.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/postgresql.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/camel-0.9.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
