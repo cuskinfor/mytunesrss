@@ -15,6 +15,12 @@ import java.security.*;
 public class EncryptTag extends BodyTagSupport {
     private static final Log LOG = LogFactory.getLog(EncryptTag.class);
 
+    private SecretKey myKey;
+
+    public void setKey(SecretKey key) {
+        myKey = key;
+    }
+
     @Override
     public int doStartTag() throws JspException {
         return BodyTag.EVAL_BODY_BUFFERED;
@@ -35,9 +41,9 @@ public class EncryptTag extends BodyTagSupport {
     private String encryptPathInfo(String pathInfo) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, BadPaddingException,
             IllegalBlockSizeException, UnsupportedEncodingException {
         if (MyTunesRss.CONFIG.getPathInfoKey() != null) {
-            Cipher cipher = Cipher.getInstance("DES");
-            cipher.init(Cipher.ENCRYPT_MODE, MyTunesRss.CONFIG.getPathInfoKey());
-            return MyTunesRssBase64Utils.encode(cipher.doFinal(pathInfo.getBytes("UTF-8")));
+            Cipher cipher = Cipher.getInstance(myKey.getAlgorithm());
+            cipher.init(Cipher.ENCRYPT_MODE, myKey);
+            return "{" + MyTunesRssBase64Utils.encode(cipher.doFinal(pathInfo.getBytes("UTF-8"))) + "}";
         }
         return pathInfo;
     }

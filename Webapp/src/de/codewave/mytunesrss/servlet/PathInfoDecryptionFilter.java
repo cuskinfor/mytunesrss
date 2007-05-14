@@ -43,17 +43,19 @@ public class PathInfoDecryptionFilter implements Filter {
             String pathInfo = ((HttpServletRequest)getRequest()).getPathInfo();
             if (StringUtils.isNotEmpty(pathInfo)) {
                 String[] splitted = StringUtils.split(pathInfo, "/");
-                if (splitted != null && splitted.length > 1) {
-                    try {
-                        Cipher cipher = Cipher.getInstance("DES");
-                        cipher.init(Cipher.DECRYPT_MODE, key);
-                        splitted[1] = new String(cipher.doFinal(MyTunesRssBase64Utils.decode(splitted[1])), "UTF-8");
-                        String newPathInfo = "/" + StringUtils.join(splitted, "/");
-                        return URLDecoder.decode(newPathInfo, "UTF-8");
-                    } catch (Exception e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not descrypt path info.", e);
+                try {
+                    Cipher cipher = Cipher.getInstance(key.getAlgorithm());
+                    cipher.init(Cipher.DECRYPT_MODE, key);
+                    for (int i = 0; i < splitted.length; i++) {
+                        if (splitted[i].startsWith("{") && splitted[i].endsWith("}")) {
+                            splitted[i] = new String(cipher.doFinal(MyTunesRssBase64Utils.decode(splitted[i].substring(1, splitted[i].length() - 1))), "UTF-8");
                         }
+                    }
+                    String newPathInfo = "/" + StringUtils.join(splitted, "/");
+                    return URLDecoder.decode(newPathInfo, "UTF-8");
+                } catch (Exception e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not descrypt path info.", e);
                     }
                 }
             }
