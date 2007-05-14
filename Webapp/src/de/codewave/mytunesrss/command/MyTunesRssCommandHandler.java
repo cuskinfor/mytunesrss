@@ -48,7 +48,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         return user != null && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
     }
 
-    protected void authorize(String userName) {
+    protected void authorizeSession(String userName) {
         User user = getMyTunesRssConfig().getUser(userName);
         getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(
                 "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
@@ -189,9 +189,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         }
         if (!MyTunesRss.createDatabaseBuilderTask().isRunning()) {
             try {
-                if (!isRequestAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
+                if (!isSessionAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
                                                                                              getWebConfig().getPasswordHash())) {
-                    authorize(getWebConfig().getUserName());
+                    authorizeSession(getWebConfig().getUserName());
                 }
                 if (!isRequestAuthorized()) {
                     forward(MyTunesRssResource.Login);

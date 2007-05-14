@@ -27,7 +27,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                 webConfig.setUserName(userName);
                 webConfig.setPasswordHash(passwordHash);
                 webConfig.save(getResponse());
-                authorize(userName);
+                authorizeSession(userName);
                 forward(MyTunesRssCommand.ShowPortal);
             } else {
                 addError(new BundleError("error.loginDenied"));
