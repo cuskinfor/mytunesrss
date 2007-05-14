@@ -7,7 +7,6 @@ import javax.crypto.*;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
 import java.io.*;
-import java.security.*;
 
 /**
  * de.codewave.mytunesrss.jsp.FlipFlopTag
@@ -29,22 +28,10 @@ public class EncryptTag extends BodyTagSupport {
     @Override
     public int doEndTag() throws JspException {
         try {
-            pageContext.getOut().write(encryptPathInfo(getBodyContent().getString()));
-        } catch (Exception e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not encrypt path info.", e);
-            }
+            pageContext.getOut().write(MyTunesRssWebUtils.encryptPathInfo(getBodyContent().getString()));
+        } catch (IOException e) {
+            throw new JspException(e);
         }
         return Tag.EVAL_PAGE;
-    }
-
-    private String encryptPathInfo(String pathInfo) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, BadPaddingException,
-            IllegalBlockSizeException, UnsupportedEncodingException {
-        if (MyTunesRss.CONFIG.getPathInfoKey() != null) {
-            Cipher cipher = Cipher.getInstance(myKey.getAlgorithm());
-            cipher.init(Cipher.ENCRYPT_MODE, myKey);
-            return "{" + MyTunesRssBase64Utils.encode(cipher.doFinal(pathInfo.getBytes("UTF-8"))) + "}";
-        }
-        return pathInfo;
     }
 }

@@ -6,8 +6,8 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.*;
-import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.task.*;
@@ -51,8 +51,8 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected void authorize(String userName) {
         User user = getMyTunesRssConfig().getUser(userName);
         if (user != null) {
-            getSession().setAttribute("auth",
-                                      MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash()));
+            getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(
+                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
             getSession().setAttribute("authUser", user);
             ((MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest())).setUser(user);
             getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);

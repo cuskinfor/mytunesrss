@@ -14,7 +14,7 @@
 
     <script type="text/javascript">
         function initProgress() {
-            frames["progressFrame"].location.href = "${servletUrl}/showUploadProgress";
+            frames["progressFrame"].location.href = "${servletUrl}/showUploadProgress/${auth}";
             document.getElementById("progressDiv").style.display = "block";
         }
         function updateProgress() {
@@ -31,7 +31,7 @@
 <div class="body">
 
     <h1 class="upload">
-        <a class="portal" href="${servletUrl}/showPortal"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
+        <a class="portal" href="${servletUrl}/showPortal/${auth}"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
     </h1>
 
     <jsp:include page="/incl_error.jsp" />
@@ -45,7 +45,7 @@
         </tr>
         <tr class="odd">
             <td>
-                <form name="upload" enctype="multipart/form-data" method="post" action="${servletUrl}/upload" target="resultFrame">
+                <form name="upload" enctype="multipart/form-data" method="post" action="${servletUrl}/upload/${auth}" target="resultFrame">
                     <input type="file" name="file" /> <input type="submit" value="<fmt:message key="doUpload"/>" onclick="initProgress()"/>
                 </form>
             </td>

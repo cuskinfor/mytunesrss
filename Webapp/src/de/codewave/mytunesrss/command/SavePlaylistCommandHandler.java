@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 
@@ -37,7 +38,7 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
             forward(MyTunesRssCommand.ShowPortal);
         } else {
             addError(new BundleError("error.needPlaylistNameForSave"));
-            redirect(getRequestParameter("backUrl", null));
+            redirect(MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null)));
         }
     }
 

@@ -174,4 +174,17 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Capitalize a string, i.e. make the first character upper case.
+        </description>
+        <name>capitalize</name>
+        <function-class>org.apache.commons.lang.StringUtils</function-class>
+        <function-signature>java.lang.String capitalize(java.lang.String)
+        </function-signature>
+        <example>
+            &lt;c:out value="${mtfn:capitalise('please capitalize me')}"/&gt;
+        </example>
+    </function>
+
 </taglib>

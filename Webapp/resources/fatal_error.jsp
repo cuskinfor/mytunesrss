@@ -20,7 +20,7 @@
 
     <h1 class="search"><span><fmt:message key="myTunesRss"/></span></h1>
 
-    <form id="login" action="${servletUrl}/login" method="post">
+    <form id="login" action="${servletUrl}/login/${auth}" method="post">
 
         <h2 class="fatalError"><fmt:message key="fatalError"/></h2>
 
@@ -28,7 +28,7 @@
 
 					<fmt:message key="error.fatal"/>
 
-					<p><a href="${servletUrl}/showPortal"><fmt:message key="gotoPortal"/></a></p>
+					<p><a href="${servletUrl}/showPortal/${auth}"><fmt:message key="gotoPortal"/></a></p>
 
 				</div>
 

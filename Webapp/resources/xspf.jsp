@@ -5,14 +5,14 @@
     <trackList>
         <c:forEach items="${tracks}" var="item">
             <track>
-                <location>${servletUrl}/playTrack/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}/auth=${cwfn:encodeUrl(auth)}</mt:encrypt>/${mtfn:virtualTrackName(item)}.${mtfn:suffix(item)}</location>
+                <location>${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt>/${mtfn:virtualTrackName(item)}.${mtfn:suffix(item)}</location>
                 <creator><c:out value="${cwfn:choose(mtfn:unknown(item.artist), '(unknown)', item.artist)}" /></creator>
                 <album><c:out value="${cwfn:choose(mtfn:unknown(item.album), '(unknown)', item.album)}" /></album>
                 <title><c:out value="${item.name}"/></title>
                 <c:if test="${!empty item.genre}"><annotation><c:out value="${item.genre}"/></annotation></c:if>
                 <duration>${item.time * 1000}</duration>
-                <image>${servletUrl}/showTrackImage/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt></image>
-                <info>${servletUrl}/showTrackInfo/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}/auth=${cwfn:encodeUrl(auth)}</mt:encrypt></info>
+                <image>${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt></image>
+                <info>${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt></info>
             </track>
         </c:forEach>
     </trackList>

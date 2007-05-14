@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
 
@@ -11,8 +12,8 @@
 
 <c:if test="${!empty sessionScope.playlist}">
     <div class="playlist">
-        <a class="close" href="${servletUrl}/cancelCreatePlaylist/backUrl=${cwfn:encodeUrl(backUrl)}"><img src="${appUrl}/images/cancel.gif" alt=""/></a>
-				<a class="finish" href="${servletUrl}/editPlaylist/backUrl=${cwfn:encodeUrl(backUrl)}"><img src="${appUrl}/images/finish.gif" alt=""/></a>
+        <a class="close" href="${servletUrl}/cancelCreatePlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><img src="${appUrl}/images/cancel.gif" alt=""/></a>
+				<a class="finish" href="${servletUrl}/editPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><img src="${appUrl}/images/finish.gif" alt=""/></a>
 				<span>
 					<strong>${cwfn:choose (empty sessionScope.playlist.name, newPlaylistName, sessionScope.playlist.name)}</strong>
 					- <fmt:message key="playlistTrackCount" /> : ${sessionScope.playlist.trackCount}
