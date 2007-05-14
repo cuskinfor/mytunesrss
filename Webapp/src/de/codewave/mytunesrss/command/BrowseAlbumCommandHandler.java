@@ -19,30 +19,34 @@ import java.util.*;
  */
 public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws IOException, ServletException, SQLException {
-        String artist = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("artist"));
-        String genre = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("genre"));
-        getRequest().setAttribute("albumPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
-        FindAlbumQuery findAlbumQuery = new FindAlbumQuery(artist, genre, getIntegerRequestParameter("page", -1));
-        Collection<Album> albums = getDataStore().executeQuery(findAlbumQuery);
-        int pageSize = getWebConfig().getEffectivePageSize();
-        if (pageSize > 0 && albums.size() > pageSize) {
-            int current = getSafeIntegerRequestParameter("index", 0);
-            Pager pager = createPager(albums.size(), current);
-            getRequest().setAttribute("indexPager", pager);
-            albums = ((List<Album>)albums).subList(current * pageSize, Math.min((current * pageSize) + pageSize, albums.size()));
-        }
-        getRequest().setAttribute("albums", albums);
-        Boolean singleGenre = Boolean.valueOf(StringUtils.isNotEmpty(genre));
-        Boolean singleArtist = Boolean.valueOf(StringUtils.isNotEmpty(artist));
-        getRequest().setAttribute("singleGenre", singleGenre);
-        getRequest().setAttribute("singleArtist", singleArtist);
-        if (singleArtist || singleGenre) {
-            int trackCount = 0;
-            for (Album album : albums) {
-                trackCount += album.getTrackCount();
+        if (isSessionAuthorized()) {
+            String artist = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("artist"));
+            String genre = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("genre"));
+            getRequest().setAttribute("albumPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
+            FindAlbumQuery findAlbumQuery = new FindAlbumQuery(artist, genre, getIntegerRequestParameter("page", -1));
+            Collection<Album> albums = getDataStore().executeQuery(findAlbumQuery);
+            int pageSize = getWebConfig().getEffectivePageSize();
+            if (pageSize > 0 && albums.size() > pageSize) {
+                int current = getSafeIntegerRequestParameter("index", 0);
+                Pager pager = createPager(albums.size(), current);
+                getRequest().setAttribute("indexPager", pager);
+                albums = ((List<Album>)albums).subList(current * pageSize, Math.min((current * pageSize) + pageSize, albums.size()));
             }
-            getRequest().setAttribute("allAlbumsTrackCount", trackCount);
+            getRequest().setAttribute("albums", albums);
+            Boolean singleGenre = Boolean.valueOf(StringUtils.isNotEmpty(genre));
+            Boolean singleArtist = Boolean.valueOf(StringUtils.isNotEmpty(artist));
+            getRequest().setAttribute("singleGenre", singleGenre);
+            getRequest().setAttribute("singleArtist", singleArtist);
+            if (singleArtist || singleGenre) {
+                int trackCount = 0;
+                for (Album album : albums) {
+                    trackCount += album.getTrackCount();
+                }
+                getRequest().setAttribute("allAlbumsTrackCount", trackCount);
+            }
+            forward(MyTunesRssResource.BrowseAlbum);
+        } else {
+            forward(MyTunesRssResource.Login);
         }
-        forward(MyTunesRssResource.BrowseAlbum);
     }
 }

@@ -20,19 +20,23 @@ import java.util.*;
  */
 public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws SQLException, IOException, ServletException {
-        String album = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("album"));
-        String genre = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("genre"));
-        getRequest().setAttribute("artistPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
-        FindArtistQuery findArtistQuery = new FindArtistQuery(album, genre, getIntegerRequestParameter("page", -1));
-        Collection<Artist> artists = getDataStore().executeQuery(findArtistQuery);
-        int pageSize = getWebConfig().getEffectivePageSize();
-        if (pageSize > 0 && artists.size() > pageSize) {
-            int current = getSafeIntegerRequestParameter("index", 0);
-            Pager pager = createPager(artists.size(), current);
-            getRequest().setAttribute("indexPager", pager);
-            artists = ((List<Artist>)artists).subList(current * pageSize, Math.min((current * pageSize) + pageSize, artists.size()));
+        if (isSessionAuthorized()) {
+            String album = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("album"));
+            String genre = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("genre"));
+            getRequest().setAttribute("artistPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
+            FindArtistQuery findArtistQuery = new FindArtistQuery(album, genre, getIntegerRequestParameter("page", -1));
+            Collection<Artist> artists = getDataStore().executeQuery(findArtistQuery);
+            int pageSize = getWebConfig().getEffectivePageSize();
+            if (pageSize > 0 && artists.size() > pageSize) {
+                int current = getSafeIntegerRequestParameter("index", 0);
+                Pager pager = createPager(artists.size(), current);
+                getRequest().setAttribute("indexPager", pager);
+                artists = ((List<Artist>)artists).subList(current * pageSize, Math.min((current * pageSize) + pageSize, artists.size()));
+            }
+            getRequest().setAttribute("artists", artists);
+            forward(MyTunesRssResource.BrowseArtist);
+        } else {
+            forward(MyTunesRssResource.Login);
         }
-        getRequest().setAttribute("artists", artists);
-        forward(MyTunesRssResource.BrowseArtist);
     }
 }

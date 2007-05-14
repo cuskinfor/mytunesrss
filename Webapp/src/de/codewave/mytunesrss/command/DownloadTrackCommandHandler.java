@@ -9,8 +9,8 @@ import java.sql.*;
  */
 public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
     @Override
-    public void execute() throws IOException, SQLException {
-        if (needsAuthorization() || !getAuthUser().isDownload()) {
+    public void executeAuthorized() throws IOException, SQLException {
+        if (!isRequestAuthorized() || !getAuthUser().isDownload()) {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         } else {
             super.execute();

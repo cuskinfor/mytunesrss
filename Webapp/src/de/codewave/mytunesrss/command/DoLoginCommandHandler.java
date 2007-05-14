@@ -18,7 +18,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
     public void execute() throws IOException, ServletException {
         String userName = getRequest().getParameter("username");
         String password = getRequest().getParameter("password");
-        if (password != null && needsAuthorization()) {
+        if (password != null && !isSessionAuthorized()) {
             byte[] passwordHash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
             if (isAuthorized(userName, passwordHash)) {
                 WebConfig webConfig = getWebConfig();
@@ -27,13 +27,13 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                 webConfig.setUserName(userName);
                 webConfig.setPasswordHash(passwordHash);
                 webConfig.save(getResponse());
-                authorize(userName);
+                authorize(WebAppScope.Session, userName);
                 forward(MyTunesRssCommand.ShowPortal);
             } else {
                 addError(new BundleError("error.loginDenied"));
                 forward(MyTunesRssResource.Login);
             }
-        } else if (needsAuthorization()) {
+        } else if (!isSessionAuthorized()) {
             forward(MyTunesRssResource.Login);
         } else {
             forward(MyTunesRssCommand.ShowPortal);

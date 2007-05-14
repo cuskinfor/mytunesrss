@@ -19,26 +19,30 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        String name = getRequestParameter("name", "");
-        Playlist playlist = (Playlist)getSession().getAttribute("playlist");
-        Collection<Track> playlistContent = (Collection<Track>)getSession().getAttribute("playlistContent");
-        if (StringUtils.isNotEmpty(name)) {
-            playlist.setName(name);
-            DataStoreSession session = getDataStore().getTransaction();
-            session.begin();
-            SavePlaylistStatement statement = new SaveMyTunesPlaylistStatement();
-            statement.setId(playlist.getId());
-            statement.setName(name);
-            statement.setTrackIds(getTrackIds(playlistContent));
-            session.executeStatement(statement);
-            session.commit();
-            getSession().removeAttribute("playlist");
-            getSession().removeAttribute("playlistContent");
-            getStates().put("addToPlaylistMode", Boolean.FALSE);
-            forward(MyTunesRssCommand.ShowPortal);
+        if (isSessionAuthorized()) {
+            String name = getRequestParameter("name", "");
+            Playlist playlist = (Playlist)getSession().getAttribute("playlist");
+            Collection<Track> playlistContent = (Collection<Track>)getSession().getAttribute("playlistContent");
+            if (StringUtils.isNotEmpty(name)) {
+                playlist.setName(name);
+                DataStoreSession session = getDataStore().getTransaction();
+                session.begin();
+                SavePlaylistStatement statement = new SaveMyTunesPlaylistStatement();
+                statement.setId(playlist.getId());
+                statement.setName(name);
+                statement.setTrackIds(getTrackIds(playlistContent));
+                session.executeStatement(statement);
+                session.commit();
+                getSession().removeAttribute("playlist");
+                getSession().removeAttribute("playlistContent");
+                getStates().put("addToPlaylistMode", Boolean.FALSE);
+                forward(MyTunesRssCommand.ShowPortal);
+            } else {
+                addError(new BundleError("error.needPlaylistNameForSave"));
+                redirect(MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null)));
+            }
         } else {
-            addError(new BundleError("error.needPlaylistNameForSave"));
-            redirect(MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null)));
+            forward(MyTunesRssResource.Login);
         }
     }
 

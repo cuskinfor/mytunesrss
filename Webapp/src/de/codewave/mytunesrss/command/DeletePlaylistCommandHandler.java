@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.jsp.*;
 import de.codewave.utils.sql.*;
 
 /**
@@ -13,11 +14,15 @@ import de.codewave.utils.sql.*;
 public class DeletePlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        String playlistId = getRequestParameter("playlist", null);
-        DataStoreSession storeSession = getDataStore().getTransaction();
-        storeSession.begin();
-        storeSession.executeStatement(new DeletePlaylistStatement(playlistId));
-        storeSession.commit();
-        forward(MyTunesRssCommand.ShowPlaylistManager);
+        if (isSessionAuthorized()) {
+            String playlistId = getRequestParameter("playlist", null);
+            DataStoreSession storeSession = getDataStore().getTransaction();
+            storeSession.begin();
+            storeSession.executeStatement(new DeletePlaylistStatement(playlistId));
+            storeSession.commit();
+            forward(MyTunesRssCommand.ShowPlaylistManager);
+        } else {
+            forward(MyTunesRssResource.Login);
+        }
     }
 }

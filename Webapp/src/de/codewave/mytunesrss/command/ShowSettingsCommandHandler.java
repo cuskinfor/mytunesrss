@@ -13,6 +13,10 @@ public class ShowSettingsCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        forward(MyTunesRssResource.Settings);
+        if (isSessionAuthorized()) {
+            forward(MyTunesRssResource.Settings);
+        } else {
+            forward(MyTunesRssResource.Login);
+        }
     }
 }

@@ -22,36 +22,40 @@ import org.apache.commons.lang.*;
 public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
 
     public void executeAuthorized() throws SQLException, IOException, ServletException {
-        List<Playlist> playlists = new ArrayList<Playlist>();
-        if (getAuthUser().isSpecialPlaylists()) {
-            playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM,
-                                       PlaylistType.MyTunes,
-                                       getBundleString("playlist.specialAllByAlbum"),
-                                       -1));
-            playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ARTIST, PlaylistType.MyTunes, getBundleString(
-                    "playlist.specialAllByArtist"), -1));
-            int randomPlaylistSize = getWebConfig().getRandomPlaylistSize();
-            if (randomPlaylistSize > 0) {
-                playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize,
+        if (isSessionAuthorized()) {
+            List<Playlist> playlists = new ArrayList<Playlist>();
+            if (getAuthUser().isSpecialPlaylists()) {
+                playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM,
                                            PlaylistType.MyTunes,
-                                           MessageFormat.format(getBundleString("playlist.specialRandom"), randomPlaylistSize),
+                                           getBundleString("playlist.specialAllByAlbum"),
                                            -1));
+                playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ARTIST, PlaylistType.MyTunes, getBundleString(
+                        "playlist.specialAllByArtist"), -1));
+                int randomPlaylistSize = getWebConfig().getRandomPlaylistSize();
+                if (randomPlaylistSize > 0) {
+                    playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize,
+                                               PlaylistType.MyTunes,
+                                               MessageFormat.format(getBundleString("playlist.specialRandom"), randomPlaylistSize),
+                                               -1));
+                }
             }
+            for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistQuery(null, null))) {
+                playlists.add(playlist);
+                playlists.addAll(createSplittedPlaylists(playlist));
+            }
+            int pageSize = getWebConfig().getEffectivePageSize();
+            if (pageSize > 0 && playlists.size() > pageSize) {
+                int current = getSafeIntegerRequestParameter("index", 0);
+                Pager pager = createPager(playlists.size(), current);
+                getRequest().setAttribute("pager", pager);
+                playlists = playlists.subList(current * pageSize, Math.min((current * pageSize) + pageSize, playlists.size()));
+            }
+            getRequest().setAttribute("playlists", playlists);
+            getRequest().setAttribute("uploadLink", getAuthUser().isUpload() && StringUtils.isNotEmpty(MyTunesRss.CONFIG.getUploadDir()));
+            forward(MyTunesRssResource.Portal);
+        } else {
+            forward(MyTunesRssResource.Login);
         }
-        for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistQuery(null, null))) {
-            playlists.add(playlist);
-            playlists.addAll(createSplittedPlaylists(playlist));
-        }
-        int pageSize = getWebConfig().getEffectivePageSize();
-        if (pageSize > 0 && playlists.size() > pageSize) {
-            int current = getSafeIntegerRequestParameter("index", 0);
-            Pager pager = createPager(playlists.size(), current);
-            getRequest().setAttribute("pager", pager);
-            playlists = playlists.subList(current * pageSize, Math.min((current * pageSize) + pageSize, playlists.size()));
-        }
-        getRequest().setAttribute("playlists", playlists);
-        getRequest().setAttribute("uploadLink", getAuthUser().isUpload() && StringUtils.isNotEmpty(MyTunesRss.CONFIG.getUploadDir()));
-        forward(MyTunesRssResource.Portal);
     }
 
     private List<Playlist> createSplittedPlaylists(Playlist playlist) {

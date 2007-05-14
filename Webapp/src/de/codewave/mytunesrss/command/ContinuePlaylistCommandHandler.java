@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.jsp.*;
+
 /**
  * de.codewave.mytunesrss.command.ContinuePlaylistCommandHandler
  */
@@ -11,7 +13,11 @@ public class ContinuePlaylistCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        getStates().put("addToPlaylistMode", Boolean.TRUE);
-        forward(MyTunesRssCommand.BrowseArtist);
+        if (isSessionAuthorized()) {
+            getStates().put("addToPlaylistMode", Boolean.TRUE);
+            forward(MyTunesRssCommand.BrowseArtist);
+        } else {
+            forward(MyTunesRssResource.Login);
+        }
     }
 }

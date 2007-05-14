@@ -51,9 +51,9 @@ public class ShowTrackImageCommandHandler extends MyTunesRssCommandHandler {
     }
 
     @Override
-    public void execute() throws Exception {
+    public void executeAuthorized() throws Exception {
         Image image = null;
-        if (needsAuthorization()) {
+        if (!isRequestAuthorized()) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("Not authorized to request track, sending default MyTunesRSS image.");
             }

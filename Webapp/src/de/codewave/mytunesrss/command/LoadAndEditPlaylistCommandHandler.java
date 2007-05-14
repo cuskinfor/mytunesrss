@@ -4,13 +4,19 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.jsp.*;
+
 /**
  * de.codewave.mytunesrss.command.StartNewPlaylistCommandHandler
  */
 public class LoadAndEditPlaylistCommandHandler extends LoadPlaylistCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        loadPlaylist();
-        forward(MyTunesRssCommand.EditPlaylist);
+        if (isSessionAuthorized()) {
+            loadPlaylist();
+            forward(MyTunesRssCommand.EditPlaylist);
+        } else {
+            forward(MyTunesRssResource.Login);
+        }
     }
 }
