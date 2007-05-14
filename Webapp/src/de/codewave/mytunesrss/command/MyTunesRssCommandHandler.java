@@ -192,7 +192,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         }
         if (!MyTunesRss.createDatabaseBuilderTask().isRunning()) {
             try {
-                if (!isRequestAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
+                if (!isSessionAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
                                                                                              getWebConfig().getPasswordHash())) {
                     authorize(WebAppScope.Session, getWebConfig().getUserName());
                 }
