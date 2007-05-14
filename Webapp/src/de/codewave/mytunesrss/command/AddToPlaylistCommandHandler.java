@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 
@@ -35,7 +36,7 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
         } else {
             addError(new BundleError("error.emptySelection"));
         }
-        String backUrl = getRequestParameter("backUrl", null);
+        String backUrl = MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null));
         if (StringUtils.isNotEmpty(backUrl)) {
             redirect(backUrl);
         } else {

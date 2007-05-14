@@ -24,12 +24,12 @@
 <div class="body">
 
     <h1 class="settings">
-        <a class="portal" href="${servletUrl}/showPortal"><fmt:message key="portal" /></a> <span><fmt:message key="myTunesRss" /></span>
+        <a class="portal" href="${servletUrl}/showPortal/${auth}"><fmt:message key="portal" /></a> <span><fmt:message key="myTunesRss" /></span>
     </h1>
 
     <jsp:include page="/incl_error.jsp" />
 
-    <form action="${servletUrl}/saveSettings" method="post">
+    <form action="${servletUrl}/saveSettings/${auth}" method="post">
         <table cellspacing="0">
             <tr>
                 <th class="active"><fmt:message key="settings.info" /></th>
@@ -164,7 +164,7 @@
 
         <div class="buttons">
             <input type="submit" value="<fmt:message key="doSave"/>" />
-            <input type="button" value="<fmt:message key="doCancel"/>" onclick="document.location.href='${servletUrl}/showPortal'" />
+            <input type="button" value="<fmt:message key="doCancel"/>" onclick="document.location.href='${servletUrl}/showPortal/${auth}'" />
         </div>
     </form>
 </div>

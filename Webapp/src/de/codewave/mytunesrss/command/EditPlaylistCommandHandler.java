@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.*;
 
 import java.util.*;
 
@@ -29,7 +30,7 @@ public class EditPlaylistCommandHandler extends MyTunesRssCommandHandler {
             forward(MyTunesRssResource.EditPlaylist);
         } else {
             addError(new BundleError("error.cannotEditEmptyPlaylist"));
-            redirect(getRequestParameter("backUrl", null));
+            redirect(MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null)));
         }
     }
 }

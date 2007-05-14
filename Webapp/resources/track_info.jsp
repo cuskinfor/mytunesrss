@@ -24,7 +24,7 @@
 <div class="body">
 
     <h1 class="info">
-        <a class="portal" href="${servletUrl}/showPortal">
+        <a class="portal" href="${servletUrl}/showPortal/${auth}">
             <fmt:message key="portal" />
         </a> <span><fmt:message key="myTunesRss" /></span>
     </h1>
@@ -34,7 +34,7 @@
   <ul class="links">
     <c:if test="${!empty param.backUrl}">
       <li>
-        <a href="${param.backUrl}"><fmt:message key="back" /></a>
+        <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back" /></a>
       </li>
     </c:if>
   </ul>
@@ -93,7 +93,7 @@
                     &nbsp;
                 </td>
                 <td>
-                    <a href="${servletUrl}/playTrack/<mt:encrypt key="${encryptionKey}">auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}">
+                    <a href="${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}">
                         <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="download"/>" />
                         <fmt:message key="doDownload"/>
                     </a>
@@ -103,7 +103,7 @@
         <tr <c:if test="${!authUser.download || !config.showDownload}">class="odd"</c:if>>
           <td colspan="2">
             <img alt="${track.name} Album Art"
-              src="${servletUrl}/showTrackImage/<mt:encrypt key="${encryptionKey}">auth=${cwfn:encodeUrl(auth)}/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>"
+              src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>"
               width="200" style="display: block; margin: 10px auto;"/>
           </td>
         </tr>

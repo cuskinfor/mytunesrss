@@ -4,7 +4,7 @@
         <title><c:out value="${channel}"/></title>
         <link>${feedUrl}</link>
         <image>
-            <url>${servletUrl}/showTrackImage/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(imageTrackId)}</mt:encrypt></url>
+            <url>${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(imageTrackId)}</mt:encrypt></url>
             <title><c:out value="${channel}"/></title>
             <link>${feedUrl}</link>
         </image>
@@ -13,13 +13,13 @@
                 <title><c:out value="${track.name}"/></title>
                 <description><c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" /></description>
                 <author><c:out value="${track.artist}"/></author>
-                <link>${servletUrl}/showTrackInfo/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}/auth=${cwfn:encodeUrl(auth)}</mt:encrypt></link>
-                <guid>${servletUrl}/showTrackInfo/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}/auth=${cwfn:encodeUrl(auth)}</mt:encrypt></guid>
+                <link>${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt></link>
+                <guid>${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt></guid>
                 <pubDate>${pubDate}</pubDate>
-                <enclosure url="${servletUrl}/playTrack/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}/auth=${cwfn:encodeUrl(auth)}</mt:encrypt>/${cwfn:encodeUrl(virtualFileName)}"
+                <enclosure url="${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${cwfn:encodeUrl(virtualFileName)}"
                            type="${track.contentType}"
                            length="${track.contentLength}"/>
-                <c:if test="${mediaThumbnails}"><media:thumbnail url="${servletUrl}/showTrackImage/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>" width="160"/></c:if>
+                <c:if test="${mediaThumbnails}"><media:thumbnail url="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>" width="160"/></c:if>
             </item></c:forEach>
     </channel>
 </rss>

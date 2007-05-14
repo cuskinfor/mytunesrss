@@ -14,7 +14,7 @@
 
     <jsp:include page="incl_head.jsp"/>
 
-    <meta http-equiv="refresh" content="5; URL=${servletUrl}/showPortal" />
+    <meta http-equiv="refresh" content="5; URL=${servletUrl}/showPortal/${auth}" />
 
 </head>
 
@@ -22,7 +22,7 @@
 
     <h1 class="search"><span><fmt:message key="myTunesRss"/></span></h1>
 
-    <form id="login" action="${servletUrl}/login" method="post">
+    <form id="login" action="${servletUrl}/login/${auth}" method="post">
 
         <h2 class="message"><fmt:message key="info.databaseUpdating.title"/></h2>
 

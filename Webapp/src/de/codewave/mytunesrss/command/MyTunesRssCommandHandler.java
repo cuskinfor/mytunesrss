@@ -51,8 +51,8 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected void authorize(String userName) {
         User user = getMyTunesRssConfig().getUser(userName);
         if (user != null) {
-            getSession().setAttribute("auth",
-                                      MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash()));
+            getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(
+                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
             getSession().setAttribute("authUser", user);
             ((MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest())).setUser(user);
             getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);
