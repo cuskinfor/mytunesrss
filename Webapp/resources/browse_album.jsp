@@ -73,7 +73,7 @@
             <th class="active">
                 <c:if test="${!empty param.genre}">${mtfn:capitalize(mtfn:decode64(param.genre))}</c:if>
                 <fmt:message key="albums"/>
-                <c:if test="${!empty param.artist}"> <fmt:message key="by"/> "${mtfn:decode64(param.artist)}"</c:if>
+                <c:if test="${!empty param.artist}"> <fmt:message key="with"/> "${mtfn:decode64(param.artist)}"</c:if>
             </th>
             <th><fmt:message key="artist"/></th>
             <th colspan="${1 + mtfn:buttonColumns(authUser, config)}"><fmt:message key="tracks"/></th>
