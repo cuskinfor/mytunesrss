@@ -16,30 +16,34 @@ import java.util.*;
 public class BrowseServersCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
-    public void execute() throws Exception {
-        List<RemoteServer> servers = (List<RemoteServer>)getSession().getAttribute("remoteServers");
-        if (servers == null) {
-            servers = new ArrayList<RemoteServer>(MulticastService.getOtherInstances());
-            Collections.sort(servers, new Comparator<RemoteServer>() {
-                public int compare(RemoteServer server1, RemoteServer server2) {
-                    return server1.getName().compareTo(server2.getName());
-                }
-            });
-            getSession().setAttribute("remoteServers", servers);
-        }
-        if (servers != null && servers.size() > 0) {
-            int pageSize = getWebConfig().getEffectivePageSize();
-            if (pageSize > 0 && servers.size() > pageSize) {
-                int current = getSafeIntegerRequestParameter("index", 0);
-                Pager pager = createPager(servers.size(), current);
-                getRequest().setAttribute("indexPager", pager);
-                servers = servers.subList(current * pageSize, Math.min((current * pageSize) + pageSize, servers.size()));
+    public void executeAuthorized() throws Exception {
+        if (isSessionAuthorized()) {
+            List<RemoteServer> servers = (List<RemoteServer>)getSession().getAttribute("remoteServers");
+            if (servers == null) {
+                servers = new ArrayList<RemoteServer>(MulticastService.getOtherInstances());
+                Collections.sort(servers, new Comparator<RemoteServer>() {
+                    public int compare(RemoteServer server1, RemoteServer server2) {
+                        return server1.getName().compareTo(server2.getName());
+                    }
+                });
+                getSession().setAttribute("remoteServers", servers);
             }
-            getRequest().setAttribute("servers", servers);
-            forward(MyTunesRssResource.BrowseServers);
+            if (servers != null && servers.size() > 0) {
+                int pageSize = getWebConfig().getEffectivePageSize();
+                if (pageSize > 0 && servers.size() > pageSize) {
+                    int current = getSafeIntegerRequestParameter("index", 0);
+                    Pager pager = createPager(servers.size(), current);
+                    getRequest().setAttribute("indexPager", pager);
+                    servers = servers.subList(current * pageSize, Math.min((current * pageSize) + pageSize, servers.size()));
+                }
+                getRequest().setAttribute("servers", servers);
+                forward(MyTunesRssResource.BrowseServers);
+            } else {
+                addError(new BundleError("error.noRemoteServers"));
+                forward(MyTunesRssCommand.ShowPortal);
+            }
         } else {
-            addError(new BundleError("error.noRemoteServers"));
-            forward(MyTunesRssCommand.ShowPortal);
+            forward(MyTunesRssResource.Login);
         }
     }
 }

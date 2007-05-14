@@ -21,12 +21,12 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
     private static final Log LOG = LogFactory.getLog(PlayTrackCommandHandler.class);
 
     @Override
-    public void execute() throws IOException, SQLException {
+    public void executeAuthorized() throws IOException, SQLException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(ServletUtils.getRequestInfo(getRequest()));
         }
         FileSender fileSender;
-        if (needsAuthorization()) {
+        if (!isRequestAuthorized()) {
             fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
         } else {
             String trackId = getRequest().getParameter("track");

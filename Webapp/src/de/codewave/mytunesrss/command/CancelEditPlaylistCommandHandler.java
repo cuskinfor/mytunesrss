@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import org.apache.commons.lang.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.jsp.*;
 
 /**
  * de.codewave.mytunesrss.command.CancelEditPlaylistCommandHandler
@@ -13,12 +14,16 @@ import de.codewave.mytunesrss.*;
 public class CancelEditPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        getStates().put("addToPlaylistMode", Boolean.FALSE);
-        String backUrl = MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null));
-        if (StringUtils.isNotEmpty(backUrl)) {
-            redirect(backUrl);
+        if (isSessionAuthorized()) {
+            getStates().put("addToPlaylistMode", Boolean.FALSE);
+            String backUrl = MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null));
+            if (StringUtils.isNotEmpty(backUrl)) {
+                redirect(backUrl);
+            } else {
+                forward(MyTunesRssCommand.ShowPortal);
+            }
         } else {
-            forward(MyTunesRssCommand.ShowPortal);
+            forward(MyTunesRssResource.Login);
         }
     }
 }

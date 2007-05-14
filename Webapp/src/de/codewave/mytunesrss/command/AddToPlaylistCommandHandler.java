@@ -18,29 +18,33 @@ import java.util.*;
 public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        Collection<Track> playlist = (Collection<Track>)getSession().getAttribute("playlistContent");
-        String[] trackIds = getNonEmptyParameterValues("track");
-        String trackList = getRequestParameter("tracklist", null);
-        if ((trackIds == null || trackIds.length == 0) && StringUtils.isNotEmpty(trackList)) {
-            trackIds = StringUtils.split(trackList, ',');
-        }
-        DataStoreQuery<Collection<Track>> query = null;
-        if (trackIds != null && trackIds.length > 0) {
-            query = FindTrackQuery.getForId(trackIds);
+        if (isSessionAuthorized()) {
+            Collection<Track> playlist = (Collection<Track>)getSession().getAttribute("playlistContent");
+            String[] trackIds = getNonEmptyParameterValues("track");
+            String trackList = getRequestParameter("tracklist", null);
+            if ((trackIds == null || trackIds.length == 0) && StringUtils.isNotEmpty(trackList)) {
+                trackIds = StringUtils.split(trackList, ',');
+            }
+            DataStoreQuery<Collection<Track>> query = null;
+            if (trackIds != null && trackIds.length > 0) {
+                query = FindTrackQuery.getForId(trackIds);
+            } else {
+                query = TrackRetrieveUtils.getQuery(getRequest(), true);
+            }
+            if (query != null) {
+                playlist.addAll(getDataStore().executeQuery(query));
+                ((Playlist)getSession().getAttribute("playlist")).setTrackCount(playlist.size());
+            } else {
+                addError(new BundleError("error.emptySelection"));
+            }
+            String backUrl = MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null));
+            if (StringUtils.isNotEmpty(backUrl)) {
+                redirect(backUrl);
+            } else {
+                forward(MyTunesRssCommand.ShowPortal);
+            }
         } else {
-            query = TrackRetrieveUtils.getQuery(getRequest(), true);
-        }
-        if (query != null) {
-            playlist.addAll(getDataStore().executeQuery(query));
-            ((Playlist)getSession().getAttribute("playlist")).setTrackCount(playlist.size());
-        } else {
-            addError(new BundleError("error.emptySelection"));
-        }
-        String backUrl = MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null));
-        if (StringUtils.isNotEmpty(backUrl)) {
-            redirect(backUrl);
-        } else {
-            forward(MyTunesRssCommand.ShowPortal);
+            forward(MyTunesRssResource.Login);
         }
     }
 }

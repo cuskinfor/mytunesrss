@@ -19,41 +19,45 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        String searchTerm = getRequestParameter("searchTerm", null);
-        String sortOrderName = getRequestParameter("sortOrder", TrackRetrieveUtils.SortOrder.Album.name());
-        TrackRetrieveUtils.SortOrder sortOrderValue = TrackRetrieveUtils.SortOrder.valueOf(sortOrderName);
+        if (isSessionAuthorized()) {
+            String searchTerm = getRequestParameter("searchTerm", null);
+            String sortOrderName = getRequestParameter("sortOrder", TrackRetrieveUtils.SortOrder.Album.name());
+            TrackRetrieveUtils.SortOrder sortOrderValue = TrackRetrieveUtils.SortOrder.valueOf(sortOrderName);
 
-        DataStoreQuery<Collection<Track>> query = null;
-        if (StringUtils.isNotEmpty(searchTerm)) {
-            query = FindTrackQuery.getForSearchTerm(searchTerm, sortOrderValue == TrackRetrieveUtils.SortOrder.Artist);
-        } else {
-            query = TrackRetrieveUtils.getQuery(getRequest(), false);
-        }
-        getRequest().setAttribute("sortOrder", sortOrderName);
-        List<EnhancedTrack> tracks = null;
-        if (query != null) {
-            List<Track> simpleTracks = (List<Track>)getDataStore().executeQuery(query);
-            EnhancedTracks enhancedTracks = getTracks(simpleTracks, sortOrderValue);
-            getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()));
-            tracks = (List<EnhancedTrack>)enhancedTracks.getTracks();
-            int pageSize = getWebConfig().getEffectivePageSize();
-            if (pageSize > 0 && simpleTracks.size() > pageSize) {
-                int current = getSafeIntegerRequestParameter("index", 0);
-                Pager pager = createPager(simpleTracks.size(), current);
-                getRequest().setAttribute("pager", pager);
-                tracks = tracks.subList(current * pageSize, Math.min((current * pageSize) + pageSize, simpleTracks.size()));
+            DataStoreQuery<Collection<Track>> query = null;
+            if (StringUtils.isNotEmpty(searchTerm)) {
+                query = FindTrackQuery.getForSearchTerm(searchTerm, sortOrderValue == TrackRetrieveUtils.SortOrder.Artist);
+            } else {
+                query = TrackRetrieveUtils.getQuery(getRequest(), false);
             }
-            if (pageSize > 0 && tracks.size() > pageSize) {
-                tracks.get(0).setContinuation(!tracks.get(0).isNewSection());
-                tracks.get(0).setNewSection(true);
+            getRequest().setAttribute("sortOrder", sortOrderName);
+            List<EnhancedTrack> tracks = null;
+            if (query != null) {
+                List<Track> simpleTracks = (List<Track>)getDataStore().executeQuery(query);
+                EnhancedTracks enhancedTracks = getTracks(simpleTracks, sortOrderValue);
+                getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()));
+                tracks = (List<EnhancedTrack>)enhancedTracks.getTracks();
+                int pageSize = getWebConfig().getEffectivePageSize();
+                if (pageSize > 0 && simpleTracks.size() > pageSize) {
+                    int current = getSafeIntegerRequestParameter("index", 0);
+                    Pager pager = createPager(simpleTracks.size(), current);
+                    getRequest().setAttribute("pager", pager);
+                    tracks = tracks.subList(current * pageSize, Math.min((current * pageSize) + pageSize, simpleTracks.size()));
+                }
+                if (pageSize > 0 && tracks.size() > pageSize) {
+                    tracks.get(0).setContinuation(!tracks.get(0).isNewSection());
+                    tracks.get(0).setNewSection(true);
+                }
+                getRequest().setAttribute("tracks", tracks);
             }
-            getRequest().setAttribute("tracks", tracks);
-        }
-        if (tracks == null || tracks.isEmpty()) {
-            addError(new BundleError("error.browseTrackNoResult"));
-            redirect(MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null)));
+            if (tracks == null || tracks.isEmpty()) {
+                addError(new BundleError("error.browseTrackNoResult"));
+                redirect(MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null)));
+            } else {
+                forward(MyTunesRssResource.BrowseTrack);
+            }
         } else {
-            forward(MyTunesRssResource.BrowseTrack);
+            forward(MyTunesRssResource.Login);
         }
     }
 

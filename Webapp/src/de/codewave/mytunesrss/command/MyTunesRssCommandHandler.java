@@ -50,25 +50,24 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected void authorize(String userName) {
         User user = getMyTunesRssConfig().getUser(userName);
-        if (user != null) {
-            getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(
-                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
-            getSession().setAttribute("authUser", user);
-            ((MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest())).setUser(user);
-            getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);
-        }
+        getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(
+                "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+        getSession().setAttribute("authUser", user);
+        ((MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest())).setUser(user);
+        getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);
     }
 
     protected User getAuthUser() {
-        return (User)getSession().getAttribute("authUser");
+        User user = (User)getSession().getAttribute("authUser");
+        if (user == null) {
+            user = (User)getRequest().getAttribute("authUser");
+        }
+        return user;
     }
 
-    protected boolean needsAuthorization() {
-        if (getSession().getAttribute("auth") != null) {
-            User user = (User)getSession().getAttribute("authUser");
-            if (user.isActive() && getMyTunesRssConfig().getUser(user.getName()) != null) {
-                return false;
-            }
+    protected boolean isRequestAuthorized() {
+        if (isSessionAuthorized()) {
+            return true;
         }
         if (StringUtils.isNotEmpty(getRequest().getParameter("auth"))) {
             try {
@@ -78,15 +77,30 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                     byte[] requestAuthHash = MyTunesRssBase64Utils.decode(auth.substring(i + 1));
                     String userName = MyTunesRssBase64Utils.decodeToString(auth.substring(0, i));
                     if (isAuthorized(userName, requestAuthHash)) {
-                        authorize(userName);
-                        return false;
+                        User user = getMyTunesRssConfig().getUser(userName);
+                        getRequest().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(
+                                "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+                        getRequest().setAttribute("authUser", user);
+                        ((MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest())).setUser(user);
+                        getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);
+                        return true;
                     }
                 }
             } catch (NumberFormatException e) {
                 // intentionally left blank
             }
         }
-        return true;
+        return false;
+    }
+
+    protected boolean isSessionAuthorized() {
+        if (getSession().getAttribute("auth") != null) {
+            User user = (User)getSession().getAttribute("authUser");
+            if (user.isActive() && getMyTunesRssConfig().getUser(user.getName()) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void addError(Error error) {
@@ -175,11 +189,11 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         }
         if (!MyTunesRss.createDatabaseBuilderTask().isRunning()) {
             try {
-                if (needsAuthorization() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
-                                                                                           getWebConfig().getPasswordHash())) {
+                if (!isRequestAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
+                                                                                             getWebConfig().getPasswordHash())) {
                     authorize(getWebConfig().getUserName());
-                    executeAuthorized();
-                } else if (needsAuthorization()) {
+                }
+                if (!isRequestAuthorized()) {
                     forward(MyTunesRssResource.Login);
                 } else {
                     executeAuthorized();

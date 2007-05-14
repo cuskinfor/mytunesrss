@@ -24,15 +24,19 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     private static final Log LOG = LogFactory.getLog(UploadCommandHandler.class);
 
     @Override
-    public void execute() throws Exception {
-        FileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        List<FileItem> items = upload.parseRequest(new ProgressRequestWrapper(getRequest()));
-        for (FileItem item : items) {
-            processItem(item);
+    public void executeAuthorized() throws Exception {
+        if (isSessionAuthorized()) {
+            FileItemFactory factory = new DiskFileItemFactory();
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            List<FileItem> items = upload.parseRequest(new ProgressRequestWrapper(getRequest()));
+            for (FileItem item : items) {
+                processItem(item);
+            }
+            runDatabaseUpdate();
+            forward(MyTunesRssResource.UploadFinished);
+        } else {
+            forward(MyTunesRssResource.Login);
         }
-        runDatabaseUpdate();
-        forward(MyTunesRssResource.UploadFinished);
     }
 
     private void processItem(FileItem item) throws IOException {

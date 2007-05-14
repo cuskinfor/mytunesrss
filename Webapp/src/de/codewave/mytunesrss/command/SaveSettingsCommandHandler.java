@@ -20,12 +20,16 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        WebConfig webConfig = getWebConfig();
-        if (transferAndValidate(webConfig)) {
-            webConfig.save(getResponse());
-            forward(MyTunesRssCommand.ShowPortal);
+        if (isSessionAuthorized()) {
+            WebConfig webConfig = getWebConfig();
+            if (transferAndValidate(webConfig)) {
+                webConfig.save(getResponse());
+                forward(MyTunesRssCommand.ShowPortal);
+            } else {
+                forward(MyTunesRssResource.Settings);
+            }
         } else {
-            forward(MyTunesRssResource.Settings);
+            forward(MyTunesRssResource.Login);
         }
     }
 

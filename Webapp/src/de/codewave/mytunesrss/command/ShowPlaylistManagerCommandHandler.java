@@ -17,15 +17,19 @@ public class ShowPlaylistManagerCommandHandler extends MyTunesRssCommandHandler 
 
     @Override
     public void executeAuthorized() throws Exception {
-        List<Playlist> playlists = (List<Playlist>)getDataStore().executeQuery(new FindPlaylistQuery(PlaylistType.MyTunes));
-        int pageSize = getWebConfig().getEffectivePageSize();
-        if (pageSize > 0 && playlists.size() > pageSize) {
-            int current = getSafeIntegerRequestParameter("index", 0);
-            Pager pager = createPager(playlists.size(), current);
-            getRequest().setAttribute("pager", pager);
-            playlists = playlists.subList(current * pageSize, Math.min((current * pageSize) + pageSize, playlists.size()));
+        if (isSessionAuthorized()) {
+            List<Playlist> playlists = (List<Playlist>)getDataStore().executeQuery(new FindPlaylistQuery(PlaylistType.MyTunes));
+            int pageSize = getWebConfig().getEffectivePageSize();
+            if (pageSize > 0 && playlists.size() > pageSize) {
+                int current = getSafeIntegerRequestParameter("index", 0);
+                Pager pager = createPager(playlists.size(), current);
+                getRequest().setAttribute("pager", pager);
+                playlists = playlists.subList(current * pageSize, Math.min((current * pageSize) + pageSize, playlists.size()));
+            }
+            getRequest().setAttribute("playlists", playlists);
+            forward(MyTunesRssResource.PlaylistManager);
+        } else {
+            forward(MyTunesRssResource.Login);
         }
-        getRequest().setAttribute("playlists", playlists);
-        forward(MyTunesRssResource.PlaylistManager);
     }
 }

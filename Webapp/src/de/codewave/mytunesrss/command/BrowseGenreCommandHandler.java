@@ -20,22 +20,26 @@ import org.apache.commons.lang.*;
  */
 public class BrowseGenreCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws IOException, ServletException, SQLException {
-        String page = getRequest().getParameter("page");
-        getRequest().setAttribute("genrePager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
-        Collection<Genre> genres;
-        if (StringUtils.isNotEmpty(page)) {
-            genres = getDataStore().executeQuery(new FindGenreQuery(Integer.parseInt(page)));
+        if (isSessionAuthorized()) {
+            String page = getRequest().getParameter("page");
+            getRequest().setAttribute("genrePager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
+            Collection<Genre> genres;
+            if (StringUtils.isNotEmpty(page)) {
+                genres = getDataStore().executeQuery(new FindGenreQuery(Integer.parseInt(page)));
+            } else {
+                genres = getDataStore().executeQuery(new FindGenreQuery());
+            }
+            int pageSize = getWebConfig().getEffectivePageSize();
+            if (pageSize > 0 && genres.size() > pageSize) {
+                int current = getSafeIntegerRequestParameter("index", 0);
+                Pager pager = createPager(genres.size(), current);
+                getRequest().setAttribute("indexPager", pager);
+                genres = ((List<Genre>)genres).subList(current * pageSize, Math.min((current * pageSize) + pageSize, genres.size()));
+            }
+            getRequest().setAttribute("genres", genres);
+            forward(MyTunesRssResource.BrowseGenre);
         } else {
-            genres = getDataStore().executeQuery(new FindGenreQuery());
+            forward(MyTunesRssResource.Login);
         }
-        int pageSize = getWebConfig().getEffectivePageSize();
-        if (pageSize > 0 && genres.size() > pageSize) {
-            int current = getSafeIntegerRequestParameter("index", 0);
-            Pager pager = createPager(genres.size(), current);
-            getRequest().setAttribute("indexPager", pager);
-            genres = ((List<Genre>)genres).subList(current * pageSize, Math.min((current * pageSize) + pageSize, genres.size()));
-        }
-        getRequest().setAttribute("genres", genres);
-        forward(MyTunesRssResource.BrowseGenre);
     }
 }

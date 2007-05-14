@@ -20,26 +20,30 @@ import java.util.*;
  */
 public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws SQLException, IOException, ServletException {
-        String album = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("album"));
-        String genre = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("genre"));
-        String page = getRequest().getParameter("page");
-        getRequest().setAttribute("artistPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
-        Collection<Artist> artists;
-        if (StringUtils.isNotEmpty(page)) {
-            artists = getDataStore().executeQuery(FindArtistQuery.getForPagerIndex(Integer.parseInt(page)));
-        } else if (StringUtils.isNotEmpty(album)) {
-            artists = getDataStore().executeQuery(FindArtistQuery.getForAlbum(album));
+        if (isSessionAuthorized()) {
+            String album = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("album"));
+            String genre = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("genre"));
+            String page = getRequest().getParameter("page");
+            getRequest().setAttribute("artistPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
+            Collection<Artist> artists;
+            if (StringUtils.isNotEmpty(page)) {
+                artists = getDataStore().executeQuery(FindArtistQuery.getForPagerIndex(Integer.parseInt(page)));
+            } else if (StringUtils.isNotEmpty(album)) {
+                artists = getDataStore().executeQuery(FindArtistQuery.getForAlbum(album));
+            } else {
+                artists = getDataStore().executeQuery(FindArtistQuery.getForGenre(genre));
+            }
+            int pageSize = getWebConfig().getEffectivePageSize();
+            if (pageSize > 0 && artists.size() > pageSize) {
+                int current = getSafeIntegerRequestParameter("index", 0);
+                Pager pager = createPager(artists.size(), current);
+                getRequest().setAttribute("indexPager", pager);
+                artists = ((List<Artist>)artists).subList(current * pageSize, Math.min((current * pageSize) + pageSize, artists.size()));
+            }
+            getRequest().setAttribute("artists", artists);
+            forward(MyTunesRssResource.BrowseArtist);
         } else {
-            artists = getDataStore().executeQuery(FindArtistQuery.getForGenre(genre));
+            forward(MyTunesRssResource.Login);
         }
-        int pageSize = getWebConfig().getEffectivePageSize();
-        if (pageSize > 0 && artists.size() > pageSize) {
-            int current = getSafeIntegerRequestParameter("index", 0);
-            Pager pager = createPager(artists.size(), current);
-            getRequest().setAttribute("indexPager", pager);
-            artists = ((List<Artist>)artists).subList(current * pageSize, Math.min((current * pageSize) + pageSize, artists.size()));
-        }
-        getRequest().setAttribute("artists", artists);
-        forward(MyTunesRssResource.BrowseArtist);
     }
 }

@@ -16,19 +16,23 @@ public class RemoveFromPlaylistCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        Collection<Track> playlistContent = (Collection<Track>)getSession().getAttribute("playlistContent");
-        String[] trackIds = getNonEmptyParameterValues("track");
-        if (trackIds != null && trackIds.length > 0) {
-            Track dummyTrack = new Track();
-            for (String trackId : trackIds) {
-                dummyTrack.setId(trackId);
-                playlistContent.remove(dummyTrack);
+        if (isSessionAuthorized()) {
+            Collection<Track> playlistContent = (Collection<Track>)getSession().getAttribute("playlistContent");
+            String[] trackIds = getNonEmptyParameterValues("track");
+            if (trackIds != null && trackIds.length > 0) {
+                Track dummyTrack = new Track();
+                for (String trackId : trackIds) {
+                    dummyTrack.setId(trackId);
+                    playlistContent.remove(dummyTrack);
+                }
+                Playlist playlist = (Playlist)getSession().getAttribute("playlist");
+                playlist.setTrackCount(playlistContent.size());
+            } else {
+                addError(new BundleError("error.deleteFromPlaylistNoTrack"));
             }
-            Playlist playlist = (Playlist)getSession().getAttribute("playlist");
-            playlist.setTrackCount(playlistContent.size());
+            forward(MyTunesRssCommand.EditPlaylist);
         } else {
-            addError(new BundleError("error.deleteFromPlaylistNoTrack"));
+            forward(MyTunesRssResource.Login);
         }
-        forward(MyTunesRssCommand.EditPlaylist);
     }
 }

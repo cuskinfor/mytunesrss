@@ -16,21 +16,25 @@ import java.util.*;
 public class EditPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        Collection<Track> playlist = (Collection<Track>)getSession().getAttribute("playlistContent");
-        if ((playlist != null && !playlist.isEmpty()) || getBooleanRequestParameter("allowEditEmpty", false)) {
-            int pageSize = getWebConfig().getEffectivePageSize();
-            if (pageSize > 0 && playlist.size() > pageSize) {
-                int index = getSafeIntegerRequestParameter("index", 0);
-                getRequest().setAttribute("tracks", new ArrayList<Track>(playlist).subList(index * pageSize, Math.min((index * pageSize) + pageSize,
-                                                                                                                      playlist.size())));
-                getRequest().setAttribute("pager", createPager(playlist.size(), index));
+        if (isSessionAuthorized()) {
+            Collection<Track> playlist = (Collection<Track>)getSession().getAttribute("playlistContent");
+            if ((playlist != null && !playlist.isEmpty()) || getBooleanRequestParameter("allowEditEmpty", false)) {
+                int pageSize = getWebConfig().getEffectivePageSize();
+                if (pageSize > 0 && playlist.size() > pageSize) {
+                    int index = getSafeIntegerRequestParameter("index", 0);
+                    getRequest().setAttribute("tracks", new ArrayList<Track>(playlist).subList(index * pageSize, Math.min((index * pageSize) + pageSize,
+                                                                                                                          playlist.size())));
+                    getRequest().setAttribute("pager", createPager(playlist.size(), index));
+                } else {
+                    getRequest().setAttribute("tracks", playlist);
+                }
+                forward(MyTunesRssResource.EditPlaylist);
             } else {
-                getRequest().setAttribute("tracks", playlist);
+                addError(new BundleError("error.cannotEditEmptyPlaylist"));
+                redirect(MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null)));
             }
-            forward(MyTunesRssResource.EditPlaylist);
         } else {
-            addError(new BundleError("error.cannotEditEmptyPlaylist"));
-            redirect(MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null)));
+            forward(MyTunesRssResource.Login);
         }
     }
 }
