@@ -9,7 +9,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseAlbum/<mt:encrypt>artist=${cwfn:encodeUrl(param.artist)}/page=${param.page}/index=${param.index}</mt:encrypt></c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseAlbum/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/page=${param.page}/index=${param.index}</mt:encrypt></c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -60,7 +60,7 @@
 
     <c:if test="${!empty indexPager}">
         <c:set var="pager" scope="request" value="${indexPager}" />
-        <c:set var="pagerCommand" scope="request">${servletUrl}/browseServers/<mt:encrypt>page=${param.page}</mt:encrypt>?index={index}</c:set>
+        <c:set var="pagerCommand" scope="request">${servletUrl}/browseServers/<mt:encrypt key="${encryptionKey}">page=${param.page}</mt:encrypt>/index={index}</c:set>
         <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
         <jsp:include page="incl_bottomPager.jsp" />
     </c:if>

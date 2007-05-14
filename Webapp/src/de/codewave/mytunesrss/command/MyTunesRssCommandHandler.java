@@ -133,6 +133,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         if (getAuthUser() != null && getAuthUser().isQuotaExceeded()) {
             addError(new BundleError("error.quotaExceeded." + getAuthUser().getQuotaType().name()));
         }
+        getRequest().setAttribute("encryptionKey", MyTunesRss.CONFIG.getPathInfoKey());
     }
 
     protected WebConfig getWebConfig() {

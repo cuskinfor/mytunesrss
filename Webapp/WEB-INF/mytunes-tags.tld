@@ -46,6 +46,11 @@
         <name>encrypt</name>
         <tag-class>de.codewave.mytunesrss.jsp.EncryptTag</tag-class>
         <body-content>JSP</body-content>
+        <attribute>
+            <description>Encryption secret key.</description>
+            <name>key</name>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
 </taglib>

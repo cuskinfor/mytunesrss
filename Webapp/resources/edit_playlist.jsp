@@ -9,7 +9,7 @@
 
 <fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
 
-<c:set var="backUrl">${servletUrl}/editPlaylist/<mt:encrypt>allowEditEmpty=${param.allowEditEmpty}/index=${param.index}</mt:encrypt>?backUrl=${cwfn:encodeUrl(param.backUrl)}</c:set>
+<c:set var="backUrl">${servletUrl}/editPlaylist/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/index=${param.index}</mt:encrypt>/backUrl=${cwfn:encodeUrl(param.backUrl)}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -70,7 +70,7 @@
                         <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                     </td>
                     <td class="icon">
-                        <a href="${servletUrl}/removeFromPlaylist/<mt:encrypt>allowEditEmpty=${param.allowEditEmpty}/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>?backUrl=${cwfn:encodeUrl(param.backUrl)}">
+                        <a href="${servletUrl}/removeFromPlaylist/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/backUrl=${cwfn:encodeUrl(param.backUrl)}">
                             <img src="${appUrl}/images/delete${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                     </td>
                 </tr>
@@ -78,7 +78,7 @@
         </table>
         <c:if test="${!empty pager}">
             <c:set var="pagerCommand"
-                   scope="request">${servletUrl}/editPlaylist/<mt:encrypt>allowEditEmpty=${param.allowEditEmpty}</mt:encrypt>?index={index}&amp;backUrl=${cwfn:encodeUrl(param.backUrl)}</c:set>
+                   scope="request">${servletUrl}/editPlaylist/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}</mt:encrypt>/index={index}/backUrl=${cwfn:encodeUrl(param.backUrl)}</c:set>
             <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
             <jsp:include page="incl_bottomPager.jsp" />
         </c:if>
@@ -88,7 +88,7 @@
             <input type="submit"
                    onClick="document.forms['playlist'].action = '${servletUrl}/savePlaylist';document.forms['playlist'].elements['backUrl'].value = '${backUrl}'"
                    value="<fmt:message key="savePlaylist"/>" />
-            <input type="button" onClick="document.location.href = '${servletUrl}/cancelEditPlaylist?backUrl=${cwfn:encodeUrl(param.backUrl)}'" value="<fmt:message key="doCancel"/>" />
+            <input type="button" onClick="document.location.href = '${servletUrl}/cancelEditPlaylist/backUrl=${cwfn:encodeUrl(param.backUrl)}'" value="<fmt:message key="doCancel"/>" />
         </div>
     </form>
 
