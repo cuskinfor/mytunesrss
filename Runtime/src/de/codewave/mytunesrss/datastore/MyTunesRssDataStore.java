@@ -72,4 +72,9 @@ public class MyTunesRssDataStore extends DataStore {
             }
         }, 10, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 3, 1, false, false, 10000, 2, 20000, false, 20000));
     }
+
+    @Override
+    protected void beforeDestroy(Connection connection) throws SQLException {
+        connection.createStatement().execute("SHUTDOWN COMPACT");
+    }
 }
