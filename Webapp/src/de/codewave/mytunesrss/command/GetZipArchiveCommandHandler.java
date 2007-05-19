@@ -22,7 +22,7 @@ import java.util.zip.*;
 public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        if (!isRequestAuthorized() && getAuthUser().isDownload() && !getAuthUser().isQuotaExceeded()) {
+        if (isRequestAuthorized() && getAuthUser().isDownload() && !getAuthUser().isQuotaExceeded()) {
             String baseName = getRequest().getPathInfo();
             baseName = baseName.substring(baseName.lastIndexOf("/") + 1, baseName.lastIndexOf("."));
             String album = MyTunesRssBase64Utils.decodeToString(getRequestParameter("album", null));
