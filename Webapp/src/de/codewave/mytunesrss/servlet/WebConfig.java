@@ -117,7 +117,7 @@ public class WebConfig {
         }
     }
 
-    public void save(HttpServletResponse response) {
+    public void save(HttpServletRequest request, HttpServletResponse response) {
         StringBuffer value = new StringBuffer();
         for (Map.Entry<String, String> entry : myConfigValues.entrySet()) {
             value.append(";").append(entry.getKey()).append("=").append(entry.getValue());
@@ -125,6 +125,8 @@ public class WebConfig {
         Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, MyTunesRssBase64Utils.encode(value.substring(1)));
         cookie.setComment("MyTunesRSS settings cookie");
         cookie.setMaxAge(3600 * 24 * 365);// one year
+        String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
+        cookie.setPath(servletUrl.substring(servletUrl.lastIndexOf("/")));
         response.addCookie(cookie);
     }
 
