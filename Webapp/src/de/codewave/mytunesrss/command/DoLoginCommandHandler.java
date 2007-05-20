@@ -26,7 +26,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                 webConfig.setLoginStored(rememberLogin);
                 webConfig.setUserName(userName);
                 webConfig.setPasswordHash(passwordHash);
-                webConfig.save(getResponse());
+                webConfig.save(getRequest(), getResponse());
                 authorize(WebAppScope.Session, userName);
                 forward(MyTunesRssCommand.ShowPortal);
             } else {

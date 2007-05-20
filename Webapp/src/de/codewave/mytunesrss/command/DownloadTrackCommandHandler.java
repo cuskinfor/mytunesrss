@@ -13,7 +13,7 @@ public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
         if (!isRequestAuthorized() || !getAuthUser().isDownload()) {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         } else {
-            super.execute();
+            super.executeAuthorized();
         }
     }
 }
