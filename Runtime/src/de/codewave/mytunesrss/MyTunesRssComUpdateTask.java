@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class MyTunesRssComUpdateTask extends TimerTask {
     private static final Log LOG = LogFactory.getLog(MyTunesRssComUpdateTask.class);
-    private static final String MYTUNESRSSCOM_URL = "http://www.mytunesrss.com/save_ip.php";
+    private static final String MYTUNESRSSCOM_URL = "http://www.mytunesrss.com/tools/save_ip.php";
 
     private int myInterval;
     private Timer myTimer;
