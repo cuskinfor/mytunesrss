@@ -18,7 +18,6 @@
   <component name="BuildJarProjectSettings">
     <option name="BUILD_JARS_ON_MAKE" value="true" />
   </component>
-  <component name="ClearCase" />
   <component name="CodeStyleProjectProfileManger">
     <option name="PROJECT_PROFILE" />
     <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
@@ -364,6 +363,7 @@
       </item>
     </group>
   </component>
+  <component name="ProjectFileVersion" converted="false" />
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AppleExtensions/AppleExtensions.iml" filepath="$PROJECT_DIR$/AppleExtensions/AppleExtensions.iml" />
@@ -414,7 +414,6 @@
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
   <component name="StarteamVcsAdapter" />
-  <component name="SvnBranchConfigurationManager" />
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="svn" />
   </component>

@@ -290,7 +290,7 @@ public class MyTunesRss {
             if (StringUtils.isNotEmpty(CONFIG.getMyTunesRssComUser()) && CONFIG.getMyTunesRssComPasswordHash() != null &&
                     CONFIG.getMyTunesRssComPasswordHash().length > 0) {
                 MyTunesRssComUpdateTask myTunesRssComUpdater = new MyTunesRssComUpdateTask(SERVER_RUNNING_TIMER,
-                                                                                           60000,
+                                                                                           300000,
                                                                                            CONFIG.getMyTunesRssComUser(),
                                                                                            CONFIG.getMyTunesRssComPasswordHash());
                 SERVER_RUNNING_TIMER.schedule(myTunesRssComUpdater, 0);
