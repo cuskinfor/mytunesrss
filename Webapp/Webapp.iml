@@ -63,37 +63,14 @@
     <setting name="RUN_JASPER_VALIDATION" value="false" />
   </component>
   <component name="WebModuleProperties">
-    <containerElement type="module" name="AppleExtensions">
-      <attribute name="method" value="0" />
-      <attribute name="URI" value="/WEB-INF/classes" />
-    </containerElement>
     <containerElement type="module" name="Runtime">
       <attribute name="method" value="0" />
       <attribute name="URI" value="&lt;N/A&gt;" />
     </containerElement>
-    <containerElement type="module" name="ZipPatch">
-      <attribute name="method" value="0" />
-      <attribute name="URI" value="/WEB-INF/classes" />
-    </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
-      <attribute name="URI" value="/WEB-INF/lib/camel-0.4.jar" />
-      <url>jar://$MODULE_DIR$/../Runtime/lib/camel-0.4.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="0" />
-      <attribute name="URI" value="/WEB-INF/lib/camel-0.5.jar" />
-      <url>jar://$MODULE_DIR$/../Runtime/lib/camel-0.5.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="0" />
-      <attribute name="URI" value="/WEB-INF/lib/camel-0.8.jar" />
-      <url>jar://$MODULE_DIR$/../Runtime/lib/camel-0.8.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="0" />
-      <attribute name="URI" value="/WEB-INF/lib/camel-0.9.jar" />
-      <url>jar://$MODULE_DIR$/../Runtime/lib/camel-0.9.jar!/</url>
+      <attribute name="URI" value="/WEB-INF/lib/camel-0.9.1.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/camel-0.9.1.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
