@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
@@ -13,7 +14,7 @@
 
     <title><fmt:message key="applicationTitle" /></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="refresh" content="0; URL=mytunesrss/" />
+    <meta http-equiv="refresh" content="0; URL=mytunesrss/<c:if test="${!(param.mytunesrss_com_user eq null)}">?mytunesrss_com_user=${param.mytunesrss_com_user}&amp;mytunesrss_com_cookie=${cwfn:encodeUrl(param.mytunesrss_com_cookie)}</c:if>" />
 
 </head>
 

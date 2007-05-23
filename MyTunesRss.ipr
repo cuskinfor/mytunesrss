@@ -376,7 +376,7 @@
   <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="Standard" type="Application" factoryName="Application" enabled="false" merge="false">
       <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
-      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.0-rc5 -agentlib:yjpagent" />
+      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.0-rc6 -agentlib:yjpagent" />
       <option name="PROGRAM_PARAMETERS" value="-debug" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/distribution" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
