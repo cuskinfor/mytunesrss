@@ -20,9 +20,10 @@ public class DoLogoutCommandHandler extends MyTunesRssCommandHandler {
         webConfig.save(getRequest(), getResponse());
         if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
             restartMyTunesRssCom();
+            getSession().invalidate();
         } else {
+            getSession().invalidate();
             forward(MyTunesRssResource.Login);
         }
-        getSession().invalidate();
     }
 }
