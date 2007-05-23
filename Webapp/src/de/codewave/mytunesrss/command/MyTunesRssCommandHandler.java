@@ -17,9 +17,9 @@ import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
 import javax.servlet.*;
-import javax.servlet.jsp.*;
 import java.io.*;
 import java.util.*;
+import java.net.*;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
@@ -146,7 +146,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("mytunesrssVersion", MyTunesRss.VERSION);
         getRequest().setAttribute("sessionCreationTime", getSession().getCreationTime());
         getRequest().setAttribute("registered", MyTunesRss.REGISTRATION.isRegistered());
-        getWebConfig();// result not needed, method also fills the request attribute "config"
+        getWebConfig();// result not needed, method also fills the session attribute "config"
         if (getAuthUser() != null && getAuthUser().isQuotaExceeded()) {
             addError(new BundleError("error.quotaExceeded." + getAuthUser().getQuotaType().name()));
         }
@@ -154,11 +154,11 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected WebConfig getWebConfig() {
-        WebConfig webConfig = (WebConfig)getRequest().getAttribute("config");
+        WebConfig webConfig = (WebConfig)getSession().getAttribute("config");
         if (webConfig == null) {
             webConfig = new WebConfig();
             webConfig.load(getRequest());
-            getRequest().setAttribute("config", webConfig);
+            getSession().setAttribute("config", webConfig);
         }
         return webConfig;
     }
@@ -236,5 +236,14 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected String getBundleString(String key) {
         ResourceBundle bundle = ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb", getRequest().getLocale());
         return bundle.getString(key);
+    }
+
+    protected void restartMyTunesRssCom() throws IOException {
+        restartMyTunesRssCom((String)getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER), getWebConfig());
+    }
+
+    protected void restartMyTunesRssCom(String user, WebConfig webConfig) throws IOException {
+        redirect(MyTunesRss.MYTUNESRSSCOM_TOOLS_URL + "/set_cookie.php?username=" + user + "&cookie=" + URLEncoder.encode(webConfig.getCookieValue(),
+                                                                                                                          "UTF-8"));
     }
 }

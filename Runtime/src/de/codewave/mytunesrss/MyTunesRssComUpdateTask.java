@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class MyTunesRssComUpdateTask extends TimerTask {
     private static final Log LOG = LogFactory.getLog(MyTunesRssComUpdateTask.class);
-    private static final String MYTUNESRSSCOM_URL = "http://www.mytunesrss.com/tools/save_ip.php";
+    private static final String MYTUNESRSSCOM_URL = MyTunesRss.MYTUNESRSSCOM_TOOLS_URL + "/save_ip.php";
 
     private int myInterval;
     private Timer myTimer;
@@ -34,8 +34,8 @@ public class MyTunesRssComUpdateTask extends TimerTask {
     public void run() {
         String base64Hash = Base64Utils.encode(myPasswordHash);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Updating mytunesrss.com: user=\"" + myUsername + "\", password=\"" + base64Hash + "\", port=\"" +
-                    MyTunesRss.CONFIG.getPort() + "\".");
+            LOG.debug("Updating mytunesrss.com: user=\"" + myUsername + "\", password=\"" + base64Hash + "\", port=\"" + MyTunesRss.CONFIG.getPort() +
+                    "\".");
         }
         PostMethod postMethod = new PostMethod(System.getProperty("MyTunesRSS.mytunesrsscomUrl", MYTUNESRSSCOM_URL));
         postMethod.addParameter("user", myUsername);

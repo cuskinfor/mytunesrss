@@ -36,6 +36,7 @@ import java.util.prefs.*;
  */
 public class MyTunesRss {
     public static final String APPLICATION_IDENTIFIER = "MyTunesRSS3";
+    public static final String MYTUNESRSSCOM_TOOLS_URL = "http://mytunesrss.com/tools";
 
     static {
         try {

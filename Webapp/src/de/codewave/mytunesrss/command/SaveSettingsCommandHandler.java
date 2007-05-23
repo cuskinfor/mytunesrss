@@ -4,9 +4,9 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.servlet.*;
-import de.codewave.mytunesrss.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -24,7 +24,11 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
             WebConfig webConfig = getWebConfig();
             if (transferAndValidate(webConfig)) {
                 webConfig.save(getRequest(), getResponse());
-                forward(MyTunesRssCommand.ShowPortal);
+                if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
+                    restartMyTunesRssCom();
+                } else {
+                    forward(MyTunesRssCommand.ShowPortal);
+                }
             } else {
                 forward(MyTunesRssResource.Settings);
             }
