@@ -45,12 +45,7 @@ public class TrackListener implements PListHandlerListener {
         String trackId = track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
         myExistingIds.add(trackId);
         myTrackIdToPersId.put((Long)track.get("Track ID"), trackId);
-        Date dateModified = ((Date)track.get("Date Modified"));
-        long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
-        Date dateAdded = ((Date)track.get("Date Added"));
-        long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
-        if (dateModifiedTime >= myLibraryListener.getTimeLastUpate() || dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
-            if (insertOrUpdateTrack(track)) {
+        if (processTrack(track)) {
                 myUpdatedCount++;
                 if (myUpdatedCount % 5000 == 0) {// commit every 5000 tracks to not run out of memory
                     try {
@@ -64,10 +59,6 @@ public class TrackListener implements PListHandlerListener {
                         }
                     }
                 }
-            } else {
-                myExistingIds.remove(trackId);
-                myTrackIdToPersId.remove(track.get("Track ID"));
-            }
         }
         return false;
     }
@@ -76,7 +67,7 @@ public class TrackListener implements PListHandlerListener {
         throw new UnsupportedOperationException("method beforeArrayAdd of class ItunesLoader$TrackListener is not supported!");
     }
 
-    private boolean insertOrUpdateTrack(Map track) {
+    private boolean processTrack(Map track) {
         String trackId = track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
         String name = (String)track.get("Name");
         String trackType = (String)track.get("Track Type");
@@ -84,6 +75,12 @@ public class TrackListener implements PListHandlerListener {
             File file = ItunesLoader.getFileForLocation((String)track.get("Location"));
             if (trackId != null && StringUtils.isNotEmpty(name) && file != null && new SupportedFileFilter().accept(file.getParentFile(),
                                                                                                                     file.getName())) {
+                Date dateModified = ((Date)track.get("Date Modified"));
+                long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
+                Date dateAdded = ((Date)track.get("Date Added"));
+                long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
+                if (!myDatabaseIds.contains(trackId) || dateModifiedTime >= myLibraryListener.getTimeLastUpate() ||
+                        dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
                 try {
                     InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(trackId) ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);
                     statement.clear();
@@ -104,13 +101,13 @@ public class TrackListener implements PListHandlerListener {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not insert track \"" + name + "\" into database", e);
                     }
-                } catch (NumberFormatException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not insert track \"" + name + "\" into database", e);
                     }
                 }
+                return false;
             }
         }
+        myExistingIds.remove(trackId);
+        myTrackIdToPersId.remove(track.get("Track ID"));
         return false;
     }
 

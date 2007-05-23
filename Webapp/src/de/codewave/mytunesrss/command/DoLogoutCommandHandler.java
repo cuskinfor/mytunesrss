@@ -18,11 +18,11 @@ public class DoLogoutCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setLoginStored(false);
         webConfig.setPasswordHash(new byte[0]);
         webConfig.save(getRequest(), getResponse());
-        String user = (String)getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER);
-        getSession().invalidate();
-        if (user != null) {
-            restartMyTunesRssCom(user, webConfig);
+        if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
+            restartMyTunesRssCom();
+            getSession().invalidate();
         } else {
+            getSession().invalidate();
             forward(MyTunesRssResource.Login);
         }
     }

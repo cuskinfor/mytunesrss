@@ -64,6 +64,7 @@ public class MyTunesRss {
     public static int OPTION_PANE_MAX_MESSAGE_LENGTH = 100;
     public static boolean HEADLESS;
     private static Database DATABASE_FORM;
+    private static Settings SETTINGS;
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
     public static final ErrorQueue ERROR_QUEUE = new ErrorQueue();
     public static boolean QUIT_REQUEST;
@@ -154,7 +155,7 @@ public class MyTunesRss {
         if (DATABASE_FORM == null) {
             return new DatabaseBuilderTask();
         }
-        return new GuiDatabaseBuilderTask(DATABASE_FORM);
+        return new GuiDatabaseBuilderTask(SETTINGS);
     }
 
     private static boolean isOtherInstanceRunning(long timeoutMillis) {
@@ -196,16 +197,16 @@ public class MyTunesRss {
     private static void executeGuiMode() throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
             ClassNotFoundException, IOException, InterruptedException {
         showNewVersionInfo();
-        final Settings settings = new Settings();
-        DATABASE_FORM = settings.getDatabaseForm();
-        MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(settings);
-        executeApple(settings);
-        executeWindows(settings);
+        SETTINGS = new Settings();
+        DATABASE_FORM = SETTINGS.getDatabaseForm();
+        MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(SETTINGS);
+        executeApple(SETTINGS);
+        executeWindows(SETTINGS);
         ROOT_FRAME.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         ROOT_FRAME.addWindowListener(mainWindowListener);
-        ROOT_FRAME.getContentPane().add(settings.getRootPanel());
+        ROOT_FRAME.getContentPane().add(SETTINGS.getRootPanel());
         ROOT_FRAME.setResizable(false);
-        settings.setGuiMode(GuiMode.ServerIdle);
+        SETTINGS.setGuiMode(GuiMode.ServerIdle);
         SwingUtils.removeEmptyTooltips(ROOT_FRAME.getRootPane());
         int x = CONFIG.loadWindowPosition().x;
         int y = CONFIG.loadWindowPosition().y;
@@ -213,7 +214,7 @@ public class MyTunesRss {
             UpdateUtils.checkForUpdate(true);
         }
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
-        settings.init();
+        SETTINGS.init();
         DUMMY_FRAME.dispose();
         if (x != Integer.MAX_VALUE && y != Integer.MAX_VALUE) {
             ROOT_FRAME.setLocation(x, y);
@@ -222,7 +223,7 @@ public class MyTunesRss {
             SwingUtils.packAndShowRelativeTo(ROOT_FRAME, null);
         }
         if (CONFIG.isAutoStartServer()) {
-            settings.doStartServer();
+            SETTINGS.doStartServer();
             if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
                 // todo: hide window on osx instead of iconify
                 ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
