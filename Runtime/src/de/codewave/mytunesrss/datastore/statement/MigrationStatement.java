@@ -4,8 +4,8 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.utils.sql.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.logging.*;
 
 import java.sql.*;
@@ -21,6 +21,12 @@ public class MigrationStatement implements DataStoreStatement {
         if (LOG.isInfoEnabled()) {
             LOG.info("Database version " + version + " detected.");
         }
+        // migration from 3.0 to current version
+        if (version.equals("3.0")) {
+            new DropAllTablesStatement().execute(connection);
+            new CreateAllTablesStatement().execute(connection);
+        }
+        new UpdateDatabaseVersionStatement().execute(connection);
     }
 
     private String getVersion(Connection connection) throws SQLException {

@@ -87,4 +87,15 @@
         <sql>{create_playlist_id_sequence}</sql>
     </statement>
 
+    <statement name="dropAllTables">
+        <sql>DROP TABLE link_track_playlist</sql>
+        <sql>DROP TABLE playlist</sql>
+        <sql>DROP TABLE album</sql>
+        <sql>DROP TABLE artist</sql>
+        <sql>DROP TABLE genre</sql>
+        <sql>DROP TABLE track</sql>
+        <sql>DROP TABLE system_information</sql>
+        <sql>{drop_playlist_id_sequence}</sql>
+    </statement>
+
 </statements>

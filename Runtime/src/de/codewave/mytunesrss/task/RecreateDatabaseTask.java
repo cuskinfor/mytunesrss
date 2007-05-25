@@ -6,12 +6,11 @@ import de.codewave.mytunesrss.*;
  * de.codewave.mytunesrss.task.RecreateDatabaseTask
  */
 public class RecreateDatabaseTask extends MyTunesRssTask {
-    private DeleteDatabaseTask myDeleteDatabaseTask = new DeleteDatabaseTask(true);
+    private DropAllTablesTask myDropAllTablesTask = new DropAllTablesTask();
     private InitializeDatabaseTask myInitializeDatabaseTask = new InitializeDatabaseTask();
 
     public void execute() throws Exception {
-        MyTunesRss.STORE.destroy();
-        myDeleteDatabaseTask.execute();
+        myDropAllTablesTask.execute();
         myInitializeDatabaseTask.execute();
     }
 }

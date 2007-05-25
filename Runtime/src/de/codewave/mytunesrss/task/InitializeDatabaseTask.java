@@ -16,8 +16,6 @@ import java.sql.*;
  * de.codewave.mytunesrss.task.InitializeDatabaseTask
  */
 public class InitializeDatabaseTask extends MyTunesRssTask {
-    private static final Log LOG = LogFactory.getLog(InitializeDatabaseTask.class);
-
     private boolean myExistent;
 
     public void execute() throws IOException, SQLException {

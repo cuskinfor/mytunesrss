@@ -173,11 +173,8 @@
         <sql>INSERT INTO system_information (version) VALUES (:version)</sql>
     </statement>
 
-    <statement name="deleteAllContent">
-        <sql>DELETE FROM playlist</sql>
-        <sql>DELETE FROM album</sql>
-        <sql>DELETE FROM artist</sql>
-        <sql>DELETE FROM track</sql>
+    <statement name="updateDatabaseVersion">
+        <sql>UPDATE system_information SET version = :version</sql>
     </statement>
 
     <statement name="insertTrack">

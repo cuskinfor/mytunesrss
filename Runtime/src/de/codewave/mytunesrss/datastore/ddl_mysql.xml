@@ -16,5 +16,6 @@
             UNIQUE (id)
         )
     </fragment>
+    <fragment name="drop_playlist_id_sequence">DROP TABLE playlist_id_sequence</fragment>
 
 </statements>

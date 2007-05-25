@@ -14,6 +14,7 @@ import de.codewave.utils.*;
 import de.codewave.utils.moduleinfo.*;
 import de.codewave.utils.swing.*;
 import org.apache.catalina.*;
+import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 import org.apache.log4j.*;
@@ -36,8 +37,6 @@ import java.util.prefs.*;
  */
 public class MyTunesRss {
     public static final String APPLICATION_IDENTIFIER = "MyTunesRSS3";
-    public static final String MYTUNESRSSCOM_TOOLS_URL = "http://mytunesrss.com/tools";
-    private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
 
     static {
         try {
@@ -45,6 +44,11 @@ public class MyTunesRss {
         } catch (IOException e) {
             System.setProperty("MyTunesRSS.logDir", ".");
         }
+    }
+
+    private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
+
+    static {
         try {
             UPDATE_URL = new URL("http://www.codewave.de/download/versions/mytunesrss.xml");
         } catch (MalformedURLException e) {
@@ -61,6 +65,7 @@ public class MyTunesRss {
         }
     }
 
+    public static final String MYTUNESRSSCOM_TOOLS_URL = "http://mytunesrss.com/tools";
     public static String VERSION;
     public static URL UPDATE_URL;
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
@@ -91,11 +96,7 @@ public class MyTunesRss {
         if (arguments.containsKey("debug")) {
             Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
         }
-        if (arguments.containsKey("lib")) {
-            registerDatabaseDriver(arguments.get("lib")[0]);
-        } else {
-            Class.forName(System.getProperty("database.driver", "org.h2.Driver"));
-        }
+        registerDatabaseDriver();
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
         VERSION = modulesInfo != null ? modulesInfo.getVersion() : System.getProperty("MyTunesRSS.version", "0.0.0");
         if (LOG.isInfoEnabled()) {
@@ -132,8 +133,8 @@ public class MyTunesRss {
                 MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
             }
         }
-        if (Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).getBoolean("deleteDatabaseOnNextStartOnError", false)) {
-            new DeleteDatabaseTask(false).execute();
+        if (System.getProperty("database.type") == null && Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).getBoolean("deleteDatabaseOnNextStartOnError", false)) {
+            new DeleteDatabaseFilesTask().execute();
         }
         loadConfiguration(arguments);
         if (HEADLESS) {
@@ -154,40 +155,47 @@ public class MyTunesRss {
         }
     }
 
-    private static void registerDatabaseDriver(String classpath) throws MalformedURLException, SQLException, ClassNotFoundException,
-            IllegalAccessException, InstantiationException {
-        List<URL> urls = new ArrayList<URL>();
-        for (String libPath : StringUtils.split(classpath, ";:")) {
-            urls.add(new File(libPath).toURL());
+    private static void registerDatabaseDriver()
+            throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        File libDir = new File(PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER) + "/lib");
+        Collection<File> files = libDir.exists() && libDir.isDirectory() ? (Collection<File>)FileUtils.listFiles(libDir, new String[] {"jar"}, false) : null;
+        if (files != null && !files.isEmpty()) {
+            Collection<URL> urls = new ArrayList<URL>();
+            for (File file : files) {
+                urls.add(file.toURL());
+            }
+            final ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), ClassLoader.getSystemClassLoader());
+            DriverManager.registerDriver(new Driver() {
+                private Driver myDriver = (Driver)Class.forName(System.getProperty("database.driver", "org.h2.Driver"), true, classLoader)
+                        .newInstance();
+
+                public Connection connect(String string, Properties properties) throws SQLException {
+                    return myDriver.connect(string, properties);
+                }
+
+                public boolean acceptsURL(String string) throws SQLException {
+                    return myDriver.acceptsURL(string);
+                }
+
+                public DriverPropertyInfo[] getPropertyInfo(String string, Properties properties) throws SQLException {
+                    return myDriver.getPropertyInfo(string, properties);
+                }
+
+                public int getMajorVersion() {
+                    return myDriver.getMajorVersion();
+                }
+
+                public int getMinorVersion() {
+                    return myDriver.getMinorVersion();
+                }
+
+                public boolean jdbcCompliant() {
+                    return myDriver.jdbcCompliant();
+                }
+            });
+        } else {
+            Class.forName(System.getProperty("database.driver", "org.h2.Driver"));
         }
-        final ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), ClassLoader.getSystemClassLoader());
-        DriverManager.registerDriver(new Driver() {
-            private Driver myDriver = (Driver)Class.forName(System.getProperty("database.driver", "org.h2.Driver"), true, classLoader).newInstance();
-
-            public Connection connect(String string, Properties properties) throws SQLException {
-                return myDriver.connect(string, properties);
-            }
-
-            public boolean acceptsURL(String string) throws SQLException {
-                return myDriver.acceptsURL(string);
-            }
-
-            public DriverPropertyInfo[] getPropertyInfo(String string, Properties properties) throws SQLException {
-                return myDriver.getPropertyInfo(string, properties);
-            }
-
-            public int getMajorVersion() {
-                return myDriver.getMajorVersion();
-            }
-
-            public int getMinorVersion() {
-                return myDriver.getMinorVersion();
-            }
-
-            public boolean jdbcCompliant() {
-                return myDriver.jdbcCompliant();
-            }
-        });
     }
 
     public static DatabaseBuilderTask createDatabaseBuilderTask() {

@@ -153,13 +153,6 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         }
     }
 
-    public void deleteAllContent() throws SQLException {
-        DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
-        storeSession.begin();
-        storeSession.executeStatement(new DeleteAllContentStatement());
-        storeSession.commit();
-    }
-
     public boolean isRunning() {
         return CURRENTLY_RUNNING;
     }
