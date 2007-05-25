@@ -26,7 +26,7 @@ public class SaveMyTunesPlaylistStatement extends SavePlaylistStatement {
                 setId("MyTunesRSS" + playlistId);
                 SmartStatement statement = MyTunesRssUtils.createStatement(connection, "cleanupPlaylistIdSequence");
                 statement.setInt("playlistId", playlistId);
-                statement.executeQuery();
+                statement.execute();
             }
             executeInsert(connection);
         } else {

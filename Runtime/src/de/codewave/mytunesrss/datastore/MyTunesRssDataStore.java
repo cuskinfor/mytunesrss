@@ -25,16 +25,6 @@ public class MyTunesRssDataStore extends DataStore {
     private static final Log LOG = LogFactory.getLog(MyTunesRssDataStore.class);
     public static final String DIRNAME = "h2";
 
-    static {
-        try {
-            Class.forName(System.getProperty("database.driver", "org.h2.Driver"));
-        } catch (ClassNotFoundException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not load database driver.", e);
-            }
-        }
-    }
-
     private SmartStatementFactory mySmartStatementFactory;
 
     public void init() throws IOException {

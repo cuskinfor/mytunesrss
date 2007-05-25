@@ -20,7 +20,7 @@ public class SaveM3uFilePlaylistStatement extends SavePlaylistStatement {
             setId("M3U" + playlistId);
             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "cleanupPlaylistIdSequence");
             statement.setInt("playlistId", playlistId);
-            statement.executeQuery();
+            statement.execute();
         }
         executeInsert(connection);
     }

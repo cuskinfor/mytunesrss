@@ -7,8 +7,8 @@
     </statement>
 
     <statement name="nextPlaylistId">
-        <sql>INSERT INTO (playlist_id_sequence) VALUES (NULL)</sql>
-        <sql>SELECT LAST_INSERT_ID() FROM playlist_id_sequence LIMIT 1</sql>
+        <sql>INSERT INTO playlist_id_sequence VALUES (0)</sql>
+        <sql>SELECT LAST_INSERT_ID() AS id FROM playlist_id_sequence LIMIT 1</sql>
     </statement>
 
     <statement name="cleanupPlaylistIdSequence">

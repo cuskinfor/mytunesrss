@@ -37,6 +37,7 @@ import java.util.prefs.*;
 public class MyTunesRss {
     public static final String APPLICATION_IDENTIFIER = "MyTunesRSS3";
     public static final String MYTUNESRSSCOM_TOOLS_URL = "http://mytunesrss.com/tools";
+    private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
 
     static {
         try {
@@ -44,9 +45,22 @@ public class MyTunesRss {
         } catch (IOException e) {
             System.setProperty("MyTunesRSS.logDir", ".");
         }
+        try {
+            UPDATE_URL = new URL("http://www.codewave.de/download/versions/mytunesrss.xml");
+        } catch (MalformedURLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not create update url.", e);
+            }
+        }
+        try {
+            MESSAGE_DIGEST = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not create message digest.", e);
+            }
+        }
     }
 
-    private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
     public static String VERSION;
     public static URL UPDATE_URL;
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
@@ -68,23 +82,7 @@ public class MyTunesRss {
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
     public static final ErrorQueue ERROR_QUEUE = new ErrorQueue();
     public static boolean QUIT_REQUEST;
-
-    static {
-        try {
-            UPDATE_URL = new URL("http://www.codewave.de/download/versions/mytunesrss.xml");
-        } catch (MalformedURLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create update url.", e);
-            }
-        }
-        try {
-            MESSAGE_DIGEST = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create message digest.", e);
-            }
-        }
-    }
+    public static Driver DATABASE_DRIVER;
 
     public static void main(final String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException,
             InstantiationException, ClassNotFoundException, IOException, SQLException {
@@ -92,6 +90,11 @@ public class MyTunesRss {
         HEADLESS = arguments.containsKey("headless");
         if (arguments.containsKey("debug")) {
             Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
+        }
+        if (arguments.containsKey("lib")) {
+            registerDatabaseDriver(arguments.get("lib")[0]);
+        } else {
+            Class.forName(System.getProperty("database.driver", "org.h2.Driver"));
         }
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
         VERSION = modulesInfo != null ? modulesInfo.getVersion() : System.getProperty("MyTunesRSS.version", "0.0.0");
@@ -149,6 +152,42 @@ public class MyTunesRss {
                 }
             });
         }
+    }
+
+    private static void registerDatabaseDriver(String classpath) throws MalformedURLException, SQLException, ClassNotFoundException,
+            IllegalAccessException, InstantiationException {
+        List<URL> urls = new ArrayList<URL>();
+        for (String libPath : StringUtils.split(classpath, ";:")) {
+            urls.add(new File(libPath).toURL());
+        }
+        final ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), ClassLoader.getSystemClassLoader());
+        DriverManager.registerDriver(new Driver() {
+            private Driver myDriver = (Driver)Class.forName(System.getProperty("database.driver", "org.h2.Driver"), true, classLoader).newInstance();
+
+            public Connection connect(String string, Properties properties) throws SQLException {
+                return myDriver.connect(string, properties);
+            }
+
+            public boolean acceptsURL(String string) throws SQLException {
+                return myDriver.acceptsURL(string);
+            }
+
+            public DriverPropertyInfo[] getPropertyInfo(String string, Properties properties) throws SQLException {
+                return myDriver.getPropertyInfo(string, properties);
+            }
+
+            public int getMajorVersion() {
+                return myDriver.getMajorVersion();
+            }
+
+            public int getMinorVersion() {
+                return myDriver.getMinorVersion();
+            }
+
+            public boolean jdbcCompliant() {
+                return myDriver.jdbcCompliant();
+            }
+        });
     }
 
     public static DatabaseBuilderTask createDatabaseBuilderTask() {
