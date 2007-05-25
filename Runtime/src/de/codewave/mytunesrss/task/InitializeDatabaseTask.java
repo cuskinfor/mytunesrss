@@ -24,10 +24,14 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
         MyTunesRss.STORE.init();
         MyTunesRss.STORE.executeQuery(new DataStoreQuery<Boolean>() {
             public Boolean execute(Connection connection) throws SQLException {
-                ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "initialize").executeQuery();
-                if (resultSet.next() && resultSet.getInt(1) == 1) {
-                    myExistent = true;
-                    return Boolean.TRUE;
+                try {
+                    ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "initialize").executeQuery();
+                    if (resultSet.next()) {
+                        myExistent = true;
+                        return Boolean.TRUE;
+                    }
+                } catch (SQLException e) {
+                    // intentionally left blank
                 }
                 myExistent = false;
                 return Boolean.FALSE;
@@ -36,39 +40,13 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
         if (!myExistent) {
             DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
             storeSession.begin();
-            try {
-                storeSession.executeStatement(new CreateAllTablesStatement());
-                storeSession.commit();
-            } catch (SQLException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not create tables.", e);
-                }
-                try {
-                    storeSession.rollback();
-                } catch (SQLException e1) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not rollback transaction.", e1);
-                    }
-                }
-            }
+            storeSession.executeStatement(new CreateAllTablesStatement());
+            storeSession.commit();
         } else {
             DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
             storeSession.begin();
-            try {
-                storeSession.executeStatement(new MigrationStatement());
-                storeSession.commit();
-            } catch (SQLException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not migrate database.", e);
-                }
-                try {
-                    storeSession.rollback();
-                } catch (SQLException e1) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not rollback transaction.", e1);
-                    }
-                }
-            }
+            storeSession.executeStatement(new MigrationStatement());
+            storeSession.commit();
         }
     }
 

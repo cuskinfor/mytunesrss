@@ -5,11 +5,16 @@
     <statement name="preCreateAllTables"/>
 
     <statement name="initialize">
-        <sql>SELECT * FROM pg_catalog.pg_stat_user_tables WHERE LOWER(schemaname) = 'public' AND LOWER(relname) = 'track'</sql>
+        <sql>show tables</sql>
     </statement>
 
     <fragment name="datatype_boolean">BOOLEAN</fragment>
     <fragment name="create_table_prefix">CREATE TABLE</fragment>
-    <fragment name="playlist_id_column">id VARCHAR(20) NOT NULL</fragment>
+    <fragment name="create_playlist_id_sequence">
+        CREATE TABLE playlist_id_sequence (
+            id INTEGER NOT NULL AUTO_INCREMENT,
+            UNIQUE (id)
+        )
+    </fragment>
 
 </statements>

@@ -16,7 +16,11 @@ public class SaveM3uFilePlaylistStatement extends SavePlaylistStatement {
     public void execute(Connection connection) throws SQLException {
         ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "nextPlaylistId").executeQuery();
         if (resultSet.next()) {
-            setId("M3U" + resultSet.getInt("ID"));
+            int playlistId = resultSet.getInt("ID");
+            setId("M3U" + playlistId);
+            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "cleanupPlaylistIdSequence");
+            statement.setInt("playlistId", playlistId);
+            statement.executeQuery();
         }
         executeInsert(connection);
     }

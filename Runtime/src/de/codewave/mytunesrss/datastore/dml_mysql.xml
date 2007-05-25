@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<statements>
+
+    <statement name="findRandomTracks">
+        <sql>SELECT {trackColumns} FROM track t ORDER BY RAND() LIMIT :maxCount</sql>
+    </statement>
+
+    <statement name="nextPlaylistId">
+        <sql>INSERT INTO (playlist_id_sequence) VALUES (NULL)</sql>
+        <sql>SELECT LAST_INSERT_ID() FROM playlist_id_sequence LIMIT 1</sql>
+    </statement>
+
+    <statement name="cleanupPlaylistIdSequence">
+        <sql>DELETE FROM playlist_id_sequence WHERE id = :playlistId</sql>
+    </statement>
+
+    <!-- reusable sql fragments -->
+    <fragment name="tuneDatabaseAfterHelpTablesUpdate">ANALYZE TABLE track, artist, album, genre</fragment>
+
+    <fragment name="likeEscape">ESCAPE '\\'</fragment>
+
+</statements>

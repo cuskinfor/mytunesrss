@@ -103,6 +103,11 @@
       </containerElement>
       <containerElement type="library" level="module">
         <attribute name="method" value="2" />
+        <attribute name="URI" value="/lib/mysql-connector-java-5.0.6-bin.jar" />
+        <url>jar://$MODULE_DIR$/lib/mysql-connector-java-5.0.6-bin.jar!/</url>
+      </containerElement>
+      <containerElement type="library" level="module">
+        <attribute name="method" value="2" />
         <attribute name="URI" value="/lib/naming-factory.jar" />
         <url>jar://$MODULE_DIR$/lib/naming-factory.jar!/</url>
       </containerElement>
@@ -446,6 +451,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/mysql-connector-java-5.0.6-bin.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="AppleExtensions" />
     <orderEntryProperties />
   </component>
   <component name="copyright">

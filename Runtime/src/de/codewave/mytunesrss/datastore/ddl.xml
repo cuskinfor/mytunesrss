@@ -4,15 +4,15 @@
 
         <statement name="createAllTables">
         <sql>
-            CREATE {cached_table_prefix} TABLE track (
-                id VARCHAR(2000) NOT NULL,
+            {create_table_prefix} track (
+                id VARCHAR(1000) NOT NULL,
                 name VARCHAR(255) NOT NULL,
-                artist {datatype_varchar_ignorecase}(255) NOT NULL,
-                album {datatype_varchar_ignorecase}(255) NOT NULL,
+                artist VARCHAR(255) NOT NULL,
+                album VARCHAR(255) NOT NULL,
                 time INTEGER,
                 track_number INTEGER,
                 file VARCHAR(1024) NOT NULL,
-                suffix {datatype_varchar_ignorecase}(10) NOT NULL,
+                suffix VARCHAR(10) NOT NULL,
                 protected BOOLEAN,
                 video {datatype_boolean},
                 source VARCHAR(20),
@@ -21,7 +21,7 @@
             )
         </sql>
         <sql>
-            CREATE {cached_table_prefix} TABLE playlist (
+            {create_table_prefix} playlist (
                 id VARCHAR(20) NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 type VARCHAR(20) NOT NULL,
@@ -30,24 +30,24 @@
             )
         </sql>
         <sql>
-            CREATE {cached_table_prefix} TABLE link_track_playlist (
-                index INTEGER,
-                track_id VARCHAR(2000) NOT NULL,
+            {create_table_prefix} link_track_playlist (
+                idx INTEGER,
+                track_id VARCHAR(1000) NOT NULL,
                 playlist_id VARCHAR(20) NOT NULL,
                 CONSTRAINT fk_linktrackplaylist_trackid FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE,
                 CONSTRAINT fk_linktrackplaylist_playlistid FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
             )
         </sql>
         <sql>
-            CREATE {cached_table_prefix} TABLE system_information (
+            {create_table_prefix} system_information (
                 lastupdate BIGINT,
                 version VARCHAR(20) NOT NULL,
                 itunes_library_id VARCHAR(20)
             )
         </sql>
         <sql>
-            CREATE {cached_table_prefix} TABLE album (
-                name {datatype_varchar_ignorecase}(255) NOT NULL,
+            {create_table_prefix} album (
+                name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 artist_count INTEGER,
@@ -55,30 +55,20 @@
             )
         </sql>
         <sql>
-            CREATE {cached_table_prefix} TABLE artist (
-                name {datatype_varchar_ignorecase}(255) NOT NULL,
+            {create_table_prefix} artist (
+                name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 album_count INTEGER
             )
         </sql>
         <sql>
-            CREATE {cached_table_prefix} TABLE genre (
-                name {datatype_varchar_ignorecase}(255) NOT NULL,
+            {create_table_prefix} genre (
+                name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 album_count INTEGER,
                 artist_count INTEGER
-            )
-        </sql>
-        <sql>
-            CREATE {cached_table_prefix} TABLE pager (
-                type VARCHAR(20) NOT NULL,
-                index INTEGER NOT NULL,
-                condition VARCHAR(255) NOT NULL,
-                value VARCHAR(255) NOT NULL,
-                content_count INTEGER NOT NULL,
-                UNIQUE (type, index)
             )
         </sql>
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>
@@ -87,14 +77,14 @@
         <sql>CREATE INDEX idx_track_genre ON track (genre)</sql>
         <sql>CREATE INDEX idx_track_id ON track (id)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
-        <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (index)</sql>
+        <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (idx)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_track_id ON link_track_playlist (track_id)</sql>
         <sql>CREATE INDEX idx_album_first ON album (first_char)</sql>
         <sql>CREATE INDEX idx_album_artist ON album (artist)</sql>
         <sql>CREATE INDEX idx_artist_first ON artist (first_char)</sql>
         <sql>CREATE INDEX idx_genre_first ON genre (first_char)</sql>
         <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
-        <sql>CREATE SEQUENCE playlist_id_sequence</sql>
+        <sql>{create_playlist_id_sequence}</sql>
     </statement>
 
 </statements>
