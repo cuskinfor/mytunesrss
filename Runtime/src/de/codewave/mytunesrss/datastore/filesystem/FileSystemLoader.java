@@ -1,20 +1,14 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.DeleteTrackStatement;
-import de.codewave.mytunesrss.datastore.statement.FindTrackIdsQuery;
-import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.mytunesrss.datastore.*;
-import de.codewave.utils.io.FileProcessor;
-import de.codewave.utils.io.IOUtils;
-import de.codewave.utils.sql.DataStoreSession;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.utils.io.*;
+import de.codewave.utils.sql.*;
+import org.apache.commons.logging.*;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.sql.SQLException;
+import java.io.*;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -23,8 +17,7 @@ import java.util.*;
 public class FileSystemLoader extends DataLoader {
     private static final Log LOG = LogFactory.getLog(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(List<File> baseDirs, DataStoreSession storeSession, long lastUpdateTime)
-        throws IOException, SQLException {
+    public static void loadFromFileSystem(List<File> baseDirs, DataStoreSession storeSession, long lastUpdateTime) throws IOException, SQLException {
         Set<String> databaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.FileSystem.name()));
         int trackCount = 0;
         MyTunesRssFileProcessor fileProcessor = null;
@@ -40,7 +33,7 @@ public class FileSystemLoader extends DataLoader {
                             return file.isDirectory() || FileSupportUtils.isSupported(file.getName());
                         }
                     });
-                    FileProcessor playlistFileProcessor = new PlaylistFileProcessor(baseDir, storeSession);
+                    FileProcessor playlistFileProcessor = new PlaylistFileProcessor(storeSession);
                     IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
                         public boolean accept(File file) {
                             return file.isDirectory() || file.getName().toLowerCase().endsWith(".m3u");

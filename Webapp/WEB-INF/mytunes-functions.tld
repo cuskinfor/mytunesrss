@@ -187,4 +187,16 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Get the number of tracks in a section on the track browsing page.
+        </description>
+        <name>sectionTrackCount</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>int getSectionTrackCount(java.lang.String)</function-signature>
+        <example>
+            &lt;c:out value="${mtfn:sectionTrackCount(sectionIds)}"/&gt;
+        </example>
+    </function>
+
 </taglib>

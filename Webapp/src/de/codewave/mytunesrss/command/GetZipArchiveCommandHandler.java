@@ -7,8 +7,8 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
-import de.codewave.utils.io.*;
 import de.codewave.utils.servlet.*;
+import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 
 import javax.servlet.http.*;
@@ -28,6 +28,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             String album = MyTunesRssBase64Utils.decodeToString(getRequestParameter("album", null));
             String artist = MyTunesRssBase64Utils.decodeToString(getRequestParameter("artist", null));
             String genre = MyTunesRssBase64Utils.decodeToString(getRequestParameter("genre", null));
+            String tracklist = getRequestParameter("tracklist", null);
             String playlist = getRequestParameter("playlist", null);
             Collection<Track> tracks;
             if (StringUtils.isNotEmpty(album)) {
@@ -38,6 +39,8 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 tracks = getDataStore().executeQuery(FindTrackQuery.getForGenre(new String[] {genre}, true));
             } else if (StringUtils.isNotEmpty(playlist)) {
                 tracks = getDataStore().executeQuery(new FindPlaylistTracksQuery(playlist, null));
+            } else if (StringUtils.isNotEmpty(tracklist)) {
+                tracks = getDataStore().executeQuery(FindTrackQuery.getForId(StringUtils.split(tracklist, ",")));
             } else {
                 throw new IllegalArgumentException("Missing parameter!");
             }
@@ -90,9 +93,9 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     entryNameWithoutSuffix += StringUtils.leftPad(Integer.toString(track.getTrackNumber()), 2, "0") + " ";
                 }
                 entryNameWithoutSuffix += MyTunesFunctions.getLegalFileName(track.getName());
-                String entryName = entryNameWithoutSuffix + "." + IOUtils.getSuffix(track.getFile());
+                String entryName = entryNameWithoutSuffix + "." + FilenameUtils.getExtension(track.getFile().getName());
                 while (entryNames.contains(entryName)) {
-                    entryName = entryNameWithoutSuffix + " " + number + "." + IOUtils.getSuffix(track.getFile());
+                    entryName = entryNameWithoutSuffix + " " + number + "." + FilenameUtils.getExtension(track.getFile().getName());
                     number++;
                 }
                 entryNames.add(entryName);

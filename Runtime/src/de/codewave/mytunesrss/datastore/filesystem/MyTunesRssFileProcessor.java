@@ -4,9 +4,11 @@ import de.codewave.camel.mp3.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.io.*;
+import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.io.*;
 
 import java.io.*;
 import java.sql.*;
@@ -53,7 +55,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         statement.clear();
                         statement.setId(fileId);
                         Id3Tag tag = null;
-                        if ("mp3".equalsIgnoreCase(IOUtils.getSuffix(file))) {
+                        if ("mp3".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
                             try {
                                 if (LOG.isDebugEnabled()) {
                                     LOG.debug("Reading ID3 information from file \"" + file.getAbsolutePath() + "\".");
@@ -81,7 +83,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                 statement.setArtist(artist);
                                 String name = tag.getTitle();
                                 if (StringUtils.isEmpty(name)) {
-                                    name = IOUtils.getNameWithoutSuffix(file);
+                                    name = FilenameUtils.getBaseName(file.getName());
                                 }
                                 statement.setName(name);
                                 if (tag.isId3v2()) {
@@ -140,7 +142,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     }
 
     private void setSimpleInfo(InsertOrUpdateTrackStatement statement, File file) {
-        statement.setName(IOUtils.getNameWithoutSuffix(file));
+        statement.setName(FilenameUtils.getBaseName(file.getName()));
         statement.setAlbum(getAncestorAlbumName(file));
         statement.setArtist(getAncestorArtistName(file));
     }

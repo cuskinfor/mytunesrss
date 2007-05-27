@@ -8,7 +8,8 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.utils.*;
-import de.codewave.utils.io.*;
+import org.apache.commons.io.*;
+import org.apache.commons.lang.*;
 
 import javax.servlet.http.*;
 
@@ -72,7 +73,7 @@ public class MyTunesFunctions {
     }
 
     public static String suffix(Track track) {
-        return IOUtils.getSuffix(track.getFile());
+        return FilenameUtils.getExtension(track.getFile().getName());
     }
 
     public static String replace(String string, String target, String replacement) {
@@ -137,5 +138,9 @@ public class MyTunesFunctions {
             count++;
         }
         return count;
+    }
+
+    public static int getSectionTrackCount(String sectionIds) {
+        return StringUtils.split(sectionIds, ",").length;
     }
 }

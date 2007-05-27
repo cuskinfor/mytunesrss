@@ -136,7 +136,18 @@
                     </th>
                 </c:if>
                 <c:if test="${authUser.download && config.showDownload}">
-                    <th class="icon">&nbsp;</th>
+                    <th class="icon">
+                        <c:choose>
+                            <c:when test="${authUser.maximumZipEntries <= 0 || mtfn:sectionTrackCount(track.sectionIds) <= authUser.maximumZipEntries}">
+                                <a href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.zip">
+                                <img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="#" onclick="alert('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>')">
+                                <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
+                            </c:otherwise>
+                        </c:choose>
+                    </th>
                 </c:if>
             </c:when>
             <c:otherwise>

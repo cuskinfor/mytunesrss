@@ -9,7 +9,7 @@ import de.codewave.camel.mp3.framebody.v2.*;
 import de.codewave.camel.mp3.framebody.v3.*;
 import de.codewave.camel.mp3.structure.*;
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.utils.io.*;
+import org.apache.commons.io.*;
 import org.apache.commons.logging.*;
 
 import java.io.*;
@@ -22,7 +22,7 @@ public class ID3Utils {
 
     public static Image getImage(Track track) {
         File file = track.getFile();
-        if (file.exists() && "mp3".equalsIgnoreCase(IOUtils.getSuffix(file))) {
+        if (file.exists() && "mp3".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
             try {
                 Id3v2Tag id3v2Tag = Mp3Utils.readId3v2Tag(file);
                 if (id3v2Tag != null && id3v2Tag.getFrames() != null) {
