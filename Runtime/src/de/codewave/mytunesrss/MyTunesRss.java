@@ -100,8 +100,8 @@ public class MyTunesRss {
         ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
         VERSION = modulesInfo != null ? modulesInfo.getVersion() : System.getProperty("MyTunesRSS.version", "0.0.0");
         if (LOG.isInfoEnabled()) {
-            LOG.info("Operating system: " + ProgramUtils.guessOperatingSystem().name());
-            LOG.info("Java: " + getJavaEnvironment());
+            LOG.info("Operating system: " + SystemUtils.OS_NAME + ", " + SystemUtils.OS_VERSION + ", " + SystemUtils.OS_ARCH);
+            LOG.info("Java: " + SystemUtils.JAVA_VERSION + "(" + SystemUtils.JAVA_HOME + ")");
             LOG.info("Application version: " + VERSION);
             LOG.info("Cache data path: " + PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER));
             LOG.info("Preferences data path: " + PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER));
@@ -136,7 +136,7 @@ public class MyTunesRss {
         if (System.getProperty("database.type") == null && Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).getBoolean("deleteDatabaseOnNextStartOnError", false)) {
             new DeleteDatabaseFilesTask().execute();
         }
-        loadConfiguration(arguments);
+        loadConfiguration();
         if (HEADLESS) {
             executeHeadlessMode();
         } else {
@@ -235,12 +235,6 @@ public class MyTunesRss {
         return true;
     }
 
-    private static String getJavaEnvironment() {
-        StringBuffer java = new StringBuffer();
-        java.append(System.getProperty("java.version")).append(" (\"").append(System.getProperty("java.home")).append("\")");
-        return java.toString();
-    }
-
     private static void executeGuiMode() throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
             ClassNotFoundException, IOException, InterruptedException {
         showNewVersionInfo();
@@ -271,7 +265,7 @@ public class MyTunesRss {
         }
         if (CONFIG.isAutoStartServer()) {
             SETTINGS.doStartServer();
-            if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
+            if (SystemUtils.IS_OS_MAC_OSX) {
                 // todo: hide window on osx instead of iconify
                 ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
             } else {
@@ -359,18 +353,18 @@ public class MyTunesRss {
         MulticastService.stopListener();
     }
 
-    private static void loadConfiguration(Map<String, String[]> arguments) throws MalformedURLException {
+    private static void loadConfiguration() throws MalformedURLException {
         CONFIG.loadFromPrefs();
     }
 
     private static void executeWindows(Settings settingsForm) {
-        if (ProgramUtils.guessOperatingSystem() == OperatingSystem.Windows && SysTrayMenu.isAvailable()) {
+        if (SystemUtils.IS_OS_WINDOWS && SysTrayMenu.isAvailable()) {
             SYSTRAYMENU = new SysTray(settingsForm);
         }
     }
 
     private static void executeApple(final Settings settings) {
-        if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
+        if (SystemUtils.IS_OS_MAC_OSX) {
             try {
                 Class appleExtensionsClass = Class.forName("de.codewave.mytunesrss.AppleExtensions");
                 Method activateMethod = appleExtensionsClass.getMethod("activate", EventListener.class);

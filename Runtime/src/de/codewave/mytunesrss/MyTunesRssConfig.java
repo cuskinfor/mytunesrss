@@ -8,15 +8,16 @@ import de.codewave.utils.*;
 import de.codewave.utils.io.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.codec.binary.*;
 
 import javax.crypto.*;
 import javax.crypto.spec.*;
 import java.awt.*;
 import java.io.*;
+import java.security.*;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
-import java.security.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssConfig
@@ -463,7 +464,12 @@ public class MyTunesRssConfig {
     private void readPathInfoEncryptionKey() {
         String pathInfoKey = Preferences.userRoot().node(PREF_ROOT).get("pathInfoKey", null);
         if (StringUtils.isNotEmpty(pathInfoKey)) {
-            byte[] keyBytes = Base64Utils.decode(pathInfoKey);
+            byte[] keyBytes = new byte[0];
+            try {
+                keyBytes = Base64.decodeBase64(pathInfoKey.getBytes("UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                keyBytes = Base64.decodeBase64(pathInfoKey.getBytes());
+            }
             myPathInfoKey = new SecretKeySpec(keyBytes, "DES");
         }
         if (myPathInfoKey == null) {
@@ -565,7 +571,11 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node(PREF_ROOT).put("artistDropWords", myArtistDropWords);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("quitConfirmation", myQuitConfirmation);
         if (myPathInfoKey != null) {
-            Preferences.userRoot().node(PREF_ROOT).put("pathInfoKey", Base64Utils.encode(myPathInfoKey.getEncoded()));
+            try {
+                Preferences.userRoot().node(PREF_ROOT).put("pathInfoKey", new String(Base64.encodeBase64(myPathInfoKey.getEncoded()), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                Preferences.userRoot().node(PREF_ROOT).put("pathInfoKey", new String(Base64.encodeBase64(myPathInfoKey.getEncoded())));
+            }
         }
     }
 
