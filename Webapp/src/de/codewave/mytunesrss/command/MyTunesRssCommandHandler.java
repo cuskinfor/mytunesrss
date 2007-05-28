@@ -139,7 +139,12 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     private void prepareRequestForResource() {
-        getRequest().setAttribute("servletUrl", MyTunesRssWebUtils.getServletUrl(getRequest()));
+        String myTunesRssComUsername = (String)getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER);
+        if (StringUtils.isEmpty(myTunesRssComUsername)) {
+            getRequest().setAttribute("servletUrl", MyTunesRssWebUtils.getServletUrl(getRequest()));
+        } else {
+            getRequest().setAttribute("servletUrl", MyTunesRss.MYTUNESRSSCOM_URL + "/" + myTunesRssComUsername);
+        }
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
         getRequest().setAttribute("mytunesrssVersion", MyTunesRss.VERSION);
         getRequest().setAttribute("sessionCreationTime", getSession().getCreationTime());
