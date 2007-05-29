@@ -111,7 +111,7 @@
                     <c:when test="${empty sessionScope.playlist}">
                         <c:if test="${authUser.rss && config.showRss}">
                             <td class="icon">
-                                <a href="${servletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/${mtfn:virtualAlbumName(album)}.xml">
+                                <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/${mtfn:virtualAlbumName(album)}.xml">
                                     <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="rss" /> </a>
                             </td>
@@ -167,7 +167,7 @@
                     <c:when test="${empty sessionScope.playlist}">
                         <c:if test="${authUser.rss && config.showRss}">
                             <td class="icon">
-                                <a href="${servletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xml">
+                                <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xml">
                                     <img src="${appUrl}/images/rss${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
                                          alt="rss" /> </a>
                             </td>

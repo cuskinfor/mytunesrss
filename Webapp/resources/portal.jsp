@@ -111,7 +111,7 @@
                 </td>
                 <c:if test="${authUser.rss && config.showRss}">
                     <td class="icon">
-                        <a href="${servletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(playlist.id)}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xml">
+                        <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(playlist.id)}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xml">
                             <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="rss" /> </a>
                     </td>
                 </c:if>
