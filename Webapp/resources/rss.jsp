@@ -4,7 +4,7 @@
         <title><c:out value="${channel}"/></title>
         <link>${feedUrl}</link>
         <image>
-            <url>${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(imageTrackId)}</mt:encrypt></url>
+            <url>${localServletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(imageTrackId)}</mt:encrypt></url>
             <title><c:out value="${channel}"/></title>
             <link>${feedUrl}</link>
         </image>
@@ -19,7 +19,7 @@
                 <enclosure url="${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${cwfn:encodeUrl(virtualFileName)}"
                            type="${track.contentType}"
                            length="${track.contentLength}"/>
-                <c:if test="${mediaThumbnails}"><media:thumbnail url="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>" width="160"/></c:if>
+                <c:if test="${mediaThumbnails}"><media:thumbnail url="${localServletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>" width="160"/></c:if>
             </item></c:forEach>
     </channel>
 </rss>
