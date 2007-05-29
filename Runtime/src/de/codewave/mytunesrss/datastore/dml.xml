@@ -238,10 +238,6 @@
         <sql>{tuneDatabaseAfterHelpTablesUpdate}</sql>
     </statement>
 
-    <statement name="cleanupPlaylistIdSequence">
-        <sql>SELECT * FROM system_information</sql> <!-- just a dummy -->
-    </statement>
-
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
