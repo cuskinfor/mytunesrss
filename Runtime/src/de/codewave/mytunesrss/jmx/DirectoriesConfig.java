@@ -37,14 +37,6 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
         MyTunesRss.CONFIG.setUploadDir(uploadDir);
     }
 
-    public String getItunesMusicLibraryXmlPath() {
-        return MyTunesRss.CONFIG.getLibraryXml();
-    }
-
-    public void setItunesMusicLibraryXmlPath(String path) {
-        MyTunesRss.CONFIG.setLibraryXml(path);
-    }
-
     public String getFolderStructure() {
         StringBuffer buffer = new StringBuffer();
         if (MyTunesRss.CONFIG.getFileSystemAlbumNameFolder() == 2) {

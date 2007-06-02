@@ -41,8 +41,7 @@
         <sql>
             {create_table_prefix} system_information (
                 lastupdate BIGINT,
-                version VARCHAR(20) NOT NULL,
-                itunes_library_id VARCHAR(20)
+                version VARCHAR(20) NOT NULL
             )
         </sql>
         <sql>

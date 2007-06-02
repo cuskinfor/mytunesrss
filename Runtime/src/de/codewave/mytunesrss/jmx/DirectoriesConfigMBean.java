@@ -30,10 +30,6 @@ public interface DirectoriesConfigMBean {
 
     void setUploadDir(String uploadDir);
 
-    String getItunesMusicLibraryXmlPath();
-
-    void setItunesMusicLibraryXmlPath(String path);
-
     String addWatchFolder(String watchFolder);
 
     String removeWatchFolder(String watchFolder);

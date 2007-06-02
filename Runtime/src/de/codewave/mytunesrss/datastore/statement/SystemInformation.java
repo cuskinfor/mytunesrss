@@ -10,15 +10,6 @@ package de.codewave.mytunesrss.datastore.statement;
 public class SystemInformation {
     private long myLastUpdate = Long.MIN_VALUE;
     private String myVersion;
-    private String myItunesLibraryId;
-
-    public String getItunesLibraryId() {
-        return myItunesLibraryId;
-    }
-
-    public void setItunesLibraryId(String itunesLibraryId) {
-        myItunesLibraryId = itunesLibraryId;
-    }
 
     public long getLastUpdate() {
         return myLastUpdate;

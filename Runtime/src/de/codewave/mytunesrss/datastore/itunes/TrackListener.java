@@ -42,7 +42,8 @@ public class TrackListener implements PListHandlerListener {
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
         Map track = (Map)value;
-        String trackId = track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
+        String trackId = myLibraryListener.getLibraryId() + "_";
+        trackId += track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
         myExistingIds.add(trackId);
         myTrackIdToPersId.put((Long)track.get("Track ID"), trackId);
         if (processTrack(track)) {
@@ -68,7 +69,8 @@ public class TrackListener implements PListHandlerListener {
     }
 
     private boolean processTrack(Map track) {
-        String trackId = track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
+        String trackId = myLibraryListener.getLibraryId() + "_";
+        trackId += track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
         String name = (String)track.get("Name");
         String trackType = (String)track.get("Track Type");
         if (trackType == null || "File".equals(trackType)) {

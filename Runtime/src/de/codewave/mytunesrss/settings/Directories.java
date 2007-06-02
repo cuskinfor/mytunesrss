@@ -7,8 +7,10 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.swing.*;
 import org.apache.commons.lang.*;
+import org.apache.commons.io.*;
 
 import javax.swing.*;
+import javax.swing.filechooser.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -35,8 +37,6 @@ public class Directories {
     }
 
     private JPanel myRootPanel;
-    private JTextField myTunesXmlPathInput;
-    private JButton myTunesXmlPathLookupButton;
     private JList myBaseDirsList;
     private JButton myAddBaseDirButton;
     private JTextField myUploadDirInput;
@@ -72,8 +72,6 @@ public class Directories {
         myFolderStructureParent.addItem(FolderStructureRole.None);
         myFolderStructureParent.addItem(FolderStructureRole.Album);
         myFolderStructureParent.addItem(FolderStructureRole.Artist);
-        myTunesXmlPathLookupButton.addActionListener(new TunesXmlPathLookupButtonListener());
-        myTunesXmlPathInput.setText(MyTunesRss.CONFIG.getLibraryXml());
         addAllToListModel();
         myBaseDirsList.setModel(myListModel);
         myBaseDirsList.addListSelectionListener(new ListSelectionListener() {
@@ -123,7 +121,6 @@ public class Directories {
     }
 
     public String updateConfigFromGui() {
-        MyTunesRss.CONFIG.setLibraryXml(myTunesXmlPathInput.getText().trim());
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(getFolderStructureRole(FolderStructureRole.Artist));
         MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(getFolderStructureRole(FolderStructureRole.Album));
         MyTunesRss.CONFIG.setUploadDir(myUploadDirInput.getText());
@@ -134,9 +131,7 @@ public class Directories {
     public void setGuiMode(GuiMode mode) {
         switch (mode) {
             case ServerRunning:
-                SwingUtils.enableElementAndLabel(myTunesXmlPathInput, false);
                 SwingUtils.enableElementAndLabel(myBaseDirsList, false);
-                myTunesXmlPathLookupButton.setEnabled(false);
                 myAddBaseDirButton.setEnabled(false);
                 myDeleteBaseDirButton.setEnabled(false);
                 myFolderStructureGrandparent.setEnabled(false);
@@ -150,9 +145,7 @@ public class Directories {
                 myTrackLabel.setEnabled(false);
                 break;
             case ServerIdle:
-                SwingUtils.enableElementAndLabel(myTunesXmlPathInput, true);
                 SwingUtils.enableElementAndLabel(myBaseDirsList, true);
-                myTunesXmlPathLookupButton.setEnabled(true);
                 myAddBaseDirButton.setEnabled(true);
                 myDeleteBaseDirButton.setEnabled(myBaseDirsList.getSelectedIndex() > -1);
                 myFolderStructureGrandparent.setEnabled(true);
@@ -168,30 +161,21 @@ public class Directories {
         }
     }
 
-    public class TunesXmlPathLookupButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent event) {
-            FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("dialog.loadITunes"), FileDialog.LOAD);
-            if (StringUtils.isNotEmpty(myTunesXmlPathInput.getText())) {
-                fileDialog.setFile(myTunesXmlPathInput.getText());
-            }
-            fileDialog.setVisible(true);
-            if (fileDialog.getFile() != null) {
-                File sourceFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
-                try {
-                    myTunesXmlPathInput.setText(sourceFile.getCanonicalPath());
-                } catch (IOException e) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.lookupLibraryXml") + e.getMessage());
-                }
-            }
-        }
-    }
-
     public class AddWatchFolderButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             if (MyTunesRss.REGISTRATION.isRegistered() || MyTunesRss.CONFIG.getWatchFolders().length < MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setDialogTitle(MyTunesRss.BUNDLE.getString("dialog.lookupBaseDir"));
-                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                    public boolean accept(File file) {
+                        return file.isDirectory() || (file.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())));
+                    }
+
+                    public String getDescription() {
+                        return null;
+                    }
+                });
                 int result = fileChooser.showOpenDialog(MyTunesRss.ROOT_FRAME);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     try {

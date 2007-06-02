@@ -165,7 +165,7 @@
 
     <statement name="getSystemInformation">
         <sql>
-            SELECT lastupdate AS lastupdate, version AS version, itunes_library_id AS itunes_library_id FROM system_information
+            SELECT lastupdate AS lastupdate, version AS version FROM system_information
         </sql>
     </statement>
 

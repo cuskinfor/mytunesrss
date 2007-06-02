@@ -23,7 +23,6 @@ public class GetSystemInformationQuery extends DataStoreQuery<SystemInformation>
                 SystemInformation systemInformation = new SystemInformation();
                 systemInformation.setLastUpdate(resultSet.getLong("lastupdate"));
                 systemInformation.setVersion(resultSet.getString("version"));
-                systemInformation.setItunesLibraryId(resultSet.getString("itunes_library_id"));
                 return systemInformation;
             }
         } catch (SQLException e) {

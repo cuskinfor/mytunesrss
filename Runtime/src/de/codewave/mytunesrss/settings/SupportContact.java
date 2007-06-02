@@ -1,9 +1,9 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.utils.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.swing.*;
-import de.codewave.utils.*;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.commons.httpclient.methods.multipart.*;
@@ -12,12 +12,8 @@ import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.*;
 import java.io.*;
 import java.util.zip.*;
-import java.util.*;
-
-import com.intellij.uiDesigner.core.*;
 
 /**
  * de.codewave.mytunesrss.settings.SupportContact
@@ -32,7 +28,6 @@ public class SupportContact {
     private JTextField myNameInput;
     private JTextField myEmailInput;
     private JTextArea myCommentInput;
-    private JCheckBox myItunesXmlInput;
     private JTextArea myInfoText;
 
     public void display(JFrame parent, String title, String infoText) {
@@ -106,19 +101,13 @@ public class SupportContact {
                 zipOutput = new ZipOutputStream(baos);
                 ZipUtils.addToZip("MyTunesRSS_Support/MyTunesRSS-" + MyTunesRss.VERSION + ".log", new File(
                         PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.log"), zipOutput);
-                String iTunesXml = MyTunesRss.CONFIG.getLibraryXml();
-                if (myItunesXmlInput.isSelected() && StringUtils.isNotEmpty(iTunesXml)) {
-                    File file = new File(iTunesXml);
-                    if (file.exists()) {
-                        ZipUtils.addToZip("MyTunesRSS_Support/iTunes Music Library.xml", file, zipOutput);
-                    }
-                }
                 zipOutput.close();
                 postMethod = new PostMethod(System.getProperty("MyTunesRSS.supportUrl", SUPPORT_URL));
                 PartSource partSource = new ByteArrayPartSource("MyTunesRSS-" + MyTunesRss.VERSION + "-Support.zip", baos.toByteArray());
                 Part[] part = new Part[] {new StringPart("mailSubject", "MyTunesRSS v" + MyTunesRss.VERSION + " Support Request"), new StringPart(
-                        "name", myNameInput.getText()), new StringPart("email", myEmailInput.getText()), new StringPart("comment", myCommentInput.getText()),
-                                                        new FilePart("archive", partSource)};
+                        "name",
+                        myNameInput.getText()), new StringPart("email", myEmailInput.getText()), new StringPart("comment", myCommentInput.getText()),
+                                                new FilePart("archive", partSource)};
                 MultipartRequestEntity multipartRequestEntity = new MultipartRequestEntity(part, postMethod.getParams());
                 postMethod.setRequestEntity(multipartRequestEntity);
                 HttpClient httpClient = MyTunesRssUtils.createHttpClient();

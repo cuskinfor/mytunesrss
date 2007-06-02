@@ -14,15 +14,12 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.filesystem.FileSystemLoaderr
  */
-public class FileSystemLoader extends DataLoader {
+public class FileSystemLoader {
     private static final Log LOG = LogFactory.getLog(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(List<File> baseDirs, DataStoreSession storeSession, long lastUpdateTime) throws IOException, SQLException {
-        Set<String> databaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.FileSystem.name()));
+    public static void loadFromFileSystem(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> databaseIds) throws IOException, SQLException {
         int trackCount = 0;
         MyTunesRssFileProcessor fileProcessor = null;
-        if (baseDirs != null) {
-            for (File baseDir : baseDirs) {
                 if (baseDir != null && baseDir.exists() && baseDir.isDirectory()) {
                     fileProcessor = new MyTunesRssFileProcessor(baseDir, storeSession, lastUpdateTime);
                     if (LOG.isInfoEnabled()) {
@@ -44,11 +41,6 @@ public class FileSystemLoader extends DataLoader {
                     }
                     databaseIds.removeAll(fileProcessor.getExistingIds());
                     trackCount += fileProcessor.getExistingIds().size();
-                }
-            }
-        }
-        if (!databaseIds.isEmpty()) {
-            removeObsoleteTracks(storeSession, databaseIds);
         }
         if (fileProcessor != null && LOG.isDebugEnabled()) {
             LOG.info(trackCount + " file system tracks in the database.");

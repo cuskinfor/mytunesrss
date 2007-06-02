@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.itunes.ItunesLoaderr
  */
-public class ItunesLoader extends DataLoader {
+public class ItunesLoader {
     private static final Log LOG = LogFactory.getLog(ItunesLoader.class);
 
     static File getFileForLocation(String location) {
@@ -32,15 +32,14 @@ public class ItunesLoader extends DataLoader {
         return null;
     }
 
-    public static String loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, String previousLibraryId, long timeLastUpdate)
+    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> databaseIds)
             throws SQLException {
-        Set<String> databaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.ITunes.name()));
         LibraryListener libraryListener = null;
         TrackListener trackListener = null;
         if (iTunesLibraryXml != null) {
             PListHandler handler = new PListHandler();
             Map<Long, String> trackIdToPersId = new HashMap<Long, String>();
-            libraryListener = new LibraryListener(previousLibraryId, timeLastUpdate);
+            libraryListener = new LibraryListener(timeLastUpdate);
             trackListener = new TrackListener(storeSession, libraryListener, trackIdToPersId);
             handler.addListener("/plist/dict", libraryListener);
             handler.addListener("/plist/dict[Tracks]/dict", trackListener);
@@ -60,12 +59,8 @@ public class ItunesLoader extends DataLoader {
             }
             databaseIds.removeAll(trackListener.getExistingIds());
         }
-        if (!databaseIds.isEmpty()) {
-            removeObsoleteTracks(storeSession, databaseIds);
-        }
         if (trackListener != null && LOG.isDebugEnabled()) {
             LOG.info(trackListener.getExistingIds().size() + " iTunes tracks in the database.");
         }
-        return libraryListener != null ? libraryListener.getLibraryId() : null;
     }
 }

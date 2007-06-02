@@ -29,7 +29,6 @@ public class MyTunesRssConfig {
     private int myPort = 8080;
     private String myServerName = "MyTunesRSS";
     private boolean myAvailableOnLocalNet = true;
-    private String myLibraryXml = "";
     private List<String> myWatchFolders = new ArrayList<String>();
     private boolean myCheckUpdateOnStart = true;
     private boolean myAutoStartServer;
@@ -56,14 +55,6 @@ public class MyTunesRssConfig {
     private boolean myLocalTempArchive;
     private boolean myQuitConfirmation;
     private SecretKey myPathInfoKey;
-
-    public String getLibraryXml() {
-        return myLibraryXml;
-    }
-
-    public void setLibraryXml(String libraryXml) {
-        myLibraryXml = StringUtils.trim(libraryXml);
-    }
 
     public String[] getWatchFolders() {
         return myWatchFolders.toArray(new String[myWatchFolders.size()]);
@@ -369,31 +360,8 @@ public class MyTunesRssConfig {
         setVersion(Preferences.userRoot().node(PREF_ROOT).get("version", ""));
         migrate();
         setPort(Preferences.userRoot().node(PREF_ROOT).getInt("serverPort", getPort()));
-        try {
-            if (!Arrays.asList(Preferences.userRoot().node(PREF_ROOT).keys()).contains("iTunesLibrary")) {
-                MyTunesRssUtils.executeTask(null,
-                                            MyTunesRss.BUNDLE.getString("pleaseWait.searchingItunesXml"),
-                                            MyTunesRss.BUNDLE.getString("cancel"),
-                                            false,
-                                            new MyTunesRssTask() {
-                                                private Trigger myCancelTrigger = new Trigger();
-
-                                                public void execute() throws Exception {
-                                                    setLibraryXml(findItunesLibraryXml(myCancelTrigger));
-                                                }
-
-                                                @Override
-                                                protected void cancel() {
-                                                    myCancelTrigger.trigger();
-                                                }
-                                            });
-            }
-        } catch (BackingStoreException e) {
-            // intentionally left blank
-        }
         setServerName(Preferences.userRoot().node(PREF_ROOT).get("serverName", getServerName()));
         setAvailableOnLocalNet(Preferences.userRoot().node(PREF_ROOT).getBoolean("availableOnLocalNet", isAvailableOnLocalNet()));
-        setLibraryXml(Preferences.userRoot().node(PREF_ROOT).get("iTunesLibrary", getLibraryXml()));
         setCheckUpdateOnStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("checkUpdateOnStart", isCheckUpdateOnStart()));
         setAutoStartServer(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoStartServer", isAutoStartServer()));
         setAutoUpdateDatabase(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoUpdateDatabase", isAutoUpdateDatabase()));
@@ -493,7 +461,6 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node(PREF_ROOT).putInt("serverPort", myPort);
         Preferences.userRoot().node(PREF_ROOT).put("serverName", myServerName);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("availableOnLocalNet", myAvailableOnLocalNet);
-        Preferences.userRoot().node(PREF_ROOT).put("iTunesLibrary", myLibraryXml);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("checkUpdateOnStart", myCheckUpdateOnStart);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("autoStartServer", myAutoStartServer);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("updateDatabaseOnServerStart", myUpdateDatabaseOnServerStart);

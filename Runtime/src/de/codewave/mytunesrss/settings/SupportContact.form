@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.codewave.mytunesrss.settings.SupportContact">
-  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
       <xy x="20" y="20" width="1396" height="664"/>
@@ -94,43 +94,10 @@
           </scrollpane>
         </children>
       </grid>
-      <grid id="1424a" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="5" left="5" bottom="5" right="5"/>
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <font swing-font="Label.font"/>
-          <opaque value="false"/>
-        </properties>
-        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.supportAdditionalTitle"/>
-        <children>
-          <component id="d7025" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font swing-font="Label.font"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.supportAdditionalInfo"/>
-            </properties>
-          </component>
-          <component id="b35ee" class="javax.swing.JCheckBox" binding="myItunesXmlInput">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font swing-font="Label.font"/>
-              <opaque value="false"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.supportAdditionalTunesXml"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.supportAdditionalTunesXmlTooltip"/>
-            </properties>
-          </component>
-        </children>
-      </grid>
       <grid id="f74d2" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <opaque value="false"/>
