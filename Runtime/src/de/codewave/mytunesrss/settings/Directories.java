@@ -6,11 +6,9 @@ package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.swing.*;
-import org.apache.commons.lang.*;
 import org.apache.commons.io.*;
 
 import javax.swing.*;
-import javax.swing.filechooser.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -98,7 +96,7 @@ public class Directories {
     }
 
     private void addAllToListModel() {
-        for (String baseDir : MyTunesRss.CONFIG.getWatchFolders()) {
+        for (String baseDir : MyTunesRss.CONFIG.getDatasources()) {
             myListModel.addElement(baseDir);
         }
     }
@@ -163,7 +161,7 @@ public class Directories {
 
     public class AddWatchFolderButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            if (MyTunesRss.REGISTRATION.isRegistered() || MyTunesRss.CONFIG.getWatchFolders().length < MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
+            if (MyTunesRss.REGISTRATION.isRegistered() || MyTunesRss.CONFIG.getDatasources().length < MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setDialogTitle(MyTunesRss.BUNDLE.getString("dialog.lookupBaseDir"));
                 fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -190,7 +188,7 @@ public class Directories {
         }
 
         protected void handleChosenFile(File file) throws IOException {
-            String error = MyTunesRss.CONFIG.addWatchFolder(file.getCanonicalPath());
+            String error = MyTunesRss.CONFIG.addDatasource(file.getCanonicalPath());
             if (error == null) {
                 myListModel.clear();
                 addAllToListModel();

@@ -14,7 +14,6 @@ import org.apache.commons.logging.*;
 import org.apache.commons.io.*;
 
 import java.io.*;
-import java.net.*;
 import java.sql.*;
 import java.util.*;
 
@@ -29,8 +28,8 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     private boolean myExecuted;
 
     public DatabaseBuilderTask() {
-        if (MyTunesRss.CONFIG.getWatchFolders() != null && MyTunesRss.CONFIG.getWatchFolders().length > 0) {
-            for (String baseDir : MyTunesRss.CONFIG.getWatchFolders()) {
+        if (MyTunesRss.CONFIG.getDatasources() != null && MyTunesRss.CONFIG.getDatasources().length > 0) {
+            for (String baseDir : MyTunesRss.CONFIG.getDatasources()) {
                 myBaseDirs.add(new File(baseDir));
             }
         }
@@ -107,8 +106,8 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
             Set<String> databaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.ITunes.name()));
             databaseIds.addAll((Set<String>)storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.FileSystem.name())));
-            if (MyTunesRss.CONFIG.getWatchFolders() != null) {
-                for (String filePath : MyTunesRss.CONFIG.getWatchFolders()) {
+            if (MyTunesRss.CONFIG.getDatasources() != null) {
+                for (String filePath : MyTunesRss.CONFIG.getDatasources()) {
                     if (LOG.isInfoEnabled()) {
                         LOG.info("Parsing \"" + filePath + "\".");
                     }

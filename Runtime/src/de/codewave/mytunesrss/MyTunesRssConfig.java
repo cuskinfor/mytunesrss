@@ -29,7 +29,7 @@ public class MyTunesRssConfig {
     private int myPort = 8080;
     private String myServerName = "MyTunesRSS";
     private boolean myAvailableOnLocalNet = true;
-    private List<String> myWatchFolders = new ArrayList<String>();
+    private List<String> myDatasources = new ArrayList<String>();
     private boolean myCheckUpdateOnStart = true;
     private boolean myAutoStartServer;
     private boolean myAutoUpdateDatabase;
@@ -56,48 +56,48 @@ public class MyTunesRssConfig {
     private boolean myQuitConfirmation;
     private SecretKey myPathInfoKey;
 
-    public String[] getWatchFolders() {
-        return myWatchFolders.toArray(new String[myWatchFolders.size()]);
+    public String[] getDatasources() {
+        return myDatasources.toArray(new String[myDatasources.size()]);
     }
 
-    public void setWatchFolders(String[] watchFolders) {
-        myWatchFolders = new ArrayList<String>();
-        for (String watchFolder : watchFolders) {
-            myWatchFolders.add(watchFolder.trim());
+    public void setDatasources(String[] datasources) {
+        myDatasources = new ArrayList<String>();
+        for (String watchFolder : datasources) {
+            myDatasources.add(watchFolder.trim());
         }
-        Collections.sort(myWatchFolders);
+        Collections.sort(myDatasources);
     }
 
-    public String addWatchFolder(String watchFolder) {
-        if (new File(watchFolder).exists()) {
-            for (String folder : myWatchFolders) {
+    public String addDatasource(String datasource) {
+        if (new File(datasource).exists()) {
+            for (String eachDatasource : myDatasources) {
                 try {
-                    if (watchFolder.equals(folder)) {
-                        return MyTunesRssUtils.getBundleString("error.watchFolderAlreadyExists", folder);
-                    } else if (IOUtils.isContained(new File(folder), new File(watchFolder))) {
-                        return MyTunesRssUtils.getBundleString("error.existingWatchFolderContainsNewOne", folder);
-                    } else if (IOUtils.isContained(new File(watchFolder), new File(folder))) {
-                        return MyTunesRssUtils.getBundleString("error.newWatchFolderContainsExistingOne", folder);
+                    if (datasource.equals(eachDatasource)) {
+                        return MyTunesRssUtils.getBundleString("error.watchFolderAlreadyExists", eachDatasource);
+                    } else if (IOUtils.isContained(new File(eachDatasource), new File(datasource))) {
+                        return MyTunesRssUtils.getBundleString("error.existingWatchFolderContainsNewOne", eachDatasource);
+                    } else if (IOUtils.isContained(new File(datasource), new File(eachDatasource))) {
+                        return MyTunesRssUtils.getBundleString("error.newWatchFolderContainsExistingOne", eachDatasource);
                     }
                 } catch (IOException e) {
                     if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not check if existing folder contains new folder or vice versa, assuming everything is okay.", e);
+                        LOG.error("Could not check if existing datasource contains new datasource or vice versa, assuming everything is okay.", e);
                     }
                 }
             }
-            myWatchFolders.add(watchFolder);
-            Collections.sort(myWatchFolders);
+            myDatasources.add(datasource);
+            Collections.sort(myDatasources);
             return null;
         }
-        return MyTunesRss.BUNDLE.getString("error.watchFolderDoesNotExist");
+        return MyTunesRss.BUNDLE.getString("error.datasourceDoesNotExist");
     }
 
     public String removeWatchFolder(String watchFolder) {
-        if (myWatchFolders.contains(watchFolder)) {
-            myWatchFolders.remove(watchFolder);
+        if (myDatasources.contains(watchFolder)) {
+            myDatasources.remove(watchFolder);
             return null;
         }
-        return MyTunesRss.BUNDLE.getString("error.watchFolderDoesNotExist");
+        return MyTunesRss.BUNDLE.getString("error.datasourceDoesNotExist");
     }
 
     public int getPort() {
@@ -376,7 +376,7 @@ public class MyTunesRssConfig {
                 break;
             }
         }
-        setWatchFolders(baseDirs);
+        setDatasources(baseDirs);
         setFileSystemArtistNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("artistFolder", getFileSystemArtistNameFolder()));
         setFileSystemAlbumNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("albumFolder", getFileSystemAlbumNameFolder()));
         setItunesDeleteMissingFiles(Preferences.userRoot().node(PREF_ROOT).getBoolean("iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
@@ -468,11 +468,11 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node(PREF_ROOT).putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
         Preferences.userRoot().node(PREF_ROOT).put("version", myVersion);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("ignoreTimestamps", myIgnoreTimestamps);
-        Preferences.userRoot().node(PREF_ROOT).putInt("baseDirCount", myWatchFolders.size());
+        Preferences.userRoot().node(PREF_ROOT).putInt("baseDirCount", myDatasources.size());
         try {
             Preferences.userRoot().node(PREF_ROOT + "/basedir").removeNode();
-            for (int i = 0; i < myWatchFolders.size(); i++) {
-                Preferences.userRoot().node(PREF_ROOT + "/basedir").put(Integer.toString(i), myWatchFolders.get(i));
+            for (int i = 0; i < myDatasources.size(); i++) {
+                Preferences.userRoot().node(PREF_ROOT + "/basedir").put(Integer.toString(i), myDatasources.get(i));
             }
         } catch (BackingStoreException e) {
             if (LOG.isErrorEnabled()) {

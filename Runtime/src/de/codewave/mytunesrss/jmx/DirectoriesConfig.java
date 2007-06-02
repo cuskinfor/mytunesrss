@@ -18,7 +18,7 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
   }
 
     public String[] getWatchFolders() {
-        return MyTunesRss.CONFIG.getWatchFolders();
+        return MyTunesRss.CONFIG.getDatasources();
     }
 
     public boolean isCreateUserSubdir() {
@@ -84,7 +84,7 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
     }
 
     public String addWatchFolder(String watchFolder) {
-        String error = MyTunesRss.CONFIG.addWatchFolder(watchFolder);
+        String error = MyTunesRss.CONFIG.addDatasource(watchFolder);
         return error != null ? error : MyTunesRss.BUNDLE.getString("ok");
     }
 
