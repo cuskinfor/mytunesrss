@@ -13,8 +13,8 @@
                 <title><c:out value="${track.name}"/></title>
                 <description><c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" /></description>
                 <author><c:out value="${track.artist}"/></author>
-                <link>${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt></link>
-                <guid>${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt></guid>
+                <link>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt></link>
+                <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt></guid>
                 <pubDate>${pubDate}</pubDate>
                 <enclosure url="${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${cwfn:encodeUrl(virtualFileName)}"
                            type="${track.contentType}"
