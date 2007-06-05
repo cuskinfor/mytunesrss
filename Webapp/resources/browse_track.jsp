@@ -168,7 +168,7 @@
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
         <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
         <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:if>
-        <a href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+        <a href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
         <c:choose>
             <c:when test="${sortOrder == 'Album'}">
                 <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
@@ -193,32 +193,32 @@
         <c:when test="${empty sessionScope.playlist}">
             <c:if test="${authUser.rss && config.showRss}">
                 <td class="icon">
-                    <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml">
+                    <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml">
                         <img src="${appUrl}/images/rss${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="rss" /> </a>
                 </td>
             </c:if>
             <c:if test="${authUser.playlist && config.showPlaylist}">
                 <td class="icon">
-                    <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}">
+                    <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}">
                         <img src="${appUrl}/images/playlist${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="playlist" /> </a>
                 </td>
             </c:if>
             <c:if test="${authUser.player && config.showPlayer}">
                 <td class="icon">
-                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">type=Xspf/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xspf')">
+                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">type=Xspf/track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xspf')">
                         <img src="${appUrl}/images/player${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="player" /> </a>
                 </td>
             </c:if>
             <c:if test="${authUser.download && config.showDownload}">
                 <td class="icon">
-                    <a href="${servletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}">
+                    <a href="${servletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}">
                         <img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
                 </td>
             </c:if>
         </c:when>
         <c:otherwise>
             <td class="icon">
-                <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                     <img src="${appUrl}/images/add${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
             </td>
         </c:otherwise>
