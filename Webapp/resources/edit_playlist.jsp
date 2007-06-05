@@ -70,7 +70,7 @@
                         <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
                     </td>
                     <td class="icon">
-                        <a href="${servletUrl}/removeFromPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/track=${cwfn:encodeUrl(track.id)}</mt:encrypt>/backUrl=${param.backUrl}">
+                        <a href="${servletUrl}/removeFromPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/track=${track.id}</mt:encrypt>/backUrl=${param.backUrl}">
                             <img src="${appUrl}/images/delete${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                     </td>
                 </tr>

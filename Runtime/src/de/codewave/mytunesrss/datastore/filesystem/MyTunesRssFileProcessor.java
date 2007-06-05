@@ -5,8 +5,10 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.sql.*;
+import de.codewave.utils.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.codec.binary.*;
 
 import java.io.*;
 import java.sql.*;
@@ -49,7 +51,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         try {
             String canonicalFilePath = file.getCanonicalPath();
             if (file.isFile() && FileSupportUtils.isSupported(file.getName())) {
-                String fileId = IOUtils.getFileIdentifier(file);
+                String fileId = getFileIdentifier(file);
                 if (!myFoundIds.contains(fileId)) {
                     if ((file.lastModified() >= myLastUpdateTime || !myDatabaseIds.contains(fileId))) {
                         InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(fileId) ? myUpdateStatement : myInsertStatement;
@@ -140,6 +142,13 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 LOG.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
             }
         }
+    }
+
+    private String getFileIdentifier(File file) throws IOException {
+        if (file != null && file.exists()) {
+            return new String(Hex.encodeHex(MyTunesRss.MESSAGE_DIGEST.digest(file.getCanonicalPath().getBytes("UTF-8")))).toLowerCase();
+        }
+        return null;
     }
 
     private void setSimpleInfo(InsertOrUpdateTrackStatement statement, File file) {

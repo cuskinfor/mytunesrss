@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.datastore.filesystem;
 import de.codewave.utils.io.*;
 import de.codewave.utils.sql.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.*;
 
 import java.io.*;
 import java.util.*;
@@ -10,6 +11,7 @@ import java.sql.*;
 
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.codec.binary.*;
 
 /**
  * de.codewave.mytunesrss.datastore.filesystem.PlaylistFileProcessor
@@ -44,7 +46,7 @@ public class PlaylistFileProcessor implements FileProcessor {
                 }
                 if (!trackIds.isEmpty()) {
                     SaveM3uFilePlaylistStatement statement = new SaveM3uFilePlaylistStatement();
-                    statement.setId(IOUtils.getFileIdentifier(playlistFile));
+                    statement.setId(getFileIdentifier(playlistFile));
                     statement.setName(IOUtils.getNameWithoutSuffix(playlistFile));
                     statement.setTrackIds(trackIds);
                     myDataStoreSession.executeStatement(statement);
@@ -63,5 +65,12 @@ public class PlaylistFileProcessor implements FileProcessor {
                 }
             }
         }
+    }
+
+    private String getFileIdentifier(File file) throws IOException {
+        if (file != null && file.exists()) {
+            return new String(Hex.encodeHex(MyTunesRss.MESSAGE_DIGEST.digest(file.getCanonicalPath().getBytes("UTF-8")))).toLowerCase();
+        }
+        return null;
     }
 }

@@ -45,13 +45,13 @@
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                 <td class="mytunes"><c:out value="${playlist.name}" /></td>
-                <td class="tracks"><a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(playlist.id)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${playlist.trackCount}</a></td>
+                <td class="tracks"><a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${playlist.trackCount}</a></td>
                 <td class="icon">
-                    <a href="${servletUrl}/loadAndEditPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=true/playlist=${cwfn:encodeUrl(playlist.id)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                    <a href="${servletUrl}/loadAndEditPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=true/playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                         <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                 </td>
                 <td class="icon">
-                    <a href="${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(playlist.id)}</mt:encrypt>">
+                    <a href="${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>">
                         <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                 </td>
             </tr>
