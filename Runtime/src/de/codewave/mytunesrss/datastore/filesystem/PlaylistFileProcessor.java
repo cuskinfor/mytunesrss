@@ -43,7 +43,7 @@ public class PlaylistFileProcessor implements FileProcessor {
                 }
                 if (!trackIds.isEmpty()) {
                     SaveM3uFilePlaylistStatement statement = new SaveM3uFilePlaylistStatement();
-                    statement.setId(IOUtils.getFileIdentifier(playlistFile));
+                    statement.setId(IOUtils.getFilenameHash(playlistFile));
                     statement.setName(FilenameUtils.getBaseName(playlistFile.getName()));
                     statement.setTrackIds(trackIds);
                     myDataStoreSession.executeStatement(statement);
