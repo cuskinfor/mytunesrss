@@ -9,6 +9,7 @@ import org.apache.commons.httpclient.methods.*;
 import org.apache.commons.httpclient.methods.multipart.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.io.*;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -29,6 +30,7 @@ public class SupportContact {
     private JTextField myEmailInput;
     private JTextArea myCommentInput;
     private JTextArea myInfoText;
+    private JCheckBox myItunesXmlInput;
 
     public void display(JFrame parent, String title, String infoText) {
         final JDialog dialog = new JDialog(parent, title, true);
@@ -101,6 +103,20 @@ public class SupportContact {
                 zipOutput = new ZipOutputStream(baos);
                 ZipUtils.addToZip("MyTunesRSS_Support/MyTunesRSS-" + MyTunesRss.VERSION + ".log", new File(
                         PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.log"), zipOutput);
+                if (myItunesXmlInput.isSelected()) {
+                    int index = 0;
+                    for (String dataSource : MyTunesRss.CONFIG.getDatasources()) {
+                        File file = new File(dataSource);
+                        if (file.exists() && file.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(dataSource))) {
+                            if (index == 0) {
+                                ZipUtils.addToZip("MyTunesRSS_Support/iTunes Music Library.xml", file, zipOutput);
+                            } else {
+                                ZipUtils.addToZip("MyTunesRSS_Support/iTunes Music Library (" + index + ").xml", file, zipOutput);
+                            }
+                            index++;
+                        }
+                    }
+                }
                 zipOutput.close();
                 postMethod = new PostMethod(System.getProperty("MyTunesRSS.supportUrl", SUPPORT_URL));
                 PartSource partSource = new ByteArrayPartSource("MyTunesRSS-" + MyTunesRss.VERSION + "-Support.zip", baos.toByteArray());
