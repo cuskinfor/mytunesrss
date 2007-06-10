@@ -73,8 +73,8 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />
-      <attribute name="URI" value="/WEB-INF/lib/camel-0.9.1.jar" />
-      <url>jar://$MODULE_DIR$/../Runtime/lib/camel-0.9.1.jar!/</url>
+      <attribute name="URI" value="/WEB-INF/lib/camel-0.9.2.jar" />
+      <url>jar://$MODULE_DIR$/../Runtime/lib/camel-0.9.2.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="0" />

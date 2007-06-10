@@ -274,6 +274,7 @@
       <module fileurl="file://$PROJECT_DIR$/AppleExtensions/AppleExtensions.iml" filepath="$PROJECT_DIR$/AppleExtensions/AppleExtensions.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyTunesRSS.iml" filepath="$PROJECT_DIR$/MyTunesRSS.iml" />
       <module fileurl="file://$PROJECT_DIR$/Runtime/Runtime.iml" filepath="$PROJECT_DIR$/Runtime/Runtime.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ShareItKeyGen/ShareItKeyGen.iml" filepath="$PROJECT_DIR$/ShareItKeyGen/ShareItKeyGen.iml" />
       <module fileurl="file://$PROJECT_DIR$/Webapp/Webapp.iml" filepath="$PROJECT_DIR$/Webapp/Webapp.iml" />
     </modules>
   </component>
