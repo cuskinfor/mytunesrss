@@ -44,7 +44,20 @@ public class WebServer {
                     final Map<String, Object> contextEntries = new HashMap<String, Object>();
                     contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
                     contextEntries.put(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
-                    myEmbeddedTomcat = createServer("mytunesrss", null, MyTunesRss.CONFIG.getPort(), new File("."), "ROOT", System.getProperty(
+                    String catalinaBase = getClass().getResource("WebServer.class").getFile();
+                    if (catalinaBase.contains("MyTunesRSS.jar")) {
+                        // get the directory containing the main jar file and use it as the catalina base directory
+                        catalinaBase = catalinaBase.split("MyTunesRSS.jar")[0];
+                        catalinaBase = catalinaBase.split("file:")[catalinaBase.split("file:").length - 1];
+                        catalinaBase = new File(catalinaBase).getAbsolutePath();
+                    } else {
+                        // not started from a jar file, i.e. development environment, use the current working directory as catalina base
+                        catalinaBase = new File(".").getAbsolutePath();
+                    }
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Using catalina base: \"" + catalinaBase + "\".");
+                    }
+                    myEmbeddedTomcat = createServer("mytunesrss", null, MyTunesRss.CONFIG.getPort(), new File(catalinaBase), "ROOT", System.getProperty(
                             "webapp.context",
                             ""), contextEntries);
                     if (myEmbeddedTomcat != null) {
