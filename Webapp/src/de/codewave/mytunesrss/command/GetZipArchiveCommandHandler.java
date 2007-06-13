@@ -132,8 +132,15 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             if (counter != null) {
                 counter.add((int)quotaExceededInfoEntry.getCompressedSize());
             }
+        } else if (trackCount == 0) {
+            ZipEntry noFilesInfoEntry = new ZipEntry(baseName + "/Readme.txt");
+            zipStream.putNextEntry(noFilesInfoEntry);
+            zipStream.write("This archive does not contain any files from MyTunesRSS! If you think it should, please contact the MyTunesRSS server administrator or - in case you are the administrator - contact the Codewave support.".getBytes("UTF-8"));
+            zipStream.closeEntry();
+            if (counter != null) {
+                counter.add((int)noFilesInfoEntry.getCompressedSize());
+            }
         }
         zipStream.close();
     }
-
 }
