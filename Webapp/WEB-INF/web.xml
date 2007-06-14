@@ -80,19 +80,9 @@
         <servlet-name>CommandServlet</servlet-name>
         <servlet-class>de.codewave.utils.servlet.CommandServlet</servlet-class>
     </servlet>
-    <servlet>
-        <description>Scaled stylesheet handler</description>
-        <display-name>ScaledStyleServlet</display-name>
-        <servlet-name>ScaledStyleServlet</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.ScaledStyleServlet</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
         <url-pattern>/mytunesrss/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ScaledStyleServlet</servlet-name>
-        <url-pattern>/styles/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
