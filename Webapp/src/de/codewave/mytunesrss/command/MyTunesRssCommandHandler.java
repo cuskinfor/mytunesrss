@@ -162,13 +162,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected WebConfig getWebConfig() {
-        WebConfig webConfig = (WebConfig)getSession().getAttribute("config");
-        if (webConfig == null) {
-            webConfig = new WebConfig();
-            webConfig.load(getRequest());
-            getSession().setAttribute("config", webConfig);
-        }
-        return webConfig;
+        return MyTunesRssWebUtils.getWebConfig(getRequest());
     }
 
     protected void forward(MyTunesRssCommand command) throws IOException, ServletException {

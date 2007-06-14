@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.utils.servlet.*;
+import de.codewave.mytunesrss.servlet.*;
 
 import javax.crypto.*;
 import javax.servlet.http.*;
@@ -36,6 +37,16 @@ public class MyTunesRssWebUtils {
             }
         }
         return pathInfo;
+    }
+
+    public static WebConfig getWebConfig(HttpServletRequest httpServletRequest) {
+        WebConfig webConfig = (WebConfig)httpServletRequest.getSession().getAttribute("config");
+        if (webConfig == null) {
+            webConfig = new WebConfig();
+            webConfig.load(httpServletRequest);
+            httpServletRequest.getSession().setAttribute("config", webConfig);
+        }
+        return webConfig;
     }
 }
 

@@ -20,7 +20,7 @@ public abstract class ThemeServlet extends HttpServlet {
     private static final Log LOG = LogFactory.getLog(ThemeServlet.class);
 
     protected File getFile(HttpServletRequest httpServletRequest, String resourceBasePath) {
-        String theme = (String)httpServletRequest.getSession().getAttribute("theme");
+        String theme = MyTunesRssWebUtils.getWebConfig(httpServletRequest).getTheme();
         if (LOG.isDebugEnabled()) {
             LOG.debug("File \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + theme + "\" requested.");
         }
@@ -32,8 +32,8 @@ public abstract class ThemeServlet extends HttpServlet {
                 }
             }
         } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not find file \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + theme + "\".", e);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Could not find file \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + theme + "\". Using default resource.", e);
             }
         }
         return new File(getServletContext().getRealPath(resourceBasePath) + httpServletRequest.getPathInfo());

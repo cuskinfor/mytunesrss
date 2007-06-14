@@ -31,6 +31,7 @@ public class WebConfig {
     private static final String CFG_RSS_ARTWORK = "rssArtwork";
     private static final String CFG_RANDOM_PLAYLIST_SIZE = "randomPlaylistSize";
     private static final String CFG_PLAYLIST_TYPE = "playlistType";
+    private static final String CFG_THEME = "theme";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -207,6 +208,14 @@ public class WebConfig {
 
     public void setUserName(String userName) {
         myConfigValues.put(CFG_USER_NAME, userName);
+    }
+
+    public String getTheme() {
+        return myConfigValues.get(CFG_THEME);
+    }
+
+    public void setTheme(String theme) {
+        myConfigValues.put(CFG_THEME, theme);
     }
 
     public boolean isShowRss() {
