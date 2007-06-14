@@ -2,6 +2,10 @@
 <module version="4" relativePaths="true" type="JAVA_MODULE">
   <component name="BuildJarSettings">
     <containerInfo>
+      <containerElement type="module" name="AppleExtensions">
+        <attribute name="method" value="1" />
+        <attribute name="URI" value="/" />
+      </containerElement>
       <containerElement type="module" name="Runtime">
         <attribute name="method" value="1" />
         <attribute name="URI" value="/" />
@@ -449,6 +453,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="AppleExtensions" />
     <orderEntryProperties />
   </component>
   <component name="copyright">

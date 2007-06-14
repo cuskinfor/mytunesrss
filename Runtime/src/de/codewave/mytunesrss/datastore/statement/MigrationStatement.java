@@ -24,6 +24,7 @@ public class MigrationStatement implements DataStoreStatement {
         // migration from 3.0 to current version
         if (version.equals("3.0")) {
             new DropAllTablesStatement().execute(connection);
+            MyTunesRssUtils.createStatement(connection, "migrate30to31").execute();
             new CreateAllTablesStatement().execute(connection);
         }
         new UpdateDatabaseVersionStatement().execute(connection);
