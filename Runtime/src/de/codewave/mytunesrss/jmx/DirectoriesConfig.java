@@ -17,7 +17,7 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
     super(DirectoriesConfigMBean.class);
   }
 
-    public String[] getWatchFolders() {
+    public String[] getDatasources() {
         return MyTunesRss.CONFIG.getDatasources();
     }
 
@@ -83,12 +83,12 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(1);
     }
 
-    public String addWatchFolder(String watchFolder) {
+    public String addDatasource(String watchFolder) {
         String error = MyTunesRss.CONFIG.addDatasource(watchFolder);
         return error != null ? error : MyTunesRss.BUNDLE.getString("ok");
     }
 
-    public String removeWatchFolder(String watchFolder) {
+    public String removeDatasource(String watchFolder) {
         String error = MyTunesRss.CONFIG.removeWatchFolder(watchFolder);
         return error != null ? error : MyTunesRss.BUNDLE.getString("ok");
     }

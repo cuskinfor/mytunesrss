@@ -8,7 +8,7 @@ package de.codewave.mytunesrss.jmx;
  * de.codewave.mytunesrss.jmx.DirectoriesConfigMBean
  */
 public interface DirectoriesConfigMBean {
-    String[] getWatchFolders();
+    String[] getDatasources();
 
     boolean isCreateUserSubdir();
 
@@ -30,7 +30,7 @@ public interface DirectoriesConfigMBean {
 
     void setUploadDir(String uploadDir);
 
-    String addWatchFolder(String watchFolder);
+    String addDatasource(String datasource);
 
-    String removeWatchFolder(String watchFolder);
+    String removeDatasource(String datasource);
 }

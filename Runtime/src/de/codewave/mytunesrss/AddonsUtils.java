@@ -70,34 +70,45 @@ public class AddonsUtils {
         return languages;
     }
 
-    public static void addTheme(File theme) {
+    public static String addTheme(File theme) {
         // todo: implement method
         throw new UnsupportedOperationException("method addTheme of class MyTunesRssConfig is not yet implemented!");
     }
 
-    public static void addLanguage(File language) {
+    public static String addLanguage(File language) {
         // todo: implement method
         throw new UnsupportedOperationException("method addLanguage of class MyTunesRssConfig is not yet implemented!");
     }
 
-    public static String deleteTheme(String theme) {
+    public static String deleteTheme(String themeName) {
         try {
-            FileUtils.deleteDirectory(new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes/" + theme));
+            File themeDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes/" + themeName);
+            if (themeDir.isDirectory()) {
+                FileUtils.deleteDirectory(themeDir);
+            } else {
+                return MyTunesRss.BUNDLE.getString("error.deleteThemeNoDir");
+            }
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
-                LOG.error("Could not delete theme \"" + theme + "\".", e);
+                LOG.error("Could not delete theme \"" + themeName + "\".", e);
             }
             return MyTunesRss.BUNDLE.getString("error.couldNotRemoveTheme");
         }
         return null;
     }
 
-    public static String deleteLanguage(String language) {
+    public static String deleteLanguage(String languageCode) {
         try {
-            new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/" + language).delete();
+            File languageFile = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/MyTunesRssWeb_" +
+                    languageCode + ".properties");
+            if (languageFile.isFile()) {
+                languageFile.delete();
+            } else {
+                return MyTunesRss.BUNDLE.getString("error.deleteLanguageNoFile");
+            }
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
-                LOG.error("Could not delete language \"" + language + "\".", e);
+                LOG.error("Could not delete language \"" + languageCode + "\".", e);
             }
             return MyTunesRss.BUNDLE.getString("error.couldNotRemoveLanguage");
         }
