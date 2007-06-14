@@ -77,6 +77,19 @@
                     </td>
                 </tr>
             </c:if>
+            <c:if test="${registered && !empty themes}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.theme" /></td>
+                    <td>
+                        <select name="theme">
+                            <option value="" <c:if test="${empty config.theme}">selected="selected"</c:if>><fmt:message key="theme.default"/></option>
+                            <c:forEach items="${themes}" var="theme">
+                                <option value="<c:out value="${theme}"/>" <c:if test="${config.theme eq theme}">selected="selected"</c:if>><c:out value="${theme}"/></option>
+                            </c:forEach>
+                        </select>
+                    </td>
+                </tr>
+            </c:if>
             <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.itemsPerPage" /></td>
                 <td><input type="text"

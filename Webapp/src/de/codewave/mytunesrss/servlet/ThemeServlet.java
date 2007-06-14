@@ -29,6 +29,11 @@ public abstract class ThemeServlet extends HttpServlet {
                 File file = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes/" + theme + resourceBasePath + httpServletRequest.getPathInfo());
                 if (file.exists()) {
                     return file;
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Could not find file \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + theme +
+                                "\". Using default resource.");
+                    }
                 }
             }
         } catch (IOException e) {

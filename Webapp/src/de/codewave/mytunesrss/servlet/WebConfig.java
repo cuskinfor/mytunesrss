@@ -215,7 +215,11 @@ public class WebConfig {
     }
 
     public void setTheme(String theme) {
-        myConfigValues.put(CFG_THEME, theme);
+        if (StringUtils.isNotEmpty(theme)) {
+            myConfigValues.put(CFG_THEME, theme);
+        } else {
+            myConfigValues.remove(CFG_THEME);
+        }
     }
 
     public boolean isShowRss() {

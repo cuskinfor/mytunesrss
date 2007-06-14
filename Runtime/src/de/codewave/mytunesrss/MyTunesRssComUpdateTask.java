@@ -4,11 +4,10 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.*;
+import org.apache.commons.codec.binary.*;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.commons.logging.*;
-import org.apache.commons.codec.binary.*;
 
 import java.io.*;
 import java.util.*;
@@ -50,7 +49,12 @@ public class MyTunesRssComUpdateTask extends TimerTask {
         postMethod.addParameter("context", System.getProperty("webapp.context", ""));
         HttpClient client = MyTunesRssUtils.createHttpClient();
         try {
-            client.executeMethod(postMethod);
+            int responseCode = client.executeMethod(postMethod);
+            if (responseCode != 200) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Could not update mytunesrss.com (Status code " + responseCode + ").");
+                }
+            }
         } catch (IOException e) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Could not update mytunesrss.com", e);

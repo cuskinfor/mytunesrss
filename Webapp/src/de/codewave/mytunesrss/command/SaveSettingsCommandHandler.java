@@ -44,6 +44,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setShowPlaylist(isParameterValue("feedType", "playlist"));
         webConfig.setPlaylistType(getRequestParameter("playlistType", "m3u"));
         webConfig.setShowPlayer(getBooleanRequestParameter("showPlayer", false));
+        webConfig.setTheme(getRequest().getParameter("theme"));
         boolean error = false;
         error |= transferAndValidatePageSize(webConfig);
         error |= transferAndValidateRssFeedLimit(webConfig);
