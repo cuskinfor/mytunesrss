@@ -112,6 +112,7 @@ public class Settings {
         myDatabaseForm.setGuiMode(mode);
         myDirectoriesForm.setGuiMode(mode);
         myMiscForm.setGuiMode(mode);
+        myAddonsForm.setGuiMode(mode);
     }
 
     public void doStartServer() {

@@ -129,12 +129,12 @@ public class Directories {
     public void setGuiMode(GuiMode mode) {
         switch (mode) {
             case ServerRunning:
-                SwingUtils.enableElementAndLabel(myBaseDirsList, false);
+                myBaseDirsList.setEnabled(false);
                 myAddBaseDirButton.setEnabled(false);
                 myDeleteBaseDirButton.setEnabled(false);
                 myFolderStructureGrandparent.setEnabled(false);
                 myFolderStructureParent.setEnabled(false);
-                SwingUtils.enableElementAndLabel(myUploadDirInput, false);
+                myUploadDirInput.setEnabled(false);
                 myUploadDirLookupButton.setEnabled(false);
                 myCreateUserDir.setEnabled(false);
                 myStructureLabel.setEnabled(false);
@@ -143,12 +143,12 @@ public class Directories {
                 myTrackLabel.setEnabled(false);
                 break;
             case ServerIdle:
-                SwingUtils.enableElementAndLabel(myBaseDirsList, true);
+                myBaseDirsList.setEnabled(true);
                 myAddBaseDirButton.setEnabled(true);
                 myDeleteBaseDirButton.setEnabled(myBaseDirsList.getSelectedIndex() > -1);
                 myFolderStructureGrandparent.setEnabled(true);
                 myFolderStructureParent.setEnabled(true);
-                SwingUtils.enableElementAndLabel(myUploadDirInput, true);
+                myUploadDirInput.setEnabled(true);
                 myUploadDirLookupButton.setEnabled(true);
                 myCreateUserDir.setEnabled(true);
                 myStructureLabel.setEnabled(true);

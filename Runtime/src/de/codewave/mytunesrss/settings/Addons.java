@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.utils.swing.*;
 import org.apache.commons.io.*;
 
 import javax.swing.*;
@@ -83,6 +84,27 @@ public class Addons {
                 return AddonsUtils.deleteLanguage(language);
             }
         });
+    }
+
+    public void setGuiMode(GuiMode mode) {
+        switch (mode) {
+            case ServerRunning:
+                myThemesList.setEnabled(false);
+                myAddThemeButton.setEnabled(false);
+                myDeleteThemeButton.setEnabled(false);
+                myLanguagesList.setEnabled(false);
+                myAddLanguageButton.setEnabled(false);
+                myDeleteLanguageButton.setEnabled(false);
+                break;
+            case ServerIdle:
+                myThemesList.setEnabled(true);
+                myAddThemeButton.setEnabled(true);
+                myDeleteThemeButton.setEnabled(myThemesList.getSelectedIndex() > -1);
+                myLanguagesList.setEnabled(true);
+                myAddLanguageButton.setEnabled(true);
+                myDeleteLanguageButton.setEnabled(myLanguagesList.getSelectedIndex() > -1);
+                break;
+        }
     }
 
     public abstract class AddButtonListener implements ActionListener {
