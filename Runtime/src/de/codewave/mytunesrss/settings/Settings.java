@@ -26,6 +26,8 @@ public class Settings {
     private JTabbedPane myTabbedPane;
     private Database myDatabaseForm;
     private Info myInfoForm;
+    private Addons myAddonsForm;
+    private JPanel myAddonsPanel;
 
     public Database getDatabaseForm() {
         return myDatabaseForm;
@@ -36,6 +38,7 @@ public class Settings {
     }
 
     public void init() {
+        initRegistration();
         myStartServerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 doStartServer();
@@ -57,7 +60,14 @@ public class Settings {
         myMiscForm.init();
         myInfoForm.init();
         myUserManagementForm.init();
+        myAddonsForm.init();
         myTabbedPane.addChangeListener(new TabSwitchListener());
+    }
+
+    private void initRegistration() {
+        if (!MyTunesRss.REGISTRATION.isRegistered()) {
+            myTabbedPane.remove(myAddonsPanel);
+        }
     }
 
     public String updateConfigFromGui() {
