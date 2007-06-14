@@ -148,6 +148,14 @@ public class WebServer {
 
     private Embedded createServer(String name, InetAddress listenAddress, int listenPort, File catalinaBasePath, String webAppName,
             String webAppContext, Map<String, Object> contextEntries) throws IOException {
+        URL url = WebServer.class.getResource("/org/apache/catalina/startup/CatalinaProperties.class");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("CatalinaProperties.class=" + url);
+        }
+        url = WebServer.class.getResource("/org/apache/catalina/startup/Embedded.class");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Embedded.class=" + url);
+        }
         Embedded server = new Embedded();
         server.setCatalinaBase(catalinaBasePath.getCanonicalPath());
         Engine engine = server.createEngine();
