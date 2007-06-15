@@ -126,14 +126,12 @@ public class MyTunesRss {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
             MyTunesRssUtils.shutdown();
         }
-        REGISTRATION.init(null, true);
-        if (REGISTRATION.isExpired()) {
-            if (REGISTRATION.isDefaultData()) {
+        MyTunesRssRegistration.RegistrationResult result = REGISTRATION.init(null, true);
+        if (result == MyTunesRssRegistration.RegistrationResult.InternalExpired) {
                 MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.defaulRegistrationExpired"));
                 MyTunesRssUtils.shutdown();
-            } else {
+        } else if (result == MyTunesRssRegistration.RegistrationResult.ExternalExpired) {
                 MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
-            }
         }
         if (System.getProperty("database.type") == null && Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).getBoolean("deleteDatabaseOnNextStartOnError", false)) {
             new DeleteDatabaseFilesTask().execute();

@@ -17,11 +17,12 @@ public class P300165105 {
     public static int ExitCode = ERC_INTERNAL;
     public static String fileEncoding = "ISO-8859-1";
     private static final String expectedEncoding = "UTF8";
-    public static String REG_NAME = null;
-    public static int PRODUCT_ID = 0;
-    public static String KeyMIMEType = null;
-    public static String KeyDisplayFileName = null;
-    public static String KeyData = null;
+    public static String REG_NAME;
+    public static String EXPIRATION;
+    public static int PRODUCT_ID;
+    public static String KeyMIMEType;
+    public static String KeyDisplayFileName;
+    public static String KeyData;
 
     private static void GenerateKey() throws Exception {
         String privateKeyText =
@@ -35,8 +36,11 @@ public class P300165105 {
         String regData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<registration>\n" +
             "    <name>" + REG_NAME + "</name>\n" +
-            "    <registered>true</registered>\n" +
-            "</registration>";
+            "    <registered>true</registered>\n";
+        if (EXPIRATION != null && EXPIRATION.length() > 0) {
+            regData += "    <expiration>" + EXPIRATION + "</expiration>\n";
+        }
+        regData += "</registration>";
         byte[] privateKeyBytes = new BASE64Decoder().decodeBuffer(privateKeyText);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -61,6 +65,8 @@ public class P300165105 {
                 fileEncoding = value;
             } else if (key.compareTo("REG_NAME") == 0) {
                 REG_NAME = value;
+            } else if (key.compareTo("EXPIRATION") == 0) {
+                EXPIRATION = value;
             } else if (key.compareTo("PRODUCT_ID") == 0) {
                 PRODUCT_ID = Integer.valueOf(value).intValue();
             }
