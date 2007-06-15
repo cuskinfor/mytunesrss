@@ -71,6 +71,16 @@ public class Directories {
         myFolderStructureParent.addItem(FolderStructureRole.Artist);
         addAllToListModel();
         myBaseDirsList.setModel(myListModel);
+        myBaseDirsList.setCellRenderer(new DefaultListCellRenderer() {
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                String text = value.toString();
+                label.setIcon(new ImageIcon(getClass().getResource("xml".equalsIgnoreCase(FilenameUtils.getExtension(text)) ? "itunes.gif" : "folder.gif")));
+                label.setText(text);
+                label.setToolTipText(text);
+                return label;
+            }
+        });
         myBaseDirsList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 myDeleteBaseDirButton.setEnabled(myBaseDirsList.getSelectedIndex() > -1);
