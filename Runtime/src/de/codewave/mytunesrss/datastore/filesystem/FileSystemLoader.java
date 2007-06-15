@@ -20,7 +20,7 @@ public class FileSystemLoader {
     public static void loadFromFileSystem(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> databaseIds) throws IOException, SQLException {
         int trackCount = 0;
         MyTunesRssFileProcessor fileProcessor = null;
-                if (baseDir != null && baseDir.exists() && baseDir.isDirectory()) {
+                if (baseDir != null && baseDir.isDirectory()) {
                     fileProcessor = new MyTunesRssFileProcessor(baseDir, storeSession, lastUpdateTime);
                     if (LOG.isInfoEnabled()) {
                         LOG.info("Processing files from: \"" + baseDir + "\".");

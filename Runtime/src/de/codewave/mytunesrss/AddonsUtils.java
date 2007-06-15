@@ -274,4 +274,29 @@ public class AddonsUtils {
         }
         return null;
     }
+
+    public static File getBestLanguageFile(Locale locale) {
+        String[] codes = locale.toString().split("_");
+        List<String> fileNames = new ArrayList<String>();
+        if (codes.length == 3) {
+            fileNames.add("MyTunesRssWeb_" + codes[0] + "_" + codes[1] + "_" + codes[2] + ".properties");
+        }
+        if (codes.length >= 2) {
+            fileNames.add("MyTunesRssWeb_" + codes[0] + "_" + codes[1] + ".properties");
+        }
+        fileNames.add("MyTunesRssWeb_" + codes[0] + ".properties");
+        for (String fileName : fileNames) {
+            try {
+                File languageFile = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/" + fileName);
+                if (languageFile.isFile()) {
+                    return languageFile;
+                }
+            } catch (IOException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Language file \"" + fileName + "\" not found.");
+                }
+            }
+        }
+        return null;
+    }
 }

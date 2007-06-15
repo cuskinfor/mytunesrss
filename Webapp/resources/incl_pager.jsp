@@ -5,8 +5,6 @@
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
-<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
-
 <table class="pager" cellspacing="0">
     <tr>
         <c:forEach items="${pager.currentPages}" var="page">

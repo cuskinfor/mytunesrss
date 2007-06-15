@@ -4,8 +4,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
-<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
-
 <c:if test="${!empty errors}">
     <div class="error">
         <c:forEach items="${errors}" var="error">

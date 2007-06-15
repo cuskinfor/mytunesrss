@@ -108,13 +108,13 @@ public class UpdateUtils {
                     MyTunesRssUtils.showInfoMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("info.newVersionDownloadDone"));
                     break;
                 case Cancelled:
-                    if (myFile.exists() && myFile.isFile()) {
+                    if (myFile.isFile()) {
                         myFile.delete();
                     }
                     MyTunesRssUtils.showErrorMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("info.newVersionDownloadCancelled"));
                     break;
                 case Failed:
-                    if (myFile.exists() && myFile.isFile()) {
+                    if (myFile.isFile()) {
                         myFile.delete();
                     }
                     MyTunesRssUtils.showErrorMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("info.newVersionDownloadFailed"));

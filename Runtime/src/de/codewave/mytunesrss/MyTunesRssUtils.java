@@ -1,19 +1,16 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.task.*;
+import de.codewave.utils.sql.*;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.pleasewait.*;
-import de.codewave.utils.sql.*;
-import de.codewave.utils.*;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.logging.*;
-import org.apache.commons.io.*;
 
 import javax.swing.*;
-import java.text.*;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
+import java.text.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -35,18 +32,18 @@ public class MyTunesRssUtils {
 
     public static void showErrorMessage(JFrame parent, String message) {
         SwingUtils.showMessage(parent,
-                               JOptionPane.ERROR_MESSAGE,
-                               MyTunesRssUtils.getBundleString("error.title"),
-                               message,
-                               MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
+            JOptionPane.ERROR_MESSAGE,
+            MyTunesRssUtils.getBundleString("error.title"),
+            message,
+            MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
     }
 
     public static void showInfoMessage(JFrame parent, String message) {
         SwingUtils.showMessage(parent,
-                               JOptionPane.INFORMATION_MESSAGE,
-                               MyTunesRssUtils.getBundleString("info.title"),
-                               message,
-                               MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
+            JOptionPane.INFORMATION_MESSAGE,
+            MyTunesRssUtils.getBundleString("info.title"),
+            message,
+            MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
     }
 
     public static void executeTask(String title, String text, String cancelButtonText, boolean progressBar, PleaseWaitTask task) {
@@ -150,17 +147,15 @@ public class MyTunesRssUtils {
     }
 
     public static boolean deleteRecursivly(File file) {
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                for (File subFile : file.listFiles()) {
-                    if (!deleteRecursivly(subFile)) {
-                        return false;
-                    }
+        if (file.isDirectory()) {
+            for (File subFile : file.listFiles()) {
+                if (!deleteRecursivly(subFile)) {
+                    return false;
                 }
-                file.delete();
-            } else {
-                return file.delete();
             }
+            file.delete();
+        } else if (file.isFile()) {
+            return file.delete();
         }
         return true;
     }

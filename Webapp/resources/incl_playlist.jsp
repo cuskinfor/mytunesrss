@@ -6,8 +6,6 @@
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
-<fmt:setBundle basename="de.codewave.mytunesrss.MyTunesRssWeb" />
-
 <fmt:message var="newPlaylistName" key="newPlaylistName" />
 
 <c:if test="${!empty sessionScope.playlist}">

@@ -107,7 +107,7 @@ public class SupportContact {
                     int index = 0;
                     for (String dataSource : MyTunesRss.CONFIG.getDatasources()) {
                         File file = new File(dataSource);
-                        if (file.exists() && file.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(dataSource))) {
+                        if (file.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(dataSource))) {
                             if (index == 0) {
                                 ZipUtils.addToZip("MyTunesRSS_Support/iTunes Music Library.xml", file, zipOutput);
                             } else {

@@ -17,6 +17,8 @@ import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
 import javax.servlet.*;
+import javax.servlet.jsp.jstl.core.*;
+import javax.servlet.jsp.jstl.fmt.*;
 import java.io.*;
 import java.util.*;
 import java.net.*;
@@ -159,6 +161,58 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             addError(new BundleError("error.quotaExceeded." + getAuthUser().getQuotaType().name()));
         }
         getRequest().setAttribute("encryptionKey", MyTunesRss.CONFIG.getPathInfoKey());
+        setResourceBundle();
+    }
+
+    private void setResourceBundle() {
+        Locale locale = getRequest().getLocale();
+        LocalizationContext context = (LocalizationContext)getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+        if (context == null || !ObjectUtils.equals(context.getLocale(), locale)) {
+            File language = AddonsUtils.getBestLanguageFile(locale);
+            ResourceBundle bundle = null;
+            if (language != null) {
+                try {
+                    bundle = new PropertyResourceBundle(new FileInputStream(language));
+                } catch (IOException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not read language file \"" + language.getAbsolutePath() + "\".");
+                    }
+                }
+            }
+            if (bundle == null) {
+                try {
+                    bundle = new PropertyResourceBundle(getBestLanguageResource(locale).openStream());
+                } catch (IOException e1) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not get one of the default resource bundles.", e1);
+                    }
+                }
+            }
+            if (bundle != null) {
+                getSession().setAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session", new LocalizationContext(bundle, bundle.getLocale()));
+            } else {
+                getSession().removeAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+            }
+        }
+    }
+
+    private URL getBestLanguageResource(Locale locale) {
+        String[] codes = locale.toString().split("_");
+        List<URL> resources = new ArrayList<URL>();
+        if (codes.length == 3) {
+            resources.add(getClass().getResource("../MyTunesRssWeb_" + codes[0] + "_" + codes[1] + "_" + codes[2] + ".properties"));
+        }
+        if (codes.length >= 2) {
+            resources.add(getClass().getResource("../MyTunesRssWeb_" + codes[0] + "_" + codes[1] + ".properties"));
+        }
+        resources.add(getClass().getResource("../MyTunesRssWeb_" + codes[0] + ".properties"));
+        resources.add(getClass().getResource("../MyTunesRssWeb.properties"));
+        for (URL resource : resources) {
+            if (resource != null) {
+                return resource;
+            }
+        }
+        return null;
     }
 
     protected WebConfig getWebConfig() {

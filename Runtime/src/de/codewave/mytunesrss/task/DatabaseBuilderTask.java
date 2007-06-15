@@ -24,29 +24,29 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
     private static boolean CURRENTLY_RUNNING;
 
-    private List<File> myBaseDirs = new ArrayList<File>();
+    private List<File> myDatasources = new ArrayList<File>();
     private boolean myExecuted;
 
     public DatabaseBuilderTask() {
         if (MyTunesRss.CONFIG.getDatasources() != null && MyTunesRss.CONFIG.getDatasources().length > 0) {
-            for (String baseDir : MyTunesRss.CONFIG.getDatasources()) {
-                myBaseDirs.add(new File(baseDir));
+            for (String datasource : MyTunesRss.CONFIG.getDatasources()) {
+                myDatasources.add(new File(datasource));
             }
         }
         if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getUploadDir())) {
-            myBaseDirs.add(new File(MyTunesRss.CONFIG.getUploadDir().trim()));
+            myDatasources.add(new File(MyTunesRss.CONFIG.getUploadDir().trim()));
         }
     }
 
     public boolean needsUpdate() throws SQLException {
-        if (myBaseDirs != null) {
-            for (File baseDir : myBaseDirs) {
-                if (baseDir.isDirectory() && baseDir.exists()) {
+        if (myDatasources != null) {
+            for (File baseDir : myDatasources) {
+                if (baseDir.isDirectory()) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Database update needed.");
                     }
                     return true;
-                } else if (baseDir.isFile() && baseDir.exists() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(baseDir.getName()))) {
+                } else if (baseDir.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(baseDir.getName()))) {
                     SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
                     if (MyTunesRss.CONFIG.isIgnoreTimestamps() || baseDir.lastModified() > systemInformation.getLastUpdate()) {
                         if (LOG.isDebugEnabled()) {
@@ -100,24 +100,21 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             storeSession.executeStatement(new PrepareForUpdateStatement());
             final long timeUpdateStart = System.currentTimeMillis();
             SystemInformation systemInformation = storeSession.executeQuery(new GetSystemInformationQuery());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Loading tracks from iTunes library.");
-            }
             long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
             Set<String> databaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.ITunes.name()));
-            databaseIds.addAll((Set<String>)storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.FileSystem.name())));
-            if (MyTunesRss.CONFIG.getDatasources() != null) {
-                for (String filePath : MyTunesRss.CONFIG.getDatasources()) {
+            databaseIds.addAll(storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.FileSystem.name())));
+            if (myDatasources != null) {
+                for (File datasource : myDatasources) {
                     if (LOG.isInfoEnabled()) {
-                        LOG.info("Parsing \"" + filePath + "\".");
+                        LOG.info("Parsing \"" + datasource.getAbsolutePath() + "\".");
                     }
-                    File file = new File(filePath);
-                    if (file.isFile() && file.exists() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
-                        ItunesLoader.loadFromITunes(file.toURL(), storeSession, timeLastUpdate, databaseIds);
-                    } else if (file.isDirectory() && file.exists()) {
-                        FileSystemLoader.loadFromFileSystem(file, storeSession, timeLastUpdate, databaseIds);
+                    if (datasource.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(datasource.getName()))) {
+                        ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, databaseIds);
+                    } else if (datasource.isDirectory()) {
+                        FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, databaseIds);
                     }
-                }}
+                }
+            }
             if (!databaseIds.isEmpty()) {
                 removeObsoleteTracks(storeSession, databaseIds);
             }

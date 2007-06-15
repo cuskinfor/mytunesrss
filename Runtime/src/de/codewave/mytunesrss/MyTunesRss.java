@@ -160,7 +160,7 @@ public class MyTunesRss {
     private static void registerDatabaseDriver()
             throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         File libDir = new File(PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER) + "/lib");
-        Collection<File> files = libDir.exists() && libDir.isDirectory() ? (Collection<File>)FileUtils.listFiles(libDir, new String[] {"jar"}, false) : null;
+        Collection<File> files = libDir.isDirectory() ? (Collection<File>)FileUtils.listFiles(libDir, new String[] {"jar"}, false) : null;
         if (files != null && !files.isEmpty()) {
             Collection<URL> urls = new ArrayList<URL>();
             for (File file : files) {
