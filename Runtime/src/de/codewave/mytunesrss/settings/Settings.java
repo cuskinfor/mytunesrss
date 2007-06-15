@@ -132,7 +132,7 @@ public class Settings {
         MyTunesRss.stopWebserver();
         if (!MyTunesRss.WEBSERVER.isRunning()) {
             setGuiMode(GuiMode.ServerIdle);
-            myServerForm.setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
+            myServerForm.setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
             if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
                 MyTunesRss.SERVER_RUNNING_TIMER.cancel();
                 MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");

@@ -28,7 +28,7 @@ public class ErrorQueue {
                 clear();
             }
         }
-        return MyTunesRss.BUNDLE.getString("ok");
+        return MyTunesRssUtils.getBundleString("ok");
     }
 
     public boolean isEmpty() {

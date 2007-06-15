@@ -39,7 +39,7 @@ public class ServerInfo {
         myServerPort = serverPort;
         fetchServerStatusLater();
         init();
-        JDialog dialog = new JDialog(parent, MyTunesRss.BUNDLE.getString("serverStatus.title"), true);
+        JDialog dialog = new JDialog(parent, MyTunesRssUtils.getBundleString("serverStatus.title"), true);
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
@@ -67,8 +67,8 @@ public class ServerInfo {
     }
 
     private void init() {
-        myExternalAddress.setText(MyTunesRss.BUNDLE.getString("serverStatus.fetching"));
-        myInternalAddresses.setText(MyTunesRss.BUNDLE.getString("serverStatus.fetching"));
+        myExternalAddress.setText(MyTunesRssUtils.getBundleString("serverStatus.fetching"));
+        myInternalAddresses.setText(MyTunesRssUtils.getBundleString("serverStatus.fetching"));
     }
 
     private void fetchLocalAddresses() {
@@ -85,7 +85,7 @@ public class ServerInfo {
                     }
                     myInternalAddresses.setText(info.toString());
                 } else {
-                    myInternalAddresses.setText(MyTunesRss.BUNDLE.getString("serverStatus.unavailable"));
+                    myInternalAddresses.setText(MyTunesRssUtils.getBundleString("serverStatus.unavailable"));
                 }
             }
         });
@@ -106,7 +106,7 @@ public class ServerInfo {
                 if (StringUtils.isNotEmpty(externalAddress) && !"unreachable".equals(externalAddress)) {
                     myExternalAddress.setText(externalAddress);
                 } else {
-                    myExternalAddress.setText(MyTunesRss.BUNDLE.getString("serverStatus.unavailable"));
+                    myExternalAddress.setText(MyTunesRssUtils.getBundleString("serverStatus.unavailable"));
                 }
             }
         });
@@ -194,16 +194,16 @@ public class ServerInfo {
         private String formatDate(long millis) {
             DateFormat format;
             if (System.currentTimeMillis() < millis || System.currentTimeMillis() - millis > 3600 * 24 * 1000) {
-                format = new SimpleDateFormat(MyTunesRss.BUNDLE.getString("serverStatus.connectionTimeFormat"));// older than 24 hours
+                format = new SimpleDateFormat(MyTunesRssUtils.getBundleString("serverStatus.connectionTimeFormat"));// older than 24 hours
             } else {
-                format = new SimpleDateFormat(MyTunesRss.BUNDLE.getString("serverStatus.connectionTimeFormatSameDay"));
+                format = new SimpleDateFormat(MyTunesRssUtils.getBundleString("serverStatus.connectionTimeFormatSameDay"));
             }
             return format.format(new Date(millis));
         }
 
         @Override
         public String getColumnName(int column) {
-            return MyTunesRss.BUNDLE.getString("serverStatus.connectionsHeader" + column);
+            return MyTunesRssUtils.getBundleString("serverStatus.connectionsHeader" + column);
         }
     }
 }

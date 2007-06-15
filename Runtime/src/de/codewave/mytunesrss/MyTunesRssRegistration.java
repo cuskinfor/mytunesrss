@@ -32,10 +32,10 @@ public class MyTunesRssRegistration {
                 MyTunesRssRegistration registration = new MyTunesRssRegistration();
                 registration.init(registrationFile, false);
                 if (registration.isExpired()) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicenseExpired", registration.getExpiration(MyTunesRss.BUNDLE.getString(
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicenseExpired", registration.getExpiration(MyTunesRssUtils.getBundleString(
                             "common.dateFormat"))));
                 } else if (!registration.isRegistered()) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.loadLicense"));
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicense"));
                 } else {
                     copyFile(registrationFile, new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.key"));
                     MyTunesRssUtils.showInfoMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("error.loadLicenseOk",
@@ -43,10 +43,10 @@ public class MyTunesRssRegistration {
                     return registration;
                 }
             } else {
-                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.loadLicense"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicense"));
             }
         } catch (IOException e) {
-            MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.loadLicense"));
+            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicense"));
         }
         return null;
     }
@@ -125,7 +125,7 @@ public class MyTunesRssRegistration {
                 LOG.debug("Registration data:");
                 LOG.debug("name=" + getName());
                 LOG.debug("registered=" + isRegistered());
-                LOG.debug("expiration=" + getExpiration(MyTunesRss.BUNDLE.getString("common.dateFormat")));
+                LOG.debug("expiration=" + getExpiration(MyTunesRssUtils.getBundleString("common.dateFormat")));
             }
         }
     }

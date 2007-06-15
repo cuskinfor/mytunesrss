@@ -43,24 +43,24 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
                     MyTunesRssUtils.executeTask(null, null, null, false, databaseBuilderTask);
                 }
             }).start();
-            return MyTunesRss.BUNDLE.getString("jmx.databaseUpdateStarted");
+            return MyTunesRssUtils.getBundleString("jmx.databaseUpdateStarted");
         } else {
-            return MyTunesRss.BUNDLE.getString("jmx.databaseUpdateAlreadyRunning");
+            return MyTunesRssUtils.getBundleString("jmx.databaseUpdateAlreadyRunning");
         }
     }
 
     public String getDatabaseStatus() {
         if (MyTunesRss.createDatabaseBuilderTask().isRunning()) {
-            return MyTunesRss.BUNDLE.getString("jmx.databaseUpdateRunning");
+            return MyTunesRssUtils.getBundleString("jmx.databaseUpdateRunning");
         }
         try {
             SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
             if (systemInformation.getLastUpdate() > 0) {
                 Date date = new Date(systemInformation.getLastUpdate());
-                return MyTunesRss.BUNDLE.getString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRss.BUNDLE.getString(
+                return MyTunesRssUtils.getBundleString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRssUtils.getBundleString(
                         "settings.lastDatabaseUpdateDateFormat")).format(date);
             } else {
-                return MyTunesRss.BUNDLE.getString("settings.databaseNotYetCreated");
+                return MyTunesRssUtils.getBundleString("settings.databaseNotYetCreated");
             }
         } catch (SQLException e) {
             return e.getMessage();

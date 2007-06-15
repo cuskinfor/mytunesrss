@@ -26,23 +26,23 @@ public class SysTray {
         SysTrayMenuIcon menuIcon = new SysTrayMenuIcon(getClass().getResource("SysTray.ico"));
         Listener menuListener = new Listener(settingsForm);
         menuIcon.addSysTrayMenuListener(menuListener);
-        myMenu = new SysTrayMenu(menuIcon, MyTunesRss.BUNDLE.getString("systray.menuLabel"));
-        myQuit = new SysTrayMenuItem(MyTunesRss.BUNDLE.getString("systray.quit"), "quit");
+        myMenu = new SysTrayMenu(menuIcon, MyTunesRssUtils.getBundleString("systray.menuLabel"));
+        myQuit = new SysTrayMenuItem(MyTunesRssUtils.getBundleString("systray.quit"), "quit");
         myQuit.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myQuit);
         myMenu.addSeparator();
-        myShow = new SysTrayMenuItem(MyTunesRss.BUNDLE.getString("systray.show"), "show");
+        myShow = new SysTrayMenuItem(MyTunesRssUtils.getBundleString("systray.show"), "show");
         myShow.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myShow);
         myMenu.addSeparator();
-        myUpdate = new SysTrayMenuItem(MyTunesRss.BUNDLE.getString("systray.updateDatabase"), "update");
+        myUpdate = new SysTrayMenuItem(MyTunesRssUtils.getBundleString("systray.updateDatabase"), "update");
         myUpdate.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myUpdate);
         myMenu.addSeparator();
-        myStopServer = new SysTrayMenuItem(MyTunesRss.BUNDLE.getString("systray.stopServer"), "stop_server");
+        myStopServer = new SysTrayMenuItem(MyTunesRssUtils.getBundleString("systray.stopServer"), "stop_server");
         myStopServer.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myStopServer);
-        myStartServer = new SysTrayMenuItem(MyTunesRss.BUNDLE.getString("systray.startServer"), "start_server");
+        myStartServer = new SysTrayMenuItem(MyTunesRssUtils.getBundleString("systray.startServer"), "start_server");
         myStartServer.addSysTrayMenuListener(menuListener);
         myMenu.addItem(myStartServer);
         hide();
@@ -116,9 +116,9 @@ public class SysTray {
 
         private void updateDatabase() {
             DatabaseBuilderTask task = MyTunesRss.createDatabaseBuilderTask();
-            MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.buildDatabase"), null, false, task);
+            MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.buildDatabase"), null, false, task);
             if (!task.isExecuted()) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.updateNotRun"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateNotRun"));
             }
         }
     }

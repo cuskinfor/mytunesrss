@@ -57,8 +57,8 @@ public class Misc implements MyTunesRssEventListener {
         myQuitConfirmationInput.setSelected(MyTunesRss.CONFIG.isQuitConfirmation());
         myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
         myUpdateOnStartInput.setSelected(MyTunesRss.CONFIG.isCheckUpdateOnStart());
-        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput, MyTunesRss.BUNDLE.getString("error.emptyProxyHost")));
-        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myProxyPortInput, 1, 65535, false, MyTunesRss.BUNDLE.getString(
+        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput, MyTunesRssUtils.getBundleString("error.emptyProxyHost")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myProxyPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
                 "error.illegalProxyPort")));
     }
 
@@ -67,7 +67,7 @@ public class Misc implements MyTunesRssEventListener {
     }
 
     private void createUIComponents() {
-        myPasswordInput = new PasswordHashField(MyTunesRss.BUNDLE.getString("passwordHasBeenSet"), MyTunesRss.MESSAGE_DIGEST);
+        myPasswordInput = new PasswordHashField(MyTunesRssUtils.getBundleString("passwordHasBeenSet"), MyTunesRss.MESSAGE_DIGEST);
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -135,7 +135,7 @@ public class Misc implements MyTunesRssEventListener {
         public void actionPerformed(ActionEvent actionEvent) {
             String messages = updateConfigFromGui();
             if (messages == null) {
-                new SupportContact().display(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("dialog.supportRequest"), MyTunesRss.BUNDLE.getString(
+                new SupportContact().display(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("dialog.supportRequest"), MyTunesRssUtils.getBundleString(
                         "settings.supportInfo"));
             } else {
                 MyTunesRssUtils.showErrorMessage(messages);

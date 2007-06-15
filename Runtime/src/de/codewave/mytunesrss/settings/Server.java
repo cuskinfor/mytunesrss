@@ -41,7 +41,7 @@ public class Server {
         myServerNameInput.setText(MyTunesRss.CONFIG.getServerName());
         myAvailableOnLocalNetInput.setSelected(MyTunesRss.CONFIG.isAvailableOnLocalNet());
         SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected());
-        setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.idle"), null);
+        setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
         myAvailableOnLocalNetInput.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 if (MyTunesRss.WEBSERVER.isRunning()) {
@@ -60,9 +60,9 @@ public class Server {
         } else {
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DisableAutoStartServer);
         }
-        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myPortInput, 1, 65535, false, MyTunesRss.BUNDLE.getString(
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
                 "error.illegalServerPort")));
-        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myServerNameInput, MyTunesRss.BUNDLE.getString("error.emptyServerName")));
+        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myServerNameInput, MyTunesRssUtils.getBundleString("error.emptyServerName")));
     }
 
     private void initRegistration() {
@@ -77,7 +77,7 @@ public class Server {
     }
 
     public void setServerRunningStatus(int serverPort) {
-        setServerStatus(MyTunesRss.BUNDLE.getString("serverStatus.running"), null);
+        setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.running"), null);
         myRootPanel.validate();
     }
 

@@ -29,7 +29,7 @@ public class UserConfig extends MyTunesRssMBean implements UserConfigMBean {
             MyTunesRssJmxUtils.unregisterUsers();
             MyTunesRss.CONFIG.addUser(user);
             MyTunesRssJmxUtils.registerUsers();
-            return MyTunesRss.BUNDLE.getString("ok");
+            return MyTunesRssUtils.getBundleString("ok");
         } catch (UnsupportedEncodingException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not create password hash.", e);

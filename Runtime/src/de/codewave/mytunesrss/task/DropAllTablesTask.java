@@ -25,7 +25,7 @@ public class DropAllTablesTask extends MyTunesRssTask {
         } catch (SQLException e) {
             if (System.getProperty("database.type") == null) {
                 Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).putBoolean("deleteDatabaseOnNextStartOnError", true);
-                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.deleteDatabaseOnNextStartOnError"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.deleteDatabaseOnNextStartOnError"));
             } else {
                 throw e;
             }

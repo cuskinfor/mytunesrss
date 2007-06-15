@@ -11,7 +11,7 @@ public class User {
 
         @Override
         public String toString() {
-            return MyTunesRss.BUNDLE.getString("editUser.quotaType." + name());
+            return MyTunesRssUtils.getBundleString("editUser.quotaType." + name());
         }
     }
 

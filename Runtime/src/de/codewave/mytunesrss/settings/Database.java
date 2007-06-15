@@ -70,10 +70,10 @@ public class Database {
                     if (systemInformation.getLastUpdate() > 0) {
                         Date date = new Date(systemInformation.getLastUpdate());
                         myLastUpdatedLabel.setText(
-                                MyTunesRss.BUNDLE.getString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRss.BUNDLE.getString(
+                                MyTunesRssUtils.getBundleString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRssUtils.getBundleString(
                                         "settings.lastDatabaseUpdateDateFormat")).format(date));
                     } else {
-                        myLastUpdatedLabel.setText(MyTunesRss.BUNDLE.getString("settings.databaseNotYetCreated"));
+                        myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString("settings.databaseNotYetCreated"));
                     }
                     myRootPanel.validate();
                 }
@@ -136,13 +136,13 @@ public class Database {
 
     public class DeleteDatabaseButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent) {
-            String optionOk = MyTunesRss.BUNDLE.getString("ok");
-            String optionCancel = MyTunesRss.BUNDLE.getString("cancel");
-            Object option = SwingUtils.showOptionsMessage(MyTunesRss.ROOT_FRAME, JOptionPane.QUESTION_MESSAGE, null, MyTunesRss.BUNDLE.getString(
+            String optionOk = MyTunesRssUtils.getBundleString("ok");
+            String optionCancel = MyTunesRssUtils.getBundleString("cancel");
+            Object option = SwingUtils.showOptionsMessage(MyTunesRss.ROOT_FRAME, JOptionPane.QUESTION_MESSAGE, null, MyTunesRssUtils.getBundleString(
                     "question.deleteDatabase"), MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH, new Object[] {optionCancel, optionOk});
             if (optionOk.equals(option)) {
                 MyTunesRssUtils.executeTask(null,
-                                            MyTunesRss.BUNDLE.getString("pleaseWait.recreatingDatabase"),
+                                            MyTunesRssUtils.getBundleString("pleaseWait.recreatingDatabase"),
                                             null,
                                             false,
                                             new RecreateDatabaseTask());
@@ -153,9 +153,9 @@ public class Database {
     public class UpdateDatabaseButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             DatabaseBuilderTask task = MyTunesRss.createDatabaseBuilderTask();
-            MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.buildDatabase"), null, false, task);
+            MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.buildDatabase"), null, false, task);
             if (!task.isExecuted()) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.updateNotRun"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateNotRun"));
             }
         }
     }

@@ -57,7 +57,7 @@ public class EditUser {
 
     public void display(final JFrame parent, User user) {
         myUser = user;
-        JDialog dialog = new JDialog(parent, MyTunesRss.BUNDLE.getString(user != null ? "editUser.editUserTitle" : "editUser.newUserTitle"), true);
+        JDialog dialog = new JDialog(parent, MyTunesRssUtils.getBundleString(user != null ? "editUser.editUserTitle" : "editUser.newUserTitle"), true);
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
@@ -145,23 +145,23 @@ public class EditUser {
             myApplyButton.setVisible(false);
         }
         JTextFieldValidation.setValidation(new CompositeTextFieldValidation(myUserNameInput,
-                                                                            new NotEmptyTextFieldValidation(myUserNameInput, MyTunesRss.BUNDLE.getString(
+                                                                            new NotEmptyTextFieldValidation(myUserNameInput, MyTunesRssUtils.getBundleString(
                                                                                     "error.missingUserName")),
                                                                             new MaxLengthTextFieldValidation(myUserNameInput, 30, MyTunesRssUtils.getBundleString(
                                                                                     "error.userNameTooLong", 30))));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myPasswordInput,
-                                                                           MyTunesRss.BUNDLE.getString("error.missingUserPassword")));
+                                                                           MyTunesRssUtils.getBundleString("error.missingUserPassword")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myBytesQuotaInput,
                                                                               1,
                                                                               Long.MAX_VALUE,
                                                                               false,
-                                                                              MyTunesRss.BUNDLE.getString("error.illegalBytesQuota")));
+                                                                              MyTunesRssUtils.getBundleString("error.illegalBytesQuota")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myMaxZipEntriesInput,
                                                                               1,
                                                                               Integer.MAX_VALUE,
                                                                               true,
-                                                                              MyTunesRss.BUNDLE.getString("error.illegalMaxZipEntries")));
-        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(mySessionTimeoutInput, 1, 1440, true, MyTunesRss.BUNDLE.getString(
+                                                                              MyTunesRssUtils.getBundleString("error.illegalMaxZipEntries")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(mySessionTimeoutInput, 1, 1440, true, MyTunesRssUtils.getBundleString(
                 "error.illegalSessionTimeout")));
         JTextFieldValidation.validateAll(myRootPanel);
     }
@@ -175,7 +175,7 @@ public class EditUser {
     }
 
     private void refreshInfo() {
-        myInfoReset.setText(new SimpleDateFormat(MyTunesRss.BUNDLE.getString("common.dateFormat")).format(new Date(myUser.getResetTime())));
+        myInfoReset.setText(new SimpleDateFormat(MyTunesRssUtils.getBundleString("common.dateFormat")).format(new Date(myUser.getResetTime())));
         myInfoDownBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(myUser.getDownBytes()));
         myInfoDownBytes.setVisible(true);
         if (myUser.getQuotaType() != User.QuotaType.None) {
@@ -188,7 +188,7 @@ public class EditUser {
     }
 
     private void createUIComponents() {
-        myPasswordInput = new PasswordHashField(MyTunesRss.BUNDLE.getString("passwordHasBeenSet"), MyTunesRss.MESSAGE_DIGEST);
+        myPasswordInput = new PasswordHashField(MyTunesRssUtils.getBundleString("passwordHasBeenSet"), MyTunesRss.MESSAGE_DIGEST);
     }
 
     public class SaveButtonActionListener implements ActionListener {
@@ -252,8 +252,8 @@ public class EditUser {
 
         public void actionPerformed(ActionEvent e) {
             if (JOptionPane.showConfirmDialog(MyTunesRss.ROOT_FRAME,
-                                              MyTunesRss.BUNDLE.getString("confirm.cancelEditUser"),
-                                              MyTunesRss.BUNDLE.getString("confirm.cancelEditUserTitle"),
+                                              MyTunesRssUtils.getBundleString("confirm.cancelEditUser"),
+                                              MyTunesRssUtils.getBundleString("confirm.cancelEditUserTitle"),
                                               JOptionPane.YES_NO_OPTION) == JOptionPane
                     .YES_OPTION) {
                 myDialog.dispose();

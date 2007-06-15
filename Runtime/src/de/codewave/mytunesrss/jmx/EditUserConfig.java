@@ -150,7 +150,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     }
 
     public String getLastHistoryResetDate() {
-        return new SimpleDateFormat(MyTunesRss.BUNDLE.getString("common.dateFormat")).format(new Date(MyTunesRss.CONFIG
+        return new SimpleDateFormat(MyTunesRssUtils.getBundleString("common.dateFormat")).format(new Date(MyTunesRss.CONFIG
                 .getUser(myUsername).getResetTime()));
     }
 
@@ -161,7 +161,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
 
     public String getQuotaInfo() {
         if (MyTunesRss.CONFIG.getUser(myUsername).getQuotaType() != User.QuotaType.None) {
-            return MessageFormat.format(MyTunesRss.BUNDLE.getString("jmx.quota"),
+            return MessageFormat.format(MyTunesRssUtils.getBundleString("jmx.quota"),
                                         MyTunesRssUtils.getMemorySizeForDisplay(MyTunesRss.CONFIG.getUser(myUsername).getBytesQuota()),
                                         MyTunesRss.CONFIG.getUser(myUsername).getQuotaType().toString(),
                                         MyTunesRssUtils.getMemorySizeForDisplay(MyTunesRss.CONFIG.getUser(myUsername).getQuotaDownBytes()),
@@ -175,7 +175,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         MyTunesRssJmxUtils.unregisterUsers();
         MyTunesRss.CONFIG.removeUser(myUsername);
         MyTunesRssJmxUtils.registerUsers();
-        return MyTunesRss.BUNDLE.getString("jmx.userDeleted");
+        return MyTunesRssUtils.getBundleString("jmx.userDeleted");
     }
 
     public int getSessionTimeout() {

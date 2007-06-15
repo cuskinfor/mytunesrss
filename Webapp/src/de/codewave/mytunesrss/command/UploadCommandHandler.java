@@ -5,11 +5,12 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.servlet.*;
 import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.*;
 import org.apache.commons.fileupload.servlet.*;
+import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -80,26 +81,18 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 }
                 uploadDir.mkdirs();
             }
-            if (uploadDir.exists() && uploadDir.isDirectory()) {
+            if (uploadDir.isDirectory()) {
                 FileOutputStream targetStream = new FileOutputStream(new File(uploadDir, fileName));
-                byte[] buffer = new byte[10240];
-                for (int count = inputStream.read(buffer); count != -1; count = inputStream.read(buffer)) {
-                    if (count > 0) {
-                        targetStream.write(buffer, 0, count);
-                    }
+                try {
+                    IOUtils.copy(inputStream, targetStream);
+                } finally {
+                    targetStream.close();
                 }
-                targetStream.close();
             }
         }
     }
 
     private boolean isAccepted(String fileName) {
-        if (StringUtils.isEmpty(fileName) || fileName.endsWith("/") || fileName.endsWith("\\")) {
-            return false; // do no accept empty names or directory names
-        }
-        if (fileName.contains("__MACOSX/")) {
-            return false; // do not accept special OS X file
-        }
-        return FileSupportUtils.isSupported(fileName);
+        return !(StringUtils.isEmpty(fileName) || fileName.endsWith("/") || fileName.endsWith("\\")) && !fileName.contains("__MACOSX/") && FileSupportUtils.isSupported(fileName);
     }
 }

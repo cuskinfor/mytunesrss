@@ -312,7 +312,7 @@ public class MyTunesRss {
             MyTunesRssJmxUtils.stopJmxServer();
             CONFIG.save();
         } else {
-            MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.unregisteredNoHeadlessMode"));
+            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.unregisteredNoHeadlessMode"));
         }
         SERVER_RUNNING_TIMER.cancel();
         STORE.destroy();
@@ -347,7 +347,7 @@ public class MyTunesRss {
     }
 
     public static void stopWebserver() {
-        MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.serverstopping"), null, false, new MyTunesRssTask() {
+        MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.serverstopping"), null, false, new MyTunesRssTask() {
             public void execute() throws Exception {
                 MyTunesRss.WEBSERVER.stop();
             }
@@ -389,7 +389,7 @@ public class MyTunesRss {
 
             @Override
             public String toString() {
-                return MyTunesRss.BUNDLE.getString("confirmation.quitMyTunesRss.option" + name());
+                return MyTunesRssUtils.getBundleString("confirmation.quitMyTunesRss.option" + name());
             }
         }
 
@@ -403,8 +403,8 @@ public class MyTunesRss {
         public void windowClosing(WindowEvent e) {
             if (CONFIG.isQuitConfirmation()) {
                 int result = JOptionPane.showOptionDialog(ROOT_FRAME,
-                                                          MyTunesRss.BUNDLE.getString("confirmation.quitMyTunesRss"),
-                                                          MyTunesRss.BUNDLE.getString("pleaseWait.defaultTitle"),
+                                                          MyTunesRssUtils.getBundleString("confirmation.quitMyTunesRss"),
+                                                          MyTunesRssUtils.getBundleString("pleaseWait.defaultTitle"),
                                                           JOptionPane.YES_NO_OPTION,
                                                           JOptionPane.QUESTION_MESSAGE,
                                                           null,

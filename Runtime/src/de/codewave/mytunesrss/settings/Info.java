@@ -48,7 +48,7 @@ public class Info {
             myRegistrationNameInput.setText(MyTunesRss.REGISTRATION.getName());
             myExpirationLabel.setVisible(MyTunesRss.REGISTRATION.isExpirationDate());
             myExpirationInput.setVisible(MyTunesRss.REGISTRATION.isExpirationDate());
-            myExpirationInput.setText(MyTunesRss.REGISTRATION.getExpiration(MyTunesRss.BUNDLE.getString("common.dateFormat")));
+            myExpirationInput.setText(MyTunesRss.REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString("common.dateFormat")));
             myUnregisteredTextArea.setVisible(false);
         } else {
             myRegistrationNameLabel.setVisible(false);
@@ -61,7 +61,7 @@ public class Info {
 
     public class LicenseLookupButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("dialog.loadLicense"), FileDialog.LOAD);
+            FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("dialog.loadLicense"), FileDialog.LOAD);
             fileDialog.setVisible(true);
             if (fileDialog.getFile() != null) {
                 MyTunesRssRegistration.register(new File(fileDialog.getDirectory(), fileDialog.getFile()));

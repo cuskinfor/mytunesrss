@@ -24,8 +24,8 @@ import java.util.prefs.Preferences;
 public class UpdateUtils {
     public static void checkForUpdate(boolean autoCheck) {
         CheckUpdateTask checkUpdateTask = new CheckUpdateTask();
-        MyTunesRssUtils.executeTask(MyTunesRss.BUNDLE.getString("pleaseWait.updateCheckTitle"),
-                                    MyTunesRss.BUNDLE.getString("pleaseWait.updateCheck"), MyTunesRss.BUNDLE.getString("cancel"), true,
+        MyTunesRssUtils.executeTask(MyTunesRssUtils.getBundleString("pleaseWait.updateCheckTitle"),
+                                    MyTunesRssUtils.getBundleString("pleaseWait.updateCheck"), MyTunesRssUtils.getBundleString("cancel"), true,
                                     checkUpdateTask);
         if (!checkUpdateTask.isCancelled()) {
             UpdateInfo updateInfo = checkUpdateTask.getUpdateInfo();
@@ -35,7 +35,7 @@ public class UpdateUtils {
                     if (askForUpdate(updateInfo, autoCheck)) {
                         File targetFile = new File(updateInfo.getFileName());
                         final FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME,
-                                                                     MyTunesRss.BUNDLE.getString("dialog.saveUpdate"),
+                                                                     MyTunesRssUtils.getBundleString("dialog.saveUpdate"),
                                                                      FileDialog.SAVE);
                         fileDialog.setDirectory(targetFile.getParent());
                         fileDialog.setFile(targetFile.getName());
@@ -46,17 +46,17 @@ public class UpdateUtils {
                         }
                     }
                 } else if (!autoCheck) {
-                    MyTunesRssUtils.showInfoMessage(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("info.noUpdate"));
+                    MyTunesRssUtils.showInfoMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("info.noUpdate"));
                 }
             } else if (!autoCheck) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("error.noUpdateInfo"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("error.noUpdateInfo"));
             }
         }
     }
 
     private static void downloadUpdate(final URL url, final File file, String version) {
-        MyTunesRssUtils.executeTask(MyTunesRss.BUNDLE.getString("pleaseWait.dowloadTitle"),
-                                    MyTunesRssUtils.getBundleString("pleaseWait.downloadMessage", version), MyTunesRss.BUNDLE.getString("cancel"), true,
+        MyTunesRssUtils.executeTask(MyTunesRssUtils.getBundleString("pleaseWait.dowloadTitle"),
+                                    MyTunesRssUtils.getBundleString("pleaseWait.downloadMessage", version), MyTunesRssUtils.getBundleString("cancel"), true,
                                     new DownloadUpdateTask(url, file));
     }
 
@@ -64,11 +64,11 @@ public class UpdateUtils {
         JOptionPane pane = SwingUtils.createMaxLengthOptionPane(MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
         pane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
         pane.setMessage(MyTunesRssUtils.getBundleString("info.newVersionMessage", MyTunesRss.VERSION, updateInfo.getVersion()));
-        String stopNagging = MyTunesRss.BUNDLE.getString("info.newVersionStopNagging");
-        String later = MyTunesRss.BUNDLE.getString("info.newVersionLater");
-        String download = MyTunesRss.BUNDLE.getString("info.newVersionDownload");
-        String cancel = MyTunesRss.BUNDLE.getString("cancel");
-        String moreInfo = MyTunesRss.BUNDLE.getString("info.newVersionMoreInfo");
+        String stopNagging = MyTunesRssUtils.getBundleString("info.newVersionStopNagging");
+        String later = MyTunesRssUtils.getBundleString("info.newVersionLater");
+        String download = MyTunesRssUtils.getBundleString("info.newVersionDownload");
+        String cancel = MyTunesRssUtils.getBundleString("cancel");
+        String moreInfo = MyTunesRssUtils.getBundleString("info.newVersionMoreInfo");
         if (autoCheck) {
             pane.setOptions(new String[]{stopNagging, later, download, moreInfo});
         } else {
@@ -105,19 +105,19 @@ public class UpdateUtils {
         public void execute() {
             switch (myDownloader.download()) {
                 case Finished:
-                    MyTunesRssUtils.showInfoMessage(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("info.newVersionDownloadDone"));
+                    MyTunesRssUtils.showInfoMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("info.newVersionDownloadDone"));
                     break;
                 case Cancelled:
                     if (myFile.exists() && myFile.isFile()) {
                         myFile.delete();
                     }
-                    MyTunesRssUtils.showErrorMessage(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("info.newVersionDownloadCancelled"));
+                    MyTunesRssUtils.showErrorMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("info.newVersionDownloadCancelled"));
                     break;
                 case Failed:
                     if (myFile.exists() && myFile.isFile()) {
                         myFile.delete();
                     }
-                    MyTunesRssUtils.showErrorMessage(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("info.newVersionDownloadFailed"));
+                    MyTunesRssUtils.showErrorMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("info.newVersionDownloadFailed"));
                     break;
             }
         }

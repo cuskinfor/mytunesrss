@@ -26,7 +26,7 @@ public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandle
         }
         SwingUtils.invokeAndWait(new Runnable() {
             public void run() {
-                new SupportContact().display(myParent, MyTunesRss.BUNDLE.getString("dialog.bugReport"), MyTunesRss.BUNDLE.getString(
+                new SupportContact().display(myParent, MyTunesRssUtils.getBundleString("dialog.bugReport"), MyTunesRssUtils.getBundleString(
                         "settings.supportBugInfo"));
             }
         });

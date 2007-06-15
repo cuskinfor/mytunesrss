@@ -36,7 +36,7 @@ public class MyTunesRssUtils {
     public static void showErrorMessage(JFrame parent, String message) {
         SwingUtils.showMessage(parent,
                                JOptionPane.ERROR_MESSAGE,
-                               MyTunesRss.BUNDLE.getString("error.title"),
+                               MyTunesRssUtils.getBundleString("error.title"),
                                message,
                                MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
     }
@@ -44,7 +44,7 @@ public class MyTunesRssUtils {
     public static void showInfoMessage(JFrame parent, String message) {
         SwingUtils.showMessage(parent,
                                JOptionPane.INFORMATION_MESSAGE,
-                               MyTunesRss.BUNDLE.getString("info.title"),
+                               MyTunesRssUtils.getBundleString("info.title"),
                                message,
                                MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
     }
@@ -58,7 +58,7 @@ public class MyTunesRssUtils {
             }
         } else {
             if (title == null) {
-                title = MyTunesRss.BUNDLE.getString("pleaseWait.defaultTitle");
+                title = MyTunesRssUtils.getBundleString("pleaseWait.defaultTitle");
             }
             PleaseWaitUtils.executeAndWait(MyTunesRss.ROOT_FRAME, MyTunesRss.PLEASE_WAIT_ICON, title, text, cancelButtonText, progressBar, task);
         }
@@ -95,7 +95,7 @@ public class MyTunesRssUtils {
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             final DatabaseBuilderTask databaseBuilderTask = MyTunesRss.createDatabaseBuilderTask();
             if (databaseBuilderTask.isRunning()) {
-                MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.finishingUpdate"), null, false, new MyTunesRssTask() {
+                MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.finishingUpdate"), null, false, new MyTunesRssTask() {
                     public void execute() {
                         while (databaseBuilderTask.isRunning()) {
                             try {
@@ -107,7 +107,7 @@ public class MyTunesRssUtils {
                     }
                 });
             }
-            MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
+            MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
                 public void execute() {
                     MyTunesRss.STORE.destroy();
                 }

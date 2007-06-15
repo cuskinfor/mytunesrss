@@ -6,10 +6,12 @@ package de.codewave.mytunesrss;
 
 import de.codewave.utils.*;
 import org.apache.commons.io.*;
+import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.zip.*;
 
 /**
  * de.codewave.mytunesrss.AddonsUtils
@@ -71,13 +73,171 @@ public class AddonsUtils {
     }
 
     public static String addTheme(File theme) {
-        // todo: implement method
-        throw new UnsupportedOperationException("method addTheme of class MyTunesRssConfig is not yet implemented!");
+        if (isThemeArchive(theme)) {
+            File themeDir = null;
+            CodewaveZipInputStream zipInputStream = null;
+            try {
+                zipInputStream = new CodewaveZipInputStream(new FileInputStream(theme));
+                for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
+                    themeDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes/" + FilenameUtils.getBaseName(theme.getName()));
+                    saveFile(themeDir, entry.getName(), zipInputStream);
+                }
+            } catch (IOException e) {
+                if (themeDir != null && themeDir.exists()) {
+                    try {
+                        FileUtils.deleteDirectory(themeDir);
+                    } catch (IOException e1) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Could not delete directory.", e);
+                        }
+                    }
+                }
+                return MyTunesRssUtils.getBundleString("error.couldNotExtractTheme");
+            } finally {
+                if (zipInputStream != null) {
+                    try {
+                        zipInputStream.close();
+                    } catch (IOException e) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Could not close zip input stream.", e);
+                        }
+                    }
+                }
+            }
+        } else {
+            return MyTunesRssUtils.getBundleString("error.invalidThemeFile");
+        }
+        return null;
+    }
+
+    private static boolean isThemeArchive(File theme) {
+        CodewaveZipInputStream zipInputStream = null;
+        boolean stylesFound = false;
+        boolean imagesFound = false;
+        try {
+            zipInputStream = new CodewaveZipInputStream(new FileInputStream(theme));
+            for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
+                String entryName = entry.getName();
+                if ("styles".equals(entryName) || entryName.startsWith("styles/") || entryName.startsWith("styles\\")) {
+                    stylesFound = true;
+                } else if ("images".equals(entryName) || entryName.startsWith("images/") || entryName.startsWith("images\\")) {
+                    imagesFound = true;
+                }
+            }
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not verify language archive.", e);
+            }
+            return false;
+        } finally {
+            if (zipInputStream != null) {
+                try {
+                    zipInputStream.close();
+                } catch (IOException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not close zip input stream.", e);
+                    }
+                }
+            }
+        }
+        return imagesFound && stylesFound;
+    }
+
+    private static void saveFile(File baseDir, String fileName, InputStream inputStream) throws IOException {
+        if (isAccepted(fileName)) {
+            String dirName = "";
+            if (fileName.contains("/")) {
+                dirName = fileName.substring(0, fileName.lastIndexOf("/"));
+                fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+            } else if (fileName.contains("\\")) {
+                dirName = fileName.substring(0, fileName.lastIndexOf("\\"));
+                fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
+            }
+            File uploadDir = new File(baseDir, dirName);
+            if (!uploadDir.exists()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Creating upload directory \"" + uploadDir + "\".");
+                }
+                uploadDir.mkdirs();
+            }
+            if (uploadDir.isDirectory()) {
+                FileOutputStream targetStream = new FileOutputStream(new File(uploadDir, fileName));
+                IOUtils.copy(inputStream, targetStream);
+                targetStream.close();
+            }
+        }
+    }
+
+    private static boolean isAccepted(String fileName) {
+        return !(StringUtils.isEmpty(fileName) || fileName.endsWith("/") || fileName.endsWith("\\")) && !fileName.contains("__MACOSX/");
     }
 
     public static String addLanguage(File language) {
-        // todo: implement method
-        throw new UnsupportedOperationException("method addLanguage of class MyTunesRssConfig is not yet implemented!");
+        if (isLanguageArchive(language)) {
+            CodewaveZipInputStream zipInputStream = null;
+            File languageDir = null;
+            try {
+                zipInputStream = new CodewaveZipInputStream(new FileInputStream(language));
+                for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
+                    languageDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages");
+                    if (entry.getName().startsWith("MyTunesRssWeb_") && entry.getName().endsWith(".properties")) {
+                        saveFile(languageDir, entry.getName(), zipInputStream);
+                    }
+                }
+            } catch (IOException e) {
+                if (languageDir != null && languageDir.exists()) {
+                    try {
+                        FileUtils.deleteDirectory(languageDir);
+                    } catch (IOException e1) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Could not delete directory.", e);
+                        }
+                    }
+                }
+                return MyTunesRssUtils.getBundleString("error.couldNotExtractLanguage");
+            } finally {
+                if (zipInputStream != null) {
+                    try {
+                        zipInputStream.close();
+                    } catch (IOException e) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Could not close zip input stream.", e);
+                        }
+                    }
+                }
+            }
+        } else {
+            return MyTunesRssUtils.getBundleString("error.invalidLanguageFile");
+        }
+        return null;
+    }
+
+    private static boolean isLanguageArchive(File language) {
+        CodewaveZipInputStream zipInputStream = null;
+        try {
+            zipInputStream = new CodewaveZipInputStream(new FileInputStream(language));
+            for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
+                if (entry.getName().startsWith("MyTunesRssWeb_") && entry.getName().endsWith(".properties")) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not verify language archive.", e);
+            }
+            return false;
+        } finally {
+            if (zipInputStream != null) {
+                try {
+                    zipInputStream.close();
+                } catch (IOException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not close zip input stream.", e);
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public static String deleteTheme(String themeName) {
@@ -86,13 +246,13 @@ public class AddonsUtils {
             if (themeDir.isDirectory()) {
                 FileUtils.deleteDirectory(themeDir);
             } else {
-                return MyTunesRss.BUNDLE.getString("error.deleteThemeNoDir");
+                return MyTunesRssUtils.getBundleString("error.deleteThemeNoDir");
             }
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not delete theme \"" + themeName + "\".", e);
             }
-            return MyTunesRss.BUNDLE.getString("error.couldNotRemoveTheme");
+            return MyTunesRssUtils.getBundleString("error.couldNotRemoveTheme");
         }
         return null;
     }
@@ -100,17 +260,17 @@ public class AddonsUtils {
     public static String deleteLanguage(String languageCode) {
         try {
             File languageFile = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/MyTunesRssWeb_" +
-                    languageCode + ".properties");
+                languageCode + ".properties");
             if (languageFile.isFile()) {
                 languageFile.delete();
             } else {
-                return MyTunesRss.BUNDLE.getString("error.deleteLanguageNoFile");
+                return MyTunesRssUtils.getBundleString("error.deleteLanguageNoFile");
             }
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not delete language \"" + languageCode + "\".", e);
             }
-            return MyTunesRss.BUNDLE.getString("error.couldNotRemoveLanguage");
+            return MyTunesRssUtils.getBundleString("error.couldNotRemoveLanguage");
         }
         return null;
     }

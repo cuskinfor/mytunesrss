@@ -75,15 +75,15 @@ public class SupportContact {
             SendSupportRequestTask requestTask = new SendSupportRequestTask();
             if (!MyTunesRss.CONFIG.isProxyServer() ||
                     (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getProxyHost()) && MyTunesRss.CONFIG.getProxyPort() > 0)) {
-                MyTunesRssUtils.executeTask(null, MyTunesRss.BUNDLE.getString("pleaseWait.sendingSupportRequest"), null, false, requestTask);
+                MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.sendingSupportRequest"), null, false, requestTask);
                 if (requestTask.isSuccess()) {
-                    MyTunesRssUtils.showInfoMessage(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("info.supportRequestSent"));
+                    MyTunesRssUtils.showInfoMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("info.supportRequestSent"));
                     myDialog.dispose();
                 } else {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.couldNotSendSupportRequest"));
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.couldNotSendSupportRequest"));
                 }
             } else {
-                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.illegalProxySettings"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.illegalProxySettings"));
             }
         }
     }

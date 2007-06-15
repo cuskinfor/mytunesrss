@@ -54,7 +54,7 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
         } else {
             buffer.append(Directories.FolderStructureRole.None);
         }
-        buffer.append(" / ").append(MyTunesRss.BUNDLE.getString("settings.folderStructureTrack"));
+        buffer.append(" / ").append(MyTunesRssUtils.getBundleString("settings.folderStructureTrack"));
         return buffer.toString();
     }
 
@@ -85,11 +85,11 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
 
     public String addDatasource(String watchFolder) {
         String error = MyTunesRss.CONFIG.addDatasource(watchFolder);
-        return error != null ? error : MyTunesRss.BUNDLE.getString("ok");
+        return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
 
     public String removeDatasource(String watchFolder) {
         String error = MyTunesRss.CONFIG.removeWatchFolder(watchFolder);
-        return error != null ? error : MyTunesRss.BUNDLE.getString("ok");
+        return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
 }

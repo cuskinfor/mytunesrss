@@ -34,12 +34,12 @@ public class Application extends MyTunesRssMBean implements ApplicationMBean {
             if (MyTunesRss.REGISTRATION.isExpirationDate()) {
                 return MyTunesRssUtils.getBundleString("jmx.registrationWithExpiration",
                                                        MyTunesRss.REGISTRATION.getName(),
-                                                       MyTunesRss.REGISTRATION.getExpiration(MyTunesRss.BUNDLE.getString("common.dateFormat")));
+                                                       MyTunesRss.REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString("common.dateFormat")));
             } else {
                 return MyTunesRssUtils.getBundleString("jmx.registration", MyTunesRss.REGISTRATION.getName());
             }
         } else {
-            return MyTunesRss.BUNDLE.getString("settings.unregistered");
+            return MyTunesRssUtils.getBundleString("settings.unregistered");
         }
     }
 }

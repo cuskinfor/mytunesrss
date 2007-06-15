@@ -110,13 +110,13 @@ public class UserManagement {
         JLabel name = new JLabel(user.getName());
         name.setOpaque(false);
         addPanelComponent(name, gbcName);
-        JButton edit = new JButton(MyTunesRss.BUNDLE.getString("settings.editUser"));
+        JButton edit = new JButton(MyTunesRssUtils.getBundleString("settings.editUser"));
         edit.setToolTipText(MyTunesRssUtils.getBundleString("settings.editUserTooltip", user.getName()));
         edit.addActionListener(myEditUserActionListener);
         edit.setActionCommand(user.getName());
         edit.setOpaque(false);
         addPanelComponent(edit, gbcEdit);
-        JButton delete = new JButton(MyTunesRss.BUNDLE.getString("settings.deleteUser"));
+        JButton delete = new JButton(MyTunesRssUtils.getBundleString("settings.deleteUser"));
         delete.setToolTipText(MyTunesRssUtils.getBundleString("settings.deleteUserTooltip", user.getName()));
         delete.addActionListener(myDeleteUserActionListener);
         delete.setActionCommand(user.getName());
@@ -152,7 +152,7 @@ public class UserManagement {
             User user = MyTunesRss.CONFIG.getUser(e.getActionCommand());
             int result = JOptionPane.showConfirmDialog(myRootPanel,
                                                        MyTunesRssUtils.getBundleString("confirmation.deleteUser", user.getName()),
-                                                       MyTunesRss.BUNDLE.getString("confirmation.titleDeleteUser"),
+                                                       MyTunesRssUtils.getBundleString("confirmation.titleDeleteUser"),
                                                        JOptionPane.YES_NO_OPTION);
             if (result == JOptionPane.YES_OPTION) {
                 MyTunesRss.CONFIG.removeUser(user.getName());

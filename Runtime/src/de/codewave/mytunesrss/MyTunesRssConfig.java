@@ -90,7 +90,7 @@ public class MyTunesRssConfig {
             Collections.sort(myDatasources);
             return null;
         }
-        return MyTunesRss.BUNDLE.getString("error.datasourceDoesNotExist");
+        return MyTunesRssUtils.getBundleString("error.datasourceDoesNotExist");
     }
 
     public String removeWatchFolder(String watchFolder) {
@@ -98,7 +98,7 @@ public class MyTunesRssConfig {
             myDatasources.remove(watchFolder);
             return null;
         }
-        return MyTunesRss.BUNDLE.getString("error.datasourceDoesNotExist");
+        return MyTunesRssUtils.getBundleString("error.datasourceDoesNotExist");
     }
 
     public int getPort() {

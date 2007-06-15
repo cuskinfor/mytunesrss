@@ -60,7 +60,7 @@ public class MyTunesRssDataStore extends DataStore {
                         LOG.error("Could not get a database connection.", e);
                     }
                 }
-                MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.noDatabaseConnection"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.noDatabaseConnection"));
                 MyTunesRssUtils.shutdown();
                 return null;
             }

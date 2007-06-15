@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.utils.swing.*;
 import org.apache.commons.io.*;
 
 import javax.swing.*;
@@ -25,11 +24,11 @@ public class Directories {
         public String toString() {
             switch (this) {
                 case Album:
-                    return MyTunesRss.BUNDLE.getString("settings.folderStructureRoleAlbum");
+                    return MyTunesRssUtils.getBundleString("settings.folderStructureRoleAlbum");
                 case Artist:
-                    return MyTunesRss.BUNDLE.getString("settings.folderStructureRoleArtist");
+                    return MyTunesRssUtils.getBundleString("settings.folderStructureRoleArtist");
                 default:
-                    return MyTunesRss.BUNDLE.getString("settings.folderStructureRoleNone");
+                    return MyTunesRssUtils.getBundleString("settings.folderStructureRoleNone");
             }
         }
     }
@@ -163,7 +162,7 @@ public class Directories {
         public void actionPerformed(ActionEvent event) {
             if (MyTunesRss.REGISTRATION.isRegistered() || MyTunesRss.CONFIG.getDatasources().length < MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setDialogTitle(MyTunesRss.BUNDLE.getString("dialog.lookupBaseDir"));
+                fileChooser.setDialogTitle(MyTunesRssUtils.getBundleString("dialog.lookupBaseDir"));
                 fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
                 fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
                     public boolean accept(File file) {
@@ -179,7 +178,7 @@ public class Directories {
                     try {
                         handleChosenFile(fileChooser.getSelectedFile());
                     } catch (IOException e) {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.lookupBaseDir") + e.getMessage());
+                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.lookupDir", e.getMessage()));
                     }
                 }
             } else {

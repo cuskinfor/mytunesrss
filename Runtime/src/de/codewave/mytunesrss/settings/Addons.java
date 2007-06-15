@@ -48,12 +48,7 @@ public class Addons {
         myLanguagesScrollPane.getViewport().setOpaque(false);
         myThemesList.setModel(myThemesListModel);
         myLanguagesList.setModel(myLanguagesListModel);
-        for (String theme : AddonsUtils.getThemes()) {
-            myThemesListModel.addElement(theme);
-        }
-        for (String language : AddonsUtils.getLanguages()) {
-            myLanguagesListModel.addElement(language);
-        }
+        initListModels();
         myThemesList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 myDeleteThemeButton.setEnabled(myThemesList.getSelectedIndex() > -1);
@@ -64,26 +59,37 @@ public class Addons {
                 myDeleteLanguageButton.setEnabled(myLanguagesList.getSelectedIndex() > -1);
             }
         });
-        myAddThemeButton.addActionListener(new AddButtonListener(MyTunesRss.BUNDLE.getString("dialog.lookupTheme")) {
-            protected void add(File theme) {
-                AddonsUtils.addTheme(theme);
+        myAddThemeButton.addActionListener(new AddButtonListener(MyTunesRssUtils.getBundleString("dialog.lookupTheme"), MyTunesRssUtils.getBundleString("pleaseWait.addingTheme")) {
+            protected String add(File theme) {
+                return AddonsUtils.addTheme(theme);
             }
         });
-        myDeleteThemeButton.addActionListener(new DeleteButtonListener(myThemesListModel) {
+        myDeleteThemeButton.addActionListener(new DeleteButtonListener(myThemesListModel, myThemesList) {
             protected String delete(String theme) {
                 return AddonsUtils.deleteTheme(theme);
             }
         });
-        myAddLanguageButton.addActionListener(new AddButtonListener(MyTunesRss.BUNDLE.getString("dialog.lookupLanguage")) {
-            protected void add(File language) {
-                AddonsUtils.addLanguage(language);
+        myAddLanguageButton.addActionListener(new AddButtonListener(MyTunesRssUtils.getBundleString("dialog.lookupLanguage"), MyTunesRssUtils.getBundleString("pleaseWait.addingLanguage")) {
+            protected String add(File language) {
+                return AddonsUtils.addLanguage(language);
             }
         });
-        myDeleteLanguageButton.addActionListener(new DeleteButtonListener(myLanguagesListModel) {
+        myDeleteLanguageButton.addActionListener(new DeleteButtonListener(myLanguagesListModel, myLanguagesList) {
             protected String delete(String language) {
                 return AddonsUtils.deleteLanguage(language);
             }
         });
+    }
+
+    private void initListModels() {
+        myThemesListModel.clear();
+        for (String theme : AddonsUtils.getThemes()) {
+            myThemesListModel.addElement(theme);
+        }
+        myLanguagesListModel.clear();
+        for (String language : AddonsUtils.getLanguages()) {
+            myLanguagesListModel.addElement(language);
+        }
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -109,10 +115,11 @@ public class Addons {
 
     public abstract class AddButtonListener implements ActionListener {
         private String myTitle;
+        private String myPleaseWaitText;
 
-
-        protected AddButtonListener(String title) {
+        protected AddButtonListener(String title, String pleaseWaitText) {
             myTitle = title;
+            myPleaseWaitText = pleaseWaitText;
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -121,7 +128,7 @@ public class Addons {
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
                 public boolean accept(File file) {
-                    return file.isFile() && "zip".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()));
+                    return file.isDirectory() || file.isFile() && "zip".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()));
                 }
 
                 public String getDescription() {
@@ -130,26 +137,38 @@ public class Addons {
             });
             int result = fileChooser.showOpenDialog(MyTunesRss.ROOT_FRAME);
             if (result == JFileChooser.APPROVE_OPTION) {
-                try {
-                    add(fileChooser.getSelectedFile());
-                } catch (Exception ex) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRss.BUNDLE.getString("error.lookupFile") + ex.getMessage());
-                }
+                final File selectedFile = fileChooser.getSelectedFile();
+                MyTunesRssUtils.executeTask(null, myPleaseWaitText, null, false, new MyTunesRssTask() {
+                    public void execute() throws Exception {
+                        try {
+                            String error = add(selectedFile);
+                            if (error != null) {
+                                MyTunesRssUtils.showErrorMessage(error);
+                            } else {
+                                initListModels();
+                            }
+                        } catch (Exception ex) {
+                            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.lookupFile", ex.getMessage()));
+                        }
+                    }
+                });
             }
         }
 
-        protected abstract void add(File file) throws Exception;
+        protected abstract String add(File file) throws Exception;
     }
 
     public abstract class DeleteButtonListener implements ActionListener {
         private DefaultListModel myListModel;
+        private JList myList;
 
-        public DeleteButtonListener(DefaultListModel listModel) {
+        public DeleteButtonListener(DefaultListModel listModel, JList list) {
             myListModel = listModel;
+            myList = list;
         }
 
         public void actionPerformed(ActionEvent e) {
-            int index = ((JList)e.getSource()).getSelectedIndex();
+            int index = myList.getSelectedIndex();
             if (index > -1 && index < myListModel.getSize()) {
                 String error = delete(myListModel.get(index).toString());
                 if (error == null) {
