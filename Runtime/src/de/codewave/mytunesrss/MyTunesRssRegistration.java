@@ -21,6 +21,10 @@ public class MyTunesRssRegistration {
     public static final int UNREGISTERED_MAX_USERS = 3;
     public static final int UNREGISTERED_MAX_WATCHFOLDERS = 1;
 
+    public enum RegistrationResult {
+        InternalExpired(), ExternalExpired(), LicenseOk();
+    }
+
     private String myName;
     private long myExpiration;
     private boolean myRegistered;
@@ -91,7 +95,7 @@ public class MyTunesRssRegistration {
         return MyTunesRssRegistration.class.getResource("/MyTunesRSS.public");
     }
 
-    public void init(File file, boolean allowDefaultLicense) throws IOException {
+    public RegistrationResult init(File file, boolean allowDefaultLicense) throws IOException {
         String path = PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
         String registration = RegistrationUtils.getRegistrationData(file != null ? file.toURL() : new File(path + "/MyTunesRSS.key").toURL(), getPublicKey());
         if (registration != null) {
@@ -99,13 +103,25 @@ public class MyTunesRssRegistration {
                 LOG.info("Using registration data from preferences.");
             }
             handleRegistration(registration);
+            if (isExpired()) {
+                if (allowDefaultLicense) {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("License expired. Using default registration data.");
+                    }
+                    handleRegistration(RegistrationUtils.getRegistrationData(getClass().getResource("/MyTunesRSS.key"), getPublicKey()));
+                    myDefaultData = true;
+                    return isExpired() ? RegistrationResult.InternalExpired : RegistrationResult.ExternalExpired;
+                }
+            }
         } else if (allowDefaultLicense) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Using default registration data.");
             }
             handleRegistration(RegistrationUtils.getRegistrationData(getClass().getResource("/MyTunesRSS.key"), getPublicKey()));
             myDefaultData = true;
+            return isExpired() ? RegistrationResult.InternalExpired : RegistrationResult.LicenseOk;
         }
+        return RegistrationResult.LicenseOk;
     }
 
     private void handleRegistration(String registration) {

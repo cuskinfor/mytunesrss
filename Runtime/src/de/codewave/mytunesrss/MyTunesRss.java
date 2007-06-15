@@ -37,7 +37,7 @@ import java.util.prefs.*;
 public class MyTunesRss {
     public static final String APPLICATION_IDENTIFIER = "MyTunesRSS3";
     public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
-//    public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.dyn-o-saur.com";
+    //    public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.dyn-o-saur.com";
     public static final String MYTUNESRSSCOM_TOOLS_URL = MYTUNESRSSCOM_URL + "/tools";
 
     static {
@@ -122,14 +122,12 @@ public class MyTunesRss {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
             MyTunesRssUtils.shutdown();
         }
-        REGISTRATION.init(null, true);
-        if (REGISTRATION.isExpired()) {
-            if (REGISTRATION.isDefaultData()) {
-                MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.defaulRegistrationExpired"));
-                MyTunesRssUtils.shutdown();
-            } else {
-                MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
-            }
+        MyTunesRssRegistration.RegistrationResult result = REGISTRATION.init(null, true);
+        if (result == MyTunesRssRegistration.RegistrationResult.InternalExpired) {
+            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.defaulRegistrationExpired"));
+            MyTunesRssUtils.shutdown();
+        } else if (result == MyTunesRssRegistration.RegistrationResult.ExternalExpired) {
+            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
         }
         if (Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).getBoolean("deleteDatabaseOnNextStartOnError", false)) {
             new DeleteDatabaseTask(false).execute();
