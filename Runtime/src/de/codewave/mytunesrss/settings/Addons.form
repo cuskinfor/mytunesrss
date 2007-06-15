@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.codewave.mytunesrss.settings.Addons">
-  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="0" left="0" bottom="0" right="0"/>
+  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+    <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
@@ -18,7 +18,7 @@
         <properties>
           <opaque value="false"/>
         </properties>
-        <border type="etched" title="@@ Web interface themes"/>
+        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.themes"/>
         <children>
           <hspacer id="a1781">
             <constraints>
@@ -44,7 +44,7 @@
                 <properties>
                   <opaque value="false"/>
                   <text value="+"/>
-                  <toolTipText value="@@ Add web interface theme"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.addThemeTooltip"/>
                 </properties>
               </component>
               <component id="e5855" class="javax.swing.JButton" binding="myDeleteThemeButton">
@@ -55,7 +55,7 @@
                   <enabled value="false"/>
                   <opaque value="false"/>
                   <text value="-"/>
-                  <toolTipText value="@@ Remove web interface theme"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.deleteThemeTooltip"/>
                 </properties>
               </component>
             </children>
@@ -81,9 +81,10 @@
                     <constraints/>
                     <properties>
                       <font swing-font="TextField.font"/>
+                      <model/>
                       <opaque value="true"/>
                       <selectionMode value="0"/>
-                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.baseDirsTooltip"/>
+                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.themesListTooltip"/>
                     </properties>
                   </component>
                 </children>
@@ -100,7 +101,7 @@
         <properties>
           <opaque value="false"/>
         </properties>
-        <border type="etched" title="@@ Web interface language packs"/>
+        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.languages"/>
         <children>
           <hspacer id="c3244">
             <constraints>
@@ -126,7 +127,7 @@
                 <properties>
                   <opaque value="false"/>
                   <text value="+"/>
-                  <toolTipText value="@@ Add web interface language pack"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.addLanguageTooltip"/>
                 </properties>
               </component>
               <component id="b6e02" class="javax.swing.JButton" binding="myDeleteLanguageButton">
@@ -137,7 +138,7 @@
                   <enabled value="false"/>
                   <opaque value="false"/>
                   <text value="-"/>
-                  <toolTipText value="@@ Remove web interface language pack"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.deleteLanguageTooltip"/>
                 </properties>
               </component>
             </children>
@@ -165,7 +166,7 @@
                       <font swing-font="TextField.font"/>
                       <opaque value="true"/>
                       <selectionMode value="0"/>
-                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.baseDirsTooltip"/>
+                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.languagesListTooltip"/>
                     </properties>
                   </component>
                 </children>
