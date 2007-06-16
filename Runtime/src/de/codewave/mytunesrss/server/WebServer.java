@@ -46,10 +46,25 @@ public class WebServer {
                     contextEntries.put(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
                     String catalinaBase = getClass().getResource("WebServer.class").getFile();
                     if (catalinaBase.contains("MyTunesRSS.jar")) {
-                        // get the directory containing the main jar file and use it as the catalina base directory
-                        catalinaBase = catalinaBase.split("MyTunesRSS.jar")[0];
-                        catalinaBase = catalinaBase.split("file:")[catalinaBase.split("file:").length - 1];
-                        catalinaBase = new File(catalinaBase).getAbsolutePath();
+                        try {
+                            // get the directory containing the main jar file and use it as the catalina base directory
+                            catalinaBase = catalinaBase.split("MyTunesRSS.jar")[0];
+                            catalinaBase = catalinaBase.split("file:")[catalinaBase.split("file:").length - 1];
+                            catalinaBase = new File(URLDecoder.decode(catalinaBase)).getAbsolutePath();
+                            if (!new File(catalinaBase).isDirectory()) {
+                                // fallback to old behaviour (just in case the above does not work)
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Assumed catalina base \"" + catalinaBase + "\" is not a directory.");
+                                }
+                                catalinaBase = new File(".").getAbsolutePath();
+                            }
+                        } catch (Exception e) {
+                            // fallback to old behaviour (just in case the above does not work)
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Could not lookup catalina base.", e);
+                            }
+                            catalinaBase = new File(".").getAbsolutePath();
+                        }
                     } else {
                         // not started from a jar file, i.e. development environment, use the current working directory as catalina base
                         catalinaBase = new File(".").getAbsolutePath();
