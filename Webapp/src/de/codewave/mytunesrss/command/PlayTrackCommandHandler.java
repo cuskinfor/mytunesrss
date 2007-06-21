@@ -5,8 +5,10 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.servlet.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.lang.*;
 
 import javax.servlet.http.*;
 import java.io.*;
@@ -19,15 +21,17 @@ import java.util.*;
  */
 public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
     private static final Log LOG = LogFactory.getLog(PlayTrackCommandHandler.class);
+    private static final String LAME_BINARY = "/usr/local/bin/lame"; // todo: configuration
+    private static final int MAX_BITRATE = 32; // todo: configuration
 
     @Override
     public void executeAuthorized() throws IOException, SQLException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(ServletUtils.getRequestInfo(getRequest()));
         }
-        FileSender fileSender;
+        StreamSender streamSender;
         if (!isRequestAuthorized()) {
-            fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
+            streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
         } else {
             String trackId = getRequest().getParameter("track");
             Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
@@ -40,35 +44,39 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         if (LOG.isWarnEnabled()) {
                             LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");
                         }
-                        fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
+                        streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                     } else {
-                        fileSender = new FileSender(file, contentType, (int)file.length());
+                        if (MAX_BITRATE <= 0) {
+                            streamSender = new FileSender(file, contentType, (int)file.length());
+                        } else {
+                            streamSender = new StreamSender(new LameTranscoderStream(file, LAME_BINARY, MAX_BITRATE), contentType, (int)file.length());
+                        }
                     }
-                    fileSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
+                    streamSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
                 } else {
                     if (LOG.isWarnEnabled()) {
                         LOG.warn("User limit exceeded, sending response code SC_NO_CONTENT instead.");
                     }
-                    fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
+                    streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                 }
             } else {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("No tracks recognized in request, sending response code SC_NO_CONTENT instead.");
                 }
-                fileSender = new StatusCodeFileSender(HttpServletResponse.SC_NO_CONTENT);
+                streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
             }
         }
         if ("head".equalsIgnoreCase(getRequest().getMethod())) {
-            fileSender.sendHeadResponse(getRequest(), getResponse());
+            streamSender.sendHeadResponse(getRequest(), getResponse());
         } else {
-            fileSender.sendGetResponse(getRequest(), getResponse(), false);
+            streamSender.sendGetResponse(getRequest(), getResponse(), false);
         }
     }
 
-    private static class StatusCodeFileSender extends FileSender {
+    private static class StatusCodeSender extends StreamSender {
         private int myStatusCode;
 
-        public StatusCodeFileSender(int statusCode) throws MalformedURLException {
+        public StatusCodeSender(int statusCode) throws MalformedURLException {
             super(null, null, -1);
             myStatusCode = statusCode;
         }

@@ -280,31 +280,6 @@
   </component>
   <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.5.0" project-jdk-type="JavaSDK" />
   <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="Deutsch (postgres)" type="Application" factoryName="Application" enabled="false" merge="false">
-      <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
-      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1 -agentlib:yjpagent -Ddatabase.type=postgres -Ddatabase.connection=jdbc:postgresql://192.168.0.2:5432/mytunesrss -Ddatabase.user=postgres -Ddatabase.password=postgres -Ddatabase.driver=org.postgresql.Driver" />
-      <option name="PROGRAM_PARAMETERS" value="-debug" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/distribution" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <module name="Runtime" />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="62338" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Profile ">
-        <option name="myExternalizedOptions" value="&#10;force-jvmti=true&#10;snapshots-dir=&#10;startup=66&#10;" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="false" />
-        <option name="Run ant target" value="false" />
-      </method>
-    </configuration>
     <configuration default="false" name="Deutsch (h2)" type="Application" factoryName="Application" enabled="false" merge="false">
       <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
       <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1 -agentlib:yjpagent" />
@@ -413,6 +388,31 @@
       <module name="Runtime" />
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="62624" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Profile ">
+        <option name="myExternalizedOptions" value="&#10;force-jvmti=true&#10;snapshots-dir=&#10;startup=66&#10;" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method>
+        <option name="Make" value="false" />
+        <option name="Run ant target" value="false" />
+      </method>
+    </configuration>
+    <configuration default="false" name="Deutsch (postgres)" type="Application" factoryName="Application" enabled="false" merge="false">
+      <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
+      <option name="VM_PARAMETERS" value="-Xms32m -Xmx128m -Xbootclasspath/p:lib/codewave-zis.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=3.1 -agentlib:yjpagent -Ddatabase.type=postgres -Ddatabase.connection=jdbc:postgresql://192.168.0.2:5432/mytunesrss -Ddatabase.user=postgres -Ddatabase.password=postgres -Ddatabase.driver=org.postgresql.Driver" />
+      <option name="PROGRAM_PARAMETERS" value="-debug" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/distribution" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <module name="Runtime" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="62338" />
         <option name="TRANSPORT" value="0" />
         <option name="LOCAL" value="true" />
       </RunnerSettings>
