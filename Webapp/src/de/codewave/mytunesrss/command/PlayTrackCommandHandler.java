@@ -22,7 +22,8 @@ import java.util.*;
 public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
     private static final Log LOG = LogFactory.getLog(PlayTrackCommandHandler.class);
     private static final String LAME_BINARY = "/usr/local/bin/lame"; // todo: configuration
-    private static final int MAX_BITRATE = 32; // todo: configuration
+    private static final int OUTPUT_BITRATE = 32; // todo: configuration
+    private static final int OUTPUT_SAMPLE_RATE = 11025; // todo: configuration
 
     @Override
     public void executeAuthorized() throws IOException, SQLException {
@@ -46,10 +47,10 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         }
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                     } else {
-                        if (MAX_BITRATE <= 0) {
+                        if (OUTPUT_BITRATE == 0 && OUTPUT_SAMPLE_RATE == 0) {
                             streamSender = new FileSender(file, contentType, (int)file.length());
                         } else {
-                            streamSender = new StreamSender(new LameTranscoderStream(file, LAME_BINARY, MAX_BITRATE), contentType, (int)file.length());
+                            streamSender = new StreamSender(new LameTranscoderStream(file, LAME_BINARY, OUTPUT_BITRATE, OUTPUT_SAMPLE_RATE), contentType, 0);
                         }
                     }
                     streamSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
