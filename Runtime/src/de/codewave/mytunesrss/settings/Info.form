@@ -70,7 +70,7 @@
         </constraints>
         <properties>
           <opaque value="false"/>
-          <visible value="false"/>
+          <visible value="true"/>
         </properties>
         <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.registration"/>
         <children>
