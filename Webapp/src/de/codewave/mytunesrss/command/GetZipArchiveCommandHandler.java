@@ -23,6 +23,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         if (isRequestAuthorized() && getAuthUser().isDownload() && !getAuthUser().isQuotaExceeded()) {
+            try {
             String baseName = getRequest().getPathInfo();
             baseName = baseName.substring(baseName.lastIndexOf("/") + 1, baseName.lastIndexOf("."));
             String album = MyTunesRssBase64Utils.decodeToString(getRequestParameter("album", null));
@@ -61,6 +62,9 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 createZipArchive(getResponse().getOutputStream(), tracks, baseName, (FileSender.ByteSentCounter)SessionManager.getSessionInfo(
                         getRequest()));
             }
+            } finally {
+                getSession().setMaxInactiveInterval(getAuthUser().getSessionTimeout() * 60); // reset correct session timeout
+            }
         } else {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
@@ -77,6 +81,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
         int trackCount = 0;
         boolean quotaExceeded = false;
         for (Track track : tracks) {
+            getSession().setMaxInactiveInterval(-1); // keep unlimited session until finished
             if (track.getFile().exists() && !getAuthUser().isQuotaExceeded()) {
                 String trackArtist = track.getArtist();
                 if (trackArtist.equals(InsertTrackStatement.UNKNOWN)) {
