@@ -77,10 +77,10 @@ public class AddonsUtils {
             File themeDir = null;
             CodewaveZipInputStream zipInputStream = null;
             try {
-                zipInputStream = new CodewaveZipInputStream(new FileInputStream(theme));
+                zipInputStream = CodewaveZipInputStreamFactory.newInstance(new FileInputStream(theme));
                 for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
                     themeDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes/" + FilenameUtils.getBaseName(theme.getName()));
-                    saveFile(themeDir, entry.getName(), zipInputStream);
+                    saveFile(themeDir, entry.getName(), (InputStream)zipInputStream);
                 }
             } catch (IOException e) {
                 if (themeDir != null && themeDir.exists()) {
@@ -115,7 +115,7 @@ public class AddonsUtils {
         boolean stylesFound = false;
         boolean imagesFound = false;
         try {
-            zipInputStream = new CodewaveZipInputStream(new FileInputStream(theme));
+            zipInputStream = CodewaveZipInputStreamFactory.newInstance(new FileInputStream(theme));
             for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
                 String entryName = entry.getName();
                 if ("styles".equals(entryName) || entryName.startsWith("styles/") || entryName.startsWith("styles\\")) {
@@ -177,11 +177,11 @@ public class AddonsUtils {
             CodewaveZipInputStream zipInputStream = null;
             File languageDir = null;
             try {
-                zipInputStream = new CodewaveZipInputStream(new FileInputStream(language));
+                zipInputStream = CodewaveZipInputStreamFactory.newInstance(new FileInputStream(language));
                 for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
                     languageDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages");
                     if (entry.getName().startsWith("MyTunesRssWeb_") && entry.getName().endsWith(".properties")) {
-                        saveFile(languageDir, entry.getName(), zipInputStream);
+                        saveFile(languageDir, entry.getName(), (InputStream)zipInputStream);
                     }
                 }
             } catch (IOException e) {
@@ -215,7 +215,7 @@ public class AddonsUtils {
     private static boolean isLanguageArchive(File language) {
         CodewaveZipInputStream zipInputStream = null;
         try {
-            zipInputStream = new CodewaveZipInputStream(new FileInputStream(language));
+            zipInputStream = CodewaveZipInputStreamFactory.newInstance(new FileInputStream(language));
             for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
                 if (entry.getName().startsWith("MyTunesRssWeb_") && entry.getName().endsWith(".properties")) {
                     return true;

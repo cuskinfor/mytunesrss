@@ -47,9 +47,9 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Extracting zip file \"" + item.getName() + "\".");
                     }
-                    CodewaveZipInputStream zipInputStream = new CodewaveZipInputStream(item.getInputStream());
+                    CodewaveZipInputStream zipInputStream = CodewaveZipInputStreamFactory.newInstance(item.getInputStream());
                     for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
-                        saveFile(entry.getName(), zipInputStream);
+                        saveFile(entry.getName(), (InputStream)zipInputStream);
                     }
                 } else {
                     if (LOG.isDebugEnabled()) {
