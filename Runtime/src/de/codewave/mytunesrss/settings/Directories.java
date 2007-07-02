@@ -211,7 +211,7 @@ public class Directories {
         public void actionPerformed(ActionEvent e) {
             int index = myBaseDirsList.getSelectedIndex();
             if (index > -1 && index < myListModel.getSize()) {
-                String error = MyTunesRss.CONFIG.removeWatchFolder(myListModel.get(index).toString());
+                String error = MyTunesRss.CONFIG.removeDatasource(myListModel.get(index).toString());
                 if (error == null) {
                     myListModel.remove(index);
                 } else {

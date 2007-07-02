@@ -63,8 +63,10 @@ public class MyTunesRssConfig {
 
     public void setDatasources(String[] datasources) {
         myDatasources = new ArrayList<String>();
-        for (String watchFolder : datasources) {
-            myDatasources.add(watchFolder.trim());
+        for (String datasource : datasources) {
+            if (StringUtils.isNotBlank(datasource)) {
+                myDatasources.add(datasource.trim());
+            }
         }
         Collections.sort(myDatasources);
     }
@@ -93,9 +95,9 @@ public class MyTunesRssConfig {
         return MyTunesRssUtils.getBundleString("error.datasourceDoesNotExist");
     }
 
-    public String removeWatchFolder(String watchFolder) {
-        if (myDatasources.contains(watchFolder)) {
-            myDatasources.remove(watchFolder);
+    public String removeDatasource(String datasource) {
+        if (myDatasources.contains(datasource)) {
+            myDatasources.remove(datasource);
             return null;
         }
         return MyTunesRssUtils.getBundleString("error.datasourceDoesNotExist");

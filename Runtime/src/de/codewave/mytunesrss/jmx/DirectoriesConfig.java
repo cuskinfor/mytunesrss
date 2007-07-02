@@ -89,7 +89,7 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
     }
 
     public String removeDatasource(String watchFolder) {
-        String error = MyTunesRss.CONFIG.removeWatchFolder(watchFolder);
+        String error = MyTunesRss.CONFIG.removeDatasource(watchFolder);
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
 }
