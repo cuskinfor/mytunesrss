@@ -72,7 +72,9 @@ public class MyTunesRssConfig {
     public void setWatchFolders(String[] watchFolders) {
         myWatchFolders = new ArrayList<String>();
         for (String watchFolder : watchFolders) {
-            myWatchFolders.add(watchFolder.trim());
+            if (StringUtils.isNotBlank(watchFolder)) {
+                myWatchFolders.add(watchFolder.trim());
+            }
         }
         Collections.sort(myWatchFolders);
     }
