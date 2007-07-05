@@ -225,8 +225,7 @@ public class MyTunesRss {
         if (CONFIG.isAutoStartServer()) {
             SETTINGS.doStartServer();
             if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
-                // todo: hide window on osx instead of iconify
-                ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
+                ROOT_FRAME.setVisible(false);
             } else {
                 ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
             }
@@ -331,6 +330,11 @@ public class MyTunesRss {
                     public void handleQuit() {
                         settings.doQuitApplication();
                     }
+                    public void handleReOpenApplication() {
+                        if (!ROOT_FRAME.isVisible()) {
+                            ROOT_FRAME.setVisible(true);
+                        }
+                    }
                 });
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {
@@ -358,24 +362,28 @@ public class MyTunesRss {
 
         @Override
         public void windowClosing(WindowEvent e) {
-            if (CONFIG.isQuitConfirmation()) {
-                int result = JOptionPane.showOptionDialog(ROOT_FRAME,
-                                                          MyTunesRss.BUNDLE.getString("confirmation.quitMyTunesRss"),
-                                                          MyTunesRss.BUNDLE.getString("pleaseWait.defaultTitle"),
-                                                          JOptionPane.YES_NO_OPTION,
-                                                          JOptionPane.QUESTION_MESSAGE,
-                                                          null,
-                                                          new QuitConfirmOption[] {QuitConfirmOption.NoButMinimize, QuitConfirmOption.No,
-                                                                                   QuitConfirmOption.Yes},
-                                                          QuitConfirmOption.No);
-                if (result == 1) {
-                    return;
-                } else if (result == 0) {
-                    ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
-                    return;
+            if (ProgramUtils.guessOperatingSystem() == OperatingSystem.MacOSX) {
+                ROOT_FRAME.setVisible(false);
+            } else {
+                if (CONFIG.isQuitConfirmation()) {
+                    int result = JOptionPane.showOptionDialog(ROOT_FRAME,
+                                                              MyTunesRss.BUNDLE.getString("confirmation.quitMyTunesRss"),
+                                                              MyTunesRss.BUNDLE.getString("pleaseWait.defaultTitle"),
+                                                              JOptionPane.YES_NO_OPTION,
+                                                              JOptionPane.QUESTION_MESSAGE,
+                                                              null,
+                                                              new QuitConfirmOption[] {QuitConfirmOption.NoButMinimize, QuitConfirmOption.No,
+                                                                                       QuitConfirmOption.Yes},
+                                                              QuitConfirmOption.No);
+                    if (result == 1) {
+                        return;
+                    } else if (result == 0) {
+                        ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
+                        return;
+                    }
                 }
+                mySettingsForm.doQuitApplication();
             }
-            mySettingsForm.doQuitApplication();
         }
 
         @Override
