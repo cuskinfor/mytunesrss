@@ -18,10 +18,22 @@ public class AppleExtensions {
 
     public static void activate(final EventListener listener) throws NoSuchMethodException {
         final Method handleQuitMethod = listener.getClass().getMethod("handleQuit");
+        final Method handleReOpenApplicationMethod = listener.getClass().getMethod("handleReOpenApplication");
         Application application = Application.getApplication();
         application.setEnabledAboutMenu(false);
         application.setEnabledPreferencesMenu(false);
         application.addApplicationListener(new ApplicationAdapter() {
+            @Override
+            public void handleReOpenApplication(ApplicationEvent applicationEvent) {
+                try {
+                    handleReOpenApplicationMethod.invoke(listener);
+                } catch (Exception e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not invoke method for handling apple \"reOpenApplication\".", e);
+                    }
+                }
+            }
+
             @Override
             public void handleQuit(ApplicationEvent applicationEvent) {
                 try {

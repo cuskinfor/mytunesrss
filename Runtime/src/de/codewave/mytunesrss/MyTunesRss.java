@@ -66,7 +66,7 @@ public class MyTunesRss {
     }
 
     public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
-//    public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.dyn-o-saur.com";
+    //    public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.dyn-o-saur.com";
     public static final String MYTUNESRSSCOM_TOOLS_URL = MYTUNESRSSCOM_URL + "/tools";
     public static String VERSION;
     public static URL UPDATE_URL;
@@ -128,12 +128,14 @@ public class MyTunesRss {
         }
         MyTunesRssRegistration.RegistrationResult result = REGISTRATION.init(null, true);
         if (result == MyTunesRssRegistration.RegistrationResult.InternalExpired) {
-                MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.defaulRegistrationExpired"));
-                MyTunesRssUtils.shutdown();
+            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.defaulRegistrationExpired"));
+            MyTunesRssUtils.shutdown();
         } else if (result == MyTunesRssRegistration.RegistrationResult.ExternalExpired) {
-                MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
+            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
         }
-        if (System.getProperty("database.type") == null && Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).getBoolean("deleteDatabaseOnNextStartOnError", false)) {
+        if (System.getProperty("database.type") == null && Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).getBoolean(
+                "deleteDatabaseOnNextStartOnError",
+                false)) {
             new DeleteDatabaseFilesTask().execute();
         }
         loadConfiguration();
@@ -266,8 +268,7 @@ public class MyTunesRss {
         if (CONFIG.isAutoStartServer()) {
             SETTINGS.doStartServer();
             if (SystemUtils.IS_OS_MAC_OSX) {
-                // todo: hide window on osx instead of iconify
-                ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
+                ROOT_FRAME.setVisible(false);
             } else {
                 ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
             }
@@ -372,6 +373,12 @@ public class MyTunesRss {
                     public void handleQuit() {
                         settings.doQuitApplication();
                     }
+
+                    public void handleReOpenApplication() {
+                        if (!ROOT_FRAME.isVisible()) {
+                            ROOT_FRAME.setVisible(true);
+                        }
+                    }
                 });
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {
@@ -399,24 +406,28 @@ public class MyTunesRss {
 
         @Override
         public void windowClosing(WindowEvent e) {
-            if (CONFIG.isQuitConfirmation()) {
-                int result = JOptionPane.showOptionDialog(ROOT_FRAME,
-                                                          MyTunesRssUtils.getBundleString("confirmation.quitMyTunesRss"),
-                                                          MyTunesRssUtils.getBundleString("pleaseWait.defaultTitle"),
-                                                          JOptionPane.YES_NO_OPTION,
-                                                          JOptionPane.QUESTION_MESSAGE,
-                                                          null,
-                                                          new QuitConfirmOption[] {QuitConfirmOption.NoButMinimize, QuitConfirmOption.No,
-                                                                                   QuitConfirmOption.Yes},
-                                                          QuitConfirmOption.No);
-                if (result == 1) {
-                    return;
-                } else if (result == 0) {
-                    ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
-                    return;
+            if (SystemUtils.IS_OS_MAC_OSX) {
+                ROOT_FRAME.setVisible(false);
+            } else {
+                if (CONFIG.isQuitConfirmation()) {
+                    int result = JOptionPane.showOptionDialog(ROOT_FRAME,
+                                                              MyTunesRssUtils.getBundleString("confirmation.quitMyTunesRss"),
+                                                              MyTunesRssUtils.getBundleString("pleaseWait.defaultTitle"),
+                                                              JOptionPane.YES_NO_OPTION,
+                                                              JOptionPane.QUESTION_MESSAGE,
+                                                              null,
+                                                              new QuitConfirmOption[] {QuitConfirmOption.NoButMinimize, QuitConfirmOption.No,
+                                                                                       QuitConfirmOption.Yes},
+                                                              QuitConfirmOption.No);
+                    if (result == 1) {
+                        return;
+                    } else if (result == 0) {
+                        ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
+                        return;
+                    }
                 }
+                mySettingsForm.doQuitApplication();
             }
-            mySettingsForm.doQuitApplication();
         }
 
         @Override
