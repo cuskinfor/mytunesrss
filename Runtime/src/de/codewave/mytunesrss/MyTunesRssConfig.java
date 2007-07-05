@@ -409,7 +409,7 @@ public class MyTunesRssConfig {
                     user.setMaximumZipEntries(userNode.node(userName).getInt("maximumZipEntries", 0));
                     user.setFileTypes(userNode.node(userName).get("fileTypes", null));
                     addUser(user);
-                    if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
+                    if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
                         break;
                     }
                 }
