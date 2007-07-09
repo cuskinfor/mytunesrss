@@ -62,7 +62,7 @@
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT ltp.idx AS index, {trackColumns}
+            SELECT ltp.idx AS idx, {trackColumns}
             FROM link_track_playlist ltp, track t
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
