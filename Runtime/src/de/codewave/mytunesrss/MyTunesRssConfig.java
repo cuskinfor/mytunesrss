@@ -561,7 +561,7 @@ public class MyTunesRssConfig {
     }
 
     private void migrate() {
-        setVersion("3.0-rc1");
+        setVersion("3.1");
     }
 
     public Point loadWindowPosition() {
