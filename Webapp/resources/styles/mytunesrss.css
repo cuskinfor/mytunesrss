@@ -408,8 +408,23 @@ tr.odd td.itunes {
 }
 
 div.playlist {
-    padding: 11px 10px 10px 32px;
-    background: #666 url( "../images/playlist_include.gif" ) 0 1px no-repeat;
+    padding: 9px 10px 8px 32px;
+    background: #ffe url( "../images/playlist_include.gif" ) 0 0 no-repeat;
+}
+
+div.msgtop {
+    height: 3px;
+    background: #666 url( "../images/msg_top.gif" ) 0 1px no-repeat;;
+}
+
+div.welcome {
+    padding: 9px 10px 8px 10px;
+    background: #ffe;
+}
+
+div.msgbottom {
+    height: 2px;
+    background: #666 url( "../images/msg_bottom.gif" ) 0 0 no-repeat;;
 }
 
 div.playlist span {

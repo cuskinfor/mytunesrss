@@ -23,6 +23,7 @@ public class Addons {
     private JButton myDeleteLanguageButton;
     private JScrollPane myLanguagesScrollPane;
     private JList myLanguagesList;
+    private JTextField myWelcomeMessageInput;
     private DefaultListModel myThemesListModel = new DefaultListModel();
     private DefaultListModel myLanguagesListModel = new DefaultListModel();
 
@@ -79,6 +80,7 @@ public class Addons {
                 return AddonsUtils.deleteLanguage(language);
             }
         });
+        myWelcomeMessageInput.setText(MyTunesRss.CONFIG.getWebWelcomeMessage());
     }
 
     private void initListModels() {
@@ -101,6 +103,7 @@ public class Addons {
                 myLanguagesList.setEnabled(false);
                 myAddLanguageButton.setEnabled(false);
                 myDeleteLanguageButton.setEnabled(false);
+                SwingUtils.enableElementAndLabel(myWelcomeMessageInput, false);
                 break;
             case ServerIdle:
                 myThemesList.setEnabled(true);
@@ -109,8 +112,14 @@ public class Addons {
                 myLanguagesList.setEnabled(true);
                 myAddLanguageButton.setEnabled(true);
                 myDeleteLanguageButton.setEnabled(myLanguagesList.getSelectedIndex() > -1);
+                SwingUtils.enableElementAndLabel(myWelcomeMessageInput, true);
                 break;
         }
+    }
+
+    public String updateConfigFromGui() {
+        MyTunesRss.CONFIG.setWebWelcomeMessage(myWelcomeMessageInput.getText());
+        return null;
     }
 
     public abstract class AddButtonListener implements ActionListener {

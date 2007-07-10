@@ -41,6 +41,14 @@
 
     <jsp:include page="/incl_error.jsp" />
 
+    <c:if test="${!empty welcomeMessage}">
+        <div class="msgtop"></div>
+        <div class="welcome">
+            <strong><c:out value="${welcomeMessage}"/></strong>
+        </div>
+        <div class="msgbottom"></div>
+    </c:if>
+
     <form id="search" action="${servletUrl}/browseTrack/${auth}" method="post">
 
         <table class="portal" cellspacing="0">

@@ -56,6 +56,7 @@ public class MyTunesRssConfig {
     private boolean myLocalTempArchive;
     private boolean myQuitConfirmation;
     private SecretKey myPathInfoKey;
+    private String myWebWelcomeMessage = "";
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -339,23 +340,12 @@ public class MyTunesRssConfig {
         myUpdateDatabaseOnServerStart = updateOnServerStart;
     }
 
-    private String findItunesLibraryXml(Trigger trigger) {
-        String userHome = System.getProperty("user.home");
-        if (StringUtils.isNotEmpty(userHome)) {
-            if (!userHome.endsWith("/") && !userHome.endsWith("\\")) {
-                userHome += "/";
-            }
-            Collection<File> files = IOUtils.find(new File(userHome), "iTunes Music Library.xml", trigger);
-            if (!files.isEmpty()) {
-                for (File file : files) {
-                    File parentFile = file.getParentFile();
-                    if (parentFile != null && "iTunes".equals(parentFile.getName())) {
-                        return file.getAbsolutePath();
-                    }
-                }
-            }
-        }
-        return "";
+    public String getWebWelcomeMessage() {
+        return myWebWelcomeMessage;
+    }
+
+    public void setWebWelcomeMessage(String webWelcomeMessage) {
+        myWebWelcomeMessage = webWelcomeMessage;
     }
 
     public void loadFromPrefs() {
@@ -429,6 +419,7 @@ public class MyTunesRssConfig {
         setFileTypes(Preferences.userRoot().node(PREF_ROOT).get("fileTypes", getFileTypes()));
         setArtistDropWords(Preferences.userRoot().node(PREF_ROOT).get("artistDropWords", getArtistDropWords()));
         setQuitConfirmation(Preferences.userRoot().node(PREF_ROOT).getBoolean("quitConfirmation", isQuitConfirmation()));
+        setWebWelcomeMessage(Preferences.userRoot().node(PREF_ROOT).get("webWelcomeMessage", getWebWelcomeMessage()));
         readPathInfoEncryptionKey();
     }
 
@@ -540,6 +531,7 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node(PREF_ROOT).put("fileTypes", myFileTypes);
         Preferences.userRoot().node(PREF_ROOT).put("artistDropWords", myArtistDropWords);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("quitConfirmation", myQuitConfirmation);
+        Preferences.userRoot().node(PREF_ROOT).put("webWelcomeMessage", myWebWelcomeMessage);
         if (myPathInfoKey != null) {
             try {
                 Preferences.userRoot().node(PREF_ROOT).put("pathInfoKey", new String(Base64.encodeBase64(myPathInfoKey.getEncoded()), "UTF-8"));

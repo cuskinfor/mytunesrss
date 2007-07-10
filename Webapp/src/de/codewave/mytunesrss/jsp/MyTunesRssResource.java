@@ -4,7 +4,12 @@
 
 package de.codewave.mytunesrss.jsp;
 
+import de.codewave.mytunesrss.*;
+import org.apache.commons.lang.*;
+
 import javax.servlet.http.*;
+import javax.servlet.jsp.jstl.core.*;
+import javax.servlet.jsp.jstl.fmt.*;
 import java.util.*;
 
 public enum MyTunesRssResource {
@@ -47,5 +52,25 @@ public enum MyTunesRssResource {
         if (this != BrowseServers) {
             request.getSession().removeAttribute("remoteServers");
         }
+        if (this == Portal && !Boolean.TRUE.equals(request.getSession().getAttribute("welcomeMessageDone"))) {
+            handleWelcomeMessage(request);
+        }
+    }
+
+    private void handleWelcomeMessage(HttpServletRequest request) {
+        String welcomeMessage = MyTunesRss.CONFIG.getWebWelcomeMessage();
+        if (!StringUtils.isBlank(welcomeMessage)) {
+            LocalizationContext context = (LocalizationContext)request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+            if (context != null) {
+                try {
+                    request.setAttribute("welcomeMessage", context.getResourceBundle().getString(welcomeMessage));
+                } catch (Exception e) {
+                    request.setAttribute("welcomeMessage", welcomeMessage);
+                }
+            } else {
+                request.setAttribute("welcomeMessage", welcomeMessage);
+            }
+        }
+        request.getSession().setAttribute("welcomeMessageDone", Boolean.TRUE);
     }
 }
