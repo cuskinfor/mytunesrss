@@ -92,7 +92,7 @@
                 </td>
                 <td>
                     <a href="${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}">
-                        <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="download"/>" />
+                        <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" />
                         <fmt:message key="doDownload"/>
                     </a>
                 </td>

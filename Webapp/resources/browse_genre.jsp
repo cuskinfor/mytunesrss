@@ -85,21 +85,21 @@
                                 <td class="icon">
                                     <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.xml">
                                         <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                             alt="rss" /> </a>
+                                             alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
                                 </td>
                             </c:if>
                             <c:if test="${authUser.playlist && config.showPlaylist}">
                                 <td class="icon">
                                     <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.${config.playlistFileSuffix}">
                                         <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                             alt="playlist" /> </a>
+                                             alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
                                 </td>
                             </c:if>
                             <c:if test="${authUser.player && config.showPlayer}">
                                 <td class="icon">
                                     <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/type=Xspf</mt:encrypt>/${mtfn:virtualGenreName(genre)}.xspf')">
                                         <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                             alt="player" /> </a>
+                                             alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                                 </td>
                             </c:if>
                             <c:if test="${authUser.download && config.showDownload}">
@@ -107,11 +107,11 @@
                                     <c:choose>
                                         <c:when test="${authUser.maximumZipEntries <= 0 || genre.trackCount <= authUser.maximumZipEntries}">
                                             <a href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.zip">
-                                                <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
+                                                <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
                                         </c:when>
                                         <c:otherwise>
                                             <a href="#" onclick="alert('<fmt:message key="error.zipLimit"/>')">
-                                                <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="download"/>" /></a>
+                                                <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
