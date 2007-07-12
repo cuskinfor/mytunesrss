@@ -10,6 +10,7 @@ public enum FileSuffixInfo {
     avi("x-msvideo", true, false),
     mov("quicktime", true, false),
     wmv("x-ms-wmv", true, false),
+    wma("x-ms-wma", false, false),
     mpg("mpeg", false, false),
     mpeg("mpeg", false, false),
     flac("application/flac", false, false),
