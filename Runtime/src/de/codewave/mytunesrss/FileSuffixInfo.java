@@ -1,21 +1,40 @@
 package de.codewave.mytunesrss;
 
-public enum FileSuffixInfo {
+import de.codewave.utils.*;
+import org.apache.commons.logging.*;
 
-    mp3("mp3", false, false),
-    m4a("x-m4a", false, false),
-    m4p("x-m4p", false, true),
-    wav("wav", false, false),
-    mp4("x-mp4", false, false),
-    avi("x-msvideo", true, false),
-    mov("quicktime", true, false),
-    wmv("x-ms-wmv", true, false),
-    wma("x-ms-wma", false, false),
-    mpg("mpeg", false, false),
-    mpeg("mpeg", false, false),
-    flac("application/flac", false, false),
-    ogg("application/ogg", false, false),
-    m4v("x-m4v", true, false);
+import java.io.*;
+import java.util.*;
+
+public class FileSuffixInfo {
+    private static final Log LOG = LogFactory.getLog(FileSuffixInfo.class);
+    private static final Properties INTERNAL_PROPERTIES = new Properties();
+    private static final Properties USER_PROPERTIES = new Properties();
+    private static final Set<String> SUFFIXES = new HashSet<String>();
+
+    static {
+        try {
+            INTERNAL_PROPERTIES.load(FileSuffixInfo.class.getResourceAsStream("file-suffixes.properties"));
+            for (Enumeration e = INTERNAL_PROPERTIES.keys(); e.hasMoreElements();) {
+                SUFFIXES.add(e.nextElement().toString().split("\\.")[0].toLowerCase());
+            }
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not load internal file suffix properties.", e);
+            }
+        }
+        try {
+            USER_PROPERTIES.load(new FileInputStream(
+                    PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/file-suffixes.properties"));
+            for (Enumeration e = USER_PROPERTIES.keys(); e.hasMoreElements();) {
+                SUFFIXES.add(e.nextElement().toString().split("\\.")[0].toLowerCase());
+            }
+        } catch (IOException e) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Could not load user file suffix properties.", e);
+            }
+        }
+    }
 
     private String myMimeType;
     private boolean myProtected;
@@ -40,5 +59,24 @@ public enum FileSuffixInfo {
 
     public boolean isVideo() {
         return myVideo;
+    }
+
+    public static Set<String> getSuffixes() {
+        return SUFFIXES;
+    }
+
+    public static FileSuffixInfo getForSuffix(String suffix) {
+        if (SUFFIXES.contains(suffix.toLowerCase())) {
+            return new FileSuffixInfo(getString(suffix + ".mime"), getBoolean(suffix + ".video"), getBoolean(suffix + ".protected"));
+        }
+        return null;
+    }
+
+    private static boolean getBoolean(String key) {
+        return Boolean.valueOf(getString(key));
+    }
+
+    private static String getString(String key) {
+        return USER_PROPERTIES.getProperty(key, INTERNAL_PROPERTIES.getProperty(key, ""));
     }
 }

@@ -12,20 +12,12 @@ import java.util.*;
  * de.codewave.mytunesrss.FileSupportUtils
  */
 public class FileSupportUtils {
-    private static Set<String> SUPPORTED_SUFFIXES = new HashSet<String>();
-
-    static {
-        for (FileSuffixInfo fileSuffixInfo : FileSuffixInfo.values()) {
-            SUPPORTED_SUFFIXES.add(fileSuffixInfo.name());
-        }
-    }
-
     public static boolean isSupported(String filename) {
         return isSuffixSupported(getFileSuffix(filename));
     }
 
     private static boolean isSuffixSupported(String suffix) {
-        if (SUPPORTED_SUFFIXES.contains(suffix)) {
+        if (FileSuffixInfo.getSuffixes().contains(suffix)) {
             if (StringUtils.isEmpty(MyTunesRss.CONFIG.getFileTypes())) {
                 return true;
             }
@@ -40,7 +32,7 @@ public class FileSupportUtils {
 
     public static FileSuffixInfo getFileSuffixInfo(String filename) {
         if (isSupported(filename)) {
-            return FileSuffixInfo.valueOf(getFileSuffix(filename));
+            return FileSuffixInfo.getForSuffix(getFileSuffix(filename));
         }
         return null;
     }
