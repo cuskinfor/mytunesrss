@@ -4,8 +4,6 @@
 
 package de.codewave.mytunesrss;
 
-import org.apache.commons.lang.*;
-
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;

@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.utils.*;
 import org.apache.commons.logging.*;
 
 import javax.swing.*;

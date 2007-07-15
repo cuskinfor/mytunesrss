@@ -4,8 +4,6 @@
 
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.datastore.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.*;
 import org.apache.commons.logging.*;

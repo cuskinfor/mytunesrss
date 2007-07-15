@@ -6,7 +6,6 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.settings.*;
 import de.codewave.mytunesrss.task.*;
-import org.apache.commons.logging.*;
 import snoozesoft.systray4j.*;
 
 import javax.swing.*;

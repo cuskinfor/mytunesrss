@@ -4,21 +4,13 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.SQLUtils;
-import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.lang.StringUtils;
+import de.codewave.mytunesrss.*;
+import de.codewave.utils.sql.*;
+import org.apache.commons.lang.*;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.sql.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry

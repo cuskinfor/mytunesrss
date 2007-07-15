@@ -8,7 +8,6 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.*;
 
-import java.io.*;
 import java.sql.*;
 import java.util.prefs.*;
 

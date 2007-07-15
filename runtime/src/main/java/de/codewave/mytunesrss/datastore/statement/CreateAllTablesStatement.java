@@ -8,7 +8,6 @@ import de.codewave.mytunesrss.*;
 import de.codewave.utils.sql.*;
 
 import java.sql.*;
-import java.util.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement

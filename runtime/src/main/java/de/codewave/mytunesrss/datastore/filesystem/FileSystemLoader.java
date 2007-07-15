@@ -1,8 +1,6 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.*;
-import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.sql.*;
 import org.apache.commons.logging.*;

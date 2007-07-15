@@ -4,10 +4,8 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.*;
-import de.codewave.utils.io.IOUtils;
+import de.codewave.utils.io.*;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 

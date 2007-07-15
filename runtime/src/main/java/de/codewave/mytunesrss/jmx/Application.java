@@ -3,7 +3,6 @@ package de.codewave.mytunesrss.jmx;
 import de.codewave.mytunesrss.*;
 
 import javax.management.*;
-import java.io.*;
 
 /**
  * de.codewave.mytunesrss.jmx.Application

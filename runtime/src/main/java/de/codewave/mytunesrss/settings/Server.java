@@ -4,7 +4,6 @@
 
 package de.codewave.mytunesrss.settings;
 
-import com.intellij.uiDesigner.core.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.network.*;
 import de.codewave.utils.swing.*;
@@ -12,9 +11,7 @@ import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 
 /**
  * Server settings panel
@@ -69,11 +66,6 @@ public class Server {
         myAvailableOnLocalNetInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myServerNameLabel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myServerNameInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-    }
-
-    public Dimension getContentDimension() {
-        Insets insets = ((AbstractLayout)myRootPanel.getLayout()).getMargin();
-        return new Dimension(myRootPanel.getWidth() - insets.left - insets.right, myRootPanel.getHeight() - insets.top - insets.bottom);
     }
 
     public void setServerRunningStatus(int serverPort) {

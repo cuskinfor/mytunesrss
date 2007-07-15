@@ -1,9 +1,9 @@
 package de.codewave.mytunesrss.jmx;
 
-import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.*;
 
 import javax.management.*;
-import java.util.MissingResourceException;
+import java.util.*;
 
 /**
  * <b>Description:</b>   <br>

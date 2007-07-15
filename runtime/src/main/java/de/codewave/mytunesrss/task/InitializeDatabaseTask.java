@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.task;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.*;
-import org.apache.commons.logging.*;
 
 import java.io.*;
 import java.sql.*;

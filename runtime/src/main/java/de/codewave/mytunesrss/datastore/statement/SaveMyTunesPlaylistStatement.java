@@ -4,7 +4,6 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.utils.sql.*;
 import de.codewave.mytunesrss.*;
 import org.apache.commons.lang.*;
 

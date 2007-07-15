@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.jmx;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 /**
  * <b>Description:</b>   <br>

@@ -4,7 +4,6 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.task.*;
 import org.apache.commons.logging.*;
 
 import java.util.*;

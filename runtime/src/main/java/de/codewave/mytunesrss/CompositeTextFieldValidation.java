@@ -4,10 +4,7 @@
 
 package de.codewave.mytunesrss;
 
-import org.apache.commons.lang.*;
-
 import javax.swing.*;
-import java.util.*;
 
 /**
  * de.codewave.mytunesrss.NotEmptyTextFieldValidation

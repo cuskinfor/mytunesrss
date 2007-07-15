@@ -7,7 +7,7 @@ package de.codewave.mytunesrss.jmx;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.settings.*;
 
-import javax.management.NotCompliantMBeanException;
+import javax.management.*;
 
 /**
  * de.codewave.mytunesrss.jmx.DirectoriesConfig

@@ -13,9 +13,6 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
-import com.intellij.uiDesigner.core.*;
-import org.apache.commons.lang.*;
-
 /**
  * de.codewave.mytunesrss.settings.UserManagement
  */

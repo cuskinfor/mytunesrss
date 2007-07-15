@@ -1,7 +1,5 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.*;
-
 import java.io.*;
 import java.security.*;
 

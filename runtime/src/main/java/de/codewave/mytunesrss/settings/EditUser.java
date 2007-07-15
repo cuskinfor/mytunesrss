@@ -7,12 +7,9 @@ import de.codewave.utils.swing.components.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
-import java.awt.*;
 import java.text.*;
 import java.util.*;
 import java.util.Timer;
-
-import com.intellij.uiDesigner.core.*;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>

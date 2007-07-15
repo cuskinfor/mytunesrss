@@ -4,12 +4,10 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.utils.sql.*;
 import de.codewave.mytunesrss.*;
-import org.apache.commons.logging.*;
+import de.codewave.utils.sql.*;
 
 import java.sql.*;
-import java.util.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement

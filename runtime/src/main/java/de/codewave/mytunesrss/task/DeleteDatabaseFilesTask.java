@@ -1,15 +1,10 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.utils.sql.*;
 import de.codewave.utils.*;
+import org.apache.commons.io.*;
 
 import java.io.*;
-import java.sql.*;
-import java.util.prefs.*;
-
-import org.apache.commons.io.*;
 
 /**
  * de.codewave.mytunesrss.task.InitializeDatabaseTask

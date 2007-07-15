@@ -2,9 +2,8 @@ package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.*;
 import mx4j.tools.adaptor.http.*;
-import mx4j.tools.adaptor.ssl.*;
-import org.apache.commons.logging.*;
 import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 
 import javax.management.*;
 import java.lang.management.*;

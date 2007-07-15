@@ -5,11 +5,7 @@ import de.codewave.mytunesrss.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
-import java.awt.*;
-import java.util.*;
 import java.util.Timer;
-
-import com.intellij.uiDesigner.core.*;
 
 /**
  * de.codewave.mytunesrss.settings.Settings
