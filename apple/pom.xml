@@ -3,25 +3,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.codewave.mytunesrss</groupId>
-    <artifactId>mytunesrss</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>mytunesrss-apple</artifactId>
+    <packaging>jar</packaging>
     <version>3.1-SNAPSHOT</version>
-    <name>mytunesrss</name>
+    <name>Codewave MyTunesRSS Apple Extensions</name>
     <distributionManagement>
         <site>
-            <url>http://codewave.dyn-o-saur.com/java-projects/mytunesrss</url>
+            <url>http://codewave.dyn-o-saur.com/java-projects/mytunesrss-apple</url>
         </site>
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>
     <parent>
-        <groupId>de.codewave</groupId>
-        <artifactId>codewave-maven2-base</artifactId>
-        <version>1.0</version>
+        <groupId>de.codewave.mytunesrss</groupId>
+        <artifactId>mytunesrss</artifactId>
+        <version>3.1-SNAPSHOT</version>
     </parent>
-    <modules>
-        <module>runtime</module>
-        <module>webapp</module>
-        <module>apple</module>
-        <module>shareit-keygen</module>
-    </modules>
 </project>
