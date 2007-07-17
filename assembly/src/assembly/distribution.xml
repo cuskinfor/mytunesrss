@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+    <id>distribution</id>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>*:jar:*</include>
+            </includes>
+            <excludes>
+                <exclude>*:runtime:jar:*</exclude>
+            </excludes>
+        </dependencySet>
+        <dependencySet>
+            <includes>
+                <include>*:runtime:jar:*</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+    <fileSets>
+        <fileSet>
+            <outputDirectory>conf</outputDirectory>
+            <includes>
+                <include>../etc/conf/**</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>

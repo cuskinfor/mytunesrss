@@ -23,5 +23,6 @@
         <module>webapp</module>
         <module>apple</module>
         <module>shareit-keygen</module>
+        <module>assembly</module>
     </modules>
 </project>

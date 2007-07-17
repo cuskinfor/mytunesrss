@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.codewave.mytunesrss</groupId>
-    <artifactId>mytunesrss-shareit-keygen</artifactId>
+    <artifactId>shareit-keygen</artifactId>
     <packaging>jar</packaging>
     <version>3.1-SNAPSHOT</version>
     <name>Codewave MyTunesRSS ShareIt Key Generator</name>
     <distributionManagement>
         <site>
-            <url>http://codewave.dyn-o-saur.com/java-projects/mytunesrss-shareit-keygen</url>
+            <url>http://codewave.dyn-o-saur.com/java-projects/mytunesrss/shareit-keygen</url>
         </site>
     </distributionManagement>
     <inceptionYear>2007</inceptionYear>
