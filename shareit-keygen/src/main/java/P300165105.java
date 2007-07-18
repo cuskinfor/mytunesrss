@@ -47,7 +47,7 @@ public class P300165105 {
         PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
         Signature signature = Signature.getInstance("SHA1withRSA");
         signature.initSign(privateKey);
-        signature.update(regData.getBytes());
+        signature.update(regData.getBytes("UTF-8"));
         byte[] signatureBytes = signature.sign();
         KeyData = new String(new BASE64Encoder().encode(regData.getBytes("UTF-8")));
         KeyData += System.getProperty("line.separator") + System.getProperty("line.separator");
