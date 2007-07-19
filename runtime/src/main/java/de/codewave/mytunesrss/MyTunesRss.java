@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.settings.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.*;
+import de.codewave.utils.maven.*;
 import de.codewave.utils.moduleinfo.*;
 import de.codewave.utils.swing.*;
 import org.apache.catalina.*;
@@ -99,8 +100,10 @@ public class MyTunesRss {
             Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
         }
         registerDatabaseDriver();
-        ModuleInfo modulesInfo = ModuleInfoUtils.getModuleInfo("META-INF/codewave-version.xml", "MyTunesRSS");
-        VERSION = modulesInfo != null ? modulesInfo.getVersion() : System.getProperty("MyTunesRSS.version", "0.0.0");
+        VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
+        if (StringUtils.isEmpty(VERSION)) {
+            VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");
+        }
         if (LOG.isInfoEnabled()) {
             LOG.info("Operating system: " + SystemUtils.OS_NAME + ", " + SystemUtils.OS_VERSION + ", " + SystemUtils.OS_ARCH);
             LOG.info("Java: " + SystemUtils.JAVA_VERSION + "(" + SystemUtils.JAVA_HOME + ")");
