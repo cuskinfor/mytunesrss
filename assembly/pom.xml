@@ -50,7 +50,7 @@
                             </descriptors>
                         </configuration>
                         <goals>
-                            <goal>directory</goal>
+                            <goal>assembly</goal>
                         </goals>
                     </execution>
                 </executions>

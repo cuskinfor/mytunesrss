@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assembly>
     <id>distribution</id>
+    <baseDirectory>mytunesrss-${version}</baseDirectory>
+    <formats>
+        <format>dir</format>
+    </formats>
     <dependencySets>
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
@@ -12,16 +16,25 @@
             </excludes>
         </dependencySet>
         <dependencySet>
+            <outputFileNameMapping>mytunesrss.jar</outputFileNameMapping>
             <includes>
                 <include>*:runtime:jar:*</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputFileNameMapping>ROOT.war</outputFileNameMapping>
+            <outputDirectory>webapps</outputDirectory>
+            <includes>
+                <include>*:war:*</include>
             </includes>
         </dependencySet>
     </dependencySets>
     <fileSets>
         <fileSet>
+            <directory>../etc/conf</directory>
             <outputDirectory>conf</outputDirectory>
             <includes>
-                <include>../etc/conf/**</include>
+                <include>**</include>
             </includes>
         </fileSet>
     </fileSets>
