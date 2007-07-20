@@ -9,7 +9,7 @@
     <name>Codewave MyTunesRSS Assembly</name>
     <distributionManagement>
         <site>
-            <url>http://codewave.dyn-o-saur.com/java-projects/mytunesrss/assembly</url>
+            <url>/Users/mdescher/Sites/java-projects/mytunesrss/assembly</url>
         </site>
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>

@@ -9,7 +9,7 @@
     <name>Codewave MyTunesRSS Apple Extensions</name>
     <distributionManagement>
         <site>
-            <url>http://codewave.dyn-o-saur.com/java-projects/mytunesrss/apple</url>
+            <url>/Users/mdescher/Sites/java-projects/mytunesrss/apple</url>
         </site>
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>

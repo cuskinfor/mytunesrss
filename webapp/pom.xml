@@ -9,7 +9,7 @@
     <name>Codewave MyTunesRSS Web Application</name>
     <distributionManagement>
         <site>
-            <url>http://codewave.dyn-o-saur.com/java-projects/mytunesrss/webapp</url>
+            <url>/Users/mdescher/Sites/java-projects/mytunesrss/webapp</url>
         </site>
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>
