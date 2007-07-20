@@ -36,6 +36,8 @@ public class P300165105 {
         String regData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<registration>\n" +
             "    <name>" + REG_NAME + "</name>\n" +
+            "    <keygen>v2</keygen>\n" +
+            "    <timestamp>" + System.currentTimeMillis() + "</timestamp>\n" +
             "    <registered>true</registered>\n";
         if (EXPIRATION != null && EXPIRATION.length() > 0) {
             regData += "    <expiration>" + EXPIRATION + "</expiration>\n";
