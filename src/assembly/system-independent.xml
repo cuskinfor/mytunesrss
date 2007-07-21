@@ -6,38 +6,39 @@
     </formats>
     <moduleSets>
         <moduleSet>
-            <binaries>
-                <outputDirectory>lib</outputDirectory>
-                <includes>
-                    <include>*:jar:*</include>
-                </includes>
-                <excludes>
-                    <exclude>*:runtime:jar:*</exclude>
-                </excludes>
-            </binaries>
-        </moduleSet>
-        <moduleSet>
+            <includes>
+                <include>*:runtime:jar:*</include>
+            </includes>
             <binaries>
                 <outputFileNameMapping>mytunesrss.jar</outputFileNameMapping>
-                <includes>
-                    <include>*:runtime:jar:*</include>
-                </includes>
+                <unpack>false</unpack>
+                <includeDependencies>true</includeDependencies>
+                <dependencySets>
+                    <dependencySet>
+                        <outputDirectory>lib</outputDirectory>
+                        <includes>
+                            <include>*:jar:*</include>
+                        </includes>
+                    </dependencySet>
+                </dependencySets>
             </binaries>
         </moduleSet>
         <moduleSet>
+            <includes>
+                <include>*:war:*</include>
+            </includes>
             <binaries>
-                <outputFileNameMapping>ROOT.war</outputFileNameMapping>
                 <outputDirectory>webapps</outputDirectory>
-                <includes>
-                    <include>*:war:*</include>
-                </includes>
+                <outputFileNameMapping>ROOT</outputFileNameMapping>
+                <unpack>true</unpack>
+                <includeDependencies>false</includeDependencies>
             </binaries>
         </moduleSet>
     </moduleSets>
     <fileSets>
         <fileSet>
-            <directory>etc/conf</directory>
             <outputDirectory>conf</outputDirectory>
+            <directory>etc/conf</directory>
             <includes>
                 <include>**</include>
             </includes>

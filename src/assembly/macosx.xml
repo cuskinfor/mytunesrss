@@ -7,17 +7,6 @@
     <moduleSets>
         <moduleSet>
             <binaries>
-                <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/lib</outputDirectory>
-                <includes>
-                    <include>*:jar:*</include>
-                </includes>
-                <excludes>
-                    <exclude>*:runtime:jar:*</exclude>
-                </excludes>
-            </binaries>
-        </moduleSet>
-        <moduleSet>
-            <binaries>
                 <outputDirectory>MyTunesRSS.app/Contents/Resources/Java</outputDirectory>
                 <outputFileNameMapping>mytunesrss.jar</outputFileNameMapping>
                 <includes>
@@ -27,14 +16,22 @@
         </moduleSet>
         <moduleSet>
             <binaries>
-                <outputFileNameMapping>ROOT.war</outputFileNameMapping>
                 <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/webapps</outputDirectory>
+                <outputFileNameMapping>ROOT.war</outputFileNameMapping>
                 <includes>
                     <include>*:war:*</include>
                 </includes>
             </binaries>
         </moduleSet>
     </moduleSets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/lib</outputDirectory>
+            <includes>
+                <include>*:jar:*</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
     <fileSets>
         <fileSet>
             <outputDirectory>.</outputDirectory>
