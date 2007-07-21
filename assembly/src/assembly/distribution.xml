@@ -22,7 +22,7 @@
             </includes>
         </dependencySet>
         <dependencySet>
-            <outputFileNameMapping>mytunesrss.war</outputFileNameMapping>
+            <outputFileNameMapping>ROOT.war</outputFileNameMapping>
             <outputDirectory>webapps</outputDirectory>
             <includes>
                 <include>*:war:*</include>
