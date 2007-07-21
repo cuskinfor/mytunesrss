@@ -34,8 +34,8 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>src/assembly/system-independent.xml</descriptor>
-                                <!--<descriptor>src/assembly/windows.xml</descriptor>-->
-                                <!--<descriptor>src/assembly/macosx.xml</descriptor>-->
+                                <descriptor>src/assembly/windows.xml</descriptor>
+                                <descriptor>src/assembly/macosx.xml</descriptor>
                             </descriptors>
                         </configuration>
                         <goals>
@@ -44,23 +44,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <configuration>
-                            <tasks>
-                                <unwar src="${outputDirectory}/${artifactId}-${version}.dir/mytunesrss-${version}/webapps/ROOT.war" dest="${outputDirectory}/${artifactId}-${version}.dir/mytunesrss-${version}/webapps/ROOT"/>
-                                <delete file="${outputDirectory}/${artifactId}-${version}.dir/mytunesrss-${version}/webapps/ROOT.war"/>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin-->
         </plugins>
     </build>
 </project>
