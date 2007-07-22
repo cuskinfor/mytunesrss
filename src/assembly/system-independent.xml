@@ -3,6 +3,7 @@
     <id>system-independent</id>
     <formats>
         <format>dir</format>
+        <format>zip</format>
     </formats>
     <moduleSets>
         <moduleSet>
@@ -35,12 +36,27 @@
             </binaries>
         </moduleSet>
     </moduleSets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>*:codewave-zis:*</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
     <fileSets>
         <fileSet>
             <outputDirectory>conf</outputDirectory>
             <directory>etc/conf</directory>
             <includes>
                 <include>**</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>.</outputDirectory>
+            <directory>etc</directory>
+            <includes>
+                <include>readme.*</include>
             </includes>
         </fileSet>
     </fileSets>

@@ -24,6 +24,14 @@
         <module>apple</module>
         <module>shareit-keygen</module>
     </modules>
+    <dependencies>
+        <dependency>
+            <groupId>de.codewave</groupId>
+            <artifactId>codewave-zis</artifactId>
+            <version>1.0</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>

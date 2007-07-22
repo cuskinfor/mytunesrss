@@ -3,6 +3,7 @@
     <id>macosx</id>
     <formats>
         <format>dir</format>
+        <format>zip</format>
     </formats>
     <moduleSets>
         <moduleSet>
@@ -36,6 +37,14 @@
             </binaries>
         </moduleSet>
     </moduleSets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/lib</outputDirectory>
+            <includes>
+                <include>*:codewave-zis:*</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
     <fileSets>
         <fileSet>
             <outputDirectory>.</outputDirectory>
@@ -43,12 +52,30 @@
             <includes>
                 <include>**</include>
             </includes>
+            <excludes>
+                <exclude>**/JavaApplicationStub*</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>.</outputDirectory>
+            <directory>etc/MacOS-Bundle</directory>
+            <includes>
+                <include>**/JavaApplicationStub*</include>
+            </includes>
+            <fileMode>755</fileMode>
         </fileSet>
         <fileSet>
             <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/conf</outputDirectory>
             <directory>etc/conf</directory>
             <includes>
                 <include>**</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>.</outputDirectory>
+            <directory>etc</directory>
+            <includes>
+                <include>readme.*</include>
             </includes>
         </fileSet>
     </fileSets>
