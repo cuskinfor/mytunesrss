@@ -136,6 +136,8 @@ public class MyTunesRssRegistration {
                 } catch (ParseException e) {
                     // intentionally left blank
                 }
+            } else {
+                myExpiration = 0;
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Registration data:");
