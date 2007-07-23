@@ -429,7 +429,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../../CodewaveUtils/src" />
+          <root url="file://$MODULE_DIR$/../../codewave-utils-27/src" />
         </SOURCES>
       </library>
     </orderEntry>
