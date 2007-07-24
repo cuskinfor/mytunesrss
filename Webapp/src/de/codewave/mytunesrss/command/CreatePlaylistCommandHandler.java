@@ -22,7 +22,7 @@ public class CreatePlaylistCommandHandler extends CreatePlaylistBaseCommandHandl
 
     @Override
     public void executeAuthorized() throws SQLException, IOException, ServletException {
-        if (getAuthUser().isPlaylist()) {
+        if (getAuthUser().isPlaylist() || Boolean.parseBoolean(getRequestParameter("playerRequest", "false"))) {
             Collection<Track> tracks = getTracks();
             if (tracks != null && !tracks.isEmpty()) {
                 getRequest().setAttribute("tracks", tracks);
