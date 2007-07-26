@@ -6,9 +6,12 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.sql.*;
+import de.codewave.utils.*;
 import org.apache.commons.logging.*;
 
 import java.sql.*;
+
+import com.sun.java_cup.internal.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement
@@ -17,12 +20,12 @@ public class MigrationStatement implements DataStoreStatement {
     private static final Log LOG = LogFactory.getLog(MigrationStatement.class);
 
     public void execute(Connection connection) throws SQLException {
-        String version = getVersion(connection);
+        Version databaseVersion = new Version(getVersion(connection));
         if (LOG.isInfoEnabled()) {
-            LOG.info("Database version " + version + " detected.");
+            LOG.info("Database version " + databaseVersion + " detected.");
         }
-        // migration from 3.0 to current version
-        if (version.equals("3.0")) {
+        // migration from 3.0.x to 3.1
+        if (databaseVersion.compareTo(new Version("3.1")) < 0) {
             new DropAllTablesStatement().execute(connection);
             MyTunesRssUtils.createStatement(connection, "migrate30to31").execute();
             new CreateAllTablesStatement().execute(connection);
