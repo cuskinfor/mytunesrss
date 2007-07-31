@@ -25,7 +25,7 @@
 
 <div class="body">
 
-    <h1 class="search"><span><fmt:message key="myTunesRss" /></span></h1>
+    <h1 class="search" onclick="window.open('http://www.codewave.de')" style="cursor: pointer"><span><fmt:message key="myTunesRss" /></span></h1>
 
     <ul class="links">
         <li><a href="${servletUrl}/showSettings/${auth}">
