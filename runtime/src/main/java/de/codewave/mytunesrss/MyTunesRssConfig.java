@@ -55,6 +55,7 @@ public class MyTunesRssConfig {
     private boolean myQuitConfirmation;
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
+    private String myLameBinary = "";
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -252,6 +253,14 @@ public class MyTunesRssConfig {
         return myPathInfoKey;
     }
 
+    public String getLameBinary() {
+        return myLameBinary;
+    }
+
+    public void setLameBinary(String lameBinary) {
+        myLameBinary = lameBinary;
+    }
+
     public Collection<User> getUsers() {
         return new HashSet<User>(myUsers);
     }
@@ -419,6 +428,7 @@ public class MyTunesRssConfig {
         setQuitConfirmation(Preferences.userRoot().node(PREF_ROOT).getBoolean("quitConfirmation", isQuitConfirmation()));
         setWebWelcomeMessage(Preferences.userRoot().node(PREF_ROOT).get("webWelcomeMessage", getWebWelcomeMessage()));
         readPathInfoEncryptionKey();
+        setLameBinary(Preferences.userRoot().node(PREF_ROOT).get("lameBinary", getLameBinary()));
     }
 
     private void readPathInfoEncryptionKey() {
@@ -537,6 +547,7 @@ public class MyTunesRssConfig {
                 Preferences.userRoot().node(PREF_ROOT).put("pathInfoKey", new String(Base64.encodeBase64(myPathInfoKey.getEncoded())));
             }
         }
+        Preferences.userRoot().node(PREF_ROOT).put("lameBinary", myLameBinary);
     }
 
     private void checkPrefsVersion() {

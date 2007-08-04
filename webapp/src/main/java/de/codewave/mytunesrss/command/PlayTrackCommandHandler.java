@@ -21,7 +21,6 @@ import java.util.*;
  */
 public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
     private static final Log LOG = LogFactory.getLog(PlayTrackCommandHandler.class);
-    private static final String LAME_BINARY = "/usr/local/bin/lame"; // todo: configuration
     private static final int OUTPUT_BITRATE = 32; // todo: configuration
     private static final int OUTPUT_SAMPLE_RATE = 11025; // todo: configuration
 
@@ -47,10 +46,17 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         }
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                     } else {
-                        if (OUTPUT_BITRATE == 0 && OUTPUT_SAMPLE_RATE == 0) {
+                        String lameBinary = MyTunesRss.CONFIG.getLameBinary();
+                        if (StringUtils.isNotEmpty(lameBinary) && !new File(lameBinary).isFile()) {
+                            if (LOG.isWarnEnabled()) {
+                                LOG.warn("Lame binary \"" + lameBinary + "\" is not a file.");
+                            }
+                            lameBinary = null;
+                        }
+                        if (OUTPUT_BITRATE == 0 && OUTPUT_SAMPLE_RATE == 0 && StringUtils.isNotEmpty(lameBinary)) {
                             streamSender = new FileSender(file, contentType, (int)file.length());
                         } else {
-                            streamSender = new StreamSender(new LameTranscoderStream(file, LAME_BINARY, OUTPUT_BITRATE, OUTPUT_SAMPLE_RATE), contentType, 0);
+                            streamSender = new StreamSender(new LameTranscoderStream(file, lameBinary, OUTPUT_BITRATE, OUTPUT_SAMPLE_RATE), contentType, 0);
                         }
                     }
                     streamSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));

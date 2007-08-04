@@ -24,6 +24,8 @@ public class Settings {
     private Info myInfoForm;
     private Addons myAddonsForm;
     private JPanel myAddonsPanel;
+    private Streaming myStreamingForm;
+    private JPanel myStreamingPanel;
 
     public Database getDatabaseForm() {
         return myDatabaseForm;
@@ -56,6 +58,7 @@ public class Settings {
         myMiscForm.init();
         myInfoForm.init();
         myUserManagementForm.init();
+        myStreamingForm.init();
         myAddonsForm.init();
         myTabbedPane.addChangeListener(new TabSwitchListener());
     }
@@ -63,6 +66,7 @@ public class Settings {
     private void initRegistration() {
         if (!MyTunesRss.REGISTRATION.isRegistered()) {
             myTabbedPane.remove(myAddonsPanel);
+            myTabbedPane.remove(myStreamingPanel);
         }
     }
 
@@ -81,6 +85,10 @@ public class Settings {
             messages.append(message).append(" ");
         }
         message = myMiscForm.updateConfigFromGui();
+        if (message != null) {
+            messages.append(message).append(" ");
+        }
+        message = myStreamingForm.updateConfigFromGui();
         if (message != null) {
             messages.append(message).append(" ");
         }
@@ -112,6 +120,7 @@ public class Settings {
         myDatabaseForm.setGuiMode(mode);
         myDirectoriesForm.setGuiMode(mode);
         myMiscForm.setGuiMode(mode);
+        myStreamingForm.setGuiMode(mode);
         myAddonsForm.setGuiMode(mode);
     }
 
