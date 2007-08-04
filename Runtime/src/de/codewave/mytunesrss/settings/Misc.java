@@ -19,7 +19,6 @@ import com.intellij.uiDesigner.core.*;
  * de.codewave.mytunesrss.settings.Misc
  */
 public class Misc implements MyTunesRssEventListener {
-    private JButton mySupportContactButton;
     private JPanel myRootPanel;
     private JTextField myUsernameInput;
     private PasswordHashField myPasswordInput;
@@ -40,7 +39,6 @@ public class Misc implements MyTunesRssEventListener {
 
     public void init() {
         initRegistration();
-        mySupportContactButton.addActionListener(new SupportContactActionListener());
         myUsernameInput.setText(MyTunesRss.CONFIG.getMyTunesRssComUser());
         myPasswordInput.setPasswordHash(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash());
         myUseProxyInput.setSelected(MyTunesRss.CONFIG.isProxyServer());
@@ -128,18 +126,6 @@ public class Misc implements MyTunesRssEventListener {
                 myUpdateOnStartInput.setEnabled(true);
                 myAutoStartServer = false;
                 break;
-        }
-    }
-
-    public class SupportContactActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent actionEvent) {
-            String messages = updateConfigFromGui();
-            if (messages == null) {
-                new SupportContact().display(MyTunesRss.ROOT_FRAME, MyTunesRss.BUNDLE.getString("dialog.supportRequest"), MyTunesRss.BUNDLE.getString(
-                        "settings.supportInfo"));
-            } else {
-                MyTunesRssUtils.showErrorMessage(messages);
-            }
         }
     }
 
