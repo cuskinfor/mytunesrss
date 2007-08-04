@@ -98,11 +98,11 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             statement.setInt(4, myTime);
             statement.setInt(5, myTrackNumber);
             statement.setString(6, myFileName);
-            statement.setString(7, myId);
-            statement.setBoolean(8, myProtected);
-            statement.setBoolean(9, myVideo);
-            statement.setString(10, myGenre);
-            statement.setString(11, FileSupportUtils.getFileSuffix(myFileName));
+            statement.setBoolean(7, myProtected);
+            statement.setBoolean(8, myVideo);
+            statement.setString(9, myGenre);
+            statement.setString(10, FileSupportUtils.getFileSuffix(myFileName));
+            statement.setString(11, myId);
             statement.executeUpdate();
         } catch (SQLException e) {
             if (UpdateTrackStatement.LOG.isErrorEnabled()) {
