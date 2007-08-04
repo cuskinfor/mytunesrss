@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="6" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
     <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="641" height="662"/>
+      <xy x="20" y="20" width="661" height="714"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -30,7 +30,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="840d2" binding="myPermissionsPanel" layout-manager="GridLayoutManager" row-count="7" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+              <grid id="840d2" binding="myPermissionsPanel" layout-manager="GridLayoutManager" row-count="8" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints/>
                 <properties/>
@@ -92,11 +92,21 @@
                   </component>
                   <component id="86d00" class="javax.swing.JCheckBox" binding="myPermChangePasswordInput">
                     <constraints>
-                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permChangePassword"/>
                       <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permChangePasswordTooltip"/>
+                    </properties>
+                  </component>
+                  <component id="aa4e9" class="javax.swing.JCheckBox" binding="myPermTranscoderInput">
+                    <constraints>
+                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <opaque value="false"/>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permTranscoder"/>
+                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permTranscoderTooltip"/>
                     </properties>
                   </component>
                 </children>

@@ -16,7 +16,7 @@
                 <link>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></link>
                 <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></guid>
                 <pubDate>${pubDate}</pubDate>
-                <enclosure url="${permServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${cwfn:encodeUrl(virtualFileName)}"
+                <enclosure url="${permServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/lame=${param.lame}</mt:encrypt>/${cwfn:encodeUrl(virtualFileName)}"
                            type="${track.contentType}"
                            length="${track.contentLength}"/>
                 <c:if test="${userAgentPsp}"><media:thumbnail url="${permServletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>" width="160"/></c:if>

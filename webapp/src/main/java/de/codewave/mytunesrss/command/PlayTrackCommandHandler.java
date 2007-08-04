@@ -4,8 +4,8 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.servlet.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.lang.*;
@@ -21,8 +21,6 @@ import java.util.*;
  */
 public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
     private static final Log LOG = LogFactory.getLog(PlayTrackCommandHandler.class);
-    private static final int OUTPUT_BITRATE = 32; // todo: configuration
-    private static final int OUTPUT_SAMPLE_RATE = 11025; // todo: configuration
 
     @Override
     public void executeAuthorized() throws IOException, SQLException {
@@ -46,17 +44,28 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         }
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                     } else {
-                        String lameBinary = MyTunesRss.CONFIG.getLameBinary();
-                        if (StringUtils.isNotEmpty(lameBinary) && !new File(lameBinary).isFile()) {
-                            if (LOG.isWarnEnabled()) {
-                                LOG.warn("Lame binary \"" + lameBinary + "\" is not a file.");
+                        // todo
+                        // --- begin: put into method which gets a transcoder object ---
+                        boolean useLame = getWebConfig().isLame();
+                        int lameTargetBitrate = getWebConfig().getLameTargetBitrate();
+                        int lameTargetSampleRate = getWebConfig().getLameTargetSampleRate();
+                        if (StringUtils.isNotEmpty(getRequest().getParameter("lame"))) {
+                            String[] splitted = getRequest().getParameter("lame").split(",");
+                            if (splitted.length == 2) {
+                                useLame = true;
+                                lameTargetBitrate = Integer.parseInt(splitted[0]);
+                                lameTargetSampleRate = Integer.parseInt(splitted[1]);
                             }
-                            lameBinary = null;
                         }
-                        if (OUTPUT_BITRATE == 0 && OUTPUT_SAMPLE_RATE == 0 && StringUtils.isNotEmpty(lameBinary)) {
-                            streamSender = new FileSender(file, contentType, (int)file.length());
+                        // --- end: put into method which gets a transcoder object ---
+                        if (MyTunesRss.REGISTRATION.isRegistered() && useLame && lameTargetBitrate > 0 && lameTargetSampleRate > 0 &&
+                                MyTunesRss.CONFIG.isValidLameBinary()) {
+                            streamSender = new StreamSender(new LameTranscoderStream(file,
+                                                                                     MyTunesRss.CONFIG.getLameBinary(),
+                                                                                     lameTargetBitrate,
+                                                                                     getWebConfig().getLameTargetSampleRate()), contentType, 0);
                         } else {
-                            streamSender = new StreamSender(new LameTranscoderStream(file, lameBinary, OUTPUT_BITRATE, OUTPUT_SAMPLE_RATE), contentType, 0);
+                            streamSender = new FileSender(file, contentType, (int)file.length());
                         }
                     }
                     streamSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));

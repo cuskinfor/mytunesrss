@@ -161,7 +161,13 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             addError(new BundleError("error.quotaExceeded." + getAuthUser().getQuotaType().name()));
         }
         getRequest().setAttribute("encryptionKey", MyTunesRss.CONFIG.getPathInfoKey());
+        getRequest().setAttribute("globalConfig", MyTunesRss.CONFIG);
         setResourceBundle();
+        if (MyTunesRss.REGISTRATION.isRegistered() && getWebConfig().isLame() && getWebConfig().getLameTargetBitrate() > 0 &&
+                getWebConfig().getLameTargetSampleRate() > 0) {
+            getRequest().setAttribute("lame", getWebConfig().getLameTargetBitrate() + "," + getWebConfig().getLameTargetSampleRate());
+        }
+
     }
 
     private void setResourceBundle() {

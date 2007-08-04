@@ -48,6 +48,7 @@ public class EditUser {
     private JCheckBox myPermSpecialPlaylists;
     private JPanel myPermissionsPanel;
     private JScrollPane myScrollPane;
+    private JCheckBox myPermTranscoderInput;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -101,6 +102,7 @@ public class EditUser {
             myMaxZipEntriesInput.setText(myUser.getMaximumZipEntries() > 0 ? Integer.toString(myUser.getMaximumZipEntries()) : "");
             myFileTypesInput.setText(myUser.getFileTypes());
             mySessionTimeoutInput.setText(Integer.toString(myUser.getSessionTimeout()));
+            myPermTranscoderInput.setSelected(myUser.isTranscoder());
         } else {
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
             myPermRssInput.setSelected(true);
@@ -169,6 +171,7 @@ public class EditUser {
         myPermPlayerInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myRestrictionsPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myQuotaInfoPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myPermTranscoderInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
     }
 
     private void refreshInfo() {
@@ -231,6 +234,7 @@ public class EditUser {
                     myUser.setMaximumZipEntries(MyTunesRssUtils.getTextFieldInteger(myMaxZipEntriesInput, 0));
                     myUser.setFileTypes(myFileTypesInput.getText());
                     myUser.setSessionTimeout(MyTunesRssUtils.getTextFieldInteger(mySessionTimeoutInput, 10));
+                    myUser.setTranscoder(myPermTranscoderInput.isSelected());
                     MyTunesRss.CONFIG.addUser(myUser);
                     if (myClose) {
                         myDialog.dispose();

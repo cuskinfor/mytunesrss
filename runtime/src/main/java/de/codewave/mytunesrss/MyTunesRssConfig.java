@@ -257,6 +257,10 @@ public class MyTunesRssConfig {
         return myLameBinary;
     }
 
+    public boolean isValidLameBinary() {
+        return StringUtils.isNotEmpty(myLameBinary) && new File(myLameBinary).isFile();
+    }
+
     public void setLameBinary(String lameBinary) {
         myLameBinary = lameBinary;
     }
@@ -405,6 +409,7 @@ public class MyTunesRssConfig {
                     user.setQuotaType(User.QuotaType.valueOf(userNode.node(userName).get("quotaType", User.QuotaType.None.name())));
                     user.setMaximumZipEntries(userNode.node(userName).getInt("maximumZipEntries", 0));
                     user.setFileTypes(userNode.node(userName).get("fileTypes", null));
+                    user.setTranscoder(userNode.node(userName).getBoolean("featureTranscoder", false));
                     addUser(user);
                     if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
                         break;
@@ -519,6 +524,7 @@ public class MyTunesRssConfig {
                 userNode.node(user.getName()).put("quotaType", user.getQuotaType().name());
                 userNode.node(user.getName()).putInt("maximumZipEntries", user.getMaximumZipEntries());
                 userNode.node(user.getName()).put("fileTypes", user.getFileTypes() != null ? user.getFileTypes() : "");
+                userNode.node(user.getName()).putBoolean("featureTranscoder", user.isTranscoder());
             }
         } catch (BackingStoreException e) {
             if (LOG.isErrorEnabled()) {

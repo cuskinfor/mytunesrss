@@ -34,6 +34,7 @@ public class User {
     private String myFileTypes;
     private int mySessionTimeout = 10;
     private boolean mySpecialPlaylists;
+    private boolean myTranscoder;
 
     public User(String name) {
         myName = name;
@@ -196,6 +197,14 @@ public class User {
 
     public void setSpecialPlaylists(boolean specialPlaylists) {
         mySpecialPlaylists = specialPlaylists;
+    }
+
+    public boolean isTranscoder() {
+        return myTranscoder;
+    }
+
+    public void setTranscoder(boolean transcoder) {
+        myTranscoder = transcoder;
     }
 
     @Override
