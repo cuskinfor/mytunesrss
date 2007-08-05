@@ -24,10 +24,10 @@ public class MigrationStatement implements DataStoreStatement {
         if (LOG.isInfoEnabled()) {
             LOG.info("Database version " + databaseVersion + " detected.");
         }
-        // migration from 3.0.x to 3.1
-        if (databaseVersion.compareTo(new Version("3.1")) < 0) {
+        // migration from 3.0.x to 3.1-EAP-1
+        if (databaseVersion.compareTo(new Version("3.1-EAP-1")) < 0) {
             new DropAllTablesStatement().execute(connection);
-            MyTunesRssUtils.createStatement(connection, "migrate30to31").execute();
+            MyTunesRssUtils.createStatement(connection, "migrate30to31eap1").execute();
             new CreateAllTablesStatement().execute(connection);
         }
         new UpdateDatabaseVersionStatement().execute(connection);

@@ -5,7 +5,7 @@
     <trackList>
         <c:forEach items="${tracks}" var="item">
             <track>
-                <location>${permServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt>/${mtfn:virtualTrackName(item)}.${mtfn:suffix(item)}</location>
+                <location>${permServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}/lame=${param.lame}</mt:encrypt>/${mtfn:virtualTrackName(item)}.${mtfn:suffix(item)}</location>
                 <creator><c:out value="${cwfn:choose(mtfn:unknown(item.artist), '(unknown)', item.artist)}" /></creator>
                 <album><c:out value="${cwfn:choose(mtfn:unknown(item.album), '(unknown)', item.album)}" /></album>
                 <title><c:out value="${item.name}"/></title>

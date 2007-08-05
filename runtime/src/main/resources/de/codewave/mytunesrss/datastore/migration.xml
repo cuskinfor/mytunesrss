@@ -5,7 +5,7 @@
         <sql>SELECT version AS version FROM system_information</sql>
     </statement>
 
-    <statement name="migrate30to31">
+    <statement name="migrate30to31eap1">
         <sql>DROP TABLE pager</sql>
     </statement>
 </statements>
