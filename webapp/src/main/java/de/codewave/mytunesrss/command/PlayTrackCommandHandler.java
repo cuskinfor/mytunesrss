@@ -42,8 +42,8 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         }
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                     } else {
-                        Transcoder transcoder = new Transcoder(file, getWebConfig(), getRequest());
-                        if (transcoder.isTranscoder()) {
+                        Transcoder transcoder = Transcoder.createTranscoder(track, getWebConfig(), getRequest());
+                        if (transcoder != null) {
                             streamSender = new FileSender(transcoder.getTranscodedFile(), contentType, (int)transcoder.getTranscodedFile().length());
                         } else {
                             streamSender = new FileSender(file, contentType, (int)file.length());

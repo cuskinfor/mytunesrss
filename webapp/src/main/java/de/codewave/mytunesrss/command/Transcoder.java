@@ -1,9 +1,10 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.utils.io.*;
-import org.apache.commons.io.*;
+import de.codewave.utils.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.*;
 
@@ -14,13 +15,21 @@ import java.io.*;
  * de.codewave.mytunesrss.command.Transcoder
  */
 public class Transcoder {
+    private static final String CACHE_ACCESS_SYNC = "CacheAccessSync";
+
+    private String myTrackId;
     private File myFile;
     private boolean myLame;
     private int myLameTargetBitrate;
     private int myLameTargetSampleRate;
 
-    public Transcoder(File file, WebConfig webConfig, HttpServletRequest request) {
-        myFile = file;
+    public static Transcoder createTranscoder(Track track, WebConfig webConfig, HttpServletRequest request) {
+        return new Transcoder(track, webConfig, request);
+    }
+
+    public Transcoder(Track track, WebConfig webConfig, HttpServletRequest request) {
+        myTrackId = track.getId();
+        myFile = track.getFile();
         init(webConfig, request);
     }
 
@@ -49,18 +58,32 @@ public class Transcoder {
         return new LameTranscoderStream(myFile, MyTunesRss.CONFIG.getLameBinary(), myLameTargetBitrate, myLameTargetSampleRate);
     }
 
-    public synchronized File getTranscodedFile() throws IOException {
-        File file = FileCache.getFile(myFile.getAbsolutePath());
+    public File getTranscodedFile() throws IOException {
+        String identifier = myTrackId + "_" + getTranscoderId();
+        File file = FileCache.getFile(identifier);
         if (file == null) {
-            file = File.createTempFile("mytunesrss-", ".tmp");
-            file.deleteOnExit();
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            InputStream inputStream = getStream();
-            IOUtils.copy(inputStream, fileOutputStream);
-            inputStream.close();
-            fileOutputStream.close();
-            FileCache.add(myFile.getAbsolutePath(), file, 600000); // expiration time is 10 minutes
+            synchronized(CACHE_ACCESS_SYNC) {
+                file = FileCache.getFile(identifier);
+                if (file == null) {
+                    File cacheDir = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder/cache");
+                    if (!cacheDir.exists()) {
+                        cacheDir.mkdirs();
+                    }
+                    file = File.createTempFile("mytunesrss_", ".tmp", cacheDir);
+                    file.deleteOnExit();
+                    FileOutputStream fileOutputStream = new FileOutputStream(file);
+                    InputStream inputStream = getStream();
+                    IOUtils.copy(inputStream, fileOutputStream);
+                    inputStream.close();
+                    fileOutputStream.close();
+                    FileCache.add(identifier, file, 600000);// expiration time is 10 minutes
+                }
+            }
         }
         return file;
+    }
+
+    protected String getTranscoderId() {
+        return "lame_mp3tomp3_" + myLameTargetBitrate + "_" + myLameTargetSampleRate;
     }
 }
