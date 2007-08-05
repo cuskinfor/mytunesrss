@@ -117,19 +117,19 @@
                 </td>
                 <c:if test="${authUser.rss && config.showRss}">
                     <td class="icon">
-                        <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/lame=${param.lame}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xml">
+                        <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/lame=${lame}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xml">
                             <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
                     </td>
                 </c:if>
                 <c:if test="${authUser.playlist && config.showPlaylist}">
                     <td class="icon">
-                        <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/lame=${param.lame}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.${config.playlistFileSuffix}">
+                        <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/lame=${lame}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.${config.playlistFileSuffix}">
                             <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
                     </td>
                 </c:if>
                 <c:if test="${authUser.player && config.showPlayer}">
                     <td class="icon">
-                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/playerRequest=true/lame=${param.lame}/type=Xspf</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xspf')">
+                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/playerRequest=true/lame=${lame}/type=Xspf</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xspf')">
                             <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                     </td>
                 </c:if>

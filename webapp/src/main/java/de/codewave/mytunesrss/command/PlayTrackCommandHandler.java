@@ -4,11 +4,9 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.servlet.*;
 import org.apache.commons.logging.*;
-import org.apache.commons.lang.*;
 
 import javax.servlet.http.*;
 import java.io.*;
@@ -44,26 +42,9 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         }
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                     } else {
-                        // todo
-                        // --- begin: put into method which gets a transcoder object ---
-                        boolean useLame = getWebConfig().isLame();
-                        int lameTargetBitrate = getWebConfig().getLameTargetBitrate();
-                        int lameTargetSampleRate = getWebConfig().getLameTargetSampleRate();
-                        if (StringUtils.isNotEmpty(getRequest().getParameter("lame"))) {
-                            String[] splitted = getRequest().getParameter("lame").split(",");
-                            if (splitted.length == 2) {
-                                useLame = true;
-                                lameTargetBitrate = Integer.parseInt(splitted[0]);
-                                lameTargetSampleRate = Integer.parseInt(splitted[1]);
-                            }
-                        }
-                        // --- end: put into method which gets a transcoder object ---
-                        if (MyTunesRss.REGISTRATION.isRegistered() && useLame && lameTargetBitrate > 0 && lameTargetSampleRate > 0 &&
-                                MyTunesRss.CONFIG.isValidLameBinary()) {
-                            streamSender = new StreamSender(new LameTranscoderStream(file,
-                                                                                     MyTunesRss.CONFIG.getLameBinary(),
-                                                                                     lameTargetBitrate,
-                                                                                     getWebConfig().getLameTargetSampleRate()), contentType, 0);
+                        Transcoder transcoder = new Transcoder(file, getWebConfig(), getRequest());
+                        if (transcoder.isTranscoder()) {
+                            streamSender = new FileSender(transcoder.getTranscodedFile(), contentType, (int)transcoder.getTranscodedFile().length());
                         } else {
                             streamSender = new FileSender(file, contentType, (int)file.length());
                         }
