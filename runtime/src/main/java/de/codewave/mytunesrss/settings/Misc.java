@@ -10,10 +10,6 @@ import de.codewave.utils.swing.components.*;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.*;
-import java.util.*;
-
-import com.intellij.uiDesigner.core.*;
 
 /**
  * de.codewave.mytunesrss.settings.Misc
