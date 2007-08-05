@@ -24,7 +24,8 @@ public class Transcoder {
     private int myLameTargetSampleRate;
 
     public static Transcoder createTranscoder(Track track, WebConfig webConfig, HttpServletRequest request) {
-        return new Transcoder(track, webConfig, request);
+        Transcoder transcoder = new Transcoder(track, webConfig, request);
+        return transcoder.isTranscoder() ? transcoder : null;
     }
 
     public Transcoder(Track track, WebConfig webConfig, HttpServletRequest request) {
