@@ -3,10 +3,11 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.*;
-import de.codewave.utils.io.*;
 import de.codewave.utils.*;
+import de.codewave.utils.io.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 
 import javax.servlet.http.*;
 import java.io.*;
@@ -15,8 +16,6 @@ import java.io.*;
  * de.codewave.mytunesrss.command.Transcoder
  */
 public class Transcoder {
-    private static final String CACHE_ACCESS_SYNC = "CacheAccessSync";
-
     private String myTrackId;
     private File myFile;
     private boolean myLame;
@@ -63,23 +62,18 @@ public class Transcoder {
         String identifier = myTrackId + "_" + getTranscoderId();
         File file = FileCache.getFile(identifier);
         if (file == null) {
-            synchronized(CACHE_ACCESS_SYNC) {
-                file = FileCache.getFile(identifier);
-                if (file == null) {
-                    File cacheDir = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder/cache");
-                    if (!cacheDir.exists()) {
-                        cacheDir.mkdirs();
-                    }
-                    file = File.createTempFile("mytunesrss_", ".tmp", cacheDir);
-                    file.deleteOnExit();
-                    FileOutputStream fileOutputStream = new FileOutputStream(file);
-                    InputStream inputStream = getStream();
-                    IOUtils.copy(inputStream, fileOutputStream);
-                    inputStream.close();
-                    fileOutputStream.close();
-                    FileCache.add(identifier, file, 600000);// expiration time is 10 minutes
-                }
+            File cacheDir = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder/cache");
+            if (!cacheDir.exists()) {
+                cacheDir.mkdirs();
             }
+            file = File.createTempFile("mytunesrss_", ".tmp", cacheDir);
+            file.deleteOnExit();
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            InputStream inputStream = getStream();
+            IOUtils.copy(inputStream, fileOutputStream);
+            inputStream.close();
+            fileOutputStream.close();
+            FileCache.add(identifier, file, 600000);// expiration time is 10 minutes
         }
         return file;
     }
