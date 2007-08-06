@@ -4,8 +4,10 @@ import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.pleasewait.*;
+import de.codewave.utils.*;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.io.*;
 
 import javax.swing.*;
 import java.io.*;
@@ -79,6 +81,17 @@ public class MyTunesRssUtils {
     }
 
     public static void shutdown() {
+        if (MyTunesRss.STREAMING_CACHE != null) {
+            try {
+                File destinationFile = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder/cache.xml");
+                FileUtils.writeStringToFile(destinationFile, MyTunesRss.STREAMING_CACHE.getContent());
+            } catch (IOException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not write streaming cache contents, all files will be lost on next start.", e);
+                }
+                MyTunesRss.STREAMING_CACHE.clearCache();
+            }
+        }
         System.exit(0);
     }
 

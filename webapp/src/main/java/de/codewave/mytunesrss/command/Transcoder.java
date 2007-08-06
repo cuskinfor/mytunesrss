@@ -60,20 +60,19 @@ public class Transcoder {
 
     public File getTranscodedFile() throws IOException {
         String identifier = myTrackId + "_" + getTranscoderId();
-        File file = FileCache.getFile(identifier);
+        File file = MyTunesRss.STREAMING_CACHE.getFile(identifier);
         if (file == null) {
             File cacheDir = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder/cache");
             if (!cacheDir.exists()) {
                 cacheDir.mkdirs();
             }
             file = File.createTempFile("mytunesrss_", ".tmp", cacheDir);
-            file.deleteOnExit();
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             InputStream inputStream = getStream();
             IOUtils.copy(inputStream, fileOutputStream);
             inputStream.close();
             fileOutputStream.close();
-            FileCache.add(identifier, file, 600000);// expiration time is 10 minutes
+            MyTunesRss.STREAMING_CACHE.add(identifier, file, MyTunesRss.CONFIG.getStreamingCacheTimeout() * 60000);
         }
         return file;
     }

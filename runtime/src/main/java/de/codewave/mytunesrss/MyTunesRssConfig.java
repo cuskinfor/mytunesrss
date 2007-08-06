@@ -56,6 +56,8 @@ public class MyTunesRssConfig {
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
     private String myLameBinary = "";
+    private int myStreamingCacheTimeout = 20;
+    private int myStreamingCacheMaxFiles = 300;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -265,6 +267,22 @@ public class MyTunesRssConfig {
         myLameBinary = lameBinary;
     }
 
+    public int getStreamingCacheTimeout() {
+        return myStreamingCacheTimeout;
+    }
+
+    public void setStreamingCacheTimeout(int streamingCacheTimeout) {
+        myStreamingCacheTimeout = streamingCacheTimeout;
+    }
+
+    public int getStreamingCacheMaxFiles() {
+        return myStreamingCacheMaxFiles;
+    }
+
+    public void setStreamingCacheMaxFiles(int streamingCacheMaxFiles) {
+        myStreamingCacheMaxFiles = streamingCacheMaxFiles;
+    }
+
     public Collection<User> getUsers() {
         return new HashSet<User>(myUsers);
     }
@@ -434,6 +452,8 @@ public class MyTunesRssConfig {
         setWebWelcomeMessage(Preferences.userRoot().node(PREF_ROOT).get("webWelcomeMessage", getWebWelcomeMessage()));
         readPathInfoEncryptionKey();
         setLameBinary(Preferences.userRoot().node(PREF_ROOT).get("lameBinary", getLameBinary()));
+        setStreamingCacheTimeout(Preferences.userRoot().node(PREF_ROOT).getInt("streamingCacheTimeout", getStreamingCacheTimeout()));
+        setStreamingCacheMaxFiles(Preferences.userRoot().node(PREF_ROOT).getInt("streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
     }
 
     private void readPathInfoEncryptionKey() {
@@ -554,6 +574,8 @@ public class MyTunesRssConfig {
             }
         }
         Preferences.userRoot().node(PREF_ROOT).put("lameBinary", myLameBinary);
+        Preferences.userRoot().node(PREF_ROOT).putInt("streamingCacheTimeout", myStreamingCacheTimeout);
+        Preferences.userRoot().node(PREF_ROOT).putInt("streamingCacheMaxFiles", myStreamingCacheMaxFiles);
     }
 
     private void checkPrefsVersion() {

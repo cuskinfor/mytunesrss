@@ -11,6 +11,8 @@ import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.settings.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.*;
+import de.codewave.utils.xml.*;
+import de.codewave.utils.io.*;
 import de.codewave.utils.maven.*;
 import de.codewave.utils.moduleinfo.*;
 import de.codewave.utils.swing.*;
@@ -91,6 +93,7 @@ public class MyTunesRss {
     public static final ErrorQueue ERROR_QUEUE = new ErrorQueue();
     public static boolean QUIT_REQUEST;
     public static Driver DATABASE_DRIVER;
+    public static FileCache STREAMING_CACHE;
 
     public static void main(final String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException,
             InstantiationException, ClassNotFoundException, IOException, SQLException {
@@ -142,6 +145,8 @@ public class MyTunesRss {
             new DeleteDatabaseFilesTask().execute();
         }
         loadConfiguration();
+        STREAMING_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER, 10000, CONFIG.getStreamingCacheMaxFiles());
+        STREAMING_CACHE.setContent(JXPathUtils.getContext(new File(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/transcoder/cache.xml").toURL()));
         if (HEADLESS) {
             executeHeadlessMode();
         } else {
