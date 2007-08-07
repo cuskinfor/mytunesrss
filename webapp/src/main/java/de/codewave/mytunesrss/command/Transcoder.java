@@ -4,10 +4,8 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.utils.*;
-import de.codewave.utils.io.*;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
 
 import javax.servlet.http.*;
 import java.io.*;
@@ -59,21 +57,16 @@ public class Transcoder {
     }
 
     public File getTranscodedFile() throws IOException {
-        String identifier = myTrackId + "_" + getTranscoderId();
-        File file = MyTunesRss.STREAMING_CACHE.getFile(identifier);
-        if (file == null) {
-            File cacheDir = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder/cache");
-            if (!cacheDir.exists()) {
-                cacheDir.mkdirs();
-            }
-            file = File.createTempFile("mytunesrss_", ".tmp", cacheDir);
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            InputStream inputStream = getStream();
-            IOUtils.copy(inputStream, fileOutputStream);
-            inputStream.close();
-            fileOutputStream.close();
-            MyTunesRss.STREAMING_CACHE.add(identifier, file, MyTunesRss.CONFIG.getStreamingCacheTimeout() * 60000);
+        File cacheDir = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder/cache");
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs();
         }
+        File file = File.createTempFile("mytunesrss_", ".tmp", cacheDir);
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        InputStream inputStream = getStream();
+        IOUtils.copy(inputStream, fileOutputStream);
+        inputStream.close();
+        fileOutputStream.close();
         return file;
     }
 

@@ -146,7 +146,10 @@ public class MyTunesRss {
         }
         loadConfiguration();
         STREAMING_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER, 10000, CONFIG.getStreamingCacheMaxFiles());
-        STREAMING_CACHE.setContent(JXPathUtils.getContext(new File(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/transcoder/cache.xml").toURL()));
+        File streamingCacheFile = new File(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/transcoder/cache.xml");
+        if (streamingCacheFile.isFile()) {
+            STREAMING_CACHE.setContent(JXPathUtils.getContext(streamingCacheFile.toURL()));
+        }
         if (HEADLESS) {
             executeHeadlessMode();
         } else {

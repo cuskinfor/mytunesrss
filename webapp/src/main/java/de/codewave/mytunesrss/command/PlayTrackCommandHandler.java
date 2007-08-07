@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.servlet.*;
 import org.apache.commons.logging.*;
@@ -44,7 +45,18 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                     } else {
                         Transcoder transcoder = Transcoder.createTranscoder(track, getWebConfig(), getRequest());
                         if (transcoder != null) {
-                            streamSender = new FileSender(transcoder.getTranscodedFile(), contentType, (int)transcoder.getTranscodedFile().length());
+                            final String identifier = trackId + "_" + transcoder.getTranscoderId();
+                            File transcodedFile = MyTunesRss.STREAMING_CACHE.lock(identifier);
+                            if (transcodedFile == null) {
+                                transcodedFile = transcoder.getTranscodedFile();
+                                MyTunesRss.STREAMING_CACHE.add(identifier, transcodedFile, MyTunesRss.CONFIG.getStreamingCacheTimeout() * 60000);
+                                MyTunesRss.STREAMING_CACHE.lock(identifier);
+                            }
+                            streamSender = new FileSender(transcodedFile, contentType, (int)transcodedFile.length()) {
+                                protected void afterSend() {
+                                    MyTunesRss.STREAMING_CACHE.unlock(identifier);
+                                }
+                            };
                         } else {
                             streamSender = new FileSender(file, contentType, (int)file.length());
                         }
