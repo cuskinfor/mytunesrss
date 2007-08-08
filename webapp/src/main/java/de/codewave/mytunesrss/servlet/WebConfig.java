@@ -97,7 +97,7 @@ public class WebConfig {
         myConfigValues.put(CFG_USE_LAME, "false");
         myConfigValues.put(CFG_LAME_TARGET_BITRATE, "96");
         myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, "22050");
-        myConfigValues.put(CFG_LAME_OTF_IF_POSSIBLE, "true");
+        myConfigValues.put(CFG_LAME_OTF_IF_POSSIBLE, "false");
     }
 
     public void load(HttpServletRequest request) {
