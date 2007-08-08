@@ -32,11 +32,17 @@
 
     <tag>
         <description>
-            Get the next value for the flip flop and switch values.
+            Get the current value for the flip flop and optionally toggle.
         </description>
         <name>flipFlop</name>
         <tag-class>de.codewave.mytunesrss.jsp.FlipFlopTag</tag-class>
         <body-content>empty</body-content>
+        <attribute>
+            <description>Set to true for toggling or false otherwise. The default is true.</description>
+            <name>toggle</name>
+            <rtexprvalue>true</rtexprvalue>
+            <type>boolean</type>
+        </attribute>
     </tag>
 
     <tag>

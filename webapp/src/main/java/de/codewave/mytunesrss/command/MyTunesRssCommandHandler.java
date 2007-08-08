@@ -156,16 +156,16 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("mytunesrssVersion", MyTunesRss.VERSION);
         getRequest().setAttribute("sessionCreationTime", getSession().getCreationTime());
         getRequest().setAttribute("registered", MyTunesRss.REGISTRATION.isRegistered());
-        getWebConfig();// result not needed, method also fills the session attribute "config"
+        WebConfig webConfig = getWebConfig();
         if (getAuthUser() != null && getAuthUser().isQuotaExceeded()) {
             addError(new BundleError("error.quotaExceeded." + getAuthUser().getQuotaType().name()));
         }
         getRequest().setAttribute("encryptionKey", MyTunesRss.CONFIG.getPathInfoKey());
         getRequest().setAttribute("globalConfig", MyTunesRss.CONFIG);
         setResourceBundle();
-        if (MyTunesRss.REGISTRATION.isRegistered() && getWebConfig().isLame() && getWebConfig().getLameTargetBitrate() > 0 &&
-                getWebConfig().getLameTargetSampleRate() > 0) {
-            getRequest().setAttribute("lame", getWebConfig().getLameTargetBitrate() + "," + getWebConfig().getLameTargetSampleRate());
+        if (MyTunesRss.REGISTRATION.isRegistered() && webConfig.isLame() && webConfig.getLameTargetBitrate() > 0 &&
+                webConfig.getLameTargetSampleRate() > 0) {
+            getRequest().setAttribute("lame", webConfig.getLameTargetBitrate() + "," + webConfig.getLameTargetSampleRate() + "," + webConfig.isLameOnTheFlyIfPossible());
         }
 
     }

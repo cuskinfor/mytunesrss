@@ -48,6 +48,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setLame(getBooleanRequestParameter("useLame", false));
         webConfig.setLameTargetBitrate(getIntegerRequestParameter("lameTargetBitrate", 96));
         webConfig.setLameTargetSampleRate(getIntegerRequestParameter("lameTargetSampleRate", 22050));
+        webConfig.setLameOnTheFlyIfPossible(getBooleanRequestParameter("lameOnTheFlyIfPossible", false));
         boolean error = false;
         error |= transferAndValidatePageSize(webConfig);
         error |= transferAndValidateRssFeedLimit(webConfig);

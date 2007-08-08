@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.utils.*;
+import de.codewave.utils.servlet.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 
@@ -19,6 +20,7 @@ public class Transcoder {
     private boolean myLame;
     private int myLameTargetBitrate;
     private int myLameTargetSampleRate;
+    private boolean myTempFile;
 
     public static Transcoder createTranscoder(Track track, WebConfig webConfig, HttpServletRequest request) {
         Transcoder transcoder = new Transcoder(track, webConfig, request);
@@ -36,12 +38,14 @@ public class Transcoder {
             myLame = webConfig.isLame();
             myLameTargetBitrate = webConfig.getLameTargetBitrate();
             myLameTargetSampleRate = webConfig.getLameTargetSampleRate();
+            myTempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request) || !webConfig.isLameOnTheFlyIfPossible();
             if (StringUtils.isNotEmpty(request.getParameter("lame"))) {
                 String[] splitted = request.getParameter("lame").split(",");
-                if (splitted.length == 2) {
+                if (splitted.length == 3) {
                     myLame = true;
                     myLameTargetBitrate = Integer.parseInt(splitted[0]);
                     myLameTargetSampleRate = Integer.parseInt(splitted[1]);
+                    myTempFile |= !Boolean.parseBoolean(splitted[2]);
                 }
             }
         }
@@ -70,7 +74,30 @@ public class Transcoder {
         return file;
     }
 
+    public StreamSender getStreamSender() throws IOException {
+        final String identifier = myTrackId + "_" + getTranscoderId();
+        if (myTempFile) {
+            File transcodedFile = MyTunesRss.STREAMING_CACHE.lock(identifier);
+            if (transcodedFile == null) {
+                transcodedFile = getTranscodedFile();
+                MyTunesRss.STREAMING_CACHE.add(identifier, transcodedFile, MyTunesRss.CONFIG.getStreamingCacheTimeout() * 60000);
+                MyTunesRss.STREAMING_CACHE.lock(identifier);
+            }
+            return new FileSender(transcodedFile, getTargetContentType(), (int)transcodedFile.length()) {
+                protected void afterSend() {
+                    MyTunesRss.STREAMING_CACHE.unlock(identifier);
+                }
+            };
+        } else {
+            return new StreamSender(getStream(), getTargetContentType(), 0);
+        }
+    }
+
     protected String getTranscoderId() {
         return "lame_mp3tomp3_" + myLameTargetBitrate + "_" + myLameTargetSampleRate;
+    }
+
+    public String getTargetContentType() {
+        return "audio/mp3";
     }
 }

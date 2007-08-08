@@ -35,6 +35,7 @@ public class WebConfig {
     private static final String CFG_LAME_TARGET_BITRATE = "lameBitrate";
     private static final String CFG_LAME_TARGET_SAMPLE_RATE = "lameSampleRate";
     private static final String CFG_THEME = "theme";
+    private static final String CFG_LAME_OTF_IF_POSSIBLE = "lameOnTheFlyIfPossible";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -96,6 +97,7 @@ public class WebConfig {
         myConfigValues.put(CFG_USE_LAME, "false");
         myConfigValues.put(CFG_LAME_TARGET_BITRATE, "96");
         myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, "22050");
+        myConfigValues.put(CFG_LAME_OTF_IF_POSSIBLE, "true");
     }
 
     public void load(HttpServletRequest request) {
@@ -343,5 +345,13 @@ public class WebConfig {
 
     public void setLameTargetSampleRate(int lameTargetFrequency) {
         myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, Integer.toString(lameTargetFrequency));
+    }
+
+    public boolean isLameOnTheFlyIfPossible() {
+        return Boolean.parseBoolean(myConfigValues.get(CFG_LAME_OTF_IF_POSSIBLE));
+    }
+
+    public void setLameOnTheFlyIfPossible(boolean lameOnTheFlyIfPossible) {
+        myConfigValues.put(CFG_LAME_OTF_IF_POSSIBLE, Boolean.toString(lameOnTheFlyIfPossible));
     }
 }

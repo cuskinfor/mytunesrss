@@ -43,7 +43,7 @@
                     <td><fmt:message key="settings.quota" /></td>
                     <td><c:out value="${mtfn:memory(authUser.bytesQuota)}"/> ${authUser.quotaType}</td>
                 </tr>
-                <tr <mt:flipFlop/>>
+                <tr <mt:flipFlop toggle="false"/>>
                     <td><fmt:message key="settings.quotaRemain" /></td>
                     <td><c:out value="${mtfn:memory(authUser.quotaRemaining)}"/></td>
                 </tr>
@@ -64,7 +64,7 @@
                                style="width: 170px;" />
                     </td>
                 </tr>
-                <tr <mt:flipFlop/>>
+                <tr <mt:flipFlop toggle="false"/>>
                     <td><fmt:message key="settings.retypePassword" /></td>
                     <td>
                         <input type="password"
@@ -135,7 +135,7 @@
                         <img src="${appUrl}/images/playlist_odd.gif" alt="playlist" style="vertical-align:text-top;" />
                     </td>
                 </tr>
-                <tr <mt:flipFlop/>>
+                <tr <mt:flipFlop toggle="false"/>>
                     <td><fmt:message key="settings.playlistType" /></td>
                     <td>
                         <select name="playlistType">
@@ -178,7 +178,7 @@
                         <input type="checkbox" name="useLame" value="true" <c:if test="${config.lame}">checked="checked"</c:if> />
                     </td>
                 </tr>
-                <tr <mt:flipFlop/>>
+                <tr <mt:flipFlop toggle="false"/>>
                     <td><fmt:message key="settings.lameTargetBitrate" /></td>
                     <td>
                         <select name="lameTargetBitrate">
@@ -190,7 +190,7 @@
                         </select>
                     </td>
                 </tr>
-                <tr <mt:flipFlop/>>
+                <tr <mt:flipFlop toggle="false"/>>
                     <td><fmt:message key="settings.lameTargetSampleRate" /></td>
                     <td>
                         <select name="lameTargetSampleRate">
@@ -198,6 +198,12 @@
                             <option value="22050" <c:if test="${config.lameTargetSampleRate eq '22050'}">selected="selected"</c:if>>22050 Hz</option>
                             <option value="44100" <c:if test="${config.lameTargetSampleRate eq '44100'}">selected="selected"</c:if>>44100 Hz</option>
                         </select>
+                    </td>
+                </tr>
+                <tr <mt:flipFlop toggle="false"/>>
+                    <td><fmt:message key="settings.lameOnTheFlyIfPossible" /></td>
+                    <td>
+                        <input type="checkbox" name="lameOnTheFlyIfPossible" value="true" <c:if test="${config.lameOnTheFlyIfPossible}">checked="checked"</c:if> />
                     </td>
                 </tr>
             </c:if>

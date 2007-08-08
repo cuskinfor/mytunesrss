@@ -45,18 +45,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                     } else {
                         Transcoder transcoder = Transcoder.createTranscoder(track, getWebConfig(), getRequest());
                         if (transcoder != null) {
-                            final String identifier = trackId + "_" + transcoder.getTranscoderId();
-                            File transcodedFile = MyTunesRss.STREAMING_CACHE.lock(identifier);
-                            if (transcodedFile == null) {
-                                transcodedFile = transcoder.getTranscodedFile();
-                                MyTunesRss.STREAMING_CACHE.add(identifier, transcodedFile, MyTunesRss.CONFIG.getStreamingCacheTimeout() * 60000);
-                                MyTunesRss.STREAMING_CACHE.lock(identifier);
-                            }
-                            streamSender = new FileSender(transcodedFile, contentType, (int)transcodedFile.length()) {
-                                protected void afterSend() {
-                                    MyTunesRss.STREAMING_CACHE.unlock(identifier);
-                                }
-                            };
+                            streamSender = transcoder.getStreamSender();
                         } else {
                             streamSender = new FileSender(file, contentType, (int)file.length());
                         }
@@ -75,7 +64,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                 streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
             }
         }
-        if ("head".equalsIgnoreCase(getRequest().getMethod())) {
+        if (ServletUtils.isHeadRequest(getRequest())) {
             streamSender.sendHeadResponse(getRequest(), getResponse());
         } else {
             streamSender.sendGetResponse(getRequest(), getResponse(), false);
