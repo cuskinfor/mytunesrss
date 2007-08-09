@@ -14,13 +14,6 @@ public class Faad2LameTranscoderStream extends InputStream {
     private static String LAME_ARGUMENTS = "--quiet -b {bitrate} --resample {samplerate} - -";
     private static String FAAD2_ARGUMENTS = "-f 2 -w {infile}";
 
-    protected static String getLameSampleRate(int outputSampleRate) {
-        StringBuffer lameRate = new StringBuffer();
-        lameRate.append(Integer.toString(outputSampleRate / 1000)).append(".");
-        lameRate.append(StringUtils.stripEnd(StringUtils.leftPad(Integer.toString(outputSampleRate % 1000), 3, "0"), "0"));
-        return lameRate.toString();
-    }
-
     private Process myLameProcess;
     private Process myFaad2Process;
 
@@ -50,7 +43,15 @@ public class Faad2LameTranscoderStream extends InputStream {
         new Thread(new Runnable() {
             public void run() {
                 try {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Start copying faad2 output into lame input.");
+                    }
                     IOUtils.copy(myFaad2Process.getInputStream(), myLameProcess.getOutputStream());
+                    myLameProcess.getOutputStream().close();
+                    myFaad2Process.destroy();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Finished copying faad2 output into lame input. Destroyed faad2 process.");
+                    }
                 } catch (IOException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not copy faad2 output to lame input stream.", e);
@@ -67,7 +68,6 @@ public class Faad2LameTranscoderStream extends InputStream {
     @Override
     public void close() throws IOException {
         myLameProcess.destroy();
-        myFaad2Process.destroy();
         super.close();
     }
 }

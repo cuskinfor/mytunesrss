@@ -75,7 +75,7 @@ public class MyTunesFunctions {
 
     public static String suffix(Map replacements, Track track) {
         String extension = FilenameUtils.getExtension(track.getFile().getName());
-        return replacements.get(extension) != null ? replacements.get(extension).toString() : extension;
+        return replacements != null && replacements.get(extension) != null ? replacements.get(extension).toString() : extension;
     }
 
     public static String replace(String string, String target, String replacement) {

@@ -13,13 +13,6 @@ public class LameTranscoderStream extends InputStream {
     private static final Log LOG = LogFactory.getLog(LameTranscoderStream.class);
     private static String LAME_ARGUMENTS = "--quiet -b {bitrate} --resample {samplerate} {infile} -";
 
-    protected static String getLameSampleRate(int outputSampleRate) {
-        StringBuffer lameRate = new StringBuffer();
-        lameRate.append(Integer.toString(outputSampleRate / 1000)).append(".");
-        lameRate.append(StringUtils.stripEnd(StringUtils.leftPad(Integer.toString(outputSampleRate % 1000), 3, "0"), "0"));
-        return lameRate.toString();
-    }
-
     private Process myProcess;
 
     public LameTranscoderStream(File file, String lameBinary, int outputBitRate, int outputSampleRate) throws IOException {
