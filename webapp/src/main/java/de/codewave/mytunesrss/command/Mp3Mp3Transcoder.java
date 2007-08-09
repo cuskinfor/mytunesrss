@@ -19,11 +19,10 @@ public class Mp3Mp3Transcoder extends Transcoder {
 
     public Mp3Mp3Transcoder(Track track, WebConfig webConfig, HttpServletRequest request) {
         super(track.getId(), track.getFile(), request, webConfig);
-        setTempFileRequested(init(webConfig, request));
+        init(webConfig, request);
     }
 
-    private boolean init(WebConfig webConfig, HttpServletRequest request) {
-        boolean tempFile = true;
+    private void init(WebConfig webConfig, HttpServletRequest request) {
         myLame = webConfig.isLame();
         myLameTargetBitrate = webConfig.getLameTargetBitrate();
         myLameTargetSampleRate = webConfig.getLameTargetSampleRate();
@@ -33,10 +32,9 @@ public class Mp3Mp3Transcoder extends Transcoder {
                 myLame = true;
                 myLameTargetBitrate = Integer.parseInt(splitted[0]);
                 myLameTargetSampleRate = Integer.parseInt(splitted[1]);
-                tempFile |= !Boolean.parseBoolean(splitted[2]);
+                setTempFileRequested(!Boolean.parseBoolean(splitted[2]));
             }
         }
-        return tempFile;
     }
 
     public boolean isTranscoder() {

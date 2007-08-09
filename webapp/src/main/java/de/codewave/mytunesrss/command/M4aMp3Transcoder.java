@@ -19,11 +19,10 @@ public class M4aMp3Transcoder extends Transcoder {
 
     public M4aMp3Transcoder(Track track, WebConfig webConfig, HttpServletRequest request) {
         super(track.getId(), track.getFile(), request, webConfig);
-        setTempFileRequested(init(webConfig, request));
+        init(webConfig, request);
     }
 
-    private boolean init(WebConfig webConfig, HttpServletRequest request) {
-        boolean tempFile = true;
+    private void init(WebConfig webConfig, HttpServletRequest request) {
         myFaad2 = webConfig.isFaad2();
         myFaad2TargetBitrate = webConfig.getFaad2TargetBitrate();
         myFaad2TargetSampleRate = webConfig.getFaad2TargetSampleRate();
@@ -33,10 +32,9 @@ public class M4aMp3Transcoder extends Transcoder {
                 myFaad2 = true;
                 myFaad2TargetBitrate = Integer.parseInt(splitted[0]);
                 myFaad2TargetSampleRate = Integer.parseInt(splitted[1]);
-                tempFile = !Boolean.parseBoolean(splitted[2]);
+                setTempFileRequested(!Boolean.parseBoolean(splitted[2]));
             }
         }
-        return tempFile;
     }
 
     public boolean isTranscoder() {

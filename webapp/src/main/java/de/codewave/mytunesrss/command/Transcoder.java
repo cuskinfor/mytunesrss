@@ -38,7 +38,7 @@ public abstract class Transcoder {
     }
 
     protected void setTempFileRequested(boolean tempFile) {
-        myTempFile |= (!myPlayerRequest && tempFile);
+        myTempFile = !myPlayerRequest && tempFile;
     }
 
     public File getTranscodedFile() throws IOException {
