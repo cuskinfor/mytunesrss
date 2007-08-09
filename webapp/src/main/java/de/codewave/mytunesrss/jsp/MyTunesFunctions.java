@@ -12,6 +12,7 @@ import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 
 import javax.servlet.http.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
@@ -72,8 +73,9 @@ public class MyTunesFunctions {
         return webSafeFileName(genre.getName());
     }
 
-    public static String suffix(Track track) {
-        return FilenameUtils.getExtension(track.getFile().getName());
+    public static String suffix(Map replacements, Track track) {
+        String extension = FilenameUtils.getExtension(track.getFile().getName());
+        return replacements.get(extension) != null ? replacements.get(extension).toString() : extension;
     }
 
     public static String replace(String string, String target, String replacement) {

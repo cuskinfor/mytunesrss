@@ -34,8 +34,11 @@ public class WebConfig {
     private static final String CFG_USE_LAME = "lame";
     private static final String CFG_LAME_TARGET_BITRATE = "lameBitrate";
     private static final String CFG_LAME_TARGET_SAMPLE_RATE = "lameSampleRate";
+    private static final String CFG_USE_FAAD2 = "faad2";
+    private static final String CFG_FAAD2_TARGET_BITRATE = "faad2Bitrate";
+    private static final String CFG_FAAD2_TARGET_SAMPLE_RATE = "faad2SampleRate";
     private static final String CFG_THEME = "theme";
-    private static final String CFG_LAME_OTF_IF_POSSIBLE = "lameOnTheFlyIfPossible";
+    private static final String CFG_TRANSCODE_OTF_IF_POSSIBLE = "transcodeOnTheFlyIfPossible";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -97,7 +100,10 @@ public class WebConfig {
         myConfigValues.put(CFG_USE_LAME, "false");
         myConfigValues.put(CFG_LAME_TARGET_BITRATE, "96");
         myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, "22050");
-        myConfigValues.put(CFG_LAME_OTF_IF_POSSIBLE, "false");
+        myConfigValues.put(CFG_USE_FAAD2, "false");
+        myConfigValues.put(CFG_FAAD2_TARGET_BITRATE, "128");
+        myConfigValues.put(CFG_FAAD2_TARGET_SAMPLE_RATE, "44100");
+        myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, "false");
     }
 
     public void load(HttpServletRequest request) {
@@ -347,11 +353,35 @@ public class WebConfig {
         myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, Integer.toString(lameTargetFrequency));
     }
 
-    public boolean isLameOnTheFlyIfPossible() {
-        return Boolean.parseBoolean(myConfigValues.get(CFG_LAME_OTF_IF_POSSIBLE));
+    public boolean isTranscodeOnTheFlyIfPossible() {
+        return Boolean.parseBoolean(myConfigValues.get(CFG_TRANSCODE_OTF_IF_POSSIBLE));
     }
 
-    public void setLameOnTheFlyIfPossible(boolean lameOnTheFlyIfPossible) {
-        myConfigValues.put(CFG_LAME_OTF_IF_POSSIBLE, Boolean.toString(lameOnTheFlyIfPossible));
+    public void setTranscodeOnTheFlyIfPossible(boolean transcodeOnTheFlyIfPossible) {
+        myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, Boolean.toString(transcodeOnTheFlyIfPossible));
+    }
+
+    public boolean isFaad2() {
+        return Boolean.parseBoolean(myConfigValues.get(CFG_USE_FAAD2));
+    }
+
+    public void setFaad2(boolean faad2) {
+        myConfigValues.put(CFG_USE_FAAD2, Boolean.toString(faad2));
+    }
+
+    public int getFaad2TargetBitrate() {
+        return Integer.parseInt(myConfigValues.get(CFG_FAAD2_TARGET_BITRATE));
+    }
+
+    public void setFaad2TargetBitrate(int faad2TargetBitrate) {
+        myConfigValues.put(CFG_FAAD2_TARGET_BITRATE, Integer.toString(faad2TargetBitrate));
+    }
+
+    public int getFaad2TargetSampleRate() {
+        return Integer.parseInt(myConfigValues.get(CFG_FAAD2_TARGET_SAMPLE_RATE));
+    }
+
+    public void setFaad2TargetSampleRate(int faad2TargetFrequency) {
+        myConfigValues.put(CFG_FAAD2_TARGET_SAMPLE_RATE, Integer.toString(faad2TargetFrequency));
     }
 }

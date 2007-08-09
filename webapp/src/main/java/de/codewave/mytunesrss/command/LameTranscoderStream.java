@@ -13,10 +13,6 @@ public class LameTranscoderStream extends InputStream {
     private static final Log LOG = LogFactory.getLog(LameTranscoderStream.class);
     private static String LAME_ARGUMENTS = "--quiet -b {bitrate} --resample {samplerate} {infile} -";
 
-    static {
-
-    }
-
     protected static String getLameSampleRate(int outputSampleRate) {
         StringBuffer lameRate = new StringBuffer();
         lameRate.append(Integer.toString(outputSampleRate / 1000)).append(".");

@@ -6,7 +6,6 @@ import de.codewave.mytunesrss.servlet.*;
 import de.codewave.utils.*;
 import de.codewave.utils.servlet.*;
 import org.apache.commons.io.*;
-import org.apache.commons.lang.*;
 
 import javax.servlet.http.*;
 import java.io.*;
@@ -14,50 +13,32 @@ import java.io.*;
 /**
  * de.codewave.mytunesrss.command.Transcoder
  */
-public class Transcoder {
+public abstract class Transcoder {
     private String myTrackId;
     private File myFile;
-    private boolean myLame;
-    private int myLameTargetBitrate;
-    private int myLameTargetSampleRate;
     private boolean myTempFile;
+    private boolean myPlayerRequest;
 
     public static Transcoder createTranscoder(Track track, WebConfig webConfig, HttpServletRequest request) {
-        Transcoder transcoder = new Transcoder(track, webConfig, request);
-        return transcoder.isTranscoder() ? transcoder : null;
-    }
-
-    public Transcoder(Track track, WebConfig webConfig, HttpServletRequest request) {
-        myTrackId = track.getId();
-        myFile = track.getFile();
-        init(webConfig, request);
-    }
-
-    private void init(WebConfig webConfig, HttpServletRequest request) {
-        if (myFile.getName().toLowerCase().endsWith(".mp3")) {
-            myLame = webConfig.isLame();
-            myLameTargetBitrate = webConfig.getLameTargetBitrate();
-            myLameTargetSampleRate = webConfig.getLameTargetSampleRate();
-            myTempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request) || !webConfig.isLameOnTheFlyIfPossible();
-            if (StringUtils.isNotEmpty(request.getParameter("lame"))) {
-                String[] splitted = request.getParameter("lame").split(",");
-                if (splitted.length == 3) {
-                    myLame = true;
-                    myLameTargetBitrate = Integer.parseInt(splitted[0]);
-                    myLameTargetSampleRate = Integer.parseInt(splitted[1]);
-                    myTempFile |= !Boolean.parseBoolean(splitted[2]);
-                }
-            }
+        Transcoder transcoder = null;
+        if ("audio/mp3".equals(track.getContentType())) {
+            transcoder = new Mp3Mp3Transcoder(track, webConfig, request);
+        } else if ("audio/x-m4a".equals(track.getContentType())) {
+            transcoder = new M4aMp3Transcoder(track, webConfig, request);
         }
+        return transcoder != null && transcoder.isTranscoder() ? transcoder : null;
     }
 
-    public boolean isTranscoder() {
-        return MyTunesRss.REGISTRATION.isRegistered() && myLame && myLameTargetBitrate > 0 && myLameTargetSampleRate > 0 &&
-                MyTunesRss.CONFIG.isValidLameBinary();
+    protected Transcoder(String trackId, File file, HttpServletRequest request, WebConfig webConfig) {
+        myPlayerRequest = "true".equalsIgnoreCase(request.getParameter("playerRequest"));
+        myTempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request) ||
+                (!webConfig.isTranscodeOnTheFlyIfPossible() && !myPlayerRequest);
+        myTrackId = trackId;
+        myFile = file;
     }
 
-    public InputStream getStream() throws IOException {
-        return new LameTranscoderStream(myFile, MyTunesRss.CONFIG.getLameBinary(), myLameTargetBitrate, myLameTargetSampleRate);
+    protected void setTempFileRequested(boolean tempFile) {
+        myTempFile |= (!myPlayerRequest && tempFile);
     }
 
     public File getTranscodedFile() throws IOException {
@@ -93,11 +74,19 @@ public class Transcoder {
         }
     }
 
-    protected String getTranscoderId() {
-        return "lame_mp3tomp3_" + myLameTargetBitrate + "_" + myLameTargetSampleRate;
+    protected File getFile() {
+        return myFile;
     }
 
-    public String getTargetContentType() {
-        return "audio/mp3";
+    protected void setTempFile(boolean tempFile) {
+        myTempFile = tempFile;
     }
+
+    protected abstract String getTranscoderId();
+
+    public abstract String getTargetContentType();
+
+    public abstract InputStream getStream() throws IOException;
+
+    public abstract boolean isTranscoder();
 }

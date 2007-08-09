@@ -56,6 +56,7 @@ public class MyTunesRssConfig {
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
     private String myLameBinary = "";
+    private String myFaad2Binary = "";
     private int myStreamingCacheTimeout = 20;
     private int myStreamingCacheMaxFiles = 300;
 
@@ -267,6 +268,18 @@ public class MyTunesRssConfig {
         myLameBinary = lameBinary;
     }
 
+    public String getFaad2Binary() {
+        return myFaad2Binary;
+    }
+
+    public boolean isValidFaad2Binary() {
+        return StringUtils.isNotEmpty(myFaad2Binary) && new File(myFaad2Binary).isFile();
+    }
+
+    public void setFaad2Binary(String faad2Binary) {
+        myFaad2Binary = faad2Binary;
+    }
+
     public int getStreamingCacheTimeout() {
         return myStreamingCacheTimeout;
     }
@@ -452,6 +465,7 @@ public class MyTunesRssConfig {
         setWebWelcomeMessage(Preferences.userRoot().node(PREF_ROOT).get("webWelcomeMessage", getWebWelcomeMessage()));
         readPathInfoEncryptionKey();
         setLameBinary(Preferences.userRoot().node(PREF_ROOT).get("lameBinary", getLameBinary()));
+        setFaad2Binary(Preferences.userRoot().node(PREF_ROOT).get("faad2Binary", getFaad2Binary()));
         setStreamingCacheTimeout(Preferences.userRoot().node(PREF_ROOT).getInt("streamingCacheTimeout", getStreamingCacheTimeout()));
         setStreamingCacheMaxFiles(Preferences.userRoot().node(PREF_ROOT).getInt("streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
     }
@@ -574,6 +588,7 @@ public class MyTunesRssConfig {
             }
         }
         Preferences.userRoot().node(PREF_ROOT).put("lameBinary", myLameBinary);
+        Preferences.userRoot().node(PREF_ROOT).put("faad2Binary", myFaad2Binary);
         Preferences.userRoot().node(PREF_ROOT).putInt("streamingCacheTimeout", myStreamingCacheTimeout);
         Preferences.userRoot().node(PREF_ROOT).putInt("streamingCacheMaxFiles", myStreamingCacheMaxFiles);
     }

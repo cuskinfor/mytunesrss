@@ -165,9 +165,22 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         setResourceBundle();
         if (MyTunesRss.REGISTRATION.isRegistered() && webConfig.isLame() && webConfig.getLameTargetBitrate() > 0 &&
                 webConfig.getLameTargetSampleRate() > 0) {
-            getRequest().setAttribute("lame", webConfig.getLameTargetBitrate() + "," + webConfig.getLameTargetSampleRate() + "," + webConfig.isLameOnTheFlyIfPossible());
+            getRequest().setAttribute("lame", webConfig.getLameTargetBitrate() + "," + webConfig.getLameTargetSampleRate() + "," + webConfig.isTranscodeOnTheFlyIfPossible());
         }
+        if (MyTunesRss.REGISTRATION.isRegistered() && webConfig.isFaad2() && webConfig.getFaad2TargetBitrate() > 0 &&
+                webConfig.getFaad2TargetSampleRate() > 0) {
+            getRequest().setAttribute("faad2", webConfig.getFaad2TargetBitrate() + "," + webConfig.getFaad2TargetSampleRate() + "," + webConfig.isTranscodeOnTheFlyIfPossible());
+            addSuffixReplacement("m4a", "mp3");
+        }
+    }
 
+    private void addSuffixReplacement(String suffix, String replacement) {
+        Map<String, String> replacements = (Map<String, String>)getRequest().getAttribute("suffixReplacements");
+        if (replacements == null) {
+            replacements = new HashMap<String, String>();
+            getRequest().setAttribute("suffixReplacements", replacements);
+        }
+        replacements.put(suffix, replacement);
     }
 
     private void setResourceBundle() {

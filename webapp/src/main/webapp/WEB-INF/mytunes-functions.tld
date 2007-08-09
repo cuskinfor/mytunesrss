@@ -89,7 +89,7 @@
         </description>
         <name>suffix</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String suffix(de.codewave.mytunesrss.datastore.statement.Track)
+        <function-signature>java.lang.String suffix(java.util.Map, de.codewave.mytunesrss.datastore.statement.Track)
         </function-signature>
         <example>
             &lt;c:out value="${mtfn:suffix(track)}"/&gt;

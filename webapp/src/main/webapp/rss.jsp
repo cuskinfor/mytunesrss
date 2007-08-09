@@ -8,7 +8,7 @@
             <title><c:out value="${channel}"/></title>
             <c:if test="${!userAgentPsp}"><link>${permServletUrl}</link></c:if>
         </image>
-        <description><fmt:message key="rssChannelDescription"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:suffix(track)}</c:set>
+        <description><fmt:message key="rssChannelDescription"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:suffix(suffixReplacements, track)}</c:set>
             <item>
                 <title><c:out value="${track.name}"/></title>
                 <description><c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" /></description>
@@ -16,7 +16,7 @@
                 <link>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></link>
                 <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></guid>
                 <pubDate>${pubDate}</pubDate>
-                <enclosure url="${permServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/lame=${param.lame}</mt:encrypt>/${cwfn:encodeUrl(virtualFileName)}"
+                <enclosure url="${permServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/faad2=${param.faad2}/lame=${param.lame}</mt:encrypt>/${cwfn:encodeUrl(virtualFileName)}"
                            type="${track.contentType}"
                            length="${track.contentLength}"/>
                 <c:if test="${userAgentPsp}"><media:thumbnail url="${permServletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>" width="160"/></c:if>
