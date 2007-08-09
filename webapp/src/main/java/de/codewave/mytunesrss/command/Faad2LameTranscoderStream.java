@@ -43,15 +43,8 @@ public class Faad2LameTranscoderStream extends InputStream {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Start copying faad2 output into lame input.");
-                    }
                     IOUtils.copy(myFaad2Process.getInputStream(), myLameProcess.getOutputStream());
                     myLameProcess.getOutputStream().close();
-                    myFaad2Process.destroy();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Finished copying faad2 output into lame input. Destroyed faad2 process.");
-                    }
                 } catch (IOException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not copy faad2 output to lame input stream.", e);
@@ -67,6 +60,7 @@ public class Faad2LameTranscoderStream extends InputStream {
 
     @Override
     public void close() throws IOException {
+        myFaad2Process.destroy();
         myLameProcess.destroy();
         super.close();
     }
