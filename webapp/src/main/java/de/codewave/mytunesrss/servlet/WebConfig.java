@@ -35,8 +35,6 @@ public class WebConfig {
     private static final String CFG_LAME_TARGET_BITRATE = "lameBitrate";
     private static final String CFG_LAME_TARGET_SAMPLE_RATE = "lameSampleRate";
     private static final String CFG_USE_FAAD2 = "faad2";
-    private static final String CFG_FAAD2_TARGET_BITRATE = "faad2Bitrate";
-    private static final String CFG_FAAD2_TARGET_SAMPLE_RATE = "faad2SampleRate";
     private static final String CFG_THEME = "theme";
     private static final String CFG_TRANSCODE_OTF_IF_POSSIBLE = "transcodeOnTheFlyIfPossible";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
@@ -101,8 +99,6 @@ public class WebConfig {
         myConfigValues.put(CFG_LAME_TARGET_BITRATE, "96");
         myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, "22050");
         myConfigValues.put(CFG_USE_FAAD2, "false");
-        myConfigValues.put(CFG_FAAD2_TARGET_BITRATE, "128");
-        myConfigValues.put(CFG_FAAD2_TARGET_SAMPLE_RATE, "44100");
         myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, "false");
     }
 
@@ -369,19 +365,11 @@ public class WebConfig {
         myConfigValues.put(CFG_USE_FAAD2, Boolean.toString(faad2));
     }
 
-    public int getFaad2TargetBitrate() {
-        return Integer.parseInt(myConfigValues.get(CFG_FAAD2_TARGET_BITRATE));
+    private boolean isAnyTranscoder() {
+        return isLame() || isFaad2();
     }
 
-    public void setFaad2TargetBitrate(int faad2TargetBitrate) {
-        myConfigValues.put(CFG_FAAD2_TARGET_BITRATE, Integer.toString(faad2TargetBitrate));
-    }
-
-    public int getFaad2TargetSampleRate() {
-        return Integer.parseInt(myConfigValues.get(CFG_FAAD2_TARGET_SAMPLE_RATE));
-    }
-
-    public void setFaad2TargetSampleRate(int faad2TargetFrequency) {
-        myConfigValues.put(CFG_FAAD2_TARGET_SAMPLE_RATE, Integer.toString(faad2TargetFrequency));
+    public boolean isValidTranscoder() {
+        return isAnyTranscoder() && getLameTargetBitrate() > 0 && getLameTargetSampleRate() > 0;
     }
 }

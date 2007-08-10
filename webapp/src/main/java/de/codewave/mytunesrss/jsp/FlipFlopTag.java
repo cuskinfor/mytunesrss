@@ -16,16 +16,6 @@ import java.io.*;
 public class FlipFlopTag extends TagSupport {
     private static final Log LOG = LogFactory.getLog(FlipFlopTag.class);
 
-    private boolean myToggle = true;
-
-    public boolean isToggle() {
-        return myToggle;
-    }
-
-    public void setToggle(boolean toggle) {
-        myToggle = toggle;
-    }
-
     @Override
     public int doStartTag() throws JspException {
         return Tag.EVAL_BODY_INCLUDE;
@@ -36,12 +26,10 @@ public class FlipFlopTag extends TagSupport {
         String value1 = (String)pageContext.getAttribute("flipFlop_value1");
         String value2 = (String)pageContext.getAttribute("flipFlop_value2");
         String current = (String)pageContext.getAttribute("flipFlop_current");
-        if (myToggle) {
-            if (current.equals(value1)) {
-                pageContext.setAttribute("flipFlop_current", value2);
-            } else {
-                pageContext.setAttribute("flipFlop_current", value1);
-            }
+        if (current.equals(value1)) {
+            pageContext.setAttribute("flipFlop_current", value2);
+        } else {
+            pageContext.setAttribute("flipFlop_current", value1);
         }
         try {
             pageContext.getOut().print(pageContext.getAttribute("flipFlop_current"));

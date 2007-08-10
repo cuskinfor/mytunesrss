@@ -3,8 +3,6 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.*;
-import de.codewave.utils.servlet.*;
-import org.apache.commons.lang.*;
 
 import javax.servlet.http.*;
 import java.io.*;
@@ -13,41 +11,27 @@ import java.io.*;
  * de.codewave.mytunesrss.command.Transcoder
  */
 public class Mp3Mp3Transcoder extends Transcoder {
-    private boolean myLame;
-    private int myLameTargetBitrate;
-    private int myLameTargetSampleRate;
+    private boolean myActive;
 
     public Mp3Mp3Transcoder(Track track, WebConfig webConfig, HttpServletRequest request) {
         super(track.getId(), track.getFile(), request, webConfig);
-        init(webConfig, request);
+        myActive = webConfig.isLame();
     }
 
-    private void init(WebConfig webConfig, HttpServletRequest request) {
-        myLame = webConfig.isLame();
-        myLameTargetBitrate = webConfig.getLameTargetBitrate();
-        myLameTargetSampleRate = webConfig.getLameTargetSampleRate();
-        if (StringUtils.isNotEmpty(request.getParameter("lame"))) {
-            String[] splitted = request.getParameter("lame").split(",");
-            if (splitted.length == 3) {
-                myLame = true;
-                myLameTargetBitrate = Integer.parseInt(splitted[0]);
-                myLameTargetSampleRate = Integer.parseInt(splitted[1]);
-                setTempFileRequested(!Boolean.parseBoolean(splitted[2]));
-            }
-        }
+    public boolean isAvailable() {
+        return super.isAvailable() && MyTunesRss.CONFIG.isValidLameBinary();
     }
 
-    public boolean isTranscoder() {
-        return MyTunesRss.REGISTRATION.isRegistered() && myLame && myLameTargetBitrate > 0 && myLameTargetSampleRate > 0 &&
-                MyTunesRss.CONFIG.isValidLameBinary();
+    public boolean isActive() {
+        return super.isActive() || myActive;
     }
 
     public InputStream getStream() throws IOException {
-        return new LameTranscoderStream(getFile(), MyTunesRss.CONFIG.getLameBinary(), myLameTargetBitrate, myLameTargetSampleRate);
+        return new LameTranscoderStream(getFile(), MyTunesRss.CONFIG.getLameBinary(), getTargetBitrate(), getTargetSampleRate());
     }
 
     protected String getTranscoderId() {
-        return "lame_mp3tomp3_" + myLameTargetBitrate + "_" + myLameTargetSampleRate;
+        return "lame_mp3tomp3_" + getTargetBitrate() + "_" + getTargetSampleRate();
     }
 
     public String getTargetContentType() {

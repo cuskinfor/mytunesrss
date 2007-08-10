@@ -163,14 +163,11 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("encryptionKey", MyTunesRss.CONFIG.getPathInfoKey());
         getRequest().setAttribute("globalConfig", MyTunesRss.CONFIG);
         setResourceBundle();
-        if (MyTunesRss.REGISTRATION.isRegistered() && webConfig.isLame() && webConfig.getLameTargetBitrate() > 0 &&
-                webConfig.getLameTargetSampleRate() > 0) {
-            getRequest().setAttribute("lame", webConfig.getLameTargetBitrate() + "," + webConfig.getLameTargetSampleRate() + "," + webConfig.isTranscodeOnTheFlyIfPossible());
-        }
-        if (MyTunesRss.REGISTRATION.isRegistered() && webConfig.isFaad2() && webConfig.getFaad2TargetBitrate() > 0 &&
-                webConfig.getFaad2TargetSampleRate() > 0) {
-            getRequest().setAttribute("faad2", webConfig.getFaad2TargetBitrate() + "," + webConfig.getFaad2TargetSampleRate() + "," + webConfig.isTranscodeOnTheFlyIfPossible());
-            addSuffixReplacement("m4a", "mp3");
+        if (MyTunesRss.REGISTRATION.isRegistered() && webConfig.isValidTranscoder()) {
+            getRequest().setAttribute("tc", webConfig.getLameTargetBitrate() + "," + webConfig.getLameTargetSampleRate() + "," + webConfig.isTranscodeOnTheFlyIfPossible());
+            if (webConfig.isFaad2()) {
+                addSuffixReplacement("m4a", "mp3");
+            }
         }
     }
 

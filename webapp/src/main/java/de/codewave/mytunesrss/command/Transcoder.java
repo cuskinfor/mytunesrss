@@ -6,6 +6,7 @@ import de.codewave.mytunesrss.servlet.*;
 import de.codewave.utils.*;
 import de.codewave.utils.servlet.*;
 import org.apache.commons.io.*;
+import org.apache.commons.lang.*;
 
 import javax.servlet.http.*;
 import java.io.*;
@@ -18,6 +19,9 @@ public abstract class Transcoder {
     private File myFile;
     private boolean myTempFile;
     private boolean myPlayerRequest;
+    private int myTargetBitrate;
+    private int myTargetSampleRate;
+    private boolean myActive;
 
     public static Transcoder createTranscoder(Track track, WebConfig webConfig, HttpServletRequest request) {
         Transcoder transcoder = null;
@@ -26,7 +30,7 @@ public abstract class Transcoder {
         } else if ("audio/x-m4a".equals(track.getContentType())) {
             transcoder = new M4aMp3Transcoder(track, webConfig, request);
         }
-        return transcoder != null && transcoder.isTranscoder() ? transcoder : null;
+        return transcoder != null && transcoder.isAvailable() && transcoder.isActive() ? transcoder : null;
     }
 
     protected Transcoder(String trackId, File file, HttpServletRequest request, WebConfig webConfig) {
@@ -35,6 +39,17 @@ public abstract class Transcoder {
                 (!webConfig.isTranscodeOnTheFlyIfPossible() && !myPlayerRequest);
         myTrackId = trackId;
         myFile = file;
+        myTargetBitrate = webConfig.getLameTargetBitrate();
+        myTargetSampleRate = webConfig.getLameTargetSampleRate();
+        if (StringUtils.isNotEmpty(request.getParameter("tc"))) {
+            String[] splitted = request.getParameter("tc").split(",");
+            if (splitted.length == 3) {
+                myActive = true;
+                myTargetBitrate = Integer.parseInt(splitted[0]);
+                myTargetSampleRate = Integer.parseInt(splitted[1]);
+                setTempFileRequested(!Boolean.parseBoolean(splitted[2]));
+            }
+        }
     }
 
     protected void setTempFileRequested(boolean tempFile) {
@@ -88,5 +103,19 @@ public abstract class Transcoder {
 
     public abstract InputStream getStream() throws IOException;
 
-    public abstract boolean isTranscoder();
+    public boolean isActive() {
+        return myActive;
+    }
+
+    public boolean isAvailable() {
+        return MyTunesRss.REGISTRATION.isRegistered() && myTargetBitrate > 0 && myTargetSampleRate > 0;
+    }
+
+    protected int getTargetBitrate() {
+        return myTargetBitrate;
+    }
+
+    protected int getTargetSampleRate() {
+        return myTargetSampleRate;
+    }
 }

@@ -43,7 +43,7 @@
                     <td><fmt:message key="settings.quota" /></td>
                     <td><c:out value="${mtfn:memory(authUser.bytesQuota)}"/> ${authUser.quotaType}</td>
                 </tr>
-                <tr <mt:flipFlop toggle="false"/>>
+                <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.quotaRemain" /></td>
                     <td><c:out value="${mtfn:memory(authUser.quotaRemaining)}"/></td>
                 </tr>
@@ -64,7 +64,7 @@
                                style="width: 170px;" />
                     </td>
                 </tr>
-                <tr <mt:flipFlop toggle="false"/>>
+                <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.retypePassword" /></td>
                     <td>
                         <input type="password"
@@ -135,7 +135,7 @@
                         <img src="${appUrl}/images/playlist_odd.gif" alt="playlist" style="vertical-align:text-top;" />
                     </td>
                 </tr>
-                <tr <mt:flipFlop toggle="false"/>>
+                <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.playlistType" /></td>
                     <td>
                         <select name="playlistType">
@@ -178,7 +178,25 @@
                         <input type="checkbox" name="useLame" value="true" <c:if test="${config.lame}">checked="checked"</c:if> />
                     </td>
                 </tr>
-                <tr <mt:flipFlop toggle="false"/>>
+            </c:if>
+            <c:if test="${registered && authUser.transcoder && globalConfig.validLameBinary && globalConfig.validFaad2Binary}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.useFaad2" /></td>
+                    <td>
+                        <input type="checkbox" name="useFaad2" value="true" <c:if test="${config.faad2}">checked="checked"</c:if> />
+                    </td>
+                </tr>
+            </c:if>
+            <c:if test="${registered && authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaad2Binary)}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.transcodeOnTheFlyIfPossible" /></td>
+                    <td>
+                        <input type="checkbox" name="transcodeOnTheFlyIfPossible" value="true" <c:if test="${config.transcodeOnTheFlyIfPossible}">checked="checked"</c:if> />
+                    </td>
+                </tr>
+            </c:if>
+            <c:if test="${registered && authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaad2Binary)}">
+                <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.lameTargetBitrate" /></td>
                     <td>
                         <select name="lameTargetBitrate">
@@ -190,7 +208,7 @@
                         </select>
                     </td>
                 </tr>
-                <tr <mt:flipFlop toggle="false"/>>
+                <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.lameTargetSampleRate" /></td>
                     <td>
                         <select name="lameTargetSampleRate">
@@ -201,46 +219,7 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${registered && authUser.transcoder && globalConfig.validLameBinary && globalConfig.validFaad2Binary}">
-                <tr <mt:flipFlop/>>
-                    <td><fmt:message key="settings.useFaad2" /></td>
-                    <td>
-                        <input type="checkbox" name="useFaad2" value="true" <c:if test="${config.faad2}">checked="checked"</c:if> />
-                    </td>
-                </tr>
-                <tr <mt:flipFlop toggle="false"/>>
-                    <td><fmt:message key="settings.faad2TargetBitrate" /></td>
-                    <td>
-                        <select name="faad2TargetBitrate">
-                            <option value="32" <c:if test="${config.faad2TargetBitrate eq '32'}">selected="selected"</c:if>>32 kbit</option>
-                            <option value="64" <c:if test="${config.faad2TargetBitrate eq '64'}">selected="selected"</c:if>>64 kbit</option>
-                            <option value="96" <c:if test="${config.faad2TargetBitrate eq '96'}">selected="selected"</c:if>>96 kbit</option>
-                            <option value="128" <c:if test="${config.faad2TargetBitrate eq '128'}">selected="selected"</c:if>>128 kbit</option>
-                            <option value="192" <c:if test="${config.faad2TargetBitrate eq '192'}">selected="selected"</c:if>>192 kbit</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr <mt:flipFlop toggle="false"/>>
-                    <td><fmt:message key="settings.faad2TargetSampleRate" /></td>
-                    <td>
-                        <select name="faad2TargetSampleRate">
-                            <option value="11025" <c:if test="${config.faad2TargetSampleRate eq '11025'}">selected="selected"</c:if>>11025 Hz</option>
-                            <option value="22050" <c:if test="${config.faad2TargetSampleRate eq '22050'}">selected="selected"</c:if>>22050 Hz</option>
-                            <option value="44100" <c:if test="${config.faad2TargetSampleRate eq '44100'}">selected="selected"</c:if>>44100 Hz</option>
-                        </select>
-                    </td>
-                </tr>
-            </c:if>
-            <c:if test="${registered && authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaad2Binary)}">
-                <tr <mt:flipFlop toggle="true"/>>
-                    <td><fmt:message key="settings.transcodeOnTheFlyIfPossible" /></td>
-                    <td>
-                        <input type="checkbox" name="transcodeOnTheFlyIfPossible" value="true" <c:if test="${config.transcodeOnTheFlyIfPossible}">checked="checked"</c:if> />
-                    </td>
-                </tr>
-            </c:if>
         </table>
-
         <div class="buttons">
             <input type="submit" value="<fmt:message key="doSave"/>" />
             <input type="button" value="<fmt:message key="doCancel"/>" onclick="document.location.href='${servletUrl}/showPortal/${auth}'" />
