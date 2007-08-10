@@ -1,4 +1,4 @@
 ENCODING=UTF8
 PRODUCT_ID=300165105
-REG_NAME=Sahas Katta
+REG_NAME=celumsolutions software gmbh & co kg
 #EXPIRATION=2007-10-31
