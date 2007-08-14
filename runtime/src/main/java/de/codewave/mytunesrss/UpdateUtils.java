@@ -6,6 +6,7 @@ package de.codewave.mytunesrss;
 
 import de.codewave.utils.network.*;
 import de.codewave.utils.swing.*;
+import de.codewave.utils.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +27,7 @@ public class UpdateUtils {
             UpdateInfo updateInfo = checkUpdateTask.getUpdateInfo();
             if (updateInfo != null) {
                 String noNagVersion = Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).get("updateIgnoreVersion", MyTunesRss.VERSION);
-                if (!updateInfo.getVersion().equals(MyTunesRss.VERSION) && (!autoCheck || !noNagVersion.equals(updateInfo.getVersion()))) {
+                if (new Version(updateInfo.getVersion()).compareTo(new Version(MyTunesRss.VERSION)) > 0 && (!autoCheck || !noNagVersion.equals(updateInfo.getVersion()))) {
                     if (askForUpdate(updateInfo, autoCheck)) {
                         File targetFile = new File(updateInfo.getFileName());
                         final FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME,
