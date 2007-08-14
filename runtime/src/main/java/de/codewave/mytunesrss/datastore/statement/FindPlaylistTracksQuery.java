@@ -51,11 +51,13 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
         } else {
             statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByIndex");
         }
-        String[] parts = StringUtils.split(myId);
-        statement.setString("id", parts[0]);
-        if (parts.length == 3) {
-            statement.setInt("firstIndex", Integer.parseInt(parts[1]));
-            statement.setInt("lastIndex", Integer.parseInt(parts[2]));
+        if (myId != null) {
+            String[] parts = StringUtils.split(myId);
+            statement.setString("id", parts[0]);
+            if (parts.length == 3) {
+                statement.setInt("firstIndex", Integer.parseInt(parts[1]));
+                statement.setInt("lastIndex", Integer.parseInt(parts[2]));
+            }
         }
         return execute(statement, new TrackResultBuilder());
     }
