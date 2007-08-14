@@ -51,4 +51,13 @@ public class AddonsConfig extends MyTunesRssMBean implements AddonsConfigMBean {
         onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
+
+    public String getWebWelcomeMessage() {
+        return MyTunesRss.CONFIG.getWebWelcomeMessage();
+    }
+
+    public void setWebWelcomeMessage(String message) {
+        MyTunesRss.CONFIG.setWebWelcomeMessage(message);
+        onChange();
+    }
 }

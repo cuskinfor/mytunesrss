@@ -310,7 +310,6 @@ public class MyTunesRss {
         }
         if (MyTunesRss.REGISTRATION.isRegistered()) {
             MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
-            MyTunesRssJmxUtils.startJmxServer();
             if (CONFIG.isAutoStartServer()) {
                 startWebserver();
             }

@@ -14,4 +14,6 @@ public interface AddonsConfigMBean {
     String addLanguage(String languagePath);
     String removeTheme(String themeName);
     String removeLanguage(String languageCode);
+    String getWebWelcomeMessage();
+    void setWebWelcomeMessage(String message);
 }
