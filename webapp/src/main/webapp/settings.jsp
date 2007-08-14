@@ -118,6 +118,17 @@
                            style="width: 50px;" />
                 </td>
             </tr>
+            <tr <mt:flipFlop/>>
+                <td><fmt:message key="settings.randomSource" /></td>
+                <td>
+                    <select name="randomSource">
+                        <option value=""><fmt:message key="settings.randomSourceAll"/></option>
+                        <c:forEach items="${playlists}" var="playlist">
+                            <option value="${playlist.id}" <c:if test="${config.randomSource eq playlist.id}">selected="selected"</c:if>><c:out value="${playlist.name}"/></option>
+                        </c:forEach>
+                    </select>
+                </td>
+            </tr>
             <c:if test="${authUser.rss}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.playlistTypes.rss" /></td>

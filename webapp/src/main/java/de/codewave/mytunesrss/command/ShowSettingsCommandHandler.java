@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 
 /**
  * de.codewave.mytunesrss.command.ShowSettingsCommandHandler
@@ -16,6 +17,7 @@ public class ShowSettingsCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized()) {
             getRequest().setAttribute("themes", AddonsUtils.getThemes());
+            getRequest().setAttribute("playlists", getDataStore().executeQuery(new FindPlaylistQuery(null, null)));
             forward(MyTunesRssResource.Settings);
         } else {
             forward(MyTunesRssResource.Login);

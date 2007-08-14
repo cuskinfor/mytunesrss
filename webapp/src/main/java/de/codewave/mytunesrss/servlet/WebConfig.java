@@ -37,6 +37,7 @@ public class WebConfig {
     private static final String CFG_USE_FAAD2 = "faad2";
     private static final String CFG_THEME = "theme";
     private static final String CFG_TRANSCODE_OTF_IF_POSSIBLE = "transcodeOnTheFlyIfPossible";
+    private static final String CFG_RANDOM_SOURCE = "rndSrc";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -100,6 +101,7 @@ public class WebConfig {
         myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, "22050");
         myConfigValues.put(CFG_USE_FAAD2, "false");
         myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, "false");
+        myConfigValues.put(CFG_RANDOM_SOURCE, "");
     }
 
     public void load(HttpServletRequest request) {
@@ -371,5 +373,13 @@ public class WebConfig {
 
     public boolean isValidTranscoder() {
         return isAnyTranscoder() && getLameTargetBitrate() > 0 && getLameTargetSampleRate() > 0;
+    }
+
+    public String getRandomSource() {
+        return myConfigValues.get(CFG_RANDOM_SOURCE);
+    }
+
+    public void setRandomSource(String source) {
+        myConfigValues.put(CFG_RANDOM_SOURCE, source);
     }
 }

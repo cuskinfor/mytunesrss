@@ -42,7 +42,16 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
             myId = null;
         } else if (myId.startsWith(PSEUDO_ID_RANDOM)) {
             statement = MyTunesRssUtils.createStatement(connection, "findRandomTracks");
-            statement.setInt("maxCount", Integer.parseInt(myId.split("_")[1]));
+            String[] splitted = myId.split("_");
+            statement.setInt("maxCount", Integer.parseInt(splitted[1]));
+            if (splitted.length > 2) {
+                String sourceId = splitted[2];
+                Collection<Playlist> playlists = new FindPlaylistQuery(null, sourceId).execute(connection);
+                if (playlists.size() == 1) {
+                    Playlist playlist = playlists.iterator().next();
+                    statement.setString("sourcePlaylistId", StringUtils.trimToNull(playlist.getId()));
+                }
+            }
             myId = null;
         } else if (mySortOrder == SortOrder.Album) {
             statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByAlbum");
