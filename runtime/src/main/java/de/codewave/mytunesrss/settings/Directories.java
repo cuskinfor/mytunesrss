@@ -16,7 +16,7 @@ import java.io.*;
 /**
  * de.codewave.mytunesrss.settings.Options
  */
-public class Directories {
+public class Directories implements MyTunesRssEventListener {
 
     public enum FolderStructureRole {
         Artist, Album, None;
@@ -48,7 +48,7 @@ public class Directories {
     private JButton myDeleteBaseDirButton;
     private JScrollPane myScrollPane;
     private JPanel myUploadPanel;
-    private DefaultListModel myListModel = new DefaultListModel();
+    private DefaultListModel myListModel;
 
     private void createUIComponents() {
         myBaseDirsList = new JList() {
@@ -69,8 +69,7 @@ public class Directories {
         myFolderStructureParent.addItem(FolderStructureRole.None);
         myFolderStructureParent.addItem(FolderStructureRole.Album);
         myFolderStructureParent.addItem(FolderStructureRole.Artist);
-        addAllToListModel();
-        myBaseDirsList.setModel(myListModel);
+        initValues();
         myBaseDirsList.setCellRenderer(new DefaultListCellRenderer() {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -86,8 +85,6 @@ public class Directories {
                 myDeleteBaseDirButton.setEnabled(myBaseDirsList.getSelectedIndex() > -1);
             }
         });
-        setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemArtistNameFolder(), FolderStructureRole.Artist);
-        setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemAlbumNameFolder(), FolderStructureRole.Album);
         myAddBaseDirButton.addActionListener(new AddWatchFolderButtonListener());
         myDeleteBaseDirButton.addActionListener(new DeleteWatchFolderButtonListener());
         myUploadDirLookupButton.addActionListener(new AddWatchFolderButtonListener() {
@@ -96,6 +93,21 @@ public class Directories {
                 myUploadDirInput.setText(file.getCanonicalPath());
             }
         });
+        MyTunesRssEventManager.getInstance().addListener(this);
+    }
+
+    public void handleEvent(MyTunesRssEvent event) {
+        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+            initValues();
+        }
+    }
+
+    private void initValues() {
+        myListModel = new DefaultListModel();
+        addAllToListModel();
+        myBaseDirsList.setModel(myListModel);
+        setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemArtistNameFolder(), FolderStructureRole.Artist);
+        setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemAlbumNameFolder(), FolderStructureRole.Album);
         myUploadDirInput.setText(MyTunesRss.CONFIG.getUploadDir());
         myCreateUserDir.setSelected(MyTunesRss.CONFIG.isUploadCreateUserDir());
     }

@@ -19,7 +19,7 @@ import java.util.Date;
 /**
  * de.codewave.mytunesrss.settings.Database
  */
-public class Database {
+public class Database implements MyTunesRssEventListener {
     private static final Log LOG = LogFactory.getLog(Database.class);
     private static final int MAX_UPDATE_INTERVAL = 1440;
     private static final int MIN_UPDATE_INTERVAL = 1;
@@ -38,15 +38,26 @@ public class Database {
 
     public void init() {
         refreshLastUpdate();
+        myAutoUpdateDatabaseInput.addActionListener(new AutoUpdateDatabaseInputListener());
+        myDeleteDatabaseButton.addActionListener(new DeleteDatabaseButtonListener());
+        myUpdateDatabaseButton.addActionListener(new UpdateDatabaseButtonListener());
+        initValues();
+        MyTunesRssEventManager.getInstance().addListener(this);
+    }
+
+    public void handleEvent(MyTunesRssEvent event) {
+        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+            initValues();
+        }
+    }
+
+    private void initValues() {
         int interval = MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval();
         if (interval < MIN_UPDATE_INTERVAL) {
             interval = MIN_UPDATE_INTERVAL;
         } else if (interval > MAX_UPDATE_INTERVAL) {
             interval = MAX_UPDATE_INTERVAL;
         }
-        myAutoUpdateDatabaseInput.addActionListener(new AutoUpdateDatabaseInputListener());
-        myDeleteDatabaseButton.addActionListener(new DeleteDatabaseButtonListener());
-        myUpdateDatabaseButton.addActionListener(new UpdateDatabaseButtonListener());
         SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(interval, MIN_UPDATE_INTERVAL, MAX_UPDATE_INTERVAL, 1);
         myAutoUpdateDatabaseIntervalInput.setModel(spinnerNumberModel);
         myAutoUpdateDatabaseInput.setSelected(MyTunesRss.CONFIG.isAutoUpdateDatabase());

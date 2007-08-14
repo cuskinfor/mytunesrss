@@ -25,6 +25,7 @@ public class MyTunesRssJmxUtils {
     private static ObjectName USER_CONFIG_NAME;
     private static ObjectName MISC_CONFIG_NAME;
     private static ObjectName ADDONS_CONFIG_NAME;
+    private static ObjectName STREAMING_CONFIG_NAME;
     private static boolean INITIALIZED;
 
     static {
@@ -37,6 +38,7 @@ public class MyTunesRssJmxUtils {
             USER_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Users");
             MISC_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Miscellaneous");
             ADDONS_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Addons");
+            STREAMING_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Streaming");
             INITIALIZED = true;
         } catch (MalformedObjectNameException e) {
             if (LOG.isErrorEnabled()) {
@@ -56,6 +58,7 @@ public class MyTunesRssJmxUtils {
                 server.registerMBean(new UserConfig(), USER_CONFIG_NAME);
                 server.registerMBean(new MiscConfig(), MISC_CONFIG_NAME);
                 server.registerMBean(new AddonsConfig(), ADDONS_CONFIG_NAME);
+                server.registerMBean(new StreamingConfig(), STREAMING_CONFIG_NAME);
                 registerUsers();
                 HttpAdaptor adaptor = new HttpAdaptor();
                 ObjectName name = HTTP_ADAPTOR_NAME;

@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * de.codewave.mytunesrss.settings.UserManagement
  */
-public class UserManagement {
+public class UserManagement implements MyTunesRssEventListener {
     private JPanel myRootPanel;
     private JButton myCreateButton;
     private JPanel myUserPanel;
@@ -28,6 +28,13 @@ public class UserManagement {
         myScrollPane.getViewport().setOpaque(false);
         myCreateButton.addActionListener(new CreateUserActionListener());
         refreshUserList();
+        MyTunesRssEventManager.getInstance().addListener(this);
+    }
+
+    public void handleEvent(MyTunesRssEvent event) {
+        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+            refreshUserList();
+        }
     }
 
     private void refreshUserList() {

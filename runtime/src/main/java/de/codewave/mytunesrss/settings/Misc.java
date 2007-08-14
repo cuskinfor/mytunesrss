@@ -35,10 +35,18 @@ public class Misc implements MyTunesRssEventListener {
 
     public void init() {
         initRegistration();
+        initValues();
+        myUseProxyInput.addActionListener(new UseProxyActionListener());
+        myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
+        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput, MyTunesRssUtils.getBundleString("error.emptyProxyHost")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myProxyPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
+                "error.illegalProxyPort")));
+    }
+
+    private void initValues() {
         myUsernameInput.setText(MyTunesRss.CONFIG.getMyTunesRssComUser());
         myPasswordInput.setPasswordHash(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash());
         myUseProxyInput.setSelected(MyTunesRss.CONFIG.isProxyServer());
-        myUseProxyInput.addActionListener(new UseProxyActionListener());
         SwingUtils.enableElementAndLabel(myProxyHostInput, myUseProxyInput.isSelected());
         SwingUtils.enableElementAndLabel(myProxyPortInput, myUseProxyInput.isSelected());
         myProxyHostInput.setText(MyTunesRss.CONFIG.getProxyHost());
@@ -49,11 +57,7 @@ public class Misc implements MyTunesRssEventListener {
             myProxyPortInput.setText("");
         }
         myQuitConfirmationInput.setSelected(MyTunesRss.CONFIG.isQuitConfirmation());
-        myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
         myUpdateOnStartInput.setSelected(MyTunesRss.CONFIG.isCheckUpdateOnStart());
-        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput, MyTunesRssUtils.getBundleString("error.emptyProxyHost")));
-        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myProxyPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
-                "error.illegalProxyPort")));
     }
 
     private void initRegistration() {
@@ -111,17 +115,19 @@ public class Misc implements MyTunesRssEventListener {
 
     public void handleEvent(MyTunesRssEvent event) {
         switch (event) {
-            case EnableAutoStartServer:
+            case ENABLE_AUTO_START_SERVER:
                 myUpdateOnStartInputCache = myUpdateOnStartInput.isSelected();
                 myUpdateOnStartInput.setSelected(false);
                 myUpdateOnStartInput.setEnabled(false);
                 myAutoStartServer = true;
                 break;
-            case DisableAutoStartServer:
+            case DISABLE_AUTO_START_SERVER:
                 myUpdateOnStartInput.setSelected(myUpdateOnStartInputCache);
                 myUpdateOnStartInput.setEnabled(true);
                 myAutoStartServer = false;
                 break;
+            case CONFIGURATION_CHANGED:
+                initValues();
         }
     }
 

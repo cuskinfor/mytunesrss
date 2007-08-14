@@ -28,10 +28,12 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
 
     public void setIgnoreTimestampsOnUpdate(boolean ignoreTimestamps) {
         MyTunesRss.CONFIG.setIgnoreTimestamps(ignoreTimestamps);
+        onChange();
     }
 
     public String resetDatabase() {
         MyTunesRssUtils.executeTask(null, null, null, false, new RecreateDatabaseTask());
+        onChange();
         return MyTunesRss.ERROR_QUEUE.popLastError();
     }
 
@@ -43,6 +45,7 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
                     MyTunesRssUtils.executeTask(null, null, null, false, databaseBuilderTask);
                 }
             }).start();
+            onChange();
             return MyTunesRssUtils.getBundleString("jmx.databaseUpdateStarted");
         } else {
             return MyTunesRssUtils.getBundleString("jmx.databaseUpdateAlreadyRunning");
@@ -73,6 +76,7 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
 
     public void setUpdateOnServerStart(boolean updateOnServerStart) {
         MyTunesRss.CONFIG.setUpdateDatabaseOnServerStart(updateOnServerStart);
+        onChange();
     }
 
     public boolean isAutoUpdate() {
@@ -81,6 +85,7 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
 
     public void setAutoUpdate(boolean autoUpdate) {
         MyTunesRss.CONFIG.setAutoUpdateDatabase(autoUpdate);
+        onChange();
     }
 
     public int getAutoUpdateIntervalMinutes() {
@@ -89,6 +94,7 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
 
     public void setAutoUpdateIntervalMinutes(int minutes) {
         MyTunesRss.CONFIG.setAutoUpdateDatabaseInterval(minutes);
+        onChange();
     }
 
     public String getArtistDropWords() {
@@ -97,6 +103,7 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
 
     public void setArtistDropWords(String artistDropWords) {
         MyTunesRss.CONFIG.setArtistDropWords(artistDropWords);
+        onChange();
     }
 
     public String getFileTypes() {
@@ -105,6 +112,7 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
 
     public void setFileTypes(String fileTypes) {
         MyTunesRss.CONFIG.setFileTypes(fileTypes);
+        onChange();
     }
 
     public boolean isRemoveMissingItunesTracks() {
@@ -113,5 +121,6 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
 
     public void setRemoveMissingItunesTracks(boolean removeMissingTracks) {
         MyTunesRss.CONFIG.setItunesDeleteMissingFiles(removeMissingTracks);
+        onChange();
     }
 }

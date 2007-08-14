@@ -20,11 +20,13 @@ public class AddonsConfig extends MyTunesRssMBean implements AddonsConfigMBean {
 
     public String addLanguage(String languagePath) {
         String error = AddonsUtils.addLanguage(new File(languagePath));
+        onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
 
     public String addTheme(String themePath) {
         String error = AddonsUtils.addTheme(new File(themePath));
+        onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
 
@@ -40,11 +42,13 @@ public class AddonsConfig extends MyTunesRssMBean implements AddonsConfigMBean {
 
     public String removeLanguage(String languageCode) {
         String error = AddonsUtils.deleteLanguage(languageCode);
+        onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
 
     public String removeTheme(String themeName) {
         String error = AddonsUtils.deleteTheme(themeName);
+        onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
 }

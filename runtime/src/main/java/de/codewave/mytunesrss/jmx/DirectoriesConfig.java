@@ -27,6 +27,7 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
 
     public void setCreateUserSubdir(boolean createUserSubdir) {
         MyTunesRss.CONFIG.setUploadCreateUserDir(createUserSubdir);
+        onChange();
     }
 
     public String getUploadDir() {
@@ -35,6 +36,7 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
 
     public void setUploadDir(String uploadDir) {
         MyTunesRss.CONFIG.setUploadDir(uploadDir);
+        onChange();
     }
 
     public String getFolderStructure() {
@@ -61,35 +63,42 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
     public void setFolderStructureToAlbumAndArtist() {
         MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(2);
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(1);
+        onChange();
     }
 
     public void setFolderStructureToArtistAndAlbum() {
         MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(1);
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(2);
+        onChange();
     }
 
     public void setFolderStructureToNone() {
         MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(0);
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(0);
+        onChange();
     }
 
     public void setFolderStructureToNoneAndAlbum() {
         MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(1);
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(0);
+        onChange();
     }
 
     public void setFolderStructureToNoneAndArtist() {
         MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(0);
         MyTunesRss.CONFIG.setFileSystemArtistNameFolder(1);
+        onChange();
     }
 
     public String addDatasource(String watchFolder) {
         String error = MyTunesRss.CONFIG.addDatasource(watchFolder);
+        onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
 
     public String removeDatasource(String watchFolder) {
         String error = MyTunesRss.CONFIG.removeDatasource(watchFolder);
+        onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
 }

@@ -29,6 +29,7 @@ public class UserConfig extends MyTunesRssMBean implements UserConfigMBean {
             MyTunesRssJmxUtils.unregisterUsers();
             MyTunesRss.CONFIG.addUser(user);
             MyTunesRssJmxUtils.registerUsers();
+            onChange();
             return MyTunesRssUtils.getBundleString("ok");
         } catch (UnsupportedEncodingException e) {
             if (LOG.isErrorEnabled()) {

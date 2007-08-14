@@ -10,7 +10,7 @@ import java.util.Timer;
 /**
  * de.codewave.mytunesrss.settings.Settings
  */
-public class Settings {
+public class Settings implements MyTunesRssEventListener {
     private JPanel myRootPanel;
     private Server myServerForm;
     private Directories myDirectoriesForm;
@@ -61,6 +61,7 @@ public class Settings {
         myStreamingForm.init();
         myAddonsForm.init();
         myTabbedPane.addChangeListener(new TabSwitchListener());
+        MyTunesRssEventManager.getInstance().addListener(this);
     }
 
     private void initRegistration() {
@@ -128,25 +129,30 @@ public class Settings {
         String messages = updateConfigFromGui();
         if (messages == null) {
             MyTunesRss.startWebserver();
-            if (MyTunesRss.WEBSERVER.isRunning()) {
-                setGuiMode(GuiMode.ServerRunning);
-                myServerForm.setServerRunningStatus(MyTunesRss.CONFIG.getPort());
-            }
+            setServerStateInGui();
         } else {
             MyTunesRssUtils.showErrorMessage(messages);
         }
     }
 
-    public void doStopServer() {
-        MyTunesRss.stopWebserver();
-        if (!MyTunesRss.WEBSERVER.isRunning()) {
+    public void handleEvent(MyTunesRssEvent event) {
+        if (event == MyTunesRssEvent.SERVER_STARTED || event == MyTunesRssEvent.SERVER_STOPPED) {
+            setServerStateInGui();
+        }
+    }
+
+    private void setServerStateInGui() {
+        if (MyTunesRss.WEBSERVER.isRunning()) {
+            setGuiMode(GuiMode.ServerRunning);
+            myServerForm.setServerRunningStatus(MyTunesRss.CONFIG.getPort());
+        } else {
             setGuiMode(GuiMode.ServerIdle);
             myServerForm.setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
-            if (MyTunesRss.CONFIG.isAutoUpdateDatabase()) {
-                MyTunesRss.SERVER_RUNNING_TIMER.cancel();
-                MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
-            }
         }
+    }
+
+    public void doStopServer() {
+        MyTunesRss.stopWebserver();
     }
 
     public void doQuitApplication() {

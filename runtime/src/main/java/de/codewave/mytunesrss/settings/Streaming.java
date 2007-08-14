@@ -12,7 +12,7 @@ import org.apache.commons.lang.*;
 /**
  * de.codewave.mytunesrss.settings.Streaming
  */
-public class Streaming {
+public class Streaming implements MyTunesRssEventListener {
     private JPanel myRootPanel;
     private JTextField myLameBinaryInput;
     private JButton myLameBinaryLookupButton;
@@ -22,18 +22,29 @@ public class Streaming {
     private JButton myFaad2BinaryLookupButton;
 
     public void init() {
-        myLameBinaryInput.setText(MyTunesRss.CONFIG.getLameBinary());
-        myFaad2BinaryInput.setText(MyTunesRss.CONFIG.getFaad2Binary());
+        initValues();
         myLameBinaryLookupButton.addActionListener(new SelectBinaryActionListener(myLameBinaryInput, MyTunesRssUtils.getBundleString(
                 "dialog.lookupLameBinary")));
         myFaad2BinaryLookupButton.addActionListener(new SelectBinaryActionListener(myFaad2BinaryInput, MyTunesRssUtils.getBundleString(
                 "dialog.lookupFaad2Binary")));
-        myCacheTimeout.setText(Integer.toString(MyTunesRss.CONFIG.getStreamingCacheTimeout()));
-        myCacheLimit.setText(Integer.toString(MyTunesRss.CONFIG.getStreamingCacheMaxFiles()));
         JTextFieldValidation.setValidation(new FileExistsTextFieldValidation(myLameBinaryInput, true, false, MyTunesRssUtils.getBundleString("error.lameBinaryFileMissing")));
         JTextFieldValidation.setValidation(new FileExistsTextFieldValidation(myFaad2BinaryInput, true, false, MyTunesRssUtils.getBundleString("error.faad2BinaryFileMissing")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myCacheTimeout, 0, 1440, true, MyTunesRssUtils.getBundleString("error.illegalCacheTimeout")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myCacheLimit, 0, 10000, true, MyTunesRssUtils.getBundleString("error.illegalCacheLimit")));
+        MyTunesRssEventManager.getInstance().addListener(this);
+    }
+
+    public void handleEvent(MyTunesRssEvent event) {
+        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+            initValues();
+        }
+    }
+
+    private void initValues() {
+        myLameBinaryInput.setText(MyTunesRss.CONFIG.getLameBinary());
+        myFaad2BinaryInput.setText(MyTunesRss.CONFIG.getFaad2Binary());
+        myCacheTimeout.setText(Integer.toString(MyTunesRss.CONFIG.getStreamingCacheTimeout()));
+        myCacheLimit.setText(Integer.toString(MyTunesRss.CONFIG.getStreamingCacheMaxFiles()));
     }
 
     public String updateConfigFromGui() {

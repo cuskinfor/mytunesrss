@@ -79,4 +79,8 @@ public interface EditUserConfigMBean {
     int getSessionTimeout();
 
     void setSessionTimeout(int minutes);
+
+    boolean isPermissionTranscoding();
+
+    void setPermissionTranscoding(boolean permissionTranscoding);
 }

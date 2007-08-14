@@ -13,7 +13,7 @@ import java.io.*;
 /**
  * de.codewave.mytunesrss.settings.Addons
  */
-public class Addons {
+public class Addons implements MyTunesRssEventListener {
     private JPanel myRootPanel;
     private JButton myAddThemeButton;
     private JButton myDeleteThemeButton;
@@ -49,7 +49,6 @@ public class Addons {
         myLanguagesScrollPane.getViewport().setOpaque(false);
         myThemesList.setModel(myThemesListModel);
         myLanguagesList.setModel(myLanguagesListModel);
-        initListModels();
         myThemesList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 myDeleteThemeButton.setEnabled(myThemesList.getSelectedIndex() > -1);
@@ -60,7 +59,8 @@ public class Addons {
                 myDeleteLanguageButton.setEnabled(myLanguagesList.getSelectedIndex() > -1);
             }
         });
-        myAddThemeButton.addActionListener(new AddButtonListener(MyTunesRssUtils.getBundleString("dialog.lookupTheme"), MyTunesRssUtils.getBundleString("pleaseWait.addingTheme")) {
+        myAddThemeButton.addActionListener(new AddButtonListener(MyTunesRssUtils.getBundleString("dialog.lookupTheme"),
+                                                                 MyTunesRssUtils.getBundleString("pleaseWait.addingTheme")) {
             protected String add(File theme) {
                 return AddonsUtils.addTheme(theme);
             }
@@ -70,7 +70,8 @@ public class Addons {
                 return AddonsUtils.deleteTheme(theme);
             }
         });
-        myAddLanguageButton.addActionListener(new AddButtonListener(MyTunesRssUtils.getBundleString("dialog.lookupLanguage"), MyTunesRssUtils.getBundleString("pleaseWait.addingLanguage")) {
+        myAddLanguageButton.addActionListener(new AddButtonListener(MyTunesRssUtils.getBundleString("dialog.lookupLanguage"),
+                                                                    MyTunesRssUtils.getBundleString("pleaseWait.addingLanguage")) {
             protected String add(File language) {
                 return AddonsUtils.addLanguage(language);
             }
@@ -80,6 +81,18 @@ public class Addons {
                 return AddonsUtils.deleteLanguage(language);
             }
         });
+        initValues();
+        MyTunesRssEventManager.getInstance().addListener(this);
+    }
+
+    public void handleEvent(MyTunesRssEvent event) {
+        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+            initValues();
+        }
+    }
+
+    private void initValues() {
+        initListModels();
         myWelcomeMessageInput.setText(MyTunesRss.CONFIG.getWebWelcomeMessage());
     }
 

@@ -150,6 +150,9 @@ public class MyTunesRss {
         if (streamingCacheFile.isFile()) {
             STREAMING_CACHE.setContent(JXPathUtils.getContext(streamingCacheFile.toURL()));
         }
+        if (MyTunesRss.REGISTRATION.isRegistered()) {
+            MyTunesRssJmxUtils.startJmxServer();
+        }
         if (HEADLESS) {
             executeHeadlessMode();
         } else {
@@ -353,6 +356,7 @@ public class MyTunesRss {
             if (MyTunesRss.CONFIG.isAvailableOnLocalNet()) {
                 MulticastService.startListener();
             }
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.SERVER_STARTED);
         }
     }
 
@@ -362,7 +366,12 @@ public class MyTunesRss {
                 MyTunesRss.WEBSERVER.stop();
             }
         });
-        MulticastService.stopListener();
+        if (!MyTunesRss.WEBSERVER.isRunning()) {
+            MyTunesRss.SERVER_RUNNING_TIMER.cancel();
+            MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
+            MulticastService.stopListener();
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.SERVER_STOPPED);
+        }
     }
 
     private static void loadConfiguration() throws MalformedURLException {

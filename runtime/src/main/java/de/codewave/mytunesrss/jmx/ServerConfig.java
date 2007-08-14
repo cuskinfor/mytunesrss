@@ -23,6 +23,7 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
 
     public void setPort(int port) {
         MyTunesRss.CONFIG.setPort(port);
+        onChange();
     }
 
     public boolean isShowOnLocalNetwork() {
@@ -31,6 +32,7 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
 
     public void setShowOnLocalNetwork(boolean showOnLocalNetwork) {
         MyTunesRss.CONFIG.setAvailableOnLocalNet(showOnLocalNetwork);
+        onChange();
     }
 
     public String getServerName() {
@@ -39,6 +41,7 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
 
     public void setServerName(String name) {
         MyTunesRss.CONFIG.setServerName(name);
+        onChange();
     }
 
     public boolean isRunning() {
@@ -49,6 +52,7 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
         MyTunesRss.ERROR_QUEUE.clear();
         if (!MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRss.startWebserver();
+            onChange();
         }
         return MyTunesRss.ERROR_QUEUE.popLastError();
     }
@@ -57,6 +61,7 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
         MyTunesRss.ERROR_QUEUE.clear();
         if (MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRss.stopWebserver();
+            onChange();
         }
         return MyTunesRss.ERROR_QUEUE.popLastError();
     }
@@ -67,6 +72,8 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
 
     public void setAutostart(boolean autostart) {
         MyTunesRss.CONFIG.setAutoStartServer(autostart);
+        MyTunesRssEventManager.getInstance().fireEvent(autostart ? MyTunesRssEvent.ENABLE_AUTO_START_SERVER : MyTunesRssEvent.DISABLE_AUTO_START_SERVER);
+        onChange();
     }
 
     public boolean isCreateTempArchives() {
@@ -75,6 +82,7 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
 
     public void setCreateTempArchives(boolean createTempArchives) {
         MyTunesRss.CONFIG.setLocalTempArchive(createTempArchives);
+        onChange();
     }
 
     public String getExternalAddress() {
@@ -85,6 +93,3 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
         return ServerInfo.getLocalAddresses(Integer.toString(getPort()));
     }
 }
-
-
-

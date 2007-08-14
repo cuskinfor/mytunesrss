@@ -16,7 +16,7 @@ import java.awt.event.*;
 /**
  * Server settings panel
  */
-public class Server {
+public class Server implements MyTunesRssEventListener {
     private static final Log LOG = LogFactory.getLog(Server.class);
 
     private JPanel myRootPanel;
@@ -31,14 +31,10 @@ public class Server {
 
     public void init() {
         initRegistration();
+        initValues();
+        MyTunesRssEventManager.getInstance().addListener(this);
         myAutoStartServerInput.addActionListener(new AutoStartServerInputListener());
-        myAutoStartServerInput.setSelected(MyTunesRss.CONFIG.isAutoStartServer());
         myServerInfoButton.addActionListener(new ServerInfoButtonListener());
-        myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
-        myServerNameInput.setText(MyTunesRss.CONFIG.getServerName());
-        myAvailableOnLocalNetInput.setSelected(MyTunesRss.CONFIG.isAvailableOnLocalNet());
-        SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected());
-        setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
         myAvailableOnLocalNetInput.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 if (MyTunesRss.WEBSERVER.isRunning()) {
@@ -51,15 +47,30 @@ public class Server {
                 SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected() && !MyTunesRss.WEBSERVER.isRunning());
             }
         });
-        myTempZipArchivesInput.setSelected(MyTunesRss.CONFIG.isLocalTempArchive());
         if (myAutoStartServerInput.isSelected()) {
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.EnableAutoStartServer);
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.ENABLE_AUTO_START_SERVER);
         } else {
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DisableAutoStartServer);
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DISABLE_AUTO_START_SERVER);
         }
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
                 "error.illegalServerPort")));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myServerNameInput, MyTunesRssUtils.getBundleString("error.emptyServerName")));
+    }
+
+    public void handleEvent(MyTunesRssEvent event) {
+        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+            initValues();
+        }
+    }
+
+    private void initValues() {
+        myAutoStartServerInput.setSelected(MyTunesRss.CONFIG.isAutoStartServer());
+        myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
+        myServerNameInput.setText(MyTunesRss.CONFIG.getServerName());
+        myAvailableOnLocalNetInput.setSelected(MyTunesRss.CONFIG.isAvailableOnLocalNet());
+        SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected());
+        setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
+        myTempZipArchivesInput.setSelected(MyTunesRss.CONFIG.isLocalTempArchive());
     }
 
     private void initRegistration() {
@@ -116,9 +127,9 @@ public class Server {
     public class AutoStartServerInputListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (myAutoStartServerInput.isSelected()) {
-                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.EnableAutoStartServer);
+                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.ENABLE_AUTO_START_SERVER);
             } else {
-                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DisableAutoStartServer);
+                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DISABLE_AUTO_START_SERVER);
             }
             myRootPanel.validate();
         }

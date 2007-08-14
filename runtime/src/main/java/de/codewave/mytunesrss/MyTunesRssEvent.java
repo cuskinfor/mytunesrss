@@ -8,6 +8,7 @@ package de.codewave.mytunesrss;
  * de.codewave.mytunesrss.MyTunesRssEvent
  */
 public enum MyTunesRssEvent {
-    EnableAutoStartServer(),
-    DisableAutoStartServer();
+    ENABLE_AUTO_START_SERVER,
+    DISABLE_AUTO_START_SERVER,
+    CONFIGURATION_CHANGED, SERVER_STOPPED, SERVER_STARTED;
 }
