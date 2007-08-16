@@ -441,6 +441,8 @@ public class MyTunesRssConfig {
                     user.setMaximumZipEntries(userNode.node(userName).getInt("maximumZipEntries", 0));
                     user.setFileTypes(userNode.node(userName).get("fileTypes", null));
                     user.setTranscoder(userNode.node(userName).getBoolean("featureTranscoder", false));
+                    user.setSessionTimeout(userNode.node(userName).getInt("sessionTimeout", 10));
+                    user.setBandwidthLimit(userNode.node(userName).getInt("bandwidthLimit", 0));
                     addUser(user);
                     if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
                         break;
@@ -559,6 +561,8 @@ public class MyTunesRssConfig {
                 userNode.node(user.getName()).putInt("maximumZipEntries", user.getMaximumZipEntries());
                 userNode.node(user.getName()).put("fileTypes", user.getFileTypes() != null ? user.getFileTypes() : "");
                 userNode.node(user.getName()).putBoolean("featureTranscoder", user.isTranscoder());
+                userNode.node(user.getName()).putInt("sessionTimeout", user.getSessionTimeout());
+                userNode.node(user.getName()).putInt("bandwidthLimit", user.getBandwidthLimit());
             }
         } catch (BackingStoreException e) {
             if (LOG.isErrorEnabled()) {

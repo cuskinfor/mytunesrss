@@ -49,6 +49,7 @@ public class EditUser {
     private JPanel myPermissionsPanel;
     private JScrollPane myScrollPane;
     private JCheckBox myPermTranscoderInput;
+    private JTextField myBandwidthLimit;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -103,6 +104,7 @@ public class EditUser {
             myFileTypesInput.setText(myUser.getFileTypes());
             mySessionTimeoutInput.setText(Integer.toString(myUser.getSessionTimeout()));
             myPermTranscoderInput.setSelected(myUser.isTranscoder());
+            myBandwidthLimit.setText(myUser.getBandwidthLimit() > 0 ? Integer.toString(myUser.getBandwidthLimit()) : "");
         } else {
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
             myPermRssInput.setSelected(true);
@@ -162,6 +164,8 @@ public class EditUser {
                                                                               MyTunesRssUtils.getBundleString("error.illegalMaxZipEntries")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(mySessionTimeoutInput, 1, 1440, true, MyTunesRssUtils.getBundleString(
                 "error.illegalSessionTimeout")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myBandwidthLimit, 10, 1024, true, MyTunesRssUtils.getBundleString(
+                "error.illegalBandwidthLimit")));
         JTextFieldValidation.validateAll(myRootPanel);
     }
 
@@ -235,6 +239,7 @@ public class EditUser {
                     myUser.setFileTypes(myFileTypesInput.getText());
                     myUser.setSessionTimeout(MyTunesRssUtils.getTextFieldInteger(mySessionTimeoutInput, 10));
                     myUser.setTranscoder(myPermTranscoderInput.isSelected());
+                    myUser.setBandwidthLimit(MyTunesRssUtils.getTextFieldInteger(myBandwidthLimit, 0));
                     MyTunesRss.CONFIG.addUser(myUser);
                     if (myClose) {
                         myDialog.dispose();

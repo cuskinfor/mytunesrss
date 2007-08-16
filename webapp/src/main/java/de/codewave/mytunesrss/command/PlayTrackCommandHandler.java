@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.servlet.*;
+import de.codewave.utils.io.*;
 import org.apache.commons.logging.*;
 
 import javax.servlet.http.*;
@@ -67,6 +68,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
         if (ServletUtils.isHeadRequest(getRequest())) {
             streamSender.sendHeadResponse(getRequest(), getResponse());
         } else {
+            streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper());
             streamSender.sendGetResponse(getRequest(), getResponse(), false);
         }
     }

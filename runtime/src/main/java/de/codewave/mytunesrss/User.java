@@ -1,11 +1,19 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.utils.io.*;
+import de.codewave.utils.servlet.*;
+
+import java.io.*;
 import java.util.*;
+
+import org.apache.commons.logging.*;
 
 /**
  * de.codewave.mytunesrss.User
  */
 public class User {
+    private static final Log LOG = LogFactory.getLog(User.class);
+    
     public enum QuotaType {
         None, Day, Week, Month;
 
@@ -35,6 +43,7 @@ public class User {
     private int mySessionTimeout = 10;
     private boolean mySpecialPlaylists;
     private boolean myTranscoder;
+    private int myBandwidthLimit;
 
     public User(String name) {
         myName = name;
@@ -207,6 +216,14 @@ public class User {
         myTranscoder = transcoder;
     }
 
+    public int getBandwidthLimit() {
+        return myBandwidthLimit;
+    }
+
+    public void setBandwidthLimit(int bandwidthLimit) {
+        myBandwidthLimit = bandwidthLimit;
+    }
+
     @Override
     public boolean equals(Object object) {
         return object != null && object instanceof User && getName().equals(((User)object).getName());
@@ -257,5 +274,20 @@ public class User {
             myQuotaDownBytes = 0;
             myQuotaResetTime = System.currentTimeMillis();
         }
+    }
+
+    public StreamSender.OutputStreamWrapper getOutputStreamWrapper() {
+        return new StreamSender.OutputStreamWrapper() {
+            public OutputStream wrapStream(OutputStream outputStream) {
+                if (getBandwidthLimit() > 0) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Using bandwidth limited output stream with " + getBandwidthLimit() + " kbit.");
+                    }
+                    return new LimitedBandwidthOutputStream(outputStream, getBandwidthLimit());
+                } else {
+                    return outputStream;
+                }
+            }
+        };
     }
 }
