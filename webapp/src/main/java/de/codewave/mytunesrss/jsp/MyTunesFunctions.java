@@ -164,7 +164,7 @@ public class MyTunesFunctions {
 
     public static String getDisplayBitrate(Track track) {
         try {
-            return Mp3Utils.getBitrate(new FileInputStream(track.getFile())) + " kbit";
+            return Mp3Utils.getMaxBitrate(new FileInputStream(track.getFile())) + " kbit";
         } catch (IOException e) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn(null, e);
