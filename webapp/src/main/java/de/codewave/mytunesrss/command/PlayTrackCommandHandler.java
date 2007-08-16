@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.servlet.*;
 import de.codewave.utils.io.*;
+import de.codewave.camel.mp3.*;
 import org.apache.commons.logging.*;
 
 import javax.servlet.http.*;
@@ -28,13 +29,14 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             LOG.debug(ServletUtils.getRequestInfo(getRequest()));
         }
         StreamSender streamSender;
+        Track track = null;
         if (!isRequestAuthorized()) {
             streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
         } else {
             String trackId = getRequest().getParameter("track");
             Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
             if (!tracks.isEmpty()) {
-                Track track = tracks.iterator().next();
+                track = tracks.iterator().next();
                 if (!getAuthUser().isQuotaExceeded()) {
                     File file = track.getFile();
                     String contentType = track.getContentType();
@@ -68,7 +70,11 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
         if (ServletUtils.isHeadRequest(getRequest())) {
             streamSender.sendHeadResponse(getRequest(), getResponse());
         } else {
-            streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper());
+            int bitrate = 0;
+            if (track != null) {
+//                bitrate = Mp3Utils.getBitrate(new FileInputStream(track.getFile()));
+            }
+            streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper((int)(bitrate * 1.02)));
             streamSender.sendGetResponse(getRequest(), getResponse(), false);
         }
     }

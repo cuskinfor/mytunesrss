@@ -4,20 +4,25 @@
 
 package de.codewave.mytunesrss.jsp;
 
+import de.codewave.camel.mp3.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.utils.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 
 import javax.servlet.http.*;
+import java.io.*;
 import java.util.*;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
  */
 public class MyTunesFunctions {
+    private static final Log LOG = LogFactory.getLog(MyTunesFunctions.class);
+
     private static final String DEFAULT_NAME = "MyTunesRSS";
 
     public static String webSafeFileName(String name) {
@@ -144,5 +149,27 @@ public class MyTunesFunctions {
 
     public static int getSectionTrackCount(String sectionIds) {
         return StringUtils.split(sectionIds, ",").length;
+    }
+
+    public static String getDisplaySampleRate(Track track) {
+        try {
+            return Mp3Utils.getSampleRate(new FileInputStream(track.getFile())) + " Hz";
+        } catch (IOException e) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn(null, e);
+            }
+        }
+        return null;
+    }
+
+    public static String getDisplayBitrate(Track track) {
+        try {
+            return Mp3Utils.getBitrate(new FileInputStream(track.getFile())) + " kbit";
+        } catch (IOException e) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn(null, e);
+            }
+        }
+        return null;
     }
 }

@@ -29,6 +29,7 @@ public class MigrationStatement implements DataStoreStatement {
             new DropAllTablesStatement().execute(connection);
             MyTunesRssUtils.createStatement(connection, "migrate30to31eap1").execute();
             new CreateAllTablesStatement().execute(connection);
+            databaseVersion = new Version("3.1-EAP-1");
         }
         new UpdateDatabaseVersionStatement().execute(connection);
     }

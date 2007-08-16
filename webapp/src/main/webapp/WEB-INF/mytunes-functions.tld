@@ -199,4 +199,28 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Get the display bitrate of a track.
+        </description>
+        <name>bitrate</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>String getDisplayBitrate(de.codewave.mytunesrss.datastore.statement.Track)</function-signature>
+        <example>
+            &lt;c:out value="${mtfn:bitrate(track)}"/&gt;
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Get the display sample rate of a track.
+        </description>
+        <name>samplerate</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>String getDisplaySampleRate(de.codewave.mytunesrss.datastore.statement.Track)</function-signature>
+        <example>
+            &lt;c:out value="${mtfn:samplerate(track)}"/&gt;
+        </example>
+    </function>
+
 </taglib>

@@ -51,7 +51,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     createZipArchive(new FileOutputStream(tempFile), tracks, baseName, null);
                     FileSender fileSender = new FileSender(tempFile, "application/zip", (int)tempFile.length());
                     fileSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
-                    fileSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper());
+                    fileSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper(0));
                     fileSender.sendGetResponse(getRequest(), getResponse(), false);
                 } finally {
                     if (tempFile.exists()) {
@@ -60,7 +60,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 }
             } else {
                 getResponse().setContentType("application/zip");
-                OutputStream outputStream = getAuthUser().getOutputStreamWrapper().wrapStream(getResponse().getOutputStream());
+                OutputStream outputStream = getAuthUser().getOutputStreamWrapper(0).wrapStream(getResponse().getOutputStream());
                 createZipArchive(outputStream, tracks, baseName, (FileSender.ByteSentCounter)SessionManager.getSessionInfo(
                         getRequest()));
             }

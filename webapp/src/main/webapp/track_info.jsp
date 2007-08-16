@@ -77,6 +77,23 @@
                 <c:out value="${mtfn:duration(track)}" />
             </td>
         </tr>
+        <fmt:message var="localizedUnknown" key="unknown" />
+        <tr>
+            <td>
+                <fmt:message key="bitrate" />:
+            </td>
+            <td>
+                <c:out value="${mtfn:bitrate(track)}" default="${localizedUnknown}"/>
+            </td>
+        </tr>
+        <tr class="odd">
+            <td>
+                <fmt:message key="samplerate" />:
+            </td>
+            <td>
+                <c:out value="${mtfn:samplerate(track)}" default="${localizedUnknown}"/>
+            </td>
+        </tr>
         <tr>
             <td><fmt:message key="type"/>:</td>
             <td>

@@ -13,7 +13,7 @@ import org.apache.commons.logging.*;
  */
 public class User {
     private static final Log LOG = LogFactory.getLog(User.class);
-    
+
     public enum QuotaType {
         None, Day, Week, Month;
 
@@ -276,14 +276,15 @@ public class User {
         }
     }
 
-    public StreamSender.OutputStreamWrapper getOutputStreamWrapper() {
+    public StreamSender.OutputStreamWrapper getOutputStreamWrapper(final int bitrate) {
         return new StreamSender.OutputStreamWrapper() {
             public OutputStream wrapStream(OutputStream outputStream) {
-                if (getBandwidthLimit() > 0) {
+                int limit = Math.min(bitrate, getBandwidthLimit() > 0 ? getBandwidthLimit() : Integer.MAX_VALUE);
+                if (limit > 0) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Using bandwidth limited output stream with " + getBandwidthLimit() + " kbit.");
+                        LOG.debug("Using bandwidth limited output stream with " + limit + " kbit.");
                     }
-                    return new LimitedBandwidthOutputStream(outputStream, getBandwidthLimit());
+                    return new LimitedBandwidthOutputStream(outputStream, limit);
                 } else {
                     return outputStream;
                 }
