@@ -72,7 +72,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
         } else {
             int bitrate = 0;
             if (track != null) {
-                bitrate = Mp3Utils.getMp3Info(new FileInputStream(track.getFile())).getMaxBitrate();
+                bitrate = Mp3Utils.getMp3Info(new FileInputStream(track.getFile())).getAvgBitrate();
             }
             streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper((int)(bitrate * 1.02)));
             streamSender.sendGetResponse(getRequest(), getResponse(), false);

@@ -154,13 +154,7 @@ public class MyTunesFunctions {
     public static String getDisplaySampleRate(Track track) {
         try {
             Mp3Info info = Mp3Utils.getMp3Info(new FileInputStream(track.getFile()));
-            if (info.getMinSampleRate() > 0 && info.getMaxSampleRate() >= info.getMinSampleRate()) {
-                if (info.getMinSampleRate() == info.getMaxSampleRate()) {
-                    return info.getMinSampleRate() + " Hz";
-                } else {
-                    return info.getMinSampleRate() + " - " + info.getMaxSampleRate() + " Hz";
-                }
-            }
+            return info.getAvgSampleRate() + " Hz";
         } catch (IOException e) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn(null, e);
@@ -172,13 +166,7 @@ public class MyTunesFunctions {
     public static String getDisplayBitrate(Track track) {
         try {
             Mp3Info info = Mp3Utils.getMp3Info(new FileInputStream(track.getFile()));
-            if (info.getMinBitrate() > 0 && info.getMaxBitrate() >= info.getMinBitrate()) {
-                if (info.getMinBitrate() == info.getMaxBitrate()) {
-                    return info.getMinBitrate() + " kbit";
-                } else {
-                    return info.getMinBitrate() + " - " + info.getMaxBitrate() + " kbit";
-                }
-            }
+            return info.getAvgBitrate() + " kbit";
         } catch (IOException e) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn(null, e);

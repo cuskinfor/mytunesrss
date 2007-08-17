@@ -284,7 +284,7 @@ public class User {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Using bandwidth limited output stream with " + limit + " kbit.");
                     }
-                    return new LimitedBandwidthOutputStream(outputStream, limit);
+                    return new LimitedBandwidthOutputStream(outputStream, limit, 50000);
                 } else {
                     return outputStream;
                 }
