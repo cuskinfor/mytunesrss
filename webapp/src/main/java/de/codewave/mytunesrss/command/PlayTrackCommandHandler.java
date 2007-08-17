@@ -46,7 +46,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         }
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                     } else {
-                        Transcoder transcoder = Transcoder.createTranscoder(track, getWebConfig(), getRequest());
+                        Transcoder transcoder = "false".equals(getRequestParameter("notranscode", "false")) ? Transcoder.createTranscoder(track, getWebConfig(), getRequest()) : null;
                         if (transcoder != null) {
                             streamSender = transcoder.getStreamSender();
                         } else {
@@ -72,7 +72,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
         } else {
             int bitrate = 0;
             if (track != null) {
-                bitrate = Mp3Utils.getMaxBitrate(new FileInputStream(track.getFile()));
+                bitrate = Mp3Utils.getMp3Info(new FileInputStream(track.getFile())).getMaxBitrate();
             }
             streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper((int)(bitrate * 1.02)));
             streamSender.sendGetResponse(getRequest(), getResponse(), false);

@@ -77,29 +77,31 @@
                 <c:out value="${mtfn:duration(track)}" />
             </td>
         </tr>
-        <fmt:message var="localizedUnknown" key="unknown" />
-        <tr>
-            <td>
-                <fmt:message key="bitrate" />:
-            </td>
-            <td>
-                <c:out value="${mtfn:bitrate(track)}" default="${localizedUnknown}"/>
-            </td>
-        </tr>
-        <tr class="odd">
-            <td>
-                <fmt:message key="samplerate" />:
-            </td>
-            <td>
-                <c:out value="${mtfn:samplerate(track)}" default="${localizedUnknown}"/>
-            </td>
-        </tr>
+        <c:if test="${mp3info}">
+            <fmt:message var="localizedUnknown" key="unknown" />
+            <tr>
+                <td>
+                    <fmt:message key="bitrate" />:
+                </td>
+                <td>
+                    <c:out value="${mtfn:bitrate(track)}" default="${localizedUnknown}"/>
+                </td>
+            </tr>
+            <tr class="odd">
+                <td>
+                    <fmt:message key="samplerate" />:
+                </td>
+                <td>
+                    <c:out value="${mtfn:samplerate(track)}" default="${localizedUnknown}"/>
+                </td>
+            </tr>
+        </c:if>
         <tr>
             <td><fmt:message key="type"/>:</td>
             <td>
                 <c:if test="${track.protected}"><img src="${appUrl}/images/protected.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle" /></c:if>
                 <c:if test="${track.video}"><img src="${appUrl}/images/movie.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle" /></c:if>
-                <c:out value="${mtfn:suffix(suffixReplacements, track)}" />
+                <c:out value="${mtfn:suffix(null, track)}" />
             </td>
         </tr>
         <c:if test="${authUser.download && config.showDownload}">
@@ -108,7 +110,7 @@
                     &nbsp;
                 </td>
                 <td>
-                    <a href="${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(suffixReplacements, track)}">
+                    <a href="${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(null, track)}">
                         <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" />
                         <fmt:message key="doDownload"/>
                     </a>
