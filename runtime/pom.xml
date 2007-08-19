@@ -260,6 +260,12 @@
             <version>2.0</version>
         </dependency>
         <dependency>
+            <groupId>systray4j</groupId>
+            <artifactId>systray4j</artifactId>
+            <version>2.4.1</version>
+            <optional/>
+        </dependency>
+        <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
             <version>2.8.1</version>
