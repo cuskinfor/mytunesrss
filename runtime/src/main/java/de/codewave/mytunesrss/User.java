@@ -2,6 +2,8 @@ package de.codewave.mytunesrss;
 
 import de.codewave.utils.io.*;
 import de.codewave.utils.servlet.*;
+import de.codewave.camel.mp3.*;
+import de.codewave.camel.mp3.exception.*;
 
 import java.io.*;
 import java.util.*;
@@ -284,7 +286,7 @@ public class User {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Using bandwidth limited output stream with " + limit + " kbit.");
                     }
-                    return new LimitedBandwidthOutputStream(outputStream, limit, 50000);
+                    return new LimitedBandwidthOutputStream(outputStream, limit);
                 } else {
                     return outputStream;
                 }
