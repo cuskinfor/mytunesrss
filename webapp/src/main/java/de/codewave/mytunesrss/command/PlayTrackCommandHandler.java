@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.servlet.*;
 import de.codewave.utils.io.*;
 import de.codewave.camel.mp3.*;
+import de.codewave.camel.mp3.exception.*;
 import org.apache.commons.logging.*;
 
 import javax.servlet.http.*;
@@ -71,10 +72,24 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             streamSender.sendHeadResponse(getRequest(), getResponse());
         } else {
             int bitrate = 0;
+            int fileSize = 0;
+            int dataOffset = 0;
             if (track != null) {
                 bitrate = Mp3Utils.getMp3Info(new FileInputStream(track.getFile())).getAvgBitrate();
+                fileSize = (int)track.getFile().length();
+                Id3Tag tag = null;
+                try {
+                    tag = Mp3Utils.readId3Tag(track.getFile());
+                    if (tag.isId3v2()) {
+                        dataOffset = ((Id3v2Tag)tag).getHeader().getBodySize();
+                    }
+                } catch (IllegalHeaderException e) {
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("Could not read ID3 information.", e);
+                    }
+                }
             }
-            streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper((int)(bitrate * 1.02)));
+            streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper((int)(bitrate * 1.02), dataOffset, new RangeHeader(getRequest(), fileSize)));
             streamSender.sendGetResponse(getRequest(), getResponse(), false);
         }
     }
