@@ -8,4 +8,9 @@
     <statement name="migrate30to31eap1">
         <sql>DROP TABLE pager</sql>
     </statement>
+
+    <statement name="migrate31eap131eap4">
+        <sql>ALTER TABLE track ALTER COLUMN id VARCHAR(100) NOT NULL</sql>
+        <sql>ALTER TABLE link_track_playlist ALTER COLUMN track_id VARCHAR(100) NOT NULL</sql>
+    </statement>
 </statements>
