@@ -1,14 +1,11 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.io.*;
 import de.codewave.utils.servlet.*;
-import de.codewave.camel.mp3.*;
-import de.codewave.camel.mp3.exception.*;
-
-import java.io.*;
-import java.util.*;
-
+import de.codewave.mytunesrss.server.*;
 import org.apache.commons.logging.*;
+
+import java.util.*;
+import java.io.*;
 
 /**
  * de.codewave.mytunesrss.User
@@ -282,44 +279,17 @@ public class User {
         return getOutputStreamWrapper(bitrate, 0, null);
     }
 
-    public StreamSender.OutputStreamWrapper getOutputStreamWrapper(final int bitrate, final int dataOffset, final RangeHeader rangeHeader) {
+    public StreamSender.OutputStreamWrapper getOutputStreamWrapper(int bitrate, int dataOffset, RangeHeader rangeHeader) {
+        final int limit = Math.min(bitrate, getBandwidthLimit() > 0 ? getBandwidthLimit() : Integer.MAX_VALUE);
+        if (limit > 0) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using bandwidth limited output stream with " + limit + " kbit.");
+            }
+            return new MyTunesRSSOutputStreamWrapper(bitrate, dataOffset, rangeHeader.getFirstByte(), 2);
+        }
         return new StreamSender.OutputStreamWrapper() {
-            public OutputStream wrapStream(final OutputStream outputStream) {
-                int limit = Math.min(bitrate, getBandwidthLimit() > 0 ? getBandwidthLimit() : Integer.MAX_VALUE);
-                if (limit > 0) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Using bandwidth limited output stream with " + limit + " kbit.");
-                    }
-                    final LimitedBandwidthOutputStream limitedStream = new LimitedBandwidthOutputStream(outputStream, limit);
-                    if (rangeHeader.getFirstByte() >= dataOffset) {
-                        return limitedStream;
-                    } else {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Transferring " + (dataOffset - rangeHeader.getFirstByte()) + " bytes without limit.");
-                        }
-                        return new OutputStream() {
-                            byte[] myBuffer = new byte[dataOffset - rangeHeader.getFirstByte()];
-                            int myPointer;
-                            public void write(int b) throws IOException {
-                                if (myPointer < myBuffer.length) {
-                                    myBuffer[myPointer] = (byte)b;
-                                    myPointer++;
-                                } else if (myPointer == myBuffer.length) {
-                                    outputStream.write(myBuffer);
-                                    outputStream.flush();
-                                    myPointer++;
-                                    if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Now enabling limit.");
-                                    }
-                                } else {
-                                    limitedStream.write(b);
-                                }
-                            }
-                        };
-                    }
-                } else {
-                    return outputStream;
-                }
+            public OutputStream wrapStream(OutputStream stream) {
+                return stream;
             }
         };
     }
