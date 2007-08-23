@@ -136,7 +136,13 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 }
             });
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Committing transaction.");
+                LOG.debug("Inserting/updating MP3 cover images.");
+            }
+            List<Album> albums = (List<Album>)storeSession.executeQuery(new FindAlbumQuery(null, null, -1));
+            for (Album album : albums) {
+                List<Track> tracks = (List<Track>)storeSession.executeQuery(FindTrackQuery.getForAlbum(new String[] {album.getName()}, false));
+                storeSession.commitAndContinue();
+                storeSession.executeStatement(new InsertTrackImagesStatement(tracks));
             }
             storeSession.commit();
             long timeAfterCommit = System.currentTimeMillis();

@@ -15,7 +15,6 @@
     </statement>
 
     <statement name="migrate31eap4to31eap6">
-        <sql>ALTER TABLE track ADD COLUMN image_mime VARCHAR(50)</sql>
         <sql>UPDATE system_information SET lastupdate = 0</sql>
         <sql>
             {create_table_prefix} image (

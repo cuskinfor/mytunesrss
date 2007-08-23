@@ -17,7 +17,6 @@
                 video {datatype_boolean},
                 source VARCHAR(20),
                 genre VARCHAR(255),
-                image_mime VARCHAR(50),
                 UNIQUE (id)
             )
         </sql>

@@ -7,6 +7,7 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.*;
+import de.codewave.utils.graphics.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
@@ -92,7 +93,16 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                     statement.setTime(id3v2Tag.getTimeSeconds());
                                     statement.setTrackNumber(id3v2Tag.getTrackNumber());
                                     Image image = ID3Utils.getImage(id3v2Tag);
-                                    statement.setImageMime(image != null ? StringUtils.trimToNull(image.getMimeType()) : null);
+                                    if (image != null) {
+                                        myStoreSession.executeStatement(new InsertImageStatement(fileId, 32, ImageUtils.resizeImageWithMaxSize(
+                                                image.getData(), 32)));
+                                        myStoreSession.executeStatement(new InsertImageStatement(fileId, 64, ImageUtils.resizeImageWithMaxSize(
+                                                image.getData(), 64)));
+                                        myStoreSession.executeStatement(new InsertImageStatement(fileId, 128, ImageUtils.resizeImageWithMaxSize(
+                                                image.getData(), 128)));
+                                        myStoreSession.executeStatement(new InsertImageStatement(fileId, 256, ImageUtils.resizeImageWithMaxSize(
+                                                image.getData(), 256)));
+                                    }
                                 }
                                 String genre = tag.getGenreAsString();
                                 if (genre != null) {
