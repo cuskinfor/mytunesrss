@@ -1,11 +1,15 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.mp3.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.*;
+import de.codewave.utils.graphics.*;
+import de.codewave.camel.mp3.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.io.*;
 
 import java.io.*;
 import java.sql.*;
@@ -97,6 +101,21 @@ public class TrackListener implements PListHandlerListener {
                     statement.setProtected(FileSupportUtils.isProtected(fileName));
                     statement.setVideo(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue());
                     statement.setGenre(StringUtils.trimToNull((String)track.get("Genre")));
+                    try {
+                        Image image = ID3Utils.getImage(Mp3Utils.readId3v2Tag(file));
+                        statement.setImageMime(image != null ? StringUtils.trimToNull(image.getMimeType()) : null);
+                        if (image != null) {
+                            myDataStoreSession.executeStatement(new InsertImageStatement(trackId, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)));
+                            myDataStoreSession.executeStatement(new InsertImageStatement(trackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)));
+                            myDataStoreSession.executeStatement(new InsertImageStatement(trackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)));
+                            myDataStoreSession.executeStatement(new InsertImageStatement(trackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)));
+                        }
+                        myDataStoreSession.commitAndContinue(); // committing each image pack
+                    } catch (Exception e) {
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Could not extract image from MP3 file.");
+                        }
+                    }
                     myDataStoreSession.executeStatement(statement);
                     return true;
                 } catch (SQLException e) {

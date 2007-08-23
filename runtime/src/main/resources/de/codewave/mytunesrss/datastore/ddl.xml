@@ -17,6 +17,7 @@
                 video {datatype_boolean},
                 source VARCHAR(20),
                 genre VARCHAR(255),
+                image_mime VARCHAR(50),
                 UNIQUE (id)
             )
         </sql>
@@ -70,6 +71,13 @@
                 artist_count INTEGER
             )
         </sql>
+        <sql>
+            {create_table_prefix} image (
+                track_id VARCHAR(100) NOT NULL,
+                size INTEGER NOT NULL,
+                data {image_datatype} NOT NULL,
+                UNIQUE(track_id, size))
+        </sql>
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>
         <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
         <sql>CREATE INDEX idx_track_album ON track (album)</sql>
@@ -95,6 +103,7 @@
         <sql>DROP TABLE track</sql>
         <sql>DROP TABLE system_information</sql>
         <sql>{drop_playlist_id_sequence}</sql>
+        <sql>DROP TABLE image</sql>
     </statement>
 
 </statements>

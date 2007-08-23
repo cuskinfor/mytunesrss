@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.camel.mp3.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.mp3.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.io.IOUtils;
@@ -87,8 +88,11 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                 }
                                 statement.setName(name);
                                 if (tag.isId3v2()) {
-                                    statement.setTime(((Id3v2Tag)tag).getTimeSeconds());
-                                    statement.setTrackNumber(((Id3v2Tag)tag).getTrackNumber());
+                                    Id3v2Tag id3v2Tag = ((Id3v2Tag)tag);
+                                    statement.setTime(id3v2Tag.getTimeSeconds());
+                                    statement.setTrackNumber(id3v2Tag.getTrackNumber());
+                                    Image image = ID3Utils.getImage(id3v2Tag);
+                                    statement.setImageMime(image != null ? StringUtils.trimToNull(image.getMimeType()) : null);
                                 }
                                 String genre = tag.getGenreAsString();
                                 if (genre != null) {

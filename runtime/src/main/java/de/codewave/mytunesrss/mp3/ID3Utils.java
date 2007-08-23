@@ -22,23 +22,32 @@ public class ID3Utils {
 
     public static Image getImage(Track track) {
         File file = track.getFile();
+        return getImage(file);
+    }
+
+    public static Image getImage(File file) {
         if (file.exists() && "mp3".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
             try {
                 Id3v2Tag id3v2Tag = Mp3Utils.readId3v2Tag(file);
-                if (id3v2Tag != null && id3v2Tag.getFrames() != null) {
-                    for (Frame frame : id3v2Tag.getFrames()) {
-                        if ("APIC".equals(frame.getId())) {
-                            APICFrameBody frameBody = new APICFrameBody(frame);
-                            return new Image(frameBody.getMimeType(), frameBody.getPictureData());
-                        } else if ("PIC".equals(frame.getId())) {
-                            PICFrameBody frameBody = new PICFrameBody(frame);
-                            return new Image(frameBody.getMimeType(), frameBody.getPictureData());
-                        }
-                    }
-                }
+                return getImage(id3v2Tag);
             } catch (Exception e) {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("Could not extract artwork for \"" + file + "\".", e);
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Image getImage(Id3v2Tag id3v2Tag) {
+        if (id3v2Tag != null && id3v2Tag.getFrames() != null) {
+            for (Frame frame : id3v2Tag.getFrames()) {
+                if ("APIC".equals(frame.getId())) {
+                    APICFrameBody frameBody = new APICFrameBody(frame);
+                    return new Image(frameBody.getMimeType(), frameBody.getPictureData());
+                } else if ("PIC".equals(frame.getId())) {
+                    PICFrameBody frameBody = new PICFrameBody(frame);
+                    return new Image(frameBody.getMimeType(), frameBody.getPictureData());
                 }
             }
         }

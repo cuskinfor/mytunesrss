@@ -30,5 +30,7 @@ public interface InsertOrUpdateTrackStatement extends DataStoreStatement {
 
     void setGenre(String genre);
 
+    void setImageMime(String imageMime);
+
     void clear();
 }

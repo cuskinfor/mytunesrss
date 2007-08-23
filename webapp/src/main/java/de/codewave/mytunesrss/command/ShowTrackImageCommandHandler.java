@@ -63,7 +63,9 @@ public class ShowTrackImageCommandHandler extends MyTunesRssCommandHandler {
                 Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
                 if (!tracks.isEmpty()) {
                     Track track = tracks.iterator().next();
-                    image = ID3Utils.getImage(track);
+                    if (track.getImageMime() != null) {
+                        image = ID3Utils.getImage(track);
+                    }
                 }
             }
         }

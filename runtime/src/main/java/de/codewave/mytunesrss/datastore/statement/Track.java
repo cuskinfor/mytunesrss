@@ -22,6 +22,7 @@ public class Track {
     private boolean myProtected;
     private boolean myVideo;
     private String myGenre;
+    private String myImageMime;
 
     public String getAlbum() {
         return myAlbum;
@@ -101,6 +102,14 @@ public class Track {
 
     public void setGenre(String genre) {
         myGenre = genre;
+    }
+
+    public String getImageMime() {
+        return myImageMime;
+    }
+
+    public void setImageMime(String imageMime) {
+        myImageMime = imageMime;
     }
 
     public String getContentType() {

@@ -13,4 +13,16 @@
         <sql>ALTER TABLE track ALTER COLUMN id VARCHAR(100) NOT NULL</sql>
         <sql>ALTER TABLE link_track_playlist ALTER COLUMN track_id VARCHAR(100) NOT NULL</sql>
     </statement>
+
+    <statement name="migrate31eap4to31eap6">
+        <sql>ALTER TABLE track ADD COLUMN image_mime VARCHAR(50)</sql>
+        <sql>UPDATE system_information SET lastupdate = 0</sql>
+        <sql>
+            {create_table_prefix} image (
+                track_id VARCHAR(100) NOT NULL,
+                size INTEGER NOT NULL,
+                data {image_datatype} NOT NULL,
+                UNIQUE(track_id, size))
+        </sql>
+    </statement>
 </statements>

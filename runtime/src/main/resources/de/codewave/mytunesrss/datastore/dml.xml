@@ -177,14 +177,20 @@
         <sql>UPDATE system_information SET version = :version</sql>
     </statement>
 
+    <statement name="insertImage">
+        <sql>
+            INSERT INTO image (track_id, size, data) VALUES (:track_id, :size, :data)
+        </sql>
+    </statement>
+
     <statement name="insertTrack">
         <parameter name="time" type="java.lang.Integer"/>
         <parameter name="track_number" type="java.lang.Integer"/>
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="video" type="java.lang.Boolean"/>
         <sql>
-            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix)
-            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix)
+            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix, image_mime)
+            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :image_mime)
         </sql>
     </statement>
 
@@ -195,7 +201,7 @@
         <parameter name="video" type="java.lang.Boolean"/>
         <sql>
             UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
-                             file = :file, protected = :protected, video = :video, genre = :genre, suffix = :suffix
+                             file = :file, protected = :protected, video = :video, genre = :genre, suffix = :suffix, image_mime = :image_mime
             WHERE id = :id
         </sql>
     </statement>
@@ -255,7 +261,7 @@
 
     <fragment name="trackColumns">
         t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file,
-        t.protected AS protected, t.video AS video, t.genre AS genre
+        t.protected AS protected, t.video AS video, t.genre AS genre, t.image_mime AS image_mime
     </fragment>
 
     <fragment name="updatePlaylistCount">

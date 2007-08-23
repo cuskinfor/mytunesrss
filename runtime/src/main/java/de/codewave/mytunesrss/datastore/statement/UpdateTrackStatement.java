@@ -29,6 +29,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
     private boolean myProtected;
     private boolean myVideo;
     private String myGenre;
+    private String myImageMime;
     private SmartStatement myStatement;
 
     public void setAlbum(String album) {
@@ -71,6 +72,10 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
         myGenre = genre;
     }
 
+    public void setImageMime(String imageMime) {
+        myImageMime = imageMime;
+    }
+
     public synchronized void execute(Connection connection) throws SQLException {
         try {
             myArtist = dropWordsFromArtist(myArtist);
@@ -89,6 +94,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setBoolean("video", myVideo);
             myStatement.setString("genre", myGenre);
             myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
+            myStatement.setString("image_mime", myImageMime);
             myStatement.execute();
         } catch (SQLException e) {
             if (UpdateTrackStatement.LOG.isErrorEnabled()) {

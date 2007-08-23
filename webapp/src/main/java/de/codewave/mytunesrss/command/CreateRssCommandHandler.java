@@ -37,14 +37,16 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
                 if (getWebConfig().isRssArtwork()) {
                     for (Track track : tracks) {
                         try {
-                            Image image = ID3Utils.getImage(track);
-                            if (image != null && image.getData() != null && image.getData().length > 0 &&
-                                    StringUtils.isNotEmpty(image.getMimeType())) {
-                                getRequest().setAttribute("imageTrackId", track.getId());
-                                break;// use first available image
-                            } else {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Could not extract valid artwork from mp3 file.");
+                            if (track.getImageMime() != null) {
+                                Image image = ID3Utils.getImage(track);
+                                if (image != null && image.getData() != null && image.getData().length > 0 &&
+                                        StringUtils.isNotEmpty(image.getMimeType())) {
+                                    getRequest().setAttribute("imageTrackId", track.getId());
+                                    break;// use first available image
+                                } else {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Could not extract valid artwork from mp3 file.");
+                                    }
                                 }
                             }
                         } catch (Exception e) {
