@@ -151,6 +151,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             setProtected(track.isProtected());
             setVideo(track.isVideo());
             setGenre(track.getGenre());
+            track.setImageCount(track.getImageCount());
         }
 
         public boolean isNewSection() {

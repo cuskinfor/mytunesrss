@@ -11,7 +11,7 @@ public class Image {
     private String myMimeType;
     private byte[] myData;
 
-    Image(String mimeType, byte[] data) {
+    public Image(String mimeType, byte[] data) {
         myMimeType = mimeType;
         myData = data;
     }

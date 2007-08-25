@@ -186,6 +186,24 @@
         </sql>
     </statement>
 
+    <statement name="updateImage">
+        <sql>
+            UPDATE image SET data = :data WHERE track_id = :track_id AND size = :size
+        </sql>
+    </statement>
+
+    <statement name="deleteImage">
+        <sql>
+            DELETE FROM image WHERE track_id = :track_id
+        </sql>
+    </statement>
+
+    <statement name="findTrackImage">
+        <sql>
+            SELECT data as DATA FROM image WHERE track_id = :track_id AND size = :size
+        </sql>
+    </statement>
+
     <statement name="insertTrack">
         <parameter name="time" type="java.lang.Integer"/>
         <parameter name="track_number" type="java.lang.Integer"/>
@@ -263,7 +281,7 @@
 
     <fragment name="trackColumns">
         t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file,
-        t.protected AS protected, t.video AS video, t.genre AS genre
+        t.protected AS protected, t.video AS video, t.genre AS genre, select count(*) from image where image.track_id = t.id AS imagecount
     </fragment>
 
     <fragment name="updatePlaylistCount">

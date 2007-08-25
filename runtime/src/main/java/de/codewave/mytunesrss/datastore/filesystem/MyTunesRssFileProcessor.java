@@ -123,6 +123,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         statement.setFileName(canonicalFilePath);
                         try {
                             myStoreSession.executeStatement(statement);
+                            myStoreSession.executeStatement(new HandleTrackImagesStatement(file, fileId));
                             myUpdatedCount++;
                             if (myUpdatedCount % 100 == 0) {
                                 // commit every 100 tracks

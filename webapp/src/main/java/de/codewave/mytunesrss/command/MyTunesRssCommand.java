@@ -40,6 +40,7 @@ public enum MyTunesRssCommand implements Command {
     ShowUpload("showUpload", ShowUploadCommandHandler.class),
     BrowseServers("browseServers", BrowseServersCommandHandler.class),
     BrowseGenre("browseGenre", BrowseGenreCommandHandler.class),
+    ShowAlbumImage("showAlbumImage", ShowAlbumImageCommandHandler.class),
     Upload("upload", UploadCommandHandler.class);
 
     private String myName;

@@ -6,6 +6,12 @@
         <sql>SELECT {trackColumns} FROM track t ORDER BY RAND() LIMIT :maxCount</sql>
     </statement>
 
+    <statement name="findAlbumImage">
+        <sql>
+            SELECT data AS data FROM image WHERE size = :size AND track_id IN (SELECT id from TRACK where album = :album) LIMIT 1
+        </sql>
+    </statement>
+
     <statement name="nextPlaylistId">
         <sql>INSERT INTO playlist_id_sequence VALUES (0)</sql>
         <sql>DELETE FROM playlist_id_sequence WHERE id = LAST_INSERT_ID()</sql>

@@ -83,8 +83,15 @@
                         <input type="checkbox" name="album" id="album${loopStatus.count}" value="${mtfn:encode64(album.name)}" />
                     </td>
                 </c:if>
-                <td class="artist">
-                    <c:out value="${cwfn:choose(mtfn:unknown(album.name), '(unknown)', album.name)}" />
+                <td class="albumwithcover" style="background-image:url('${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=32</mt:encrypt>')">
+                    <c:choose>
+                        <c:when test="${mtfn:unknown(album.name)}">
+                            (unknown)
+                        </c:when>
+                        <c:otherwise>
+                            <c:out value="${album.name}"/>
+                        </c:otherwise>
+                    </c:choose>
                 </td>
                 <td>
                     <c:choose>
@@ -157,7 +164,7 @@
                 <c:if test="${!empty sessionScope.playlist}">
                     <td class="check">&nbsp;</td>
                 </c:if>
-                <td colspan="2"><em><fmt:message key="allTracksOfAboveAlbums"/></em></td>
+                <td colspan="2" class="albumwithcover"><em><fmt:message key="allTracksOfAboveAlbums"/></em></td>
                 <td class="tracks">
                     <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${allAlbumsTrackCount}</a>
                 </td>

@@ -88,6 +88,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
             track.setProtected(resultSet.getBoolean("PROTECTED"));
             track.setVideo(resultSet.getBoolean("VIDEO"));
             track.setGenre(resultSet.getString("GENRE"));
+            track.setImageCount(resultSet.getInt("IMAGECOUNT"));
             return track;
         }
     }

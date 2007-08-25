@@ -9,6 +9,15 @@
         </sql>
     </statement>
 
+    <statement name="findAlbumImage">
+        <sql>
+            SELECT LIMIT 0 1 data AS data
+            FROM image
+            WHERE size = :size
+            AND track_id IN (SELECT id from TRACK where album = :album)
+        </sql>
+    </statement>
+
     <statement name="nextPlaylistId">
         <sql>SELECT TOP 1 NEXT VALUE FOR playlist_id_sequence AS id FROM system_information</sql>
     </statement>

@@ -253,6 +253,21 @@ table.portal input {
 td.artist {
 }
 
+td.albumwithcover {
+    padding-left: 40px;
+    background-position: 3px center;
+    background-repeat: no-repeat;
+    height: 38px;
+}
+
+tr.odd td.albumwithcover {
+    background-color: #edf3fe;
+    padding-left: 40px;
+    background-position: 3px center;
+    background-repeat: no-repeat;
+    height: 38px;
+}
+
 td.artist a {
   display: inline;
   color: #000;

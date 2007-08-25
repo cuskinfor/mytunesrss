@@ -129,15 +129,6 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     connection.createStatement().execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
                 }
             });
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Inserting/updating MP3 cover images.");
-            }
-            List<Album> albums = (List<Album>)storeSession.executeQuery(new FindAlbumQuery(null, null, -1));
-            for (Album album : albums) {
-                List<Track> tracks = (List<Track>)storeSession.executeQuery(FindTrackQuery.getForAlbum(new String[] {album.getName()}, false));
-//                storeSession.commitAndContinue();
-//                storeSession.executeStatement(new InsertTrackImagesStatement(tracks));
-            }
             storeSession.commit();
             long timeAfterCommit = System.currentTimeMillis();
             if (LOG.isDebugEnabled()) {
