@@ -176,4 +176,26 @@ public class MyTunesRssUtils {
     public static SmartStatement createStatement(Connection connection, String name) throws SQLException {
         return MyTunesRss.STORE.getSmartStatementFactory().createStatement(connection, name);
     }
+
+    public static void executeDatabaseUpdate() {
+        final DatabaseBuilderTask task = MyTunesRss.createDatabaseBuilderTask();
+        if (!task.isRunning()) {
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        task.execute();
+                        if (!task.isExecuted()) {
+                            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateNotRun"));
+                        }
+                    } catch (Exception e) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Error during database update", e);
+                        }
+                    }
+                }
+            }).start();
+        } else {
+            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateAlreadyRunning"));
+        }
+    }
 }

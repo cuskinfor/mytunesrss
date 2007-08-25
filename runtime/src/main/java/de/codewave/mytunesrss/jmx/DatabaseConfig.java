@@ -13,11 +13,14 @@ import java.sql.*;
 import java.text.*;
 import java.util.Date;
 
+import org.apache.commons.logging.*;
+
 /**
  * de.codewave.mytunesrss.jmx.DatabaseConfig
  */
 public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBean {
-
+    private static final Log LOG = LogFactory.getLog(DatabaseConfig.class);
+    
     DatabaseConfig() throws NotCompliantMBeanException {
         super(DatabaseConfigMBean.class);
     }
@@ -42,7 +45,13 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
         if (!databaseBuilderTask.isRunning()) {
             new Thread(new Runnable() {
                 public void run() {
-                    MyTunesRssUtils.executeTask(null, null, null, false, databaseBuilderTask);
+                    try {
+                        databaseBuilderTask.execute();
+                    } catch (Exception e) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Error during database update", e);
+                        }
+                    }
                 }
             }).start();
             onChange();

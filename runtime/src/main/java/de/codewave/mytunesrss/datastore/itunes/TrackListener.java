@@ -1,15 +1,11 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.mp3.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.*;
-import de.codewave.utils.graphics.*;
-import de.codewave.camel.mp3.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
-import org.apache.commons.io.*;
 
 import java.io.*;
 import java.sql.*;
@@ -51,19 +47,32 @@ public class TrackListener implements PListHandlerListener {
         myExistingIds.add(trackId);
         myTrackIdToPersId.put((Long)track.get("Track ID"), trackId);
         if (processTrack(track)) {
-                myUpdatedCount++;
-                if (myUpdatedCount % 5000 == 0) {// commit every 5000 tracks to not run out of memory
+            myUpdatedCount++;
+            if (myUpdatedCount % 100 == 0) {
+                // commit every 100 tracks
+                if (myUpdatedCount % 500 == 0) {
+                    // recreate help tables every 500 tracks
                     try {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Committing transaction after 5000 inserted/updated tracks.");
-                        }
-                        myDataStoreSession.commitAndContinue();
+                        myDataStoreSession
+                                .executeStatement(new RecreateHelpTablesStatement(myDataStoreSession.executeQuery(new FindAlbumArtistMappingQuery())));
                     } catch (SQLException e) {
                         if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not commit block of track updates.", e);
+                            LOG.error("Could not recreate help tables..", e);
                         }
                     }
                 }
+                try {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Committing transaction after 100 inserted/updated tracks.");
+                    }
+                    myDataStoreSession.commit();
+//                    myDataStoreSession.commitAndContinue();
+                } catch (SQLException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not commit transaction.", e);
+                    }
+                }
+            }
         }
         return false;
     }
@@ -87,26 +96,27 @@ public class TrackListener implements PListHandlerListener {
                 long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
                 if (!myDatabaseIds.contains(trackId) || dateModifiedTime >= myLibraryListener.getTimeLastUpate() ||
                         dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
-                try {
-                    InsertOrUpdateTrackStatement statement = myDatabaseIds.contains(trackId) ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);
-                    statement.clear();
-                    statement.setId(trackId);
-                    statement.setName(name.trim());
-                    statement.setArtist(StringUtils.trimToNull((String)track.get("Artist")));
-                    statement.setAlbum(StringUtils.trimToNull((String)track.get("Album")));
-                    statement.setTime((int)(track.get("Total Time") != null ? (Long)track.get("Total Time") / 1000 : 0));
-                    statement.setTrackNumber((int)(track.get("Track Number") != null ? (Long)track.get("Track Number") : 0));
-                    String fileName = file.getAbsolutePath();
-                    statement.setFileName(fileName);
-                    statement.setProtected(FileSupportUtils.isProtected(fileName));
-                    statement.setVideo(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue());
-                    statement.setGenre(StringUtils.trimToNull((String)track.get("Genre")));
-                    myDataStoreSession.executeStatement(statement);
-                    return true;
-                } catch (SQLException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not insert track \"" + name + "\" into database", e);
-                    }
+                    try {
+                        InsertOrUpdateTrackStatement statement =
+                                myDatabaseIds.contains(trackId) ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);
+                        statement.clear();
+                        statement.setId(trackId);
+                        statement.setName(name.trim());
+                        statement.setArtist(StringUtils.trimToNull((String)track.get("Artist")));
+                        statement.setAlbum(StringUtils.trimToNull((String)track.get("Album")));
+                        statement.setTime((int)(track.get("Total Time") != null ? (Long)track.get("Total Time") / 1000 : 0));
+                        statement.setTrackNumber((int)(track.get("Track Number") != null ? (Long)track.get("Track Number") : 0));
+                        String fileName = file.getAbsolutePath();
+                        statement.setFileName(fileName);
+                        statement.setProtected(FileSupportUtils.isProtected(fileName));
+                        statement.setVideo(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue());
+                        statement.setGenre(StringUtils.trimToNull((String)track.get("Genre")));
+                        myDataStoreSession.executeStatement(statement);
+                        return true;
+                    } catch (SQLException e) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Could not insert track \"" + name + "\" into database", e);
+                        }
                     }
                 }
                 return false;

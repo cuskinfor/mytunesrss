@@ -50,7 +50,8 @@ public class PlaylistFileProcessor implements FileProcessor {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Committing transaction after inserting playlist.");
                     }
-                    myDataStoreSession.commitAndContinue();
+                    myDataStoreSession.commit();
+//                    myDataStoreSession.commitAndContinue();
                 }
             } catch (IOException e) {
                 if (LOG.isErrorEnabled()) {

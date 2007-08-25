@@ -149,6 +149,9 @@
         <sql>
             DELETE FROM track WHERE id = :id
         </sql>
+        <sql>
+            DELETE FROM image WHERE track_id = :id
+        </sql>
     </statement>
 
     <statement name="findAlbumArtistMapping">
@@ -208,25 +211,25 @@
 
     <statement name="prepareForUpdate">
         <sql>DELETE FROM playlist WHERE type IN (:itunes, :m3ufile)</sql>
-        <sql>DELETE FROM album</sql>
-        <sql>DELETE FROM artist</sql>
-        <sql>DELETE FROM genre</sql>
     </statement>
 
     <statement name="insertPlaylist">
         <sql>INSERT INTO playlist (id, name, type, track_count) VALUES (:id, :name, :type, 0)</sql>
-        <sql loop="track_id">{createPlaylistTrackLinks}</sql>
+        <sql loop="track_id" loopcommit="500">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>
     </statement>
 
     <statement name="updatePlaylist">
         <sql>UPDATE playlist SET name = :name WHERE id = :id</sql>
         <sql>DELETE FROM link_track_playlist WHERE playlist_id = :id</sql>
-        <sql loop="track_id">{createPlaylistTrackLinks}</sql>
+        <sql loop="track_id" loopcommit="500">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>
     </statement>
 
-    <statement name="updateHelpTables">
+    <statement name="recreateHelpTables">
+        <sql>DELETE FROM album</sql>
+        <sql>DELETE FROM artist</sql>
+        <sql>DELETE FROM genre</sql>
         <sql>
             INSERT INTO album (name, first_char, track_count, artist_count)
             SELECT DISTINCT(album), LOWER(SUBSTRING(album FROM 1 FOR 1)), COUNT(id), COUNT(DISTINCT(artist)) FROM track GROUP BY album
@@ -241,7 +244,6 @@
             SELECT DISTINCT(genre), LOWER(SUBSTRING(genre FROM 1 FOR 1)), COUNT(id), COUNT(DISTINCT(album)), COUNT(DISTINCT(artist))
             FROM track WHERE genre IS NOT NULL GROUP BY genre
         </sql>
-        <sql>{tuneDatabaseAfterHelpTablesUpdate}</sql>
     </statement>
 
     <!-- reusable sql fragments -->

@@ -9,7 +9,7 @@ package de.codewave.mytunesrss.server;
  */
 public interface CheckHealthResult {
     byte OK = 0;
-    byte EMPTY_LIBRARY = 1;
+    byte NULL_DATA_STORE = 1;
     byte INVALID_HTTP_RESPONSE = 2;
     byte SERVER_COMMUNICATION_FAILURE = 3;
     byte EOF = 4;

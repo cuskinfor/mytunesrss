@@ -48,6 +48,16 @@ public class Database implements MyTunesRssEventListener {
     public void handleEvent(MyTunesRssEvent event) {
         if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
             initValues();
+        } else if (event == MyTunesRssEvent.DATABASE_UPDATE_STARTED) {
+            myUpdateDatabaseButton.setEnabled(false);
+            myDeleteDatabaseButton.setEnabled(false);
+            myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString("settings.databaseUpdateRunning"));
+        } else if (event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED || event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN) {
+            if (event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED) {
+                refreshLastUpdate();
+            }
+            myUpdateDatabaseButton.setEnabled(true);
+            myDeleteDatabaseButton.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
         }
     }
 
@@ -125,7 +135,7 @@ public class Database implements MyTunesRssEventListener {
                 myUpdateDatabaseOnServerStart.setEnabled(true);
                 myAutoUpdateDatabaseInput.setEnabled(true);
                 myIgnoreTimestampsInput.setEnabled(true);
-                myDeleteDatabaseButton.setEnabled(true);
+                myDeleteDatabaseButton.setEnabled(!MyTunesRss.createDatabaseBuilderTask().isRunning());
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
                 myDeleteMissingFiles.setEnabled(true);
                 SwingUtils.enableElementAndLabel(myFileTypes, true);
@@ -159,11 +169,7 @@ public class Database implements MyTunesRssEventListener {
 
     public class UpdateDatabaseButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            DatabaseBuilderTask task = MyTunesRss.createDatabaseBuilderTask();
-            MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.buildDatabase"), null, false, task);
-            if (!task.isExecuted()) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateNotRun"));
-            }
+            MyTunesRssUtils.executeDatabaseUpdate();
         }
     }
 }

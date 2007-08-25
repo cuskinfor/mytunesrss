@@ -124,15 +124,28 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         try {
                             myStoreSession.executeStatement(statement);
                             myUpdatedCount++;
-                            if (myUpdatedCount % 5000 == 0) {// commit every 5000 tracks to not run out of memory
+                            if (myUpdatedCount % 100 == 0) {
+                                // commit every 100 tracks
+                                if (myUpdatedCount % 500 == 0) {
+                                    // recreate help tables every 500 tracks
+                                    try {
+                                        myStoreSession
+                                                .executeStatement(new RecreateHelpTablesStatement(myStoreSession.executeQuery(new FindAlbumArtistMappingQuery())));
+                                    } catch (SQLException e) {
+                                        if (LOG.isErrorEnabled()) {
+                                            LOG.error("Could not recreate help tables..", e);
+                                        }
+                                    }
+                                }
                                 try {
                                     if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Committing transaction after 5000 inserted/updated tracks.");
+                                        LOG.debug("Committing transaction after 100 inserted/updated tracks.");
                                     }
-                                    myStoreSession.commitAndContinue();
+                                    myStoreSession.commit();
+                                    //                    myDataStoreSession.commitAndContinue();
                                 } catch (SQLException e) {
                                     if (LOG.isErrorEnabled()) {
-                                        LOG.error("Could not commit block of track updates.", e);
+                                        LOG.error("Could not commit transaction.", e);
                                     }
                                 }
                             }

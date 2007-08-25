@@ -4,9 +4,8 @@
 
     <statement name="findRandomTracks">
         <sql>
-            SELECT LIMIT 0 :maxCount RAND() AS rnd, {trackColumns} FROM track t
-            WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId) 
-            ORDER BY rnd
+            SELECT LIMIT 0 :maxCount RAND() AS rnd, {trackColumns} FROM track t WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM
+            link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId) ORDER BY rnd
         </sql>
     </statement>
 
@@ -14,8 +13,11 @@
         <sql>SELECT TOP 1 NEXT VALUE FOR playlist_id_sequence AS id FROM system_information</sql>
     </statement>
 
+    <statement name="tuneDatabase">
+        <sql>ANALYZE SAMPLE_SIZE 0</sql>
+    </statement>
+
     <!-- reusable sql fragments -->
-    <fragment name="tuneDatabaseAfterHelpTablesUpdate">ANALYZE SAMPLE_SIZE 0</fragment>
 
     <fragment name="likeEscape">ESCAPE '\'</fragment>
 

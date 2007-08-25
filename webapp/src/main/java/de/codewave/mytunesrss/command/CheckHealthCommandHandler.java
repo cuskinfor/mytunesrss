@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.*;
-import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.server.*;
 import org.apache.commons.logging.*;
 
@@ -23,11 +22,11 @@ public class CheckHealthCommandHandler extends MyTunesRssCommandHandler {
             LOG.info("Health check servlet called.");
         }
         MyTunesRssDataStore dataStore = getDataStore();
-        if (dataStore == null || dataStore.executeQuery(FindTrackQuery.getForSearchTerm(null, false)).isEmpty()) {
+        if (dataStore == null) {
             if (LOG.isInfoEnabled()) {
-                LOG.info("Data store is null or empty!");
+                LOG.info("Data store is null!");
             }
-            getResponse().getOutputStream().write(CheckHealthResult.EMPTY_LIBRARY);
+            getResponse().getOutputStream().write(CheckHealthResult.NULL_DATA_STORE);
         } else {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Data store is up and running.");

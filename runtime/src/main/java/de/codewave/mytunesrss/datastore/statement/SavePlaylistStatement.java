@@ -15,8 +15,6 @@ import java.util.*;
  * de.codewave.mytunesrss.datastore.statement.SavePlaylistStatement
  */
 public abstract class SavePlaylistStatement implements DataStoreStatement {
-    private static final Log LOG = LogFactory.getLog(SavePlaylistStatement.class);
-
     protected String myId;
     private String myName;
     private PlaylistType myType;

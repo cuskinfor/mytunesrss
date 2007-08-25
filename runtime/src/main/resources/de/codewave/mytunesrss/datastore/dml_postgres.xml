@@ -10,8 +10,10 @@
         <sql>SELECT nextval('playlist_id_sequence') AS id FROM system_information</sql>
     </statement>
 
-    <!-- reusable sql fragments -->
-    <fragment name="tuneDatabaseAfterHelpTablesUpdate">ANALYZE</fragment>
+    <statement name="tuneDatabase">
+        <sql>ANALYZE</sql>
+    </statement>
 
+    <!-- reusable sql fragments -->
     <fragment name="likeEscape">ESCAPE '\\'</fragment>
 </statements>

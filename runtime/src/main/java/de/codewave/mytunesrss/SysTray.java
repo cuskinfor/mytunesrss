@@ -6,6 +6,7 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.settings.*;
 import de.codewave.mytunesrss.task.*;
+import de.codewave.utils.swing.*;
 import snoozesoft.systray4j.*;
 
 import javax.swing.*;
@@ -114,11 +115,7 @@ public class SysTray {
         }
 
         private void updateDatabase() {
-            DatabaseBuilderTask task = MyTunesRss.createDatabaseBuilderTask();
-            MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.buildDatabase"), null, false, task);
-            if (!task.isExecuted()) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateNotRun"));
-            }
+            MyTunesRssUtils.executeDatabaseUpdate();
         }
     }
 }

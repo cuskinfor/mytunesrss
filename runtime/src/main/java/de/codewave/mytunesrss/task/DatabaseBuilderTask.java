@@ -92,7 +92,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             LOG.debug("Database builder task started.");
         }
         DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
-        storeSession.begin();
+//        storeSession.begin();
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Preparing database tables for update.");
@@ -118,17 +118,11 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             if (!databaseIds.isEmpty()) {
                 removeObsoleteTracks(storeSession, databaseIds);
             }
-            storeSession.commitAndContinue();
+//            storeSession.commitAndContinue();
+            storeSession.commit();
             long timeAfterTracks = System.currentTimeMillis();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Time for loading tracks: " + (timeAfterTracks - timeUpdateStart));
-                LOG.debug("Building help tables.");
-            }
-            storeSession.executeStatement(new UpdateHelpTablesStatement(storeSession.executeQuery(new FindAlbumArtistMappingQuery())));
-            long timeAfterHelpTables = System.currentTimeMillis();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Time for building help tables: " + (timeAfterHelpTables - timeAfterTracks));
-                LOG.debug("Building pager and updating system information.");
             }
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
@@ -141,13 +135,13 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             List<Album> albums = (List<Album>)storeSession.executeQuery(new FindAlbumQuery(null, null, -1));
             for (Album album : albums) {
                 List<Track> tracks = (List<Track>)storeSession.executeQuery(FindTrackQuery.getForAlbum(new String[] {album.getName()}, false));
-                storeSession.commitAndContinue();
-                storeSession.executeStatement(new InsertTrackImagesStatement(tracks));
+//                storeSession.commitAndContinue();
+//                storeSession.executeStatement(new InsertTrackImagesStatement(tracks));
             }
             storeSession.commit();
             long timeAfterCommit = System.currentTimeMillis();
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Time for commit: " + (timeAfterCommit - timeAfterHelpTables));
+                LOG.debug("Time for commit: " + (timeAfterCommit - timeAfterTracks));
                 LOG.debug("Creating database checkpoint.");
             }
         } catch (Exception e) {
@@ -166,11 +160,12 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             statement.setId(id);
             storeSession.executeStatement(statement);
             count++;
-            if (count == 5000) {
+            if (count == 2000) {
                 count = 0;
-                storeSession.commitAndContinue();
+                storeSession.commit();
+//                storeSession.commitAndContinue();
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Committing transaction after 5000 deleted tracks.");
+                    LOG.debug("Committing transaction after 2000 deleted tracks.");
                 }
             }
         }

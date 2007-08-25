@@ -12,8 +12,11 @@
         <sql>SELECT LAST_INSERT_ID() AS id FROM playlist_id_sequence LIMIT 1</sql>
     </statement>
 
+    <statement name="tuneDatabase">
+        <sql>ANALYZE TABLE track, artist, album, genre</sql>
+    </statement>
+
     <!-- reusable sql fragments -->
-    <fragment name="tuneDatabaseAfterHelpTablesUpdate">ANALYZE TABLE track, artist, album, genre</fragment>
 
     <fragment name="likeEscape">ESCAPE '\\'</fragment>
 

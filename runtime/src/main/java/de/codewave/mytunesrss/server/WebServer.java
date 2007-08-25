@@ -66,8 +66,8 @@ public class WebServer {
                         if (health != CheckHealthResult.OK) {
                             myEmbeddedTomcat.stop();
                             myEmbeddedTomcat = null;
-                            if (health == CheckHealthResult.EMPTY_LIBRARY) {
-                                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverEmptyLibrary"));
+                            if (health == CheckHealthResult.NULL_DATA_STORE) {
+                                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverNullDataStore"));
                             } else {
                                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverStart"));
                             }

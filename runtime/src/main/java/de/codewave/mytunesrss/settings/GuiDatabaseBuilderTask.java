@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.task.*;
+import de.codewave.mytunesrss.*;
 
 /**
  * de.codewave.mytunesrss.settings.GuiDatabaseBuilderTask
@@ -15,10 +16,17 @@ public class GuiDatabaseBuilderTask extends DatabaseBuilderTask {
 
     @Override
     public void execute() throws Exception {
+        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_STARTED);
         mySettings.updateConfigFromGui();
-        super.execute();
-        if (isExecuted()) {
-            mySettings.getDatabaseForm().refreshLastUpdate();
+        try {
+            super.execute();
+            if (isExecuted()) {
+                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED);
+            } else {
+                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN);
+            }
+        } finally {
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED);
         }
     }
 }

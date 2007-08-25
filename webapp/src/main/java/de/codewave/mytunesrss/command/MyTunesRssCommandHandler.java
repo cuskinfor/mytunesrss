@@ -20,8 +20,8 @@ import javax.servlet.*;
 import javax.servlet.jsp.jstl.core.*;
 import javax.servlet.jsp.jstl.fmt.*;
 import java.io.*;
-import java.util.*;
 import java.net.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
@@ -150,7 +150,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             getRequest().setAttribute("permServletUrl", servletUrl);
         } else {
             String appUrl = ServletUtils.getApplicationUrl(getRequest());
-            getRequest().setAttribute("permServletUrl", MyTunesRss.MYTUNESRSSCOM_URL + "/" + myTunesRssComUsername + getRequest().getContextPath() + servletUrl.substring(appUrl.length()));
+            getRequest().setAttribute("permServletUrl",
+                                      MyTunesRss.MYTUNESRSSCOM_URL + "/" + myTunesRssComUsername + getRequest().getContextPath() +
+                                              servletUrl.substring(appUrl.length()));
         }
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
         getRequest().setAttribute("mytunesrssVersion", MyTunesRss.VERSION);
@@ -164,7 +166,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("globalConfig", MyTunesRss.CONFIG);
         setResourceBundle();
         if (MyTunesRss.REGISTRATION.isRegistered() && webConfig.isValidTranscoder()) {
-            getRequest().setAttribute("tc", webConfig.getLameTargetBitrate() + "," + webConfig.getLameTargetSampleRate() + "," + webConfig.isTranscodeOnTheFlyIfPossible());
+            getRequest().setAttribute("tc",
+                                      webConfig.getLameTargetBitrate() + "," + webConfig.getLameTargetSampleRate() + "," +
+                                              webConfig.isTranscodeOnTheFlyIfPossible());
             if (webConfig.isFaad2()) {
                 addSuffixReplacement("m4a", "mp3");
             }
@@ -262,26 +266,22 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         if (SCHEDULE_DATABASE_UPDATE) {
             runDatabaseUpdate();
         }
-        if (!MyTunesRss.createDatabaseBuilderTask().isRunning()) {
-            try {
-                if (!isSessionAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
-                                                                                             getWebConfig().getPasswordHash())) {
-                    authorize(WebAppScope.Session, getWebConfig().getUserName());
-                }
-                if (!isRequestAuthorized()) {
-                    forward(MyTunesRssResource.Login);
-                } else {
-                    executeAuthorized();
-                }
-            } catch (Exception e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Unhandled exception: ", e);
-                }
-                getSession().removeAttribute("errors");
-                redirect(ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss" + "/" + MyTunesRssCommand.ShowFatalError.getName());
+        try {
+            if (!isSessionAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
+                                                                                         getWebConfig().getPasswordHash())) {
+                authorize(WebAppScope.Session, getWebConfig().getUserName());
             }
-        } else {
-            forward(MyTunesRssResource.DatabaseUpdating);
+            if (!isRequestAuthorized()) {
+                forward(MyTunesRssResource.Login);
+            } else {
+                executeAuthorized();
+            }
+        } catch (Exception e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Unhandled exception: ", e);
+            }
+            getSession().removeAttribute("errors");
+            redirect(ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss" + "/" + MyTunesRssCommand.ShowFatalError.getName());
         }
     }
 
@@ -311,6 +311,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected void restartMyTunesRssCom() throws IOException {
-        redirect(MyTunesRss.MYTUNESRSSCOM_TOOLS_URL + "/redirect.php?username=" + getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) + "&cookie=" + URLEncoder.encode(getWebConfig().getCookieValue(), "UTF-8"));
+        redirect(MyTunesRss.MYTUNESRSSCOM_TOOLS_URL + "/redirect.php?username=" + getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) +
+                "&cookie=" + URLEncoder.encode(getWebConfig().getCookieValue(), "UTF-8"));
     }
 }
