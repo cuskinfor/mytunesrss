@@ -28,11 +28,19 @@ public class ShowTrackImageCommandHandler extends ShowImageCommandHandler {
             }
         } else {
             String trackId = getRequest().getParameter("track");
+            int size = getIntegerRequestParameter("size", 0);
             if (StringUtils.isNotEmpty(trackId)) {
-                Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
-                if (!tracks.isEmpty()) {
-                    Track track = tracks.iterator().next();
-                    image = ID3Utils.getImage(track);
+                if (size == 0) {
+                    Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
+                    if (!tracks.isEmpty()) {
+                        Track track = tracks.iterator().next();
+                        image = ID3Utils.getImage(track);
+                    }
+                } else {
+                    byte[] data = getDataStore().executeQuery(new FindTrackImageQuery(trackId, size));
+                    if (data != null && data.length > 0) {
+                        image = new Image("image/jpeg", data);
+                    }
                 }
             }
         }

@@ -120,7 +120,7 @@
         <tr <c:if test="${!authUser.download || !config.showDownload}">class="odd"</c:if>>
           <td colspan="2">
             <img alt="${track.name} Album Art"
-              src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>"
+              src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=256</mt:encrypt>"
               width="200" style="display: block; margin: 10px auto;"/>
           </td>
         </tr>
