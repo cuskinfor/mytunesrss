@@ -24,27 +24,31 @@ public class MigrationStatement implements DataStoreStatement {
         if (LOG.isInfoEnabled()) {
             LOG.info("Database version " + databaseVersion + " detected.");
         }
-        // migration from 3.0.x to 3.1-EAP-1
-        if (databaseVersion.compareTo(new Version("3.1-EAP-1")) < 0) {
+        // migration < 3.0 to current version
+        if (databaseVersion.compareTo(new Version("3.0")) < 0) {
             new DropAllTablesStatement().execute(connection);
-            MyTunesRssUtils.createStatement(connection, "migrate30to31eap1").execute();
             new CreateAllTablesStatement().execute(connection);
-            databaseVersion = new Version("3.1-EAP-1");
+            databaseVersion = new Version(MyTunesRss.VERSION);
             new UpdateDatabaseVersionStatement().execute(connection);
-        }
-        // migration from 3.1-EAP-1 to 3.1-EAP-4
-        if (databaseVersion.compareTo(new Version("3.1-EAP-4")) < 0) {
-            MyTunesRssUtils.createStatement(connection, "migrate31eap131eap4").execute();
-            new CreateAllTablesStatement().execute(connection);
-            databaseVersion = new Version("3.1-EAP-4");
-            new UpdateDatabaseVersionStatement().execute(connection);
-        }
-        // migration from 3.1-EAP-4 to 3.1-EAP-6
-        if (databaseVersion.compareTo(new Version("3.1-EAP-6")) < 0) {
-            MyTunesRssUtils.createStatement(connection, "migrate31eap4to31eap6").execute();
-            new CreateAllTablesStatement().execute(connection);
-            databaseVersion = new Version("3.1-EAP-6");
-            new UpdateDatabaseVersionStatement().execute(connection);
+        } else {
+            // migration from 3.0.x to 3.1-EAP-1
+            if (databaseVersion.compareTo(new Version("3.1-EAP-1")) < 0) {
+                MyTunesRssUtils.createStatement(connection, "migrate30to31eap1").execute();
+                databaseVersion = new Version("3.1-EAP-1");
+                new UpdateDatabaseVersionStatement().execute(connection);
+            }
+            // migration from 3.1-EAP-1 to 3.1-EAP-4
+            if (databaseVersion.compareTo(new Version("3.1-EAP-4")) < 0) {
+                MyTunesRssUtils.createStatement(connection, "migrate31eap131eap4").execute();
+                databaseVersion = new Version("3.1-EAP-4");
+                new UpdateDatabaseVersionStatement().execute(connection);
+            }
+            // migration from 3.1-EAP-4 to 3.1-EAP-6
+            if (databaseVersion.compareTo(new Version("3.1-EAP-6")) < 0) {
+                MyTunesRssUtils.createStatement(connection, "migrate31eap4to31eap6").execute();
+                databaseVersion = new Version("3.1-EAP-6");
+                new UpdateDatabaseVersionStatement().execute(connection);
+            }
         }
     }
 
