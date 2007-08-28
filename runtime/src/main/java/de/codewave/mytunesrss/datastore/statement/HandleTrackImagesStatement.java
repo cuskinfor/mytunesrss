@@ -5,6 +5,7 @@ import de.codewave.mytunesrss.mp3.*;
 import de.codewave.utils.graphics.*;
 import de.codewave.utils.sql.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.io.*;
 
 import java.io.*;
 import java.sql.*;
@@ -29,28 +30,30 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     }
 
     public void execute(Connection connection) throws SQLException {
-        try {
-            Image image = ID3Utils.getImage(Mp3Utils.readId3v2Tag(myFile));
-            boolean existing = new FindTrackImageQuery(myTrackId, 32).execute(connection) != null;
-            if (image != null && !existing) {
-                new InsertImageStatement(myTrackId, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
-                new InsertImageStatement(myTrackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
-                new InsertImageStatement(myTrackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
-                new InsertImageStatement(myTrackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
-                myUpdated = true;
-            } else if (image != null && existing) {
-                new InsertImageStatement(myTrackId, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
-                new InsertImageStatement(myTrackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
-                new InsertImageStatement(myTrackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
-                new InsertImageStatement(myTrackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
-                myUpdated = true;
-            } else if (image == null && existing) {
-                new DeleteImageStatement(myTrackId).execute(connection);
-                myUpdated = true;
-            }
-        } catch (Exception e) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Could not extract image from MP3 file.");
+        if ("mp3".equalsIgnoreCase(FilenameUtils.getExtension(myFile.getName()))) {
+            try {
+                Image image = ID3Utils.getImage(Mp3Utils.readId3v2Tag(myFile));
+                boolean existing = new FindTrackImageQuery(myTrackId, 32).execute(connection) != null;
+                if (image != null && !existing) {
+                    new InsertImageStatement(myTrackId, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
+                    new InsertImageStatement(myTrackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
+                    new InsertImageStatement(myTrackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
+                    new InsertImageStatement(myTrackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
+                    myUpdated = true;
+                } else if (image != null && existing) {
+                    new InsertImageStatement(myTrackId, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
+                    new InsertImageStatement(myTrackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
+                    new InsertImageStatement(myTrackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
+                    new InsertImageStatement(myTrackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
+                    myUpdated = true;
+                } else if (image == null && existing) {
+                    new DeleteImageStatement(myTrackId).execute(connection);
+                    myUpdated = true;
+                }
+            } catch (Exception e) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Could not extract image from MP3 file.");
+                }
             }
         }
     }
