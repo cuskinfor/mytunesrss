@@ -6,7 +6,6 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.sql.*;
-import org.apache.commons.logging.*;
 
 import java.sql.*;
 import java.util.*;
@@ -19,6 +18,7 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
     private String myName;
     private PlaylistType myType;
     private List<String> myTrackIds;
+    private boolean myUpdate;
 
     protected SavePlaylistStatement() {
         // intentionally left blank
@@ -38,6 +38,18 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
 
     public void setTrackIds(List<String> trackIds) {
         myTrackIds = trackIds;
+    }
+
+    public void setUpdate(boolean update) {
+        myUpdate = update;
+    }
+
+    public void execute(Connection connection) throws SQLException {
+        if (myUpdate) {
+            executeUpdate(connection);
+        } else {
+            executeInsert(connection);
+        }
     }
 
     protected void executeInsert(Connection connection) throws SQLException {

@@ -15,7 +15,7 @@ import java.sql.*;
 public class DeletePlaylistStatement implements DataStoreStatement {
     private String myId;
 
-    public DeletePlaylistStatement(String id) {
+    public void setId(String id) {
         myId = id;
     }
 

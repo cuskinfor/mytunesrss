@@ -24,9 +24,9 @@ public class SaveMyTunesPlaylistStatement extends SavePlaylistStatement {
                 int playlistId = resultSet.getInt("ID");
                 setId("MyTunesRSS" + playlistId);
             }
-            executeInsert(connection);
         } else {
-            executeUpdate(connection);
+            setUpdate(true);
         }
+        super.execute(connection);
     }
 }

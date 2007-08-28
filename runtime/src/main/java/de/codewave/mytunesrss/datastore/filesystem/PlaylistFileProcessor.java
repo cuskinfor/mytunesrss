@@ -19,6 +19,7 @@ public class PlaylistFileProcessor implements FileProcessor {
     private static final Log LOG = LogFactory.getLog(PlaylistFileProcessor.class);
 
     private DataStoreSession myDataStoreSession;
+    private Collection<String> myExistingIds = new HashSet<String>();
 
     public PlaylistFileProcessor(DataStoreSession storeSession) {
         myDataStoreSession = storeSession;
@@ -42,16 +43,22 @@ public class PlaylistFileProcessor implements FileProcessor {
                     }
                 }
                 if (!trackIds.isEmpty()) {
+                    String id = "file_" + IOUtils.getFilenameHash(playlistFile);
+                    DeletePlaylistStatement deleteStatement = new DeletePlaylistStatement();
+                    deleteStatement.setId(id);
                     SaveM3uFilePlaylistStatement statement = new SaveM3uFilePlaylistStatement();
-                    statement.setId("file_" + IOUtils.getFilenameHash(playlistFile));
+                    statement.setId(id);
                     statement.setName(FilenameUtils.getBaseName(playlistFile.getName()));
                     statement.setTrackIds(trackIds);
+                    if (!myDataStoreSession.executeQuery(new FindPlaylistQuery(PlaylistType.M3uFile, id)).isEmpty()) {
+                        statement.setUpdate(true);
+                    }
                     myDataStoreSession.executeStatement(statement);
+                    myExistingIds.add(id);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Committing transaction after inserting playlist.");
                     }
                     myDataStoreSession.commit();
-//                    myDataStoreSession.commitAndContinue();
                 }
             } catch (IOException e) {
                 if (LOG.isErrorEnabled()) {
@@ -63,5 +70,9 @@ public class PlaylistFileProcessor implements FileProcessor {
                 }
             }
         }
+    }
+
+    public Collection<String> getExistingIds() {
+        return myExistingIds;
     }
 }

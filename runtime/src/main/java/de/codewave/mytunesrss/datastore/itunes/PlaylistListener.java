@@ -16,10 +16,13 @@ public class PlaylistListener implements PListHandlerListener {
 
     private DataStoreSession myDataStoreSession;
     private Map<Long, String> myTrackIdToPersId;
+    private Set<String> myExistingIds = new HashSet<String>();
+    private LibraryListener myLibraryListener;
 
-    public PlaylistListener(DataStoreSession dataStoreSession, Map<Long, String> trackIdToPersId) {
+    public PlaylistListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId) {
         myDataStoreSession = dataStoreSession;
         myTrackIdToPersId = trackIdToPersId;
+        myLibraryListener = libraryListener;
     }
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
@@ -39,7 +42,8 @@ public class PlaylistListener implements PListHandlerListener {
 
         if (!master && !purchased && !partyShuffle && !podcasts) {
             String playlistId =
-                    playlist.get("Playlist Persistent ID") != null ? playlist.get("Playlist Persistent ID").toString() : "PlaylistID" + playlist.get(
+                    playlist.get("Playlist Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get("Playlist Persistent ID").toString() :
+                            myLibraryListener.getLibraryId() + "_" + "PlaylistID" + playlist.get(
                             "Playlist ID").toString();
             String name = (String)playlist.get("Name");
             List<Map> items = (List<Map>)playlist.get("Playlist Items");
@@ -51,17 +55,22 @@ public class PlaylistListener implements PListHandlerListener {
                 }
             }
             if (!tracks.isEmpty()) {
+                DeletePlaylistStatement deleteStatement = new DeletePlaylistStatement();
+                deleteStatement.setId(playlistId);
                 SavePlaylistStatement statement = new SaveITunesPlaylistStatement();
                 statement.setId(playlistId);
                 statement.setName(name);
                 statement.setTrackIds(tracks);
                 try {
+                    if (!myDataStoreSession.executeQuery(new FindPlaylistQuery(PlaylistType.ITunes, playlistId)).isEmpty()) {
+                        statement.setUpdate(true);
+                    }
                     myDataStoreSession.executeStatement(statement);
+                    myExistingIds.add(playlistId);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Committing transaction after inserting playlist.");
                     }
                     myDataStoreSession.commit();
-//                    myDataStoreSession.commitAndContinue();
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not insert playlist \"" + name + "\" into database.", e);
@@ -69,5 +78,9 @@ public class PlaylistListener implements PListHandlerListener {
                 }
             }
         }
+    }
+
+    public Collection<String> getExistingIds() {
+        return myExistingIds;
     }
 }

@@ -143,7 +143,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                         LOG.debug("Committing transaction after 100 inserted/updated tracks.");
                                     }
                                     myStoreSession.commit();
-                                    //                    myDataStoreSession.commitAndContinue();
                                 } catch (SQLException e) {
                                     if (LOG.isErrorEnabled()) {
                                         LOG.error("Could not commit transaction.", e);

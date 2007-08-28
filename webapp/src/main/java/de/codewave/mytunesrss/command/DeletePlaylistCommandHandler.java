@@ -17,8 +17,9 @@ public class DeletePlaylistCommandHandler extends MyTunesRssCommandHandler {
         if (isSessionAuthorized()) {
             String playlistId = getRequestParameter("playlist", null);
             DataStoreSession storeSession = getDataStore().getTransaction();
-//            storeSession.begin();
-            storeSession.executeStatement(new DeletePlaylistStatement(playlistId));
+            DeletePlaylistStatement statement = new DeletePlaylistStatement();
+            statement.setId(playlistId);
+            storeSession.executeStatement(statement);
             storeSession.commit();
             forward(MyTunesRssCommand.ShowPlaylistManager);
         } else {

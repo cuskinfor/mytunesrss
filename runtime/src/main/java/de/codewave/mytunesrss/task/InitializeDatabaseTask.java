@@ -36,12 +36,10 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
         });
         if (!myExistent) {
             DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
-//            storeSession.begin();
             storeSession.executeStatement(new CreateAllTablesStatement());
             storeSession.commit();
         } else {
             DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
-//            storeSession.begin();
             storeSession.executeStatement(new MigrationStatement());
             storeSession.commit();
         }

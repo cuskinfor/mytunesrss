@@ -66,7 +66,6 @@ public class TrackListener implements PListHandlerListener {
                         LOG.debug("Committing transaction after 100 inserted/updated tracks.");
                     }
                     myDataStoreSession.commit();
-//                    myDataStoreSession.commitAndContinue();
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not commit transaction.", e);

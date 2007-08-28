@@ -30,18 +30,19 @@ public class ItunesLoader {
         return null;
     }
 
-    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> databaseIds)
+    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> existingTrackIds, Collection<String> existsingPlaylistIds)
             throws SQLException {
-        LibraryListener libraryListener = null;
         TrackListener trackListener = null;
+        PlaylistListener playlistListener = null;
         if (iTunesLibraryXml != null) {
             PListHandler handler = new PListHandler();
             Map<Long, String> trackIdToPersId = new HashMap<Long, String>();
-            libraryListener = new LibraryListener(timeLastUpdate);
+            LibraryListener libraryListener = new LibraryListener(timeLastUpdate);
             trackListener = new TrackListener(storeSession, libraryListener, trackIdToPersId);
+            playlistListener = new PlaylistListener(storeSession, libraryListener, trackIdToPersId);
             handler.addListener("/plist/dict", libraryListener);
             handler.addListener("/plist/dict[Tracks]/dict", trackListener);
-            handler.addListener("/plist/dict[Playlists]/array", new PlaylistListener(storeSession, trackIdToPersId));
+            handler.addListener("/plist/dict[Playlists]/array", playlistListener);
             try {
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Parsing iTunes: \"" + iTunesLibraryXml.toString() + "\".");
@@ -55,10 +56,14 @@ public class ItunesLoader {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks.");
             }
-            databaseIds.removeAll(trackListener.getExistingIds());
+            existingTrackIds.removeAll(trackListener.getExistingIds());
+            existsingPlaylistIds.removeAll(playlistListener.getExistingIds());
         }
         if (trackListener != null && LOG.isDebugEnabled()) {
             LOG.info(trackListener.getExistingIds().size() + " iTunes tracks in the database.");
+        }
+        if (playlistListener != null && LOG.isDebugEnabled()) {
+            LOG.info(playlistListener.getExistingIds().size() + " iTunes playlists in the database.");
         }
     }
 }

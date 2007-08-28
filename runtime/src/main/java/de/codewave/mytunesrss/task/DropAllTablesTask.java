@@ -18,7 +18,6 @@ public class DropAllTablesTask extends MyTunesRssTask {
     public void execute() throws SQLException {
         try {
             DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
-//            storeSession.begin();
             storeSession.executeStatement(new DropAllTablesStatement());
             storeSession.commit();
         } catch (SQLException e) {
