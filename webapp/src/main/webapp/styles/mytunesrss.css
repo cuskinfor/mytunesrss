@@ -253,18 +253,18 @@ table.portal input {
 td.artist {
 }
 
-td.albumwithcover {
-    padding-left: 40px;
-    background-position: 3px center;
-    background-repeat: no-repeat;
+td.albumthumb {
+    padding-left: 3px;
+    padding-top: 0;
+    padding-bottom: 0;
     height: 38px;
 }
 
-tr.odd td.albumwithcover {
+tr.odd td.albumthumb {
     background-color: #edf3fe;
-    padding-left: 40px;
-    background-position: 3px center;
-    background-repeat: no-repeat;
+    padding-left: 3px;
+    padding-top: 0;
+    padding-bottom: 0;
     height: 38px;
 }
 
@@ -651,4 +651,36 @@ h1.serverbrowser span {
     background: url("../images/progress_bar.gif") top right repeat-x;
     font-weight: bold;
     text-align: center;
+}
+
+a.albumthumb {
+    position:relative;
+    left:3px;
+    width:32px;
+    height:32px;
+    text-align:center;
+}
+
+a.albumthumb img {
+    float:left;
+    padding-right:3px;
+    cursor:default;
+}
+
+span.albumthumbfull {
+    display:none;
+}
+
+a.albumthumb:HOVER span.albumthumbfull {
+    display:block;
+    position:absolute;
+    left:-86px;
+    top:-48px;
+    width:128px;
+    height:128px;
+    text-align:center;
+    border-style:solid;
+    border-color:black;
+    border-width:1px;
+    background-color:black;
 }

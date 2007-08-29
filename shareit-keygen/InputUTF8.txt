@@ -1,4 +1,4 @@
 ENCODING=UTF8
 PRODUCT_ID=300165105
-REG_NAME=celumsolutions software gmbh & co kg
+REG_NAME=Roland Müller
 #EXPIRATION=2007-10-31

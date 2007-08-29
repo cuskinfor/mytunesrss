@@ -81,7 +81,11 @@
                         <input type="checkbox" name="album" id="album${loopStatus.count}" value="${mtfn:encode64(album.name)}" />
                     </td>
                 </c:if>
-                <td class="albumwithcover" style="background-image:url('${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=32</mt:encrypt>')">
+                <td class="albumthumb">
+                    <a class="albumthumb" href="#" onclick="return false">
+                        <img src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=32</mt:encrypt>"/>
+                        <span class="albumthumbfull"><img src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=128</mt:encrypt>"/></span>
+                    </a>
                     <c:choose>
                         <c:when test="${mtfn:unknown(album.name)}">
                             (unknown)
