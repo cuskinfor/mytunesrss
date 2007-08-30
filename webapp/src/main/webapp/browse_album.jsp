@@ -132,7 +132,7 @@
                         </c:if>
                         <c:if test="${authUser.player && config.showPlayer}">
                             <td class="icon">
-                                <a href="#" onclick="openPlayer('${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/album=${cwfn:encodeUrl(mtfn:encode64(album.name))}/playerRequest=true/tc=${transcodeParam}/type=Xspf/${mtfn:virtualAlbumName(album)}.xspf&displaywidth=256&autostart=true&repeat=list&shuffle=false'); return false">
+                                <a href="#" onclick="openPlayer('${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/album=${cwfn:encodeUrl(mtfn:encode64(album.name))}/playerRequest=true/tc=${transcodeParam}/type=Xspf/${mtfn:virtualAlbumName(album)}.xspf&displaywidth=256'); return false">
                                     <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                             </td>
@@ -188,7 +188,7 @@
                         </c:if>
                         <c:if test="${authUser.player && config.showPlayer}">
                             <td class="icon">
-                                <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/tc=${transcodeParam}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/playerRequest=true/type=Xspf</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xspf'); return false">
+                                <a href="#" onclick="openPlayer('${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/tc=${transcodeParam}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/playerRequest=true/type=Xspf</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xspf&displaywidth=256'); return false">
                                     <img src="${appUrl}/images/player${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                             </td>

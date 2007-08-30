@@ -129,7 +129,7 @@
                 </c:if>
                 <c:if test="${authUser.player && config.showPlayer}">
                     <td class="icon">
-                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/playerRequest=true/tc=${transcodeParam}/type=Xspf</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xspf'); return false">
+                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/playerRequest=true/tc=${transcodeParam}/type=Xspf</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xspf&displaywidth=256'); return false">
                             <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                     </td>
                 </c:if>
