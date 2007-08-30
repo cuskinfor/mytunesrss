@@ -89,7 +89,8 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
             }
-            streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper((int)(bitrate * 1.02), dataOffset, new RangeHeader(getRequest(), fileSize)));
+            double factor = MyTunesRss.CONFIG.isBandwidthLimit() ? MyTunesRss.CONFIG.getBandwidthLimitFactor().doubleValue() : 0;
+            streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper((int)(bitrate * factor), dataOffset, new RangeHeader(getRequest(), fileSize)));
             streamSender.sendGetResponse(getRequest(), getResponse(), false);
         }
     }

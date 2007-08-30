@@ -5,26 +5,27 @@
 package de.codewave.mytunesrss;
 
 import javax.swing.*;
+import java.math.*;
 
 /**
  * de.codewave.mytunesrss.MinMaxValueTextFieldValidation
  */
 public class MinMaxValueTextFieldValidation extends JTextFieldValidation {
-    private long myMinValue;
-    private long myMaxValue;
+    private BigDecimal myMinValue;
+    private BigDecimal myMaxValue;
     private boolean myAllowEmpty;
 
     public MinMaxValueTextFieldValidation(JTextField textField, long minValue, long maxValue, boolean allowEmpty) {
         super(textField);
-        myMinValue = minValue;
-        myMaxValue = maxValue;
+        myMinValue = new BigDecimal(minValue);
+        myMaxValue = new BigDecimal(maxValue);
         myAllowEmpty = allowEmpty;
     }
 
     public MinMaxValueTextFieldValidation(JTextField textField, long minValue, long maxValue, boolean allowEmpty, String validationFailedMessage) {
         super(textField, validationFailedMessage);
-        myMinValue = minValue;
-        myMaxValue = maxValue;
+        myMinValue = new BigDecimal(minValue);
+        myMaxValue = new BigDecimal(maxValue);
         myAllowEmpty = allowEmpty;
     }
 
@@ -33,8 +34,8 @@ public class MinMaxValueTextFieldValidation extends JTextFieldValidation {
             return true;
         }
         try {
-            long value = Integer.parseInt(text);
-            return value >= myMinValue && value <= myMaxValue;
+            BigDecimal value = new BigDecimal(text);
+            return value.compareTo(myMinValue) >= 0 && value.compareTo(myMaxValue) <= 0;
         } catch (NumberFormatException exception) {
             return false;
         }

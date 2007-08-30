@@ -17,6 +17,7 @@ import java.security.*;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
+import java.math.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssConfig
@@ -59,6 +60,8 @@ public class MyTunesRssConfig {
     private String myFaad2Binary = "";
     private int myStreamingCacheTimeout = 20;
     private int myStreamingCacheMaxFiles = 300;
+    private boolean myBandwidthLimit;
+    private BigDecimal myBandwidthLimitFactor;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -296,6 +299,22 @@ public class MyTunesRssConfig {
         myStreamingCacheMaxFiles = streamingCacheMaxFiles;
     }
 
+    public boolean isBandwidthLimit() {
+        return myBandwidthLimit;
+    }
+
+    public void setBandwidthLimit(boolean bandwidthLimit) {
+        myBandwidthLimit = bandwidthLimit;
+    }
+
+    public BigDecimal getBandwidthLimitFactor() {
+        return myBandwidthLimitFactor;
+    }
+
+    public void setBandwidthLimitFactor(BigDecimal bandwidthLimitFactor) {
+        myBandwidthLimitFactor = bandwidthLimitFactor;
+    }
+
     public Collection<User> getUsers() {
         return new HashSet<User>(myUsers);
     }
@@ -470,6 +489,8 @@ public class MyTunesRssConfig {
         setFaad2Binary(Preferences.userRoot().node(PREF_ROOT).get("faad2Binary", getFaad2Binary()));
         setStreamingCacheTimeout(Preferences.userRoot().node(PREF_ROOT).getInt("streamingCacheTimeout", getStreamingCacheTimeout()));
         setStreamingCacheMaxFiles(Preferences.userRoot().node(PREF_ROOT).getInt("streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
+        setBandwidthLimit(Preferences.userRoot().node(PREF_ROOT).getBoolean("bandwidthLimit", false));
+        setBandwidthLimitFactor(new BigDecimal(Preferences.userRoot().node(PREF_ROOT).get("bandwidthLimitFactor", "0")));
     }
 
     private void readPathInfoEncryptionKey() {
@@ -595,6 +616,8 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node(PREF_ROOT).put("faad2Binary", myFaad2Binary);
         Preferences.userRoot().node(PREF_ROOT).putInt("streamingCacheTimeout", myStreamingCacheTimeout);
         Preferences.userRoot().node(PREF_ROOT).putInt("streamingCacheMaxFiles", myStreamingCacheMaxFiles);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("bandwidthLimit", myBandwidthLimit);
+        Preferences.userRoot().node(PREF_ROOT).put("bandwidthLimitFactor", myBandwidthLimitFactor.toString());
     }
 
     private void checkPrefsVersion() {

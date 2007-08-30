@@ -2,12 +2,13 @@ package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.swing.*;
+import org.apache.commons.lang.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.event.*;
 import java.io.*;
-
-import org.apache.commons.lang.*;
+import java.math.*;
 
 /**
  * de.codewave.mytunesrss.settings.Streaming
@@ -20,6 +21,9 @@ public class Streaming implements MyTunesRssEventListener {
     private JTextField myCacheLimit;
     private JTextField myFaad2BinaryInput;
     private JButton myFaad2BinaryLookupButton;
+    private JCheckBox myLimitBandwidthCheckBox;
+    private JTextField myBandwidthLimitInput;
+    private JLabel myBandwidthLimitLabel;
 
     public void init() {
         initValues();
@@ -27,10 +31,24 @@ public class Streaming implements MyTunesRssEventListener {
                 "dialog.lookupLameBinary")));
         myFaad2BinaryLookupButton.addActionListener(new SelectBinaryActionListener(myFaad2BinaryInput, MyTunesRssUtils.getBundleString(
                 "dialog.lookupFaad2Binary")));
-        JTextFieldValidation.setValidation(new FileExistsTextFieldValidation(myLameBinaryInput, true, false, MyTunesRssUtils.getBundleString("error.lameBinaryFileMissing")));
-        JTextFieldValidation.setValidation(new FileExistsTextFieldValidation(myFaad2BinaryInput, true, false, MyTunesRssUtils.getBundleString("error.faad2BinaryFileMissing")));
-        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myCacheTimeout, 0, 1440, true, MyTunesRssUtils.getBundleString("error.illegalCacheTimeout")));
-        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myCacheLimit, 0, 10000, true, MyTunesRssUtils.getBundleString("error.illegalCacheLimit")));
+        JTextFieldValidation.setValidation(new FileExistsTextFieldValidation(myLameBinaryInput, true, false, MyTunesRssUtils.getBundleString(
+                "error.lameBinaryFileMissing")));
+        JTextFieldValidation.setValidation(new FileExistsTextFieldValidation(myFaad2BinaryInput, true, false, MyTunesRssUtils.getBundleString(
+                "error.faad2BinaryFileMissing")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myCacheTimeout, 0, 1440, true, MyTunesRssUtils.getBundleString(
+                "error.illegalCacheTimeout")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myCacheLimit, 0, 10000, true, MyTunesRssUtils.getBundleString(
+                "error.illegalCacheLimit")));
+        MinMaxValueTextFieldValidation minMaxValidation = new MinMaxValueTextFieldValidation(myBandwidthLimitInput, 0, 5, true, null);
+        JTextFieldValidation.setValidation(new CheckboxCheckedTextFieldValidation(myBandwidthLimitInput,
+                                                                                  myLimitBandwidthCheckBox,
+                                                                                  minMaxValidation,
+                                                                                  MyTunesRssUtils.getBundleString("error.illegalBandwidthLimit")));
+        myLimitBandwidthCheckBox.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                myBandwidthLimitInput.setEnabled(myLimitBandwidthCheckBox.isSelected());
+            }
+        });
         MyTunesRssEventManager.getInstance().addListener(this);
     }
 
@@ -45,6 +63,13 @@ public class Streaming implements MyTunesRssEventListener {
         myFaad2BinaryInput.setText(MyTunesRss.CONFIG.getFaad2Binary());
         myCacheTimeout.setText(Integer.toString(MyTunesRss.CONFIG.getStreamingCacheTimeout()));
         myCacheLimit.setText(Integer.toString(MyTunesRss.CONFIG.getStreamingCacheMaxFiles()));
+        if (MyTunesRss.CONFIG.getBandwidthLimitFactor().compareTo(BigDecimal.ZERO) > 0) {
+            myBandwidthLimitInput.setText(MyTunesRss.CONFIG.getBandwidthLimitFactor().toPlainString());
+        } else {
+            myBandwidthLimitInput.setText("");
+        }
+        myLimitBandwidthCheckBox.setSelected(MyTunesRss.CONFIG.isBandwidthLimit());
+        myBandwidthLimitInput.setEnabled(myLimitBandwidthCheckBox.isSelected());
     }
 
     public String updateConfigFromGui() {
@@ -64,6 +89,12 @@ public class Streaming implements MyTunesRssEventListener {
             } else {
                 MyTunesRss.CONFIG.setStreamingCacheMaxFiles(0);
             }
+            MyTunesRss.CONFIG.setBandwidthLimit(myLimitBandwidthCheckBox.isSelected());
+            if (myLimitBandwidthCheckBox.isSelected() && StringUtils.isNotEmpty(myBandwidthLimitInput.getText())) {
+                MyTunesRss.CONFIG.setBandwidthLimitFactor(new BigDecimal(myBandwidthLimitInput.getText()));
+            } else {
+                MyTunesRss.CONFIG.setBandwidthLimitFactor(BigDecimal.ZERO);
+            }
         }
         return null;
     }
@@ -77,6 +108,9 @@ public class Streaming implements MyTunesRssEventListener {
                 SwingUtils.enableElementAndLabel(myCacheLimit, false);
                 myLameBinaryLookupButton.setEnabled(false);
                 myFaad2BinaryLookupButton.setEnabled(false);
+                myLimitBandwidthCheckBox.setEnabled(false);
+                myBandwidthLimitInput.setEnabled(false);
+                myBandwidthLimitLabel.setEnabled(false);
                 break;
             case ServerIdle:
                 SwingUtils.enableElementAndLabel(myLameBinaryInput, true);
@@ -85,6 +119,9 @@ public class Streaming implements MyTunesRssEventListener {
                 SwingUtils.enableElementAndLabel(myCacheLimit, true);
                 myLameBinaryLookupButton.setEnabled(true);
                 myFaad2BinaryLookupButton.setEnabled(true);
+                myLimitBandwidthCheckBox.setEnabled(true);
+                myBandwidthLimitInput.setEnabled(myLimitBandwidthCheckBox.isSelected());
+                myBandwidthLimitLabel.setEnabled(true);
                 break;
         }
     }
