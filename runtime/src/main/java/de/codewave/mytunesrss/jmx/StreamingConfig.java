@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.jmx;
 import de.codewave.mytunesrss.*;
 
 import javax.management.*;
+import java.math.*;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       Cologne Systems GmbH<br> <b>Creation Date:</b>
@@ -49,6 +50,24 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
 
     public void setLameBinary(String lameBinary) {
         MyTunesRss.CONFIG.setLameBinary(lameBinary);
+        onChange();
+    }
+
+    public BigDecimal getBandwidthLimitFactor() {
+        return MyTunesRss.CONFIG.getBandwidthLimitFactor();
+    }
+
+    public boolean isBandwidthLimit() {
+        return MyTunesRss.CONFIG.isBandwidthLimit();
+    }
+
+    public void setBandwidthLimit(boolean limit) {
+        MyTunesRss.CONFIG.setBandwidthLimit(limit);
+        onChange();
+    }
+
+    public void setBandwidthLimitFactor(BigDecimal factor) {
+        MyTunesRss.CONFIG.setBandwidthLimitFactor(factor);
         onChange();
     }
 }

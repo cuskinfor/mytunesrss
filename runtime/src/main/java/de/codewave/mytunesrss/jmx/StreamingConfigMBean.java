@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss.jmx;
 
+import java.math.*;
+
 /**
  * de.codewave.mytunesrss.jmx.AddonsConfigMBean
  */
@@ -19,4 +21,12 @@ public interface StreamingConfigMBean {
     int getCacheMaxFiles();
 
     void setCacheMaxFiles(int sizeLimit);
+
+    boolean isBandwidthLimit();
+
+    void setBandwidthLimit(boolean limit);
+
+    BigDecimal getBandwidthLimitFactor();
+
+    void setBandwidthLimitFactor(BigDecimal factor);
 }
