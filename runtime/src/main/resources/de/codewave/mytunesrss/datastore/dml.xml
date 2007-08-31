@@ -5,13 +5,16 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT name AS name, track_count AS track_count, artist_count AS artist_count, artist AS artist
-            FROM album
-            WHERE (:artist IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
-            OR (:artist IS NOT NULL AND name IN (SELECT DISTINCT(album) FROM track WHERE artist = :artist))
-            OR (:genre IS NOT NULL AND name IN (SELECT DISTINCT(album) FROM track WHERE genre = :genre))
-            OR {letterRegionByIndex}
-            ORDER BY name
+            SELECT a.name AS albumname, track_count AS track_count, artist_count AS artist_count, a.artist AS artist, COUNT(i.track_id) AS imagecount
+            FROM album a
+                INNER JOIN track t ON a.name = t.album
+                LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE ((:artist IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
+            OR (:artist IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE artist = :artist))
+            OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE genre = :genre))
+            OR {letterRegionByIndex})
+            GROUP BY a.name, a.track_count, a.artist_count, a.artist
+            ORDER BY albumname
             ]]>
         </sql>
     </statement>

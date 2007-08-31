@@ -12,6 +12,7 @@ public class Album {
     private int myArtistCount;
     private int myTrackCount;
     private String myArtist;
+    private boolean myImage;
 
     public String getName() {
         return myName;
@@ -43,5 +44,13 @@ public class Album {
 
     public void setArtist(String artist) {
         myArtist = artist;
+    }
+
+    public boolean isImage() {
+        return myImage;
+    }
+
+    public void setImage(boolean image) {
+        myImage = image;
     }
 }

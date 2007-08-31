@@ -83,8 +83,10 @@
                 </c:if>
                 <td class="albumthumb">
                     <a class="albumthumb" href="#" onclick="return false">
-                        <img alt="cover thumbnail" src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=32</mt:encrypt>"/>
-                        <span class="albumthumbfull"><img alt="cover preview" src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=128</mt:encrypt>"/></span>
+                        <c:if test="${album.image}">
+                            <img alt="cover thumbnail" src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=32</mt:encrypt>"/>
+                            <span class="albumthumbfull"><img alt="cover preview" src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=128</mt:encrypt>"/></span>
+                        </c:if>
                     </a>
                     <c:choose>
                         <c:when test="${mtfn:unknown(album.name)}">

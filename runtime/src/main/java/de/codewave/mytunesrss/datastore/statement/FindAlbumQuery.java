@@ -40,10 +40,11 @@ public class FindAlbumQuery extends DataStoreQuery<Collection<Album>> {
 
         public Album create(ResultSet resultSet) throws SQLException {
             Album album = new Album();
-            album.setName(resultSet.getString("NAME"));
+            album.setName(resultSet.getString("ALBUMNAME"));
             album.setTrackCount(resultSet.getInt("TRACK_COUNT"));
             album.setArtistCount(resultSet.getInt("ARTIST_COUNT"));
             album.setArtist(resultSet.getString("ARTIST"));
+            album.setImage(resultSet.getInt("IMAGECOUNT") > 0);
             return album;
         }
     }

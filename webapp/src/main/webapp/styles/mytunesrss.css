@@ -655,16 +655,19 @@ h1.serverbrowser span {
 
 a.albumthumb {
     position:relative;
-    left:3px;
+    left:0;
+    margin-right:3px;
     width:32px;
     height:32px;
     text-align:center;
+    display:block;
+    float:left;
+    cursor:default;
 }
 
 a.albumthumb img {
     float:left;
     padding-right:3px;
-    cursor:default;
 }
 
 span.albumthumbfull {
