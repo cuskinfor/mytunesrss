@@ -166,7 +166,7 @@
                 <c:if test="${!empty sessionScope.playlist}">
                     <td class="check">&nbsp;</td>
                 </c:if>
-                <td colspan="2" class="albumwithcover"><em><fmt:message key="allTracksOfAboveAlbums"/></em></td>
+                <td colspan="2"><em><fmt:message key="allTracksOfAboveAlbums"/></em></td>
                 <td class="tracks">
                     <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${allAlbumsTrackCount}</a>
                 </td>

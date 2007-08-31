@@ -31,7 +31,7 @@ public class ShowAlbumImageCommandHandler extends ShowImageCommandHandler {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("No tracks recognized in request or no images found in recognized tracks, sending default MyTunesRSS image.");
             }
-            getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
+            sendDefaultImage(size);
         } else {
             sendImage(image);
         }
