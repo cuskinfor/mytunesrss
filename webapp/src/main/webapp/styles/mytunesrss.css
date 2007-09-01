@@ -668,16 +668,21 @@ a.albumthumb {
 a.albumthumb img {
     float:left;
     padding-right:3px;
+    z-index:10;
 }
 
 span.albumthumbfull {
     display:none;
 }
 
+span.albumthumbfull {
+    z-index:20;
+}
+
 a.albumthumb:HOVER span.albumthumbfull {
     display:block;
     position:absolute;
-    left:-86px;
+    left:-48px;
     top:-48px;
     width:128px;
     height:128px;
