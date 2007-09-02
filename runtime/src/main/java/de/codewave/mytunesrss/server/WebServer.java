@@ -43,7 +43,7 @@ public class WebServer {
                     final Map<String, Object> contextEntries = new HashMap<String, Object>();
                     contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
                     contextEntries.put(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
-                    String catalinaBase = getClass().getResource("WebServer.class").getFile();
+                    String catalinaBase = URLDecoder.decode(getClass().getResource("WebServer.class").getFile());
                     int index = catalinaBase.toLowerCase().indexOf("mytunesrss.jar");
                     if (index > -1) {
                         // get the directory containing the main jar file and use it as the catalina base directory
