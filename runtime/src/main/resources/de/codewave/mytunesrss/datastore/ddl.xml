@@ -75,7 +75,8 @@
                 track_id VARCHAR(100) NOT NULL,
                 size INTEGER NOT NULL,
                 data {image_datatype} NOT NULL,
-                UNIQUE(track_id, size))
+                UNIQUE (track_id, size)
+            )
         </sql>
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>
         <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
