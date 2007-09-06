@@ -55,8 +55,6 @@ public class PlaylistListener implements PListHandlerListener {
                 }
             }
             if (!tracks.isEmpty()) {
-                DeletePlaylistStatement deleteStatement = new DeletePlaylistStatement();
-                deleteStatement.setId(playlistId);
                 SavePlaylistStatement statement = new SaveITunesPlaylistStatement();
                 statement.setId(playlistId);
                 statement.setName(name);

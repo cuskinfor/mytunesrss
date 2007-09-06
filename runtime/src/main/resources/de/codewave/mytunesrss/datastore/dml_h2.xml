@@ -4,8 +4,13 @@
 
     <statement name="findRandomTracks">
         <sql>
-            SELECT LIMIT 0 :maxCount RAND() AS rnd, {trackColumns} FROM track t WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM
-            link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId) ORDER BY rnd
+            SELECT LIMIT 0 :maxCount RAND() AS rnd, {trackColumns}, COUNT(i.track_id) AS imagecount
+            FROM track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM
+            link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId)
+            GROUP BY rnd, {groupByTrackColumns}
+            ORDER BY rnd
         </sql>
     </statement>
 

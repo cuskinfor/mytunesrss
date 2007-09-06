@@ -44,8 +44,6 @@ public class PlaylistFileProcessor implements FileProcessor {
                 }
                 if (!trackIds.isEmpty()) {
                     String id = "file_" + IOUtils.getFilenameHash(playlistFile);
-                    DeletePlaylistStatement deleteStatement = new DeletePlaylistStatement();
-                    deleteStatement.setId(id);
                     SaveM3uFilePlaylistStatement statement = new SaveM3uFilePlaylistStatement();
                     statement.setId(id);
                     statement.setName(FilenameUtils.getBaseName(playlistFile.getName()));

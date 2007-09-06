@@ -100,7 +100,8 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             SystemInformation systemInformation = storeSession.executeQuery(new GetSystemInformationQuery());
             long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
             Collection<String> trackIds = storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.ITunes.name()));
-            Collection<String> playlistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunes.name()));
+            Collection<String> itunesPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunes.name()));
+            Collection<String> m3uPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.M3uFile.name()));
             trackIds.addAll(storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.FileSystem.name())));
             if (myDatasources != null) {
                 for (File datasource : myDatasources) {
@@ -108,17 +109,20 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                         LOG.info("Parsing \"" + datasource.getAbsolutePath() + "\".");
                     }
                     if (datasource.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(datasource.getName()))) {
-                        ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, trackIds, playlistIds);
+                        ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, trackIds, itunesPlaylistIds);
                     } else if (datasource.isDirectory()) {
-                        FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, trackIds, playlistIds);
+                        FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, trackIds, m3uPlaylistIds);
                     }
                 }
             }
             if (!trackIds.isEmpty()) {
                 removeObsoleteTracks(storeSession, trackIds);
             }
-            if (!playlistIds.isEmpty()) {
-                removeObsoletePlaylists(storeSession, playlistIds);
+            if (!itunesPlaylistIds.isEmpty()) {
+                removeObsoletePlaylists(storeSession, itunesPlaylistIds);
+            }
+            if (!m3uPlaylistIds.isEmpty()) {
+                removeObsoletePlaylists(storeSession, m3uPlaylistIds);
             }
             storeSession.commit();
             long timeAfterTracks = System.currentTimeMillis();

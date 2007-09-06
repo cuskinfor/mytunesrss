@@ -3,7 +3,13 @@
 <statements>
 
     <statement name="findRandomTracks">
-        <sql>SELECT {trackColumns} FROM track t ORDER BY RAND() LIMIT :maxCount</sql>
+        <sql>
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            FROM track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            GROUP BY {groupByTrackColumns}
+            ORDER BY RAND() LIMIT :maxCount
+        </sql>
     </statement>
 
     <statement name="findAlbumImage">

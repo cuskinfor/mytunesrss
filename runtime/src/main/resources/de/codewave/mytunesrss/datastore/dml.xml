@@ -65,12 +65,14 @@
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT ltp.idx AS idx, {trackColumns}
+            SELECT ltp.idx AS idx, {trackColumns}, COUNT(i.track_id) AS imagecount
             FROM link_track_playlist ltp, track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
+            GROUP BY idx, {groupByTrackColumns}
             ORDER BY idx
             ]]>
         </sql>
@@ -81,12 +83,14 @@
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT {trackColumns}
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
             FROM link_track_playlist ltp, track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
+            GROUP BY {groupByTrackColumns}
             ORDER BY album, track_number, name
             ]]>
         </sql>
@@ -97,12 +101,14 @@
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT {trackColumns}
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
             FROM link_track_playlist ltp, track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
+            GROUP BY {groupByTrackColumns}
             ORDER BY artist, album, track_number, name
             ]]>
         </sql>
@@ -111,8 +117,10 @@
     <statement name="findAllTracksOrderedByAlbum">
         <sql>
             <![CDATA[
-            SELECT {trackColumns}
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
             FROM track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            GROUP BY {groupByTrackColumns}
             ORDER BY album, track_number, name
             ]]>
         </sql>
@@ -121,8 +129,10 @@
     <statement name="findAllTracksOrderedByArtist">
         <sql>
             <![CDATA[
-            SELECT {trackColumns}
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
             FROM track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            GROUP BY {groupByTrackColumns}
             ORDER BY artist, album, track_number, name
             ]]>
         </sql>
@@ -290,7 +300,11 @@
 
     <fragment name="trackColumns">
         t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file,
-        t.protected AS protected, t.video AS video, t.genre AS genre, select count(*) from image where image.track_id = t.id AS imagecount
+        t.protected AS protected, t.video AS video, t.genre AS genre
+    </fragment>
+
+    <fragment name="groupByTrackColumns">
+        id, name, artist, album, time, track_number, file, protected, video, genre
     </fragment>
 
     <fragment name="updatePlaylistCount">
@@ -305,8 +319,9 @@
 
     <fragment name="findTracksQuery">
         <![CDATA[
-        SELECT {trackColumns}
+        SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
         FROM track t
+        LEFT OUTER JOIN image i ON i.track_id = t.id
         WHERE (:size_of_id = 0 OR t.id IN (:id[]))
         AND (:size_of_genre = 0 OR t.genre IN (:genre[]))
         AND (:size_of_artist = 0 OR t.artist IN (:artist[]))
@@ -321,6 +336,7 @@
         AND (:size_of_search < 8 OR (LOWER(t.name) LIKE :search[7] {likeEscape}) OR (LOWER(album) LIKE :search[7] {likeEscape}) OR (LOWER(artist) LIKE :search[7] {likeEscape}))
         AND (:size_of_search < 9 OR (LOWER(t.name) LIKE :search[8] {likeEscape}) OR (LOWER(album) LIKE :search[8] {likeEscape}) OR (LOWER(artist) LIKE :search[8] {likeEscape}))
         AND (:size_of_search < 10 OR (LOWER(t.name) LIKE :search[9] {likeEscape}) OR (LOWER(album) LIKE :search[9] {likeEscape}) OR (LOWER(artist) LIKE :search[9] {likeEscape}))
+        GROUP BY {groupByTrackColumns}
         ]]>
     </fragment>
 
