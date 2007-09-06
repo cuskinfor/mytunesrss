@@ -10,10 +10,14 @@ import de.codewave.utils.sql.*;
 import java.sql.*;
 import java.util.*;
 
+import org.apache.commons.logging.*;
+
 /**
  * de.codewave.mytunesrss.datastore.statement.SavePlaylistStatement
  */
 public abstract class SavePlaylistStatement implements DataStoreStatement {
+    private static final Log LOG = LogFactory.getLog(SavePlaylistStatement.class);
+
     protected String myId;
     private String myName;
     private PlaylistType myType;
@@ -71,7 +75,9 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
 
     public static class ExceptionHandler implements SmartStatementExceptionHandler {
         public void handleException(SQLException sqlException, boolean b) {
-            // intentionally left blank
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Could not insert/update playlist", sqlException);
+            }
         }
     }
 }

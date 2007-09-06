@@ -66,12 +66,12 @@ public class PlaylistListener implements PListHandlerListener {
                     myDataStoreSession.executeStatement(statement);
                     myExistingIds.add(playlistId);
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Committing transaction after inserting playlist.");
+                        LOG.debug("Committing transaction after inserting/updating playlist.");
                     }
                     myDataStoreSession.commit();
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not insert playlist \"" + name + "\" into database.", e);
+                        LOG.error("Could not insert/update playlist \"" + name + "\" into database.", e);
                     }
                 }
             }

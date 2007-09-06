@@ -22,7 +22,7 @@
         </sql>
         <sql>
             {create_table_prefix} playlist (
-                id VARCHAR(20) NOT NULL,
+                id VARCHAR(100) NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 type VARCHAR(20) NOT NULL,
                 track_count INTEGER,
@@ -33,7 +33,7 @@
             {create_table_prefix} link_track_playlist (
                 idx INTEGER,
                 track_id VARCHAR(100) NOT NULL,
-                playlist_id VARCHAR(20) NOT NULL,
+                playlist_id VARCHAR(100) NOT NULL,
                 CONSTRAINT fk_linktrackplaylist_trackid FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE,
                 CONSTRAINT fk_linktrackplaylist_playlistid FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
             )

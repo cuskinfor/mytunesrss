@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+    <id>web-language</id>
+    <formats>
+        <format>dir</format>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <outputDirectory/>
+            <directory>webapp/src/main/resources/de/codewave/mytunesrss</directory>
+            <includes>
+                <include>MyTunesRssWeb.properties</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>

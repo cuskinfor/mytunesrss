@@ -44,6 +44,11 @@ public class MigrationStatement implements DataStoreStatement {
                 MyTunesRssUtils.createStatement(connection, "migrate31eap4to31eap6").execute();
                 databaseVersion = new Version("3.1-EAP-6");
             }
+            // migration from 3.1-EAP-6 to 3.1-EAP-9
+            if (databaseVersion.compareTo(new Version("3.1-EAP-9")) < 0) {
+                MyTunesRssUtils.createStatement(connection, "migrate31eap6to31eap9").execute();
+                databaseVersion = new Version("3.1-EAP-9");
+            }
         }
         new UpdateDatabaseVersionStatement().execute(connection);
     }

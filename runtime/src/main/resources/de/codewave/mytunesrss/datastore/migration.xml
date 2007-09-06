@@ -24,4 +24,9 @@
                 UNIQUE(track_id, size))
         </sql>
     </statement>
+
+    <statement name="migrate31eap6to31eap9">
+        <sql>ALTER TABLE playlist ALTER COLUMN id VARCHAR(100)</sql>
+        <sql>ALTER TABLE link_track_playlist ALTER COLUMN playlist_id VARCHAR(100)</sql>
+    </statement>
 </statements>

@@ -54,7 +54,7 @@ public class PlaylistFileProcessor implements FileProcessor {
                     myDataStoreSession.executeStatement(statement);
                     myExistingIds.add(id);
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Committing transaction after inserting playlist.");
+                        LOG.debug("Committing transaction after inserting/updating playlist.");
                     }
                     myDataStoreSession.commit();
                 }
@@ -64,7 +64,7 @@ public class PlaylistFileProcessor implements FileProcessor {
                 }
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not insert playlist from \"" + playlistFile + "\" into database.", e);
+                    LOG.error("Could not insert/update playlist from \"" + playlistFile + "\" into database.", e);
                 }
             }
         }

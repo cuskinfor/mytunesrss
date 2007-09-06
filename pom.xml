@@ -45,6 +45,8 @@
                                 <descriptor>src/assembly/system-independent.xml</descriptor>
                                 <descriptor>src/assembly/windows.xml</descriptor>
                                 <descriptor>src/assembly/macosx.xml</descriptor>
+                                <descriptor>src/assembly/web-language.xml</descriptor>
+                                <descriptor>src/assembly/default-theme.xml</descriptor>
                             </descriptors>
                         </configuration>
                         <goals>
