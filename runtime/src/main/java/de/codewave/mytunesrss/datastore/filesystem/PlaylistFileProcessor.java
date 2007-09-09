@@ -28,6 +28,7 @@ public class PlaylistFileProcessor implements FileProcessor {
     public void process(File playlistFile) {
         if (playlistFile.isFile()) {
             try {
+                String id = "file_" + IOUtils.getFilenameHash(playlistFile);
                 String[] tracks = FileUtils.readFileToString(playlistFile).split("[\\r\\n]");
                 List<String> trackIds = new ArrayList<String>();
                 for (String track : tracks) {
@@ -43,7 +44,6 @@ public class PlaylistFileProcessor implements FileProcessor {
                     }
                 }
                 if (!trackIds.isEmpty()) {
-                    String id = "file_" + IOUtils.getFilenameHash(playlistFile);
                     SaveM3uFilePlaylistStatement statement = new SaveM3uFilePlaylistStatement();
                     statement.setId(id);
                     statement.setName(FilenameUtils.getBaseName(playlistFile.getName()));

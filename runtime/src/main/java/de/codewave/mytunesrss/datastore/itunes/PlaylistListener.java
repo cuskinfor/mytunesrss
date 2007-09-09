@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.datastore.itunes;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.*;
+import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
 import java.sql.*;
@@ -41,17 +42,19 @@ public class PlaylistListener implements PListHandlerListener {
         boolean podcasts = playlist.get("Podcasts") != null && ((Boolean)playlist.get("Podcasts")).booleanValue();
 
         if (!master && !purchased && !partyShuffle && !podcasts) {
-            String playlistId =
-                    playlist.get("Playlist Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get("Playlist Persistent ID").toString() :
-                            myLibraryListener.getLibraryId() + "_" + "PlaylistID" + playlist.get(
-                            "Playlist ID").toString();
+            String playlistId = playlist.get("Playlist Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get(
+                    "Playlist Persistent ID").toString() :
+                    myLibraryListener.getLibraryId() + "_" + "PlaylistID" + playlist.get("Playlist ID").toString();
             String name = (String)playlist.get("Name");
             List<Map> items = (List<Map>)playlist.get("Playlist Items");
             List<String> tracks = new ArrayList<String>();
             if (items != null && !items.isEmpty()) {
                 for (Iterator<Map> itemIterator = items.iterator(); itemIterator.hasNext();) {
                     Map item = itemIterator.next();
-                    tracks.add(myTrackIdToPersId.get(item.get("Track ID")));
+                    Long trackId = (Long)item.get("Track ID");
+                    if (trackId != null && StringUtils.isNotEmpty(myTrackIdToPersId.get(trackId))) {
+                        tracks.add(myTrackIdToPersId.get(trackId));
+                    }
                 }
             }
             if (!tracks.isEmpty()) {
