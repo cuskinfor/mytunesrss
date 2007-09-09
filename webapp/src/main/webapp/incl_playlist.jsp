@@ -9,7 +9,7 @@
 <fmt:message var="newPlaylistName" key="newPlaylistName" />
 
 <c:if test="${!empty sessionScope.playlist}">
-    <div class="msgtop"></div>
+    <div class="playlisttop"></div>
     <div class="playlist">
         <a class="close" href="${servletUrl}/cancelCreatePlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><img src="${appUrl}/images/cancel.gif" alt=""/></a>
 				<a class="finish" href="${servletUrl}/editPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><img src="${appUrl}/images/finish.gif" alt=""/></a>
@@ -18,5 +18,5 @@
 					- <fmt:message key="playlistTrackCount" /> : ${sessionScope.playlist.trackCount}
 				</span>
     </div>
-    <div class="msgbottom"></div>
+    <div class="playlistbottom"></div>
 </c:if>

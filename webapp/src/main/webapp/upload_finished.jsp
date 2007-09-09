@@ -1,6 +1,6 @@
 <html>
 <head>
 </head>
-<body onload="window.top.location.href='${servletUrl}/showDatabaseUpdating/${auth}'">
+<body onload="window.top.location.href='${servletUrl}/showPortal/${auth}'">
 </body>
 </html>

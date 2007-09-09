@@ -20,9 +20,11 @@ public class PlaylistFileProcessor implements FileProcessor {
 
     private DataStoreSession myDataStoreSession;
     private Collection<String> myExistingIds = new HashSet<String>();
+    private Set<String> myExistingTrackIds;
 
-    public PlaylistFileProcessor(DataStoreSession storeSession) {
+    public PlaylistFileProcessor(DataStoreSession storeSession, Set<String> existingTrackIds) {
         myDataStoreSession = storeSession;
+        myExistingTrackIds = existingTrackIds;
     }
 
     public void process(File playlistFile) {
@@ -37,8 +39,8 @@ public class PlaylistFileProcessor implements FileProcessor {
                         if (!trackFile.exists()) {
                             trackFile = new File(track.trim());// absolute track path
                         }
-                        String trackId = IOUtils.getFileIdentifier(trackFile);
-                        if (StringUtils.isNotEmpty(trackId)) {
+                        String trackId = "file_" + IOUtils.getFilenameHash(trackFile);
+                        if (StringUtils.isNotEmpty(trackId) && myExistingTrackIds.contains(trackId)) {
                             trackIds.add(trackId);
                         }
                     }

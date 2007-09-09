@@ -49,7 +49,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         try {
             String canonicalFilePath = file.getCanonicalPath();
             if (file.isFile() && FileSupportUtils.isSupported(file.getName())) {
-                String fileId = "file_" + IOUtils.getFilenameHash(file);
+                      String fileId = "file_" + IOUtils.getFilenameHash(file);
                 if (!myFoundIds.contains(fileId)) {
                     if ((file.lastModified() >= myLastUpdateTime || !myDatabaseIds.contains(fileId))) {
                         InsertOrUpdateTrackStatement statement =

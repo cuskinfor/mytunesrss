@@ -79,7 +79,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
         byte[] buffer = new byte[102400];
         Set<String> entryNames = new HashSet<String>();
         String lineSeparator = System.getProperty("line.separator");
-        StringBuffer m3uPlaylist = new StringBuffer("#EXTM3U").append(lineSeparator);
+        StringBuilder m3uPlaylist = new StringBuilder("#EXTM3U").append(lineSeparator);
         int trackCount = 0;
         boolean quotaExceeded = false;
         for (Track track : tracks) {

@@ -2,11 +2,14 @@ package de.codewave.mytunesrss;
 
 import de.codewave.utils.servlet.*;
 import de.codewave.mytunesrss.servlet.*;
+import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.jsp.Error;
 
 import javax.crypto.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.security.*;
+import java.util.*;
 
 import org.apache.commons.logging.*;
 
@@ -47,6 +50,20 @@ public class MyTunesRssWebUtils {
             httpServletRequest.getSession().setAttribute("config", webConfig);
         }
         return webConfig;
+    }
+
+    public static void addError(HttpServletRequest request, Error error, String holderName) {
+        List<Error> errors = (List<Error>)request.getSession().getAttribute(holderName);
+        if (errors == null) {
+            synchronized (request.getSession()) {
+                errors = (List<Error>)request.getSession().getAttribute(holderName);
+                if (errors == null) {
+                    errors = new ArrayList<Error>();
+                    request.getSession().setAttribute(holderName, errors);
+                }
+            }
+        }
+        errors.add(error);
     }
 }
 

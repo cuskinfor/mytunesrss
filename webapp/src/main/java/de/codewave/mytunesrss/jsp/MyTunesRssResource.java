@@ -28,10 +28,9 @@ public enum MyTunesRssResource {
     FatalError("/fatal_error.jsp"),
     ShowUpload("/upload.jsp"),
     BrowseServers("/browse_servers.jsp"),
-    DatabaseUpdating("/database_updating.jsp"),
-    UploadFinished("/upload_finished.jsp"),
     UploadProgress("/upload_progress.jsp"),
-    BrowseGenre("/browse_genre.jsp");
+    BrowseGenre("/browse_genre.jsp"),
+    UploadFinished("/upload_finished.jsp");
 
     private String myValue;
 
@@ -58,19 +57,21 @@ public enum MyTunesRssResource {
     }
 
     private void handleWelcomeMessage(HttpServletRequest request) {
-        String welcomeMessage = MyTunesRss.CONFIG.getWebWelcomeMessage();
-        if (!StringUtils.isBlank(welcomeMessage)) {
-            LocalizationContext context = (LocalizationContext)request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
-            if (context != null) {
-                try {
-                    request.setAttribute("welcomeMessage", context.getResourceBundle().getString(welcomeMessage));
-                } catch (Exception e) {
-                    request.setAttribute("welcomeMessage", welcomeMessage);
+        if (!Boolean.TRUE.equals(request.getSession().getAttribute("welcomeMessageDone"))) {
+            String welcomeMessage = MyTunesRss.CONFIG.getWebWelcomeMessage();
+            if (!StringUtils.isBlank(welcomeMessage)) {
+                LocalizationContext context = (LocalizationContext)request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+                String message = welcomeMessage;
+                if (context != null) {
+                    try {
+                        message = context.getResourceBundle().getString(welcomeMessage);
+                    } catch (Exception e) {
+                        // intentionally left blank
+                    }
                 }
-            } else {
-                request.setAttribute("welcomeMessage", welcomeMessage);
+                MyTunesRssWebUtils.addError(request, new LocalizedError(welcomeMessage), "messages");
             }
+            request.getSession().setAttribute("welcomeMessageDone", Boolean.TRUE);
         }
-        request.getSession().setAttribute("welcomeMessageDone", Boolean.TRUE);
     }
 }

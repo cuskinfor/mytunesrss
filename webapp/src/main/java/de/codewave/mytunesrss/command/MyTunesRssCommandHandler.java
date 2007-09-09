@@ -109,17 +109,11 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected void addError(Error error) {
-        List<Error> errors = (List<Error>)getSession().getAttribute("errors");
-        if (errors == null) {
-            synchronized (getSession()) {
-                errors = (List<Error>)getSession().getAttribute("errors");
-                if (errors == null) {
-                    errors = new ArrayList<Error>();
-                    getSession().setAttribute("errors", errors);
-                }
-            }
-        }
-        errors.add(error);
+        MyTunesRssWebUtils.addError(getRequest(), error, "errors");
+    }
+
+    protected void addMessage(Error message) {
+        MyTunesRssWebUtils.addError(getRequest(), message, "messages");
     }
 
     protected MyTunesRssDataStore getDataStore() {

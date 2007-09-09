@@ -34,6 +34,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 processItem(item);
             }
             runDatabaseUpdate();
+            addMessage(new BundleError("info.databaseUpdating"));
             forward(MyTunesRssResource.UploadFinished);
         } else {
             forward(MyTunesRssResource.Login);
@@ -48,8 +49,20 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                         LOG.debug("Extracting zip file \"" + item.getName() + "\".");
                     }
                     CodewaveZipInputStream zipInputStream = CodewaveZipInputStreamFactory.newInstance(item.getInputStream());
+                    String lineSeparator = System.getProperty("line.separator");
+                    StringBuilder m3uPlaylist = new StringBuilder("#EXTM3U").append(lineSeparator);
                     for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
-                        saveFile(entry.getName(), (InputStream)zipInputStream);
+                        if (saveFile(entry.getName(), (InputStream)zipInputStream)) {
+                            m3uPlaylist.append(entry.getName().replace('\\', '/')).append(lineSeparator);
+                        }
+                    }
+                    String filename = getUpoadDirName() + "/" + FilenameUtils.getBaseName(item.getName()) + ".m3u";
+                    File file = new File(filename);
+                    if (!file.exists()) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Creating M3U playlist for all files of ZIP archive: \"" + filename + "\".");
+                        }
+                        FileUtils.writeByteArrayToFile(file, m3uPlaylist.toString().getBytes());
                     }
                 } else {
                     if (LOG.isDebugEnabled()) {
@@ -61,12 +74,9 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    private void saveFile(String fileName, InputStream inputStream) throws IOException {
+    private boolean saveFile(String fileName, InputStream inputStream) throws IOException {
         if (isAccepted(fileName)) {
-            String uploadDirName = MyTunesRss.CONFIG.getUploadDir();
-            if (MyTunesRss.CONFIG.isUploadCreateUserDir()) {
-                uploadDirName += "/" + getWebConfig().getUserName();
-            }
+            String uploadDirName = getUpoadDirName();
             if (fileName.contains("/")) {
                 uploadDirName += "/" + fileName.substring(0, fileName.lastIndexOf("/"));
                 fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
@@ -89,10 +99,21 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                     targetStream.close();
                 }
             }
+            return true;
         }
+        return false;
+    }
+
+    private String getUpoadDirName() {
+        String uploadDirName = MyTunesRss.CONFIG.getUploadDir();
+        if (MyTunesRss.CONFIG.isUploadCreateUserDir()) {
+            uploadDirName += "/" + getWebConfig().getUserName();
+        }
+        return uploadDirName;
     }
 
     private boolean isAccepted(String fileName) {
-        return !(StringUtils.isEmpty(fileName) || fileName.endsWith("/") || fileName.endsWith("\\")) && !fileName.contains("__MACOSX/") && FileSupportUtils.isSupported(fileName);
+        return !(StringUtils.isEmpty(fileName) || fileName.endsWith("/") || fileName.endsWith("\\")) && !fileName.contains("__MACOSX/") &&
+                FileSupportUtils.isSupported(fileName);
     }
 }
