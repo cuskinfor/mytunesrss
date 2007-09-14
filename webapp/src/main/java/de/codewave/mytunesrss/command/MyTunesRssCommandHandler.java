@@ -183,7 +183,18 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         LocalizationContext context = (LocalizationContext)getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
         if (context == null || !ObjectUtils.equals(context.getLocale(), locale)) {
             File language = AddonsUtils.getBestLanguageFile(locale);
-            ResourceBundle bundle = null;
+            ResourceBundle bundle = retrieveBundle(language, locale);
+            if (bundle != null) {
+                getSession().setAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session", new LocalizationContext(bundle, bundle.getLocale()));
+            } else {
+                getSession().removeAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+            }
+        }
+    }
+
+    private ResourceBundle retrieveBundle(File language, Locale locale) {
+        ResourceBundle bundle = (ResourceBundle)getSession().getServletContext().getAttribute("LanguageBundle." + locale.toString());
+        if (bundle == null) {
             if (language != null) {
                 try {
                     bundle = new PropertyResourceBundle(new FileInputStream(language));
@@ -203,11 +214,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 }
             }
             if (bundle != null) {
-                getSession().setAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session", new LocalizationContext(bundle, bundle.getLocale()));
-            } else {
-                getSession().removeAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+                getSession().getServletContext().setAttribute("LanguageBundle." + locale.toString(), bundle);
             }
         }
+        return bundle;
     }
 
     private URL getBestLanguageResource(Locale locale) {

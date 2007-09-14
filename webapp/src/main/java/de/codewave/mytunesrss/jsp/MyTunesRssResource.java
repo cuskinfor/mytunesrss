@@ -69,7 +69,7 @@ public enum MyTunesRssResource {
                         // intentionally left blank
                     }
                 }
-                MyTunesRssWebUtils.addError(request, new LocalizedError(welcomeMessage), "messages");
+                MyTunesRssWebUtils.addError(request, new LocalizedError(message), "messages");
             }
             request.getSession().setAttribute("welcomeMessageDone", Boolean.TRUE);
         }
