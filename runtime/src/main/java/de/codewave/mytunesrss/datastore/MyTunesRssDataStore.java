@@ -71,7 +71,7 @@ public class MyTunesRssDataStore extends DataStore {
                     ((Connection)object).close();
                 }
             }
-        }, 50, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 60000, 20, 0, false, false, 5000, 5, 10000, false, 10000));
+        }, 50, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, -1, 20, 0, false, false, 5000, 5, 10000, false, 10000));
     }
 
     @Override
