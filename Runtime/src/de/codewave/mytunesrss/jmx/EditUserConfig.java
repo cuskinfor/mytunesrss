@@ -44,9 +44,11 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
 
     public void setName(String name) throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException,
             NotCompliantMBeanException, InstanceAlreadyExistsException {
-        MyTunesRssJmxUtils.unregisterUsers();
-        MyTunesRss.CONFIG.getUser(myUsername).setName(name);
-        MyTunesRssJmxUtils.registerUsers();
+        if (StringUtils.isNotEmpty(name)) {
+            MyTunesRssJmxUtils.unregisterUsers();
+            MyTunesRss.CONFIG.getUser(myUsername).setName(name);
+            MyTunesRssJmxUtils.registerUsers();
+        }
     }
 
     public void setPassword(String password) {
