@@ -34,7 +34,6 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 processItem(item);
             }
             runDatabaseUpdate();
-            addMessage(new BundleError("info.databaseUpdating"));
             forward(MyTunesRssResource.UploadFinished);
         } else {
             forward(MyTunesRssResource.Login);

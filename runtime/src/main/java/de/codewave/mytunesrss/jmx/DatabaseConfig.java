@@ -20,7 +20,7 @@ import org.apache.commons.logging.*;
  */
 public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBean {
     private static final Log LOG = LogFactory.getLog(DatabaseConfig.class);
-    
+
     DatabaseConfig() throws NotCompliantMBeanException {
         super(DatabaseConfigMBean.class);
     }
@@ -41,11 +41,11 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
     }
 
     public synchronized String updateDatabase() {
-        final DatabaseBuilderTask databaseBuilderTask = MyTunesRss.createDatabaseBuilderTask();
-        if (!databaseBuilderTask.isRunning()) {
+        if (!DatabaseBuilderTask.isRunning()) {
             new Thread(new Runnable() {
                 public void run() {
                     try {
+                        final DatabaseBuilderTask databaseBuilderTask = MyTunesRss.createDatabaseBuilderTask();
                         databaseBuilderTask.execute();
                     } catch (Exception e) {
                         if (LOG.isErrorEnabled()) {
@@ -62,7 +62,7 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
     }
 
     public String getDatabaseStatus() {
-        if (MyTunesRss.createDatabaseBuilderTask().isRunning()) {
+        if (DatabaseBuilderTask.isRunning()) {
             return MyTunesRssUtils.getBundleString("jmx.databaseUpdateRunning");
         }
         try {

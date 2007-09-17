@@ -16,13 +16,14 @@ import org.apache.commons.logging.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.locks.*;
 
 /**
  * de.codewave.mytunesrss.task.DatabaseBuilderTaskk
  */
 public class DatabaseBuilderTask extends MyTunesRssTask {
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
-    private static boolean CURRENTLY_RUNNING;
+    private static Lock CURRENTLY_RUNNING = new ReentrantLock();
 
     private List<File> myDatasources = new ArrayList<File>();
     private boolean myExecuted;
@@ -64,21 +65,12 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     }
 
     public void execute() throws Exception {
-        boolean execute = false;
-        if (!CURRENTLY_RUNNING) {
-            synchronized (DatabaseBuilderTask.class) {
-                if (!CURRENTLY_RUNNING) {
-                    CURRENTLY_RUNNING = true;
-                    execute = true;
-                }
-            }
-        }
-        if (execute) {
+        if (CURRENTLY_RUNNING.tryLock()) {
             try {
                 internalExecute();
                 myExecuted = true;
             } finally {
-                CURRENTLY_RUNNING = false;
+                CURRENTLY_RUNNING.unlock();
             }
         }
     }
@@ -188,7 +180,11 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         storeSession.commit();
     }
 
-    public boolean isRunning() {
-        return CURRENTLY_RUNNING;
+    public static boolean isRunning() {
+        boolean locked = CURRENTLY_RUNNING.tryLock();
+        if (locked) {
+            CURRENTLY_RUNNING.unlock();
+        }
+        return !locked;
     }
 }

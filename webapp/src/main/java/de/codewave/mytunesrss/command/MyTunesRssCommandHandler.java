@@ -167,6 +167,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 addSuffixReplacement("m4a", "mp3");
             }
         }
+        if (DatabaseBuilderTask.isRunning()) {
+            addMessage(new BundleError("info.databaseUpdating"));
+        }
     }
 
     private void addSuffixReplacement(String suffix, String replacement) {
@@ -244,7 +247,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected void forward(MyTunesRssCommand command) throws IOException, ServletException {
-        prepareRequestForResource();
+        //prepareRequestForResource();
         forward("/mytunesrss/" + command.getName());
     }
 

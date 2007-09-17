@@ -103,10 +103,10 @@ public class MyTunesRssUtils {
             MyTunesRss.CONFIG.saveWindowPosition(MyTunesRss.ROOT_FRAME.getLocation());
             MyTunesRss.CONFIG.save();
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
-            final DatabaseBuilderTask databaseBuilderTask = MyTunesRss.createDatabaseBuilderTask();
-            if (databaseBuilderTask.isRunning()) {
+            if (DatabaseBuilderTask.isRunning()) {
                 MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.finishingUpdate"), null, false, new MyTunesRssTask() {
                     public void execute() {
+                        DatabaseBuilderTask databaseBuilderTask = MyTunesRss.createDatabaseBuilderTask();
                         while (databaseBuilderTask.isRunning()) {
                             try {
                                 Thread.sleep(1000);
@@ -178,11 +178,11 @@ public class MyTunesRssUtils {
     }
 
     public static void executeDatabaseUpdate() {
-        final DatabaseBuilderTask task = MyTunesRss.createDatabaseBuilderTask();
-        if (!task.isRunning()) {
+        if (!DatabaseBuilderTask.isRunning()) {
             new Thread(new Runnable() {
                 public void run() {
                     try {
+                        DatabaseBuilderTask task = MyTunesRss.createDatabaseBuilderTask();
                         task.execute();
                         if (!task.isExecuted()) {
                             MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateNotRun"));
