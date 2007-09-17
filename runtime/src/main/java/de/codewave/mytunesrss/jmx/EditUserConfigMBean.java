@@ -83,4 +83,10 @@ public interface EditUserConfigMBean {
     boolean isPermissionTranscoding();
 
     void setPermissionTranscoding(boolean permissionTranscoding);
+
+    String[] getPlaylists(); 
+
+    String getRestrictionPlaylist();
+
+    void setRestrictionPlaylist(String playlistName);
 }

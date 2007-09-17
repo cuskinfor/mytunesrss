@@ -55,4 +55,9 @@ public class Playlist {
     public void setTrackCount(int trackCount) {
         myTrackCount = trackCount;
     }
+
+    @Override
+    public String toString() {
+        return myName + " (" + myTrackCount + ")";
+    }
 }

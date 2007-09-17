@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -12,6 +13,8 @@ import javax.management.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+import java.util.Date;
+import java.sql.*;
 
 /**
  * de.codewave.mytunesrss.jmx.EditUserConfig
@@ -214,6 +217,61 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
 
     public void setSessionTimeout(int minutes) {
         MyTunesRss.CONFIG.getUser(myUsername).setSessionTimeout(minutes);
+        onChange();
+    }
+
+    public String[] getPlaylists() {
+        String[] names = null;
+        try {
+            Collection playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null));
+            names = new String[playlists.size()];
+            int i = 0;
+            for (Object playlist : playlists) {
+                names[i++] = playlist.toString();
+            }
+        } catch (SQLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not query playlists.", e);
+            }
+        }
+        return names;
+    }
+
+    public String getRestrictionPlaylist() {
+        String playlistId = MyTunesRss.CONFIG.getUser(myUsername).getPlaylistId();
+        if (StringUtils.isNotEmpty(playlistId)) {
+            Collection<Playlist> playlists = null;
+            try {
+                playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, playlistId));
+            } catch (SQLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not query playlists.", e);
+                }
+            }
+            return playlists != null && !playlists.isEmpty() ? playlists.iterator().next().toString() : MyTunesRssUtils.getBundleString(
+                    "editUser.noPlaylist");
+        }
+        return MyTunesRssUtils.getBundleString("editUser.noPlaylist");
+    }
+
+    public void setRestrictionPlaylist(String playlistName) {
+        Collection<Playlist> playlists = null;
+        try {
+            playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null));
+        } catch (SQLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not query playlists.", e);
+            }
+        }
+        if (playlists != null) {
+            User user = MyTunesRss.CONFIG.getUser(myUsername);
+            user.setPlaylistId(null);
+            for (Playlist playlist : playlists) {
+                if (playlist.getName().toLowerCase().contains(playlistName.toLowerCase())) {
+                    user.setPlaylistId(playlist.getId());
+                }
+            }
+        }
         onChange();
     }
 }

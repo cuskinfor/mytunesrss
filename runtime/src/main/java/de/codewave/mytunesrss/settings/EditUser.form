@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="6" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
     <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="661" height="714"/>
+      <xy x="20" y="20" width="712" height="714"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -157,7 +157,7 @@
           </component>
         </children>
       </grid>
-      <grid id="368b" binding="myRestrictionsPanel" layout-manager="GridLayoutManager" row-count="6" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+      <grid id="368b" binding="myRestrictionsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -165,140 +165,176 @@
         <properties/>
         <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="editUser.restrictions"/>
         <children>
-          <component id="8949e" class="javax.swing.JComboBox" binding="myQuotaTypeInput">
+          <scrollpane id="85dee" binding="myScrollPane2">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.limitTypeTooltip"/>
-            </properties>
-          </component>
-          <component id="56491" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="feb53"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.byteLimit"/>
-            </properties>
-          </component>
-          <component id="bc199" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="8949e"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.limitType"/>
-            </properties>
-          </component>
-          <component id="feb53" class="javax.swing.JTextField" binding="myBytesQuotaInput">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="450" height="150"/>
               </grid>
             </constraints>
-            <properties>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.byteLimitTooltip"/>
-            </properties>
-          </component>
-          <component id="35189" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="MB"/>
-            </properties>
-          </component>
-          <component id="f8831" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="653f4"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.maxZipEntries"/>
-            </properties>
-          </component>
-          <component id="653f4" class="javax.swing.JTextField" binding="myMaxZipEntriesInput">
-            <constraints>
-              <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="1777b" layout-manager="GridLayoutManager" row-count="7" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="8949e" class="javax.swing.JComboBox" binding="myQuotaTypeInput">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.limitTypeTooltip"/>
+                    </properties>
+                  </component>
+                  <component id="56491" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <labelFor value="feb53"/>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.byteLimit"/>
+                    </properties>
+                  </component>
+                  <component id="bc199" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <labelFor value="8949e"/>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.limitType"/>
+                    </properties>
+                  </component>
+                  <component id="feb53" class="javax.swing.JTextField" binding="myBytesQuotaInput">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.byteLimitTooltip"/>
+                    </properties>
+                  </component>
+                  <component id="35189" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="MB"/>
+                    </properties>
+                  </component>
+                  <component id="f8831" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <labelFor value="653f4"/>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.maxZipEntries"/>
+                    </properties>
+                  </component>
+                  <component id="653f4" class="javax.swing.JTextField" binding="myMaxZipEntriesInput">
+                    <constraints>
+                      <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.maxZipEntriesTooltip"/>
+                    </properties>
+                  </component>
+                  <component id="88e0a" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.fileTypes"/>
+                      <visible value="false"/>
+                    </properties>
+                  </component>
+                  <component id="84642" class="javax.swing.JTextField" binding="myFileTypesInput">
+                    <constraints>
+                      <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <visible value="false"/>
+                    </properties>
+                  </component>
+                  <component id="ea36c" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.sessionTimeout"/>
+                    </properties>
+                  </component>
+                  <component id="c53da" class="javax.swing.JTextField" binding="mySessionTimeoutInput">
+                    <constraints>
+                      <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.sessionTimeoutTooltip"/>
+                    </properties>
+                  </component>
+                  <component id="20870" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.sessionTimeoutSeconds"/>
+                    </properties>
+                  </component>
+                  <component id="f8eb" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.bandwidthLimit"/>
+                    </properties>
+                  </component>
+                  <component id="f56fa" class="javax.swing.JTextField" binding="myBandwidthLimit">
+                    <constraints>
+                      <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.bandwidthLimitTooltip"/>
+                    </properties>
+                  </component>
+                  <component id="f476c" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="kbit"/>
+                    </properties>
+                  </component>
+                  <component id="85cef" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <labelFor value="d9a91"/>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.restrictionPlaylist"/>
+                    </properties>
+                  </component>
+                  <component id="d9a91" class="javax.swing.JComboBox" binding="myRestrictionPlaylistInput">
+                    <constraints>
+                      <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.restrictionPlaylistTooltip"/>
+                    </properties>
+                  </component>
+                </children>
               </grid>
-            </constraints>
-            <properties>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.maxZipEntriesTooltip"/>
-            </properties>
-          </component>
-          <component id="88e0a" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.fileTypes"/>
-              <visible value="false"/>
-            </properties>
-          </component>
-          <component id="84642" class="javax.swing.JTextField" binding="myFileTypesInput">
-            <constraints>
-              <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <visible value="false"/>
-            </properties>
-          </component>
-          <component id="ea36c" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.sessionTimeout"/>
-            </properties>
-          </component>
-          <component id="c53da" class="javax.swing.JTextField" binding="mySessionTimeoutInput">
-            <constraints>
-              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.sessionTimeoutTooltip"/>
-            </properties>
-          </component>
-          <component id="20870" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.sessionTimeoutSeconds"/>
-            </properties>
-          </component>
-          <component id="f8eb" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.bandwidthLimit"/>
-            </properties>
-          </component>
-          <component id="f56fa" class="javax.swing.JTextField" binding="myBandwidthLimit">
-            <constraints>
-              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.bandwidthLimitTooltip"/>
-            </properties>
-          </component>
-          <component id="f476c" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="kbit"/>
-            </properties>
-          </component>
+            </children>
+          </scrollpane>
         </children>
       </grid>
       <grid id="9dfc4" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">

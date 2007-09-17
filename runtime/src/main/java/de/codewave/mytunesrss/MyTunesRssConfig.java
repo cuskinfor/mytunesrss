@@ -13,11 +13,11 @@ import javax.crypto.*;
 import javax.crypto.spec.*;
 import java.awt.*;
 import java.io.*;
+import java.math.*;
 import java.security.*;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
-import java.math.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssConfig
@@ -462,6 +462,7 @@ public class MyTunesRssConfig {
                     user.setTranscoder(userNode.node(userName).getBoolean("featureTranscoder", false));
                     user.setSessionTimeout(userNode.node(userName).getInt("sessionTimeout", 10));
                     user.setBandwidthLimit(userNode.node(userName).getInt("bandwidthLimit", 0));
+                    user.setPlaylistId(userNode.node(userName).get("playlistId", null));
                     addUser(user);
                     if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
                         break;
@@ -584,6 +585,11 @@ public class MyTunesRssConfig {
                 userNode.node(user.getName()).putBoolean("featureTranscoder", user.isTranscoder());
                 userNode.node(user.getName()).putInt("sessionTimeout", user.getSessionTimeout());
                 userNode.node(user.getName()).putInt("bandwidthLimit", user.getBandwidthLimit());
+                if (StringUtils.isNotEmpty(user.getPlaylistId())) {
+                    userNode.node(user.getName()).put("playlistId", user.getPlaylistId());
+                } else {
+                    userNode.node(user.getName()).remove("playlistId");
+                }
             }
         } catch (BackingStoreException e) {
             if (LOG.isErrorEnabled()) {

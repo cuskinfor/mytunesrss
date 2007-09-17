@@ -1,14 +1,19 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.components.*;
+import org.apache.commons.logging.*;
+import org.apache.commons.lang.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
+import java.sql.*;
 import java.text.*;
 import java.util.*;
+import java.util.Date;
 import java.util.Timer;
 
 /**
@@ -19,6 +24,7 @@ import java.util.Timer;
  * @version $Id:$
  */
 public class EditUser {
+    private static final Log LOG = LogFactory.getLog(EditUser.class);
     private static final int MEGABYTE = 1024 * 1024;
 
     private JTextField myUserNameInput;
@@ -50,13 +56,17 @@ public class EditUser {
     private JScrollPane myScrollPane;
     private JCheckBox myPermTranscoderInput;
     private JTextField myBandwidthLimit;
+    private JComboBox myRestrictionPlaylistInput;
+    private JScrollPane myScrollPane2;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
 
     public void display(final JFrame parent, User user) {
         myUser = user;
-        JDialog dialog = new JDialog(parent, MyTunesRssUtils.getBundleString(user != null ? "editUser.editUserTitle" : "editUser.newUserTitle"), true);
+        JDialog dialog = new JDialog(parent,
+                                     MyTunesRssUtils.getBundleString(user != null ? "editUser.editUserTitle" : "editUser.newUserTitle"),
+                                     true);
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
@@ -73,6 +83,7 @@ public class EditUser {
     private void init(JDialog dialog) {
         initRegistration();
         myScrollPane.getViewport().setOpaque(false);
+        myScrollPane2.getViewport().setOpaque(false);
         myInformationPanel.setVisible(myUser != null);
         myQuotaTypeInput.addItem(User.QuotaType.None);
         myQuotaTypeInput.addItem(User.QuotaType.Day);
@@ -86,6 +97,7 @@ public class EditUser {
                 }
             }
         });
+        fillPlaylistSelect();
         myUserNameInput.setText(myUser != null ? myUser.getName() : "");
         if (myUser != null) {
             myPasswordInput.setPasswordHash(myUser.getPasswordHash());
@@ -146,12 +158,16 @@ public class EditUser {
             myApplyButton.setVisible(false);
         }
         JTextFieldValidation.setValidation(new CompositeTextFieldValidation(myUserNameInput,
-                                                                            new NotEmptyTextFieldValidation(myUserNameInput, MyTunesRssUtils.getBundleString(
-                                                                                    "error.missingUserName")),
-                                                                            new MaxLengthTextFieldValidation(myUserNameInput, 30, MyTunesRssUtils.getBundleString(
-                                                                                    "error.userNameTooLong", 30))));
-        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myPasswordInput,
-                                                                           MyTunesRssUtils.getBundleString("error.missingUserPassword")));
+                                                                            new NotEmptyTextFieldValidation(myUserNameInput,
+                                                                                                            MyTunesRssUtils.getBundleString(
+                                                                                                                    "error.missingUserName")),
+                                                                            new MaxLengthTextFieldValidation(myUserNameInput,
+                                                                                                             30,
+                                                                                                             MyTunesRssUtils.getBundleString(
+                                                                                                                     "error.userNameTooLong",
+                                                                                                                     30))));
+        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myPasswordInput, MyTunesRssUtils.getBundleString(
+                "error.missingUserPassword")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myBytesQuotaInput,
                                                                               1,
                                                                               Long.MAX_VALUE,
@@ -167,6 +183,32 @@ public class EditUser {
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myBandwidthLimit, 10, 1024, true, MyTunesRssUtils.getBundleString(
                 "error.illegalBandwidthLimit")));
         JTextFieldValidation.validateAll(myRootPanel);
+    }
+
+    private void fillPlaylistSelect() {
+        Collection<Playlist> playlists = Collections.emptyList();
+        try {
+            playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null));
+        } catch (SQLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not query playlists from database.", e);
+            }
+        }
+        myRestrictionPlaylistInput.removeAllItems();
+        myRestrictionPlaylistInput.addItem(new Playlist() {
+            @Override
+            public String toString() {
+                return MyTunesRssUtils.getBundleString("editUser.noPlaylist");
+            }
+        });
+        int index = 1;
+        for (Playlist playlist : playlists) {
+            myRestrictionPlaylistInput.addItem(playlist);
+            if (myUser != null && StringUtils.isNotEmpty(myUser.getPlaylistId()) && myUser.getPlaylistId().equals(playlist.getId())) {
+                myRestrictionPlaylistInput.setSelectedIndex(index);
+            }
+            index++;
+        }
     }
 
     private void initRegistration() {
@@ -240,6 +282,7 @@ public class EditUser {
                     myUser.setSessionTimeout(MyTunesRssUtils.getTextFieldInteger(mySessionTimeoutInput, 10));
                     myUser.setTranscoder(myPermTranscoderInput.isSelected());
                     myUser.setBandwidthLimit(MyTunesRssUtils.getTextFieldInteger(myBandwidthLimit, 0));
+                    myUser.setPlaylistId(((Playlist)myRestrictionPlaylistInput.getSelectedItem()).getId());
                     MyTunesRss.CONFIG.addUser(myUser);
                     if (myClose) {
                         myDialog.dispose();

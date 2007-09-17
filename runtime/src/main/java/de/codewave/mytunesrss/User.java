@@ -43,6 +43,7 @@ public class User {
     private boolean mySpecialPlaylists;
     private boolean myTranscoder;
     private int myBandwidthLimit;
+    private String myPlaylistId;
 
     public User(String name) {
         myName = name;
@@ -221,6 +222,14 @@ public class User {
 
     public void setBandwidthLimit(int bandwidthLimit) {
         myBandwidthLimit = bandwidthLimit;
+    }
+
+    public String getPlaylistId() {
+        return myPlaylistId;
+    }
+
+    public void setPlaylistId(String playlistId) {
+        myPlaylistId = playlistId;
     }
 
     @Override
