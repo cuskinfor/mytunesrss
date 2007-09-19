@@ -53,12 +53,12 @@ public class MyTunesRssWebUtils {
     }
 
     public static void addError(HttpServletRequest request, Error error, String holderName) {
-        List<Error> errors = (List<Error>)request.getSession().getAttribute(holderName);
+        Set<Error> errors = (Set<Error>)request.getSession().getAttribute(holderName);
         if (errors == null) {
             synchronized (request.getSession()) {
-                errors = (List<Error>)request.getSession().getAttribute(holderName);
+                errors = (Set<Error>)request.getSession().getAttribute(holderName);
                 if (errors == null) {
-                    errors = new ArrayList<Error>();
+                    errors = new HashSet<Error>();
                     request.getSession().setAttribute(holderName, errors);
                 }
             }

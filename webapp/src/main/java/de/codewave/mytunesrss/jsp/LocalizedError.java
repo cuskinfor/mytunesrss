@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss.jsp;
 
+import org.apache.commons.lang.*;
+
 /**
  * de.codewave.mytunesrss.jsp.LocalizedError
  */
@@ -26,5 +28,15 @@ public class LocalizedError extends Error {
 
     public boolean isLocalized() {
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return myMessage.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof LocalizedError && StringUtils.equals(myMessage, ((LocalizedError)obj).getMessage());
     }
 }

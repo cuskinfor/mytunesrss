@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss.jsp;
 
+import org.apache.commons.lang.*;
+
 /**
  * de.codewave.mytunesrss.jsp.BundleError
  */
@@ -26,5 +28,15 @@ public class BundleError extends Error {
 
     public boolean isLocalized() {
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return myKey.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof BundleError && StringUtils.equals(myKey, ((BundleError)obj).getKey());
     }
 }
