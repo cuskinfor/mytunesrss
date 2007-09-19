@@ -19,6 +19,26 @@
         </sql>
     </statement>
 
+    <statement name="findAlbumsRestricted">
+        <parameter name="index" type="java.lang.Integer"/>
+        <sql>
+            <![CDATA[
+            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, COUNT(i.track_id) AS imagecount
+            FROM album a, link_track_playlist rltp, track t
+                LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE ((:artist IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
+            OR (:artist IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE artist = :artist))
+            OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE genre = :genre))
+            OR {letterRegionByIndex})
+            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.track_id = t.id
+            AND t.album = a.name
+            GROUP BY a.name, a.track_count, a.artist_count, a.artist
+            ORDER BY albumname
+            ]]>
+        </sql>
+    </statement>
+
     <statement name="findArtists">
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
@@ -34,6 +54,25 @@
         </sql>
     </statement>
 
+    <statement name="findArtistsRestricted">
+        <parameter name="index" type="java.lang.Integer"/>
+        <sql>
+            <![CDATA[
+            SELECT a.name AS name, a.track_count AS track_count, a.album_count AS album_count
+            FROM artist a, link_track_playlist rltp, track t
+            WHERE ((:album IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
+            OR (:album IS NOT NULL AND a.name IN (SELECT DISTINCT(artist) FROM track WHERE album = :album))
+            OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(artist) FROM track WHERE genre = :genre))
+            OR {letterRegionByIndex})
+            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.track_id = t.id
+            AND t.artist = a.name
+            GROUP BY a.name, a.track_count, a.album_count
+            ORDER BY name
+            ]]>
+        </sql>
+    </statement>
+
     <statement name="findGenres">
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
@@ -42,6 +81,22 @@
             FROM genre
             WHERE (:index < 0 OR :index > 8)
             OR {letterRegionByIndex}
+            ORDER BY name
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findGenresRestricted">
+        <parameter name="index" type="java.lang.Integer"/>
+        <sql>
+            <![CDATA[
+            SELECT g.name AS name, g.track_count AS track_count, g.artist_count AS artist_count, g.album_count AS album_count
+            FROM genre g, link_track_playlist rltp, track t
+            WHERE ((:index < 0 OR :index > 8) OR {letterRegionByIndex})
+            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.track_id = t.id
+            AND t.genre = g.name
+            GROUP BY g.name, g.track_count, g.artist_count, g.album_count
             ORDER BY name
             ]]>
         </sql>

@@ -10,19 +10,24 @@ import de.codewave.utils.sql.*;
 import java.sql.*;
 import java.util.*;
 
+import org.apache.commons.lang.*;
+
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
  */
 public class FindGenreQuery extends DataStoreQuery<Collection<Genre>> {
     private int myIndex;
+    private String myRestrictedPlaylistId;
 
-    public FindGenreQuery(int index) {
+    public FindGenreQuery(User user, int index) {
        myIndex = index;
+        myRestrictedPlaylistId = user.getPlaylistId();
     }
 
     public Collection<Genre> execute(Connection connection) throws SQLException {
-      SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenres");
+      SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenres" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted"));
       statement.setInt("index", myIndex);
+      statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
       return execute(statement, new GenreResultBuilder());
     }
 
