@@ -28,7 +28,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             if (StringUtils.isNotEmpty(searchTerm)) {
                 query = FindTrackQuery.getForSearchTerm(searchTerm, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
             } else {
-                query = TrackRetrieveUtils.getQuery(getRequest(), false);
+                query = TrackRetrieveUtils.getQuery(getRequest(), getAuthUser(), false);
             }
             getRequest().setAttribute("sortOrder", sortOrderName);
             List<EnhancedTrack> tracks = null;

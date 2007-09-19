@@ -61,6 +61,24 @@
         </sql>
     </statement>
 
+    <statement name="findPlaylistsRestricted">
+        <sql>
+            <![CDATA[
+            SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count
+            FROM playlist p, link_track_playlist rltp, link_track_playlist ltp
+            WHERE rltp.playlist_id = :restrictionPlaylistId
+            AND ltp.track_id = rltp.track_id
+            AND ltp.playlist_id = p.id
+            AND ((:type IS NULL AND :id IS NULL AND p.track_count > 0)
+            OR (:type IS NOT NULL AND :id IS NULL AND p.track_count > 0 AND p.type = :type)
+            OR (:type IS NULL AND :id IS NOT NULL AND p.track_count > 0 AND p.id = :id)
+            OR (:type IS NOT NULL AND :id IS NOT NULL AND p.track_count > 0 AND p.type = :type AND p.id = :id))
+            GROUP BY id, name, type, track_count
+            ORDER BY name
+            ]]>
+        </sql>
+    </statement>
+
     <statement name="findPlaylistTracksOrderedByIndex">
         <default name="firstIndex" value="-1" type="java.lang.Integer"/>
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
@@ -71,6 +89,26 @@
             LEFT OUTER JOIN image i ON i.track_id = t.id
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
+            AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
+            AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
+            GROUP BY idx, {groupByTrackColumns}
+            ORDER BY idx
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findPlaylistTracksOrderedByIndexRestricted">
+        <default name="firstIndex" value="-1" type="java.lang.Integer"/>
+        <default name="lastIndex" value="-1" type="java.lang.Integer"/>
+        <sql>
+            <![CDATA[
+            SELECT ltp.idx AS idx, {trackColumns}, COUNT(i.track_id) AS imagecount
+            FROM link_track_playlist ltp, link_track_playlist rltp, track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE t.id = ltp.track_id
+            AND ltp.playlist_id = :id
+            AND rltp.playlist_id = :restrictedPlaylistId
+            AND t.id = rltp.track_id
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
             GROUP BY idx, {groupByTrackColumns}
@@ -97,6 +135,26 @@
         </sql>
     </statement>
 
+    <statement name="findPlaylistTracksOrderedByAlbumRestricted">
+        <default name="firstIndex" value="-1" type="java.lang.Integer"/>
+        <default name="lastIndex" value="-1" type="java.lang.Integer"/>
+        <sql>
+            <![CDATA[
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            FROM link_track_playlist ltp, link_track_playlist rltp, track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE t.id = ltp.track_id
+            AND ltp.playlist_id = :id
+            AND rltp.playlist_id = :restrictedPlaylistId
+            AND t.id = rltp.track_id
+            AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
+            AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
+            GROUP BY {groupByTrackColumns}
+            ORDER BY album, track_number, name
+            ]]>
+        </sql>
+    </statement>
+
     <statement name="findPlaylistTracksOrderedByArtist">
         <default name="firstIndex" value="-1" type="java.lang.Integer"/>
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
@@ -107,6 +165,26 @@
             LEFT OUTER JOIN image i ON i.track_id = t.id
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
+            AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
+            AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
+            GROUP BY {groupByTrackColumns}
+            ORDER BY artist, album, track_number, name
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findPlaylistTracksOrderedByArtistRestricted">
+        <default name="firstIndex" value="-1" type="java.lang.Integer"/>
+        <default name="lastIndex" value="-1" type="java.lang.Integer"/>
+        <sql>
+            <![CDATA[
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            FROM link_track_playlist ltp, link_track_playlist rltp, track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE t.id = ltp.track_id
+            AND ltp.playlist_id = :id
+            AND rltp.playlist_id = :restrictedPlaylistId
+            AND t.id = rltp.track_id
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
             GROUP BY {groupByTrackColumns}
@@ -127,12 +205,40 @@
         </sql>
     </statement>
 
+    <statement name="findAllTracksOrderedByAlbumRestricted">
+        <sql>
+            <![CDATA[
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            FROM link_track_playlist rltp, track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE rltp.playlist_id = :restrictedPlaylistId
+            AND t.id = rltp.track_id
+            GROUP BY {groupByTrackColumns}
+            ORDER BY album, track_number, name
+            ]]>
+        </sql>
+    </statement>
+
     <statement name="findAllTracksOrderedByArtist">
         <sql>
             <![CDATA[
             SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
             FROM track t
             LEFT OUTER JOIN image i ON i.track_id = t.id
+            GROUP BY {groupByTrackColumns}
+            ORDER BY artist, album, track_number, name
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findAllTracksOrderedByArtistRestricted">
+        <sql>
+            <![CDATA[
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            FROM link_track_playlist rltp, track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE rltp.playlist_id = :restrictedPlaylistId
+            AND t.id = rltp.track_id
             GROUP BY {groupByTrackColumns}
             ORDER BY artist, album, track_number, name
             ]]>

@@ -18,7 +18,7 @@ public abstract class LoadPlaylistCommandHandler extends MyTunesRssCommandHandle
         String playlistId = getRequestParameter("playlist", null);
         if (StringUtils.isNotEmpty(playlistId)) {
             Playlist playlist = getDataStore().executeQuery(new FindPlaylistQuery(null, playlistId)).iterator().next();
-            LinkedHashSet<Track> tracks = new LinkedHashSet<Track>(getDataStore().executeQuery(new FindPlaylistTracksQuery(playlistId, null)));
+            LinkedHashSet<Track> tracks = new LinkedHashSet<Track>(getDataStore().executeQuery(new FindPlaylistTracksQuery(getAuthUser(), playlistId, null)));
             getSession().setAttribute("playlist", playlist);
             getSession().setAttribute("playlistContent", tracks);
         } else {

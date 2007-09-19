@@ -29,7 +29,7 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
             if (trackIds != null && trackIds.length > 0) {
                 query = FindTrackQuery.getForId(trackIds);
             } else {
-                query = TrackRetrieveUtils.getQuery(getRequest(), true);
+                query = TrackRetrieveUtils.getQuery(getRequest(), getAuthUser(), true);
             }
             if (query != null) {
                 playlist.addAll(getDataStore().executeQuery(query));

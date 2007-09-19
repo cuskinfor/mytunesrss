@@ -48,7 +48,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                         }}
                 }
             }
-            for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistQuery(null, null))) {
+            for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistQuery(getAuthUser(), null, null))) {
                 playlists.add(playlist);
                 playlists.addAll(createSplittedPlaylists(playlist));
             }

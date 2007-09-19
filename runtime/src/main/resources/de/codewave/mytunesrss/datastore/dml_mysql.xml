@@ -7,6 +7,20 @@
             SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
             FROM track t
             LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
+            ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId)) GROUP BY {groupByTrackColumns}
+            ORDER BY RAND() LIMIT :maxCount
+        </sql>
+    </statement>
+
+    <statement name="findRandomTracksRestricted">
+        <sql>
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            FROM link_track_playlist rltp, track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
+                ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
+            AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
             GROUP BY {groupByTrackColumns}
             ORDER BY RAND() LIMIT :maxCount
         </sql>

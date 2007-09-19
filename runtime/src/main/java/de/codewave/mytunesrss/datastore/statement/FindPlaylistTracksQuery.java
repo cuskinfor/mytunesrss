@@ -26,22 +26,29 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
 
     private String myId;
     private SortOrder mySortOrder;
+    private String myRestrictionPlaylistId;
 
     public FindPlaylistTracksQuery(String id, SortOrder sortOrder) {
         myId = id;
         mySortOrder = sortOrder;
     }
 
+    public FindPlaylistTracksQuery(User user, String id, SortOrder sortOrder) {
+        this(id, sortOrder);
+        myRestrictionPlaylistId = user.getPlaylistId();
+    }
+
     public Collection<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
+        String suffix = StringUtils.isEmpty(myRestrictionPlaylistId) || myRestrictionPlaylistId.equals(myId) ? "" : "Restricted";
         if (PSEUDO_ID_ALL_BY_ALBUM.equals(myId)) {
-            statement = MyTunesRssUtils.createStatement(connection, "findAllTracksOrderedByAlbum");
+            statement = MyTunesRssUtils.createStatement(connection, "findAllTracksOrderedByAlbum" + suffix);
             myId = null;
         } else if (PSEUDO_ID_ALL_BY_ARTIST.equals(myId)) {
-            statement = MyTunesRssUtils.createStatement(connection, "findAllTracksOrderedByArtist");
+            statement = MyTunesRssUtils.createStatement(connection, "findAllTracksOrderedByArtist" + suffix);
             myId = null;
         } else if (myId.startsWith(PSEUDO_ID_RANDOM)) {
-            statement = MyTunesRssUtils.createStatement(connection, "findRandomTracks");
+            statement = MyTunesRssUtils.createStatement(connection, "findRandomTracks" + suffix);
             String[] splitted = myId.split("_");
             statement.setInt("maxCount", Integer.parseInt(splitted[1]));
             if (splitted.length > 2) {
@@ -54,11 +61,11 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
             }
             myId = null;
         } else if (mySortOrder == SortOrder.Album) {
-            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByAlbum");
+            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByAlbum" + suffix);
         } else if (mySortOrder == SortOrder.Artist) {
-            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByArtist");
+            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByArtist" + suffix);
         } else {
-            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByIndex");
+            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByIndex" + suffix);
         }
         if (myId != null) {
             String[] parts = StringUtils.split(myId);
@@ -68,6 +75,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
                 statement.setInt("lastIndex", Integer.parseInt(parts[2]));
             }
         }
+        statement.setString("restrictedPlaylistId", myRestrictionPlaylistId);
         return execute(statement, new TrackResultBuilder());
     }
 

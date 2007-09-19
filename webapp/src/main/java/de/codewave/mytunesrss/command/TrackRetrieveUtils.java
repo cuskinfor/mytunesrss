@@ -50,7 +50,7 @@ public class TrackRetrieveUtils {
         return null;
     }
 
-    public static DataStoreQuery<Collection<Track>> getQuery(HttpServletRequest servletRequest, boolean keepPlaylistOrder) throws SQLException {
+    public static DataStoreQuery<Collection<Track>> getQuery(HttpServletRequest servletRequest, User user, boolean keepPlaylistOrder) throws SQLException {
         DataStore store = (DataStore)servletRequest.getSession().getServletContext().getAttribute(MyTunesRssDataStore.class.getName());
         String[] albums = getNonEmptyParameterValues(servletRequest, "album");
         decodeBase64(albums);
@@ -94,9 +94,9 @@ public class TrackRetrieveUtils {
             }
         } else if (StringUtils.isNotEmpty(playlistId)) {
             if (keepPlaylistOrder) {
-                return new FindPlaylistTracksQuery(playlistId, null);
+                return new FindPlaylistTracksQuery(user, playlistId, null);
             } else {
-                return new FindPlaylistTracksQuery(playlistId, sortOrderValue);
+                return new FindPlaylistTracksQuery(user, playlistId, sortOrderValue);
             }
         }
         return null;

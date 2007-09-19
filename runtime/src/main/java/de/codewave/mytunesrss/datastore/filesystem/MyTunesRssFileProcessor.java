@@ -4,6 +4,7 @@ import de.codewave.camel.mp3.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.mp3.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.*;
@@ -125,9 +126,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             myStoreSession.executeStatement(statement);
                             myStoreSession.executeStatement(new HandleTrackImagesStatement(file, fileId));
                             myUpdatedCount++;
-                            if (myUpdatedCount % 100 == 0) {
+                            if (myUpdatedCount % MyTunesRssDataStore.COMMIT_FREQUENCY_TRACKS == 0) {
                                 // commit every 100 tracks
-                                if (myUpdatedCount % 500 == 0) {
+                                if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
                                     // recreate help tables every 500 tracks
                                     try {
                                         myStoreSession

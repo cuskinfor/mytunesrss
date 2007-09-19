@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.*;
 import org.apache.commons.lang.*;
@@ -48,9 +49,9 @@ public class TrackListener implements PListHandlerListener {
         myTrackIdToPersId.put((Long)track.get("Track ID"), trackId);
         if (processTrack(track)) {
             myUpdatedCount++;
-            if (myUpdatedCount % 100 == 0) {
+            if (myUpdatedCount % MyTunesRssDataStore.COMMIT_FREQUENCY_TRACKS == 0) {
                 // commit every 100 tracks
-                if (myUpdatedCount % 500 == 0) {
+                if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
                     // recreate help tables every 500 tracks
                     try {
                         myDataStoreSession
@@ -63,7 +64,7 @@ public class TrackListener implements PListHandlerListener {
                 }
                 try {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Committing transaction after 100 inserted/updated tracks.");
+                        LOG.debug("Committing transaction after 10 inserted/updated tracks.");
                     }
                     myDataStoreSession.commit();
                 } catch (SQLException e) {
