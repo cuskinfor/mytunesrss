@@ -11,7 +11,7 @@ body {
 }
 
 div.body {
-    max-width: 480px;
+    max-width: 750px;
     min-width: 250px;
     margin: 0 auto;
     padding: 0 0 15px 0;
@@ -227,7 +227,7 @@ table.portal td.search {
 }
 
 table.portal td.search input.text {
-    width:120px;
+    width:390px;
 }
 
 table.portal td.links {

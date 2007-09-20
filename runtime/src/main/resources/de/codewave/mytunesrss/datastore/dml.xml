@@ -166,7 +166,7 @@
             AND t.id = rltp.track_id
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
-            GROUP BY idx, {groupByTrackColumns}
+            GROUP BY ltp.idx, {groupByTrackColumns}
             ORDER BY idx
             ]]>
         </sql>
@@ -307,9 +307,23 @@
       </sql>
     </statement>
 
+    <statement name="findTracksRestricted">
+      <sql>
+        {findTracksQueryRestricted}
+        ORDER BY album, track_number, name
+      </sql>
+    </statement>
+
     <statement name="findTracksWithArtistOrder">
       <sql>
         {findTracksQuery}
+        ORDER BY artist, album, track_number, name
+      </sql>
+    </statement>
+
+    <statement name="findTracksWithArtistOrderRestricted">
+      <sql>
+        {findTracksQueryRestricted}
         ORDER BY artist, album, track_number, name
       </sql>
     </statement>
@@ -485,6 +499,31 @@
         FROM track t
         LEFT OUTER JOIN image i ON i.track_id = t.id
         WHERE (:size_of_id = 0 OR t.id IN (:id[]))
+        AND (:size_of_genre = 0 OR t.genre IN (:genre[]))
+        AND (:size_of_artist = 0 OR t.artist IN (:artist[]))
+        AND (:size_of_album = 0 OR t.album IN (:album[]))
+        AND (:size_of_search < 1 OR (LOWER(t.name) LIKE :search[0] {likeEscape}) OR (LOWER(album) LIKE :search[0] {likeEscape}) OR (LOWER(artist) LIKE :search[0] {likeEscape}))
+        AND (:size_of_search < 2 OR (LOWER(t.name) LIKE :search[1] {likeEscape}) OR (LOWER(album) LIKE :search[1] {likeEscape}) OR (LOWER(artist) LIKE :search[1] {likeEscape}))
+        AND (:size_of_search < 3 OR (LOWER(t.name) LIKE :search[2] {likeEscape}) OR (LOWER(album) LIKE :search[2] {likeEscape}) OR (LOWER(artist) LIKE :search[2] {likeEscape}))
+        AND (:size_of_search < 4 OR (LOWER(t.name) LIKE :search[3] {likeEscape}) OR (LOWER(album) LIKE :search[3] {likeEscape}) OR (LOWER(artist) LIKE :search[3] {likeEscape}))
+        AND (:size_of_search < 5 OR (LOWER(t.name) LIKE :search[4] {likeEscape}) OR (LOWER(album) LIKE :search[4] {likeEscape}) OR (LOWER(artist) LIKE :search[4] {likeEscape}))
+        AND (:size_of_search < 6 OR (LOWER(t.name) LIKE :search[5] {likeEscape}) OR (LOWER(album) LIKE :search[5] {likeEscape}) OR (LOWER(artist) LIKE :search[5] {likeEscape}))
+        AND (:size_of_search < 7 OR (LOWER(t.name) LIKE :search[6] {likeEscape}) OR (LOWER(album) LIKE :search[6] {likeEscape}) OR (LOWER(artist) LIKE :search[6] {likeEscape}))
+        AND (:size_of_search < 8 OR (LOWER(t.name) LIKE :search[7] {likeEscape}) OR (LOWER(album) LIKE :search[7] {likeEscape}) OR (LOWER(artist) LIKE :search[7] {likeEscape}))
+        AND (:size_of_search < 9 OR (LOWER(t.name) LIKE :search[8] {likeEscape}) OR (LOWER(album) LIKE :search[8] {likeEscape}) OR (LOWER(artist) LIKE :search[8] {likeEscape}))
+        AND (:size_of_search < 10 OR (LOWER(t.name) LIKE :search[9] {likeEscape}) OR (LOWER(album) LIKE :search[9] {likeEscape}) OR (LOWER(artist) LIKE :search[9] {likeEscape}))
+        GROUP BY {groupByTrackColumns}
+        ]]>
+    </fragment>
+
+    <fragment name="findTracksQueryRestricted">
+        <![CDATA[
+        SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+        FROM link_track_playlist rltp, track t
+        LEFT OUTER JOIN image i ON i.track_id = t.id
+        WHERE rltp.playlist_id = :restrictedPlaylistId
+        AND rltp.track_id = t.id
+        AND (:size_of_id = 0 OR t.id IN (:id[]))
         AND (:size_of_genre = 0 OR t.genre IN (:genre[]))
         AND (:size_of_artist = 0 OR t.artist IN (:artist[]))
         AND (:size_of_album = 0 OR t.album IN (:album[]))

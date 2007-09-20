@@ -63,7 +63,7 @@ public class TrackRetrieveUtils {
         boolean fullAlbums = getBooleanRequestParameter(servletRequest, "fullAlbums", false);
 
         if (albums != null && albums.length > 0) {
-            return FindTrackQuery.getForAlbum(albums, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
+            return FindTrackQuery.getForAlbum(user, albums, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
         } else if (artists != null && artists.length > 0) {
             if (fullAlbums) {
                 Collection<String> albumNames = new HashSet<String>();
@@ -74,10 +74,10 @@ public class TrackRetrieveUtils {
                         albumNames.add(albumWithArtist.getName());
                     }
                 }
-                return FindTrackQuery.getForAlbum(albumNames.toArray(new String[albumNames.size()]), sortOrderValue == FindPlaylistTracksQuery.SortOrder
+                return FindTrackQuery.getForAlbum(user, albumNames.toArray(new String[albumNames.size()]), sortOrderValue == FindPlaylistTracksQuery.SortOrder
                     .Artist);
             } else {
-                return FindTrackQuery.getForArtist(artists, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
+                return FindTrackQuery.getForArtist(user, artists, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
             }
         } else if (StringUtils.isNotEmpty(genre)) {
             if (fullAlbums) {
@@ -87,10 +87,10 @@ public class TrackRetrieveUtils {
                 for (Album albumWithGenre : albumsWithGenre) {
                     albumNames.add(albumWithGenre.getName());
                 }
-                return FindTrackQuery.getForAlbum(albumNames.toArray(new String[albumNames.size()]), sortOrderValue == FindPlaylistTracksQuery.SortOrder
+                return FindTrackQuery.getForAlbum(user, albumNames.toArray(new String[albumNames.size()]), sortOrderValue == FindPlaylistTracksQuery.SortOrder
                     .Artist);
             } else {
-                return FindTrackQuery.getForGenre(new String[] {genre}, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
+                return FindTrackQuery.getForGenre(user, new String[] {genre}, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
             }
         } else if (StringUtils.isNotEmpty(playlistId)) {
             if (keepPlaylistOrder) {

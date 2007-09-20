@@ -46,7 +46,7 @@
         <table class="portal" cellspacing="0">
             <tr>
                 <td class="search">
-                    <input class="text" type="text" name="searchTerm" value="<c:out value="${param.searchTerm}"/>" style="width:120px;" />
+                    <input class="text" type="text" name="searchTerm" value="<c:out value="${param.searchTerm}"/>" />
                     <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" /> <input class="button"
                                                                                      type="submit"
                                                                                      value="<fmt:message key="doSearch"/>" />

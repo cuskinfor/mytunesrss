@@ -23,7 +23,7 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
     }
 
 
-    public static FindTrackQuery getForSearchTerm(String searchTerm, boolean sortByArtistFirst) {
+    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
         query.myArtistSort = sortByArtistFirst;
         String[] searchTerms = StringUtils.split(searchTerm, " ");
@@ -38,27 +38,31 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
             }
         }
         query.mySearchTerms = searchTerms;
+        query.myRestrictedPlaylistId = user.getPlaylistId();
         return query;
     }
 
-    public static FindTrackQuery getForAlbum(String[] albums, boolean sortByArtistFirst) {
+    public static FindTrackQuery getForAlbum(User user, String[] albums, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
         query.myArtistSort = sortByArtistFirst;
         query.myAlbums = albums;
+        query.myRestrictedPlaylistId = user.getPlaylistId();
         return query;
     }
 
-    public static FindTrackQuery getForArtist(String[] artists, boolean sortByArtistFirst) {
+    public static FindTrackQuery getForArtist(User user, String[] artists, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
         query.myArtistSort = sortByArtistFirst;
         query.myArtists = artists;
+        query.myRestrictedPlaylistId = user.getPlaylistId();
         return query;
     }
 
-    public static FindTrackQuery getForGenre(String[] genres, boolean sortByArtistFirst) {
+    public static FindTrackQuery getForGenre(User user, String[] genres, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
         query.myArtistSort = sortByArtistFirst;
         query.myGenres = genres;
+        query.myRestrictedPlaylistId = user.getPlaylistId();
         return query;
     }
 
@@ -68,7 +72,7 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
     private String[] myArtists;
     private String[] mySearchTerms;
     private boolean myArtistSort;
-
+    private String myRestrictedPlaylistId;
 
     private FindTrackQuery() {
         // intentionally left blank
@@ -76,16 +80,18 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
 
     public Collection<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
+        String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
         if (myArtistSort) {
-            statement = MyTunesRssUtils.createStatement(connection, "findTracksWithArtistOrder");
+            statement = MyTunesRssUtils.createStatement(connection, "findTracksWithArtistOrder" + suffix);
         } else {
-            statement = MyTunesRssUtils.createStatement(connection, "findTracks");
+            statement = MyTunesRssUtils.createStatement(connection, "findTracks" + suffix);
         }
         statement.setItems("id", myIds);
         statement.setItems("album", myAlbums);
         statement.setItems("artist", myArtists);
         statement.setItems("genre", myGenres);
         statement.setItems("search", mySearchTerms);
+        statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
         Collection<Track> tracks = execute(statement, new TrackResultBuilder());
         if (myIds != null && myIds.length > 1) {
             Map<String, Track> idToTrack = new HashMap<String, Track>(tracks.size());
