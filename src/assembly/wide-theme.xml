@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assembly>
-    <id>wide-pc-theme</id>
+    <id>wide-theme</id>
     <formats>
         <format>dir</format>
         <format>zip</format>
