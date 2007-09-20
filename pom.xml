@@ -5,7 +5,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>mytunesrss</artifactId>
     <packaging>pom</packaging>
-    <version>3.1-EAP-10</version>
+    <version>3.1-EAP-11</version>
     <name>mytunesrss</name>
     <distributionManagement>
         <site>
