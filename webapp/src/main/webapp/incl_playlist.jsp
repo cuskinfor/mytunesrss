@@ -8,7 +8,7 @@
 
 <fmt:message var="newPlaylistName" key="newPlaylistName" />
 
-<c:if test="${!empty sessionScope.playlist}">
+<c:if test="${states.addToPlaylistMode}">
     <div class="playlisttop"></div>
     <div class="playlist">
         <a class="close" href="${servletUrl}/cancelCreatePlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><img src="${appUrl}/images/cancel.gif" alt=""/></a>

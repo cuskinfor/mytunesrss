@@ -50,9 +50,9 @@ public class TrackListener implements PListHandlerListener {
         if (processTrack(track)) {
             myUpdatedCount++;
             if (myUpdatedCount % MyTunesRssDataStore.COMMIT_FREQUENCY_TRACKS == 0) {
-                // commit every 100 tracks
+                // commit every N tracks
                 if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
-                    // recreate help tables every 500 tracks
+                    // recreate help tables every N tracks
                     try {
                         myDataStoreSession
                                 .executeStatement(new RecreateHelpTablesStatement(myDataStoreSession.executeQuery(new FindAlbumArtistMappingQuery())));

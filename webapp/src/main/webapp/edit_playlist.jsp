@@ -51,6 +51,21 @@
         <input type="hidden" name="backUrl" value="${param.backUrl}" />
         <input type="hidden" name="allowEditEmpty" value="${param.allowEditEmpty}" />
         <table cellspacing="0">
+            <c:if test="${!states.addToPlaylistMode}">
+                <tr>
+                    <th class="active" colspan="4">Anzeigefilter</th>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <table cellspacing="0">
+                            <tr>
+                                <td>Inhalt:</td>
+                                <td><input type="text" name="filterText" /></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </c:if>
             <tr>
                 <th class="active" colspan="4"><fmt:message key="playlistContent"/></th>
             </tr>

@@ -93,17 +93,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                     Id3v2Tag id3v2Tag = ((Id3v2Tag)tag);
                                     statement.setTime(id3v2Tag.getTimeSeconds());
                                     statement.setTrackNumber(id3v2Tag.getTrackNumber());
-                                    Image image = ID3Utils.getImage(id3v2Tag);
-                                    if (image != null) {
-                                        myStoreSession.executeStatement(new InsertImageStatement(fileId, 32, ImageUtils.resizeImageWithMaxSize(
-                                                image.getData(), 32)));
-                                        myStoreSession.executeStatement(new InsertImageStatement(fileId, 64, ImageUtils.resizeImageWithMaxSize(
-                                                image.getData(), 64)));
-                                        myStoreSession.executeStatement(new InsertImageStatement(fileId, 128, ImageUtils.resizeImageWithMaxSize(
-                                                image.getData(), 128)));
-                                        myStoreSession.executeStatement(new InsertImageStatement(fileId, 256, ImageUtils.resizeImageWithMaxSize(
-                                                image.getData(), 256)));
-                                    }
                                 }
                                 String genre = tag.getGenreAsString();
                                 if (genre != null) {
@@ -127,9 +116,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             myStoreSession.executeStatement(new HandleTrackImagesStatement(file, fileId));
                             myUpdatedCount++;
                             if (myUpdatedCount % MyTunesRssDataStore.COMMIT_FREQUENCY_TRACKS == 0) {
-                                // commit every 100 tracks
+                                // commit every N tracks
                                 if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
-                                    // recreate help tables every 500 tracks
+                                    // recreate help tables every N tracks
                                     try {
                                         myStoreSession
                                                 .executeStatement(new RecreateHelpTablesStatement(myStoreSession.executeQuery(new FindAlbumArtistMappingQuery())));

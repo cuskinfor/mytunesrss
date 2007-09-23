@@ -32,6 +32,9 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
         if ("mp3".equalsIgnoreCase(FilenameUtils.getExtension(myFile.getName()))) {
             try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Reading image information from ID3 tag of file \"" + myFile.getAbsolutePath() + "\".");
+                }
                 Image image = ID3Utils.getImage(Mp3Utils.readId3v2Tag(myFile));
                 boolean existing = new FindTrackImageQuery(myTrackId, 32).execute(connection) != null;
                 if (image != null && !existing) {

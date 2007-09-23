@@ -15,6 +15,7 @@ public class CancelCreatePlaylistCommandHandler extends MyTunesRssCommandHandler
     @Override
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized()) {
+            getStates().put("addToPlaylistMode", Boolean.FALSE);
             getSession().removeAttribute("playlist");
             getSession().removeAttribute("playlistContent");
             String backUrl = MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null));
