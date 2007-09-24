@@ -24,7 +24,6 @@ import java.util.concurrent.locks.*;
 public class DatabaseBuilderTask extends MyTunesRssTask {
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
     private static Lock CURRENTLY_RUNNING = new ReentrantLock();
-
     private List<File> myDatasources = new ArrayList<File>();
     private boolean myExecuted;
 
@@ -86,56 +85,54 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Preparing database tables for update.");
+                LOG.debug("Starting database update.");
             }
             final long timeUpdateStart = System.currentTimeMillis();
             SystemInformation systemInformation = storeSession.executeQuery(new GetSystemInformationQuery());
-            long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
-            Collection<String> trackIds = storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.ITunes.name()));
-            Collection<String> itunesPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunes.name()));
-            Collection<String> m3uPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.M3uFile.name()));
-            trackIds.addAll(storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.FileSystem.name())));
-            if (myDatasources != null) {
-                for (File datasource : myDatasources) {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Parsing \"" + datasource.getAbsolutePath() + "\".");
-                    }
-                    if (datasource.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(datasource.getName()))) {
-                        ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, trackIds, itunesPlaylistIds);
-                    } else if (datasource.isDirectory()) {
-                        FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, trackIds, m3uPlaylistIds);
-                    }
-                }
-            }
-            if (!trackIds.isEmpty()) {
-                removeObsoleteTracks(storeSession, trackIds);
-            }
-            if (!itunesPlaylistIds.isEmpty()) {
-                removeObsoletePlaylists(storeSession, itunesPlaylistIds);
-            }
-            if (!m3uPlaylistIds.isEmpty()) {
-                removeObsoletePlaylists(storeSession, m3uPlaylistIds);
-            }
-            storeSession.commit();
-            long timeAfterTracks = System.currentTimeMillis();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Time for loading tracks: " + (timeAfterTracks - timeUpdateStart));
-            }
+            runUpdate(systemInformation, storeSession);
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     connection.createStatement().execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
                 }
             });
             storeSession.commit();
-            long timeAfterCommit = System.currentTimeMillis();
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Time for commit: " + (timeAfterCommit - timeAfterTracks));
                 LOG.debug("Creating database checkpoint.");
             }
         } catch (Exception e) {
             storeSession.rollback();
             throw e;
         }
+    }
+
+    private void runUpdate(SystemInformation systemInformation, DataStoreSession storeSession) throws SQLException, IOException {
+        long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
+        Collection<String> trackIds = storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.ITunes.name()));
+        Collection<String> itunesPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunes.name()));
+        Collection<String> m3uPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.M3uFile.name()));
+        trackIds.addAll(storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.FileSystem.name())));
+        if (myDatasources != null) {
+            for (File datasource : myDatasources) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Parsing \"" + datasource.getAbsolutePath() + "\".");
+                }
+                if (datasource.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(datasource.getName()))) {
+                    ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, trackIds, itunesPlaylistIds);
+                } else if (datasource.isDirectory()) {
+                    FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, trackIds, m3uPlaylistIds);
+                }
+            }
+        }
+        if (!trackIds.isEmpty()) {
+            removeObsoleteTracks(storeSession, trackIds);
+        }
+        if (!itunesPlaylistIds.isEmpty()) {
+            removeObsoletePlaylists(storeSession, itunesPlaylistIds);
+        }
+        if (!m3uPlaylistIds.isEmpty()) {
+            removeObsoletePlaylists(storeSession, m3uPlaylistIds);
+        }
+        storeSession.commit();
     }
 
     private static void removeObsoleteTracks(DataStoreSession storeSession, Collection<String> databaseIds) throws SQLException {
