@@ -22,8 +22,13 @@ import java.util.concurrent.locks.*;
  * de.codewave.mytunesrss.task.DatabaseBuilderTaskk
  */
 public class DatabaseBuilderTask extends MyTunesRssTask {
+    public enum State {
+        UpdatingTracksFromItunes(), UpdatingTracksFromFolder(), UpdatingTrackImages(), Idle();
+    }
+
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
     private static Lock CURRENTLY_RUNNING = new ReentrantLock();
+    private static State myState = State.Idle;
     private List<File> myDatasources = new ArrayList<File>();
     private boolean myExecuted;
 
@@ -66,11 +71,20 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     public void execute() throws Exception {
         if (CURRENTLY_RUNNING.tryLock()) {
             try {
+                MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+                event.setMessageKey("settings.databaseUpdateRunning");
+                MyTunesRssEventManager.getInstance().fireEvent(event);
                 internalExecute();
                 myExecuted = true;
+                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED);
+            } catch (Exception e) {
+                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN);
+                throw e;
             } finally {
                 CURRENTLY_RUNNING.unlock();
             }
+        } else {
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN);
         }
     }
 
@@ -90,6 +104,8 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             final long timeUpdateStart = System.currentTimeMillis();
             SystemInformation systemInformation = storeSession.executeQuery(new GetSystemInformationQuery());
             runUpdate(systemInformation, storeSession);
+            storeSession.commit();
+            runImageUpdate(systemInformation, storeSession);
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     connection.createStatement().execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
@@ -105,6 +121,41 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         }
     }
 
+    private void runImageUpdate(SystemInformation systemInformation, DataStoreSession storeSession) throws SQLException {
+        myState = State.UpdatingTrackImages;
+        MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+        event.setMessageKey("settings.databaseUpdateRunningImages");
+        MyTunesRssEventManager.getInstance().fireEvent(event);
+        int startIndex = 0;
+        Collection<Track> tracks = null;
+        do {
+            final int localStartIndex = startIndex;
+            tracks = storeSession.executeQuery(new DataStoreQuery<Collection<Track>>() {
+                public Collection<Track> execute(Connection connection) throws SQLException {
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findTracksInRange");
+                    statement.setInt("startIndex", localStartIndex);
+                    statement.setInt("selectCount", 25);
+                    ResultSet resultSet = statement.executeQuery();
+                    Collection<Track> tracks = new ArrayList<Track>();
+                    while (resultSet.next()) {
+                        Track track = new Track();
+                        track.setId(resultSet.getString("id"));
+                        track.setFile(new File(resultSet.getString("file")));
+                        tracks.add(track);
+                    }
+                    return tracks;
+                }
+            });
+            for (Track track : tracks) {
+                if (track.getFile().lastModified() >= systemInformation.getLastUpdate()) {
+                    storeSession.executeStatement(new HandleTrackImagesStatement(track.getFile(), track.getId()));
+                }
+            }
+            startIndex += tracks.size();
+            storeSession.commit();
+        } while (tracks != null && tracks.size() > 0);
+    }
+
     private void runUpdate(SystemInformation systemInformation, DataStoreSession storeSession) throws SQLException, IOException {
         long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
         Collection<String> trackIds = storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.ITunes.name()));
@@ -117,8 +168,16 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     LOG.info("Parsing \"" + datasource.getAbsolutePath() + "\".");
                 }
                 if (datasource.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(datasource.getName()))) {
+                    myState = State.UpdatingTracksFromItunes;
+                    MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+                    event.setMessageKey("settings.databaseUpdateRunningItunes");
+                    MyTunesRssEventManager.getInstance().fireEvent(event);
                     ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, trackIds, itunesPlaylistIds);
                 } else if (datasource.isDirectory()) {
+                    myState = State.UpdatingTracksFromFolder;
+                    MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+                    event.setMessageKey("settings.databaseUpdateRunningFolder");
+                    MyTunesRssEventManager.getInstance().fireEvent(event);
                     FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, trackIds, m3uPlaylistIds);
                 }
             }
@@ -183,5 +242,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             CURRENTLY_RUNNING.unlock();
         }
         return !locked;
+    }
+
+    public static State getState() {
+        return myState;
     }
 }

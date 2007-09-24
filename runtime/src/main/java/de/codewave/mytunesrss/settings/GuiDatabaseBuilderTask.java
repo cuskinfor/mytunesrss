@@ -16,17 +16,7 @@ public class GuiDatabaseBuilderTask extends DatabaseBuilderTask {
 
     @Override
     public void execute() throws Exception {
-        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_STARTED);
         mySettings.updateConfigFromGui();
-        try {
-            super.execute();
-            if (isExecuted()) {
-                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED);
-            } else {
-                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN);
-            }
-        } finally {
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED);
-        }
+        super.execute();
     }
 }

@@ -48,10 +48,10 @@ public class Database implements MyTunesRssEventListener {
     public void handleEvent(MyTunesRssEvent event) {
         if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
             initValues();
-        } else if (event == MyTunesRssEvent.DATABASE_UPDATE_STARTED) {
+        } else if (event == MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED) {
             myUpdateDatabaseButton.setEnabled(false);
             myDeleteDatabaseButton.setEnabled(false);
-            myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString("settings.databaseUpdateRunning"));
+            myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString(event.getMessageKey()));
         } else if (event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED || event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN) {
             if (event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED) {
                 refreshLastUpdate();

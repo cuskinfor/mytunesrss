@@ -112,21 +112,10 @@ public class TrackListener implements PListHandlerListener {
                         statement.setVideo(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue());
                         statement.setGenre(StringUtils.trimToNull((String)track.get("Genre")));
                         myDataStoreSession.executeStatement(statement);
-                        myDataStoreSession.executeStatement(new HandleTrackImagesStatement(file, trackId));
                         return true;
                     } catch (SQLException e) {
                         if (LOG.isErrorEnabled()) {
                             LOG.error("Could not insert track \"" + name + "\" into database", e);
-                        }
-                    }
-                } else if (file.lastModified() >= myLibraryListener.getTimeLastUpate()) {
-                    try {
-                        HandleTrackImagesStatement trackImagesStatement = new HandleTrackImagesStatement(file, trackId);
-                        myDataStoreSession.executeStatement(trackImagesStatement);
-                        return trackImagesStatement.isUpdated();
-                    } catch (SQLException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not insert images for track \"" + name + "\" into database", e);
                         }
                     }
                 }

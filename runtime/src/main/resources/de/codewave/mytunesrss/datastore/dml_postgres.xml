@@ -14,6 +14,12 @@
         </sql>
     </statement>
 
+    <statement name="findTracksInRange">
+        <sql>
+            SELECT t.id AS id, t.file AS file FROM track t ORDER BY id LIMIT :selectCount OFFSET :startIndex
+        </sql>
+    </statement>
+
     <statement name="findRandomTracksRestricted">
         <sql>
             SELECT random() AS rnd, {trackColumns}, COUNT(i.track_id) AS imagecount

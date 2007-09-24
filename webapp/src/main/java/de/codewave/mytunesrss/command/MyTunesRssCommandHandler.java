@@ -168,7 +168,12 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             }
         }
         if (DatabaseBuilderTask.isRunning()) {
-            addMessage(new BundleError("info.databaseUpdating"));
+            if (DatabaseBuilderTask.getState() == DatabaseBuilderTask.State.UpdatingTracksFromFolder ||
+                    DatabaseBuilderTask.getState() == DatabaseBuilderTask.State.UpdatingTracksFromItunes) {
+                addMessage(new BundleError("info.databaseUpdating"));
+            } else {
+                addMessage(new BundleError("info.databaseUpdatingImages"));
+            }
         }
     }
 
