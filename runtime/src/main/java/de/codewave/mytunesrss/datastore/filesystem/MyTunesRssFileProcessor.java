@@ -2,13 +2,12 @@ package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.camel.mp3.*;
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.mp3.*;
-import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.datastore.*;
+import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.*;
-import de.codewave.utils.graphics.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
@@ -50,7 +49,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         try {
             String canonicalFilePath = file.getCanonicalPath();
             if (file.isFile() && FileSupportUtils.isSupported(file.getName())) {
-                      String fileId = "file_" + IOUtils.getFilenameHash(file);
+                String fileId = "file_" + IOUtils.getFilenameHash(file);
                 if (!myFoundIds.contains(fileId)) {
                     if ((file.lastModified() >= myLastUpdateTime || !myDatabaseIds.contains(fileId))) {
                         InsertOrUpdateTrackStatement statement =
@@ -114,27 +113,16 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         try {
                             myStoreSession.executeStatement(statement);
                             myUpdatedCount++;
-                            if (myUpdatedCount % MyTunesRssDataStore.COMMIT_FREQUENCY_TRACKS == 0) {
-                                // commit every N tracks
-                                if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
-                                    // recreate help tables every N tracks
-                                    try {
-                                        myStoreSession
-                                                .executeStatement(new RecreateHelpTablesStatement(myStoreSession.executeQuery(new FindAlbumArtistMappingQuery())));
-                                    } catch (SQLException e) {
-                                        if (LOG.isErrorEnabled()) {
-                                            LOG.error("Could not recreate help tables..", e);
-                                        }
-                                    }
-                                }
+                                DatabaseBuilderTask.doCheckpoint(myStoreSession);
+                            if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
+                                // recreate help tables every N tracks
                                 try {
-                                    if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Committing transaction after 100 inserted/updated tracks.");
-                                    }
+                                    myStoreSession
+                                            .executeStatement(new RecreateHelpTablesStatement(myStoreSession.executeQuery(new FindAlbumArtistMappingQuery())));
                                     myStoreSession.commit();
                                 } catch (SQLException e) {
                                     if (LOG.isErrorEnabled()) {
-                                        LOG.error("Could not commit transaction.", e);
+                                        LOG.error("Could not recreate help tables..", e);
                                     }
                                 }
                             }

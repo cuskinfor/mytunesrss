@@ -29,8 +29,10 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
     private static Lock CURRENTLY_RUNNING = new ReentrantLock();
     private static State myState = State.Idle;
+    private static final long MAX_TX_DURATION = 2500;
     private List<File> myDatasources = new ArrayList<File>();
     private boolean myExecuted;
+    private static long TX_BEGIN;
 
     public DatabaseBuilderTask() {
         if (MyTunesRss.CONFIG.getDatasources() != null && MyTunesRss.CONFIG.getDatasources().length > 0) {
@@ -128,6 +130,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         MyTunesRssEventManager.getInstance().fireEvent(event);
         int startIndex = 0;
         Collection<Track> tracks = null;
+        TX_BEGIN = System.currentTimeMillis();
         do {
             final int localStartIndex = startIndex;
             tracks = storeSession.executeQuery(new DataStoreQuery<Collection<Track>>() {
@@ -150,10 +153,27 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 if (track.getFile().lastModified() >= systemInformation.getLastUpdate()) {
                     storeSession.executeStatement(new HandleTrackImagesStatement(track.getFile(), track.getId()));
                 }
+                doCheckpoint(storeSession);
             }
             startIndex += tracks.size();
-            storeSession.commit();
         } while (tracks != null && tracks.size() > 0);
+    }
+
+    public static void doCheckpoint(DataStoreSession storeSession) {
+        long time = System.currentTimeMillis();
+        if (time - TX_BEGIN > MAX_TX_DURATION) {
+            try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Committing transaction after " + (time - TX_BEGIN) + " milliseconds.");
+                }
+                storeSession.commit();
+            } catch (SQLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not commit transaction.", e);
+                }
+            }
+            TX_BEGIN = System.currentTimeMillis();
+        }
     }
 
     private void runUpdate(SystemInformation systemInformation, DataStoreSession storeSession) throws SQLException, IOException {
@@ -167,6 +187,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Parsing \"" + datasource.getAbsolutePath() + "\".");
                 }
+                doCheckpoint(storeSession);
                 if (datasource.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(datasource.getName()))) {
                     myState = State.UpdatingTracksFromItunes;
                     MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;

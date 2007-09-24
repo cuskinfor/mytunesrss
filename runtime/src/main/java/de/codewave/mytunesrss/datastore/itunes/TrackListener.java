@@ -1,8 +1,9 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.datastore.*;
+import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.*;
 import org.apache.commons.lang.*;
@@ -49,27 +50,16 @@ public class TrackListener implements PListHandlerListener {
         myTrackIdToPersId.put((Long)track.get("Track ID"), trackId);
         if (processTrack(track)) {
             myUpdatedCount++;
-            if (myUpdatedCount % MyTunesRssDataStore.COMMIT_FREQUENCY_TRACKS == 0) {
-                // commit every N tracks
-                if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
-                    // recreate help tables every N tracks
-                    try {
-                        myDataStoreSession
-                                .executeStatement(new RecreateHelpTablesStatement(myDataStoreSession.executeQuery(new FindAlbumArtistMappingQuery())));
-                    } catch (SQLException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not recreate help tables..", e);
-                        }
-                    }
-                }
+            DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
+            if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
+                // recreate help tables every N tracks
                 try {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Committing transaction after 10 inserted/updated tracks.");
-                    }
+                    myDataStoreSession
+                            .executeStatement(new RecreateHelpTablesStatement(myDataStoreSession.executeQuery(new FindAlbumArtistMappingQuery())));
                     myDataStoreSession.commit();
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not commit transaction.", e);
+                        LOG.error("Could not recreate help tables..", e);
                     }
                 }
             }
