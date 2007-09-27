@@ -76,41 +76,8 @@
         <table cellspacing="0">
             <c:if test="${!states.addToPlaylistMode}">
                 <tr>
-                    <th class="active" colspan="4">Anzeigefilter</th>
-                </tr>
-                <tr>
-                    <td colspan="4">
-                        <table cellspacing="0">
-                            <tr>
-                                <td>Text:</td>
-                                <td><input id="filterText" type="text" name="filterText" value="${displayFilter.text}"/></td>
-                            </tr>
-                            <tr>
-                                <td>Typ:</td>
-                                <td>
-                                    <select id="filterType" name="filterType">
-                                        <option value="">keine Einschränkung</option>
-                                        <option value="audio" <c:if test="${displayFilter.type eq 'audio'}">selected="selected"</c:if>>nur Audiodateien</option>
-                                        <option value="video" <c:if test="${displayFilter.type eq 'video'}">selected="selected"</c:if>>nur Videodateien</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Schutz:</td>
-                                <td>
-                                    <select id="filterProtected" name="filterProtected">
-                                        <option value="">keine Einschränkung</option>
-                                        <option value="protected" <c:if test="${displayFilter.protected eq 'protected'}">selected="selected"</c:if>>nur geschützte Dateien</option>
-                                        <option value="unprotected" <c:if test="${displayFilter.protected eq 'unprotected'}">selected="selected"</c:if>>nur freie Dateien</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="button" value="Filter anwenden" onclick="self.document.location.href='${servletUrl}/editPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}/' + getElementParams('filterText,filterType,filterProtected', '/')"/>
-                                </td>
-                            </tr>
-                        </table>
+                    <td colspan="4" style="padding:0">
+                        <jsp:include page="/incl_display_filter.jsp"/>
                     </td>
                 </tr>
             </c:if>

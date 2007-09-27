@@ -384,4 +384,11 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         }
         return true;
     }
+
+    protected int getValidIndex(int index, int pageSize, int listSize) {
+        if (index * pageSize > listSize) {
+            return (listSize - 1 / pageSize);
+        }
+        return index;
+    }
 }

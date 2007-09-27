@@ -22,7 +22,7 @@ public class EditPlaylistCommandHandler extends MyTunesRssCommandHandler {
                 playlist = filterTracks(playlist);
                 int pageSize = getWebConfig().getEffectivePageSize();
                 if (pageSize > 0 && playlist.size() > pageSize) {
-                    int index = getSafeIntegerRequestParameter("index", 0);
+                    int index = getValidIndex(getSafeIntegerRequestParameter("index", 0), pageSize, playlist.size());
                     getRequest().setAttribute("tracks", new ArrayList<Track>(playlist).subList(index * pageSize, Math.min((index * pageSize) + pageSize,
                                                                                                                           playlist.size())));
                     getRequest().setAttribute("pager", createPager(playlist.size(), index));

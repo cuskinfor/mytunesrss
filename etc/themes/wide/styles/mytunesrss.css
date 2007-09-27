@@ -49,6 +49,13 @@ table {
     border-bottom: 1px solid #666;
 }
 
+table.displayfilter {
+    width: 100%;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    border-bottom: 0;
+}
+
 th {
     text-align: left;
     background: #baeafa url( "../images/th.gif" );
@@ -691,4 +698,8 @@ a.albumthumb:HOVER span.albumthumbfull {
     border-color:black;
     border-width:1px;
     background-color:black;
+}
+
+table.displayfilter td.wide {
+    width:100%;
 }
