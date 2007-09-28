@@ -16,12 +16,14 @@ import org.apache.commons.lang.*;
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
  */
 public class FindArtistQuery extends DataStoreQuery<Collection<Artist>> {
+    private String myFilter;
     private String myAlbum;
     private String myGenre;
     private int myIndex;
     private String myRestrictedPlaylistId;
 
-    public FindArtistQuery(User user, String album, String genre, int index) {
+    public FindArtistQuery(User user, String filter, String album, String genre, int index) {
+        myFilter = StringUtils.isNotEmpty(filter) ? "%" + filter + "%" : null;
         myAlbum = album;
         myGenre = genre;
         myIndex = index;
@@ -30,6 +32,7 @@ public class FindArtistQuery extends DataStoreQuery<Collection<Artist>> {
 
     public Collection<Artist> execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findArtists" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted"));
+        statement.setString("filter", myFilter);
         statement.setString("album", myAlbum);
         statement.setString("genre", myGenre);
         statement.setInt("index", myIndex);

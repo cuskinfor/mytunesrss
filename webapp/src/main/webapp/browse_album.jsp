@@ -63,6 +63,12 @@
 
     <table class="select" cellspacing="0">
         <tr>
+            <td colspan="${3 + mtfn:buttonColumns(authUser, config) + cwfn:choose(empty sessionScope.playlist, 1, 0)}" style="padding:0">
+                <c:set var="displayFilterUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}</c:set>
+                <jsp:include page="/incl_display_filter.jsp"/>
+            </td>
+        </tr>
+        <tr>
             <c:if test="${!empty sessionScope.playlist}">
                 <th class="check"><input type="checkbox" name="none" value="none" onclick="selectAllByLoop('album', 1, ${fn:length(albums)}, this)" /></th>
             </c:if>

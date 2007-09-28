@@ -17,29 +17,6 @@
 
     <jsp:include page="incl_head.jsp"/>
 
-    <script type="text/javascript">
-        function getElementParams(elements, separator) {
-            var elementNames = elements.split(",");
-            var buffer = '';
-            for (var i = 0; i < elementNames.length; i++) {
-                buffer += elementNames[i] + "=" + getElementValue(self.document.getElementById(elementNames[i]));
-                if (i + 1 < elementNames.length) {
-                    buffer += separator;
-                }
-            }
-            return buffer;
-        }
-        function getElementValue(element) {
-            if (element.type == 'text') {
-                return element.value;
-            }
-            if (element.type == 'select-one') {
-                return element.options[element.options.selectedIndex].value;
-            }
-            return '';
-        }
-    </script>
-
 </head>
 
 <body>
@@ -77,6 +54,9 @@
             <c:if test="${!states.addToPlaylistMode}">
                 <tr>
                     <td colspan="4" style="padding:0">
+                        <c:set var="displayFilterUrl" scope="request">${servletUrl}/editPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}</c:set>
+                        <c:set var="filterTypeActive" scope="request" value="true"/>
+                        <c:set var="filterProtectionActive" scope="request" value="true"/>
                         <jsp:include page="/incl_display_filter.jsp"/>
                     </td>
                 </tr>

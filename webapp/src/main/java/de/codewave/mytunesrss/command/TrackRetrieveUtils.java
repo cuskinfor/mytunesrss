@@ -68,7 +68,7 @@ public class TrackRetrieveUtils {
             if (fullAlbums) {
                 Collection<String> albumNames = new HashSet<String>();
                 for (String artist : artists) { // full albums should not happen with more than one artist, otherwise this solution would be rather slow
-                    FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, artist, null, -1);
+                    FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, artist, null, -1);
                     Collection<Album> albumsWithArtist = store.executeQuery(findAlbumQuery);
                     for (Album albumWithArtist : albumsWithArtist) {
                         albumNames.add(albumWithArtist.getName());
@@ -81,7 +81,7 @@ public class TrackRetrieveUtils {
             }
         } else if (StringUtils.isNotEmpty(genre)) {
             if (fullAlbums) {
-                FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, genre, -1);
+                FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, null, genre, -1);
                 Collection<Album> albumsWithGenre = store.executeQuery(findAlbumQuery);
                 List<String> albumNames = new ArrayList<String>();
                 for (Album albumWithGenre : albumsWithGenre) {

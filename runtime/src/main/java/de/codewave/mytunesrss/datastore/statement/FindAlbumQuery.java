@@ -17,12 +17,14 @@ import org.apache.commons.lang.*;
  */
 public class FindAlbumQuery extends DataStoreQuery<Collection<Album>> {
 
+    private String myFilter;
     private String myArtist;
     private String myGenre;
     private int myIndex;
     private String myRestrictedPlaylistId;
 
-    public FindAlbumQuery(User user, String artist, String genre, int index) {
+    public FindAlbumQuery(User user, String filter, String artist, String genre, int index) {
+        myFilter = StringUtils.isNotEmpty(filter) ? "%" + filter + "%" : null;
         myArtist = artist;
         myGenre = genre;
         myIndex = index;
@@ -31,6 +33,7 @@ public class FindAlbumQuery extends DataStoreQuery<Collection<Album>> {
 
     public Collection<Album> execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAlbums" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted"));
+        statement.setString("filter", myFilter);
         statement.setString("artist", myArtist);
         statement.setString("genre", myGenre);
         statement.setInt("index", myIndex);

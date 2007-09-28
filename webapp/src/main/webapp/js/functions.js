@@ -26,3 +26,27 @@ function selectAll(prefix, ids, checkbox) {
 function openPlayer(url) {
     window.open(url, 'MyTunesRssFlashPlayer', 'width=600,height=276,resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no')
 }
+
+function getElementParams(elements, separator) {
+    var elementNames = elements.split(",");
+    var buffer = '';
+    for (var i = 0; i < elementNames.length; i++) {
+        buffer += elementNames[i] + "=" + getElementValue(self.document.getElementById(elementNames[i]));
+        if (i + 1 < elementNames.length) {
+            buffer += separator;
+        }
+    }
+    return buffer;
+}
+
+function getElementValue(element) {
+    if (element != undefined) {
+        if (element.type == 'text') {
+            return element.value;
+        }
+        if (element.type == 'select-one') {
+            return element.options[element.options.selectedIndex].value;
+        }
+    }
+    return '';
+}

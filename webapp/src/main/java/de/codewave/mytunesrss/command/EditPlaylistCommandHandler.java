@@ -4,9 +4,10 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
-import de.codewave.mytunesrss.*;
+import org.apache.commons.lang.*;
 
 import java.util.*;
 
@@ -23,8 +24,8 @@ public class EditPlaylistCommandHandler extends MyTunesRssCommandHandler {
                 int pageSize = getWebConfig().getEffectivePageSize();
                 if (pageSize > 0 && playlist.size() > pageSize) {
                     int index = getValidIndex(getSafeIntegerRequestParameter("index", 0), pageSize, playlist.size());
-                    getRequest().setAttribute("tracks", new ArrayList<Track>(playlist).subList(index * pageSize, Math.min((index * pageSize) + pageSize,
-                                                                                                                          playlist.size())));
+                    getRequest().setAttribute("tracks", new ArrayList<Track>(playlist).subList(index * pageSize, Math.min(
+                            (index * pageSize) + pageSize, playlist.size())));
                     getRequest().setAttribute("pager", createPager(playlist.size(), index));
                 } else {
                     getRequest().setAttribute("tracks", playlist);
@@ -45,5 +46,40 @@ public class EditPlaylistCommandHandler extends MyTunesRssCommandHandler {
         } else {
             forward(MyTunesRssResource.Login);
         }
+    }
+
+    protected List<Track> filterTracks(Collection<Track> tracks) {
+        List<Track> filtered = new ArrayList<Track>();
+        for (Track track : tracks) {
+            if (matchesFilter(track)) {
+                filtered.add(track);
+            }
+        }
+        return filtered;
+    }
+
+    private boolean matchesFilter(Track track) {
+        DisplayFilter filter = getDisplayFilter();
+        if (filter != null) {
+            if (StringUtils.isNotEmpty(filter.getTextFilter())) {
+                String lowerCaseFilterText = filter.getTextFilter().toLowerCase();
+                if (!track.getName().toLowerCase().contains(lowerCaseFilterText) && !track.getAlbum().toLowerCase().contains(lowerCaseFilterText)) {
+                    return false;
+                }
+            }
+            if (filter.getType() == DisplayFilter.Type.Audio && track.isVideo()) {
+                return false;
+            }
+            if (filter.getType() == DisplayFilter.Type.Video && !track.isVideo()) {
+                return false;
+            }
+            if (filter.getProtection() == DisplayFilter.Protection.Protected && !track.isProtected()) {
+                return false;
+            }
+            if (filter.getProtection() == DisplayFilter.Protection.Unprotected && track.isProtected()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -300,20 +300,33 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     private void handleDisplayFilter() {
-        Map<String, String> filter = (Map<String, String>)getSession().getAttribute("displayFilter");
-        if (filter == null) {
-            filter = new HashMap<String, String>();
-            getSession().setAttribute("displayFilter", filter);
-        }
+        DisplayFilter filter = getDisplayFilter();
         if (getRequest().getParameter("filterText") != null) {
-            filter.put("text", getRequest().getParameter("filterText"));
+            filter.setTextFilter(getRequest().getParameter("filterText"));
         }
         if (getRequest().getParameter("filterType") != null) {
-            filter.put("type", getRequest().getParameter("filterType"));
+            if ("".equals(getRequest().getParameter("filterType"))) {
+                filter.setType(DisplayFilter.Type.All);
+            } else {
+                filter.setType(DisplayFilter.Type.valueOf(getRequest().getParameter("filterType")));
+            }
         }
         if (getRequest().getParameter("filterProtected") != null) {
-            filter.put("protected", getRequest().getParameter("filterProtected"));
+            if ("".equals(getRequest().getParameter("filterProtected"))) {
+                filter.setProtection(DisplayFilter.Protection.All);
+            } else {
+                filter.setProtection(DisplayFilter.Protection.valueOf(getRequest().getParameter("filterProtected")));
+            }
         }
+    }
+
+    protected DisplayFilter getDisplayFilter() {
+        DisplayFilter filter = (DisplayFilter)getSession().getAttribute("displayFilter");
+        if (filter == null) {
+            filter = new DisplayFilter();
+            getSession().setAttribute("displayFilter", filter);
+        }
+        return filter;
     }
 
     public void executeAuthorized() throws Exception {
@@ -344,45 +357,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected void restartMyTunesRssCom() throws IOException {
         redirect(MyTunesRss.MYTUNESRSSCOM_TOOLS_URL + "/redirect.php?username=" + getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) +
                 "&cookie=" + URLEncoder.encode(getWebConfig().getCookieValue(), "UTF-8"));
-    }
-
-    protected List<Track> filterTracks(Collection<Track> tracks) {
-        List<Track> filtered = new ArrayList<Track>();
-        for (Track track : tracks) {
-            if (matchesFilter(track)) {
-                filtered.add(track);
-            }
-        }
-        return filtered;
-    }
-
-    private boolean matchesFilter(Track track) {
-        Map<String, String> filter = (Map<String, String>)getSession().getAttribute("displayFilter");
-        if (filter != null) {
-            String filterText = filter.get("text");
-            String filterType = filter.get("type");
-            String filterProtected = filter.get("protected");
-            if (StringUtils.isNotEmpty(filterText)) {
-                String lowerCaseFilterText = filterText.toLowerCase();
-                if (!track.getName().toLowerCase().contains(lowerCaseFilterText) && !track.getAlbum().toLowerCase().contains(lowerCaseFilterText) &&
-                        !track.getAlbum().toLowerCase().contains(lowerCaseFilterText)) {
-                    return false;
-                }
-            }
-            if ("audio".equals(filterType) && track.isVideo()) {
-                return false;
-            }
-            if ("video".equals(filterType) && !track.isVideo()) {
-                return false;
-            }
-            if ("protected".equals(filterProtected) && !track.isProtected()) {
-                return false;
-            }
-            if ("unprotected".equals(filterProtected) && track.isProtected()) {
-                return false;
-            }
-        }
-        return true;
     }
 
     protected int getValidIndex(int index, int pageSize, int listSize) {

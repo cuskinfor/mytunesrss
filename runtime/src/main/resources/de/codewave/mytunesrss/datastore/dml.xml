@@ -13,6 +13,7 @@
             OR (:artist IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE artist = :artist))
             OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE genre = :genre))
             OR {letterRegionByIndex})
+            AND (:filter IS NULL OR LOWER(a.name) LIKE :filter)
             GROUP BY a.name, a.track_count, a.artist_count, a.artist
             ORDER BY albumname
             ]]>
@@ -30,6 +31,7 @@
             OR (:artist IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE artist = :artist))
             OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE genre = :genre))
             OR {letterRegionByIndex})
+            AND (:filter IS NULL OR LOWER(a.name) LIKE :filter)
             AND rltp.playlist_id = :restrictedPlaylistId
             AND rltp.track_id = t.id
             AND t.album = a.name
@@ -45,10 +47,11 @@
             <![CDATA[
             SELECT name AS name, track_count AS track_count, album_count AS album_count
             FROM artist
-            WHERE (:album IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
+            WHERE ((:album IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
             OR (:album IS NOT NULL AND name IN (SELECT DISTINCT(artist) FROM track WHERE album = :album))
             OR (:genre IS NOT NULL AND name IN (SELECT DISTINCT(artist) FROM track WHERE genre = :genre))
-            OR {letterRegionByIndex}
+            OR {letterRegionByIndex})
+            AND (:filter IS NULL OR LOWER(name) LIKE :filter)
             ORDER BY name
             ]]>
         </sql>
@@ -67,6 +70,7 @@
             AND rltp.playlist_id = :restrictedPlaylistId
             AND rltp.track_id = t.id
             AND t.artist = a.name
+            AND (:filter IS NULL OR LOWER(a.name) LIKE :filter)
             GROUP BY a.name, a.track_count, a.album_count
             ORDER BY name
             ]]>

@@ -9,31 +9,35 @@
     </tr>
     <tr>
         <td>Text:</td>
-        <td class="wide"><input id="filterText" type="text" name="filterText" value="${displayFilter.text}"/></td>
+        <td class="wide"><input id="filterText" type="text" name="filterText" value="${displayFilter.textFilter}"/></td>
     </tr>
-    <tr>
-        <td>Typ:</td>
-        <td class="wide">
-            <select id="filterType" name="filterType">
-                <option value="">keine Einschränkung</option>
-                <option value="audio" <c:if test="${displayFilter.type eq 'audio'}">selected="selected"</c:if>>nur Audiodateien</option>
-                <option value="video" <c:if test="${displayFilter.type eq 'video'}">selected="selected"</c:if>>nur Videodateien</option>
-            </select>
-        </td>
-    </tr>
-    <tr>
-        <td>Schutz:</td>
-        <td class="wide">
-            <select id="filterProtected" name="filterProtected">
-                <option value="">keine Einschränkung</option>
-                <option value="protected" <c:if test="${displayFilter.protected eq 'protected'}">selected="selected"</c:if>>nur geschützte Dateien</option>
-                <option value="unprotected" <c:if test="${displayFilter.protected eq 'unprotected'}">selected="selected"</c:if>>nur freie Dateien</option>
-            </select>
-        </td>
-    </tr>
+    <c:if test="${filterTypeActive}">
+        <tr>
+            <td>Typ:</td>
+            <td class="wide">
+                <select id="filterType" name="filterType">
+                    <option value="All">keine Einschränkung</option>
+                    <option value="Audio" <c:if test="${displayFilter.type eq 'Audio'}">selected="selected"</c:if>>nur Audiodateien</option>
+                    <option value="Video" <c:if test="${displayFilter.type eq 'Video'}">selected="selected"</c:if>>nur Videodateien</option>
+                </select>
+            </td>
+        </tr>
+    </c:if>
+    <c:if test="${filterProtectionActive}">
+        <tr>
+            <td>Schutz:</td>
+            <td class="wide">
+                <select id="filterProtected" name="filterProtected">
+                    <option value="All">keine Einschränkung</option>
+                    <option value="Protected" <c:if test="${displayFilter.protection eq 'Protected'}">selected="selected"</c:if>>nur geschützte Dateien</option>
+                    <option value="Unprotected" <c:if test="${displayFilter.protection eq 'Unprotected'}">selected="selected"</c:if>>nur freie Dateien</option>
+                </select>
+            </td>
+        </tr>
+    </c:if>
     <tr>
         <td colspan="2">
-            <input type="button" value="Filter anwenden" onclick="self.document.location.href='${servletUrl}/editPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}/' + getElementParams('filterText,filterType,filterProtected', '/')"/>
+            <input type="button" value="Filter anwenden" onclick="self.document.location.href='${displayFilterUrl}/' + getElementParams('filterText,filterType,filterProtected', '/')"/>
         </td>
     </tr>
 </table>
