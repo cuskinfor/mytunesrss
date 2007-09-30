@@ -27,9 +27,7 @@ public class M4aMp3Transcoder extends Transcoder {
     }
 
     public InputStream getStream() throws IOException {
-        return new Faad2LameTranscoderStream(getFile(),
-                                             MyTunesRss.CONFIG.getLameBinary(),
-                                             MyTunesRss.CONFIG.getFaad2Binary(), getTargetBitrate(), getTargetSampleRate());
+        return new Faad2LameTranscoderStream(getFile(), getTargetBitrate(), getTargetSampleRate());
     }
 
     protected String getTranscoderId() {

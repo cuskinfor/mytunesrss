@@ -11,6 +11,7 @@ import de.codewave.utils.io.*;
 import de.codewave.camel.mp3.*;
 import de.codewave.camel.mp3.exception.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.io.*;
 
 import javax.servlet.http.*;
 import java.io.*;
@@ -74,13 +75,13 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             int bitrate = 0;
             int fileSize = 0;
             int dataOffset = 0;
-            if (track != null) {
+            if (track != null && "mp3".equals(FilenameUtils.getExtension(track.getFile().getName()).toLowerCase())) {
                 bitrate = Mp3Utils.getMp3Info(new FileInputStream(track.getFile())).getAvgBitrate();
                 fileSize = (int)track.getFile().length();
                 Id3Tag tag = null;
                 try {
                     tag = Mp3Utils.readId3Tag(track.getFile());
-                    if (tag.isId3v2()) {
+                    if (tag != null && tag.isId3v2()) {
                         dataOffset = ((Id3v2Tag)tag).getHeader().getBodySize();
                     }
                 } catch (IllegalHeaderException e) {

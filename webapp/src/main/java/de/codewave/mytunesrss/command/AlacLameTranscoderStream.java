@@ -7,13 +7,13 @@ import java.io.*;
 /**
  * de.codewave.mytunesrss.command.LameTranscoderStream
  */
-public class Faad2LameTranscoderStream extends AbstractTranscoderStream {
-    public Faad2LameTranscoderStream(File file, int outputBitRate, int outputSampleRate) throws IOException {
-        super(file, MyTunesRss.CONFIG.getLameBinary(), MyTunesRss.CONFIG.getFaad2Binary(), outputBitRate, outputSampleRate);
+public class AlacLameTranscoderStream extends AbstractTranscoderStream {
+    public AlacLameTranscoderStream(File file, int outputBitRate, int outputSampleRate) throws IOException {
+        super(file, MyTunesRss.CONFIG.getLameBinary(), MyTunesRss.CONFIG.getFaad2Binary(), outputBitRate, outputSampleRate); // todo ALAC binary
     }
 
     protected String getSourceName() {
-        return "faad2";
+        return "alac";
     }
 
     protected String getTargetName() {
@@ -21,7 +21,7 @@ public class Faad2LameTranscoderStream extends AbstractTranscoderStream {
     }
 
     protected String getSourceArguments() {
-        return "-f 2 -w {infile}";
+        return "{infile}";
     }
 
     protected String getTargetArguments() {
