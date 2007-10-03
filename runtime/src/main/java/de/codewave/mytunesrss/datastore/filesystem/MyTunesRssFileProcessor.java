@@ -192,7 +192,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 statement.setName(name);
                 //statement.setTime(atoms.get(ATOM_TIME).getData()[11]);
                 statement.setTrackNumber(atoms.get(ATOM_TRACK_NUMBER).getData()[11]);
-                statement.setMp4Codec(atoms.get(ATOM_STSD).getDataAsString(24, 4, "UTF-8"));
+                statement.setMp4Codec(atoms.get(ATOM_STSD).getDataAsString(12, 4, "UTF-8"));
                 String genre = atoms.get(ATOM_GENRE).getDataAsString(8, "UTF-8");
                 if (genre != null) {
                     statement.setGenre(StringUtils.trimToNull(genre));

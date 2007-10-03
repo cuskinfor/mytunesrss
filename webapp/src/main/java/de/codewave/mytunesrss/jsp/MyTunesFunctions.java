@@ -78,9 +78,15 @@ public class MyTunesFunctions {
         return webSafeFileName(genre.getName());
     }
 
-    public static String suffix(Map replacements, Track track) {
-        String extension = FilenameUtils.getExtension(track.getFile().getName());
-        return replacements != null && replacements.get(extension) != null ? replacements.get(extension).toString() : extension;
+    public static String suffix(WebConfig config, User user, Track track) {
+        if (config != null && user != null && FileSupportUtils.isMp4(track.getFile()) && MyTunesRss.REGISTRATION.isRegistered() && user.isTranscoder()) {
+            if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
+                return "mp3";
+            } else if ("mp4a".equals(track.getMp4Codec()) && config.isFaad2() && MyTunesRss.CONFIG.isValidFaad2Binary()) {
+                return "mp3";
+            }
+        }
+        return FilenameUtils.getExtension(track.getFile().getName());
     }
 
     public static String replace(String string, String target, String replacement) {

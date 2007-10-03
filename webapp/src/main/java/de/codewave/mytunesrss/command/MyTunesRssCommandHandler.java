@@ -164,9 +164,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             getRequest().setAttribute("tc",
                                       webConfig.getLameTargetBitrate() + "," + webConfig.getLameTargetSampleRate() + "," +
                                               webConfig.isTranscodeOnTheFlyIfPossible());
-            if (webConfig.isFaad2()) {
-                addSuffixReplacement("m4a", "mp3");
-            }
         }
         if (DatabaseBuilderTask.isRunning()) {
             if (DatabaseBuilderTask.getState() == DatabaseBuilderTask.State.UpdatingTracksFromFolder ||
@@ -176,15 +173,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 addMessage(new BundleError("info.databaseUpdatingImages"));
             }
         }
-    }
-
-    private void addSuffixReplacement(String suffix, String replacement) {
-        Map<String, String> replacements = (Map<String, String>)getRequest().getAttribute("suffixReplacements");
-        if (replacements == null) {
-            replacements = new HashMap<String, String>();
-            getRequest().setAttribute("suffixReplacements", replacements);
-        }
-        replacements.put(suffix, replacement);
     }
 
     private void setResourceBundle() {

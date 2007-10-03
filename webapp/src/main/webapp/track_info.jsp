@@ -101,7 +101,7 @@
             <td>
                 <c:if test="${track.protected}"><img src="${appUrl}/images/protected.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle" /></c:if>
                 <c:if test="${track.video}"><img src="${appUrl}/images/movie.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle" /></c:if>
-                <c:out value="${mtfn:suffix(null, track)}" />
+                <c:out value="${mtfn:suffix(null, null, track)}" />
             </td>
         </tr>
         <c:if test="${authUser.download && config.showDownload}">
@@ -110,7 +110,7 @@
                     &nbsp;
                 </td>
                 <td>
-                    <a href="${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(null, track)}">
+                    <a href="${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(null, null, track)}">
                         <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" />
                         <fmt:message key="doDownload"/>
                     </a>

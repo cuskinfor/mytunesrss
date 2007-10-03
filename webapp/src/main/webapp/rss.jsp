@@ -8,7 +8,7 @@
             <title><c:out value="${channel}"/></title>
             <c:if test="${!userAgentPsp}"><link>${permServletUrl}</link></c:if>
         </image>
-        <description><fmt:message key="rssChannelDescription"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:suffix(suffixReplacements, track)}</c:set>
+        <description><fmt:message key="rssChannelDescription"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}</c:set>
             <item>
                 <title><c:out value="${track.name}"/></title>
                 <description><c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" /></description>
