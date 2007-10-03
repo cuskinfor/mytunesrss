@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.*;
 
 import java.util.*;
 
@@ -23,7 +24,7 @@ public class ShowTrackInfoCommandHandler extends MyTunesRssCommandHandler {
         if (!tracks.isEmpty()) {
             Track track = tracks.iterator().next();
             getRequest().setAttribute("track", track);
-            if ("mp3".equals(FilenameUtils.getExtension(track.getFile().getName()).toLowerCase())) {
+            if (FileSupportUtils.isMp3(track.getFile())) {
                 getRequest().setAttribute("mp3info", Boolean.TRUE);
             }
         }

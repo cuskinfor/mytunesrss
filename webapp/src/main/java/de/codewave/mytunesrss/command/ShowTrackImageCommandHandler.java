@@ -5,12 +5,10 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.mp3.*;
+import de.codewave.mytunesrss.meta.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
-import javax.servlet.http.*;
-import java.io.*;
 import java.util.*;
 
 /**
@@ -34,7 +32,7 @@ public class ShowTrackImageCommandHandler extends ShowImageCommandHandler {
                     Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
                     if (!tracks.isEmpty()) {
                         Track track = tracks.iterator().next();
-                        image = ID3Utils.getImage(track);
+                        image = MyTunesRssMp3Utils.getImage(track);
                     }
                 } else {
                     byte[] data = getDataStore().executeQuery(new FindTrackImageQuery(trackId, size));

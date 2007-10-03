@@ -151,6 +151,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             setProtected(track.isProtected());
             setVideo(track.isVideo());
             setGenre(track.getGenre());
+            track.setMp4Codec(track.getMp4Codec());
             track.setImageCount(track.getImageCount());
         }
 

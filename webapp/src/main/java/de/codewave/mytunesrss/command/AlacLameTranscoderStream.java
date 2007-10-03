@@ -9,7 +9,7 @@ import java.io.*;
  */
 public class AlacLameTranscoderStream extends AbstractTranscoderStream {
     public AlacLameTranscoderStream(File file, int outputBitRate, int outputSampleRate) throws IOException {
-        super(file, MyTunesRss.CONFIG.getLameBinary(), MyTunesRss.CONFIG.getFaad2Binary(), outputBitRate, outputSampleRate); // todo ALAC binary
+        super(file, MyTunesRss.CONFIG.getLameBinary(), MyTunesRss.CONFIG.getAlacBinary(), outputBitRate, outputSampleRate);
     }
 
     protected String getSourceName() {

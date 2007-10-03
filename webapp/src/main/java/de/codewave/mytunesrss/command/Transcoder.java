@@ -25,10 +25,14 @@ public abstract class Transcoder {
 
     public static Transcoder createTranscoder(Track track, WebConfig webConfig, HttpServletRequest request) {
         Transcoder transcoder = null;
-        if ("audio/mp3".equals(track.getContentType())) {
-            transcoder = new Mp3Mp3Transcoder(track, webConfig, request);
-        } else if ("audio/x-m4a".equals(track.getContentType())) {
-            transcoder = new M4aMp3Transcoder(track, webConfig, request);
+        if (FileSupportUtils.isMp3(track.getFile())) {
+            transcoder = new Mp3ToMp3Transcoder(track, webConfig, request);
+        } else if (FileSupportUtils.isMp4(track.getFile())) {
+            if ("alac".equals(track.getMp4Codec())) {
+                transcoder = new AlacToMp3Transcoder(track, webConfig, request);
+            } else {
+                transcoder = new Mp4aToMp3Transcoder(track, webConfig, request);
+            }
         }
         return transcoder != null && transcoder.isAvailable() && transcoder.isActive() ? transcoder : null;
     }

@@ -21,6 +21,10 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
         return MyTunesRss.CONFIG.getFaad2Binary();
     }
 
+    public String getAlacBinary() {
+        return MyTunesRss.CONFIG.getAlacBinary();
+    }
+
     public int getCacheMaxFiles() {
         return MyTunesRss.CONFIG.getStreamingCacheMaxFiles();
     }
@@ -35,6 +39,11 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
 
     public void setFaad2Binary(String faad2Binary) {
         MyTunesRss.CONFIG.setFaad2Binary(faad2Binary);
+        onChange();
+    }
+
+    public void setAlacBinary(String alacBinary) {
+        MyTunesRss.CONFIG.setAlacBinary(alacBinary);
         onChange();
     }
 

@@ -29,4 +29,13 @@
         <sql>ALTER TABLE playlist ALTER COLUMN id VARCHAR(100)</sql>
         <sql>ALTER TABLE link_track_playlist ALTER COLUMN playlist_id VARCHAR(100)</sql>
     </statement>
+
+    <statement name="migrate31eap9to31eap11">
+        <sql>ALTER TABLE track ADD COLUMN mp4codec VARCHAR(4)</sql>
+        <sql>DELETE FROM track WHERE LOWER(file) LIKE '%mp4'</sql>
+        <sql>DELETE FROM track WHERE LOWER(file) LIKE '%m4a'</sql>
+        <sql>DELETE FROM track WHERE LOWER(file) LIKE '%m4p'</sql>
+        <sql>DELETE FROM track WHERE LOWER(file) LIKE '%m4v'</sql>
+    </statement>
+
 </statements>

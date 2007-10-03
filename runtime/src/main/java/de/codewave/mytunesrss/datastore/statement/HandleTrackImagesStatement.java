@@ -1,14 +1,17 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.camel.mp3.*;
-import de.codewave.mytunesrss.mp3.*;
+import de.codewave.camel.mp4.*;
+import de.codewave.mytunesrss.meta.*;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.graphics.*;
 import de.codewave.utils.sql.*;
 import org.apache.commons.logging.*;
-import org.apache.commons.io.*;
+import org.apache.commons.lang.*;
 
 import java.io.*;
 import java.sql.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackImagesStatement
@@ -30,12 +33,17 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     }
 
     public void execute(Connection connection) throws SQLException {
-        if ("mp3".equalsIgnoreCase(FilenameUtils.getExtension(myFile.getName()))) {
+        if (FileSupportUtils.isMp3(myFile) || FileSupportUtils.isMp4(myFile)) {
             try {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Reading image information from ID3 tag of file \"" + myFile.getAbsolutePath() + "\".");
+                    LOG.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
                 }
-                Image image = ID3Utils.getImage(Mp3Utils.readId3v2Tag(myFile));
+                Image image = null;
+                if (FileSupportUtils.isMp3(myFile)) {
+                    image = MyTunesRssMp3Utils.getImage(myFile);
+                } else {
+                    image = MyTunesRssMp4Utils.getImage(myFile);
+                }
                 boolean existing = new FindTrackImageQuery(myTrackId, 32).execute(connection) != null;
                 if (image != null && !existing) {
                     new InsertImageStatement(myTrackId, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);

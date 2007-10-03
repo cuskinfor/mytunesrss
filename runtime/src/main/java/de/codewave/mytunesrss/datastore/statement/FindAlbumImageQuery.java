@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.mp3.*;
+import de.codewave.mytunesrss.meta.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.sql.*;
 

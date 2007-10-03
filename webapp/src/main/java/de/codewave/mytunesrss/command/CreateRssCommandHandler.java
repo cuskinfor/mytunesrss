@@ -6,7 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
-import de.codewave.mytunesrss.mp3.*;
+import de.codewave.mytunesrss.meta.*;
 import de.codewave.utils.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
@@ -37,7 +37,7 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
                 if (getWebConfig().isRssArtwork()) {
                     for (Track track : tracks) {
                         try {
-                            Image image = ID3Utils.getImage(track);
+                            Image image = MyTunesRssMp3Utils.getImage(track);
                             if (image != null && image.getData() != null && image.getData().length > 0 &&
                                     StringUtils.isNotEmpty(image.getMimeType())) {
                                 getRequest().setAttribute("imageTrackId", track.getId());

@@ -1,7 +1,9 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.camel.mp3.*;
+import de.codewave.camel.mp4.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.meta.*;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
@@ -21,6 +23,12 @@ import java.util.*;
  */
 public class MyTunesRssFileProcessor implements FileProcessor {
     private static final Log LOG = LogFactory.getLog(MyTunesRssFileProcessor.class);
+    private static final String ATOM_ALBUM = "moov.udta.meta.ilst.\u00a9alb.data";
+    private static final String ATOM_ARTIST = "moov.udta.meta.ilst.\u00a9ART.data";
+    private static final String ATOM_TITLE = "moov.udta.meta.ilst.\u00a9nam.data";
+    private static final String ATOM_TRACK_NUMBER = "moov.udta.meta.ilst.trkn.data";
+    private static final String ATOM_GENRE = "moov.udta.meta.ilst.\u00a9gen.data";
+    private static final String ATOM_STSD = "moov.trak.mdia.minf.stbl.stsd";
 
     private File myBaseDir;
     private long myLastUpdateTime;
@@ -56,55 +64,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                 myDatabaseIds.contains(fileId) ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
                         statement.clear();
                         statement.setId(fileId);
-                        Id3Tag tag = null;
-                        if ("mp3".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
-                            try {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Reading ID3 information from file \"" + file.getAbsolutePath() + "\".");
-                                }
-                                tag = Mp3Utils.readId3Tag(file);
-                            } catch (Exception e) {
-                                if (LOG.isErrorEnabled()) {
-                                    LOG.error("Could not get ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
-                                }
-                            }
-                        }
-                        if (tag == null) {
-                            setSimpleInfo(statement, file);
-                        } else {
-                            try {
-                                String album = tag.getAlbum();
-                                if (StringUtils.isEmpty(album)) {
-                                    album = getAncestorAlbumName(file);
-                                }
-                                statement.setAlbum(album);
-                                String artist = tag.getArtist();
-                                if (StringUtils.isEmpty(artist)) {
-                                    artist = getAncestorArtistName(file);
-                                }
-                                statement.setArtist(artist);
-                                String name = tag.getTitle();
-                                if (StringUtils.isEmpty(name)) {
-                                    name = FilenameUtils.getBaseName(file.getName());
-                                }
-                                statement.setName(name);
-                                if (tag.isId3v2()) {
-                                    Id3v2Tag id3v2Tag = ((Id3v2Tag)tag);
-                                    statement.setTime(id3v2Tag.getTimeSeconds());
-                                    statement.setTrackNumber(id3v2Tag.getTrackNumber());
-                                }
-                                String genre = tag.getGenreAsString();
-                                if (genre != null) {
-                                    statement.setGenre(StringUtils.trimToNull(genre));
-                                }
-                            } catch (Exception e) {
-                                if (LOG.isErrorEnabled()) {
-                                    LOG.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
-                                }
-                                statement.clear();
-                                statement.setId(fileId);
-                                setSimpleInfo(statement, file);
-                            }
+                        if (FileSupportUtils.isMp3(file)) {
+                            parseMp3MetaData(file, statement, fileId);
+                        } else if (FileSupportUtils.isMp4(file)) {
+                            parseMp4MetaData(file, statement, fileId);
                         }
                         FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
                         statement.setProtected(fileSuffixInfo.isProtected());
@@ -113,7 +76,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         try {
                             myStoreSession.executeStatement(statement);
                             myUpdatedCount++;
-                                DatabaseBuilderTask.doCheckpoint(myStoreSession);
+                            DatabaseBuilderTask.doCheckpoint(myStoreSession);
                             if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
                                 // recreate help tables every N tracks
                                 try {
@@ -141,6 +104,106 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
+            }
+        }
+    }
+
+    private void parseMp3MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId) {
+        Id3Tag tag = null;
+        try {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Reading ID3 information from file \"" + file.getAbsolutePath() + "\".");
+            }
+            tag = Mp3Utils.readId3Tag(file);
+        } catch (Exception e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not get ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
+            }
+        }
+        if (tag == null) {
+            setSimpleInfo(statement, file);
+        } else {
+            try {
+                String album = tag.getAlbum();
+                if (StringUtils.isEmpty(album)) {
+                    album = getAncestorAlbumName(file);
+                }
+                statement.setAlbum(album);
+                String artist = tag.getArtist();
+                if (StringUtils.isEmpty(artist)) {
+                    artist = getAncestorArtistName(file);
+                }
+                statement.setArtist(artist);
+                String name = tag.getTitle();
+                if (StringUtils.isEmpty(name)) {
+                    name = FilenameUtils.getBaseName(file.getName());
+                }
+                statement.setName(name);
+                if (tag.isId3v2()) {
+                    Id3v2Tag id3v2Tag = ((Id3v2Tag)tag);
+                    statement.setTime(id3v2Tag.getTimeSeconds());
+                    statement.setTrackNumber(id3v2Tag.getTrackNumber());
+                }
+                String genre = tag.getGenreAsString();
+                if (genre != null) {
+                    statement.setGenre(StringUtils.trimToNull(genre));
+                }
+            } catch (Exception e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
+                }
+                statement.clear();
+                statement.setId(fileId);
+                setSimpleInfo(statement, file);
+            }
+        }
+    }
+
+    private void parseMp4MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId) {
+        Map<String, Mp4Atom> atoms = null;
+        try {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
+            }
+            atoms = Mp4Utils.getAtoms(file, Arrays.asList(ATOM_ALBUM, ATOM_ARTIST, ATOM_TITLE, ATOM_TRACK_NUMBER, ATOM_GENRE, ATOM_STSD));
+        } catch (Exception e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
+            }
+        }
+        if (atoms == null || atoms.isEmpty()) {
+            setSimpleInfo(statement, file);
+        } else {
+            try {
+                String album = atoms.get(ATOM_ALBUM).getDataAsString(8, "UTF-8");
+                if (StringUtils.isEmpty(album)) {
+                    album = getAncestorAlbumName(file);
+                }
+                statement.setAlbum(album);
+                String artist = atoms.get(ATOM_ARTIST).getDataAsString(8, "UTF-8");
+                if (StringUtils.isEmpty(artist)) {
+                    artist = getAncestorArtistName(file);
+                }
+                statement.setArtist(artist);
+                String name = atoms.get(ATOM_TITLE).getDataAsString(8, "UTF-8");
+                if (StringUtils.isEmpty(name)) {
+                    name = FilenameUtils.getBaseName(file.getName());
+                }
+                statement.setName(name);
+                //statement.setTime(atoms.get(ATOM_TIME).getData()[11]);
+                statement.setTrackNumber(atoms.get(ATOM_TRACK_NUMBER).getData()[11]);
+                statement.setMp4Codec(atoms.get(ATOM_STSD).getDataAsString(24, 4, "UTF-8"));
+                String genre = atoms.get(ATOM_GENRE).getDataAsString(8, "UTF-8");
+                if (genre != null) {
+                    statement.setGenre(StringUtils.trimToNull(genre));
+                }
+            } catch (Exception e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
+                }
+                statement.clear();
+                statement.setId(fileId);
+                setSimpleInfo(statement, file);
             }
         }
     }

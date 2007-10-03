@@ -75,7 +75,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             int bitrate = 0;
             int fileSize = 0;
             int dataOffset = 0;
-            if (track != null && "mp3".equals(FilenameUtils.getExtension(track.getFile().getName()).toLowerCase())) {
+            if (track != null && FileSupportUtils.isMp3(track.getFile())) {
                 bitrate = Mp3Utils.getMp3Info(new FileInputStream(track.getFile())).getAvgBitrate();
                 fileSize = (int)track.getFile().length();
                 Id3Tag tag = null;

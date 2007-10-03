@@ -14,6 +14,10 @@ public interface StreamingConfigMBean {
 
     void setFaad2Binary(String faad2Binary);
 
+    String getAlacBinary();
+
+    void setAlacBinary(String alacBinary);
+
     int getCacheTimeout();
 
     void setCacheTimeout(int timeout);

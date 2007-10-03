@@ -58,6 +58,7 @@ public class MyTunesRssConfig {
     private String myWebWelcomeMessage = "";
     private String myLameBinary = "";
     private String myFaad2Binary = "";
+    private String myAlacBinary = "";
     private int myStreamingCacheTimeout = 20;
     private int myStreamingCacheMaxFiles = 300;
     private boolean myBandwidthLimit;
@@ -283,6 +284,19 @@ public class MyTunesRssConfig {
         myFaad2Binary = faad2Binary;
     }
 
+    public String getAlacBinary() {
+        return myAlacBinary;
+    }
+
+    public boolean isValidAlacBinary() {
+        return StringUtils.isNotEmpty(myAlacBinary) && new File(myAlacBinary).isFile();
+    }
+
+
+    public void setAlacBinary(String alacBinary) {
+        myAlacBinary = alacBinary;
+    }
+
     public int getStreamingCacheTimeout() {
         return myStreamingCacheTimeout;
     }
@@ -488,6 +502,7 @@ public class MyTunesRssConfig {
         readPathInfoEncryptionKey();
         setLameBinary(Preferences.userRoot().node(PREF_ROOT).get("lameBinary", getLameBinary()));
         setFaad2Binary(Preferences.userRoot().node(PREF_ROOT).get("faad2Binary", getFaad2Binary()));
+        setAlacBinary(Preferences.userRoot().node(PREF_ROOT).get("alacBinary", getAlacBinary()));
         setStreamingCacheTimeout(Preferences.userRoot().node(PREF_ROOT).getInt("streamingCacheTimeout", getStreamingCacheTimeout()));
         setStreamingCacheMaxFiles(Preferences.userRoot().node(PREF_ROOT).getInt("streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
         setBandwidthLimit(Preferences.userRoot().node(PREF_ROOT).getBoolean("bandwidthLimit", false));
@@ -620,6 +635,7 @@ public class MyTunesRssConfig {
         }
         Preferences.userRoot().node(PREF_ROOT).put("lameBinary", myLameBinary);
         Preferences.userRoot().node(PREF_ROOT).put("faad2Binary", myFaad2Binary);
+        Preferences.userRoot().node(PREF_ROOT).put("alacBinary", myAlacBinary);
         Preferences.userRoot().node(PREF_ROOT).putInt("streamingCacheTimeout", myStreamingCacheTimeout);
         Preferences.userRoot().node(PREF_ROOT).putInt("streamingCacheMaxFiles", myStreamingCacheMaxFiles);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("bandwidthLimit", myBandwidthLimit);

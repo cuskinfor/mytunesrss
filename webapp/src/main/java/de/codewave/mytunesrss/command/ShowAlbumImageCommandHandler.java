@@ -1,11 +1,9 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.mp3.*;
+import de.codewave.mytunesrss.meta.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
-
-import javax.servlet.http.*;
 
 /**
  * de.codewave.mytunesrss.command.ShowTrackImageCommandHandler

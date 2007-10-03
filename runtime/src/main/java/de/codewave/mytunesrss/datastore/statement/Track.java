@@ -22,6 +22,7 @@ public class Track {
     private boolean myProtected;
     private boolean myVideo;
     private String myGenre;
+    private String myMp4Codec;
     private int myImageCount;
 
     public String getAlbum() {
@@ -102,6 +103,14 @@ public class Track {
 
     public void setGenre(String genre) {
         myGenre = genre;
+    }
+
+    public String getMp4Codec() {
+        return myMp4Codec;
+    }
+
+    public void setMp4Codec(String mp4Codec) {
+        myMp4Codec = mp4Codec;
     }
 
     public int getImageCount() {

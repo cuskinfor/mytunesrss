@@ -198,6 +198,14 @@
                     </td>
                 </tr>
             </c:if>
+            <c:if test="${registered && authUser.transcoder && globalConfig.validLameBinary && globalConfig.validAlacBinary}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.useAlac" /></td>
+                    <td>
+                        <input type="checkbox" name="useAlac" value="true" <c:if test="${config.alac}">checked="checked"</c:if> />
+                    </td>
+                </tr>
+            </c:if>
             <c:if test="${registered && authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaad2Binary)}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.transcodeOnTheFlyIfPossible" /></td>

@@ -101,6 +101,17 @@ public class TrackListener implements PListHandlerListener {
                         statement.setProtected(FileSupportUtils.isProtected(fileName));
                         statement.setVideo(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue());
                         statement.setGenre(StringUtils.trimToNull((String)track.get("Genre")));
+                        if (FileSupportUtils.isMp4(file)) {
+                            String kind = (String)track.get("Kind");
+                            if (StringUtils.isNotEmpty(kind)) {
+                                kind = kind.toLowerCase();
+                                if (kind.contains("aac")) {
+                                    statement.setMp4Codec("mp4a");
+                                } else if (kind.contains("apple lossless")) {
+                                    statement.setMp4Codec("alac");
+                                }
+                            }
+                        }
                         myDataStoreSession.executeStatement(statement);
                         return true;
                     } catch (SQLException e) {

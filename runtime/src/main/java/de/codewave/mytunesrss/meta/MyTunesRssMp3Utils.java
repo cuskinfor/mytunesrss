@@ -2,23 +2,23 @@
  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
  */
 
-package de.codewave.mytunesrss.mp3;
+package de.codewave.mytunesrss.meta;
 
 import de.codewave.camel.mp3.*;
 import de.codewave.camel.mp3.framebody.v2.*;
 import de.codewave.camel.mp3.framebody.v3.*;
 import de.codewave.camel.mp3.structure.*;
 import de.codewave.mytunesrss.datastore.statement.*;
-import org.apache.commons.io.*;
+import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 
 import java.io.*;
 
 /**
- * de.codewave.mytunesrss.mp3.ID3Utils
+ * de.codewave.mytunesrss.meta.MyTunesRssMp3Utils
  */
-public class ID3Utils {
-    private static final Log LOG = LogFactory.getLog(ID3Utils.class);
+public class MyTunesRssMp3Utils {
+    private static final Log LOG = LogFactory.getLog(MyTunesRssMp3Utils.class);
 
     public static Image getImage(Track track) {
         File file = track.getFile();
@@ -26,7 +26,7 @@ public class ID3Utils {
     }
 
     public static Image getImage(File file) {
-        if (file.exists() && "mp3".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
+        if (FileSupportUtils.isMp3(file)) {
             try {
                 Id3v2Tag id3v2Tag = Mp3Utils.readId3v2Tag(file);
                 return getImage(id3v2Tag);
@@ -39,7 +39,7 @@ public class ID3Utils {
         return null;
     }
 
-    public static Image getImage(Id3v2Tag id3v2Tag) {
+    private static Image getImage(Id3v2Tag id3v2Tag) {
         if (id3v2Tag != null && id3v2Tag.getFrames() != null) {
             for (Frame frame : id3v2Tag.getFrames()) {
                 if ("APIC".equals(frame.getId())) {

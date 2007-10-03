@@ -10,10 +10,10 @@ import java.io.*;
 /**
  * de.codewave.mytunesrss.command.Transcoder
  */
-public class M4aMp3Transcoder extends Transcoder {
+public class Mp4aToMp3Transcoder extends Transcoder {
     private boolean myActive;
 
-    public M4aMp3Transcoder(Track track, WebConfig webConfig, HttpServletRequest request) {
+    public Mp4aToMp3Transcoder(Track track, WebConfig webConfig, HttpServletRequest request) {
         super(track.getId(), track.getFile(), request, webConfig);
         myActive = webConfig.isFaad2();
     }
@@ -31,7 +31,7 @@ public class M4aMp3Transcoder extends Transcoder {
     }
 
     protected String getTranscoderId() {
-        return "faad2lame_m4atomp3_" + getTargetBitrate() + "_" + getTargetSampleRate();
+        return "faad2lame_" + getTargetBitrate() + "_" + getTargetSampleRate();
     }
 
     public String getTargetContentType() {

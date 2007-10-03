@@ -4,8 +4,10 @@
 
 package de.codewave.mytunesrss;
 
+import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 
+import java.io.*;
 import java.util.*;
 
 /**
@@ -61,5 +63,18 @@ public class FileSupportUtils {
     public static boolean isVideo(String filename) {
         FileSuffixInfo fileSuffixInfo = getFileSuffixInfo(filename);
         return fileSuffixInfo != null && fileSuffixInfo.isVideo();
+    }
+
+    public static boolean isMp3(File file) {
+        return file != null && file.isFile() && "mp3".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()));
+    }
+
+    public static boolean isMp4(File file) {
+        if (file != null && file.isFile()) {
+            String extension = FilenameUtils.getExtension(file.getName());
+            return "mp4".equalsIgnoreCase(extension) || "m4a".equalsIgnoreCase(extension) || "m4v".equalsIgnoreCase(extension) ||
+                    "m4p".equalsIgnoreCase(extension);
+        }
+        return false;
     }
 }

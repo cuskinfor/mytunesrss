@@ -124,6 +124,7 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
             track.setProtected(resultSet.getBoolean("PROTECTED"));
             track.setVideo(resultSet.getBoolean("VIDEO"));
             track.setGenre(resultSet.getString("GENRE"));
+            track.setMp4Codec(resultSet.getString("MP4CODEC"));
             track.setImageCount(resultSet.getInt("IMAGECOUNT"));
             return track;
         }

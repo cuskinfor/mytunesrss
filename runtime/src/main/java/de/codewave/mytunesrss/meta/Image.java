@@ -2,10 +2,10 @@
  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
  */
 
-package de.codewave.mytunesrss.mp3;
+package de.codewave.mytunesrss.meta;
 
 /**
- * de.codewave.mytunesrss.mp3.Image
+ * de.codewave.mytunesrss.meta.Image
  */
 public class Image {
     private String myMimeType;

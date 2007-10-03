@@ -1,13 +1,11 @@
 package de.codewave.mytunesrss.command;
 
 import org.apache.commons.logging.*;
-import org.apache.commons.lang.*;
 
 import java.io.*;
 import java.util.*;
 
-import de.codewave.mytunesrss.mp3.*;
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.meta.*;
 import de.codewave.utils.graphics.*;
 import de.codewave.utils.io.*;
 
