@@ -220,6 +220,10 @@ public class WebConfig {
         return myConfigValues.get(CFG_USER_NAME);
     }
 
+    public User getUser() {
+        return MyTunesRss.CONFIG.getUser(getUserName());
+    }
+
     public void setUserName(String userName) {
         myConfigValues.put(CFG_USER_NAME, userName);
     }

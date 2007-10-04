@@ -463,6 +463,16 @@
         <sql>SELECT id AS id FROM playlist WHERE type IN (:types[])</sql>
     </statement>
 
+    <statement name="getStatistics">
+        <sql>
+            SELECT COUNT(DISTINCT(album)) AS albumcount,
+                   COUNT(DISTINCT(artist)) AS artistcount,
+                   COUNT(DISTINCT(genre)) AS genrecount,
+                   COUNT(id) AS trackcount
+            FROM track
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[

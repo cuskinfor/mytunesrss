@@ -56,6 +56,18 @@ table.displayfilter {
     border-bottom: 0;
 }
 
+table.statistics {
+    width: 100%;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    border-bottom: 0;
+}
+
+table.statistics td {
+    padding: 5px 20px 5px 0;
+    white-space: nowrap;
+}
+
 th {
     text-align: left;
     background: #baeafa url( "../images/th.gif" );

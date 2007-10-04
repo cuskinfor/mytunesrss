@@ -82,6 +82,25 @@
     <jsp:include page="incl_playlist.jsp" />
 
     <table cellspacing="0">
+        <c:if test="${!empty statistics}">
+            <tr>
+                <th class="active" colspan="${2 + mtfn:buttonColumns(authUser, config)}" align="right">
+                    <fmt:message key="statistics" />
+                </th>
+            </tr>
+            <tr id="statistics">
+                <td colspan="${2 + mtfn:buttonColumns(authUser, config)}">
+                    <table class="statistics">
+                        <tr>
+                            <td><fmt:message key="statistics.tracks" />: ${statistics.trackCount}</td>
+                            <td><fmt:message key="statistics.albums" />: ${statistics.albumCount}</td>
+                            <td><fmt:message key="statistics.artists" />: ${statistics.artistCount}</td>
+                            <td width="100%"><fmt:message key="statistics.genres" />: ${statistics.genreCount}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </c:if>
         <tr>
             <th class="active">
                 <fmt:message key="playlists" />
