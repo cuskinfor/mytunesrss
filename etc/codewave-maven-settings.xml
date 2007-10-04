@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<settings>
+  <profiles>
+    <profile>
+      <id>codewave</id>
+      <repositories>
+        <repository>
+          <id>codewave</id>
+          <name>Codewave Maven Repository</name>
+          <url>http://codewave.dyn-o-saur.com:20111/repository/public</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+  <activeProfiles>codewave</activeProfiles>
+</settings>
