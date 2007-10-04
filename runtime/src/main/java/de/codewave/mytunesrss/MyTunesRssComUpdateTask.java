@@ -11,6 +11,7 @@ import org.apache.commons.logging.*;
 
 import java.io.*;
 import java.util.*;
+import java.text.*;
 
 /**
  * de.codewave.mytunesrss.DatabaseWatchdogTask
@@ -49,12 +50,18 @@ public class MyTunesRssComUpdateTask extends TimerTask {
         postMethod.addParameter("context", System.getProperty("webapp.context", ""));
         HttpClient client = MyTunesRssUtils.createHttpClient();
         try {
+            MyTunesRssEvent event = MyTunesRssEvent.MYTUNESRSS_COM_UPDATED;
             int responseCode = client.executeMethod(postMethod);
             if (responseCode != 200) {
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Could not update mytunesrss.com (Status code " + responseCode + ").");
                 }
+                event.setMessageKey("mytunesrsscom.invalidLogin");
+            } else {
+                event.setMessageKey("mytunesrsscom.updateOk");
+                event.setMessageParams(new SimpleDateFormat(MyTunesRssUtils.getBundleString("settings.lastMyTunesRssComUpdateDateFormat")).format(new Date()));
             }
+            MyTunesRssEventManager.getInstance().fireEvent(event);
         } catch (IOException e) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Could not update mytunesrss.com", e);

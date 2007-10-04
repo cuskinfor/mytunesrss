@@ -26,6 +26,7 @@ public class Misc implements MyTunesRssEventListener {
     private JCheckBox myUpdateOnStartInput;
     private JButton myProgramUpdateButton;
     private JPanel myMyTunesRssComPanel;
+    private JLabel myMyTunesRssComStatus;
     private boolean myUpdateOnStartInputCache;
     private boolean myAutoStartServer;
 
@@ -58,6 +59,7 @@ public class Misc implements MyTunesRssEventListener {
         }
         myQuitConfirmationInput.setSelected(MyTunesRss.CONFIG.isQuitConfirmation());
         myUpdateOnStartInput.setSelected(MyTunesRss.CONFIG.isCheckUpdateOnStart());
+        myMyTunesRssComStatus.setText(MyTunesRssUtils.getBundleString("mytunesrsscom.stateUnknown"));
     }
 
     private void initRegistration() {
@@ -128,6 +130,8 @@ public class Misc implements MyTunesRssEventListener {
                 break;
             case CONFIGURATION_CHANGED:
                 initValues();
+            case MYTUNESRSS_COM_UPDATED:
+                myMyTunesRssComStatus.setText(MyTunesRssUtils.getBundleString(event.getMessageKey(), event.getMessageParams()));
         }
     }
 

@@ -11,9 +11,10 @@ public enum MyTunesRssEvent {
     ENABLE_AUTO_START_SERVER,
     DISABLE_AUTO_START_SERVER,
     CONFIGURATION_CHANGED, SERVER_STOPPED, SERVER_STARTED, DATABASE_UPDATE_FINISHED, DATABASE_UPDATE_FINISHED_NOT_RUN,
-    DATABASE_UPDATE_STATE_CHANGED;
+    DATABASE_UPDATE_STATE_CHANGED, MYTUNESRSS_COM_UPDATED;
 
     private String myMessageKey;
+    private Object[] myMessageParams;
 
     public void setMessageKey(String messageKey) {
         myMessageKey = messageKey;
@@ -21,5 +22,13 @@ public enum MyTunesRssEvent {
 
     public String getMessageKey() {
         return myMessageKey;
+    }
+
+    public Object[] getMessageParams() {
+        return myMessageParams;
+    }
+
+    public void setMessageParams(Object... messageParams) {
+        myMessageParams = messageParams;
     }
 }
