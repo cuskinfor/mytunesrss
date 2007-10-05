@@ -152,6 +152,9 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             setVideo(track.isVideo());
             setGenre(track.getGenre());
             setMp4Codec(track.getMp4Codec());
+            setTsPlayed(track.getTsPlayed());
+            setTsUpdated(track.getTsUpdated());
+            setPlayCount(track.getPlayCount());
             setImageCount(track.getImageCount());
         }
 

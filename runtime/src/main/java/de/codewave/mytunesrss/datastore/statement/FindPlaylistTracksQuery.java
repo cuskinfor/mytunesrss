@@ -19,6 +19,8 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
     public static final String PSEUDO_ID_ALL_BY_ARTIST = "PlaylistAllByArtist";
     public static final String PSEUDO_ID_ALL_BY_ALBUM = "PlaylistAllByAlbum";
     public static final String PSEUDO_ID_RANDOM = "PlaylistRandom";
+    public static final String PSEUDO_ID_MOST_PLAYED = "PlaylistMostPlayed";
+    public static final String PSEUDO_ID_LAST_UPDATED = "PlaylistLastUpdated";
 
     public static enum SortOrder {
         Album(), Artist()
@@ -46,6 +48,16 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
             myId = null;
         } else if (PSEUDO_ID_ALL_BY_ARTIST.equals(myId)) {
             statement = MyTunesRssUtils.createStatement(connection, "findAllTracksOrderedByArtist" + suffix);
+            myId = null;
+        } else if (myId.startsWith(PSEUDO_ID_LAST_UPDATED)) {
+            statement = MyTunesRssUtils.createStatement(connection, "findLastUpdatedTracks" + suffix);
+            String[] splitted = myId.split("_");
+            statement.setInt("maxCount", Integer.parseInt(splitted[1]));
+            myId = null;
+        } else if (myId.startsWith(PSEUDO_ID_MOST_PLAYED)) {
+            statement = MyTunesRssUtils.createStatement(connection, "findMostPlayedTracks" + suffix);
+            String[] splitted = myId.split("_");
+            statement.setInt("maxCount", Integer.parseInt(splitted[1]));
             myId = null;
         } else if (myId.startsWith(PSEUDO_ID_RANDOM)) {
             statement = MyTunesRssUtils.createStatement(connection, "findRandomTracks" + suffix);
@@ -97,6 +109,9 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
             track.setVideo(resultSet.getBoolean("VIDEO"));
             track.setGenre(resultSet.getString("GENRE"));
             track.setMp4Codec(resultSet.getString("MP4CODEC"));
+            track.setTsPlayed(resultSet.getLong("TS_PLAYED"));
+            track.setTsUpdated(resultSet.getLong("TS_UPDATED"));
+            track.setPlayCount(resultSet.getLong("PLAYCOUNT"));
             track.setImageCount(resultSet.getInt("IMAGECOUNT"));
             return track;
         }

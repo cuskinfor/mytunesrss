@@ -32,6 +32,9 @@
 
     <statement name="migrate31eap9to31eap11">
         <sql>ALTER TABLE track ADD COLUMN mp4codec VARCHAR(4)</sql>
+        <sql>ALTER TABLE track ADD COLUMN ts_played NUMERIC(19)</sql>
+        <sql>ALTER TABLE track ADD COLUMN ts_updated NUMERIC(19)</sql>
+        <sql>ALTER TABLE track ADD COLUMN playcount NUMERIC(19)</sql>
         <sql>DELETE FROM track WHERE LOWER(file) LIKE '%mp4'</sql>
         <sql>DELETE FROM track WHERE LOWER(file) LIKE '%m4a'</sql>
         <sql>DELETE FROM track WHERE LOWER(file) LIKE '%m4p'</sql>

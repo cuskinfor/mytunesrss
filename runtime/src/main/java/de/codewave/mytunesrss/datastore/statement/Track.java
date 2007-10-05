@@ -24,6 +24,9 @@ public class Track {
     private String myGenre;
     private String myMp4Codec;
     private int myImageCount;
+    private long myTsPlayed;
+    private long myTsUpdated;
+    private long myPlayCount;
 
     public String getAlbum() {
         return myAlbum;
@@ -119,6 +122,30 @@ public class Track {
 
     public void setImageCount(int imageCount) {
         myImageCount = imageCount;
+    }
+
+    public long getTsPlayed() {
+        return myTsPlayed;
+    }
+
+    public void setTsPlayed(long tsPlayed) {
+        myTsPlayed = tsPlayed;
+    }
+
+    public long getTsUpdated() {
+        return myTsUpdated;
+    }
+
+    public void setTsUpdated(long tsUpdated) {
+        myTsUpdated = tsUpdated;
+    }
+
+    public long getPlayCount() {
+        return myPlayCount;
+    }
+
+    public void setPlayCount(long playCount) {
+        myPlayCount = playCount;
     }
 
     public String getContentType() {

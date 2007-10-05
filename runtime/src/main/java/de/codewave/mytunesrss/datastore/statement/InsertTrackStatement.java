@@ -100,6 +100,8 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setString("genre", myGenre);
             myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
             myStatement.setString("mp4codec", myMp4Codec);
+            myStatement.setLong("ts_updated", System.currentTimeMillis());
+            myStatement.setLong("playcount", 0);
             myStatement.execute();
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {

@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.servlet.*;
 import de.codewave.utils.io.*;
+import de.codewave.utils.sql.*;
 import de.codewave.camel.mp3.*;
 import de.codewave.camel.mp3.exception.*;
 import org.apache.commons.logging.*;
@@ -54,8 +55,11 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         } else {
                             streamSender = new FileSender(file, contentType, (int)file.length());
                         }
+                        DataStoreSession session = getDataStore().getTransaction();
+                        session.executeStatement(new UpdatePlayCountStatement(new String[] {track.getId()}));
+                        session.commit();
+                        streamSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
                     }
-                    streamSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
                 } else {
                     if (LOG.isWarnEnabled()) {
                         LOG.warn("User limit exceeded, sending response code SC_NO_CONTENT instead.");

@@ -95,6 +95,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setString("genre", myGenre);
             myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
             myStatement.setString("mp4codec", myMp4Codec);
+            myStatement.setLong("ts_updated", System.currentTimeMillis());
             myStatement.execute();
         } catch (SQLException e) {
             if (UpdateTrackStatement.LOG.isErrorEnabled()) {

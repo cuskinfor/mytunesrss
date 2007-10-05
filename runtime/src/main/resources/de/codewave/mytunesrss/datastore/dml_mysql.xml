@@ -13,6 +13,28 @@
         </sql>
     </statement>
 
+    <statement name="findLastUpdatedTracks">
+        <sql>
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            FROM track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
+            ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId)) GROUP BY {groupByTrackColumns}
+            ORDER BY ts_updated DESC LIMIT :maxCount
+        </sql>
+    </statement>
+
+    <statement name="findMostPlayedTracks">
+        <sql>
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            FROM track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
+            ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId)) GROUP BY {groupByTrackColumns}
+            ORDER BY playcount DESC LIMIT :maxCount
+        </sql>
+    </statement>
+
     <statement name="findTracksInRange">
         <sql>
             SELECT t.id AS id, t.file AS file FROM track t ORDER BY id LIMIT :selectCount OFFSET :startIndex
@@ -29,6 +51,32 @@
             AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
             GROUP BY {groupByTrackColumns}
             ORDER BY RAND() LIMIT :maxCount
+        </sql>
+    </statement>
+
+    <statement name="findLastUpdatedTracksRestricted">
+        <sql>
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            FROM link_track_playlist rltp, track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
+                ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
+            AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
+            GROUP BY {groupByTrackColumns}
+            ORDER BY ts_updated DESC LIMIT :maxCount
+        </sql>
+    </statement>
+
+    <statement name="findMostPlayedTracksRestricted">
+        <sql>
+            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            FROM link_track_playlist rltp, track t
+            LEFT OUTER JOIN image i ON i.track_id = t.id
+            WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
+                ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
+            AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
+            GROUP BY {groupByTrackColumns}
+            ORDER BY playcount DESC LIMIT :maxCount
         </sql>
     </statement>
 

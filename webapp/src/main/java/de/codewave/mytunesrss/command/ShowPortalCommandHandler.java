@@ -28,6 +28,20 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                         "playlist.specialAllByAlbum"), -1));
                 playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ARTIST, PlaylistType.MyTunes, getBundleString(
                         "playlist.specialAllByArtist"), -1));
+                int mostPlayedPlaylistSize = getWebConfig().getMostPlayedPlaylistSize();
+                if (mostPlayedPlaylistSize > 0) {
+                    playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_MOST_PLAYED + "_" + mostPlayedPlaylistSize,
+                                               PlaylistType.MyTunes,
+                                               MessageFormat.format(getBundleString("playlist.specialMostPlayed"), mostPlayedPlaylistSize),
+                                               mostPlayedPlaylistSize));
+                }
+                int lastUpdatedPlaylistSize = getWebConfig().getLastUpdatedPlaylistSize();
+                if (lastUpdatedPlaylistSize > 0) {
+                    playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_LAST_UPDATED + "_" + lastUpdatedPlaylistSize,
+                                               PlaylistType.MyTunes,
+                                               MessageFormat.format(getBundleString("playlist.specialLastUpdated"), lastUpdatedPlaylistSize),
+                                               lastUpdatedPlaylistSize));
+                }
                 int randomPlaylistSize = getWebConfig().getRandomPlaylistSize();
                 if (randomPlaylistSize > 0) {
                     Collection<Playlist> randomPlaylistSources = getDataStore().executeQuery(new FindPlaylistQuery(null,
@@ -37,15 +51,18 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                             playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize + "_" +
                                     randomPlaylistSources.iterator().next().getId(),
                                                        PlaylistType.MyTunes,
-                                                       MessageFormat.format(getBundleString("playlist.specialRandom"), randomPlaylistSize,
+                                                       MessageFormat.format(getBundleString("playlist.specialRandom"),
+                                                                            randomPlaylistSize,
                                                                             randomPlaylistSources.iterator().next().getName()),
                                                        randomPlaylistSize));
                         } else {
                             playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize,
                                                        PlaylistType.MyTunes,
-                                                       MessageFormat.format(getBundleString("playlist.specialRandomWholeLibrary"), randomPlaylistSize),
+                                                       MessageFormat.format(getBundleString("playlist.specialRandomWholeLibrary"),
+                                                                            randomPlaylistSize),
                                                        randomPlaylistSize));
-                        }}
+                        }
+                    }
                 }
             }
             for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistQuery(getAuthUser(), null, null))) {

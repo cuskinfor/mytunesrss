@@ -129,6 +129,26 @@
                     </select>
                 </td>
             </tr>
+            <tr <mt:flipFlop/>>
+                <td><fmt:message key="settings.lastUpdatedPlaylistSize" /></td>
+                <td>
+                    <input type="text"
+                           name="lastUpdatedPlaylistSize"
+                           maxlength="3"
+                           value="<c:out value="${cwfn:choose(config.lastUpdatedPlaylistSize > 0, config.lastUpdatedPlaylistSize, '')}"/>"
+                           style="width: 50px;" />
+                </td>
+            </tr>
+            <tr <mt:flipFlop/>>
+                <td><fmt:message key="settings.mostPlayedPlaylistSize" /></td>
+                <td>
+                    <input type="text"
+                           name="mostPlayedPlaylistSize"
+                           maxlength="3"
+                           value="<c:out value="${cwfn:choose(config.mostPlayedPlaylistSize > 0, config.mostPlayedPlaylistSize, '')}"/>"
+                           style="width: 50px;" />
+                </td>
+            </tr>
             <c:if test="${authUser.rss}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.playlistTypes.rss" /></td>

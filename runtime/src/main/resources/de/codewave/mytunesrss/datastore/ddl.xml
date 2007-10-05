@@ -18,6 +18,9 @@
                 source VARCHAR(20),
                 genre VARCHAR(255),
                 mp4codec VARCHAR(4),
+                ts_played NUMERIC(19),
+                ts_updated NUMERIC(19),
+                playcount NUMERIC(19),
                 UNIQUE (id)
             )
         </sql>

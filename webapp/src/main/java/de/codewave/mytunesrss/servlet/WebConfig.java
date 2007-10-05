@@ -30,6 +30,8 @@ public class WebConfig {
     private static final String CFG_SHOW_PLAYER = "showPlayer";
     private static final String CFG_RSS_ARTWORK = "rssArtwork";
     private static final String CFG_RANDOM_PLAYLIST_SIZE = "randomPlaylistSize";
+    private static final String CFG_LAST_UPDATED_PLAYLIST_SIZE = "lastUpdatedPlaylistSize";
+    private static final String CFG_MOST_PLAYED_PLAYLIST_SIZE = "mostPlayedPlaylistSize";
     private static final String CFG_PLAYLIST_TYPE = "playlistType";
     private static final String CFG_USE_LAME = "lame";
     private static final String CFG_LAME_TARGET_BITRATE = "lameBitrate";
@@ -96,6 +98,8 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
         myConfigValues.put(CFG_RSS_ARTWORK, "true");
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
+        myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, "25");
+        myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_PLAYLIST_TYPE, "M3u");
         myConfigValues.put(CFG_USE_LAME, "false");
         myConfigValues.put(CFG_LAME_TARGET_BITRATE, "96");
@@ -323,6 +327,22 @@ public class WebConfig {
 
     public void setRandomPlaylistSize(int count) {
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, Integer.toString(count));
+    }
+
+    public int getLastUpdatedPlaylistSize() {
+        return Integer.parseInt(myConfigValues.get(CFG_LAST_UPDATED_PLAYLIST_SIZE));
+    }
+
+    public void setLastUpdatedPlaylistSize(int count) {
+        myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, Integer.toString(count));
+    }
+
+    public int getMostPlayedPlaylistSize() {
+        return Integer.parseInt(myConfigValues.get(CFG_MOST_PLAYED_PLAYLIST_SIZE));
+    }
+
+    public void setMostPlayedPlaylistSize(int count) {
+        myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, Integer.toString(count));
     }
 
     public String getPlaylistFileSuffix() {
