@@ -304,9 +304,9 @@
         </sql>
     </statement>
 
-    <statement name="updatePlayCount">
+    <statement name="updatePlayCountAndDate">
         <sql>
-            UPDATE track SET playcount = playcount + 1 WHERE id IN (:id[])
+            UPDATE track SET playcount = playcount + 1, ts_played = :ts_played WHERE id IN (:id[])
         </sql>
     </statement>
 

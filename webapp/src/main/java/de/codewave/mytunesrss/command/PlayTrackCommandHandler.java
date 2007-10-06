@@ -7,12 +7,10 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.servlet.*;
-import de.codewave.utils.io.*;
 import de.codewave.utils.sql.*;
 import de.codewave.camel.mp3.*;
 import de.codewave.camel.mp3.exception.*;
 import org.apache.commons.logging.*;
-import org.apache.commons.io.*;
 
 import javax.servlet.http.*;
 import java.io.*;
@@ -56,7 +54,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                             streamSender = new FileSender(file, contentType, (int)file.length());
                         }
                         DataStoreSession session = getDataStore().getTransaction();
-                        session.executeStatement(new UpdatePlayCountStatement(new String[] {track.getId()}));
+                        session.executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
                         session.commit();
                         streamSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
                     }

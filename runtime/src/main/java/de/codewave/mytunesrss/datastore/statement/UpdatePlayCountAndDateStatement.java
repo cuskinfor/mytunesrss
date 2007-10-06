@@ -9,16 +9,17 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindPlaylistIdsQuery
  */
-public class UpdatePlayCountStatement implements DataStoreStatement {
+public class UpdatePlayCountAndDateStatement implements DataStoreStatement {
     private String[] myIds;
 
-    public UpdatePlayCountStatement(String[] ids) {
+    public UpdatePlayCountAndDateStatement(String[] ids) {
         myIds = ids;
     }
 
     public void execute(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updatePlayCount");
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updatePlayCountAndDate");
         statement.setItems("id", myIds);
+        statement.setLong("ts_played", System.currentTimeMillis());
         statement.execute();
     }
 }

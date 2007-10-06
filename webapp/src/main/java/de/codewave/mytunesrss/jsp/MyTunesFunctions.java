@@ -16,6 +16,7 @@ import org.apache.commons.logging.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
+import java.text.*;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
@@ -179,5 +180,11 @@ public class MyTunesFunctions {
             }
         }
         return null;
+    }
+
+    public static String formatDateAsDateAndTime(HttpServletRequest request, long milliseconds) {
+        ResourceBundle bundle = ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb", request.getLocale());
+        SimpleDateFormat format = new SimpleDateFormat(bundle.getString("dateAndTimeFormat"));
+        return format.format(new Date(milliseconds));
     }
 }

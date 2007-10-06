@@ -45,15 +45,8 @@
                 <c:out value="${track.name}" />
             </th>
         </tr>
-        <tr>
-            <td>
-                <fmt:message key="artist" />:
-            </td>
-            <td>
-                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
-            </td>
-        </tr>
-        <tr class="odd">
+        <mt:initFlipFlop value1="" value2="class=\"odd\""/>
+        <tr <mt:flipFlop/>>
             <td>
                 <fmt:message key="track" />:
             </td>
@@ -61,7 +54,7 @@
                 <c:out value="${track.name}" />
             </td>
         </tr>
-        <tr>
+        <tr <mt:flipFlop/>>
             <td>
                 <fmt:message key="album" />:
             </td>
@@ -69,7 +62,15 @@
                 <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
             </td>
         </tr>
-        <tr class="odd">
+        <tr <mt:flipFlop/>>
+            <td>
+                <fmt:message key="artist" />:
+            </td>
+            <td>
+                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
+            </td>
+        </tr>
+        <tr <mt:flipFlop/>>
             <td>
                 <fmt:message key="duration" />:
             </td>
@@ -79,7 +80,7 @@
         </tr>
         <c:if test="${mp3info}">
             <fmt:message var="localizedUnknown" key="unknown" />
-            <tr>
+            <tr <mt:flipFlop/>>
                 <td>
                     <fmt:message key="bitrate" />:
                 </td>
@@ -87,7 +88,7 @@
                     <c:out value="${mtfn:bitrate(track)}" default="${localizedUnknown}"/>
                 </td>
             </tr>
-            <tr class="odd">
+            <tr <mt:flipFlop/>>
                 <td>
                     <fmt:message key="samplerate" />:
                 </td>
@@ -96,7 +97,7 @@
                 </td>
             </tr>
         </c:if>
-        <tr>
+        <tr <mt:flipFlop/>>
             <td><fmt:message key="type"/>:</td>
             <td>
                 <c:if test="${track.protected}"><img src="${appUrl}/images/protected.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle" /></c:if>
@@ -105,7 +106,7 @@
             </td>
         </tr>
         <c:if test="${authUser.download && config.showDownload}">
-            <tr class="odd">
+            <tr <mt:flipFlop/>>
                 <td>
                     &nbsp;
                 </td>
@@ -117,13 +118,54 @@
                 </td>
             </tr>
         </c:if>
-        <tr <c:if test="${!authUser.download || !config.showDownload}">class="odd"</c:if>>
-          <td colspan="2">
-            <img alt="${track.name} Album Art"
-              src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=256</mt:encrypt>"
-              width="200" style="display: block; margin: 10px auto;"/>
-          </td>
+        <tr>
+            <th colspan="2" class="active">
+                <fmt:message key="trackinfo.statistics"/>
+            </th>
         </tr>
+        <mt:initFlipFlop value1="" value2="class=\"odd\""/>
+        <tr <mt:flipFlop/>>
+            <td>
+                <fmt:message key="trackinfo.playcount" />:
+            </td>
+            <td>
+                <c:out value="${track.playCount}" />
+            </td>
+        </tr>
+        <c:if test="${track.tsPlayed > 0}">
+            <tr <mt:flipFlop/>>
+                <td>
+                    <fmt:message key="trackinfo.lastPlayed" />:
+                </td>
+                <td>
+                    <c:out value="${mtfn:dateTime(pageContext.request, track.tsPlayed)}" />
+                </td>
+            </tr>
+        </c:if>
+        <c:if test="${track.tsUpdated > 0}">
+            <tr <mt:flipFlop/>>
+                <td>
+                    <fmt:message key="trackinfo.lastUpdate" />:
+                </td>
+                <td>
+                    <c:out value="${mtfn:dateTime(pageContext.request, track.tsUpdated)}" />
+                </td>
+            </tr>
+        </c:if>
+        <c:if test="${track.imageCount > 0}">
+            <tr>
+                <th colspan="2" class="active">
+                    <fmt:message key="trackinfo.cover"/>
+                </th>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <img alt="${track.name} Album Art"
+                  src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=256</mt:encrypt>"
+                  width="200" style="display: block; margin: 10px auto;"/>
+              </td>
+            </tr>
+        </c:if>
     </table>
 
 </div>
