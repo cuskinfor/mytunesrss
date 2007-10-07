@@ -26,7 +26,7 @@ public class MigrationStatement implements DataStoreStatement {
         }
         // migration < 3.0 to current version
         if (databaseVersion.compareTo(new Version("3.0")) < 0) {
-            new DropAllTablesStatement().execute(connection);
+            MyTunesRssUtils.createStatement(connection, "dropAllTablesForPre30Migration").execute();
             new CreateAllTablesStatement().execute(connection);
         } else {
             // migration from 3.0.x to 3.1-EAP-1
