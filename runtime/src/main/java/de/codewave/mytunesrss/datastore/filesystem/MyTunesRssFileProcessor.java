@@ -175,25 +175,35 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             setSimpleInfo(statement, file);
         } else {
             try {
-                String album = atoms.get(ATOM_ALBUM).getDataAsString(8, "UTF-8");
+                Mp4Atom atom = atoms.get(ATOM_ALBUM);
+                String album = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                 if (StringUtils.isEmpty(album)) {
                     album = getAncestorAlbumName(file);
                 }
                 statement.setAlbum(album);
-                String artist = atoms.get(ATOM_ARTIST).getDataAsString(8, "UTF-8");
+                atom = atoms.get(ATOM_ARTIST);
+                String artist = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                 if (StringUtils.isEmpty(artist)) {
                     artist = getAncestorArtistName(file);
                 }
                 statement.setArtist(artist);
-                String name = atoms.get(ATOM_TITLE).getDataAsString(8, "UTF-8");
+                atom = atoms.get(ATOM_TITLE);
+                String name = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                 if (StringUtils.isEmpty(name)) {
                     name = FilenameUtils.getBaseName(file.getName());
                 }
                 statement.setName(name);
                 //statement.setTime(atoms.get(ATOM_TIME).getData()[11]);
-                statement.setTrackNumber(atoms.get(ATOM_TRACK_NUMBER).getData()[11]);
-                statement.setMp4Codec(atoms.get(ATOM_STSD).getDataAsString(12, 4, "UTF-8"));
-                String genre = atoms.get(ATOM_GENRE).getDataAsString(8, "UTF-8");
+                atom = atoms.get(ATOM_TRACK_NUMBER);
+                if (atom != null) {
+                    statement.setTrackNumber(atom.getData()[11]);
+                }
+                atom = atoms.get(ATOM_STSD);
+                if (atom != null) {
+                    statement.setMp4Codec(atom.getDataAsString(12, 4, "UTF-8"));
+                }
+                atom = atoms.get(ATOM_GENRE);
+                String genre = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                 if (genre != null) {
                     statement.setGenre(StringUtils.trimToNull(genre));
                 }

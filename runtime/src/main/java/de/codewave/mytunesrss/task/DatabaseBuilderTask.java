@@ -202,6 +202,10 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, trackIds, m3uPlaylistIds);
                 }
             }
+            // ensure the help tables are created with all the data
+            storeSession.executeStatement(new RecreateHelpTablesStatement(storeSession.executeQuery(new FindAlbumArtistMappingQuery())));
+            storeSession.commit();
+
         }
         if (!trackIds.isEmpty()) {
             removeObsoleteTracks(storeSession, trackIds);
