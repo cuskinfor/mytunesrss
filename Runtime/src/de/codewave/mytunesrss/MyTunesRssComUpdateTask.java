@@ -49,6 +49,8 @@ public class MyTunesRssComUpdateTask extends TimerTask {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Could not update mytunesrss.com", e);
             }
+        } finally {
+            postMethod.releaseConnection();
         }
         try {
             myTimer.schedule(new MyTunesRssComUpdateTask(myTimer, myInterval, myUsername, myPasswordHash), myInterval);
