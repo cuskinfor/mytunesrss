@@ -6,7 +6,6 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.*;
-import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.server.*;
@@ -62,7 +61,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(
                     "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
             getSession().setAttribute("authUser", user);
-        } else {
         }
         ((MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest())).setUser(user);
         getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);
@@ -344,7 +342,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected void restartMyTunesRssCom() throws IOException {
         redirect(MyTunesRss.MYTUNESRSSCOM_TOOLS_URL + "/redirect.php?username=" + getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) +
-                "&cookie=" + URLEncoder.encode(getWebConfig().getCookieValue(), "UTF-8"));
+                "&cookie=" + URLEncoder.encode(getWebConfig().createCookieValue(), "UTF-8"));
     }
 
     protected int getValidIndex(int index, int pageSize, int listSize) {

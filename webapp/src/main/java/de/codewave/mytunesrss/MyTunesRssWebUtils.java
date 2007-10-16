@@ -2,13 +2,10 @@ package de.codewave.mytunesrss;
 
 import de.codewave.utils.servlet.*;
 import de.codewave.mytunesrss.servlet.*;
-import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.jsp.Error;
 
 import javax.crypto.*;
 import javax.servlet.http.*;
-import java.io.*;
-import java.security.*;
 import java.util.*;
 
 import org.apache.commons.logging.*;
@@ -46,6 +43,7 @@ public class MyTunesRssWebUtils {
         WebConfig webConfig = (WebConfig)httpServletRequest.getSession().getAttribute("config");
         if (webConfig == null) {
             webConfig = new WebConfig();
+            webConfig.clearWithDefaults();
             webConfig.load(httpServletRequest);
             httpServletRequest.getSession().setAttribute("config", webConfig);
         }

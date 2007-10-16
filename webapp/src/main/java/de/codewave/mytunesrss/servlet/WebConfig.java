@@ -87,7 +87,7 @@ public class WebConfig {
         }
     }
 
-    private void initWithDefaults() {
+    public void initWithDefaults() {
         myConfigValues.put(CFG_FEED_TYPE_RSS, "true");
         myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "true");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
@@ -110,37 +110,49 @@ public class WebConfig {
         myConfigValues.put(CFG_RANDOM_SOURCE, "");
     }
 
-    public void load(HttpServletRequest request) {
+    public void load(User user) {
+        if (user != null && StringUtils.isNotEmpty(user.getWebSettings())) {
+            initFromString(MyTunesRssBase64Utils.decodeToString(user.getWebSettings()));
+        }
+    }
+
+    public void clearWithDefaults() {
         clear();
         initWithDefaults();
+    }
+
+    public void load(HttpServletRequest request) {
         if (StringUtils.isNotEmpty(request.getParameter(WebConfig.MYTUNESRSS_COM_COOKIE))) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Initializing web configuration from request parameter.");
             }
             initFromString(MyTunesRssBase64Utils.decodeToString(request.getParameter(WebConfig.MYTUNESRSS_COM_COOKIE)));
         } else {
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (int i = 0; i < cookies.length; i++) {
-                    Cookie cookie = cookies[i];
-                    if (CONFIG_COOKIE_NAME.equals(cookie.getName())) {
-                        String cookieValue = "";
-                        try {
-                            cookieValue = MyTunesRssBase64Utils.decodeToString(cookie.getValue());
-                        } catch (Exception e) {
-                            // intentionally left blank
-                        }
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Initializing web configuration from cookie.");
-                        }
-                        initFromString(cookieValue);
-                    }
-                }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Initializing web configuration from cookie.");
+            }
+            try {
+                initFromString(MyTunesRssBase64Utils.decodeToString(getCookieValue(request)));
+            } catch (Exception e) {
+                // intentionally left blank
             }
         }
         if (StringUtils.isNotEmpty(request.getParameter(WebConfig.MYTUNESRSS_COM_USER))) {
             request.getSession().setAttribute(WebConfig.MYTUNESRSS_COM_USER, request.getParameter(WebConfig.MYTUNESRSS_COM_USER));
         }
+    }
+
+    private String getCookieValue(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (int i = 0; i < cookies.length; i++) {
+                Cookie cookie = cookies[i];
+                if (CONFIG_COOKIE_NAME.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return "";
     }
 
     private void initFromString(String cookieValue) {
@@ -158,7 +170,7 @@ public class WebConfig {
 
     public void save(HttpServletRequest request, HttpServletResponse response) {
         if (StringUtils.isEmpty((String)request.getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER))) {
-            Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, getCookieValue());
+            Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, createCookieValue());
             cookie.setComment("MyTunesRSS settings cookie");
             cookie.setMaxAge(3600 * 24 * 365);// one year
             String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
@@ -167,7 +179,7 @@ public class WebConfig {
         }
     }
 
-    public String getCookieValue() {
+    public String createCookieValue() {
         StringBuffer value = new StringBuffer();
         for (Map.Entry<String, String> entry : myConfigValues.entrySet()) {
             value.append(";").append(entry.getKey()).append("=").append(entry.getValue());

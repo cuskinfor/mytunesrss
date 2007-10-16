@@ -24,6 +24,9 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
             WebConfig webConfig = getWebConfig();
             if (transferAndValidate(webConfig)) {
                 webConfig.save(getRequest(), getResponse());
+                if (getAuthUser().isSaveWebSettings()) {
+                    getAuthUser().setWebSettings(webConfig.createCookieValue());
+                }
                 if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
                     restartMyTunesRssCom();
                 } else {

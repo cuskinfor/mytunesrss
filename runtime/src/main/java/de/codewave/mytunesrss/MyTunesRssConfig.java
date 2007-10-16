@@ -456,27 +456,7 @@ public class MyTunesRssConfig {
             try {
                 for (String userName : userNode.childrenNames()) {
                     User user = new User(userName);
-                    user.setActive(userNode.node(userName).getBoolean("active", true));
-                    user.setPasswordHash(userNode.node(userName).getByteArray("password", null));
-                    user.setRss(userNode.node(userName).getBoolean("featureRss", false));
-                    user.setPlaylist(userNode.node(userName).getBoolean("featurePlaylist", false));
-                    user.setDownload(userNode.node(userName).getBoolean("featureDownload", false));
-                    user.setUpload(userNode.node(userName).getBoolean("featureUpload", false));
-                    user.setPlayer(userNode.node(userName).getBoolean("featurePlayer", false));
-                    user.setChangePassword(userNode.node(userName).getBoolean("featureChangePassword", false));
-                    user.setSpecialPlaylists(userNode.node(userName).getBoolean("featureSpecialPlaylists", false));
-                    user.setResetTime(userNode.node(userName).getLong("resetTime", System.currentTimeMillis()));
-                    user.setQuotaResetTime(userNode.node(userName).getLong("quotaResetTime", System.currentTimeMillis()));
-                    user.setDownBytes(userNode.node(userName).getLong("downBytes", 0));
-                    user.setQuotaDownBytes(userNode.node(userName).getLong("quotaDownBytes", 0));
-                    user.setBytesQuota(userNode.node(userName).getLong("bytesQuota", 0));
-                    user.setQuotaType(User.QuotaType.valueOf(userNode.node(userName).get("quotaType", User.QuotaType.None.name())));
-                    user.setMaximumZipEntries(userNode.node(userName).getInt("maximumZipEntries", 0));
-                    user.setFileTypes(userNode.node(userName).get("fileTypes", null));
-                    user.setTranscoder(userNode.node(userName).getBoolean("featureTranscoder", false));
-                    user.setSessionTimeout(userNode.node(userName).getInt("sessionTimeout", 10));
-                    user.setBandwidthLimit(userNode.node(userName).getInt("bandwidthLimit", 0));
-                    user.setPlaylistId(userNode.node(userName).get("playlistId", null));
+                    user.loadFromPreferences(userNode.node(userName));
                     addUser(user);
                     if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
                         break;
@@ -576,35 +556,7 @@ public class MyTunesRssConfig {
             }
             // create and update existing users
             for (User user : myUsers) {
-                if (user.getPasswordHash() != null && user.getPasswordHash().length > 0) {
-                    userNode.node(user.getName()).putByteArray("password", user.getPasswordHash());
-                } else {
-                    userNode.node(user.getName()).remove("password");
-                }
-                userNode.node(user.getName()).putBoolean("active", user.isActive());
-                userNode.node(user.getName()).putBoolean("featureRss", user.isRss());
-                userNode.node(user.getName()).putBoolean("featurePlaylist", user.isPlaylist());
-                userNode.node(user.getName()).putBoolean("featureDownload", user.isDownload());
-                userNode.node(user.getName()).putBoolean("featureUpload", user.isUpload());
-                userNode.node(user.getName()).putBoolean("featurePlayer", user.isPlayer());
-                userNode.node(user.getName()).putBoolean("featureChangePassword", user.isChangePassword());
-                userNode.node(user.getName()).putBoolean("featureSpecialPlaylists", user.isSpecialPlaylists());
-                userNode.node(user.getName()).putLong("resetTime", user.getResetTime());
-                userNode.node(user.getName()).putLong("quotaResetTime", user.getQuotaResetTime());
-                userNode.node(user.getName()).putLong("downBytes", user.getDownBytes());
-                userNode.node(user.getName()).putLong("quotaDownBytes", user.getQuotaDownBytes());
-                userNode.node(user.getName()).putLong("bytesQuota", user.getBytesQuota());
-                userNode.node(user.getName()).put("quotaType", user.getQuotaType().name());
-                userNode.node(user.getName()).putInt("maximumZipEntries", user.getMaximumZipEntries());
-                userNode.node(user.getName()).put("fileTypes", user.getFileTypes() != null ? user.getFileTypes() : "");
-                userNode.node(user.getName()).putBoolean("featureTranscoder", user.isTranscoder());
-                userNode.node(user.getName()).putInt("sessionTimeout", user.getSessionTimeout());
-                userNode.node(user.getName()).putInt("bandwidthLimit", user.getBandwidthLimit());
-                if (StringUtils.isNotEmpty(user.getPlaylistId())) {
-                    userNode.node(user.getName()).put("playlistId", user.getPlaylistId());
-                } else {
-                    userNode.node(user.getName()).remove("playlistId");
-                }
+                user.saveToPreferences(userNode.node(user.getName()));
             }
         } catch (BackingStoreException e) {
             if (LOG.isErrorEnabled()) {

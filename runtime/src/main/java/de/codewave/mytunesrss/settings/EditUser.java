@@ -58,6 +58,7 @@ public class EditUser {
     private JTextField myBandwidthLimit;
     private JComboBox myRestrictionPlaylistInput;
     private JScrollPane myScrollPane2;
+    private JCheckBox mySaveUserSettingsInput;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -117,6 +118,7 @@ public class EditUser {
             mySessionTimeoutInput.setText(Integer.toString(myUser.getSessionTimeout()));
             myPermTranscoderInput.setSelected(myUser.isTranscoder());
             myBandwidthLimit.setText(myUser.getBandwidthLimit() > 0 ? Integer.toString(myUser.getBandwidthLimit()) : "");
+            mySaveUserSettingsInput.setSelected(myUser.isSaveWebSettings());
         } else {
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
             myPermRssInput.setSelected(true);
@@ -283,6 +285,7 @@ public class EditUser {
                     myUser.setTranscoder(myPermTranscoderInput.isSelected());
                     myUser.setBandwidthLimit(MyTunesRssUtils.getTextFieldInteger(myBandwidthLimit, 0));
                     myUser.setPlaylistId(((Playlist)myRestrictionPlaylistInput.getSelectedItem()).getId());
+                    myUser.setSaveWebSettings(mySaveUserSettingsInput.isSelected());
                     MyTunesRss.CONFIG.addUser(myUser);
                     if (myClose) {
                         myDialog.dispose();

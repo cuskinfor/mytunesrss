@@ -274,4 +274,13 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         }
         onChange();
     }
+
+    public boolean isSaveWebSettings() {
+        return MyTunesRss.CONFIG.getUser(myUsername).isSaveWebSettings();
+    }
+
+    public void setSaveWebSettings(boolean saveWebSettings) {
+        MyTunesRss.CONFIG.getUser(myUsername).setSaveWebSettings(saveWebSettings);
+        onChange();
+    }
 }

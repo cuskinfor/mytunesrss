@@ -11,6 +11,8 @@ import de.codewave.mytunesrss.servlet.*;
 import javax.servlet.*;
 import java.io.*;
 
+import org.apache.commons.lang.*;
+
 /**
  * de.codewave.mytunesrss.commanDoLoginCommandHandlerer
  */
@@ -21,13 +23,18 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
         if (password != null && !isSessionAuthorized()) {
             byte[] passwordHash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
             if (isAuthorized(userName, passwordHash)) {
+                authorize(WebAppScope.Session, userName);
+                if (getAuthUser() != null && StringUtils.isNotEmpty(getAuthUser().getWebSettings())) {
+                    getWebConfig().clearWithDefaults();
+                    getWebConfig().load(getAuthUser());
+                    getWebConfig().load(getRequest());
+                }
                 WebConfig webConfig = getWebConfig();
                 Boolean rememberLogin = getBooleanRequestParameter("rememberLogin", false);
                 webConfig.setLoginStored(rememberLogin);
                 webConfig.setUserName(userName);
                 webConfig.setPasswordHash(passwordHash);
                 webConfig.save(getRequest(), getResponse());
-                authorize(WebAppScope.Session, userName);
                 if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
                     restartMyTunesRssCom();
                 } else {

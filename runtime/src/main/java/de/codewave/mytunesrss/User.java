@@ -1,11 +1,12 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.utils.servlet.*;
-import de.codewave.mytunesrss.server.*;
+import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
-import java.util.*;
 import java.io.*;
+import java.util.*;
+import java.util.prefs.*;
 
 /**
  * de.codewave.mytunesrss.User
@@ -44,6 +45,8 @@ public class User {
     private boolean myTranscoder;
     private int myBandwidthLimit;
     private String myPlaylistId;
+    private boolean mySaveWebSettings;
+    private String myWebSettings;
 
     public User(String name) {
         myName = name;
@@ -232,6 +235,14 @@ public class User {
         myPlaylistId = playlistId;
     }
 
+    public boolean isSaveWebSettings() {
+        return mySaveWebSettings;
+    }
+
+    public void setSaveWebSettings(boolean saveWebSettings) {
+        mySaveWebSettings = saveWebSettings;
+    }
+
     @Override
     public boolean equals(Object object) {
         return object != null && object instanceof User && getName().equals(((User)object).getName());
@@ -301,5 +312,77 @@ public class User {
                 return stream;
             }
         };
+    }
+
+    public String getWebSettings() {
+        return myWebSettings;
+    }
+
+    public void setWebSettings(String webSettings) {
+        myWebSettings = webSettings;
+    }
+
+    public void loadFromPreferences(Preferences userNode) {
+        setActive(userNode.getBoolean("active", true));
+        setPasswordHash(userNode.getByteArray("password", null));
+        setRss(userNode.getBoolean("featureRss", false));
+        setPlaylist(userNode.getBoolean("featurePlaylist", false));
+        setDownload(userNode.getBoolean("featureDownload", false));
+        setUpload(userNode.getBoolean("featureUpload", false));
+        setPlayer(userNode.getBoolean("featurePlayer", false));
+        setChangePassword(userNode.getBoolean("featureChangePassword", false));
+        setSpecialPlaylists(userNode.getBoolean("featureSpecialPlaylists", false));
+        setResetTime(userNode.getLong("resetTime", System.currentTimeMillis()));
+        setQuotaResetTime(userNode.getLong("quotaResetTime", System.currentTimeMillis()));
+        setDownBytes(userNode.getLong("downBytes", 0));
+        setQuotaDownBytes(userNode.getLong("quotaDownBytes", 0));
+        setBytesQuota(userNode.getLong("bytesQuota", 0));
+        setQuotaType(QuotaType.valueOf(userNode.get("quotaType", QuotaType.None.name())));
+        setMaximumZipEntries(userNode.getInt("maximumZipEntries", 0));
+        setFileTypes(userNode.get("fileTypes", null));
+        setTranscoder(userNode.getBoolean("featureTranscoder", false));
+        setSessionTimeout(userNode.getInt("sessionTimeout", 10));
+        setBandwidthLimit(userNode.getInt("bandwidthLimit", 0));
+        setPlaylistId(userNode.get("playlistId", null));
+        setSaveWebSettings(userNode.getBoolean("saveWebSettings", false));
+        setWebSettings(userNode.get("webSettings", null));
+    }
+
+    public void saveToPreferences(Preferences userNode) {
+        if (getPasswordHash() != null && getPasswordHash().length > 0) {
+            userNode.putByteArray("password", getPasswordHash());
+        } else {
+            userNode.remove("password");
+        }
+        userNode.putBoolean("active", isActive());
+        userNode.putBoolean("featureRss", isRss());
+        userNode.putBoolean("featurePlaylist", isPlaylist());
+        userNode.putBoolean("featureDownload", isDownload());
+        userNode.putBoolean("featureUpload", isUpload());
+        userNode.putBoolean("featurePlayer", isPlayer());
+        userNode.putBoolean("featureChangePassword", isChangePassword());
+        userNode.putBoolean("featureSpecialPlaylists", isSpecialPlaylists());
+        userNode.putLong("resetTime", getResetTime());
+        userNode.putLong("quotaResetTime", getQuotaResetTime());
+        userNode.putLong("downBytes", getDownBytes());
+        userNode.putLong("quotaDownBytes", getQuotaDownBytes());
+        userNode.putLong("bytesQuota", getBytesQuota());
+        userNode.put("quotaType", getQuotaType().name());
+        userNode.putInt("maximumZipEntries", getMaximumZipEntries());
+        userNode.put("fileTypes", getFileTypes() != null ? getFileTypes() : "");
+        userNode.putBoolean("featureTranscoder", isTranscoder());
+        userNode.putInt("sessionTimeout", getSessionTimeout());
+        userNode.putInt("bandwidthLimit", getBandwidthLimit());
+        if (StringUtils.isNotEmpty(getPlaylistId())) {
+            userNode.put("playlistId", getPlaylistId());
+        } else {
+            userNode.remove("playlistId");
+        }
+        userNode.putBoolean("saveWebSettings", isSaveWebSettings());
+        if (StringUtils.isNotEmpty(getWebSettings())) {
+            userNode.put("webSettings", getWebSettings());
+        } else {
+            userNode.remove("webSettings");
+        }
     }
 }
