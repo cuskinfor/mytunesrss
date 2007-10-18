@@ -17,7 +17,7 @@
         </fileSet>
         <fileSet>
             <outputDirectory/>
-            <directory>etc/themes/wide-pc</directory>
+            <directory>etc/themes/wide</directory>
             <includes>
                 <include>images/**</include>
                 <include>styles/**</include>
