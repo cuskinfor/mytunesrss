@@ -12,6 +12,7 @@ public class Playlist {
     private String myName;
     private PlaylistType myType;
     private int myTrackCount;
+    private boolean myUserPrivate;
 
     public Playlist() {
         // intentionally left blank
@@ -54,6 +55,14 @@ public class Playlist {
 
     public void setTrackCount(int trackCount) {
         myTrackCount = trackCount;
+    }
+
+    public boolean isUserPrivate() {
+        return myUserPrivate;
+    }
+
+    public void setUserPrivate(boolean userPrivate) {
+        myUserPrivate = userPrivate;
     }
 
     @Override

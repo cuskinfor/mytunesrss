@@ -19,22 +19,31 @@ public class FindPlaylistQuery extends DataStoreQuery<Collection<Playlist>> {
     private String myId;
     private PlaylistType myType;
     private String myRestrictionPlaylistId;
+    private String myUserName;
+    private boolean myIncludeHidden;
+    private boolean myMatchingOwnerOnly;
 
-    public FindPlaylistQuery(PlaylistType type, String id) {
+    public FindPlaylistQuery(PlaylistType type, String id, boolean includeHidden) {
         myType = type;
         myId = id;
+        myIncludeHidden = includeHidden;
     }
 
-    public FindPlaylistQuery(User user, PlaylistType type, String id) {
-        this(type, id);
+    public FindPlaylistQuery(User user, PlaylistType type, String id, boolean includeHidden, boolean matchingOwnerOnly) {
+        this(type, id, includeHidden);
         myRestrictionPlaylistId = user.getPlaylistId();
+        myUserName = user.getName();
+        myMatchingOwnerOnly = matchingOwnerOnly;
     }
 
     public Collection<Playlist> execute(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, StringUtils.isEmpty(myRestrictionPlaylistId) ? "findPlaylists" : "findPlaylistsRestricted");
+        String name = myMatchingOwnerOnly ? "findUserPlaylists" : (StringUtils.isEmpty(myRestrictionPlaylistId) ? "findPlaylists" : "findPlaylistsRestricted");
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, name);
         statement.setString("type", myType != null ? myType.name() : null);
         statement.setString("id", myId);
         statement.setString("restrictionPlaylistId", myRestrictionPlaylistId);
+        statement.setString("username", myUserName);
+        statement.setBoolean("includeHidden", myIncludeHidden);
         return execute(statement, new PlaylistResultBuilder());
     }
 
@@ -49,6 +58,7 @@ public class FindPlaylistQuery extends DataStoreQuery<Collection<Playlist>> {
             playlist.setName(resultSet.getString("NAME"));
             playlist.setType(PlaylistType.valueOf(resultSet.getString("TYPE")));
             playlist.setTrackCount(resultSet.getInt("TRACK_COUNT"));
+            playlist.setUserPrivate(resultSet.getBoolean("USER_PRIVATE"));
             return playlist;
         }
     }

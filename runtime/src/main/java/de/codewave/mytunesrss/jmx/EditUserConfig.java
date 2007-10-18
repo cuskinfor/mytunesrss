@@ -223,7 +223,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     public String[] getPlaylists() {
         String[] names = null;
         try {
-            Collection playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null));
+            Collection playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true));
             names = new String[playlists.size()];
             int i = 0;
             for (Object playlist : playlists) {
@@ -242,7 +242,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         if (StringUtils.isNotEmpty(playlistId)) {
             Collection<Playlist> playlists = null;
             try {
-                playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, playlistId));
+                playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, playlistId, true));
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not query playlists.", e);
@@ -257,7 +257,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     public void setRestrictionPlaylist(String playlistName) {
         Collection<Playlist> playlists = null;
         try {
-            playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null));
+            playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true));
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not query playlists.", e);

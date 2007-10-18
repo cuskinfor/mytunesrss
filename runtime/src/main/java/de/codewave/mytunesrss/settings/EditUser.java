@@ -190,7 +190,7 @@ public class EditUser {
     private void fillPlaylistSelect() {
         Collection<Playlist> playlists = Collections.emptyList();
         try {
-            playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null));
+            playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true));
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not query playlists from database.", e);

@@ -41,4 +41,10 @@
         <sql>DELETE FROM track WHERE LOWER(file) LIKE '%m4v'</sql>
     </statement>
 
+    <statement name="migrate31eap11to31eap12">
+        <sql>ALTER TABLE playlist ADD COLUMN hidden BOOLEAN</sql>
+        <sql>ALTER TABLE playlist ADD COLUMN user_private BOOLEAN</sql>
+        <sql>ALTER TABLE playlist ADD COLUMN user_owner VARCHAR(256)</sql>
+    </statement>
+
 </statements>

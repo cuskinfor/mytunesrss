@@ -30,6 +30,9 @@
                 name VARCHAR(255) NOT NULL,
                 type VARCHAR(20) NOT NULL,
                 track_count INTEGER,
+                hidden BOOLEAN,
+                user_private BOOLEAN,
+                user_owner VARCHAR(256),
                 UNIQUE (id)
             )
         </sql>

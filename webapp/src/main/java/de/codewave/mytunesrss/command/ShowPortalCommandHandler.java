@@ -44,8 +44,8 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                 }
                 int randomPlaylistSize = getWebConfig().getRandomPlaylistSize();
                 if (randomPlaylistSize > 0) {
-                    Collection<Playlist> randomPlaylistSources = getDataStore().executeQuery(new FindPlaylistQuery(null,
-                                                                                                                   getWebConfig().getRandomSource()));
+                    Collection<Playlist> randomPlaylistSources = getDataStore().executeQuery(new FindPlaylistQuery(getAuthUser(), null,
+                                                                                                                   getWebConfig().getRandomSource(), false, false));
                     if (randomPlaylistSources.size() != 1 || randomPlaylistSources.iterator().next().getTrackCount() > randomPlaylistSize) {
                         if (randomPlaylistSources.size() == 1) {
                             playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize + "_" +
@@ -65,7 +65,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
             }
-            for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistQuery(getAuthUser(), null, null))) {
+            for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistQuery(getAuthUser(), null, null, false, false))) {
                 playlists.add(playlist);
                 playlists.addAll(createSplittedPlaylists(playlist));
             }

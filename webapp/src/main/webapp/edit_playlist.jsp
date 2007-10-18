@@ -51,6 +51,15 @@
         <input type="hidden" name="backUrl" value="${param.backUrl}" />
         <input type="hidden" name="allowEditEmpty" value="${param.allowEditEmpty}" />
         <table cellspacing="0">
+            <tr>
+                <th class="active" colspan="4"><fmt:message key="playlistSettings"/></th>
+            </tr>
+            <tr>
+                <td class="even" colspan="4">
+                    <input type="checkbox" name="user_private" value="true" <c:if test="${playlist.userPrivate}">checked="checked"</c:if> />
+                    <fmt:message key="playlistUserPrivate"/>
+                </td>
+            </tr>
             <c:if test="${!states.addToPlaylistMode}">
                 <tr>
                     <td colspan="4" style="padding:0">

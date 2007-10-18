@@ -13,8 +13,10 @@ import java.sql.*;
  * de.codewave.mytunesrss.datastore.statement.SaveITunesPlaylistStatement
  */
 public class SaveMyTunesPlaylistStatement extends SavePlaylistStatement {
-    public SaveMyTunesPlaylistStatement() {
+    public SaveMyTunesPlaylistStatement(String userName, boolean userPrivate) {
         setType(PlaylistType.MyTunes);
+        setUserName(userName);
+        setUserPrivate(userPrivate);
     }
 
     public void execute(Connection connection) throws SQLException {

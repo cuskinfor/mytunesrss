@@ -63,7 +63,7 @@ public class PlaylistListener implements PListHandlerListener {
                 statement.setName(name);
                 statement.setTrackIds(tracks);
                 try {
-                    if (!myDataStoreSession.executeQuery(new FindPlaylistQuery(PlaylistType.ITunes, playlistId)).isEmpty()) {
+                    if (!myDataStoreSession.executeQuery(new FindPlaylistQuery(PlaylistType.ITunes, playlistId, true)).isEmpty()) {
                         statement.setUpdate(true);
                     }
                     myDataStoreSession.executeStatement(statement);
