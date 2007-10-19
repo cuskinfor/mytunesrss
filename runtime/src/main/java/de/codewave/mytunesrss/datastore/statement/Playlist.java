@@ -13,6 +13,8 @@ public class Playlist {
     private PlaylistType myType;
     private int myTrackCount;
     private boolean myUserPrivate;
+    private boolean myHidden;
+    private String myUserOwner;
 
     public Playlist() {
         // intentionally left blank
@@ -63,6 +65,22 @@ public class Playlist {
 
     public void setUserPrivate(boolean userPrivate) {
         myUserPrivate = userPrivate;
+    }
+
+    public String getUserOwner() {
+        return myUserOwner;
+    }
+
+    public void setUserOwner(String userOwner) {
+        myUserOwner = userOwner;
+    }
+
+    public boolean isHidden() {
+        return myHidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        myHidden = hidden;
     }
 
     @Override

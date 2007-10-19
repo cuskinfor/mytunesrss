@@ -59,6 +59,8 @@ public class FindPlaylistQuery extends DataStoreQuery<Collection<Playlist>> {
             playlist.setType(PlaylistType.valueOf(resultSet.getString("TYPE")));
             playlist.setTrackCount(resultSet.getInt("TRACK_COUNT"));
             playlist.setUserPrivate(resultSet.getBoolean("USER_PRIVATE"));
+            playlist.setHidden(resultSet.getBoolean("HIDDEN"));
+            playlist.setUserOwner(resultSet.getString("USER_OWNER"));
             return playlist;
         }
     }

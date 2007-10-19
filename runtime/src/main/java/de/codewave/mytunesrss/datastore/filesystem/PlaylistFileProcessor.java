@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.*;
@@ -59,6 +60,7 @@ public class PlaylistFileProcessor implements FileProcessor {
                         LOG.debug("Committing transaction after inserting/updating playlist.");
                     }
                     myDataStoreSession.commit();
+                    MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_PLAYLIST_UPDATED);
                 }
             } catch (IOException e) {
                 if (LOG.isErrorEnabled()) {

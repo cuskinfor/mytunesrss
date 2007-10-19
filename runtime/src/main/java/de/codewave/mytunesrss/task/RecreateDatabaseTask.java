@@ -12,5 +12,6 @@ public class RecreateDatabaseTask extends MyTunesRssTask {
     public void execute() throws Exception {
         myDropAllTablesTask.execute();
         myInitializeDatabaseTask.execute();
+        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED);
     }
 }

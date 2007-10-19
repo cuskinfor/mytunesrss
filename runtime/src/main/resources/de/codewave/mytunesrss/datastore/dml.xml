@@ -109,7 +109,7 @@
     <statement name="findPlaylists">
         <sql>
             <![CDATA[
-            SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private
+            SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner
             FROM playlist
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
             AND (user_private IS NULL OR user_private = FALSE OR :username IS NULL OR user_owner = :username)
@@ -125,7 +125,7 @@
     <statement name="findUserPlaylists">
         <sql>
             <![CDATA[
-            SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private
+            SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner
             FROM playlist
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
             AND user_owner = :username
@@ -141,7 +141,7 @@
     <statement name="findPlaylistsRestricted">
         <sql>
             <![CDATA[
-            SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private
+            SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner
             FROM playlist p, link_track_playlist rltp, link_track_playlist ltp
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
             AND (user_private IS NULL OR user_private = FALSE OR :username IS NULL OR user_owner = :username)
@@ -460,11 +460,14 @@
     </statement>
 
     <statement name="updatePlaylist">
-        <sql>UPDATE playlist SET name = :name WHERE id = :id</sql>
-        <sql>UPDATE playlist SET user_private = :user_private WHERE id = :id</sql>
+        <sql>UPDATE playlist SET name = :name, user_private = :user_private WHERE id = :id</sql>
         <sql>DELETE FROM link_track_playlist WHERE playlist_id = :id</sql>
         <sql loop="track_id" loopcommit="500">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>
+    </statement>
+
+    <statement name="updatePlaylistAttributes">
+        <sql>UPDATE playlist SET name = :name, hidden = :hidden, user_owner = :user_owner, user_private = :user_private WHERE id = :id</sql>
     </statement>
 
     <statement name="recreateHelpTables">
