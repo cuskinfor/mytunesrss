@@ -27,6 +27,7 @@ public class Settings implements MyTunesRssEventListener {
     private Streaming myStreamingForm;
     private Content myContentForm;
     private JPanel myStreamingPanel;
+    private JPanel myContentPanel;
 
     public Database getDatabaseForm() {
         return myDatabaseForm;
@@ -70,6 +71,7 @@ public class Settings implements MyTunesRssEventListener {
         if (!MyTunesRss.REGISTRATION.isRegistered()) {
             myTabbedPane.remove(myAddonsPanel);
             myTabbedPane.remove(myStreamingPanel);
+            myTabbedPane.remove(myContentPanel);
         }
     }
 
