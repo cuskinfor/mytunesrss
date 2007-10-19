@@ -99,6 +99,24 @@
                   </nested-form>
                 </children>
               </grid>
+              <grid id="d52b0" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <tabbedpane title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.content"/>
+                </constraints>
+                <properties>
+                  <font swing-font="TabbedPane.font"/>
+                  <opaque value="false"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <nested-form id="9901a" form-file="de/codewave/mytunesrss/settings/Content.form" binding="myContentForm">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </nested-form>
+                </children>
+              </grid>
               <grid id="a5363" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>

@@ -25,6 +25,7 @@ public class Settings implements MyTunesRssEventListener {
     private Addons myAddonsForm;
     private JPanel myAddonsPanel;
     private Streaming myStreamingForm;
+    private Content myContentForm;
     private JPanel myStreamingPanel;
 
     public Database getDatabaseForm() {
@@ -55,6 +56,7 @@ public class Settings implements MyTunesRssEventListener {
         myServerForm.init();
         myDatabaseForm.init();
         myDirectoriesForm.init();
+        myContentForm.init();
         myMiscForm.init();
         myInfoForm.init();
         myUserManagementForm.init();
