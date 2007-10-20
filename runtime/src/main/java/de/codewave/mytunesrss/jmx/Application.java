@@ -23,7 +23,11 @@ public class Application extends MyTunesRssMBean implements ApplicationMBean {
             MyTunesRss.stopWebserver();
         }
         if (MyTunesRss.ERROR_QUEUE.isEmpty()) {
-            MyTunesRss.QUIT_REQUEST = true;
+            if (MyTunesRss.HEADLESS) {
+                MyTunesRss.QUIT_REQUEST = true;
+            } else {
+                MyTunesRssUtils.shutdownGracefully();
+            }
         }
         return MyTunesRss.ERROR_QUEUE.popLastError();
     }

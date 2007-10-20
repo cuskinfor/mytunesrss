@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.task.*;
+import de.codewave.mytunesrss.jmx.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.pleasewait.*;
@@ -100,6 +101,7 @@ public class MyTunesRssUtils {
             MyTunesRss.stopWebserver();
         }
         if (!MyTunesRss.WEBSERVER.isRunning()) {
+            MyTunesRssJmxUtils.stopJmxServer();
             MyTunesRss.CONFIG.saveWindowPosition(MyTunesRss.ROOT_FRAME.getLocation());
             MyTunesRss.CONFIG.save();
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();

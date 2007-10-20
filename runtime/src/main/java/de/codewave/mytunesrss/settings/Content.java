@@ -115,6 +115,13 @@ public class Content implements MyTunesRssEventListener {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not update playlist attributes.", e1);
                     }
+                    try {
+                        session.rollback();
+                    } catch (SQLException e2) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Could not rollback transaction.", e2);
+                        }
+                    }
                 }
             }
         });

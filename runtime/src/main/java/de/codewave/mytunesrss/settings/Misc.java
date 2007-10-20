@@ -130,6 +130,7 @@ public class Misc implements MyTunesRssEventListener {
                 break;
             case CONFIGURATION_CHANGED:
                 initValues();
+                break;
             case MYTUNESRSS_COM_UPDATED:
                 myMyTunesRssComStatus.setText(MyTunesRssUtils.getBundleString(event.getMessageKey(), event.getMessageParams()));
         }
