@@ -1,0 +1,28 @@
+function sort(servletUrl, sortOrder) {
+    document.forms["browse"].action = servletUrl + "/browseTrack";
+    document.forms["browse"].elements["sortOrder"].value = sortOrder;
+    document.forms["browse"].submit();
+}
+
+function selectAllByLoop(prefix, first, last, checkbox) {
+    for (var i = first; i <= last; i++) {
+        var element = document.getElementById(prefix + i);
+        if (element) {
+            element.checked = checkbox.checked;
+        }
+    }
+}
+
+function selectAll(prefix, ids, checkbox) {
+    var idArray = ids.split(",");
+    for (var i = 0; i < idArray.length; i++) {
+        var element = document.getElementById(prefix + idArray[i]);
+        if (element) {
+            element.checked = checkbox.checked;
+        }
+    }
+}
+
+function openPlayer(url) {
+    window.open(url, 'MyTunesRssFlashPlayer', 'width=500,height=400,resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no')
+}
