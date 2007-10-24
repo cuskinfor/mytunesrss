@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss.command;
 
+import org.apache.commons.lang.*;
+
 /**
  * de.codewave.mytunesrss.command.DisplayFilter
  */
@@ -25,7 +27,7 @@ public class DisplayFilter {
     }
 
     public String getTextFilter() {
-        return myTextFilter;
+        return StringUtils.isNotEmpty(myTextFilter) ? myTextFilter : null;
     }
 
     public void setTextFilter(String textFilter) {
