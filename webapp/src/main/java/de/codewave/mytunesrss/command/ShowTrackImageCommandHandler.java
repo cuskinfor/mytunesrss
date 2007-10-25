@@ -29,7 +29,7 @@ public class ShowTrackImageCommandHandler extends ShowImageCommandHandler {
             int size = getIntegerRequestParameter("size", 0);
             if (StringUtils.isNotEmpty(trackId)) {
                 if (size == 0) {
-                    Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
+                    Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId})).getResults();
                     if (!tracks.isEmpty()) {
                         Track track = tracks.iterator().next();
                         image = MyTunesRssMp3Utils.getImage(track);

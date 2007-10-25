@@ -50,7 +50,7 @@ public class TrackRetrieveUtils {
         return null;
     }
 
-    public static DataStoreQuery<Collection<Track>> getQuery(HttpServletRequest servletRequest, User user, boolean keepPlaylistOrder) throws SQLException {
+    public static DataStoreQuery<DataStoreQuery.QueryResult<Track>> getQuery(HttpServletRequest servletRequest, User user, boolean keepPlaylistOrder) throws SQLException {
         DataStore store = (DataStore)servletRequest.getSession().getServletContext().getAttribute(MyTunesRssDataStore.class.getName());
         String[] albums = getNonEmptyParameterValues(servletRequest, "album");
         decodeBase64(albums);

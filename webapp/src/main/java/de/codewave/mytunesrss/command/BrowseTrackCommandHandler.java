@@ -24,7 +24,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             String sortOrderName = getRequestParameter("sortOrder", FindPlaylistTracksQuery.SortOrder.Album.name());
             FindPlaylistTracksQuery.SortOrder sortOrderValue = FindPlaylistTracksQuery.SortOrder.valueOf(sortOrderName);
 
-            DataStoreQuery<Collection<Track>> query = null;
+            DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
             if (StringUtils.isNotEmpty(searchTerm)) {
                 query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
             } else {
@@ -33,17 +33,19 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             getRequest().setAttribute("sortOrder", sortOrderName);
             List<EnhancedTrack> tracks = null;
             if (query != null) {
-                List<Track> simpleTracks = (List<Track>)getDataStore().executeQuery(query);
-                EnhancedTracks enhancedTracks = getTracks(simpleTracks, sortOrderValue);
+                DataStoreQuery.QueryResult<Track> result = getDataStore().executeQuery(query);
+                int pageSize = getWebConfig().getEffectivePageSize();
+                EnhancedTracks enhancedTracks;
+                if (pageSize > 0 && result.getResultSize() > pageSize) {
+                    int current = getSafeIntegerRequestParameter("index", 0);
+                    Pager pager = createPager(result.getResultSize(), current);
+                    getRequest().setAttribute("pager", pager);
+                    enhancedTracks = getTracks(result.getResults(current * pageSize, pageSize), sortOrderValue);
+                } else {
+                    enhancedTracks = getTracks(result.getResults(), sortOrderValue);
+                }
                 getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()));
                 tracks = (List<EnhancedTrack>)enhancedTracks.getTracks();
-                int pageSize = getWebConfig().getEffectivePageSize();
-                if (pageSize > 0 && simpleTracks.size() > pageSize) {
-                    int current = getSafeIntegerRequestParameter("index", 0);
-                    Pager pager = createPager(simpleTracks.size(), current);
-                    getRequest().setAttribute("pager", pager);
-                    tracks = tracks.subList(current * pageSize, Math.min((current * pageSize) + pageSize, simpleTracks.size()));
-                }
                 if (pageSize > 0 && tracks.size() > pageSize) {
                     tracks.get(0).setContinuation(!tracks.get(0).isNewSection());
                     tracks.get(0).setNewSection(true);

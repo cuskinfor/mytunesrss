@@ -44,7 +44,7 @@ public class FindPlaylistQuery extends DataStoreQuery<Collection<Playlist>> {
         statement.setString("restrictionPlaylistId", myRestrictionPlaylistId);
         statement.setString("username", myUserName);
         statement.setBoolean("includeHidden", myIncludeHidden);
-        return execute(statement, new PlaylistResultBuilder());
+        return execute(statement, new PlaylistResultBuilder()).getResults();
     }
 
     public static class PlaylistResultBuilder implements ResultBuilder<Playlist> {

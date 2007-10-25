@@ -38,7 +38,7 @@ public class FindAlbumQuery extends DataStoreQuery<Collection<Album>> {
         statement.setString("genre", myGenre);
         statement.setInt("index", myIndex);
         statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
-        return execute(statement, new AlbumResultBuilder());
+        return execute(statement, new AlbumResultBuilder()).getResults();
     }
 
     public static class AlbumResultBuilder implements ResultBuilder<Album> {

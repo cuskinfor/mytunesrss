@@ -18,13 +18,13 @@ import java.util.*;
  * de.codewave.mytunesrss.command.CreatePlaylistCommandHandler
  */
 public class CreatePlaylistBaseCommandHandler extends MyTunesRssCommandHandler {
-    protected Collection<Track> getTracks() throws SQLException, IOException, ServletException {
+    protected DataStoreQuery.QueryResult<Track> getTracks() throws SQLException, IOException, ServletException {
         String[] trackIds = getNonEmptyParameterValues("track");
         String trackList = getRequestParameter("tracklist", null);
         if ((trackIds == null || trackIds.length == 0) && StringUtils.isNotEmpty(trackList)) {
             trackIds = StringUtils.split(trackList, ',');
         }
-        DataStoreQuery<Collection<Track>> query = null;
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
         if (trackIds != null && trackIds.length > 0) {
             query = FindTrackQuery.getForId(trackIds);
         } else {

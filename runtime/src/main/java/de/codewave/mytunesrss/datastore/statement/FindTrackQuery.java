@@ -10,12 +10,11 @@ import org.apache.commons.lang.*;
 
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
  */
-public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
+public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Track>> {
     public static FindTrackQuery getForId(String[] trackIds) {
         FindTrackQuery query = new FindTrackQuery();
         query.myIds = trackIds;
@@ -78,7 +77,7 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
         // intentionally left blank
     }
 
-    public Collection<Track> execute(Connection connection) throws SQLException {
+    public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
         String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
         if (myArtistSort) {
@@ -92,18 +91,18 @@ public class FindTrackQuery extends DataStoreQuery<Collection<Track>> {
         statement.setItems("genre", myGenres);
         statement.setItems("search", mySearchTerms);
         statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
-        Collection<Track> tracks = execute(statement, new TrackResultBuilder());
-        if (myIds != null && myIds.length > 1) {
-            Map<String, Track> idToTrack = new HashMap<String, Track>(tracks.size());
-            for (Track track : tracks) {
-                idToTrack.put(track.getId(), track);
-            }
-            tracks.clear();
-            for (int i = 0; i < myIds.length; i++) {
-                tracks.add(idToTrack.get(myIds[i]));
-            }
-        }
-        return tracks;
+        return execute(statement, new TrackResultBuilder());
+        //        if (myIds != null && myIds.length > 1) {
+        //            Map<String, Track> idToTrack = new HashMap<String, Track>(tracks.size());
+        //            for (Track track : tracks) {
+        //                idToTrack.put(track.getId(), track);
+        //            }
+        //            tracks.clear();
+        //            for (int i = 0; i < myIds.length; i++) {
+        //                tracks.add(idToTrack.get(myIds[i]));
+        //            }
+        //        }
+        //        return tracks;
     }
 
     public static class TrackResultBuilder implements ResultBuilder<Track> {

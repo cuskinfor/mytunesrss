@@ -22,7 +22,7 @@ public class GetStatisticsQuery extends DataStoreQuery<Statistics> {
                 statistics.setGenreCount(resultSet.getInt("GENRECOUNT"));
                 return statistics;
             }
-        });
+        }).getResults();
         return statistics != null && !statistics.isEmpty() ? statistics.iterator().next() : null;
     }
 }

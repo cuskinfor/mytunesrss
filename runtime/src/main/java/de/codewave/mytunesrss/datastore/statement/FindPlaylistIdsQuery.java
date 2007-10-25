@@ -30,6 +30,6 @@ public class FindPlaylistIdsQuery extends DataStoreQuery<Collection<String>> {
             public String create(ResultSet resultSet) throws SQLException {
                 return resultSet.getString("ID");
             }
-        });
+        }).getResults();
     }
 }

@@ -24,8 +24,7 @@ import java.sql.*;
 public class MyTunesRssDataStore extends DataStore {
     private static final Log LOG = LogFactory.getLog(MyTunesRssDataStore.class);
     public static final String DIRNAME = "h2";
-    public static final int COMMIT_FREQUENCY_TRACKS = 10;
-    public static final int UPDATE_HELP_TABLES_FREQUENCY = 1000;
+    public static final int UPDATE_HELP_TABLES_FREQUENCY = 30000;
 
     private SmartStatementFactory mySmartStatementFactory;
 

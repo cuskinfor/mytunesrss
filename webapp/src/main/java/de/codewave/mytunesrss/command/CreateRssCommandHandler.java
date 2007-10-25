@@ -32,7 +32,7 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
             getRequest().setAttribute("pubDate", PUBLISH_DATE_FORMAT.format(new Date()));
             getRequest().setAttribute("feedUrl", feedUrl);
             getRequest().setAttribute("userAgentPsp", isUserAgentPSP());
-            Collection<Track> tracks = getTracks();
+            Collection<Track> tracks = getTracks().getResults();
             if (tracks != null && !tracks.isEmpty()) {
                 if (getWebConfig().isRssArtwork()) {
                     for (Track track : tracks) {

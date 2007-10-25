@@ -25,14 +25,14 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
             if ((trackIds == null || trackIds.length == 0) && StringUtils.isNotEmpty(trackList)) {
                 trackIds = StringUtils.split(trackList, ',');
             }
-            DataStoreQuery<Collection<Track>> query = null;
+            DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
             if (trackIds != null && trackIds.length > 0) {
                 query = FindTrackQuery.getForId(trackIds);
             } else {
                 query = TrackRetrieveUtils.getQuery(getRequest(), getAuthUser(), true);
             }
             if (query != null) {
-                playlist.addAll(getDataStore().executeQuery(query));
+                playlist.addAll(getDataStore().executeQuery(query).getResults());
                 ((Playlist)getSession().getAttribute("playlist")).setTrackCount(playlist.size());
             } else {
                 addError(new BundleError("error.emptySelection"));

@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
  */
-public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
+public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Track>> {
     public static final String PSEUDO_ID_ALL_BY_ARTIST = "PlaylistAllByArtist";
     public static final String PSEUDO_ID_ALL_BY_ALBUM = "PlaylistAllByAlbum";
     public static final String PSEUDO_ID_RANDOM = "PlaylistRandom";
@@ -40,7 +40,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<Collection<Track>> {
         myRestrictionPlaylistId = user.getPlaylistId();
     }
 
-    public Collection<Track> execute(Connection connection) throws SQLException {
+    public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
         String suffix = StringUtils.isEmpty(myRestrictionPlaylistId) || myRestrictionPlaylistId.equals(myId) ? "" : "Restricted";
         if (PSEUDO_ID_ALL_BY_ALBUM.equals(myId)) {

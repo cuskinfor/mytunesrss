@@ -28,7 +28,7 @@ public class FindGenreQuery extends DataStoreQuery<Collection<Genre>> {
       SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenres" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted"));
       statement.setInt("index", myIndex);
       statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
-      return execute(statement, new GenreResultBuilder());
+      return execute(statement, new GenreResultBuilder()).getResults();
     }
 
     public static class GenreResultBuilder implements ResultBuilder<Genre> {

@@ -33,15 +33,15 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             String playlist = getRequestParameter("playlist", null);
             Collection<Track> tracks;
             if (StringUtils.isNotEmpty(album)) {
-                tracks = getDataStore().executeQuery(FindTrackQuery.getForAlbum(getAuthUser(), new String[] {album}, true));
+                tracks = getDataStore().executeQuery(FindTrackQuery.getForAlbum(getAuthUser(), new String[] {album}, true)).getResults();
             } else if (StringUtils.isNotEmpty(artist)) {
-                tracks = getDataStore().executeQuery(FindTrackQuery.getForArtist(getAuthUser(), new String[] {artist}, true));
+                tracks = getDataStore().executeQuery(FindTrackQuery.getForArtist(getAuthUser(), new String[] {artist}, true)).getResults();
             } else if (StringUtils.isNotEmpty(genre)) {
-                tracks = getDataStore().executeQuery(FindTrackQuery.getForGenre(getAuthUser(), new String[] {genre}, true));
+                tracks = getDataStore().executeQuery(FindTrackQuery.getForGenre(getAuthUser(), new String[] {genre}, true)).getResults();
             } else if (StringUtils.isNotEmpty(playlist)) {
-                tracks = getDataStore().executeQuery(new FindPlaylistTracksQuery(playlist, null));
+                tracks = getDataStore().executeQuery(new FindPlaylistTracksQuery(playlist, null)).getResults();
             } else if (StringUtils.isNotEmpty(tracklist)) {
-                tracks = getDataStore().executeQuery(FindTrackQuery.getForId(StringUtils.split(tracklist, ",")));
+                tracks = getDataStore().executeQuery(FindTrackQuery.getForId(StringUtils.split(tracklist, ","))).getResults();
             } else {
                 throw new IllegalArgumentException("Missing parameter!");
             }

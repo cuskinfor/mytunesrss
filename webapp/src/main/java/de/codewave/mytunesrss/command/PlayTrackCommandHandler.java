@@ -35,7 +35,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
         } else {
             String trackId = getRequest().getParameter("track");
-            Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
+            Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId})).getResults();
             if (!tracks.isEmpty()) {
                 track = tracks.iterator().next();
                 if (!getAuthUser().isQuotaExceeded()) {

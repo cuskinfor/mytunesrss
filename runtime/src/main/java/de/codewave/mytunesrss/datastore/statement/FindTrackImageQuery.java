@@ -26,7 +26,7 @@ public class FindTrackImageQuery extends DataStoreQuery<byte[]> {
             public byte[] create(ResultSet resultSet) throws SQLException {
                 return resultSet.getBytes("DATA");
             }
-        });
+        }).getResults();
         return results.isEmpty() ? null : results.get(0);
     }
 }

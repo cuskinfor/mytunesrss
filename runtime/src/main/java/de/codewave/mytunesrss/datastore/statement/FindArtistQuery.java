@@ -37,7 +37,7 @@ public class FindArtistQuery extends DataStoreQuery<Collection<Artist>> {
         statement.setString("genre", myGenre);
         statement.setInt("index", myIndex);
         statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
-        return execute(statement, new ArtistResultBuilder());
+        return execute(statement, new ArtistResultBuilder()).getResults();
     }
 
     public static class ArtistResultBuilder implements ResultBuilder<Artist> {

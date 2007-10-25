@@ -27,7 +27,7 @@ public class FindAlbumImageQuery extends DataStoreQuery<Image> {
             public Image create(ResultSet resultSet) throws SQLException {
                 return new Image("image/jpeg", resultSet.getBytes("DATA"));
             }
-        });
+        }).getResults();
         return images.isEmpty() ? null : images.get(0);
     }
 }
