@@ -6,16 +6,14 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.sql.*;
+import org.apache.commons.lang.*;
 
 import java.sql.*;
-import java.util.*;
-
-import org.apache.commons.lang.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
  */
-public class FindArtistQuery extends DataStoreQuery<Collection<Artist>> {
+public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Artist>> {
     private String myFilter;
     private String myAlbum;
     private String myGenre;
@@ -30,14 +28,15 @@ public class FindArtistQuery extends DataStoreQuery<Collection<Artist>> {
         myRestrictedPlaylistId = user.getPlaylistId();
     }
 
-    public Collection<Artist> execute(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findArtists" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted"));
+    public QueryResult<Artist> execute(Connection connection) throws SQLException {
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection,
+                                                                   "findArtists" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted"));
         statement.setString("filter", myFilter);
         statement.setString("album", myAlbum);
         statement.setString("genre", myGenre);
         statement.setInt("index", myIndex);
         statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
-        return execute(statement, new ArtistResultBuilder()).getResults();
+        return execute(statement, new ArtistResultBuilder());
     }
 
     public static class ArtistResultBuilder implements ResultBuilder<Artist> {

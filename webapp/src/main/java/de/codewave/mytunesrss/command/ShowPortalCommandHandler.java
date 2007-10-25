@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 
 import javax.servlet.*;
@@ -44,16 +45,17 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                 }
                 int randomPlaylistSize = getWebConfig().getRandomPlaylistSize();
                 if (randomPlaylistSize > 0) {
-                    Collection<Playlist> randomPlaylistSources = getDataStore().executeQuery(new FindPlaylistQuery(getAuthUser(), null,
+                    DataStoreQuery.QueryResult<Playlist> randomPlaylistSources = getDataStore().executeQuery(new FindPlaylistQuery(getAuthUser(), null,
                                                                                                                    getWebConfig().getRandomSource(), false, false));
-                    if (randomPlaylistSources.size() != 1 || randomPlaylistSources.iterator().next().getTrackCount() > randomPlaylistSize) {
-                        if (randomPlaylistSources.size() == 1) {
+                    if (randomPlaylistSources.getResultSize() != 1 || randomPlaylistSources.nextResult().getTrackCount() > randomPlaylistSize) {
+                        if (randomPlaylistSources.getResultSize() == 1) {
+                            Playlist firstResult = randomPlaylistSources.getResult(0);
                             playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize + "_" +
-                                    randomPlaylistSources.iterator().next().getId(),
+                                    firstResult.getId(),
                                                        PlaylistType.MyTunes,
                                                        MessageFormat.format(getBundleString("playlist.specialRandom"),
                                                                             randomPlaylistSize,
-                                                                            randomPlaylistSources.iterator().next().getName()),
+                                                                            firstResult.getName()),
                                                        randomPlaylistSize));
                         } else {
                             playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize,
@@ -65,7 +67,12 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
             }
-            for (Playlist playlist : getDataStore().executeQuery(new FindPlaylistQuery(getAuthUser(), null, null, false, false))) {
+            DataStoreQuery.QueryResult<Playlist> queryResult = getDataStore().executeQuery(new FindPlaylistQuery(getAuthUser(),
+                                                                                                                 null,
+                                                                                                                 null,
+                                                                                                                 false,
+                                                                                                                 false));
+            for (Playlist playlist = queryResult.nextResult(); playlist != null; playlist = queryResult.nextResult()) {
                 playlists.add(playlist);
                 playlists.addAll(createSplittedPlaylists(playlist));
             }

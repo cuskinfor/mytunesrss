@@ -7,7 +7,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
-import de.codewave.utils.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 
 import javax.servlet.*;
@@ -30,14 +30,21 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
                 genre = null;
             }
             getRequest().setAttribute("artistPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
-            FindArtistQuery findArtistQuery = new FindArtistQuery(getAuthUser(), getDisplayFilter().getTextFilter(), album, genre, getIntegerRequestParameter("page", -1));
-            Collection<Artist> artists = getDataStore().executeQuery(findArtistQuery);
+            FindArtistQuery findArtistQuery = new FindArtistQuery(getAuthUser(),
+                                                                  getDisplayFilter().getTextFilter(),
+                                                                  album,
+                                                                  genre,
+                                                                  getIntegerRequestParameter("page", -1));
+            DataStoreQuery.QueryResult<Artist> queryResult = getDataStore().executeQuery(findArtistQuery);
             int pageSize = getWebConfig().getEffectivePageSize();
-            if (pageSize > 0 && artists.size() > pageSize) {
+            List<Artist> artists;
+            if (pageSize > 0 && queryResult.getResultSize() > pageSize) {
                 int current = getSafeIntegerRequestParameter("index", 0);
-                Pager pager = createPager(artists.size(), current);
+                Pager pager = createPager(queryResult.getResultSize(), current);
                 getRequest().setAttribute("indexPager", pager);
-                artists = ((List<Artist>)artists).subList(current * pageSize, Math.min((current * pageSize) + pageSize, artists.size()));
+                artists = queryResult.getResults(current * pageSize, pageSize);
+            } else {
+                artists = queryResult.getResults();
             }
             getRequest().setAttribute("artists", artists);
             forward(MyTunesRssResource.BrowseArtist);

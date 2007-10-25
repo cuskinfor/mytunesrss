@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.utils.sql.*;
 
 import javax.servlet.*;
 import java.io.*;
@@ -23,18 +24,21 @@ public class BrowseGenreCommandHandler extends MyTunesRssCommandHandler {
         if (isSessionAuthorized()) {
             String page = getRequest().getParameter("page");
             getRequest().setAttribute("genrePager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
-            Collection<Genre> genres;
+            DataStoreQuery.QueryResult<Genre> queryResult;
             if (StringUtils.isNotEmpty(page)) {
-                genres = getDataStore().executeQuery(new FindGenreQuery(getAuthUser(), Integer.parseInt(page)));
+                queryResult = getDataStore().executeQuery(new FindGenreQuery(getAuthUser(), Integer.parseInt(page)));
             } else {
-                genres = getDataStore().executeQuery(new FindGenreQuery(getAuthUser(), -1));
+                queryResult = getDataStore().executeQuery(new FindGenreQuery(getAuthUser(), -1));
             }
             int pageSize = getWebConfig().getEffectivePageSize();
-            if (pageSize > 0 && genres.size() > pageSize) {
+            List<Genre> genres;
+            if (pageSize > 0 && queryResult.getResultSize() > pageSize) {
                 int current = getSafeIntegerRequestParameter("index", 0);
-                Pager pager = createPager(genres.size(), current);
+                Pager pager = createPager(queryResult.getResultSize(), current);
                 getRequest().setAttribute("indexPager", pager);
-                genres = ((List<Genre>)genres).subList(current * pageSize, Math.min((current * pageSize) + pageSize, genres.size()));
+                genres = queryResult.getResults(current * pageSize, pageSize);
+            } else {
+                genres = queryResult.getResults();
             }
             getRequest().setAttribute("genres", genres);
             forward(MyTunesRssResource.BrowseGenre);

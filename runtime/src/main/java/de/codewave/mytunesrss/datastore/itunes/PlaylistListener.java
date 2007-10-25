@@ -1,7 +1,7 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.*;
 import org.apache.commons.lang.*;
@@ -64,7 +64,7 @@ public class PlaylistListener implements PListHandlerListener {
                 statement.setName(name);
                 statement.setTrackIds(tracks);
                 try {
-                    if (!myDataStoreSession.executeQuery(new FindPlaylistQuery(PlaylistType.ITunes, playlistId, true)).isEmpty()) {
+                    if (myDataStoreSession.executeQuery(new FindPlaylistQuery(PlaylistType.ITunes, playlistId, true)).getResultSize() > 0) {
                         statement.setUpdate(true);
                     }
                     myDataStoreSession.executeStatement(statement);

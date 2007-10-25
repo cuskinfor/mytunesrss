@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 
 import javax.servlet.*;
@@ -30,13 +31,16 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
             }
             getRequest().setAttribute("albumPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
             FindAlbumQuery findAlbumQuery = new FindAlbumQuery(getAuthUser(), getDisplayFilter().getTextFilter(), artist, genre, getIntegerRequestParameter("page", -1));
-            Collection<Album> albums = getDataStore().executeQuery(findAlbumQuery);
+            DataStoreQuery.QueryResult<Album> queryResult = getDataStore().executeQuery(findAlbumQuery);
             int pageSize = getWebConfig().getEffectivePageSize();
-            if (pageSize > 0 && albums.size() > pageSize) {
+            List<Album> albums;
+            if (pageSize > 0 && queryResult.getResultSize() > pageSize) {
                 int current = getSafeIntegerRequestParameter("index", 0);
-                Pager pager = createPager(albums.size(), current);
+                Pager pager = createPager(queryResult.getResultSize(), current);
                 getRequest().setAttribute("indexPager", pager);
-                albums = ((List<Album>)albums).subList(current * pageSize, Math.min((current * pageSize) + pageSize, albums.size()));
+                albums = queryResult.getResults(current * pageSize, pageSize);
+            } else {
+                albums = queryResult.getResults();
             }
             getRequest().setAttribute("albums", albums);
             Boolean singleGenre = Boolean.valueOf(StringUtils.isNotEmpty(genre));

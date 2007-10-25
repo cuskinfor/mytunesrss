@@ -15,7 +15,7 @@ import org.apache.commons.lang.*;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery
  */
-public class FindPlaylistQuery extends DataStoreQuery<Collection<Playlist>> {
+public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Playlist>> {
     private String myId;
     private PlaylistType myType;
     private String myRestrictionPlaylistId;
@@ -36,7 +36,7 @@ public class FindPlaylistQuery extends DataStoreQuery<Collection<Playlist>> {
         myMatchingOwnerOnly = matchingOwnerOnly;
     }
 
-    public Collection<Playlist> execute(Connection connection) throws SQLException {
+    public QueryResult<Playlist> execute(Connection connection) throws SQLException {
         String name = myMatchingOwnerOnly ? "findUserPlaylists" : (StringUtils.isEmpty(myRestrictionPlaylistId) ? "findPlaylists" : "findPlaylistsRestricted");
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, name);
         statement.setString("type", myType != null ? myType.name() : null);
@@ -44,7 +44,7 @@ public class FindPlaylistQuery extends DataStoreQuery<Collection<Playlist>> {
         statement.setString("restrictionPlaylistId", myRestrictionPlaylistId);
         statement.setString("username", myUserName);
         statement.setBoolean("includeHidden", myIncludeHidden);
-        return execute(statement, new PlaylistResultBuilder()).getResults();
+        return execute(statement, new PlaylistResultBuilder());
     }
 
     public static class PlaylistResultBuilder implements ResultBuilder<Playlist> {

@@ -22,11 +22,11 @@ public class FindTrackImageQuery extends DataStoreQuery<byte[]> {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findTrackImage");
         statement.setString("track_id", myTrackId);
         statement.setInt("size", mySize);
-        List<byte[]> results = execute(statement, new ResultBuilder<byte[]>() {
+        QueryResult<byte[]> results = execute(statement, new ResultBuilder<byte[]>() {
             public byte[] create(ResultSet resultSet) throws SQLException {
                 return resultSet.getBytes("DATA");
             }
-        }).getResults();
-        return results.isEmpty() ? null : results.get(0);
+        });
+        return results.getResultSize() == 0 ? null : results.nextResult();
     }
 }

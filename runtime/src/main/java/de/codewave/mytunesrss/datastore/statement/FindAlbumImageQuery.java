@@ -23,11 +23,11 @@ public class FindAlbumImageQuery extends DataStoreQuery<Image> {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAlbumImage");
         statement.setString("album", myAlbum);
         statement.setInt("size", mySize);
-        List<Image> images = execute(statement, new ResultBuilder<Image>() {
+        QueryResult<Image> images = execute(statement, new ResultBuilder<Image>() {
             public Image create(ResultSet resultSet) throws SQLException {
                 return new Image("image/jpeg", resultSet.getBytes("DATA"));
             }
-        }).getResults();
-        return images.isEmpty() ? null : images.get(0);
+        });
+        return images.getResultSize() == 0 ? null : images.nextResult();
     }
 }

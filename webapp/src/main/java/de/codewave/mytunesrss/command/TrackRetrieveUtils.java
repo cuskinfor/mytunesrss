@@ -69,8 +69,8 @@ public class TrackRetrieveUtils {
                 Collection<String> albumNames = new HashSet<String>();
                 for (String artist : artists) { // full albums should not happen with more than one artist, otherwise this solution would be rather slow
                     FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, artist, null, -1);
-                    Collection<Album> albumsWithArtist = store.executeQuery(findAlbumQuery);
-                    for (Album albumWithArtist : albumsWithArtist) {
+                    DataStoreQuery.QueryResult<Album> albumsWithArtist = store.executeQuery(findAlbumQuery);
+                    for (Album albumWithArtist = albumsWithArtist.nextResult(); albumWithArtist != null; albumWithArtist = albumsWithArtist.nextResult()) {
                         albumNames.add(albumWithArtist.getName());
                     }
                 }
@@ -82,9 +82,9 @@ public class TrackRetrieveUtils {
         } else if (StringUtils.isNotEmpty(genre)) {
             if (fullAlbums) {
                 FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, null, genre, -1);
-                Collection<Album> albumsWithGenre = store.executeQuery(findAlbumQuery);
+                DataStoreQuery.QueryResult<Album> albumsWithGenre = store.executeQuery(findAlbumQuery);
                 List<String> albumNames = new ArrayList<String>();
-                for (Album albumWithGenre : albumsWithGenre) {
+                for (Album albumWithGenre = albumsWithGenre.nextResult(); albumWithGenre != null; albumWithGenre = albumsWithGenre.nextResult()) {
                     albumNames.add(albumWithGenre.getName());
                 }
                 return FindTrackQuery.getForAlbum(user, albumNames.toArray(new String[albumNames.size()]), sortOrderValue == FindPlaylistTracksQuery.SortOrder

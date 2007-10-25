@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.components.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.lang.*;
 
@@ -188,7 +189,7 @@ public class EditUser {
     }
 
     private void fillPlaylistSelect() {
-        Collection<Playlist> playlists = Collections.emptyList();
+        DataStoreQuery.QueryResult<Playlist> playlists = null;
         try {
             playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true));
         } catch (SQLException e) {
@@ -204,12 +205,14 @@ public class EditUser {
             }
         });
         int index = 1;
-        for (Playlist playlist : playlists) {
-            myRestrictionPlaylistInput.addItem(playlist);
-            if (myUser != null && StringUtils.isNotEmpty(myUser.getPlaylistId()) && myUser.getPlaylistId().equals(playlist.getId())) {
-                myRestrictionPlaylistInput.setSelectedIndex(index);
+        if (playlists != null) {
+            for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
+                myRestrictionPlaylistInput.addItem(playlist);
+                if (myUser != null && StringUtils.isNotEmpty(myUser.getPlaylistId()) && myUser.getPlaylistId().equals(playlist.getId())) {
+                    myRestrictionPlaylistInput.setSelectedIndex(index);
+                }
+                index++;
             }
-            index++;
         }
     }
 

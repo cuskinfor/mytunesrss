@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.mytunesrss.servlet.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 
 import javax.servlet.*;
@@ -23,9 +24,9 @@ public class CreatePlaylistCommandHandler extends CreatePlaylistBaseCommandHandl
     @Override
     public void executeAuthorized() throws SQLException, IOException, ServletException {
         if (getAuthUser().isPlaylist() || Boolean.parseBoolean(getRequestParameter("playerRequest", "false"))) {
-            Collection<Track> tracks = getTracks().getResults();
-            if (tracks != null && !tracks.isEmpty()) {
-                getRequest().setAttribute("tracks", tracks);
+            DataStoreQuery.QueryResult<Track> tracks = getTracks();
+            if (tracks.getResultSize() > 0) {
+                getRequest().setAttribute("tracks", tracks.getResults());
                 String playlistType = getRequestParameter("type", null);
                 if (StringUtils.isEmpty(playlistType)) {
                     forward(getWebConfig().getPlaylistTemplateResource());

@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.*;
 import de.codewave.utils.servlet.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 
@@ -31,17 +32,17 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             String genre = MyTunesRssBase64Utils.decodeToString(getRequestParameter("genre", null));
             String tracklist = getRequestParameter("tracklist", null);
             String playlist = getRequestParameter("playlist", null);
-            Collection<Track> tracks;
+            DataStoreQuery.QueryResult<Track> tracks;
             if (StringUtils.isNotEmpty(album)) {
-                tracks = getDataStore().executeQuery(FindTrackQuery.getForAlbum(getAuthUser(), new String[] {album}, true)).getResults();
+                tracks = getDataStore().executeQuery(FindTrackQuery.getForAlbum(getAuthUser(), new String[] {album}, true));
             } else if (StringUtils.isNotEmpty(artist)) {
-                tracks = getDataStore().executeQuery(FindTrackQuery.getForArtist(getAuthUser(), new String[] {artist}, true)).getResults();
+                tracks = getDataStore().executeQuery(FindTrackQuery.getForArtist(getAuthUser(), new String[] {artist}, true));
             } else if (StringUtils.isNotEmpty(genre)) {
-                tracks = getDataStore().executeQuery(FindTrackQuery.getForGenre(getAuthUser(), new String[] {genre}, true)).getResults();
+                tracks = getDataStore().executeQuery(FindTrackQuery.getForGenre(getAuthUser(), new String[] {genre}, true));
             } else if (StringUtils.isNotEmpty(playlist)) {
-                tracks = getDataStore().executeQuery(new FindPlaylistTracksQuery(playlist, null)).getResults();
+                tracks = getDataStore().executeQuery(new FindPlaylistTracksQuery(playlist, null));
             } else if (StringUtils.isNotEmpty(tracklist)) {
-                tracks = getDataStore().executeQuery(FindTrackQuery.getForId(StringUtils.split(tracklist, ","))).getResults();
+                tracks = getDataStore().executeQuery(FindTrackQuery.getForId(StringUtils.split(tracklist, ",")));
             } else {
                 throw new IllegalArgumentException("Missing parameter!");
             }
@@ -72,7 +73,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    private void createZipArchive(OutputStream outputStream, Collection<Track> tracks, String baseName, FileSender.ByteSentCounter counter)
+    private void createZipArchive(OutputStream outputStream, DataStoreQuery.QueryResult<Track> tracks, String baseName, FileSender.ByteSentCounter counter)
             throws IOException {
         ZipOutputStream zipStream = new ZipOutputStream(outputStream);
         zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.codewave.de)");
@@ -82,7 +83,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
         StringBuilder m3uPlaylist = new StringBuilder("#EXTM3U").append(lineSeparator);
         int trackCount = 0;
         boolean quotaExceeded = false;
-        for (Track track : tracks) {
+        for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
             getSession().setMaxInactiveInterval(-1); // keep unlimited session until finished
             if (track.getFile().exists() && !getAuthUser().isQuotaExceeded()) {
                 String trackArtist = track.getArtist();

@@ -65,9 +65,9 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
             statement.setInt("maxCount", Integer.parseInt(splitted[1]));
             if (splitted.length > 2) {
                 String sourceId = splitted[2];
-                Collection<Playlist> playlists = new FindPlaylistQuery(null, sourceId, false).execute(connection);
-                if (playlists.size() == 1) {
-                    Playlist playlist = playlists.iterator().next();
+                QueryResult<Playlist> playlists = new FindPlaylistQuery(null, sourceId, false).execute(connection);
+                if (playlists.getResultSize() == 1) {
+                    Playlist playlist = playlists.nextResult();
                     statement.setString("sourcePlaylistId", StringUtils.trimToNull(playlist.getId()));
                 }
             }

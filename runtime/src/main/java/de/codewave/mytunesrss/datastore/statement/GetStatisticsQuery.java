@@ -13,7 +13,7 @@ public class GetStatisticsQuery extends DataStoreQuery<Statistics> {
 
     public Statistics execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getStatistics");
-        Collection<Statistics> statistics = execute(statement, new ResultBuilder<Statistics>() {
+        QueryResult<Statistics> statistics = execute(statement, new ResultBuilder<Statistics>() {
             public Statistics create(ResultSet resultSet) throws SQLException {
                 Statistics statistics = new Statistics();
                 statistics.setTrackCount(resultSet.getInt("TRACKCOUNT"));
@@ -22,7 +22,7 @@ public class GetStatisticsQuery extends DataStoreQuery<Statistics> {
                 statistics.setGenreCount(resultSet.getInt("GENRECOUNT"));
                 return statistics;
             }
-        }).getResults();
-        return statistics != null && !statistics.isEmpty() ? statistics.iterator().next() : null;
+        });
+        return statistics.getResultSize() != 0 ? statistics.nextResult() : null;
     }
 }

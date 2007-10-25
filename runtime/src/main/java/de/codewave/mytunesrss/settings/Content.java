@@ -43,7 +43,7 @@ public class Content implements MyTunesRssEventListener {
     private void refreshPlaylistList() {
         myPlaylistsPanel.removeAll();
         try {
-            List<Playlist> playlists = (List<Playlist>)MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true));
+            List<Playlist> playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true)).getResults();
             Collections.sort(playlists, new Comparator<Playlist>() {
                 public int compare(Playlist o1, Playlist o2) {
                     return o1.getName().compareTo(o2.getName());

@@ -29,11 +29,10 @@ public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean
     }
 
     private String changePlaylistAttribute(String playlistId, boolean hidden) {
-        Collection<Playlist> playlists = null;
         try {
-            playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, playlistId, true));
-            if (playlists != null && playlists.size() == 1) {
-                Playlist playlist = playlists.iterator().next();
+            DataStoreQuery.QueryResult<Playlist> queryResult = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, playlistId, true));
+            if (queryResult.getResultSize() == 1) {
+                Playlist playlist = queryResult.nextResult();
                 DataStoreSession session = MyTunesRss.STORE.getTransaction();
                 SavePlaylistAttributesStatement statement = new SavePlaylistAttributesStatement();
                 statement.setId(playlist.getId());
@@ -76,9 +75,9 @@ public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean
 
     public String[] getPlaylists() {
         try {
-            Collection<Playlist> playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true));
+            DataStoreQuery.QueryResult<Playlist> playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true));
             List<String> displayItems = new ArrayList<String>();
-            for (Playlist playlist : playlists) {
+            for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
                 if (playlist.getType() == PlaylistType.ITunes || playlist.getType() == PlaylistType.M3uFile) {
                     displayItems.add("id=\"" + playlist.getId() + "\", name=\"" + playlist.getName() + "\", status=\"" + (playlist.isHidden() ? "hidden" : "visible") + "\"");
                 }

@@ -4,19 +4,18 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.camel.mp3.*;
+import de.codewave.camel.mp3.exception.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.servlet.*;
 import de.codewave.utils.sql.*;
-import de.codewave.camel.mp3.*;
-import de.codewave.camel.mp3.exception.*;
 import org.apache.commons.logging.*;
 
 import javax.servlet.http.*;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * de.codewave.mytunesrss.command.PlayTrackCommandHandler
@@ -35,9 +34,9 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
         } else {
             String trackId = getRequest().getParameter("track");
-            Collection<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId})).getResults();
-            if (!tracks.isEmpty()) {
-                track = tracks.iterator().next();
+            DataStoreQuery.QueryResult<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
+            if (tracks.getResultSize() > 0) {
+                track = tracks.nextResult();
                 if (!getAuthUser().isQuotaExceeded()) {
                     File file = track.getFile();
                     String contentType = track.getContentType();
@@ -47,7 +46,10 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         }
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                     } else {
-                        Transcoder transcoder = "false".equals(getRequestParameter("notranscode", "false")) ? Transcoder.createTranscoder(track, getWebConfig(), getRequest()) : null;
+                        Transcoder transcoder = "false".equals(getRequestParameter("notranscode", "false")) ? Transcoder.createTranscoder(track,
+                                                                                                                                          getWebConfig(),
+                                                                                                                                          getRequest()) :
+                                null;
                         if (transcoder != null) {
                             streamSender = transcoder.getStreamSender();
                         } else {
@@ -93,7 +95,9 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                 }
             }
             double factor = MyTunesRss.CONFIG.isBandwidthLimit() ? MyTunesRss.CONFIG.getBandwidthLimitFactor().doubleValue() : 0;
-            streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper((int)(bitrate * factor), dataOffset, new RangeHeader(getRequest(), fileSize)));
+            streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper((int)(bitrate * factor),
+                                                                                     dataOffset,
+                                                                                     new RangeHeader(getRequest(), fileSize)));
             streamSender.sendGetResponse(getRequest(), getResponse(), false);
         }
     }

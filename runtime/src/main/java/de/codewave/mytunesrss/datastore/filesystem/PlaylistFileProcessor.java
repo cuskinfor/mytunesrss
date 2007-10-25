@@ -51,7 +51,7 @@ public class PlaylistFileProcessor implements FileProcessor {
                     statement.setId(id);
                     statement.setName(FilenameUtils.getBaseName(playlistFile.getName()));
                     statement.setTrackIds(trackIds);
-                    if (!myDataStoreSession.executeQuery(new FindPlaylistQuery(PlaylistType.M3uFile, id, true)).isEmpty()) {
+                    if (myDataStoreSession.executeQuery(new FindPlaylistQuery(PlaylistType.M3uFile, id, true)).getResultSize() > 0) {
                         statement.setUpdate(true);
                     }
                     myDataStoreSession.executeStatement(statement);
