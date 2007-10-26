@@ -223,19 +223,11 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         if (LOG.isInfoEnabled()) {
             LOG.info("Removing " + databaseIds.size() + " obsolete tracks.");
         }
-        int count = 0;
         DeleteTrackStatement statement = new DeleteTrackStatement();
         for (String id : databaseIds) {
             statement.setId(id);
             storeSession.executeStatement(statement);
-            count++;
-            if (count == 500) {
-                count = 0;
-                storeSession.commit();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Committing transaction after 500 deleted tracks.");
-                }
-            }
+            DatabaseBuilderTask.doCheckpoint(storeSession);
         }
         storeSession.commit();
     }
@@ -244,19 +236,11 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         if (LOG.isInfoEnabled()) {
             LOG.info("Removing " + databaseIds.size() + " obsolete playlists.");
         }
-        int count = 0;
         DeletePlaylistStatement statement = new DeletePlaylistStatement();
         for (String id : databaseIds) {
             statement.setId(id);
             storeSession.executeStatement(statement);
-            count++;
-            if (count == 500) {
-                count = 0;
-                storeSession.commit();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Committing transaction after 500 deleted playlists.");
-                }
-            }
+            DatabaseBuilderTask.doCheckpoint(storeSession);
         }
         storeSession.commit();
     }
