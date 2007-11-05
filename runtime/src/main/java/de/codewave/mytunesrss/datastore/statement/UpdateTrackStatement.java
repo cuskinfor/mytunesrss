@@ -110,7 +110,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             for (StringTokenizer tokenizer = new StringTokenizer(dropWords, ","); tokenizer.hasMoreTokens(); ) {
                 String word = tokenizer.nextToken().toLowerCase();
                 while (artist.toLowerCase().startsWith(word + " ")) {
-                    artist = artist.substring(word.length() + 1);
+                    artist = artist.substring(word.length()).trim();
                 }
             }
         }

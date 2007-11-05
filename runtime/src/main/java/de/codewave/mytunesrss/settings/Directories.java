@@ -17,7 +17,6 @@ import java.io.*;
  * de.codewave.mytunesrss.settings.Options
  */
 public class Directories implements MyTunesRssEventListener {
-
     public enum FolderStructureRole {
         Artist, Album, None;
 
@@ -49,6 +48,7 @@ public class Directories implements MyTunesRssEventListener {
     private JScrollPane myScrollPane;
     private JPanel myUploadPanel;
     private DefaultListModel myListModel;
+    private File myFileChooserDierctory;
 
     private void createUIComponents() {
         myBaseDirsList = new JList() {
@@ -184,6 +184,7 @@ public class Directories implements MyTunesRssEventListener {
         public void actionPerformed(ActionEvent event) {
             if (MyTunesRss.REGISTRATION.isRegistered() || MyTunesRss.CONFIG.getDatasources().length < MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
                 JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setCurrentDirectory(myFileChooserDierctory);
                 fileChooser.setDialogTitle(MyTunesRssUtils.getBundleString("dialog.lookupBaseDir"));
                 fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
                 fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
@@ -198,6 +199,7 @@ public class Directories implements MyTunesRssEventListener {
                 int result = fileChooser.showOpenDialog(MyTunesRss.ROOT_FRAME);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     try {
+                        myFileChooserDierctory = fileChooser.getCurrentDirectory();
                         handleChosenFile(fileChooser.getSelectedFile());
                     } catch (IOException e) {
                         MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.lookupDir", e.getMessage()));
