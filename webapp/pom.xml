@@ -5,7 +5,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>webapp</artifactId>
     <packaging>war</packaging>
-    <version>3.1-EAP-14-SNAPSHOT</version>
+    <version>3.1-EAP-15-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Web Application</name>
     <distributionManagement>
         <site>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>runtime</artifactId>
-            <version>3.1-EAP-14-SNAPSHOT</version>
+            <version>3.1-EAP-15-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
