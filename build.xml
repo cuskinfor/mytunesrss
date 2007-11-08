@@ -16,4 +16,12 @@
         </copy>
     </target>
 
+    <target name="upload_website" description="upload website to shells24 server">
+        <ftp server="server11a.dnshoster.de" userid="wtdmwq" password="${password}" remotedir="public_html/file-store">
+            <fileset dir="target">
+                <include name="*.zip"/>
+            </fileset>
+        </ftp>
+    </target>
+
 </project>
