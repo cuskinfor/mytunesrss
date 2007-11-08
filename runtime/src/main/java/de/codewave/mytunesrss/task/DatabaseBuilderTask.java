@@ -128,35 +128,31 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
         event.setMessageKey("settings.databaseUpdateRunningImages");
         MyTunesRssEventManager.getInstance().fireEvent(event);
-        int startIndex = 0;
-        Collection<Track> tracks = null;
         TX_BEGIN = System.currentTimeMillis();
-        do {
-            final int localStartIndex = startIndex;
-            tracks = storeSession.executeQuery(new DataStoreQuery<Collection<Track>>() {
-                public Collection<Track> execute(Connection connection) throws SQLException {
-                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findTracksInRange");
-                    statement.setInt("startIndex", localStartIndex);
-                    statement.setInt("selectCount", 25);
-                    ResultSet resultSet = statement.executeQuery();
-                    Collection<Track> tracks = new ArrayList<Track>();
-                    while (resultSet.next()) {
-                        Track track = new Track();
-                        track.setId(resultSet.getString("id"));
-                        track.setFile(new File(resultSet.getString("file")));
-                        tracks.add(track);
-                    }
-                    return tracks;
+        DataStoreSession trackQuerySession = MyTunesRss.STORE.getTransaction();
+        try {
+            DataStoreQuery.QueryResult<Track> result = trackQuerySession.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Track>>() {
+                public QueryResult<Track> execute(Connection connection) throws SQLException {
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAllTracksForImageUpdate");
+                    return execute(statement, new ResultBuilder<Track>() {
+                        public Track create(ResultSet resultSet) throws SQLException {
+                            Track track = new Track();
+                            track.setId(resultSet.getString("id"));
+                            track.setFile(new File(resultSet.getString("file")));
+                            return track;
+                        }
+                    });
                 }
             });
-            for (Track track : tracks) {
+            for (Track track = result.nextResult(); track != null; track = result.nextResult()) {
                 if (track.getFile().lastModified() >= systemInformation.getLastUpdate()) {
                     storeSession.executeStatement(new HandleTrackImagesStatement(track.getFile(), track.getId()));
                 }
                 doCheckpoint(storeSession);
             }
-            startIndex += tracks.size();
-        } while (tracks != null && tracks.size() > 0);
+        } finally {
+            trackQuerySession.commit();
+        }
     }
 
     public static void doCheckpoint(DataStoreSession storeSession) {

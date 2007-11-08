@@ -337,6 +337,12 @@
       </sql>
     </statement>
 
+    <statement name="findAllTracksForImageUpdate">
+        <sql>
+            SELECT id AS id, file AS file FROM track
+        </sql>
+    </statement>
+
     <statement name="findTracksRestricted">
       <sql>
         {findTracksQueryRestricted}
