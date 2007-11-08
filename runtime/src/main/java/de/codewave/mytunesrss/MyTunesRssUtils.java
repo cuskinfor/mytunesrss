@@ -82,8 +82,14 @@ public class MyTunesRssUtils {
     }
 
     public static void shutdown() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Shutting down.");
+        }
         if (MyTunesRss.STREAMING_CACHE != null) {
             try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Cleaning up streamig cache.");
+                }
                 File destinationFile = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder/cache.xml");
                 FileUtils.writeStringToFile(destinationFile, MyTunesRss.STREAMING_CACHE.getContent());
             } catch (IOException e) {
@@ -93,10 +99,16 @@ public class MyTunesRssUtils {
                 MyTunesRss.STREAMING_CACHE.clearCache();
             }
         }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Very last log message before shutdown.");
+        }
         System.exit(0);
     }
 
     public static void shutdownGracefully() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Shutting down gracefully.");
+        }
         if (MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRss.stopWebserver();
         }
@@ -106,6 +118,9 @@ public class MyTunesRssUtils {
             MyTunesRss.CONFIG.save();
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             if (DatabaseBuilderTask.isRunning()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Database still updating... waiting for it to finish.");
+                }
                 MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.finishingUpdate"), null, false, new MyTunesRssTask() {
                     public void execute() {
                         DatabaseBuilderTask databaseBuilderTask = MyTunesRss.createDatabaseBuilderTask();
@@ -121,6 +136,9 @@ public class MyTunesRssUtils {
             }
             MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
                 public void execute() {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Destroying store.");
+                    }
                     MyTunesRss.STORE.destroy();
                 }
             });

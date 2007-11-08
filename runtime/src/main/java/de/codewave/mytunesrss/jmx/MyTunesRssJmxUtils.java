@@ -101,6 +101,9 @@ public class MyTunesRssJmxUtils {
     public static void stopJmxServer() {
         if (INITIALIZED) {
             try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Stopping JMX server.");
+                }
                 MBeanServer server = ManagementFactory.getPlatformMBeanServer();
                 server.invoke(HTTP_ADAPTOR_NAME, "stop", null, null);
                 server.unregisterMBean(HTTP_ADAPTOR_NAME);

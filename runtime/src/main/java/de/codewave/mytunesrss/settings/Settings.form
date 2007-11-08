@@ -160,6 +160,7 @@
                 </constraints>
                 <properties>
                   <font swing-font="TabbedPane.font"/>
+                  <opaque value="false"/>
                 </properties>
                 <border type="none"/>
                 <children>

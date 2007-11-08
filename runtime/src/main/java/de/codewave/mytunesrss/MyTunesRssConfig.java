@@ -424,6 +424,9 @@ public class MyTunesRssConfig {
     }
 
     public void loadFromPrefs() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Loading configuration.");
+        }
         checkPrefsVersion();
         setVersion(Preferences.userRoot().node(PREF_ROOT).get("version", ""));
         migrate();
@@ -517,6 +520,9 @@ public class MyTunesRssConfig {
     }
 
     public void save() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Saving configuration.");
+        }
         Preferences.userRoot().node(PREF_ROOT).put("version", MyTunesRss.VERSION);
         Preferences.userRoot().node(PREF_ROOT).putInt("serverPort", myPort);
         Preferences.userRoot().node(PREF_ROOT).put("serverName", myServerName);
