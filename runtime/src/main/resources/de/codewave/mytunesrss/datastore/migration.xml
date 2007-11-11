@@ -47,4 +47,11 @@
         <sql>ALTER TABLE playlist ADD COLUMN user_owner VARCHAR(256)</sql>
     </statement>
 
+    <statement name="migrate31eap12to31eap16">
+        <sql>ALTER TABLE system_information ADD COLUMN track_count INTEGER</sql>
+        <sql>ALTER TABLE system_information ADD COLUMN album_count INTEGER</sql>
+        <sql>ALTER TABLE system_information ADD COLUMN artist_count INTEGER</sql>
+        <sql>ALTER TABLE system_information ADD COLUMN genre_count INTEGER</sql>
+    </statement>
+
 </statements>

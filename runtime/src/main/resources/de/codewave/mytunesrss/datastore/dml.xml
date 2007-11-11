@@ -385,12 +385,6 @@
         </sql>
     </statement>
 
-    <statement name="findAlbumArtistMapping">
-        <sql>
-            SELECT album AS album, artist AS artist FROM track
-        </sql>
-    </statement>
-
     <statement name="findTrackIdsForSource">
         <sql>
             SELECT id AS id FROM track WHERE source = :source
@@ -399,7 +393,9 @@
 
     <statement name="getSystemInformation">
         <sql>
-            SELECT lastupdate AS lastupdate, version AS version FROM system_information
+            SELECT lastupdate AS lastupdate, version AS version, track_count AS track_count, album_count AS album_count,
+            artist_count AS artist_count, genre_count AS genre_count
+            FROM system_information
         </sql>
     </statement>
 
@@ -476,19 +472,23 @@
         <sql>UPDATE playlist SET name = :name, hidden = :hidden, user_owner = :user_owner, user_private = :user_private WHERE id = :id</sql>
     </statement>
 
-    <statement name="recreateHelpTables">
+    <statement name="recreateHelpTablesAlbum">
         <sql>DELETE FROM album</sql>
-        <sql>DELETE FROM artist</sql>
-        <sql>DELETE FROM genre</sql>
         <sql>
             INSERT INTO album (name, first_char, track_count, artist_count)
             SELECT DISTINCT(album), LOWER(SUBSTRING(album FROM 1 FOR 1)), COUNT(id), COUNT(DISTINCT(artist)) FROM track GROUP BY album
         </sql>
+        <sql>UPDATE album AS a SET artist = t.artist FROM track t WHERE a.artist_count = 1 AND t.album = a.name</sql>
+    </statement>
+    <statement name="recreateHelpTablesArtist">
+        <sql>DELETE FROM artist</sql>
         <sql>
             INSERT INTO artist (name, first_char, track_count, album_count)
             SELECT DISTINCT(artist), LOWER(SUBSTRING(artist FROM 1 FOR 1)), COUNT(id), COUNT(DISTINCT(album)) FROM track GROUP BY artist
         </sql>
-        <sql loop="mapping">UPDATE album SET artist = :loopitem_mapping_value WHERE name = :loopitem_mapping_key</sql>
+    </statement>
+    <statement name="recreateHelpTablesGenre">
+        <sql>DELETE FROM genre</sql>
         <sql>
             INSERT INTO genre (name, first_char, track_count, album_count, artist_count)
             SELECT DISTINCT(genre), LOWER(SUBSTRING(genre FROM 1 FOR 1)), COUNT(id), COUNT(DISTINCT(album)), COUNT(DISTINCT(artist))
@@ -500,14 +500,11 @@
         <sql>SELECT id AS id FROM playlist WHERE type IN (:types[])</sql>
     </statement>
 
-    <statement name="getStatistics">
-        <sql>
-            SELECT COUNT(DISTINCT(album)) AS albumcount,
-                   COUNT(DISTINCT(artist)) AS artistcount,
-                   COUNT(DISTINCT(genre)) AS genrecount,
-                   COUNT(id) AS trackcount
-            FROM track
-        </sql>
+    <statement name="updateStatistics">
+        <sql>UPDATE system_information SET track_count = (SELECT COUNT(id) FROM track)</sql>
+        <sql>UPDATE system_information SET album_count = (SELECT COUNT(name) FROM album)</sql>
+        <sql>UPDATE system_information SET artist_count = (SELECT COUNT(name) FROM artist)</sql>
+        <sql>UPDATE system_information SET genre_count = (SELECT COUNT(name) FROM genre)</sql>
     </statement>
 
     <!-- reusable sql fragments -->

@@ -26,7 +26,19 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
 
             DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
             if (StringUtils.isNotEmpty(searchTerm)) {
-                query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
+                int maxTermSize = 0;
+                for (String term : searchTerm.split(" ")) {
+                    if (term.length() > maxTermSize) {
+                        maxTermSize = term.length();
+                    }
+                }
+                if (maxTermSize >= 3) {
+                    query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
+                } else {
+                    addError(new BundleError("error.searchTermMinSize", 3));
+                    forward(MyTunesRssCommand.ShowPortal);
+                    return; // early return
+                }
             } else {
                 query = TrackRetrieveUtils.getQuery(getRequest(), getAuthUser(), false);
             }

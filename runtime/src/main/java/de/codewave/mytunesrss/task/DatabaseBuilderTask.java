@@ -108,6 +108,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             runUpdate(systemInformation, storeSession);
             storeSession.commit();
             runImageUpdate(systemInformation, storeSession);
+            storeSession.executeStatement(new UpdateStatisticsStatement());
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     connection.createStatement().execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
