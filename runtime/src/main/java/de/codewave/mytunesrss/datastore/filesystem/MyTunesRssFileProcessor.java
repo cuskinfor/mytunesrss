@@ -81,7 +81,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                 // recreate help tables every N tracks
                                 try {
                                     myStoreSession
-                                            .executeStatement(new RecreateHelpTablesStatement(myStoreSession.executeQuery(new FindAlbumArtistMappingQuery())));
+                                            .executeStatement(new RecreateHelpTablesStatement());
                                     myStoreSession.commit();
                                 } catch (SQLException e) {
                                     if (LOG.isErrorEnabled()) {

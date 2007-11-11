@@ -199,7 +199,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 }
             }
             // ensure the help tables are created with all the data
-            storeSession.executeStatement(new RecreateHelpTablesStatement(storeSession.executeQuery(new FindAlbumArtistMappingQuery())));
+            storeSession.executeStatement(new RecreateHelpTablesStatement());
             storeSession.commit();
 
         }

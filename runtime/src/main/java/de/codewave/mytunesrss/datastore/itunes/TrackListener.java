@@ -55,7 +55,7 @@ public class TrackListener implements PListHandlerListener {
                 // recreate help tables every N tracks
                 try {
                     myDataStoreSession
-                            .executeStatement(new RecreateHelpTablesStatement(myDataStoreSession.executeQuery(new FindAlbumArtistMappingQuery())));
+                            .executeStatement(new RecreateHelpTablesStatement());
                     myDataStoreSession.commit();
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
