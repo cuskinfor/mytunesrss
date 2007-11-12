@@ -29,10 +29,10 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
             if (trackIds != null && trackIds.length > 0) {
                 query = FindTrackQuery.getForId(trackIds);
             } else {
-                query = TrackRetrieveUtils.getQuery(getRequest(), getAuthUser(), true);
+                query = TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true);
             }
             if (query != null) {
-                playlist.addAll(getDataStore().executeQuery(query).getResults());
+                playlist.addAll(getTransaction().executeQuery(query).getResults());
                 ((Playlist)getSession().getAttribute("playlist")).setTrackCount(playlist.size());
             } else {
                 addError(new BundleError("error.emptySelection"));

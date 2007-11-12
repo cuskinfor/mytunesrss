@@ -100,4 +100,8 @@
 
     <fragment name="likeEscape">ESCAPE '\\'</fragment>
 
+    <fragment name="updateArtistNameInAlbumTable">
+        UPDATE album AS a, track AS t SET a.artist = t.artist WHERE a.artist_count = 1 AND t.album = a.name
+    </fragment>
+
 </statements>

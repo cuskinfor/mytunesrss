@@ -22,7 +22,7 @@ public class ShowAlbumImageCommandHandler extends ShowImageCommandHandler {
             }
         } else {
             if (StringUtils.isNotEmpty(album)) {
-                image = getDataStore().executeQuery(new FindAlbumImageQuery(album, size));
+                image = getTransaction().executeQuery(new FindAlbumImageQuery(album, size));
             }
         }
         if (image == null) {

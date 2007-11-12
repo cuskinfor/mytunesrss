@@ -19,21 +19,26 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
 
     public void execute() throws IOException, SQLException {
         MyTunesRss.STORE.init();
-        MyTunesRss.STORE.executeQuery(new DataStoreQuery<Boolean>() {
-            public Boolean execute(Connection connection) throws SQLException {
-                try {
-                    ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "initialize").executeQuery();
-                    if (resultSet.next()) {
-                        myExistent = true;
-                        return Boolean.TRUE;
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
+        try {
+            session.executeQuery(new DataStoreQuery<Boolean>() {
+                public Boolean execute(Connection connection) throws SQLException {
+                    try {
+                        ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "initialize").executeQuery();
+                        if (resultSet.next()) {
+                            myExistent = true;
+                            return Boolean.TRUE;
+                        }
+                    } catch (SQLException e) {
+                        // intentionally left blank
                     }
-                } catch (SQLException e) {
-                    // intentionally left blank
+                    myExistent = false;
+                    return Boolean.FALSE;
                 }
-                myExistent = false;
-                return Boolean.FALSE;
-            }
-        });
+            });
+        } finally {
+            session.commit();
+        }
         if (!myExistent) {
             DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
             storeSession.executeStatement(new CreateAllTablesStatement());

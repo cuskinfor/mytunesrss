@@ -31,7 +31,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
             }
             getRequest().setAttribute("albumPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
             FindAlbumQuery findAlbumQuery = new FindAlbumQuery(getAuthUser(), getDisplayFilter().getTextFilter(), artist, genre, getIntegerRequestParameter("page", -1));
-            DataStoreQuery.QueryResult<Album> queryResult = getDataStore().executeQuery(findAlbumQuery);
+            DataStoreQuery.QueryResult<Album> queryResult = getTransaction().executeQuery(findAlbumQuery);
             int pageSize = getWebConfig().getEffectivePageSize();
             List<Album> albums;
             if (pageSize > 0 && queryResult.getResultSize() > pageSize) {

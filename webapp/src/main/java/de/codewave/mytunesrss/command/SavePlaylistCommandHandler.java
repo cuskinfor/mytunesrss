@@ -25,14 +25,11 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
             Collection<Track> playlistContent = (Collection<Track>)getSession().getAttribute("playlistContent");
             if (StringUtils.isNotEmpty(name)) {
                 playlist.setName(name);
-                DataStoreSession session = getDataStore().getTransaction();
-//                session.begin();
                 SavePlaylistStatement statement = new SaveMyTunesPlaylistStatement(getAuthUser().getName(), getBooleanRequestParameter("user_private", false));
                 statement.setId(playlist.getId());
                 statement.setName(name);
                 statement.setTrackIds(getTrackIds(playlistContent));
-                session.executeStatement(statement);
-                session.commit();
+                getTransaction().executeStatement(statement);
                 getSession().removeAttribute("playlist");
                 getSession().removeAttribute("playlistContent");
                 getStates().put("addToPlaylistMode", Boolean.FALSE);

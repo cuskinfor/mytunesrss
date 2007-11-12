@@ -28,8 +28,8 @@ public class CreatePlaylistBaseCommandHandler extends MyTunesRssCommandHandler {
         if (trackIds != null && trackIds.length > 0) {
             query = FindTrackQuery.getForId(trackIds);
         } else {
-            query = TrackRetrieveUtils.getQuery(getRequest(), getAuthUser(), true);
+            query = TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true);
         }
-        return getDataStore().executeQuery(query);
+        return getTransaction().executeQuery(query);
     }
 }

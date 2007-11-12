@@ -190,29 +190,32 @@ public class EditUser {
 
     private void fillPlaylistSelect() {
         DataStoreQuery.QueryResult<Playlist> playlists = null;
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true));
+            playlists = session.executeQuery(new FindPlaylistQuery(null, null, true));
+            myRestrictionPlaylistInput.removeAllItems();
+            myRestrictionPlaylistInput.addItem(new Playlist() {
+                @Override
+                public String toString() {
+                    return MyTunesRssUtils.getBundleString("editUser.noPlaylist");
+                }
+            });
+            int index = 1;
+            if (playlists != null) {
+                for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
+                    myRestrictionPlaylistInput.addItem(playlist);
+                    if (myUser != null && StringUtils.isNotEmpty(myUser.getPlaylistId()) && myUser.getPlaylistId().equals(playlist.getId())) {
+                        myRestrictionPlaylistInput.setSelectedIndex(index);
+                    }
+                    index++;
+                }
+            }
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not query playlists from database.", e);
             }
-        }
-        myRestrictionPlaylistInput.removeAllItems();
-        myRestrictionPlaylistInput.addItem(new Playlist() {
-            @Override
-            public String toString() {
-                return MyTunesRssUtils.getBundleString("editUser.noPlaylist");
-            }
-        });
-        int index = 1;
-        if (playlists != null) {
-            for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
-                myRestrictionPlaylistInput.addItem(playlist);
-                if (myUser != null && StringUtils.isNotEmpty(myUser.getPlaylistId()) && myUser.getPlaylistId().equals(playlist.getId())) {
-                    myRestrictionPlaylistInput.setSelectedIndex(index);
-                }
-                index++;
-            }
+        } finally {
+            session.commit();
         }
     }
 

@@ -34,7 +34,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
         } else {
             String trackId = getRequest().getParameter("track");
-            DataStoreQuery.QueryResult<Track> tracks = getDataStore().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
+            DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
             if (tracks.getResultSize() > 0) {
                 track = tracks.nextResult();
                 if (!getAuthUser().isQuotaExceeded()) {
@@ -55,9 +55,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         } else {
                             streamSender = new FileSender(file, contentType, (int)file.length());
                         }
-                        DataStoreSession session = getDataStore().getTransaction();
-                        session.executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
-                        session.commit();
+                        getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
                         streamSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
                     }
                 } else {

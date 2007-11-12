@@ -223,8 +223,9 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
 
     public String[] getPlaylists() {
         String[] names = null;
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            DataStoreQuery.QueryResult<Playlist> playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true));
+            DataStoreQuery.QueryResult<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(null, null, true));
             names = new String[playlists.getResultSize()];
             int i = 0;
             for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
@@ -234,6 +235,8 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not query playlists.", e);
             }
+        } finally {
+            session.commit();
         }
         return names;
     }
@@ -242,38 +245,43 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         String playlistId = MyTunesRss.CONFIG.getUser(myUsername).getPlaylistId();
         if (StringUtils.isNotEmpty(playlistId)) {
             DataStoreQuery.QueryResult<Playlist> playlists = null;
+            DataStoreSession session = MyTunesRss.STORE.getTransaction();
             try {
-                playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, playlistId, true));
+                playlists = session.executeQuery(new FindPlaylistQuery(null, playlistId, true));
+                return playlists.getResultSize() != 0 ? playlists.nextResult().getName() : MyTunesRssUtils.getBundleString("editUser.noPlaylist");
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not query playlists.", e);
                 }
+            } finally {
+                session.commit();
             }
-            return playlists.getResultSize() != 0 ? playlists.nextResult().getName() : MyTunesRssUtils.getBundleString(
-                    "editUser.noPlaylist");
         }
         return MyTunesRssUtils.getBundleString("editUser.noPlaylist");
     }
 
     public void setRestrictionPlaylist(String playlistName) {
         DataStoreQuery.QueryResult<Playlist> playlists = null;
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true));
+            playlists = session.executeQuery(new FindPlaylistQuery(null, null, true));
+            if (playlists.getResultSize() > 0) {
+                User user = MyTunesRss.CONFIG.getUser(myUsername);
+                user.setPlaylistId(null);
+                for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
+                    if (playlist.getName().toLowerCase().contains(playlistName.toLowerCase())) {
+                        user.setPlaylistId(playlist.getId());
+                    }
+                }
+            }
+            onChange();
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not query playlists.", e);
             }
+        } finally {
+            session.commit();
         }
-        if (playlists.getResultSize() > 0) {
-            User user = MyTunesRss.CONFIG.getUser(myUsername);
-            user.setPlaylistId(null);
-            for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
-                if (playlist.getName().toLowerCase().contains(playlistName.toLowerCase())) {
-                    user.setPlaylistId(playlist.getId());
-                }
-            }
-        }
-        onChange();
     }
 
     public boolean isSaveWebSettings() {

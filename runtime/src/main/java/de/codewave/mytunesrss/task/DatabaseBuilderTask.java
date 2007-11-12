@@ -54,7 +54,13 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     }
                     return true;
                 } else if (baseDir.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(baseDir.getName()))) {
-                    SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
+                    DataStoreSession session = MyTunesRss.STORE.getTransaction();
+                    SystemInformation systemInformation;
+                    try {
+                        systemInformation = session.executeQuery(new GetSystemInformationQuery());
+                    } finally {
+                        session.commit();
+                    }
                     if (MyTunesRss.CONFIG.isIgnoreTimestamps() || baseDir.lastModified() > systemInformation.getLastUpdate()) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Database update needed.");
@@ -159,16 +165,10 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     public static void doCheckpoint(DataStoreSession storeSession) {
         long time = System.currentTimeMillis();
         if (time - TX_BEGIN > MAX_TX_DURATION) {
-            try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Committing transaction after " + (time - TX_BEGIN) + " milliseconds.");
-                }
-                storeSession.commit();
-            } catch (SQLException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not commit transaction.", e);
-                }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Committing transaction after " + (time - TX_BEGIN) + " milliseconds.");
             }
+            storeSession.commit();
             TX_BEGIN = System.currentTimeMillis();
         }
     }

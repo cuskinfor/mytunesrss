@@ -42,8 +42,9 @@ public class Content implements MyTunesRssEventListener {
 
     private void refreshPlaylistList() {
         myPlaylistsPanel.removeAll();
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            List<Playlist> playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true)).getResults();
+            List<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(null, null, true)).getResults();
             Collections.sort(playlists, new Comparator<Playlist>() {
                 public int compare(Playlist o1, Playlist o2) {
                     return o1.getName().compareTo(o2.getName());
@@ -69,6 +70,8 @@ public class Content implements MyTunesRssEventListener {
             if (LOG.isErrorEnabled()) {
                 LOG.error(null, e);
             }
+        } finally {
+            session.commit();
         }
         myPlaylistsPanel.validate();
     }

@@ -40,12 +40,12 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                     return; // early return
                 }
             } else {
-                query = TrackRetrieveUtils.getQuery(getRequest(), getAuthUser(), false);
+                query = TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), false);
             }
             getRequest().setAttribute("sortOrder", sortOrderName);
             List<EnhancedTrack> tracks = null;
             if (query != null) {
-                DataStoreQuery.QueryResult<Track> result = getDataStore().executeQuery(query);
+                DataStoreQuery.QueryResult<Track> result = getTransaction().executeQuery(query);
                 int pageSize = getWebConfig().getEffectivePageSize();
                 EnhancedTracks enhancedTracks;
                 if (pageSize > 0 && result.getResultSize() > pageSize) {

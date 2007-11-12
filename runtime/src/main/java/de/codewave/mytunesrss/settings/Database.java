@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.swing.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.logging.*;
 
 import javax.swing.*;
@@ -80,8 +81,9 @@ public class Database implements MyTunesRssEventListener {
     }
 
     public void refreshLastUpdate() {
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            final SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
+            final SystemInformation systemInformation = session.executeQuery(new GetSystemInformationQuery());
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     if (systemInformation.getLastUpdate() > 0) {
@@ -100,6 +102,8 @@ public class Database implements MyTunesRssEventListener {
                 LOG.error("Could not get last update time from database.", e);
             }
 
+        } finally {
+            session.commit();
         }
     }
 

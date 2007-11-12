@@ -13,8 +13,10 @@ import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.servlet.*;
 import de.codewave.utils.swing.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.apache.log4j.helpers.*;
 
 import javax.servlet.*;
 import javax.servlet.jsp.jstl.core.*;
@@ -29,6 +31,7 @@ import java.util.*;
 public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private static final Log LOG = LogFactory.getLog(MyTunesRssCommandHandler.class);
     private static boolean SCHEDULE_DATABASE_UPDATE;
+    private static final ThreadLocal<DataStoreSession> TRANSACTIONS = new ThreadLocal<DataStoreSession>();
 
     protected MyTunesRssConfig getMyTunesRssConfig() {
         return (MyTunesRssConfig)getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
@@ -115,8 +118,8 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         MyTunesRssWebUtils.addError(getRequest(), message, "messages");
     }
 
-    protected MyTunesRssDataStore getDataStore() {
-        return (MyTunesRssDataStore)getContext().getAttribute(MyTunesRssDataStore.class.getName());
+    protected DataStoreSession getTransaction() {
+        return TRANSACTIONS.get();
     }
 
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
@@ -265,6 +268,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         if (SCHEDULE_DATABASE_UPDATE) {
             runDatabaseUpdate();
         }
+        TRANSACTIONS.set(getDataStore().getTransaction());
         try {
             if (!isSessionAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
                                                                                          getWebConfig().getPasswordHash())) {
@@ -282,7 +286,14 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             }
             getSession().removeAttribute("errors");
             redirect(ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss" + "/" + MyTunesRssCommand.ShowFatalError.getName());
+        } finally {
+            TRANSACTIONS.get().commit();
+            TRANSACTIONS.remove();
         }
+    }
+
+    protected MyTunesRssDataStore getDataStore() {
+        return ((MyTunesRssDataStore)getContext().getAttribute(MyTunesRssDataStore.class.getName()));
     }
 
     private void handleDisplayFilter() {

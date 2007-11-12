@@ -35,7 +35,7 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
                                                                   album,
                                                                   genre,
                                                                   getIntegerRequestParameter("page", -1));
-            DataStoreQuery.QueryResult<Artist> queryResult = getDataStore().executeQuery(findArtistQuery);
+            DataStoreQuery.QueryResult<Artist> queryResult = getTransaction().executeQuery(findArtistQuery);
             int pageSize = getWebConfig().getEffectivePageSize();
             List<Artist> artists;
             if (pageSize > 0 && queryResult.getResultSize() > pageSize) {

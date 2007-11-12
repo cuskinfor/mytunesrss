@@ -30,10 +30,10 @@ public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean
 
     private String changePlaylistAttribute(String playlistId, boolean hidden) {
         try {
-            DataStoreQuery.QueryResult<Playlist> queryResult = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, playlistId, true));
+            DataStoreSession session = MyTunesRss.STORE.getTransaction();
+            DataStoreQuery.QueryResult<Playlist> queryResult = session.executeQuery(new FindPlaylistQuery(null, playlistId, true));
             if (queryResult.getResultSize() == 1) {
                 Playlist playlist = queryResult.nextResult();
-                DataStoreSession session = MyTunesRss.STORE.getTransaction();
                 SavePlaylistAttributesStatement statement = new SavePlaylistAttributesStatement();
                 statement.setId(playlist.getId());
                 statement.setHidden(hidden);
@@ -56,6 +56,8 @@ public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean
                         }
                     }
                 }
+            } else {
+                session.commit();
             }
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
@@ -74,8 +76,9 @@ public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean
     }
 
     public String[] getPlaylists() {
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            DataStoreQuery.QueryResult<Playlist> playlists = MyTunesRss.STORE.executeQuery(new FindPlaylistQuery(null, null, true));
+            DataStoreQuery.QueryResult<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(null, null, true));
             List<String> displayItems = new ArrayList<String>();
             for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
                 if (playlist.getType() == PlaylistType.ITunes || playlist.getType() == PlaylistType.M3uFile) {
@@ -87,6 +90,8 @@ public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not read playlists.", e);
             }
+        } finally {
+            session.commit();
         }
         return new String[] {"Could not retrieve playlists!"};
     }

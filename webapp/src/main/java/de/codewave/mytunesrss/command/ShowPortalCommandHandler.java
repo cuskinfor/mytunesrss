@@ -45,7 +45,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                 }
                 int randomPlaylistSize = getWebConfig().getRandomPlaylistSize();
                 if (randomPlaylistSize > 0) {
-                    DataStoreQuery.QueryResult<Playlist> randomPlaylistSources = getDataStore().executeQuery(new FindPlaylistQuery(getAuthUser(), null,
+                    DataStoreQuery.QueryResult<Playlist> randomPlaylistSources = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null,
                                                                                                                    getWebConfig().getRandomSource(), false, false));
                     if (randomPlaylistSources.getResultSize() != 1 || randomPlaylistSources.nextResult().getTrackCount() > randomPlaylistSize) {
                         if (randomPlaylistSources.getResultSize() == 1) {
@@ -67,7 +67,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
             }
-            DataStoreQuery.QueryResult<Playlist> queryResult = getDataStore().executeQuery(new FindPlaylistQuery(getAuthUser(),
+            DataStoreQuery.QueryResult<Playlist> queryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
                                                                                                                  null,
                                                                                                                  null,
                                                                                                                  false,
@@ -85,7 +85,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
             }
             getRequest().setAttribute("playlists", playlists);
             getRequest().setAttribute("uploadLink", getAuthUser().isUpload() && StringUtils.isNotEmpty(MyTunesRss.CONFIG.getUploadDir()));
-            getRequest().setAttribute("statistics", getDataStore().executeQuery(new GetSystemInformationQuery()));
+            getRequest().setAttribute("statistics", getTransaction().executeQuery(new GetSystemInformationQuery()));
             forward(MyTunesRssResource.Portal);
         } else {
             forward(MyTunesRssResource.Login);

@@ -478,8 +478,9 @@
             INSERT INTO album (name, first_char, track_count, artist_count)
             SELECT DISTINCT(album), LOWER(SUBSTRING(album FROM 1 FOR 1)), COUNT(id), COUNT(DISTINCT(artist)) FROM track GROUP BY album
         </sql>
-        <sql>UPDATE album AS a SET artist = t.artist FROM track t WHERE a.artist_count = 1 AND t.album = a.name</sql>
+        <sql>{updateArtistNameInAlbumTable}</sql>
     </statement>
+
     <statement name="recreateHelpTablesArtist">
         <sql>DELETE FROM artist</sql>
         <sql>
@@ -487,6 +488,7 @@
             SELECT DISTINCT(artist), LOWER(SUBSTRING(artist FROM 1 FOR 1)), COUNT(id), COUNT(DISTINCT(album)) FROM track GROUP BY artist
         </sql>
     </statement>
+
     <statement name="recreateHelpTablesGenre">
         <sql>DELETE FROM genre</sql>
         <sql>
@@ -588,6 +590,10 @@
         AND (:size_of_search < 10 OR (LOWER(t.name) LIKE :search[9] {likeEscape}) OR (LOWER(album) LIKE :search[9] {likeEscape}) OR (LOWER(artist) LIKE :search[9] {likeEscape}))
         GROUP BY {groupByTrackColumns}
         ]]>
+    </fragment>
+
+    <fragment name="updateArtistNameInAlbumTable">
+        UPDATE album AS a SET artist = t.artist FROM track t WHERE a.artist_count = 1 AND t.album = a.name
     </fragment>
 
 </statements>

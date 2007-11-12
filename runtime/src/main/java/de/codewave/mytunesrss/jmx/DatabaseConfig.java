@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.jmx;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
+import de.codewave.utils.sql.*;
 
 import javax.management.*;
 import java.sql.*;
@@ -65,8 +66,9 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
         if (DatabaseBuilderTask.isRunning()) {
             return MyTunesRssUtils.getBundleString("jmx.databaseUpdateRunning");
         }
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
+            SystemInformation systemInformation = session.executeQuery(new GetSystemInformationQuery());
             if (systemInformation.getLastUpdate() > 0) {
                 Date date = new Date(systemInformation.getLastUpdate());
                 return MyTunesRssUtils.getBundleString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRssUtils.getBundleString(
@@ -76,6 +78,8 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
             }
         } catch (SQLException e) {
             return e.getMessage();
+        } finally {
+            session.commit();
         }
     }
 
