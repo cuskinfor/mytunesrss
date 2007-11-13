@@ -133,6 +133,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
     private void runImageUpdate(SystemInformation systemInformation, DataStoreSession storeSession) throws SQLException {
         myState = State.UpdatingTrackImages;
+        long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
         MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
         event.setMessageKey("settings.databaseUpdateRunningImages");
         MyTunesRssEventManager.getInstance().fireEvent(event);
@@ -153,7 +154,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 }
             });
             for (Track track = result.nextResult(); track != null; track = result.nextResult()) {
-                if (track.getFile().lastModified() >= systemInformation.getLastUpdate()) {
+                if (track.getFile().lastModified() >= timeLastUpdate) {
                     storeSession.executeStatement(new HandleTrackImagesStatement(track.getFile(), track.getId()));
                 }
                 doCheckpoint(storeSession);
