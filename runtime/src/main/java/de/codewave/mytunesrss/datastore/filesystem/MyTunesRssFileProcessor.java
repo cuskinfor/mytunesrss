@@ -3,7 +3,6 @@ package de.codewave.mytunesrss.datastore.filesystem;
 import de.codewave.camel.mp3.*;
 import de.codewave.camel.mp4.*;
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.meta.*;
 import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
@@ -33,7 +32,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private File myBaseDir;
     private long myLastUpdateTime;
     private DataStoreSession myStoreSession;
-    private Set<String> myDatabaseIds;
     private int myUpdatedCount;
     private Set<String> myExistingIds = new HashSet<String>();
     private Set<String> myFoundIds = new HashSet<String>();
@@ -42,7 +40,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         myBaseDir = baseDir;
         myStoreSession = storeSession;
         myLastUpdateTime = lastUpdateTime;
-        myDatabaseIds = (Set<String>)storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.FileSystem.name()));
     }
 
     public Set<String> getExistingIds() {
@@ -59,9 +56,17 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             if (file.isFile() && FileSupportUtils.isSupported(file.getName())) {
                 String fileId = "file_" + IOUtils.getFilenameHash(file);
                 if (!myFoundIds.contains(fileId)) {
-                    if ((file.lastModified() >= myLastUpdateTime || !myDatabaseIds.contains(fileId))) {
+                    boolean existing = false;
+                    try {
+                        existing = myStoreSession.executeQuery(FindTrackQuery.getForId(new String[] {fileId})).getResultSize() == 1;
+                    } catch (SQLException e) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Could not check if track already exists.", e);
+                        }
+                    }
+                    if ((file.lastModified() >= myLastUpdateTime || !existing)) {
                         InsertOrUpdateTrackStatement statement =
-                                myDatabaseIds.contains(fileId) ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
+                                existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
                         statement.clear();
                         statement.setId(fileId);
                         if (FileSupportUtils.isMp3(file)) {
@@ -96,8 +101,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                 LOG.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
                             }
                         }
-                    } else if (myDatabaseIds.contains(fileId)) {
+                    } else if (existing) {
                         myExistingIds.add(fileId);
+                        DatabaseBuilderTask.setLastSeenTime(myStoreSession, fileId);
                     }
                 }
             }

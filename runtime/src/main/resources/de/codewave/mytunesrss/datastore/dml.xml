@@ -339,7 +339,7 @@
 
     <statement name="findAllTracksForImageUpdate">
         <sql>
-            SELECT id AS id, file AS file FROM track
+            SELECT id AS id, file AS file FROM track WHERE last_image_update &lt; :timeUpdateStart
         </sql>
     </statement>
 
@@ -419,6 +419,24 @@
         </sql>
     </statement>
 
+    <statement name="updateLastImageUpdateTime">
+        <sql>
+            UPDATE track SET last_image_update = :updateTime WHERE id = :track_id
+        </sql>
+    </statement>
+
+    <statement name="removeObsoleteTracks">
+        <sql>
+            DELETE FROM track WHERE last_seen &lt; :updateStartTime
+        </sql>
+    </statement>
+
+    <statement name="setLastSeenTime">
+        <sql>
+            UPDATE track SET last_seen = :currentTime WHERE id = :track_id
+        </sql>
+    </statement>
+
     <statement name="deleteImage">
         <sql>
             DELETE FROM image WHERE track_id = :track_id
@@ -437,8 +455,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="video" type="java.lang.Boolean"/>
         <sql>
-            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount)
-            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0)
+            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount, last_seen)
+            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, :ts_updated)
         </sql>
     </statement>
 
@@ -450,7 +468,7 @@
         <sql>
             UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, video = :video, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
-                             ts_updated = :ts_updated
+                             ts_updated = :ts_updated, last_seen = :ts_updated
             WHERE id = :id
         </sql>
     </statement>

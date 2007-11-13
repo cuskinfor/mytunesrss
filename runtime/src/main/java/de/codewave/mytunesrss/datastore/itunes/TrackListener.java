@@ -23,19 +23,12 @@ public class TrackListener implements PListHandlerListener {
     private DataStoreSession myDataStoreSession;
     private LibraryListener myLibraryListener;
     private int myUpdatedCount;
-    private Set<String> myExistingIds = new HashSet<String>();
-    private Set<String> myDatabaseIds = new HashSet<String>();
     private Map<Long, String> myTrackIdToPersId;
 
     public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId) throws SQLException {
         myDataStoreSession = dataStoreSession;
         myLibraryListener = libraryListener;
-        myDatabaseIds = (Set<String>)dataStoreSession.executeQuery(new FindTrackIdsQuery(TrackSource.ITunes.name()));
         myTrackIdToPersId = trackIdToPersId;
-    }
-
-    public Set<String> getExistingIds() {
-        return myExistingIds;
     }
 
     public int getUpdatedCount() {
@@ -46,11 +39,9 @@ public class TrackListener implements PListHandlerListener {
         Map track = (Map)value;
         String trackId = myLibraryListener.getLibraryId() + "_";
         trackId += track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
-        myExistingIds.add(trackId);
         myTrackIdToPersId.put((Long)track.get("Track ID"), trackId);
         if (processTrack(track)) {
             myUpdatedCount++;
-            DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
             if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
                 // recreate help tables every N tracks
                 try {
@@ -64,6 +55,7 @@ public class TrackListener implements PListHandlerListener {
                 }
             }
         }
+        DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
         return false;
     }
 
@@ -84,11 +76,19 @@ public class TrackListener implements PListHandlerListener {
                 long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
                 Date dateAdded = ((Date)track.get("Date Added"));
                 long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
-                if (!myDatabaseIds.contains(trackId) || dateModifiedTime >= myLibraryListener.getTimeLastUpate() ||
+                boolean existing = false;
+                try {
+                    existing = myDataStoreSession.executeQuery(FindTrackQuery.getForId(new String[] {trackId})).getResultSize() == 1;
+                } catch (SQLException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not check if track already exists.", e);
+                    }
+                }
+                if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() ||
                         dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
                     try {
                         InsertOrUpdateTrackStatement statement =
-                                myDatabaseIds.contains(trackId) ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);
+                                existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);
                         statement.clear();
                         statement.setId(trackId);
                         statement.setName(name.trim());
@@ -119,11 +119,12 @@ public class TrackListener implements PListHandlerListener {
                             LOG.error("Could not insert track \"" + name + "\" into database", e);
                         }
                     }
+                } else {
+                    DatabaseBuilderTask.setLastSeenTime(myDataStoreSession, trackId);
                 }
                 return false;
             }
         }
-        myExistingIds.remove(trackId);
         myTrackIdToPersId.remove(track.get("Track ID"));
         return false;
     }

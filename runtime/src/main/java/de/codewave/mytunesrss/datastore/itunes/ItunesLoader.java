@@ -30,7 +30,7 @@ public class ItunesLoader {
         return null;
     }
 
-    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> existingTrackIds, Collection<String> existsingPlaylistIds)
+    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> existsingPlaylistIds)
             throws SQLException {
         TrackListener trackListener = null;
         PlaylistListener playlistListener = null;
@@ -56,14 +56,7 @@ public class ItunesLoader {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks.");
             }
-            existingTrackIds.removeAll(trackListener.getExistingIds());
             existsingPlaylistIds.removeAll(playlistListener.getExistingIds());
-        }
-        if (trackListener != null && LOG.isDebugEnabled()) {
-            LOG.info(trackListener.getExistingIds().size() + " iTunes tracks in the database.");
-        }
-        if (playlistListener != null && LOG.isDebugEnabled()) {
-            LOG.info(playlistListener.getExistingIds().size() + " iTunes playlists in the database.");
         }
     }
 }

@@ -17,7 +17,7 @@ import java.util.*;
 public class FileSystemLoader {
     private static final Log LOG = LogFactory.getLog(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds, Collection<String> playlistIds) throws IOException, SQLException {
+    public static void loadFromFileSystem(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> playlistIds) throws IOException, SQLException {
         int trackCount = 0;
         MyTunesRssFileProcessor fileProcessor = null;
                 if (baseDir != null && baseDir.isDirectory()) {
@@ -39,7 +39,6 @@ public class FileSystemLoader {
                     if (LOG.isInfoEnabled()) {
                         LOG.info("Inserted/updated " + fileProcessor.getUpdatedCount() + " file system tracks.");
                     }
-                    trackIds.removeAll(fileProcessor.getExistingIds());
                     playlistIds.removeAll(playlistFileProcessor.getExistingIds());
                     trackCount += fileProcessor.getExistingIds().size();
         }

@@ -21,6 +21,8 @@
                 ts_played NUMERIC(19),
                 ts_updated NUMERIC(19),
                 playcount NUMERIC(19),
+                last_image_update NUMERIC(19),
+                last_seen NUMERIC(19),
                 UNIQUE (id)
             )
         </sql>

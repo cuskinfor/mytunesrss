@@ -52,6 +52,8 @@
         <sql>ALTER TABLE system_information ADD COLUMN album_count INTEGER</sql>
         <sql>ALTER TABLE system_information ADD COLUMN artist_count INTEGER</sql>
         <sql>ALTER TABLE system_information ADD COLUMN genre_count INTEGER</sql>
+        <sql>ALTER TABLE track ADD COLUMN last_image_update NUMERIC(19)</sql>
+        <sql>ALTER TABLE track ADD COLUMN last_seen NUMERIC(19)</sql>
     </statement>
 
 </statements>

@@ -22,6 +22,23 @@ import java.util.concurrent.locks.*;
  * de.codewave.mytunesrss.task.DatabaseBuilderTaskk
  */
 public class DatabaseBuilderTask extends MyTunesRssTask {
+    public static void setLastSeenTime(DataStoreSession dataStoreSession, final String trackId) {
+        try {
+            dataStoreSession.executeStatement(new DataStoreStatement() {
+                public void execute(Connection connection) throws SQLException {
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "setLastSeenTime");
+                    statement.setString("track_id", trackId);
+                    statement.setLong("currentTime", System.currentTimeMillis());
+                    statement.execute();
+                }
+            });
+        } catch (SQLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not set last-seen time for track '" + trackId + "'.", e);
+            }
+        }
+    }
+
     public enum State {
         UpdatingTracksFromItunes(), UpdatingTracksFromFolder(), UpdatingTrackImages(), Idle();
     }
@@ -113,7 +130,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             SystemInformation systemInformation = storeSession.executeQuery(new GetSystemInformationQuery());
             runUpdate(systemInformation, storeSession);
             storeSession.commit();
-            runImageUpdate(systemInformation, storeSession);
+            runImageUpdate(systemInformation, storeSession, timeUpdateStart);
             storeSession.executeStatement(new UpdateStatisticsStatement());
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
@@ -131,7 +148,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         }
     }
 
-    private void runImageUpdate(SystemInformation systemInformation, DataStoreSession storeSession) throws SQLException {
+    private void runImageUpdate(SystemInformation systemInformation, DataStoreSession storeSession, final long timeUpdateStart) throws SQLException {
         myState = State.UpdatingTrackImages;
         long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
         MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
@@ -143,6 +160,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             DataStoreQuery.QueryResult<Track> result = trackQuerySession.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Track>>() {
                 public QueryResult<Track> execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAllTracksForImageUpdate");
+                    statement.setLong("timeUpdateStart", timeUpdateStart);
                     return execute(statement, new ResultBuilder<Track>() {
                         public Track create(ResultSet resultSet) throws SQLException {
                             Track track = new Track();
@@ -166,6 +184,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
     public static void doCheckpoint(DataStoreSession storeSession) {
         long time = System.currentTimeMillis();
+        if (TX_BEGIN == 0) {
+            TX_BEGIN = time;
+        }
         if (time - TX_BEGIN > MAX_TX_DURATION) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Committing transaction after " + (time - TX_BEGIN) + " milliseconds.");
@@ -177,28 +198,23 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
     private void runUpdate(SystemInformation systemInformation, DataStoreSession storeSession) throws SQLException, IOException {
         long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
-        Collection<String> trackIds = storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.ITunes.name()));
         Collection<String> itunesPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunes.name()));
         Collection<String> m3uPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.M3uFile.name()));
-        trackIds.addAll(storeSession.executeQuery(new FindTrackIdsQuery(TrackSource.FileSystem.name())));
         if (myDatasources != null) {
             for (File datasource : myDatasources) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Parsing \"" + datasource.getAbsolutePath() + "\".");
-                }
                 doCheckpoint(storeSession);
                 if (datasource.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(datasource.getName()))) {
                     myState = State.UpdatingTracksFromItunes;
                     MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
                     event.setMessageKey("settings.databaseUpdateRunningItunes");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
-                    ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, trackIds, itunesPlaylistIds);
+                    ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, itunesPlaylistIds);
                 } else if (datasource.isDirectory()) {
                     myState = State.UpdatingTracksFromFolder;
                     MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
                     event.setMessageKey("settings.databaseUpdateRunningFolder");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
-                    FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, trackIds, m3uPlaylistIds);
+                    FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, m3uPlaylistIds);
                 }
             }
             // ensure the help tables are created with all the data
@@ -206,9 +222,11 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             storeSession.commit();
 
         }
-        if (!trackIds.isEmpty()) {
-            removeObsoleteTracks(storeSession, trackIds);
-        }
+        storeSession.executeStatement(new DataStoreStatement() {
+            public void execute(Connection connection) throws SQLException {
+                MyTunesRssUtils.createStatement(connection, "removeObsoleteTracks").execute();
+            }
+        });
         if (!itunesPlaylistIds.isEmpty()) {
             removeObsoletePlaylists(storeSession, itunesPlaylistIds);
         }

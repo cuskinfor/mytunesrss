@@ -31,7 +31,7 @@ public class FileSuffixInfo {
             }
         } catch (IOException e) {
             if (LOG.isWarnEnabled()) {
-                LOG.warn("Could not load user file suffix properties.", e);
+                LOG.warn("Could not load user file suffix properties: " + e.getMessage());
             }
         }
     }

@@ -21,15 +21,10 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
 
     private File myFile;
     private String myTrackId;
-    private boolean myUpdated;
 
     public HandleTrackImagesStatement(File file, String trackId) {
         myFile = file;
         myTrackId = trackId;
-    }
-
-    public boolean isUpdated() {
-        return myUpdated;
     }
 
     public void execute(Connection connection) throws SQLException {
@@ -50,16 +45,16 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     new InsertImageStatement(myTrackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
                     new InsertImageStatement(myTrackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
                     new InsertImageStatement(myTrackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
-                    myUpdated = true;
+                    new LastImageUpdateTimeStatement(myTrackId).execute(connection);
                 } else if (image != null && existing) {
                     new UpdateImageStatement(myTrackId, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
                     new UpdateImageStatement(myTrackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
                     new UpdateImageStatement(myTrackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
                     new UpdateImageStatement(myTrackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
-                    myUpdated = true;
+                    new LastImageUpdateTimeStatement(myTrackId).execute(connection);
                 } else if (image == null && existing) {
                     new DeleteImageStatement(myTrackId).execute(connection);
-                    myUpdated = true;
+                    new LastImageUpdateTimeStatement(myTrackId).execute(connection);
                 }
             } catch (Exception e) {
                 if (LOG.isWarnEnabled()) {
