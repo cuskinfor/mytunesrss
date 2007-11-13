@@ -118,6 +118,14 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         MyTunesRssWebUtils.addError(getRequest(), message, "messages");
     }
 
+    public static void setTransaction(DataStoreSession session) {
+        TRANSACTIONS.set(session);
+    }
+
+    public static void removeTransaction() {
+        TRANSACTIONS.remove();
+    }
+
     protected DataStoreSession getTransaction() {
         return TRANSACTIONS.get();
     }
@@ -268,7 +276,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         if (SCHEDULE_DATABASE_UPDATE) {
             runDatabaseUpdate();
         }
-        TRANSACTIONS.set(getDataStore().getTransaction());
         try {
             if (!isSessionAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
                                                                                          getWebConfig().getPasswordHash())) {
@@ -286,9 +293,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             }
             getSession().removeAttribute("errors");
             redirect(ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss" + "/" + MyTunesRssCommand.ShowFatalError.getName());
-        } finally {
-            TRANSACTIONS.get().commit();
-            TRANSACTIONS.remove();
         }
     }
 

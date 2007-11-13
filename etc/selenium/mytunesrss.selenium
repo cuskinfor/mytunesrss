@@ -16,7 +16,7 @@
 <tr>
 	<td>type</td>
 	<td>searchTerm</td>
-	<td>the</td>
+	<td>love</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -75,7 +75,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>link=6</td>
+	<td>link=9</td>
 	<td></td>
 </tr>
 <tr>
@@ -120,7 +120,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>link=12643</td>
+	<td>link=158</td>
 	<td></td>
 </tr>
 <tr>
@@ -195,7 +195,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>link=58</td>
+	<td>link=5286</td>
 	<td></td>
 </tr>
 <tr>
