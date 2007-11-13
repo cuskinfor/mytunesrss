@@ -579,7 +579,7 @@
         AND (:size_of_artist = 0 OR t.artist IN (:artist[]))
         AND (:size_of_album = 0 OR t.album IN (:album[]))
         AND (:size_of_search < 1 OR (LOWER(t.name) LIKE :search[0] {likeEscape}) OR (LOWER(album) LIKE :search[0] {likeEscape}) OR (LOWER(artist) LIKE :search[0] {likeEscape}))
-        AND (:size_of_search < 2 OR (LOWER(t.name) LIKE :search[1] {likeEscape}) OR (LOWER(album) LIKE :search[1] {likeEscape}) OR (LOWER(artist) LIKE :search[1] {likeEscape}))
+        AND (:size_of_search < 2 OR (LOWERUPDATE album AS a SET artist = t.artist FROM track t WHERE a.artist_count = 1 AND t.album = a.name(t.name) LIKE :search[1] {likeEscape}) OR (LOWER(album) LIKE :search[1] {likeEscape}) OR (LOWER(artist) LIKE :search[1] {likeEscape}))
         AND (:size_of_search < 3 OR (LOWER(t.name) LIKE :search[2] {likeEscape}) OR (LOWER(album) LIKE :search[2] {likeEscape}) OR (LOWER(artist) LIKE :search[2] {likeEscape}))
         AND (:size_of_search < 4 OR (LOWER(t.name) LIKE :search[3] {likeEscape}) OR (LOWER(album) LIKE :search[3] {likeEscape}) OR (LOWER(artist) LIKE :search[3] {likeEscape}))
         AND (:size_of_search < 5 OR (LOWER(t.name) LIKE :search[4] {likeEscape}) OR (LOWER(album) LIKE :search[4] {likeEscape}) OR (LOWER(artist) LIKE :search[4] {likeEscape}))
@@ -590,10 +590,6 @@
         AND (:size_of_search < 10 OR (LOWER(t.name) LIKE :search[9] {likeEscape}) OR (LOWER(album) LIKE :search[9] {likeEscape}) OR (LOWER(artist) LIKE :search[9] {likeEscape}))
         GROUP BY {groupByTrackColumns}
         ]]>
-    </fragment>
-
-    <fragment name="updateArtistNameInAlbumTable">
-        UPDATE album AS a SET artist = t.artist FROM track t WHERE a.artist_count = 1 AND t.album = a.name
     </fragment>
 
 </statements>

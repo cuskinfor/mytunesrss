@@ -123,6 +123,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             storeSession.commit();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating database checkpoint.");
+                LOG.debug("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
             }
         } catch (Exception e) {
             storeSession.rollback();

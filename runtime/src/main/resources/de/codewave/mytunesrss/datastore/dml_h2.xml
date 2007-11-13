@@ -104,4 +104,8 @@
 
     <fragment name="likeEscape">ESCAPE '\'</fragment>
 
+    <fragment name="updateArtistNameInAlbumTable">
+        UPDATE album AS a SET a.artist = (SELECT LIMIT 0 1 t.artist FROM track AS t WHERE t.album = a.name) WHERE a.artist_count = 1
+    </fragment>
+
 </statements>

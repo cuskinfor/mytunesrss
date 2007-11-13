@@ -113,6 +113,13 @@ public class MyTunesRss {
             LOG.info("Application version: " + VERSION);
             LOG.info("Cache data path: " + PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER));
             LOG.info("Preferences data path: " + PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("--------------------------------------------------------------------------------");
+                for (Map.Entry<Object,Object> entry : System.getProperties().entrySet()) {
+                    LOG.debug(entry.getKey() + "=" + entry.getValue());
+                }
+                LOG.debug("--------------------------------------------------------------------------------");
+            }
         }
         if (!HEADLESS) {
             Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(ROOT_FRAME, false));

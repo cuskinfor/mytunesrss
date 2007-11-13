@@ -99,4 +99,9 @@
 
     <!-- reusable sql fragments -->
     <fragment name="likeEscape">ESCAPE '\\'</fragment>
+
+    <fragment name="updateArtistNameInAlbumTable">
+        UPDATE album AS a SET artist = t.artist FROM track t WHERE a.artist_count = 1 AND t.album = a.name
+    </fragment>
+
 </statements>
