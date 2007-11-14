@@ -24,6 +24,7 @@ public class TrackListener implements PListHandlerListener {
     private LibraryListener myLibraryListener;
     private int myUpdatedCount;
     private Map<Long, String> myTrackIdToPersId;
+    private Collection<String> myLastSeenIds = new HashSet<String>();
 
     public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId) throws SQLException {
         myDataStoreSession = dataStoreSession;
@@ -120,13 +121,23 @@ public class TrackListener implements PListHandlerListener {
                         }
                     }
                 } else {
-                    DatabaseBuilderTask.setLastSeenTime(myDataStoreSession, trackId);
+                    myLastSeenIds.add(trackId);
+                    if (myLastSeenIds.size() > 100) {
+                        commitLastSeen();
+                    }
                 }
                 return false;
             }
         }
         myTrackIdToPersId.remove(track.get("Track ID"));
         return false;
+    }
+
+    public void commitLastSeen() {
+        if (!myLastSeenIds.isEmpty()) {
+            DatabaseBuilderTask.setLastSeenTime(myDataStoreSession, myLastSeenIds);
+            myLastSeenIds.clear();
+        }
     }
 
     public static class SupportedFileFilter implements FilenameFilter {

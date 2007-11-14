@@ -35,6 +35,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private int myUpdatedCount;
     private Set<String> myExistingIds = new HashSet<String>();
     private Set<String> myFoundIds = new HashSet<String>();
+    private Collection<String> myLastSeenIds = new HashSet<String>();
 
     public MyTunesRssFileProcessor(File baseDir, DataStoreSession storeSession, long lastUpdateTime) throws SQLException {
         myBaseDir = baseDir;
@@ -103,7 +104,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         }
                     } else if (existing) {
                         myExistingIds.add(fileId);
-                        DatabaseBuilderTask.setLastSeenTime(myStoreSession, fileId);
+                        myLastSeenIds.add(fileId);
+                        if (myLastSeenIds.size() > 100) {
+                            commitLastSeen();
+                        }
                     }
                 }
             }
@@ -253,5 +257,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     private String getAncestorArtistName(File file) {
         return getAncestorName(file, MyTunesRss.CONFIG.getFileSystemArtistNameFolder());
+    }
+
+    public void commitLastSeen() {
+        if (!myLastSeenIds.isEmpty()) {
+            DatabaseBuilderTask.setLastSeenTime(myStoreSession, myLastSeenIds);
+            myLastSeenIds.clear();
+        }
     }
 }

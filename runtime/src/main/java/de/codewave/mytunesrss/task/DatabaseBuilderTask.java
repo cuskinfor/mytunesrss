@@ -22,19 +22,19 @@ import java.util.concurrent.locks.*;
  * de.codewave.mytunesrss.task.DatabaseBuilderTaskk
  */
 public class DatabaseBuilderTask extends MyTunesRssTask {
-    public static void setLastSeenTime(DataStoreSession dataStoreSession, final String trackId) {
+    public static void setLastSeenTime(DataStoreSession dataStoreSession, final Collection<String> trackIds) {
         try {
             dataStoreSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "setLastSeenTime");
-                    statement.setString("track_id", trackId);
+                    statement.setItems("track_ids", trackIds);
                     statement.setLong("currentTime", System.currentTimeMillis());
                     statement.execute();
                 }
             });
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
-                LOG.error("Could not set last-seen time for track '" + trackId + "'.", e);
+                LOG.error("Could not set last-seen time.", e);
             }
         }
     }

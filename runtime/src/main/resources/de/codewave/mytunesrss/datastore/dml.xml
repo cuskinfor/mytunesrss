@@ -433,7 +433,7 @@
 
     <statement name="setLastSeenTime">
         <sql>
-            UPDATE track SET last_seen = :currentTime WHERE id = :track_id
+            UPDATE track SET last_seen = :currentTime WHERE id IN (:track_ids[])
         </sql>
     </statement>
 
