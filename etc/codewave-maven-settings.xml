@@ -7,7 +7,7 @@
       <repositories>
         <repository>
           <id>codewave</id>
-          <name>Codewave Maven Repository</name>
+          <name>Codewave Inhouse Repository</name>
           <url>http://codewave.dyn-o-saur.com:20111/repository/inhouse</url>
           <releases>
             <enabled>true</enabled>
@@ -18,7 +18,7 @@
         </repository>
         <repository>
           <id>codewave-snapshot</id>
-          <name>Codewave Maven Repository</name>
+          <name>Codewave Inhouse Snapshot Repository</name>
           <url>http://codewave.dyn-o-saur.com:20111/repository/inhouse.snapshot</url>
           <releases>
             <enabled>false</enabled>
@@ -28,8 +28,8 @@
           </snapshots>
         </repository>
         <repository>
-          <id>codewave-snapshot</id>
-          <name>Codewave Maven Repository</name>
+          <id>codewave-public</id>
+          <name>Codewave Public Repository</name>
           <url>http://codewave.dyn-o-saur.com:20111/repository/public</url>
           <releases>
             <enabled>true</enabled>
