@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.filesystem.*;
 import de.codewave.mytunesrss.datastore.itunes.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.*;
 import de.codewave.utils.sql.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
@@ -23,18 +24,34 @@ import java.util.concurrent.locks.*;
  */
 public class DatabaseBuilderTask extends MyTunesRssTask {
     public static void setLastSeenTime(DataStoreSession dataStoreSession, final Collection<String> trackIds) {
-        try {
-            dataStoreSession.executeStatement(new DataStoreStatement() {
-                public void execute(Connection connection) throws SQLException {
-                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "setLastSeenTime");
-                    statement.setItems("track_ids", trackIds);
-                    statement.setLong("currentTime", System.currentTimeMillis());
-                    statement.execute();
+        if (!trackIds.isEmpty()) {
+            try {
+                dataStoreSession.executeStatement(new DataStoreStatement() {
+                    public void execute(Connection connection) throws SQLException {
+                        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "setLastSeenTime");
+                        statement.setItems("track_ids", trackIds);
+                        statement.setLong("currentTime", System.currentTimeMillis());
+                        statement.execute();
+                    }
+                });
+            } catch (SQLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not set last-seen time.", e);
                 }
-            });
-        } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not set last-seen time.", e);
+            }
+        }
+    }
+
+    public static void updateHelpTables(DataStoreSession session, int updatedCount) {
+        if (updatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
+            // recreate help tables every N tracks
+            try {
+                session.executeStatement(new RecreateHelpTablesStatement());
+                session.commit();
+            } catch (SQLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not recreate help tables..", e);
+                }
             }
         }
     }

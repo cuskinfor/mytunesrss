@@ -104,18 +104,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     try {
                         myStoreSession.executeStatement(statement);
                         myUpdatedCount++;
-                        if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
-                            // recreate help tables every N tracks
-                            try {
-                                myStoreSession
-                                        .executeStatement(new RecreateHelpTablesStatement());
-                                myStoreSession.commit();
-                            } catch (SQLException e) {
-                                if (LOG.isErrorEnabled()) {
-                                    LOG.error("Could not recreate help tables..", e);
-                                }
-                            }
-                        }
+                        trackIds.remove(fileId);
+                        DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
                         myFoundIds.add(fileId);
                         myExistingIds.add(fileId);
                     } catch (SQLException e) {

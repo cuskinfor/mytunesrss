@@ -63,20 +63,11 @@ public class TrackListener implements PListHandlerListener {
                 }
             }
             for (Map track : myTrackCache) {
-                if (processTrack(track, existingIds.contains(track.get("Track ID").toString()))) {
+                String trackId = track.get("Track ID").toString();
+                if (processTrack(track, existingIds.contains(trackId))) {
                     myUpdatedCount++;
-                    if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
-                        // recreate help tables every N tracks
-                        try {
-                            myDataStoreSession
-                                    .executeStatement(new RecreateHelpTablesStatement());
-                            myDataStoreSession.commit();
-                        } catch (SQLException e) {
-                            if (LOG.isErrorEnabled()) {
-                                LOG.error("Could not recreate help tables..", e);
-                            }
-                        }
-                    }
+                    trackIds.remove(trackId); // do not set last seen for track already updated
+                    DatabaseBuilderTask.updateHelpTables(myDataStoreSession, myUpdatedCount);
                 }
                 DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
             }
