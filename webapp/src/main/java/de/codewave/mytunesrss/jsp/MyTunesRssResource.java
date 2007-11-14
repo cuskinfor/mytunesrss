@@ -69,6 +69,7 @@ public enum MyTunesRssResource {
                         // intentionally left blank
                     }
                 }
+                message = message.replace("'", "''").replace("{", "'{'");
                 MyTunesRssWebUtils.addError(request, new LocalizedError(message), "messages");
             }
             request.getSession().setAttribute("welcomeMessageDone", Boolean.TRUE);

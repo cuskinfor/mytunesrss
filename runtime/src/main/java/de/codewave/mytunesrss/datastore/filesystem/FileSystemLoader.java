@@ -29,6 +29,7 @@ public class FileSystemLoader {
                             return file.isDirectory() || FileSupportUtils.isSupported(file.getName());
                         }
                     });
+                    fileProcessor.processTrackCache();
                     PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(storeSession, fileProcessor.getExistingIds());
                     IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
                         public boolean accept(File file) {
@@ -40,6 +41,5 @@ public class FileSystemLoader {
                     }
                     playlistIds.removeAll(playlistFileProcessor.getExistingIds());
         }
-        fileProcessor.processTrackCache();
     }
 }
