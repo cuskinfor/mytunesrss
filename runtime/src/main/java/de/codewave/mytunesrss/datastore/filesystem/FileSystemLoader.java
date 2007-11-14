@@ -40,6 +40,6 @@ public class FileSystemLoader {
                     }
                     playlistIds.removeAll(playlistFileProcessor.getExistingIds());
         }
-        fileProcessor.commitLastSeen();
+        fileProcessor.processTrackCache();
     }
 }

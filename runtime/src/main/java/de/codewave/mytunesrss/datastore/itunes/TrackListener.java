@@ -11,8 +11,8 @@ import org.apache.commons.logging.*;
 
 import java.io.*;
 import java.sql.*;
-import java.util.Date;
 import java.util.*;
+import java.util.Date;
 
 /**
  * de.codewave.mytunesrss.datastore.itunes.TrackListenerr
@@ -24,7 +24,7 @@ public class TrackListener implements PListHandlerListener {
     private LibraryListener myLibraryListener;
     private int myUpdatedCount;
     private Map<Long, String> myTrackIdToPersId;
-    private Collection<String> myLastSeenIds = new HashSet<String>();
+    private Collection<Map> myTrackCache = new HashSet<Map>();
 
     public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId) throws SQLException {
         myDataStoreSession = dataStoreSession;
@@ -41,30 +41,56 @@ public class TrackListener implements PListHandlerListener {
         String trackId = myLibraryListener.getLibraryId() + "_";
         trackId += track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
         myTrackIdToPersId.put((Long)track.get("Track ID"), trackId);
-        if (processTrack(track)) {
-            myUpdatedCount++;
-            if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
-                // recreate help tables every N tracks
-                try {
-                    myDataStoreSession
-                            .executeStatement(new RecreateHelpTablesStatement());
-                    myDataStoreSession.commit();
-                } catch (SQLException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not recreate help tables..", e);
-                    }
+        myTrackCache.add(track);
+        if (myTrackCache.size() > 100) {
+            processTrackCache();
+        }
+        return false;
+    }
+
+    public void processTrackCache() {
+        if (!myTrackCache.isEmpty()) {
+            Collection<String> trackIds = new HashSet<String>(myTrackCache.size());
+            for (Map map : myTrackCache) {
+                trackIds.add(map.get("Track ID").toString());
+            }
+            Collection<String> existingIds = Collections.emptyList();
+            try {
+                existingIds = myDataStoreSession.executeQuery(new ConfirmTrackIdsQuery(trackIds));
+            } catch (SQLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not confirm track IDs.", e);
                 }
             }
+            for (Map track : myTrackCache) {
+                if (processTrack(track, existingIds.contains(track.get("Track ID").toString()))) {
+                    myUpdatedCount++;
+                    if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
+                        // recreate help tables every N tracks
+                        try {
+                            myDataStoreSession
+                                    .executeStatement(new RecreateHelpTablesStatement());
+                            myDataStoreSession.commit();
+                        } catch (SQLException e) {
+                            if (LOG.isErrorEnabled()) {
+                                LOG.error("Could not recreate help tables..", e);
+                            }
+                        }
+                    }
+                }
+                DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
+            }
+            DatabaseBuilderTask.setLastSeenTime(myDataStoreSession, trackIds);
+            DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
+            myTrackCache.clear();
         }
-        DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
-        return false;
     }
 
     public boolean beforeArrayAdd(List array, Object value) {
         throw new UnsupportedOperationException("method beforeArrayAdd of class ItunesLoader$TrackListener is not supported!");
     }
 
-    private boolean processTrack(Map track) {
+    private boolean processTrack(Map track, boolean existing) {
         String trackId = myLibraryListener.getLibraryId() + "_";
         trackId += track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
         String name = (String)track.get("Name");
@@ -77,7 +103,6 @@ public class TrackListener implements PListHandlerListener {
                 long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
                 Date dateAdded = ((Date)track.get("Date Added"));
                 long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
-                boolean existing = false;
                 try {
                     existing = myDataStoreSession.executeQuery(FindTrackQuery.getForId(new String[] {trackId})).getResultSize() == 1;
                 } catch (SQLException e) {
@@ -85,11 +110,9 @@ public class TrackListener implements PListHandlerListener {
                         LOG.error("Could not check if track already exists.", e);
                     }
                 }
-                if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() ||
-                        dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
+                if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() || dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
                     try {
-                        InsertOrUpdateTrackStatement statement =
-                                existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);
+                        InsertOrUpdateTrackStatement statement = existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);
                         statement.clear();
                         statement.setId(trackId);
                         statement.setName(name.trim());
@@ -120,24 +143,12 @@ public class TrackListener implements PListHandlerListener {
                             LOG.error("Could not insert track \"" + name + "\" into database", e);
                         }
                     }
-                } else {
-                    myLastSeenIds.add(trackId);
-                    if (myLastSeenIds.size() > 100) {
-                        commitLastSeen();
-                    }
                 }
                 return false;
             }
         }
         myTrackIdToPersId.remove(track.get("Track ID"));
         return false;
-    }
-
-    public void commitLastSeen() {
-        if (!myLastSeenIds.isEmpty()) {
-            DatabaseBuilderTask.setLastSeenTime(myDataStoreSession, myLastSeenIds);
-            myLastSeenIds.clear();
-        }
     }
 
     public static class SupportedFileFilter implements FilenameFilter {

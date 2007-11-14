@@ -56,7 +56,7 @@ public class ItunesLoader {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks.");
             }
-            trackListener.commitLastSeen();
+            trackListener.processTrackCache();
             existsingPlaylistIds.removeAll(playlistListener.getExistingIds());
         }
     }

@@ -35,7 +35,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private int myUpdatedCount;
     private Set<String> myExistingIds = new HashSet<String>();
     private Set<String> myFoundIds = new HashSet<String>();
-    private Collection<String> myLastSeenIds = new HashSet<String>();
+    private Collection<Object[]> myTrackCache = new HashSet<Object[]>();
 
     public MyTunesRssFileProcessor(File baseDir, DataStoreSession storeSession, long lastUpdateTime) throws SQLException {
         myBaseDir = baseDir;
@@ -53,61 +53,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     public void process(File file) {
         try {
-            String canonicalFilePath = file.getCanonicalPath();
             if (file.isFile() && FileSupportUtils.isSupported(file.getName())) {
                 String fileId = "file_" + IOUtils.getFilenameHash(file);
                 if (!myFoundIds.contains(fileId)) {
-                    boolean existing = false;
-                    try {
-                        existing = myStoreSession.executeQuery(FindTrackQuery.getForId(new String[] {fileId})).getResultSize() == 1;
-                    } catch (SQLException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not check if track already exists.", e);
-                        }
-                    }
-                    if ((file.lastModified() >= myLastUpdateTime || !existing)) {
-                        InsertOrUpdateTrackStatement statement =
-                                existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
-                        statement.clear();
-                        statement.setId(fileId);
-                        if (FileSupportUtils.isMp3(file)) {
-                            parseMp3MetaData(file, statement, fileId);
-                        } else if (FileSupportUtils.isMp4(file)) {
-                            parseMp4MetaData(file, statement, fileId);
-                        }
-                        FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
-                        statement.setProtected(fileSuffixInfo.isProtected());
-                        statement.setVideo(fileSuffixInfo.isVideo());
-                        statement.setFileName(canonicalFilePath);
-                        try {
-                            myStoreSession.executeStatement(statement);
-                            myUpdatedCount++;
-                            DatabaseBuilderTask.doCheckpoint(myStoreSession);
-                            if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
-                                // recreate help tables every N tracks
-                                try {
-                                    myStoreSession
-                                            .executeStatement(new RecreateHelpTablesStatement());
-                                    myStoreSession.commit();
-                                } catch (SQLException e) {
-                                    if (LOG.isErrorEnabled()) {
-                                        LOG.error("Could not recreate help tables..", e);
-                                    }
-                                }
-                            }
-                            myFoundIds.add(fileId);
-                            myExistingIds.add(fileId);
-                        } catch (SQLException e) {
-                            if (LOG.isErrorEnabled()) {
-                                LOG.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
-                            }
-                        }
-                    } else if (existing) {
-                        myExistingIds.add(fileId);
-                        myLastSeenIds.add(fileId);
-                        if (myLastSeenIds.size() > 100) {
-                            commitLastSeen();
-                        }
+                    myTrackCache.add(new Object[] {fileId, file, file.getCanonicalPath()});
+                    if (myTrackCache.size() > 100) {
+                        processTrackCache();
                     }
                 }
             }
@@ -115,6 +66,71 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
             }
+        }
+    }
+
+    public void processTrackCache() {
+        if (!myTrackCache.isEmpty()) {
+            Collection<String> trackIds = new HashSet<String>(myTrackCache.size());
+            for (Object[] track : myTrackCache) {
+                trackIds.add((String)track[0]);
+            }
+            Collection<String> existingIds = Collections.emptyList();
+            try {
+                existingIds = myStoreSession.executeQuery(new ConfirmTrackIdsQuery(trackIds));
+            } catch (SQLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not confirm track IDs.", e);
+                }
+            }
+            for (Object[] track : myTrackCache) {
+                String fileId = (String)track[0];
+                File file = (File)track[1];
+                String canonicalFilePath = (String)track[2];
+                boolean existing = existingIds.contains(fileId);
+                if ((file.lastModified() >= myLastUpdateTime || !existing)) {
+                    InsertOrUpdateTrackStatement statement = existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
+                    statement.clear();
+                    statement.setId(fileId);
+                    if (FileSupportUtils.isMp3(file)) {
+                        parseMp3MetaData(file, statement, fileId);
+                    } else if (FileSupportUtils.isMp4(file)) {
+                        parseMp4MetaData(file, statement, fileId);
+                    }
+                    FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
+                    statement.setProtected(fileSuffixInfo.isProtected());
+                    statement.setVideo(fileSuffixInfo.isVideo());
+                    statement.setFileName(canonicalFilePath);
+                    try {
+                        myStoreSession.executeStatement(statement);
+                        myUpdatedCount++;
+                        if (myUpdatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
+                            // recreate help tables every N tracks
+                            try {
+                                myStoreSession
+                                        .executeStatement(new RecreateHelpTablesStatement());
+                                myStoreSession.commit();
+                            } catch (SQLException e) {
+                                if (LOG.isErrorEnabled()) {
+                                    LOG.error("Could not recreate help tables..", e);
+                                }
+                            }
+                        }
+                        myFoundIds.add(fileId);
+                        myExistingIds.add(fileId);
+                    } catch (SQLException e) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
+                        }
+                    }
+                } else if (existing) {
+                    myExistingIds.add(fileId);
+                }
+                DatabaseBuilderTask.doCheckpoint(myStoreSession);
+            }
+            DatabaseBuilderTask.setLastSeenTime(myStoreSession, trackIds);
+            DatabaseBuilderTask.doCheckpoint(myStoreSession);
+            myTrackCache.clear();
         }
     }
 
@@ -257,12 +273,5 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     private String getAncestorArtistName(File file) {
         return getAncestorName(file, MyTunesRss.CONFIG.getFileSystemArtistNameFolder());
-    }
-
-    public void commitLastSeen() {
-        if (!myLastSeenIds.isEmpty()) {
-            DatabaseBuilderTask.setLastSeenTime(myStoreSession, myLastSeenIds);
-            myLastSeenIds.clear();
-        }
     }
 }

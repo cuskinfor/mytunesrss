@@ -425,6 +425,12 @@
         </sql>
     </statement>
 
+    <statement name="confirmTrackIds">
+        <sql>
+            SELECT id FROM track WHERE id IN (:ids[])
+        </sql>
+    </statement>
+
     <statement name="removeObsoleteTracks">
         <sql>
             DELETE FROM track WHERE last_seen &lt; :updateStartTime
