@@ -183,13 +183,14 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                             Track track = new Track();
                             track.setId(resultSet.getString("id"));
                             track.setFile(new File(resultSet.getString("file")));
+                            track.setLastImageUpdate(resultSet.getLong("last_image_update"));
                             return track;
                         }
                     });
                 }
             });
             for (Track track = result.nextResult(); track != null; track = result.nextResult()) {
-                if (track.getFile().lastModified() >= timeLastUpdate) {
+                if (track.getFile().lastModified() >= track.getLastImageUpdate()) {
                     storeSession.executeStatement(new HandleTrackImagesStatement(track.getFile(), track.getId()));
                 }
                 doCheckpoint(storeSession);

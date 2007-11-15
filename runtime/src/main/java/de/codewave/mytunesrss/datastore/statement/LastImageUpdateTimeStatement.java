@@ -22,7 +22,7 @@ public class LastImageUpdateTimeStatement implements DataStoreStatement {
         try {
             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateLastImageUpdateTime");
             statement.setString("track_id", myTrackId);
-            statement.setLong("currentTime", System.currentTimeMillis());
+            statement.setLong("updateTime", System.currentTimeMillis());
             statement.execute();
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {

@@ -126,6 +126,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             track.setMp4Codec(resultSet.getString("MP4CODEC"));
             track.setTsPlayed(resultSet.getLong("TS_PLAYED"));
             track.setTsUpdated(resultSet.getLong("TS_UPDATED"));
+            track.setLastImageUpdate(resultSet.getLong("LAST_IMAGE_UPDATE"));
             track.setPlayCount(resultSet.getLong("PLAYCOUNT"));
             track.setImageCount(resultSet.getInt("IMAGECOUNT"));
             return track;

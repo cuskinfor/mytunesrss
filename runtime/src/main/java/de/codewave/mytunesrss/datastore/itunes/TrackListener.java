@@ -38,8 +38,7 @@ public class TrackListener implements PListHandlerListener {
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
         Map track = (Map)value;
-        String trackId = myLibraryListener.getLibraryId() + "_";
-        trackId += track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
+        String trackId = calculateTrackId(track);
         myTrackIdToPersId.put((Long)track.get("Track ID"), trackId);
         myTrackCache.add(track);
         if (myTrackCache.size() > 100) {
@@ -48,15 +47,27 @@ public class TrackListener implements PListHandlerListener {
         return false;
     }
 
+    private String calculateTrackId(Map track) {
+        String trackId = myLibraryListener.getLibraryId() + "_";
+        trackId += track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
+        return trackId;
+    }
+
     public void processTrackCache() {
         if (!myTrackCache.isEmpty()) {
             Collection<String> trackIds = new HashSet<String>(myTrackCache.size());
             for (Map map : myTrackCache) {
-                trackIds.add(map.get("Track ID").toString());
+                trackIds.add(calculateTrackId(map));
             }
             Collection<String> existingIds = Collections.emptyList();
             try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("confirm.begin");
+                }
                 existingIds = myDataStoreSession.executeQuery(new ConfirmTrackIdsQuery(trackIds));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("confirm.end");
+                }
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not confirm track IDs.", e);
@@ -64,14 +75,20 @@ public class TrackListener implements PListHandlerListener {
             }
             for (Map track : myTrackCache) {
                 String trackId = track.get("Track ID").toString();
-                if (processTrack(track, existingIds.contains(trackId))) {
+                if (processTrack(track, existingIds.contains(calculateTrackId(track)))) {
                     myUpdatedCount++;
                     trackIds.remove(trackId); // do not set last seen for track already updated
                     DatabaseBuilderTask.updateHelpTables(myDataStoreSession, myUpdatedCount);
                 }
                 DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
             }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("lastseen.begin");
+            }
             DatabaseBuilderTask.setLastSeenTime(myDataStoreSession, trackIds);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("lastseen.end");
+            }
             DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
             myTrackCache.clear();
         }
@@ -82,8 +99,7 @@ public class TrackListener implements PListHandlerListener {
     }
 
     private boolean processTrack(Map track, boolean existing) {
-        String trackId = myLibraryListener.getLibraryId() + "_";
-        trackId += track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
+        String trackId = calculateTrackId(track);
         String name = (String)track.get("Name");
         String trackType = (String)track.get("Track Type");
         if (trackType == null || "File".equals(trackType)) {
@@ -94,13 +110,6 @@ public class TrackListener implements PListHandlerListener {
                 long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
                 Date dateAdded = ((Date)track.get("Date Added"));
                 long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
-                try {
-                    existing = myDataStoreSession.executeQuery(FindTrackQuery.getForId(new String[] {trackId})).getResultSize() == 1;
-                } catch (SQLException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not check if track already exists.", e);
-                    }
-                }
                 if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() || dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
                     try {
                         InsertOrUpdateTrackStatement statement = existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);

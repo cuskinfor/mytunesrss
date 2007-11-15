@@ -27,6 +27,7 @@ public class Track {
     private long myTsPlayed;
     private long myTsUpdated;
     private long myPlayCount;
+    private long myLastImageUpdate;
 
     public String getAlbum() {
         return myAlbum;
@@ -155,6 +156,14 @@ public class Track {
 
     public long getContentLength() {
         return getFile().length();
+    }
+
+    public long getLastImageUpdate() {
+        return myLastImageUpdate;
+    }
+
+    public void setLastImageUpdate(long lastImageUpdate) {
+        myLastImageUpdate = lastImageUpdate;
     }
 
     @Override
