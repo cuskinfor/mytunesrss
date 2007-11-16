@@ -45,17 +45,15 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     new InsertImageStatement(myTrackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
                     new InsertImageStatement(myTrackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
                     new InsertImageStatement(myTrackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
-                    new LastImageUpdateTimeStatement(myTrackId).execute(connection);
                 } else if (image != null && existing) {
                     new UpdateImageStatement(myTrackId, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
                     new UpdateImageStatement(myTrackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
                     new UpdateImageStatement(myTrackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
                     new UpdateImageStatement(myTrackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
-                    new LastImageUpdateTimeStatement(myTrackId).execute(connection);
                 } else if (image == null && existing) {
                     new DeleteImageStatement(myTrackId).execute(connection);
-                    new LastImageUpdateTimeStatement(myTrackId).execute(connection);
                 }
+                new LastImageUpdateTimeStatement(myTrackId).execute(connection);
             } catch (Exception e) {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("Could not extract image from MP3 file.");

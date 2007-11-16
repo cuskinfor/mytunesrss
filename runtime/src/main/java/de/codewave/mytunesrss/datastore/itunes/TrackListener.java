@@ -61,13 +61,7 @@ public class TrackListener implements PListHandlerListener {
             }
             Collection<String> existingIds = Collections.emptyList();
             try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("confirm.begin");
-                }
                 existingIds = myDataStoreSession.executeQuery(new ConfirmTrackIdsQuery(trackIds));
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("confirm.end");
-                }
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not confirm track IDs.", e);
@@ -82,13 +76,7 @@ public class TrackListener implements PListHandlerListener {
                 }
                 DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("lastseen.begin");
-            }
             DatabaseBuilderTask.setLastSeenTime(myDataStoreSession, trackIds);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("lastseen.end");
-            }
             DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
             myTrackCache.clear();
         }
