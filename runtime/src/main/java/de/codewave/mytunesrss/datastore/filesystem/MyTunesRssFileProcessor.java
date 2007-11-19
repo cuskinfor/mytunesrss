@@ -3,7 +3,6 @@ package de.codewave.mytunesrss.datastore.filesystem;
 import de.codewave.camel.mp3.*;
 import de.codewave.camel.mp4.*;
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.io.*;
@@ -35,12 +34,14 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private int myUpdatedCount;
     private Set<String> myExistingIds = new HashSet<String>();
     private Set<String> myFoundIds = new HashSet<String>();
-    private Collection<Object[]> myTrackCache = new HashSet<Object[]>();
+    private Collection<String> myTrackIds;
 
-    public MyTunesRssFileProcessor(File baseDir, DataStoreSession storeSession, long lastUpdateTime) throws SQLException {
+    public MyTunesRssFileProcessor(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds)
+            throws SQLException {
         myBaseDir = baseDir;
         myStoreSession = storeSession;
         myLastUpdateTime = lastUpdateTime;
+        myTrackIds = trackIds;
     }
 
     public Set<String> getExistingIds() {
@@ -56,71 +57,43 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             if (file.isFile() && FileSupportUtils.isSupported(file.getName())) {
                 String fileId = "file_" + IOUtils.getFilenameHash(file);
                 if (!myFoundIds.contains(fileId)) {
-                    myTrackCache.add(new Object[] {fileId, file, file.getCanonicalPath()});
-                    if (myTrackCache.size() > 100) {
-                        processTrackCache();
+                    String canonicalFilePath = file.getCanonicalPath();
+                    boolean existing = myTrackIds.remove(fileId);
+                    if ((file.lastModified() >= myLastUpdateTime || !existing)) {
+                        InsertOrUpdateTrackStatement statement =
+                                existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
+                        statement.clear();
+                        statement.setId(fileId);
+                        if (FileSupportUtils.isMp3(file)) {
+                            parseMp3MetaData(file, statement, fileId);
+                        } else if (FileSupportUtils.isMp4(file)) {
+                            parseMp4MetaData(file, statement, fileId);
+                        }
+                        FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
+                        statement.setProtected(fileSuffixInfo.isProtected());
+                        statement.setVideo(fileSuffixInfo.isVideo());
+                        statement.setFileName(canonicalFilePath);
+                        try {
+                            myStoreSession.executeStatement(statement);
+                            myUpdatedCount++;
+                            DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
+                            myFoundIds.add(fileId);
+                            myExistingIds.add(fileId);
+                        } catch (SQLException e) {
+                            if (LOG.isErrorEnabled()) {
+                                LOG.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
+                            }
+                        }
+                    } else if (existing) {
+                        myExistingIds.add(fileId);
                     }
+                    DatabaseBuilderTask.doCheckpoint(myStoreSession);
                 }
             }
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
             }
-        }
-    }
-
-    public void processTrackCache() {
-        if (!myTrackCache.isEmpty()) {
-            Collection<String> trackIds = new HashSet<String>(myTrackCache.size());
-            for (Object[] track : myTrackCache) {
-                trackIds.add((String)track[0]);
-            }
-            Collection<String> existingIds = Collections.emptyList();
-            try {
-                existingIds = myStoreSession.executeQuery(new ConfirmTrackIdsQuery(trackIds));
-            } catch (SQLException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not confirm track IDs.", e);
-                }
-            }
-            for (Object[] track : myTrackCache) {
-                String fileId = (String)track[0];
-                File file = (File)track[1];
-                String canonicalFilePath = (String)track[2];
-                boolean existing = existingIds.contains(fileId);
-                if ((file.lastModified() >= myLastUpdateTime || !existing)) {
-                    InsertOrUpdateTrackStatement statement = existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
-                    statement.clear();
-                    statement.setId(fileId);
-                    if (FileSupportUtils.isMp3(file)) {
-                        parseMp3MetaData(file, statement, fileId);
-                    } else if (FileSupportUtils.isMp4(file)) {
-                        parseMp4MetaData(file, statement, fileId);
-                    }
-                    FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
-                    statement.setProtected(fileSuffixInfo.isProtected());
-                    statement.setVideo(fileSuffixInfo.isVideo());
-                    statement.setFileName(canonicalFilePath);
-                    try {
-                        myStoreSession.executeStatement(statement);
-                        myUpdatedCount++;
-                        trackIds.remove(fileId);
-                        DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
-                        myFoundIds.add(fileId);
-                        myExistingIds.add(fileId);
-                    } catch (SQLException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
-                        }
-                    }
-                } else if (existing) {
-                    myExistingIds.add(fileId);
-                }
-                DatabaseBuilderTask.doCheckpoint(myStoreSession);
-            }
-            DatabaseBuilderTask.setLastSeenTime(myStoreSession, trackIds);
-            DatabaseBuilderTask.doCheckpoint(myStoreSession);
-            myTrackCache.clear();
         }
     }
 

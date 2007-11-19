@@ -30,7 +30,7 @@ public class ItunesLoader {
         return null;
     }
 
-    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> existsingPlaylistIds)
+    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds, Collection<String> existsingPlaylistIds)
             throws SQLException {
         TrackListener trackListener = null;
         PlaylistListener playlistListener = null;
@@ -38,8 +38,8 @@ public class ItunesLoader {
             PListHandler handler = new PListHandler();
             Map<Long, String> trackIdToPersId = new HashMap<Long, String>();
             LibraryListener libraryListener = new LibraryListener(timeLastUpdate);
-            trackListener = new TrackListener(storeSession, libraryListener, trackIdToPersId);
-            playlistListener = new PlaylistListener(storeSession, libraryListener, trackListener, trackIdToPersId);
+            trackListener = new TrackListener(storeSession, libraryListener, trackIdToPersId, trackIds);
+            playlistListener = new PlaylistListener(storeSession, libraryListener, trackIdToPersId);
             handler.addListener("/plist/dict", libraryListener);
             handler.addListener("/plist/dict[Tracks]/dict", trackListener);
             handler.addListener("/plist/dict[Playlists]/array", playlistListener);
@@ -56,7 +56,6 @@ public class ItunesLoader {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks.");
             }
-            trackListener.processTrackCache();
             existsingPlaylistIds.removeAll(playlistListener.getExistingIds());
         }
     }

@@ -17,10 +17,10 @@ import java.util.*;
 public class FileSystemLoader {
     private static final Log LOG = LogFactory.getLog(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> playlistIds) throws IOException, SQLException {
+    public static void loadFromFileSystem(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds, Collection<String> playlistIds) throws IOException, SQLException {
         MyTunesRssFileProcessor fileProcessor = null;
                 if (baseDir != null && baseDir.isDirectory()) {
-                    fileProcessor = new MyTunesRssFileProcessor(baseDir, storeSession, lastUpdateTime);
+                    fileProcessor = new MyTunesRssFileProcessor(baseDir, storeSession, lastUpdateTime, trackIds);
                     if (LOG.isInfoEnabled()) {
                         LOG.info("Processing files from: \"" + baseDir + "\".");
                     }
@@ -29,7 +29,6 @@ public class FileSystemLoader {
                             return file.isDirectory() || FileSupportUtils.isSupported(file.getName());
                         }
                     });
-                    fileProcessor.processTrackCache();
                     PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(storeSession, fileProcessor.getExistingIds());
                     IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
                         public boolean accept(File file) {

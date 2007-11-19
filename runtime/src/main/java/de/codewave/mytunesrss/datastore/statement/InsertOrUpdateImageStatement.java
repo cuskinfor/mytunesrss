@@ -36,18 +36,24 @@ public abstract class InsertOrUpdateImageStatement implements DataStoreStatement
     }
 
     public synchronized void execute(Connection connection) throws SQLException {
-        try {
-            if (myStatement == null) {
-                myStatement = MyTunesRssUtils.createStatement(connection, getStatementName());
+        if (myData != null) {
+            try {
+                if (myStatement == null) {
+                    myStatement = MyTunesRssUtils.createStatement(connection, getStatementName());
+                }
+                myStatement.clearParameters();
+                myStatement.setString("track_id", myTrackId);
+                myStatement.setInt("size", mySize);
+                myStatement.setObject("data", myData);
+                myStatement.execute();
+            } catch (SQLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error(String.format("Could not update image for track with ID \"%s\" in database.", myTrackId), e);
+                }
             }
-            myStatement.clearParameters();
-            myStatement.setString("track_id", myTrackId);
-            myStatement.setInt("size", mySize);
-            myStatement.setObject("data", myData);
-            myStatement.execute();
-        } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error(String.format("Could not update image for track with ID \"%s\" in database.", myTrackId), e);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Skipping image insert/update for id \"" + myTrackId + "\" because image data is NULL.");
             }
         }
     }

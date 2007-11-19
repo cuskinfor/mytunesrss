@@ -425,21 +425,15 @@
         </sql>
     </statement>
 
-    <statement name="confirmTrackIds">
+    <statement name="getTrackIds">
         <sql>
-            SELECT id FROM track WHERE id IN (:ids[])
+            SELECT id AS id FROM track
         </sql>
     </statement>
 
-    <statement name="removeObsoleteTracks">
-        <sql>
-            DELETE FROM track WHERE last_seen &lt; :updateStartTime
-        </sql>
-    </statement>
-
-    <statement name="setLastSeenTime">
-        <sql>
-            UPDATE track SET last_seen = :currentTime WHERE id IN (:track_ids[])
+    <statement name="removeTracks">
+        <sql loop="trackIds" loopcommit="500">
+            DELETE FROM track WHERE id = :loopitem_track_id
         </sql>
     </statement>
 
@@ -461,8 +455,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="video" type="java.lang.Boolean"/>
         <sql>
-            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount, last_seen, last_image_update)
-            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, :ts_updated, 0)
+            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update)
+            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, 0)
         </sql>
     </statement>
 
@@ -474,7 +468,7 @@
         <sql>
             UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, video = :video, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
-                             ts_updated = :ts_updated, last_seen = :ts_updated
+                             ts_updated = :ts_updated
             WHERE id = :id
         </sql>
     </statement>

@@ -20,13 +20,11 @@ public class PlaylistListener implements PListHandlerListener {
     private Map<Long, String> myTrackIdToPersId;
     private Set<String> myExistingIds = new HashSet<String>();
     private LibraryListener myLibraryListener;
-    private TrackListener myTrackListener;
 
-    public PlaylistListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, TrackListener trackListener, Map<Long, String> trackIdToPersId) {
+    public PlaylistListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId) {
         myDataStoreSession = dataStoreSession;
         myTrackIdToPersId = trackIdToPersId;
         myLibraryListener = libraryListener;
-        myTrackListener = trackListener;
     }
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
@@ -34,7 +32,6 @@ public class PlaylistListener implements PListHandlerListener {
     }
 
     public boolean beforeArrayAdd(List array, Object value) {
-        myTrackListener.processTrackCache();
         insertPlaylist((Map)value);
         return false;
     }

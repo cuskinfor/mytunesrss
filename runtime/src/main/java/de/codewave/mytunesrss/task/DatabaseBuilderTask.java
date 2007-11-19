@@ -218,6 +218,17 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
         Collection<String> itunesPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunes.name()));
         Collection<String> m3uPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.M3uFile.name()));
+        final Set<String> trackIds = storeSession.executeQuery(new DataStoreQuery<Set<String>>() {
+            public Set<String> execute(Connection connection) throws SQLException {
+                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTrackIds");
+                ResultSet rs = statement.executeQuery();
+                Set<String> ids = new HashSet<String>();
+                while (rs.next()) {
+                    ids.add(rs.getString("id"));
+                }
+                return ids;
+            }
+        });
         if (myDatasources != null) {
             for (File datasource : myDatasources) {
                 doCheckpoint(storeSession);
@@ -226,13 +237,13 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
                     event.setMessageKey("settings.databaseUpdateRunningItunes");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
-                    ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, itunesPlaylistIds);
+                    ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, trackIds, itunesPlaylistIds);
                 } else if (datasource.isDirectory()) {
                     myState = State.UpdatingTracksFromFolder;
                     MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
                     event.setMessageKey("settings.databaseUpdateRunningFolder");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
-                    FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, m3uPlaylistIds);
+                    FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, trackIds, m3uPlaylistIds);
                 }
             }
             // ensure the help tables are created with all the data
@@ -240,11 +251,20 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             storeSession.commit();
 
         }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Removing " + trackIds.size() + " tracks from database.");
+        }
         storeSession.executeStatement(new DataStoreStatement() {
             public void execute(Connection connection) throws SQLException {
-                MyTunesRssUtils.createStatement(connection, "removeObsoleteTracks").execute();
+                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeTracks");
+                statement.setItems("track_id", trackIds);
+                statement.execute();
             }
         });
+        storeSession.commit();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Removing " + (itunesPlaylistIds.size() + m3uPlaylistIds.size()) + " playlists from database.");
+        }
         if (!itunesPlaylistIds.isEmpty()) {
             removeObsoletePlaylists(storeSession, itunesPlaylistIds);
         }
@@ -252,22 +272,12 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             removeObsoletePlaylists(storeSession, m3uPlaylistIds);
         }
         storeSession.commit();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Obsolete tracks and playlists removed from database.");
+        }
     }
 
-    private static void removeObsoleteTracks(DataStoreSession storeSession, Collection<String> databaseIds) throws SQLException {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Removing " + databaseIds.size() + " obsolete tracks.");
-        }
-        DeleteTrackStatement statement = new DeleteTrackStatement();
-        for (String id : databaseIds) {
-            statement.setId(id);
-            storeSession.executeStatement(statement);
-            DatabaseBuilderTask.doCheckpoint(storeSession);
-        }
-        storeSession.commit();
-    }
-
-    private static void removeObsoletePlaylists(DataStoreSession storeSession, Collection<String> databaseIds) throws SQLException {
+    private void removeObsoletePlaylists(DataStoreSession storeSession, Collection<String> databaseIds) throws SQLException {
         if (LOG.isInfoEnabled()) {
             LOG.info("Removing " + databaseIds.size() + " obsolete playlists.");
         }

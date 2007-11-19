@@ -25,11 +25,13 @@ public class TrackListener implements PListHandlerListener {
     private int myUpdatedCount;
     private Map<Long, String> myTrackIdToPersId;
     private Collection<Map> myTrackCache = new HashSet<Map>();
+    private Collection<String> myTrackIds;
 
-    public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId) throws SQLException {
+    public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId, Collection<String> trackIds) throws SQLException {
         myDataStoreSession = dataStoreSession;
         myLibraryListener = libraryListener;
         myTrackIdToPersId = trackIdToPersId;
+        myTrackIds = trackIds;
     }
 
     public int getUpdatedCount() {
@@ -40,10 +42,11 @@ public class TrackListener implements PListHandlerListener {
         Map track = (Map)value;
         String trackId = calculateTrackId(track);
         myTrackIdToPersId.put((Long)track.get("Track ID"), trackId);
-        myTrackCache.add(track);
-        if (myTrackCache.size() > 100) {
-            processTrackCache();
+        if (processTrack(track, myTrackIds.remove(trackId))) {
+            myUpdatedCount++;
+            DatabaseBuilderTask.updateHelpTables(myDataStoreSession, myUpdatedCount);
         }
+        DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
         return false;
     }
 
@@ -51,35 +54,6 @@ public class TrackListener implements PListHandlerListener {
         String trackId = myLibraryListener.getLibraryId() + "_";
         trackId += track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
         return trackId;
-    }
-
-    public void processTrackCache() {
-        if (!myTrackCache.isEmpty()) {
-            Collection<String> trackIds = new HashSet<String>(myTrackCache.size());
-            for (Map map : myTrackCache) {
-                trackIds.add(calculateTrackId(map));
-            }
-            Collection<String> existingIds = Collections.emptyList();
-            try {
-                existingIds = myDataStoreSession.executeQuery(new ConfirmTrackIdsQuery(trackIds));
-            } catch (SQLException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not confirm track IDs.", e);
-                }
-            }
-            for (Map track : myTrackCache) {
-                String trackId = track.get("Track ID").toString();
-                if (processTrack(track, existingIds.contains(calculateTrackId(track)))) {
-                    myUpdatedCount++;
-                    trackIds.remove(trackId); // do not set last seen for track already updated
-                    DatabaseBuilderTask.updateHelpTables(myDataStoreSession, myUpdatedCount);
-                }
-                DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
-            }
-            DatabaseBuilderTask.setLastSeenTime(myDataStoreSession, trackIds);
-            DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
-            myTrackCache.clear();
-        }
     }
 
     public boolean beforeArrayAdd(List array, Object value) {

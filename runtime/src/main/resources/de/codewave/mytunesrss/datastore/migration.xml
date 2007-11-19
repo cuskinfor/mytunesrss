@@ -56,4 +56,8 @@
         <sql>ALTER TABLE track ADD COLUMN last_seen NUMERIC(19)</sql>
     </statement>
 
+    <statement name="migrate31eap16to31eap17">
+        <sql>ALTER TABLE track DROP COLUMN last_seen</sql>
+    </statement>
+
 </statements>
