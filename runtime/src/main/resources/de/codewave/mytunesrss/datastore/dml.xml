@@ -549,7 +549,7 @@
     </fragment>
 
     <fragment name="groupByTrackColumns">
-        id, name, artist, album, time, track_number, file, protected, video, genre, mp4codec, ts_played, ts_updated, playcount
+        id, name, artist, album, time, track_number, file, protected, video, genre, mp4codec, ts_played, ts_updated, playcount, last_image_update
     </fragment>
 
     <fragment name="updatePlaylistCount">
