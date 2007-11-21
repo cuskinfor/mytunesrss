@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.sql.*;
@@ -46,7 +45,7 @@ public class TrackListener implements PListHandlerListener {
             myUpdatedCount++;
             DatabaseBuilderTask.updateHelpTables(myDataStoreSession, myUpdatedCount);
         }
-        DatabaseBuilderTask.doCheckpoint(myDataStoreSession);
+        DatabaseBuilderTask.doCheckpoint(myDataStoreSession, false);
         return false;
     }
 

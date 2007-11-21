@@ -431,10 +431,8 @@
         </sql>
     </statement>
 
-    <statement name="removeTracks">
-        <sql loop="trackIds" loopcommit="500">
-            DELETE FROM track WHERE id = :loopitem_track_id
-        </sql>
+    <statement name="removeTrack">
+        <sql>DELETE FROM track WHERE id = :track_id</sql>
     </statement>
 
     <statement name="deleteImage">

@@ -47,7 +47,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             // recreate help tables every N tracks
             try {
                 session.executeStatement(new RecreateHelpTablesStatement());
-                session.commit();
+                DatabaseBuilderTask.doCheckpoint(session, false);
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not recreate help tables..", e);
@@ -93,7 +93,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     try {
                         systemInformation = session.executeQuery(new GetSystemInformationQuery());
                     } finally {
-                        session.commit();
+                        DatabaseBuilderTask.doCheckpoint(session, true);
                     }
                     if (MyTunesRss.CONFIG.isIgnoreTimestamps() || baseDir.lastModified() > systemInformation.getLastUpdate()) {
                         if (LOG.isDebugEnabled()) {
@@ -146,7 +146,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             final long timeUpdateStart = System.currentTimeMillis();
             SystemInformation systemInformation = storeSession.executeQuery(new GetSystemInformationQuery());
             runUpdate(systemInformation, storeSession);
-            storeSession.commit();
+            DatabaseBuilderTask.doCheckpoint(storeSession, true);
             runImageUpdate(systemInformation, storeSession, timeUpdateStart);
             storeSession.executeStatement(new UpdateStatisticsStatement());
             storeSession.executeStatement(new DataStoreStatement() {
@@ -154,7 +154,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     connection.createStatement().execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
                 }
             });
-            storeSession.commit();
+            DatabaseBuilderTask.doCheckpoint(storeSession, true);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating database checkpoint.");
                 LOG.debug("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
@@ -193,19 +193,19 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 if (track.getFile().lastModified() >= track.getLastImageUpdate()) {
                     storeSession.executeStatement(new HandleTrackImagesStatement(track.getFile(), track.getId()));
                 }
-                doCheckpoint(storeSession);
+                doCheckpoint(storeSession, false);
             }
         } finally {
             trackQuerySession.commit();
         }
     }
 
-    public static void doCheckpoint(DataStoreSession storeSession) {
+    public static void doCheckpoint(DataStoreSession storeSession, boolean force) {
         long time = System.currentTimeMillis();
         if (TX_BEGIN == 0) {
             TX_BEGIN = time;
         }
-        if (time - TX_BEGIN > MAX_TX_DURATION) {
+        if (time - TX_BEGIN > MAX_TX_DURATION || force) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Committing transaction after " + (time - TX_BEGIN) + " milliseconds.");
             }
@@ -231,7 +231,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         });
         if (myDatasources != null) {
             for (File datasource : myDatasources) {
-                doCheckpoint(storeSession);
+                doCheckpoint(storeSession, false);
                 if (datasource.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(datasource.getName()))) {
                     myState = State.UpdatingTracksFromItunes;
                     MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
@@ -248,20 +248,13 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             }
             // ensure the help tables are created with all the data
             storeSession.executeStatement(new RecreateHelpTablesStatement());
-            storeSession.commit();
+            DatabaseBuilderTask.doCheckpoint(storeSession, true);
 
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug("Removing " + trackIds.size() + " tracks from database.");
         }
-        storeSession.executeStatement(new DataStoreStatement() {
-            public void execute(Connection connection) throws SQLException {
-                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeTracks");
-                statement.setItems("track_id", trackIds);
-                statement.execute();
-            }
-        });
-        storeSession.commit();
+        storeSession.executeStatement(new RemoveTrackStatement(trackIds));
         if (LOG.isDebugEnabled()) {
             LOG.debug("Removing " + (itunesPlaylistIds.size() + m3uPlaylistIds.size()) + " playlists from database.");
         }
@@ -271,23 +264,19 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         if (!m3uPlaylistIds.isEmpty()) {
             removeObsoletePlaylists(storeSession, m3uPlaylistIds);
         }
-        storeSession.commit();
+        DatabaseBuilderTask.doCheckpoint(storeSession, true);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Obsolete tracks and playlists removed from database.");
         }
     }
 
     private void removeObsoletePlaylists(DataStoreSession storeSession, Collection<String> databaseIds) throws SQLException {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Removing " + databaseIds.size() + " obsolete playlists.");
-        }
         DeletePlaylistStatement statement = new DeletePlaylistStatement();
         for (String id : databaseIds) {
             statement.setId(id);
             storeSession.executeStatement(statement);
-            DatabaseBuilderTask.doCheckpoint(storeSession);
+            DatabaseBuilderTask.doCheckpoint(storeSession, false);
         }
-        storeSession.commit();
     }
 
     public static boolean isRunning() {

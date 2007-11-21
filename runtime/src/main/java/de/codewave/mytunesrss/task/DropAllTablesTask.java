@@ -19,7 +19,7 @@ public class DropAllTablesTask extends MyTunesRssTask {
         try {
             DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
             storeSession.executeStatement(new DropAllTablesStatement());
-            storeSession.commit();
+            DatabaseBuilderTask.doCheckpoint(storeSession, true);
         } catch (SQLException e) {
             if (System.getProperty("database.type") == null) {
                 Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).putBoolean("deleteDatabaseOnNextStartOnError", true);

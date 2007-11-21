@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.*;
 import org.apache.commons.lang.*;
@@ -69,10 +70,7 @@ public class PlaylistListener implements PListHandlerListener {
                     }
                     myDataStoreSession.executeStatement(statement);
                     myExistingIds.add(playlistId);
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Committing transaction after inserting/updating playlist.");
-                    }
-                    myDataStoreSession.commit();
+                    DatabaseBuilderTask.doCheckpoint(myDataStoreSession, true);
                     MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_PLAYLIST_UPDATED);
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {

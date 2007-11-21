@@ -87,7 +87,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     } else if (existing) {
                         myExistingIds.add(fileId);
                     }
-                    DatabaseBuilderTask.doCheckpoint(myStoreSession);
+                    DatabaseBuilderTask.doCheckpoint(myStoreSession, false);
                 }
             }
         } catch (IOException e) {

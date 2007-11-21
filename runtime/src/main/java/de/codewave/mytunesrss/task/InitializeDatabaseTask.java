@@ -37,16 +37,16 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
                 }
             });
         } finally {
-            session.commit();
+            DatabaseBuilderTask.doCheckpoint(session, true);
         }
         if (!myExistent) {
             DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
             storeSession.executeStatement(new CreateAllTablesStatement());
-            storeSession.commit();
+            DatabaseBuilderTask.doCheckpoint(storeSession, true);
         } else {
             DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
             storeSession.executeStatement(new MigrationStatement());
-            storeSession.commit();
+            DatabaseBuilderTask.doCheckpoint(storeSession, true);
         }
     }
 
