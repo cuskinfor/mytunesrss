@@ -71,6 +71,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                 streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
             }
         }
+        getTransaction().commit();
         if (ServletUtils.isHeadRequest(getRequest())) {
             streamSender.sendHeadResponse(getRequest(), getResponse());
         } else {

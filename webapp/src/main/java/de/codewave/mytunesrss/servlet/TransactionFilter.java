@@ -12,6 +12,8 @@ import java.io.*;
  * de.codewave.mytunesrss.servlet.TransactionFilter
  */
 public class TransactionFilter implements Filter {
+    private static final ThreadLocal<DataStoreSession> TRANSACTIONS = new ThreadLocal<DataStoreSession>();
+
     public void init(FilterConfig filterConfig) throws ServletException {
         // intentionally left blank
     }
@@ -21,16 +23,28 @@ public class TransactionFilter implements Filter {
         ServletContext servletContext = ((HttpServletRequest)servletRequest).getSession().getServletContext();
         DataStore store = (DataStore)servletContext.getAttribute(MyTunesRssDataStore.class.getName());
         DataStoreSession session = store.getTransaction();
-        MyTunesRssCommandHandler.setTransaction(session);
+        setTransaction(session);
         try {
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
-            MyTunesRssCommandHandler.removeTransaction();
+            removeTransaction();
             session.commit();
         }
     }
 
     public void destroy() {
         // intentionally left blank
+    }
+
+    private void setTransaction(DataStoreSession session) {
+        TRANSACTIONS.set(session);
+    }
+
+    private void removeTransaction() {
+        TRANSACTIONS.remove();
+    }
+
+    public static DataStoreSession getTransaction() {
+        return TRANSACTIONS.get();
     }
 }

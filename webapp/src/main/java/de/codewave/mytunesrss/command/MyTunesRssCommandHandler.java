@@ -31,7 +31,6 @@ import java.util.*;
 public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private static final Log LOG = LogFactory.getLog(MyTunesRssCommandHandler.class);
     private static boolean SCHEDULE_DATABASE_UPDATE;
-    private static final ThreadLocal<DataStoreSession> TRANSACTIONS = new ThreadLocal<DataStoreSession>();
 
     protected MyTunesRssConfig getMyTunesRssConfig() {
         return (MyTunesRssConfig)getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
@@ -118,16 +117,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         MyTunesRssWebUtils.addError(getRequest(), message, "messages");
     }
 
-    public static void setTransaction(DataStoreSession session) {
-        TRANSACTIONS.set(session);
-    }
-
-    public static void removeTransaction() {
-        TRANSACTIONS.remove();
-    }
 
     protected DataStoreSession getTransaction() {
-        return TRANSACTIONS.get();
+        return TransactionFilter.getTransaction();
     }
 
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
@@ -273,6 +265,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     public void execute() throws Exception {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Command handler \"" + this.getClass().getName() + "\" called.");
+        }
         if (SCHEDULE_DATABASE_UPDATE) {
             runDatabaseUpdate();
         }

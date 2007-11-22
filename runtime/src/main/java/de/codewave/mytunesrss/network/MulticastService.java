@@ -63,11 +63,17 @@ public class MulticastService extends Thread {
             if (interfaces != null) {
                 while (interfaces.hasMoreElements()) {
                     NetworkInterface networkInterface = interfaces.nextElement();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Sending discovery packet to \"" + networkInterface.getDisplayName() + "\"");
+                    try {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Sending discovery packet to \"" + networkInterface.getDisplayName() + "\"");
+                        }
+                        socket.setNetworkInterface(networkInterface);
+                        socket.send(sendPacket);
+                    } catch (IOException e) {
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Could not send discovery packet to \"" + networkInterface.getDisplayName() + "\"", e);
+                        }
                     }
-                    socket.setNetworkInterface(networkInterface);
-                    socket.send(sendPacket);
                 }
                 try {
                     Collection<String> localAddresses = new ArrayList(Arrays.asList(ServerInfo.getLocalAddresses(String.valueOf(MyTunesRss.CONFIG.getPort()))));
