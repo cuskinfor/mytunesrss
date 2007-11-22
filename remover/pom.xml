@@ -70,7 +70,8 @@
                         </manifest>
                     </archive>
                 </configuration>
-            </plugin>            <plugin>
+            </plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <inherited>false</inherited>
                 <executions>
