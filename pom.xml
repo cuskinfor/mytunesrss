@@ -23,6 +23,7 @@
         <module>webapp</module>
         <module>apple</module>
         <module>shareit-keygen</module>
+        <module>remover</module>
     </modules>
     <dependencies>
         <dependency>
