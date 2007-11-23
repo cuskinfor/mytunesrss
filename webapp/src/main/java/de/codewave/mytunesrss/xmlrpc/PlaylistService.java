@@ -1,11 +1,13 @@
 package de.codewave.mytunesrss.xmlrpc;
 
+import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.command.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.utils.sql.*;
 
-import java.util.*;
 import java.sql.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.xmlrpc.PlaylistService
@@ -23,5 +25,14 @@ public class PlaylistService {
             answer.add(answerPlaylist);
         }
         return answer;
+    }
+
+    public String getPlaylistUrl(String playlistId, String type, String filename) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(MyTunesRssXmlRpcServlet.getServerCall(MyTunesRssCommand.CreatePlaylist));
+        StringBuilder pathInfo = new StringBuilder();
+        pathInfo.append("playlist=").append(playlistId).append("/type=").append(type);
+        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(pathInfo.toString())).append("/").append(filename);
+        return builder.toString();
     }
 }

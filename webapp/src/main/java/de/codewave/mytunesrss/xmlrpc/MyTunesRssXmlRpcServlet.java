@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.xmlrpc;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.command.*;
 import org.apache.commons.logging.*;
 import org.apache.xmlrpc.*;
 import org.apache.xmlrpc.common.*;
@@ -18,6 +19,7 @@ import java.util.*;
 public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
     private static final Log LOG = LogFactory.getLog(MyTunesRssXmlRpcServlet.class);
     private static final ThreadLocal<User> USERS = new ThreadLocal<User>();
+    private static final ThreadLocal<HttpServletRequest> REQUESTS = new ThreadLocal<HttpServletRequest>();
 
     public static User getAuthUser() {
         return USERS.get();
@@ -51,7 +53,18 @@ public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
 
     @Override
     public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
-        super.doPost(httpServletRequest, httpServletResponse);
-        USERS.remove();
+        REQUESTS.set(httpServletRequest);
+        try {
+            super.doPost(httpServletRequest, httpServletResponse);
+        } finally {
+            USERS.remove();
+            REQUESTS.remove();
+        }
+    }
+
+    public static String getServerCall(MyTunesRssCommand command) {
+        String auth = MyTunesRssWebUtils.encryptPathInfo("auth=" + MyTunesRssBase64Utils.encode(USERS.get().getName()) + " " +
+                MyTunesRssBase64Utils.encode(USERS.get().getPasswordHash()));
+        return MyTunesRssWebUtils.getServletUrl(REQUESTS.get()) + "/" + command.getName() + "/" + auth;
     }
 }

@@ -106,7 +106,7 @@
     </servlet>
     <servlet>
         <servlet-name>XmlRpcServlet</servlet-name>
-        <servlet-class>org.apache.xmlrpc.webserver.XmlRpcServlet</servlet-class>
+        <servlet-class>de.codewave.mytunesrss.xmlrpc.MyTunesRssXmlRpcServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
