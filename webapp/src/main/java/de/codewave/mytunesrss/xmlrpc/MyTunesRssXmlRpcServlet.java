@@ -1,8 +1,11 @@
 package de.codewave.mytunesrss.xmlrpc;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.xmlrpc.render.*;
 import de.codewave.mytunesrss.command.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.lang.*;
 import org.apache.xmlrpc.*;
 import org.apache.xmlrpc.common.*;
 import org.apache.xmlrpc.server.*;
@@ -23,6 +26,23 @@ public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
 
     public static User getAuthUser() {
         return USERS.get();
+    }
+
+    public static final RenderMachine RENDER_MACHINE = new RenderMachine();
+
+    static {
+        RENDER_MACHINE.addRenderer(Playlist.class, new PlaylistRenderer());
+        RENDER_MACHINE.addRenderer(Album.class, new AlbumRenderer());
+    }
+
+    public static String getServerCall(MyTunesRssCommand command, String pathInfo) {
+        String auth = MyTunesRssWebUtils.encryptPathInfo("auth=" + MyTunesRssBase64Utils.encode(USERS.get().getName()) + " " +
+                MyTunesRssBase64Utils.encode(USERS.get().getPasswordHash()));
+        String url = MyTunesRssWebUtils.getServletUrl(REQUESTS.get()) + "/" + command.getName() + "/" + auth;
+        if (StringUtils.isNotEmpty(pathInfo)) {
+            url += "/" + MyTunesRssWebUtils.encryptPathInfo(pathInfo);
+        }
+        return url;
     }
 
     protected XmlRpcHandlerMapping newXmlRpcHandlerMapping() throws XmlRpcException {
@@ -60,11 +80,5 @@ public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
             USERS.remove();
             REQUESTS.remove();
         }
-    }
-
-    public static String getServerCall(MyTunesRssCommand command) {
-        String auth = MyTunesRssWebUtils.encryptPathInfo("auth=" + MyTunesRssBase64Utils.encode(USERS.get().getName()) + " " +
-                MyTunesRssBase64Utils.encode(USERS.get().getPasswordHash()));
-        return MyTunesRssWebUtils.getServletUrl(REQUESTS.get()) + "/" + command.getName() + "/" + auth;
     }
 }
