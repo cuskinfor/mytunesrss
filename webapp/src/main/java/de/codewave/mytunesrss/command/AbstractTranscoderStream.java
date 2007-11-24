@@ -91,8 +91,7 @@ public abstract class AbstractTranscoderStream extends InputStream {
     protected abstract String getTargetName();
 
     private String getSourceArguments() {
-        String key = getSourceName() + ".source";
-        return getPropertyValue(key);
+        return getPropertyValue(getSourceName() + "." + getTargetName() + ".source");
     }
 
     static String getPropertyValue(String key) {
@@ -100,7 +99,6 @@ public abstract class AbstractTranscoderStream extends InputStream {
     }
 
     private String getTargetArguments() {
-        String key = getTargetName() + ".target";
-        return getPropertyValue(key);
+        return getPropertyValue(getSourceName() + "." + getTargetName() + ".target");
     }
 }

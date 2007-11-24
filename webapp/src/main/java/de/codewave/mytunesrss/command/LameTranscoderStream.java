@@ -15,7 +15,7 @@ public class LameTranscoderStream extends InputStream {
     private Process myProcess;
 
     public LameTranscoderStream(File file, String lameBinary, int outputBitRate, int outputSampleRate) throws IOException {
-        String[] command = (lameBinary + " " + AbstractTranscoderStream.getPropertyValue("lame")).split(" ");
+        String[] command = (lameBinary + " " + AbstractTranscoderStream.getPropertyValue("lame.lame")).split(" ");
         for (int i = 0; i < command.length; i++) {
             if ("{bitrate}".equals(command[i])) {
                 command[i] = Integer.toString(outputBitRate);
