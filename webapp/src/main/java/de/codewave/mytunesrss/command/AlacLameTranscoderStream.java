@@ -19,12 +19,4 @@ public class AlacLameTranscoderStream extends AbstractTranscoderStream {
     protected String getTargetName() {
         return "lame";
     }
-
-    protected String getSourceArguments() {
-        return "{infile}";
-    }
-
-    protected String getTargetArguments() {
-        return "--quiet -b {bitrate} --resample {samplerate} - -";
-    }
 }

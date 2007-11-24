@@ -194,14 +194,6 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${authUser.rss}">
-                <tr <mt:flipFlop/>>
-                    <td><fmt:message key="settings.rssArtwork" /></td>
-                    <td>
-                        <input type="checkbox" name="rssArtwork" value="true" <c:if test="${config.rssArtwork}">checked="checked"</c:if> />
-                    </td>
-                </tr>
-            </c:if>
             <c:if test="${registered && authUser.transcoder && globalConfig.validLameBinary}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.useLame" /></td>

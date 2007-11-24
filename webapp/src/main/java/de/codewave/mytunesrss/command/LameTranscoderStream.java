@@ -11,12 +11,11 @@ import java.text.*;
  */
 public class LameTranscoderStream extends InputStream {
     private static final Log LOG = LogFactory.getLog(LameTranscoderStream.class);
-    private static String LAME_ARGUMENTS = "--quiet -b {bitrate} --resample {samplerate} {infile} -";
 
     private Process myProcess;
 
     public LameTranscoderStream(File file, String lameBinary, int outputBitRate, int outputSampleRate) throws IOException {
-        String[] command = (lameBinary + " " + LAME_ARGUMENTS).split(" ");
+        String[] command = (lameBinary + " " + AbstractTranscoderStream.getPropertyValue("lame")).split(" ");
         for (int i = 0; i < command.length; i++) {
             if ("{bitrate}".equals(command[i])) {
                 command[i] = Integer.toString(outputBitRate);

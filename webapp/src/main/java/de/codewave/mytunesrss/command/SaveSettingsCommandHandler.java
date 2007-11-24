@@ -41,7 +41,6 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private boolean transferAndValidate(WebConfig webConfig) {
-        webConfig.setRssArtwork(getBooleanRequestParameter("rssArtwork", false));
         webConfig.setShowDownload(getBooleanRequestParameter("showDownload", false));
         webConfig.setShowRss(isParameterValue("feedType", "rss"));
         webConfig.setShowPlaylist(isParameterValue("feedType", "playlist"));

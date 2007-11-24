@@ -28,7 +28,6 @@ public class WebConfig {
     private static final String CFG_PAGE_SIZE = "pageSize";
     private static final String CFG_SHOW_DOWNLOAD = "showDownload";
     private static final String CFG_SHOW_PLAYER = "showPlayer";
-    private static final String CFG_RSS_ARTWORK = "rssArtwork";
     private static final String CFG_RANDOM_PLAYLIST_SIZE = "randomPlaylistSize";
     private static final String CFG_LAST_UPDATED_PLAYLIST_SIZE = "lastUpdatedPlaylistSize";
     private static final String CFG_MOST_PLAYED_PLAYLIST_SIZE = "mostPlayedPlaylistSize";
@@ -96,7 +95,6 @@ public class WebConfig {
         myConfigValues.put(CFG_PAGE_SIZE, "0");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
-        myConfigValues.put(CFG_RSS_ARTWORK, "true");
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
@@ -323,14 +321,6 @@ public class WebConfig {
 
     public void setPageSize(int pageSize) {
         myConfigValues.put(CFG_PAGE_SIZE, Integer.toString(pageSize));
-    }
-
-    public boolean isRssArtwork() {
-        return Boolean.valueOf(myConfigValues.get(CFG_RSS_ARTWORK));
-    }
-
-    public void setRssArtwork(boolean rssArtwork) {
-        myConfigValues.put(CFG_RSS_ARTWORK, Boolean.toString(rssArtwork));
     }
 
     public int getRandomPlaylistSize() {

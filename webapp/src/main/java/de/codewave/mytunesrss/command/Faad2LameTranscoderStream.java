@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.*;
 
 import java.io.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.command.LameTranscoderStream
@@ -18,13 +19,5 @@ public class Faad2LameTranscoderStream extends AbstractTranscoderStream {
 
     protected String getTargetName() {
         return "lame";
-    }
-
-    protected String getSourceArguments() {
-        return "-f 2 -w {infile}";
-    }
-
-    protected String getTargetArguments() {
-        return "--quiet -b {bitrate} --resample {samplerate} - -";
     }
 }
