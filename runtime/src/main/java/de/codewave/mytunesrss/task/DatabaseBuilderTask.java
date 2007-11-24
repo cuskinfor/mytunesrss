@@ -146,9 +146,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             final long timeUpdateStart = System.currentTimeMillis();
             SystemInformation systemInformation = storeSession.executeQuery(new GetSystemInformationQuery());
             runUpdate(systemInformation, storeSession);
-            DatabaseBuilderTask.doCheckpoint(storeSession, true);
-            runImageUpdate(systemInformation, storeSession, timeUpdateStart);
             storeSession.executeStatement(new UpdateStatisticsStatement());
+            DatabaseBuilderTask.doCheckpoint(storeSession, true);
+            runImageUpdate(storeSession, timeUpdateStart);
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     connection.createStatement().execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
@@ -165,9 +165,8 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         }
     }
 
-    private void runImageUpdate(SystemInformation systemInformation, DataStoreSession storeSession, final long timeUpdateStart) throws SQLException {
+    private void runImageUpdate(DataStoreSession storeSession, final long timeUpdateStart) throws SQLException {
         myState = State.UpdatingTrackImages;
-        long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
         MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
         event.setMessageKey("settings.databaseUpdateRunningImages");
         MyTunesRssEventManager.getInstance().fireEvent(event);
