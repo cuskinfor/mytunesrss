@@ -24,7 +24,10 @@ function selectAll(prefix, ids, checkbox) {
 }
 
 function openPlayer(url) {
-    window.open(url, 'MyTunesRssFlashPlayer', 'width=600,height=276,resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no')
+    var flashPlayer = window.open(url, "MyTunesRssFlashPlayer", "width=600,height=276,resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no");
+    flashPlayer.onload=function() {
+        flashPlayer.document.title = self.document.title;
+    }
 }
 
 function getElementParams(elements, separator) {
