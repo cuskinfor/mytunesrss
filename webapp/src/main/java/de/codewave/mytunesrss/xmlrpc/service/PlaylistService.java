@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.command.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.xmlrpc.*;
+import org.apache.commons.lang.*;
 
 import java.sql.*;
 
@@ -44,6 +45,18 @@ public class PlaylistService {
      * @return The URL for the specified playlist.
      */
     public String getPlaylistUrl(String playlistId, String type) {
-        return MyTunesRssXmlRpcServlet.getServerCall(MyTunesRssCommand.CreatePlaylist, "playlist=" + playlistId + "/type=" + type);
+        return MyTunesRssXmlRpcServlet.getServerCall(MyTunesRssCommand.CreatePlaylist, "playlist=" + playlistId + "/type=" + StringUtils.capitalize(
+                type.toLowerCase()));
+    }
+
+    /**
+     * Get an URL for retrieving an RSS feed for the playlist with the specified ID.
+     *
+     * @param playlistId ID of the playlist.
+     *
+     * @return The URL for the RSS feed.
+     */
+    public String getRssUrl(String playlistId) {
+        return MyTunesRssXmlRpcServlet.getServerCall(MyTunesRssCommand.CreateRss, "playlist=" + playlistId);
     }
 }
