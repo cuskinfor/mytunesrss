@@ -15,9 +15,9 @@
     </dependencySets>
     <files>
         <file>
-            <source>target/${artifactId}-${version}.jar</source>
+            <source>target/mytunesrss-remover-${version}.jar</source>
             <outputDirectory>data</outputDirectory>
-            <destName>mytunesrss_remover.jar</destName>
+            <destName>mytunesrss-remover.jar</destName>
         </file>
     </files>
     <fileSets>
