@@ -5,7 +5,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
-    <version>3.1-EAP-19</version>
+    <version>3.1-EAP-20</version>
     <name>Codewave MyTunesRSS Runtime</name>
     <distributionManagement>
         <site>
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>apple</artifactId>
-            <version>3.1-EAP-19</version>
+            <version>3.1-EAP-20</version>
             <scope>runtime</scope>
             <optional/>
         </dependency>
