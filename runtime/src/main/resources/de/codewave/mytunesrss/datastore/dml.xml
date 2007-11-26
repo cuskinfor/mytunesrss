@@ -152,7 +152,7 @@
             OR (:type IS NOT NULL AND :id IS NULL AND p.track_count > 0 AND p.type = :type)
             OR (:type IS NULL AND :id IS NOT NULL AND p.track_count > 0 AND p.id = :id)
             OR (:type IS NOT NULL AND :id IS NOT NULL AND p.track_count > 0 AND p.type = :type AND p.id = :id))
-            GROUP BY id, name, type, track_count
+            GROUP BY id, name, type, track_count, user_private, hidden, user_owner
             ORDER BY name
             ]]>
         </sql>
