@@ -1,11 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>apple</artifactId>
     <packaging>jar</packaging>
-    <version>3.1-EAP-20-SNAPSHOT</version>
+    <version>3.1-EAP-20</version>
     <name>Codewave MyTunesRSS Apple Extensions</name>
     <distributionManagement>
         <site>
@@ -25,4 +23,8 @@
             <version>1.0.4</version>
         </dependency>
     </dependencies>
+
+  <scm>
+    <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/codewave-maven2-base/tags/mytunesrss-3.1-EAP-20</developerConnection>
+  </scm>
 </project>
