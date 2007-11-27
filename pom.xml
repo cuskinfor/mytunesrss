@@ -5,7 +5,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>mytunesrss</artifactId>
     <packaging>pom</packaging>
-    <version>3.1-EAP-20</version>
+    <version>3.1-EAP-20-SNAPSHOT</version>
     <name>mytunesrss</name>
     <distributionManagement>
         <site>
@@ -13,6 +13,9 @@
         </site>
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>
+    <scm>
+        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/trunk</developerConnection>
+    </scm>
     <parent>
         <groupId>de.codewave</groupId>
         <artifactId>codewave-maven2-base</artifactId>
@@ -22,8 +25,6 @@
         <module>runtime</module>
         <module>webapp</module>
         <module>apple</module>
-        <module>shareit-keygen</module>
-        <module>remover</module>
     </modules>
     <dependencies>
         <dependency>
