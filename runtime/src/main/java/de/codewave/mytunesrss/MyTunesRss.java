@@ -11,11 +11,10 @@ import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.settings.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.*;
-import de.codewave.utils.xml.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.maven.*;
-import de.codewave.utils.moduleinfo.*;
 import de.codewave.utils.swing.*;
+import de.codewave.utils.xml.*;
 import org.apache.catalina.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
@@ -53,6 +52,23 @@ public class MyTunesRss {
 
     static {
         try {
+            File file = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/system.properties");
+            if (file.isFile()) {
+                Properties properties = new Properties();
+                properties.load(new FileInputStream(file));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Setting system properties from \"" + file.getAbsolutePath() + "\".");
+                }
+                for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                    System.setProperty(entry.getKey().toString(), entry.getValue().toString());
+                }
+            }
+        } catch (IOException e) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Could not load user system properties: " + e.getMessage());
+            }
+        }
+        try {
             UPDATE_URL = new URL("http://www.codewave.de/download/versions/mytunesrss.xml");
         } catch (MalformedURLException e) {
             if (LOG.isErrorEnabled()) {
@@ -69,7 +85,6 @@ public class MyTunesRss {
     }
 
     public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
-    //    public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.dyn-o-saur.com";
     public static final String MYTUNESRSSCOM_TOOLS_URL = MYTUNESRSSCOM_URL + "/tools";
     public static String VERSION;
     public static URL UPDATE_URL;
@@ -115,7 +130,7 @@ public class MyTunesRss {
             LOG.info("Preferences data path: " + PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER));
             if (LOG.isDebugEnabled()) {
                 LOG.debug("--------------------------------------------------------------------------------");
-                for (Map.Entry<Object,Object> entry : System.getProperties().entrySet()) {
+                for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
                     LOG.debug(entry.getKey() + "=" + entry.getValue());
                 }
                 LOG.debug("--------------------------------------------------------------------------------");
@@ -188,34 +203,48 @@ public class MyTunesRss {
                 urls.add(file.toURL());
             }
             final ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), ClassLoader.getSystemClassLoader());
-            DriverManager.registerDriver(new Driver() {
-                private Driver myDriver = (Driver)Class.forName(System.getProperty("database.driver", "org.h2.Driver"), true, classLoader)
-                        .newInstance();
+            try {
+                final Class<Driver> driverClass = (Class<Driver>)Class.forName(System.getProperty("database.driver", "org.h2.Driver"), true, classLoader);
+                DriverManager.registerDriver(new Driver() {
+                    private Driver myDriver = driverClass.newInstance();
 
-                public Connection connect(String string, Properties properties) throws SQLException {
-                    return myDriver.connect(string, properties);
+                    public Connection connect(String string, Properties properties) throws SQLException {
+                        return myDriver.connect(string, properties);
+                    }
+
+                    public boolean acceptsURL(String string) throws SQLException {
+                        return myDriver.acceptsURL(string);
+                    }
+
+                    public DriverPropertyInfo[] getPropertyInfo(String string, Properties properties) throws SQLException {
+                        return myDriver.getPropertyInfo(string, properties);
+                    }
+
+                    public int getMajorVersion() {
+                        return myDriver.getMajorVersion();
+                    }
+
+                    public int getMinorVersion() {
+                        return myDriver.getMinorVersion();
+                    }
+
+                    public boolean jdbcCompliant() {
+                        return myDriver.jdbcCompliant();
+                    }
+                });
+            } catch (ClassNotFoundException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Database driver class not found.", e);
+                }
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.databaseDriverNotFound", System.getProperty("database.driver",
+                                                                                                                                    "org.h2.Driver"), libDir.getAbsolutePath()));
+                MyTunesRssUtils.shutdown();
+            } catch (SQLException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error(null, e);
                 }
 
-                public boolean acceptsURL(String string) throws SQLException {
-                    return myDriver.acceptsURL(string);
-                }
-
-                public DriverPropertyInfo[] getPropertyInfo(String string, Properties properties) throws SQLException {
-                    return myDriver.getPropertyInfo(string, properties);
-                }
-
-                public int getMajorVersion() {
-                    return myDriver.getMajorVersion();
-                }
-
-                public int getMinorVersion() {
-                    return myDriver.getMinorVersion();
-                }
-
-                public boolean jdbcCompliant() {
-                    return myDriver.jdbcCompliant();
-                }
-            });
+            }
         } else {
             Class.forName(System.getProperty("database.driver", "org.h2.Driver"));
         }

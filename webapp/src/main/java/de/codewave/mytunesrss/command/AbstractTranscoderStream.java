@@ -26,8 +26,10 @@ public abstract class AbstractTranscoderStream extends InputStream {
             }
         }
         try {
-            USER_PROPERTIES.load(new FileInputStream(
-                    PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder.properties"));
+            File file = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder.properties");
+            if (file.isFile()) {
+                USER_PROPERTIES.load(new FileInputStream(file));
+            }
         } catch (IOException e) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("Could not load user transcoder properties: " + e.getMessage());

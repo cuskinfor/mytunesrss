@@ -24,10 +24,12 @@ public class FileSuffixInfo {
             }
         }
         try {
-            USER_PROPERTIES.load(new FileInputStream(
-                    PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/file-suffixes.properties"));
-            for (Enumeration e = USER_PROPERTIES.keys(); e.hasMoreElements();) {
-                SUFFIXES.add(e.nextElement().toString().split("\\.")[0].toLowerCase());
+            File file = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/system.properties");
+            if (file.isFile()) {
+                USER_PROPERTIES.load(new FileInputStream(file));
+                for (Enumeration e = USER_PROPERTIES.keys(); e.hasMoreElements();) {
+                    SUFFIXES.add(e.nextElement().toString().split("\\.")[0].toLowerCase());
+                }
             }
         } catch (IOException e) {
             if (LOG.isWarnEnabled()) {
