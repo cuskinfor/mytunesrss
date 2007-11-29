@@ -17,6 +17,6 @@
         )
     </fragment>
     <fragment name="drop_playlist_id_sequence">DROP TABLE playlist_id_sequence</fragment>
-    <fragment name="image_datatype">BLOB(50000)</fragment>
+    <fragment name="image_datatype">BLOB(100000)</fragment>
 
 </statements>
