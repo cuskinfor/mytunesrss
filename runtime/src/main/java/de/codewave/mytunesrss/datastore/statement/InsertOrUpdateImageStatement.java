@@ -21,6 +21,9 @@ public abstract class InsertOrUpdateImageStatement implements DataStoreStatement
         myTrackId = trackId;
         mySize = size;
         myData = data;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Image data size is " + data.length + " bytes.");
+        }
     }
 
     public void setData(byte[] data) {
