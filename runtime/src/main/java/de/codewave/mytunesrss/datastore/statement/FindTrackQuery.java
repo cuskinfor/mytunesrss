@@ -129,6 +129,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             track.setLastImageUpdate(resultSet.getLong("LAST_IMAGE_UPDATE"));
             track.setPlayCount(resultSet.getLong("PLAYCOUNT"));
             track.setImageCount(resultSet.getInt("IMAGECOUNT"));
+            track.setComment(resultSet.getString("COMMENT"));
             return track;
         }
     }

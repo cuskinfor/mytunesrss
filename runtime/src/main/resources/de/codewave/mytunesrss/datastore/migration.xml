@@ -60,4 +60,8 @@
         <sql>ALTER TABLE track DROP COLUMN last_seen</sql>
     </statement>
 
+    <statement name="migrate31eap17to31eap20">
+        <sql>ALTER TABLE track ADD COLUMN comment VARCHAR(2048)</sql>
+    </statement>
+
 </statements>

@@ -171,6 +171,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             setLastImageUpdate(track.getLastImageUpdate());
             setPlayCount(track.getPlayCount());
             setImageCount(track.getImageCount());
+            setComment(track.getComment());
         }
 
         public boolean isNewSection() {

@@ -30,6 +30,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
     private boolean myVideo;
     private String myGenre;
     private String myMp4Codec;
+    private String myComment;
     private SmartStatement myStatement;
 
     public void setAlbum(String album) {
@@ -76,6 +77,10 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
         myMp4Codec = mp4Codec;
     }
 
+    public void setComment(String comment) {
+        myComment = comment;
+    }
+
     public synchronized void execute(Connection connection) throws SQLException {
         try {
             myArtist = dropWordsFromArtist(myArtist);
@@ -96,6 +101,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
             myStatement.setString("mp4codec", myMp4Codec);
             myStatement.setLong("ts_updated", System.currentTimeMillis());
+            myStatement.setString("comment", myComment);
             myStatement.execute();
         } catch (SQLException e) {
             if (UpdateTrackStatement.LOG.isErrorEnabled()) {

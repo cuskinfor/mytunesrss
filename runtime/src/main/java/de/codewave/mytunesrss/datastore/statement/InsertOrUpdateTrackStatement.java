@@ -32,5 +32,7 @@ public interface InsertOrUpdateTrackStatement extends DataStoreStatement {
 
     void setMp4Codec(String codec);
 
+    void setComment(String comment);
+
     void clear();
 }

@@ -28,6 +28,7 @@ public class Track {
     private long myTsUpdated;
     private long myPlayCount;
     private long myLastImageUpdate;
+    private String myComment;
 
     public String getAlbum() {
         return myAlbum;
@@ -123,6 +124,14 @@ public class Track {
 
     public void setImageCount(int imageCount) {
         myImageCount = imageCount;
+    }
+
+    public String getComment() {
+        return myComment;
+    }
+
+    public void setComment(String comment) {
+        myComment = comment;
     }
 
     public long getTsPlayed() {
