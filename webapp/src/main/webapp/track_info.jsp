@@ -97,6 +97,16 @@
                 </td>
             </tr>
         </c:if>
+        <c:if test="${!empty track.comment}">
+            <tr <mt:flipFlop/>>
+                <td>
+                    <fmt:message key="trackComment" />:
+                </td>
+                <td>
+                    <c:out value="${track.comment}"/>
+                </td>
+            </tr>
+        </c:if>
         <tr <mt:flipFlop/>>
             <td><fmt:message key="type"/>:</td>
             <td>
