@@ -137,6 +137,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (genre != null) {
                     statement.setGenre(StringUtils.trimToNull(genre));
                 }
+                statement.setComment(StringUtils.trimToNull(createComment(tag)));
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
@@ -146,6 +147,39 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 setSimpleInfo(statement, file);
             }
         }
+    }
+
+    private String createComment(Id3Tag tag) {
+        try {
+            if (tag.isId3v2()) {
+                String comment = " " + System.getProperty("track.comment.id3v2") + " "; // make sure the comment does neither start nor end with a token
+                if (StringUtils.isNotBlank(comment)) {
+                    for (int s = comment.indexOf("${"); s > -1; s = comment.indexOf("${")) {
+                        int e = comment.indexOf("}", s);
+                        if (e != -1) {
+                            String[] tokens = comment.substring(s + 2, e).split(",");
+                            if (tokens.length == 1) {
+                                comment = comment.substring(0, s) + ((Id3v2Tag)tag).getTextFrameBodyValue(tokens[0].trim(), tokens[0].trim()) +
+                                        comment.substring(e + 1);
+                            } else {
+                                comment = comment.substring(0, s) + ((Id3v2Tag)tag).getTextFrameBodyValue(tokens[0].trim(), tokens[1].trim()) +
+                                        comment.substring(e + 1);
+                            }
+                        }
+                    }
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Created comment for ID3 tag: \"" + StringUtils.trimToEmpty(comment) + "\"");
+                    }
+                }
+                return StringUtils.trimToNull(comment);
+            }
+            return ((Id3v1Tag)tag).getComment();
+        } catch (Exception e) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Could not create comment for ID3 tag", e);
+            }
+        }
+        return null;
     }
 
     private void parseMp4MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId) {
