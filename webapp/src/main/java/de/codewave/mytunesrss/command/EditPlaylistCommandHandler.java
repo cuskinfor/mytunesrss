@@ -20,7 +20,9 @@ public class EditPlaylistCommandHandler extends MyTunesRssCommandHandler {
         if (isSessionAuthorized()) {
             Collection<Track> playlist = (Collection<Track>)getSession().getAttribute("playlistContent");
             if ((playlist != null && !playlist.isEmpty()) || getBooleanRequestParameter("allowEditEmpty", false)) {
-                playlist = filterTracks(playlist);
+                if (!Boolean.TRUE.equals(getStates().get("addToPlaylistMode"))) {
+                    playlist = filterTracks(playlist);
+                }
                 int pageSize = getWebConfig().getEffectivePageSize();
                 if (pageSize > 0 && playlist.size() > pageSize) {
                     int index = getValidIndex(getSafeIntegerRequestParameter("index", 0), pageSize, playlist.size());
@@ -30,7 +32,7 @@ public class EditPlaylistCommandHandler extends MyTunesRssCommandHandler {
                 } else {
                     getRequest().setAttribute("tracks", playlist);
                 }
-                List<Track> tracks = (List<Track>)getRequest().getAttribute("tracks");
+                Collection<Track> tracks = (Collection<Track>)getRequest().getAttribute("tracks");
                 if (!tracks.isEmpty()) {
                     StringBuilder builder = new StringBuilder();
                     for (Track track : tracks) {
