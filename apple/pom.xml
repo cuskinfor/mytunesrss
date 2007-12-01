@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>apple</artifactId>
     <packaging>jar</packaging>
-    <version>3.1-EAP-20</version>
+    <version>3.1-EAP-21-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Apple Extensions</name>
     <distributionManagement>
         <site>
