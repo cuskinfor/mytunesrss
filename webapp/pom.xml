@@ -65,7 +65,7 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>codewave-utils</artifactId>
-            <version>0.30-SNAPSHOT</version>
+            <version>0.30</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-codec</groupId>
