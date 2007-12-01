@@ -128,13 +128,13 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             SystemInformation systemInformation = storeSession.executeQuery(new GetSystemInformationQuery());
             runUpdate(systemInformation, storeSession);
             storeSession.executeStatement(new UpdateStatisticsStatement());
-            DatabaseBuilderTask.doCheckpoint(storeSession, true);
-            runImageUpdate(storeSession, timeUpdateStart);
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     connection.createStatement().execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
                 }
             });
+            DatabaseBuilderTask.doCheckpoint(storeSession, true);
+            runImageUpdate(storeSession, timeUpdateStart);
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating database checkpoint.");

@@ -44,7 +44,10 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     public static FindTrackQuery getForAlbum(User user, String[] albums, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
         query.myArtistSort = sortByArtistFirst;
-        query.myAlbums = albums;
+        query.myAlbums = new String[albums.length];
+        for (int i = 0; i < albums.length; i++) {
+            query.myAlbums[i] = albums[i].toLowerCase();
+        }
         query.myRestrictedPlaylistId = user.getPlaylistId();
         return query;
     }
@@ -52,7 +55,10 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     public static FindTrackQuery getForArtist(User user, String[] artists, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
         query.myArtistSort = sortByArtistFirst;
-        query.myArtists = artists;
+        query.myArtists = new String[artists.length];
+        for (int i = 0; i < artists.length; i++) {
+            query.myArtists[i] = artists[i].toLowerCase();
+        }
         query.myRestrictedPlaylistId = user.getPlaylistId();
         return query;
     }
@@ -60,7 +66,10 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     public static FindTrackQuery getForGenre(User user, String[] genres, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
         query.myArtistSort = sortByArtistFirst;
-        query.myGenres = genres;
+        query.myGenres = new String[genres.length];
+        for (int i = 0; i < genres.length; i++) {
+            query.myGenres[i] = genres[i].toLowerCase();
+        }
         query.myRestrictedPlaylistId = user.getPlaylistId();
         return query;
     }

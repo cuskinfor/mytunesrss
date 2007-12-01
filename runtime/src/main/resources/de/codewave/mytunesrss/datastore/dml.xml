@@ -491,27 +491,32 @@
     <statement name="recreateHelpTablesAlbum">
         <sql>DELETE FROM album</sql>
         <sql>
-            INSERT INTO album (name, first_char, track_count, artist_count)
-            SELECT DISTINCT(album), LOWER(SUBSTRING(album FROM 1 FOR 1)), COUNT(id), COUNT(DISTINCT(artist)) FROM track GROUP BY album
+            INSERT INTO album (name, track_count, artist_count)
+            SELECT DISTINCT(LOWER(album)), COUNT(id), COUNT(DISTINCT(LOWER(artist))) FROM track GROUP BY LOWER(album)
         </sql>
+        <sql>UPDATE album SET first_char = SUBSTRING(LOWER(name) FROM 1 FOR 1)</sql>
+        <sql>{updateAlbumNameInAlbumTable}</sql>
         <sql>{updateArtistNameInAlbumTable}</sql>
     </statement>
 
     <statement name="recreateHelpTablesArtist">
         <sql>DELETE FROM artist</sql>
         <sql>
-            INSERT INTO artist (name, first_char, track_count, album_count)
-            SELECT DISTINCT(artist), LOWER(SUBSTRING(artist FROM 1 FOR 1)), COUNT(id), COUNT(DISTINCT(album)) FROM track GROUP BY artist
+            INSERT INTO artist (name, track_count, album_count)
+            SELECT DISTINCT(LOWER(artist)), COUNT(id), COUNT(DISTINCT(LOWER(album))) FROM track GROUP BY LOWER(artist)
         </sql>
+        <sql>UPDATE artist SET first_char = SUBSTRING(LOWER(name) FROM 1 FOR 1)</sql>
+        <sql>{updateArtistNameInArtistTable}</sql>
     </statement>
 
     <statement name="recreateHelpTablesGenre">
         <sql>DELETE FROM genre</sql>
         <sql>
-            INSERT INTO genre (name, first_char, track_count, album_count, artist_count)
-            SELECT DISTINCT(genre), LOWER(SUBSTRING(genre FROM 1 FOR 1)), COUNT(id), COUNT(DISTINCT(album)), COUNT(DISTINCT(artist))
-            FROM track WHERE genre IS NOT NULL GROUP BY genre
+            INSERT INTO genre (name, track_count, album_count, artist_count)
+            SELECT DISTINCT(LOWER(genre)), COUNT(id), COUNT(DISTINCT(LOWER(album))), COUNT(DISTINCT(LOWER(artist))) FROM track WHERE genre IS NOT NULL GROUP BY LOWER(genre)
         </sql>
+        <sql>UPDATE genre SET first_char = SUBSTRING(LOWER(name) FROM 1 FOR 1)</sql>
+        <sql>{updateGenreNameInGenreTable}</sql>
     </statement>
 
     <statement name="findPlaylistIds">
@@ -566,9 +571,9 @@
         FROM track t
         LEFT OUTER JOIN image i ON i.track_id = t.id
         WHERE (:size_of_id = 0 OR t.id IN (:id[]))
-        AND (:size_of_genre = 0 OR t.genre IN (:genre[]))
-        AND (:size_of_artist = 0 OR t.artist IN (:artist[]))
-        AND (:size_of_album = 0 OR t.album IN (:album[]))
+        AND (:size_of_genre = 0 OR LOWER(t.genre) IN (:genre[]))
+        AND (:size_of_artist = 0 OR LOWER(t.artist) IN (:artist[]))
+        AND (:size_of_album = 0 OR LOWER(t.album) IN (:album[]))
         AND (:size_of_search < 1 OR (LOWER(t.name) LIKE :search[0] {likeEscape}) OR (LOWER(album) LIKE :search[0] {likeEscape}) OR (LOWER(artist) LIKE :search[0] {likeEscape}))
         AND (:size_of_search < 2 OR (LOWER(t.name) LIKE :search[1] {likeEscape}) OR (LOWER(album) LIKE :search[1] {likeEscape}) OR (LOWER(artist) LIKE :search[1] {likeEscape}))
         AND (:size_of_search < 3 OR (LOWER(t.name) LIKE :search[2] {likeEscape}) OR (LOWER(album) LIKE :search[2] {likeEscape}) OR (LOWER(artist) LIKE :search[2] {likeEscape}))
@@ -591,11 +596,11 @@
         WHERE rltp.playlist_id = :restrictedPlaylistId
         AND rltp.track_id = t.id
         AND (:size_of_id = 0 OR t.id IN (:id[]))
-        AND (:size_of_genre = 0 OR t.genre IN (:genre[]))
-        AND (:size_of_artist = 0 OR t.artist IN (:artist[]))
-        AND (:size_of_album = 0 OR t.album IN (:album[]))
+        AND (:size_of_genre = 0 OR LOWER(t.genre) IN (:genre[]))
+        AND (:size_of_artist = 0 OR LOWER(t.artist) IN (:artist[]))
+        AND (:size_of_album = 0 OR LOWER(t.album) IN (:album[]))
         AND (:size_of_search < 1 OR (LOWER(t.name) LIKE :search[0] {likeEscape}) OR (LOWER(album) LIKE :search[0] {likeEscape}) OR (LOWER(artist) LIKE :search[0] {likeEscape}))
-        AND (:size_of_search < 2 OR (LOWERUPDATE album AS a SET artist = t.artist FROM track t WHERE a.artist_count = 1 AND t.album = a.name(t.name) LIKE :search[1] {likeEscape}) OR (LOWER(album) LIKE :search[1] {likeEscape}) OR (LOWER(artist) LIKE :search[1] {likeEscape}))
+        AND (:size_of_search < 2 OR (LOWER(t.name) LIKE :search[1] {likeEscape}) OR (LOWER(album) LIKE :search[1] {likeEscape}) OR (LOWER(artist) LIKE :search[1] {likeEscape}))
         AND (:size_of_search < 3 OR (LOWER(t.name) LIKE :search[2] {likeEscape}) OR (LOWER(album) LIKE :search[2] {likeEscape}) OR (LOWER(artist) LIKE :search[2] {likeEscape}))
         AND (:size_of_search < 4 OR (LOWER(t.name) LIKE :search[3] {likeEscape}) OR (LOWER(album) LIKE :search[3] {likeEscape}) OR (LOWER(artist) LIKE :search[3] {likeEscape}))
         AND (:size_of_search < 5 OR (LOWER(t.name) LIKE :search[4] {likeEscape}) OR (LOWER(album) LIKE :search[4] {likeEscape}) OR (LOWER(artist) LIKE :search[4] {likeEscape}))

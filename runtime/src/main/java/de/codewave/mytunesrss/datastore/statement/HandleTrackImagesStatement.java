@@ -40,7 +40,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     image = MyTunesRssMp4Utils.getImage(myFile);
                 }
                 boolean existing = new FindTrackImageQuery(myTrackId, 32).execute(connection) != null;
-                if (image != null  && image.getData() != null && !existing) {
+                if (image != null  && image.getData() != null && image.getData().length > 0 && !existing) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Original image size is " + image.getData().length + " bytes.");
                     }
@@ -48,7 +48,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     new InsertImageStatement(myTrackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
                     new InsertImageStatement(myTrackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
                     new InsertImageStatement(myTrackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
-                } else if (image != null && image.getData() != null && existing) {
+                } else if (image != null && image.getData() != null && image.getData().length > 0 && existing) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Original image size is " + image.getData().length + " bytes.");
                     }
@@ -56,7 +56,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     new UpdateImageStatement(myTrackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
                     new UpdateImageStatement(myTrackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
                     new UpdateImageStatement(myTrackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
-                } else if ((image == null || image.getData() == null) && existing) {
+                } else if ((image == null || image.getData() == null || image.getData().length == 0) && existing) {
                     new DeleteImageStatement(myTrackId).execute(connection);
                 }
                 new LastImageUpdateTimeStatement(myTrackId).execute(connection);

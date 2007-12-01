@@ -98,4 +98,16 @@
         UPDATE album AS a SET artist = t.artist FROM track t WHERE a.artist_count = 1 AND t.album = a.name
     </fragment>
 
+    <fragment name="updateAlbumNameInAlbumTable">
+        UPDATE album AS a SET name = t.album FROM track t WHERE a.name = LOWER(t.album)
+    </fragment>
+
+    <fragment name="updateArtistNameInArtistTable">
+        UPDATE artist AS a SET name = t.artist FROM track t WHERE a.name = LOWER(t.artist)
+    </fragment>
+
+    <fragment name="updateGenreNameInGenreTable">
+        UPDATE genre AS g SET name = t.genre FROM track t WHERE g.name = LOWER(t.genre)
+    </fragment>
+
 </statements>
