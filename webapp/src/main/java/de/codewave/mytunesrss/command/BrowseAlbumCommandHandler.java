@@ -30,7 +30,11 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                 genre = null;
             }
             getRequest().setAttribute("albumPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
-            FindAlbumQuery findAlbumQuery = new FindAlbumQuery(getAuthUser(), getDisplayFilter().getTextFilter(), artist, genre, getIntegerRequestParameter("page", -1));
+            FindAlbumQuery findAlbumQuery = new FindAlbumQuery(getAuthUser(),
+                                                               getDisplayFilter().getTextFilter(),
+                                                               artist,
+                                                               genre,
+                                                               getIntegerRequestParameter("page", -1));
             DataStoreQuery.QueryResult<Album> queryResult = getTransaction().executeQuery(findAlbumQuery);
             int pageSize = getWebConfig().getEffectivePageSize();
             List<Album> albums;
@@ -53,6 +57,33 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                     trackCount += album.getTrackCount();
                 }
                 getRequest().setAttribute("allAlbumsTrackCount", trackCount);
+                if (singleArtist) {
+                    final String finalArtist = artist;
+                    getRequest().setAttribute("allArtistGenreTrackCount", getTransaction().executeQuery(new DataStoreQuery<Object>() {
+                        public Object execute(Connection connection) throws SQLException {
+                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findArtistTrackCount");
+                            statement.setString("name", finalArtist);
+                            ResultSet rs = statement.executeQuery();
+                            if (rs.next()) {
+                                return rs.getInt("COUNT");
+                            }
+                            return new Long(0);
+                        }
+                    }));
+                } else {
+                    final String finalArtist = artist;
+                    getRequest().setAttribute("allArtistGenreTrackCount", getTransaction().executeQuery(new DataStoreQuery<Object>() {
+                        public Object execute(Connection connection) throws SQLException {
+                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenreTrackCount");
+                            statement.setString("name", finalArtist);
+                            ResultSet rs = statement.executeQuery();
+                            if (rs.next()) {
+                                return rs.getInt("COUNT");
+                            }
+                            return new Long(0);
+                        }
+                    }));
+                }
             }
             forward(MyTunesRssResource.BrowseAlbum);
         } else {

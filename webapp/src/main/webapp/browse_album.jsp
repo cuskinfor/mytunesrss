@@ -205,7 +205,7 @@
                             <td class="icon">
                                 <c:choose>
                                     <c:when test="${authUser.maximumZipEntries <= 0 || allAlbumsTrackCount <= authUser.maximumZipEntries}">
-                                        <a href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.zip">
+                                        <a href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/Albums%20with%20${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.zip">
                                             <img src="${appUrl}/images/download${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
                                     </c:when>
                                     <c:otherwise>
@@ -220,6 +220,76 @@
                         <td class="icon">
                             <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                 <img src="${appUrl}/images/add${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                        </td>
+                    </c:otherwise>
+                </c:choose>
+            </tr>
+            <tr class="${cwfn:choose(fn:length(albums) % 2 == 0, 'odd', 'even')}">
+                <c:if test="${!empty sessionScope.playlist}">
+                    <td class="check">&nbsp;</td>
+                </c:if>
+                <td colspan="2"><em>
+                    <c:choose>
+                        <c:when test="${singleArtist}">
+                            <mt:array var="params">
+                                <mt:arrayElement value="${mtfn:decode64(param.artist)}"/>
+                            </mt:array>
+                            <fmt:message var="localizedMessage" key="allTracksOfArtist"/>
+                        </c:when>
+                        <c:otherwise>
+                            <mt:array var="params">
+                                <mt:arrayElement value="${mtfn:decode64(param.genre)}"/>
+                            </mt:array>
+                            <fmt:message var="localizedMessage" key="allTracksOfGenre"/>
+                        </c:otherwise>
+                    </c:choose>
+                    <c:out value="${cwfn:message(localizedMessage, params)}"/>
+                </em></td>
+                <td class="tracks">
+                    <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${allArtistGenreTrackCount}</a>
+                </td>
+                <c:choose>
+                    <c:when test="${empty sessionScope.playlist}">
+                        <c:if test="${authUser.rss && config.showRss}">
+                            <td class="icon">
+                                <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">tc=${transcodeParam}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xml">
+                                    <img src="${appUrl}/images/rss${cwfn:choose(fn:length(albums) % 2 == 0, '_odd', '')}.gif"
+                                         alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
+                            </td>
+                        </c:if>
+                        <c:if test="${authUser.playlist && config.showPlaylist}">
+                            <td class="icon">
+                                <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/tc=${transcodeParam}</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.${config.playlistFileSuffix}">
+                                    <img src="${appUrl}/images/playlist${cwfn:choose(fn:length(albums) % 2 == 0, '_odd', '')}.gif"
+                                         alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
+                            </td>
+                        </c:if>
+                        <c:if test="${authUser.player && config.showPlayer}">
+                            <td class="icon">
+                                <a href="#" onclick="openPlayer('${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">tc=${transcodeParam}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/playerRequest=true/type=Xspf</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xspf&displaywidth=256'); return false">
+                                    <img src="${appUrl}/images/player${cwfn:choose(fn:length(albums) % 2 == 0, '_odd', '')}.gif"
+                                         alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
+                            </td>
+                        </c:if>
+                        <c:if test="${authUser.download && config.showDownload}">
+                            <td class="icon">
+                                <c:choose>
+                                    <c:when test="${authUser.maximumZipEntries <= 0 || allArtistGenreTrackCount <= authUser.maximumZipEntries}">
+                                        <a href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.zip">
+                                            <img src="${appUrl}/images/download${cwfn:choose(fn:length(albums) % 2 == 0, '_odd', '')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="#" onclick="alert('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>'); return false">
+                                            <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '_odd', '')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </c:if>
+                    </c:when>
+                    <c:otherwise>
+                        <td class="icon">
+                            <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                                <img src="${appUrl}/images/add${cwfn:choose(fn:length(albums) % 2 == 0, '_odd', '')}.gif" alt="add" /> </a>
                         </td>
                     </c:otherwise>
                 </c:choose>

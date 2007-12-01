@@ -53,4 +53,32 @@
         </attribute>
     </tag>
 
+    <tag>
+        <description>
+            Create an array of elements in the page context.
+        </description>
+        <name>array</name>
+        <tag-class>de.codewave.mytunesrss.jsp.ArrayTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <description>Name of the array in the page context.</description>
+            <name>var</name>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <description>
+            An element in an array. Used as child element in an array tag.
+        </description>
+        <name>arrayElement</name>
+        <tag-class>de.codewave.mytunesrss.jsp.ArrayElementTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <description>Element value.</description>
+            <name>value</name>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
 </taglib>
