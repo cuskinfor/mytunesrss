@@ -66,6 +66,7 @@
 <table cellspacing="0">
 <c:forEach items="${tracks}" var="track">
 <c:if test="${track.newSection}">
+    <c:set var="sectionFileName" value=""/>
     <c:set var="count" value="0" />
     <tr>
         <c:if test="${!empty sessionScope.playlist}">
