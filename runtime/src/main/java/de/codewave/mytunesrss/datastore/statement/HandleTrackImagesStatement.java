@@ -21,6 +21,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
 
     private File myFile;
     private String myTrackId;
+    private static final int MAX_IMAGE_DATA_SIZE = 1024 * 1000 * 2; // maximum image size is 2 MB
 
     public HandleTrackImagesStatement(File file, String trackId) {
         myFile = file;
@@ -40,6 +41,12 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     image = MyTunesRssMp4Utils.getImage(myFile);
                 }
                 boolean existing = new FindTrackImageQuery(myTrackId, 32).execute(connection) != null;
+                if (image != null && image.getData() != null && image.getData().length > MAX_IMAGE_DATA_SIZE) {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("Ignoring overly large image from file \"" + myFile.getAbsolutePath() + "\" (size = " + image.getData().length + ").");
+                    }
+                    image = null;
+                }
                 if (image != null  && image.getData() != null && image.getData().length > 0 && !existing) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Original image size is " + image.getData().length + " bytes.");
