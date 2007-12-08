@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>apple</artifactId>
     <packaging>jar</packaging>
-    <version>3.1-RC1-SNAPSHOT</version>
+    <version>3.1-RC1</version>
     <name>Codewave MyTunesRSS Apple Extensions</name>
     <distributionManagement>
         <site>
@@ -23,4 +23,8 @@
             <version>1.0.4</version>
         </dependency>
     </dependencies>
+
+  <scm>
+    <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/codewave-maven2-base/tags/mytunesrss-3.1-RC1</developerConnection>
+  </scm>
 </project>
