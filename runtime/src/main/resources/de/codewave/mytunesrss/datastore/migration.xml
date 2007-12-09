@@ -7,7 +7,6 @@
 
     <statement name="migrate30to31eap1">
         <sql>DROP TABLE IF EXISTS pager</sql>
-        <sql>DROP INDEX idx_link_track_playlist_index</sql>
         <sql>ALTER TABLE link_track_playlist ALTER COLUMN index RENAME TO idx</sql>
         <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (idx)</sql>
     </statement>
