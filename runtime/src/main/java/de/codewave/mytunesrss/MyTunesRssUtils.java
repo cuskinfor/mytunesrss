@@ -109,6 +109,7 @@ public class MyTunesRssUtils {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Shutting down gracefully.");
         }
+        DatabaseBuilderTask.interruptCurrentTask();
         if (MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRss.stopWebserver();
         }
@@ -123,8 +124,7 @@ public class MyTunesRssUtils {
                 }
                 MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.finishingUpdate"), null, false, new MyTunesRssTask() {
                     public void execute() {
-                        DatabaseBuilderTask databaseBuilderTask = MyTunesRss.createDatabaseBuilderTask();
-                        while (databaseBuilderTask.isRunning()) {
+                        while (DatabaseBuilderTask.isRunning()) {
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {

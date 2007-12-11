@@ -117,6 +117,7 @@ public class MyTunesRss {
         if (arguments.containsKey("debug")) {
             Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
         }
+        MyTunesRssRegistration.RegistrationResult registrationResult = REGISTRATION.init(null, true);
         registerDatabaseDriver();
         VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
         if (StringUtils.isEmpty(VERSION)) {
@@ -154,11 +155,10 @@ public class MyTunesRss {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
             MyTunesRssUtils.shutdown();
         }
-        MyTunesRssRegistration.RegistrationResult result = REGISTRATION.init(null, true);
-        if (result == MyTunesRssRegistration.RegistrationResult.InternalExpired) {
+        if (registrationResult == MyTunesRssRegistration.RegistrationResult.InternalExpired) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.defaulRegistrationExpired"));
             MyTunesRssUtils.shutdown();
-        } else if (result == MyTunesRssRegistration.RegistrationResult.ExternalExpired) {
+        } else if (registrationResult == MyTunesRssRegistration.RegistrationResult.ExternalExpired) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
         }
         if (System.getProperty("database.type") == null && Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).getBoolean(
@@ -197,6 +197,7 @@ public class MyTunesRss {
             throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         File libDir = new File(PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER) + "/lib");
         Collection<File> files = libDir.isDirectory() ? (Collection<File>)FileUtils.listFiles(libDir, new String[] {"jar"}, false) : null;
+        String driverClassName = MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.driver", "org.h2.Driver") : "org.h2.Driver";
         if (files != null && !files.isEmpty()) {
             Collection<URL> urls = new ArrayList<URL>();
             for (File file : files) {
@@ -204,7 +205,7 @@ public class MyTunesRss {
             }
             final ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), ClassLoader.getSystemClassLoader());
             try {
-                final Class<Driver> driverClass = (Class<Driver>)Class.forName(System.getProperty("database.driver", "org.h2.Driver"), true, classLoader);
+                final Class<Driver> driverClass = (Class<Driver>)Class.forName(driverClassName, true, classLoader);
                 DriverManager.registerDriver(new Driver() {
                     private Driver myDriver = driverClass.newInstance();
 
@@ -236,8 +237,9 @@ public class MyTunesRss {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Database driver class not found.", e);
                 }
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.databaseDriverNotFound", System.getProperty("database.driver",
-                                                                                                                                    "org.h2.Driver"), libDir.getAbsolutePath()));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.databaseDriverNotFound",
+                                                                                 driverClassName,
+                                                                                 libDir.getAbsolutePath()));
                 MyTunesRssUtils.shutdown();
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
@@ -246,15 +248,28 @@ public class MyTunesRss {
 
             }
         } else {
-            Class.forName(System.getProperty("database.driver", "org.h2.Driver"));
+            try {
+                Class.forName(driverClassName);
+            } catch (ClassNotFoundException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Database driver class not found.", e);
+                }
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.databaseDriverNotFound",
+                                                                                 driverClassName,
+                                                                                 libDir.getAbsolutePath()));
+                MyTunesRssUtils.shutdown();
+            }
         }
     }
 
     public static DatabaseBuilderTask createDatabaseBuilderTask() {
+        DatabaseBuilderTask task;
         if (DATABASE_FORM == null) {
-            return new DatabaseBuilderTask();
+            task = new DatabaseBuilderTask();
+        } else {
+            task = new GuiDatabaseBuilderTask(SETTINGS);
         }
-        return new GuiDatabaseBuilderTask(SETTINGS);
+        return task;
     }
 
     private static boolean isOtherInstanceRunning(long timeoutMillis) {
@@ -368,7 +383,7 @@ public class MyTunesRss {
 
     public static void startWebserver() {
         if (MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart()) {
-            MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.buildDatabase"), null, false, MyTunesRss.createDatabaseBuilderTask());
+            MyTunesRssUtils.executeDatabaseUpdate();
         }
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.serverstarting"), null, false, new MyTunesRssTask() {
             public void execute() throws Exception {

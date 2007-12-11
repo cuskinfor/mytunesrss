@@ -5,11 +5,12 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.*;
 import de.codewave.mytunesrss.datastore.filesystem.*;
 import de.codewave.mytunesrss.datastore.itunes.*;
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.datastore.*;
 import de.codewave.utils.sql.*;
+import de.codewave.utils.swing.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
@@ -37,12 +38,20 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         }
     }
 
+    public static void interruptCurrentTask() {
+        final Task task = CURRENTLY_RUNNING_TASK;
+        if (task != null) {
+            task.interrupt();
+        }
+    }
+
     public enum State {
         UpdatingTracksFromItunes(), UpdatingTracksFromFolder(), UpdatingTrackImages(), Idle();
     }
 
     private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
     private static Lock CURRENTLY_RUNNING = new ReentrantLock();
+    private static DatabaseBuilderTask CURRENTLY_RUNNING_TASK;
     private static State myState = State.Idle;
     private static final long MAX_TX_DURATION = 2500;
     private List<File> myDatasources = new ArrayList<File>();
@@ -93,6 +102,8 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
     public void execute() throws Exception {
         if (CURRENTLY_RUNNING.tryLock()) {
+            setExecutionThread(Thread.currentThread());
+            CURRENTLY_RUNNING_TASK = this;
             try {
                 MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
                 event.setMessageKey("settings.databaseUpdateRunning");
@@ -104,6 +115,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN);
                 throw e;
             } finally {
+                CURRENTLY_RUNNING_TASK = null;
                 CURRENTLY_RUNNING.unlock();
             }
         } else {
@@ -169,7 +181,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     });
                 }
             });
-            for (Track track = result.nextResult(); track != null; track = result.nextResult()) {
+            for (Track track = result.nextResult(); track != null && !getExecutionThread().isInterrupted(); track = result.nextResult()) {
                 if (track.getFile().lastModified() >= track.getLastImageUpdate()) {
                     storeSession.executeStatement(new HandleTrackImagesStatement(track.getFile(), track.getId()));
                 }
