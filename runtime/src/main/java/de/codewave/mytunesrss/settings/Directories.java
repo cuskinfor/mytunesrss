@@ -206,7 +206,7 @@ public class Directories implements MyTunesRssEventListener {
                     }
                 }
             } else {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.unregisteredMaxWatchFolders", MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.unregisteredMaxDataSources", MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS));
             }
         }
 
