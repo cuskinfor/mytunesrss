@@ -58,7 +58,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 String fileId = "file_" + IOUtils.getFilenameHash(file);
                 if (!myFoundIds.contains(fileId)) {
                     String canonicalFilePath = file.getCanonicalPath();
-                    boolean existing = myTrackIds.remove(fileId);
+                    boolean existing = myTrackIds.contains(fileId);
                     if ((file.lastModified() >= myLastUpdateTime || !existing)) {
                         InsertOrUpdateTrackStatement statement =
                                 existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
