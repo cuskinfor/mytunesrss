@@ -140,7 +140,7 @@
                         </c:if>
                         <c:if test="${authUser.player && config.showPlayer}">
                             <td class="icon">
-                                <a href="#" onclick="openPlayer('${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/album=${cwfn:encodeUrl(mtfn:encode64(album.name))}/playerRequest=true/tc=${transcodeParam}/type=Xspf/${mtfn:virtualAlbumName(album)}.xspf&displaywidth=256'); return false">
+                                <a href="#" onclick="openPlayer('${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}/playerRequest=true/tc=${transcodeParam}/type=Xspf</mt:encrypt>/${mtfn:virtualAlbumName(album)}.xspf&displaywidth=256'); return false">
                                     <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                             </td>
