@@ -98,7 +98,7 @@
                             </c:if>
                             <c:if test="${authUser.player && config.showPlayer}">
                                 <td class="icon">
-                                    <a href="#" onclick="<mtt:flashplayer playlistParams="genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}" filename="${mtfn:virtualGenreName(genre)}.xspf"/>'); return false">
+                                    <a href="#" onclick="openPlayer('<mtt:flashplayer playlistParams="genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}" filename="${mtfn:virtualGenreName(genre)}.xspf"/>'); return false">
                                         <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                                 </td>
