@@ -6,6 +6,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="mtt" %>
 
 <c:set var="backUrl" scope="request">${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}</mt:encrypt></c:set>
 
@@ -140,7 +141,7 @@
                 </c:if>
                 <c:if test="${authUser.player && config.showPlayer}">
                     <td class="icon">
-                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/playerRequest=true/tc=${transcodeParam}/type=Xspf</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xspf&displaywidth=256'); return false">
+                        <a href="#" onclick="openPlayer('<mtt:flashplayer playlistParams="playlist=${playlist.id}" filename="${mtfn:webSafeFileName(playlist.name)}.xspf"/>'); return false">
                             <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                     </td>
                 </c:if>

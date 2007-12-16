@@ -40,6 +40,7 @@ public class WebConfig {
     private static final String CFG_THEME = "theme";
     private static final String CFG_TRANSCODE_OTF_IF_POSSIBLE = "transcodeOnTheFlyIfPossible";
     private static final String CFG_RANDOM_SOURCE = "rndSrc";
+    private static final String CFG_FLASH_PLAYER_TYPE = "flashplayerType";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -106,6 +107,7 @@ public class WebConfig {
         myConfigValues.put(CFG_USE_ALAC, "false");
         myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, "false");
         myConfigValues.put(CFG_RANDOM_SOURCE, "");
+        myConfigValues.put(CFG_FLASH_PLAYER_TYPE, "jw");
     }
 
     public void load(User user) {
@@ -417,5 +419,13 @@ public class WebConfig {
 
     public void setRandomSource(String source) {
         myConfigValues.put(CFG_RANDOM_SOURCE, source);
+    }
+
+    public String getFlashplayerType() {
+        return myConfigValues.get(CFG_FLASH_PLAYER_TYPE);
+    }
+
+    public void setFlashplayerType(String type) {
+        myConfigValues.put(CFG_FLASH_PLAYER_TYPE, type);
     }
 }

@@ -54,6 +54,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setAlac(getBooleanRequestParameter("useAlac", false));
         webConfig.setTranscodeOnTheFlyIfPossible(getBooleanRequestParameter("transcodeOnTheFlyIfPossible", false));
         webConfig.setRandomSource(getRequestParameter("randomSource", ""));
+        webConfig.setFlashplayerType(getRequestParameter("flashplayerType", "jw"));
         boolean error = false;
         error |= transferAndValidatePageSize(webConfig);
         error |= transferAndValidateRssFeedLimit(webConfig);
