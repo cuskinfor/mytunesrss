@@ -33,7 +33,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private DataStoreSession myStoreSession;
     private int myUpdatedCount;
     private Set<String> myExistingIds = new HashSet<String>();
-    private Set<String> myFoundIds = new HashSet<String>();
     private Collection<String> myTrackIds;
 
     public MyTunesRssFileProcessor(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds)
@@ -56,9 +55,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         try {
             if (file.isFile() && FileSupportUtils.isSupported(file.getName())) {
                 String fileId = "file_" + IOUtils.getFilenameHash(file);
-                if (!myFoundIds.contains(fileId)) {
+                if (!myExistingIds.contains(fileId)) {
                     String canonicalFilePath = file.getCanonicalPath();
                     boolean existing = myTrackIds.contains(fileId);
+                    if (existing) {
+                        myExistingIds.add(fileId);
+                    }
                     if ((file.lastModified() >= myLastUpdateTime || !existing)) {
                         InsertOrUpdateTrackStatement statement =
                                 existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
@@ -77,15 +79,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             myStoreSession.executeStatement(statement);
                             myUpdatedCount++;
                             DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
-                            myFoundIds.add(fileId);
                             myExistingIds.add(fileId);
                         } catch (SQLException e) {
                             if (LOG.isErrorEnabled()) {
                                 LOG.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
                             }
                         }
-                    } else if (existing) {
-                        myExistingIds.add(fileId);
                     }
                     DatabaseBuilderTask.doCheckpoint(myStoreSession, false);
                 }
@@ -95,6 +94,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 LOG.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
             }
         }
+        myTrackIds.removeAll(myExistingIds);
     }
 
     private void parseMp3MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId) {
