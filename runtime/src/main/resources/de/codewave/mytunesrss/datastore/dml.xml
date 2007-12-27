@@ -503,32 +503,25 @@
     <statement name="recreateHelpTablesAlbum">
         <sql>DELETE FROM album</sql>
         <sql>
-            INSERT INTO album (name, track_count, artist_count)
-            SELECT DISTINCT(LOWER(album)), COUNT(id), COUNT(DISTINCT(LOWER(artist))) FROM track GROUP BY LOWER(album)
+            INSERT INTO album (name, first_char, artist, track_count, artist_count)
+            SELECT MAX(album), SUBSTRING(LOWER(MAX(album)) FROM 1 FOR 1), MAX(artist), COUNT(id), COUNT(DISTINCT(LOWER(artist))) FROM track GROUP BY LOWER(album)
         </sql>
-        <sql>UPDATE album SET first_char = SUBSTRING(LOWER(name) FROM 1 FOR 1)</sql>
-        <sql>{updateAlbumNameInAlbumTable}</sql>
-        <sql>{updateArtistNameInAlbumTable}</sql>
     </statement>
 
     <statement name="recreateHelpTablesArtist">
         <sql>DELETE FROM artist</sql>
         <sql>
-            INSERT INTO artist (name, track_count, album_count)
-            SELECT DISTINCT(LOWER(artist)), COUNT(id), COUNT(DISTINCT(LOWER(album))) FROM track GROUP BY LOWER(artist)
+            INSERT INTO artist (name, first_char, track_count, album_count)
+            SELECT MAX(artist), SUBSTRING(LOWER(MAX(artist)) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(LOWER(album))) FROM track GROUP BY LOWER(artist)
         </sql>
-        <sql>UPDATE artist SET first_char = SUBSTRING(LOWER(name) FROM 1 FOR 1)</sql>
-        <sql>{updateArtistNameInArtistTable}</sql>
     </statement>
 
     <statement name="recreateHelpTablesGenre">
         <sql>DELETE FROM genre</sql>
         <sql>
-            INSERT INTO genre (name, track_count, album_count, artist_count)
-            SELECT DISTINCT(LOWER(genre)), COUNT(id), COUNT(DISTINCT(LOWER(album))), COUNT(DISTINCT(LOWER(artist))) FROM track WHERE genre IS NOT NULL GROUP BY LOWER(genre)
+            INSERT INTO genre (name, first_char, track_count, album_count, artist_count)
+            SELECT MAX(genre), SUBSTRING(MAX(genre) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(LOWER(album))), COUNT(DISTINCT(LOWER(artist))) FROM track WHERE genre IS NOT NULL GROUP BY LOWER(genre)
         </sql>
-        <sql>UPDATE genre SET first_char = SUBSTRING(LOWER(name) FROM 1 FOR 1)</sql>
-        <sql>{updateGenreNameInGenreTable}</sql>
     </statement>
 
     <statement name="findPlaylistIds">

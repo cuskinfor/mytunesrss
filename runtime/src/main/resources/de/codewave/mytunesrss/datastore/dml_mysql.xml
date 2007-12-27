@@ -94,20 +94,4 @@
 
     <fragment name="likeEscape">ESCAPE '\\'</fragment>
 
-    <fragment name="updateArtistNameInAlbumTable">
-        UPDATE album AS a, track AS t SET a.artist = t.artist WHERE a.artist_count = 1 AND t.album = a.name
-    </fragment>
-
-    <fragment name="updateAlbumNameInAlbumTable">
-        UPDATE album AS a, track AS t SET a.name = t.album WHERE a.name = LOWER(t.album)
-    </fragment>
-
-    <fragment name="updateArtistNameInArtistTable">
-        UPDATE artist AS a, track AS t SET a.name = t.artist WHERE a.name = LOWER(t.artist)
-    </fragment>
-
-    <fragment name="updateGenreNameInGenreTable">
-        UPDATE genre AS g, track AS t SET g.name = t.genre WHERE g.name = LOWER(t.genre)
-    </fragment>
-
 </statements>
