@@ -160,7 +160,7 @@ public class User {
     }
 
     public QuotaType getQuotaType() {
-        return MyTunesRss.REGISTRATION.isRegistered() ? myQuotaType : QuotaType.None;
+        return MyTunesRss.REGISTRATION.isRegistered() ? (myQuotaType != null ? myQuotaType : QuotaType.None) : QuotaType.None;
     }
 
     public void setQuotaType(QuotaType quotaType) {
@@ -168,7 +168,7 @@ public class User {
     }
 
     public boolean isQuota() {
-        return myQuotaType != QuotaType.None;
+        return myQuotaType != null && myQuotaType != QuotaType.None;
     }
 
     public long getResetTime() {
@@ -254,7 +254,7 @@ public class User {
     }
 
     public boolean isQuotaExceeded() {
-        if (myQuotaType != QuotaType.None && myBytesQuota > 0) {
+        if (myQuotaType != null && myQuotaType != QuotaType.None && myBytesQuota > 0) {
             checkQuotaReset();
             return myBytesQuota > 0 && myQuotaDownBytes >= myBytesQuota;
         }
@@ -262,7 +262,7 @@ public class User {
     }
 
     public long getQuotaRemaining() {
-        if (myQuotaType != QuotaType.None && myBytesQuota > 0) {
+        if (myQuotaType != null && myQuotaType != QuotaType.None && myBytesQuota > 0) {
             checkQuotaReset();
             return Math.max(myBytesQuota - myQuotaDownBytes, 0);
         }
