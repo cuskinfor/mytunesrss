@@ -22,7 +22,11 @@ public abstract class InsertOrUpdateImageStatement implements DataStoreStatement
         mySize = size;
         myData = data;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Image data size is " + data.length + " bytes.");
+            if (data != null) {
+                LOG.debug("Image data size is " + data.length + " bytes.");
+            } else {
+                LOG.debug("Image data is NULL.");
+            }
         }
     }
 

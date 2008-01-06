@@ -32,15 +32,18 @@ public class MyTunesRssDataStore extends DataStore {
         initSmartStatementFactory();
         String filename = DIRNAME + "/MyTunesRSS";
         String pathname = PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
-        final String connectString = System.getProperty("database.connection", "jdbc:h2:file:" + pathname + "/" + filename);
+        final String connectString = MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.connection",
+                                                                                                 "jdbc:h2:file:" + pathname + "/" + filename) :
+                "jdbc:h2:file:" + pathname + "/" + filename;
         setConnectionPool(new GenericObjectPool(new BasePoolableObjectFactory() {
             public Object makeObject() throws Exception {
                 long endTime = System.currentTimeMillis() + 10000;
                 do {
                     try {
-                        return DriverManager.getConnection(connectString, System.getProperty("database.user", "sa"), System.getProperty(
-                                "database.password",
-                                ""));
+                        return DriverManager.getConnection(connectString,
+                                                           MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.user",
+                                                                                                                       "sa") : "sa",
+                                                           MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.password", "") : "");
                     } catch (SQLException e1) {
                         if (LOG.isWarnEnabled()) {
                             LOG.warn("Could not get a database connection.");
@@ -53,9 +56,10 @@ public class MyTunesRssDataStore extends DataStore {
                     }
                 } while (System.currentTimeMillis() < endTime);
                 try {
-                    return DriverManager.getConnection(connectString, System.getProperty("database.user", "sa"), System.getProperty(
-                            "database.password",
-                            ""));
+                    return DriverManager.getConnection(connectString,
+                                                       MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.user",
+                                                                                                                   "sa") : "sa",
+                                                       MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.password", "") : "");
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not get a database connection.", e);
@@ -83,7 +87,7 @@ public class MyTunesRssDataStore extends DataStore {
     }
 
     private void initSmartStatementFactory() {
-        String databaseType = System.getProperty("database.type", "h2");
+        String databaseType = MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.type", "h2") : "h2";
         JXPathContext[] contexts =
                 new JXPathContext[] {JXPathUtils.getContext(getClass().getResource("ddl.xml")), JXPathUtils.getContext(getClass().getResource(
                         "dml.xml")), JXPathUtils.getContext(getClass().getResource("migration.xml"))};

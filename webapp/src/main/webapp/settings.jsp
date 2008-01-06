@@ -193,6 +193,15 @@
                         <img src="${appUrl}/images/player.gif" alt="player" style="vertical-align:text-top;" />
                     </td>
                 </tr>
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.flashplayerType" /></td>
+                    <td>
+                        <select name="flashplayerType">
+                            <option value="jw" <c:if test="${config.flashplayerType eq 'jw'}">selected="selected"</c:if>><fmt:message key="flashplayer.jw"/></option>
+                            <option value="xspf" <c:if test="${config.flashplayerType eq 'xspf'}">selected="selected"</c:if>><fmt:message key="flashplayer.xspf"/></option>
+                        </select>
+                    </td>
+                </tr>
             </c:if>
             <c:if test="${registered && authUser.transcoder && globalConfig.validLameBinary}">
                 <tr <mt:flipFlop/>>

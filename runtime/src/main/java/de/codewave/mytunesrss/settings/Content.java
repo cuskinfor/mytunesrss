@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.*;
+import de.codewave.utils.swing.*;
 import org.apache.commons.logging.*;
 
 import javax.swing.*;
@@ -41,39 +42,43 @@ public class Content implements MyTunesRssEventListener {
     }
 
     private void refreshPlaylistList() {
-        myPlaylistsPanel.removeAll();
-        DataStoreSession session = MyTunesRss.STORE.getTransaction();
-        try {
-            List<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(null, null, true)).getResults();
-            Collections.sort(playlists, new Comparator<Playlist>() {
-                public int compare(Playlist o1, Playlist o2) {
-                    return o1.getName().compareTo(o2.getName());
+        SwingUtils.invokeAndWait(new Runnable() {
+            public void run() {
+                myPlaylistsPanel.removeAll();
+                DataStoreSession session = MyTunesRss.STORE.getTransaction();
+                try {
+                    List<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(null, null, true)).getResults();
+                    Collections.sort(playlists, new Comparator<Playlist>() {
+                        public int compare(Playlist o1, Playlist o2) {
+                            return o1.getName().compareTo(o2.getName());
+                        }
+                    });
+                    for (Playlist playlist : playlists) {
+                        if (playlist.getType() == PlaylistType.ITunes || playlist.getType() == PlaylistType.M3uFile) {
+                            addPlaylist(playlist);
+                        }
+                    }
+                    addPanelComponent(new JLabel(""), new GridBagConstraints(GridBagConstraints.RELATIVE,
+                                                                             GridBagConstraints.RELATIVE,
+                                                                             2,
+                                                                             1,
+                                                                             1.0,
+                                                                             1.0,
+                                                                             GridBagConstraints.WEST,
+                                                                             GridBagConstraints.BOTH,
+                                                                             new Insets(0, 0, 0, 0),
+                                                                             0,
+                                                                             0));
+                } catch (SQLException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error(null, e);
+                    }
+                } finally {
+                    session.commit();
                 }
-            });
-            for (Playlist playlist : playlists) {
-                if (playlist.getType() == PlaylistType.ITunes || playlist.getType() == PlaylistType.M3uFile) {
-                    addPlaylist(playlist);
-                }
+                myPlaylistsPanel.validate();
             }
-            addPanelComponent(new JLabel(""), new GridBagConstraints(GridBagConstraints.RELATIVE,
-                                                                     GridBagConstraints.RELATIVE,
-                                                                     2,
-                                                                     1,
-                                                                     1.0,
-                                                                     1.0,
-                                                                     GridBagConstraints.WEST,
-                                                                     GridBagConstraints.BOTH,
-                                                                     new Insets(0, 0, 0, 0),
-                                                                     0,
-                                                                     0));
-        } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error(null, e);
-            }
-        } finally {
-            session.commit();
-        }
-        myPlaylistsPanel.validate();
+        });
     }
 
     private void addPlaylist(final Playlist playlist) {

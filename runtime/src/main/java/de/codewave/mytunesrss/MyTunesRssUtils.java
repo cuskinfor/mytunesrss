@@ -109,11 +109,14 @@ public class MyTunesRssUtils {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Shutting down gracefully.");
         }
+        DatabaseBuilderTask.interruptCurrentTask();
         if (MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRss.stopWebserver();
         }
         if (!MyTunesRss.WEBSERVER.isRunning()) {
-            MyTunesRssJmxUtils.stopJmxServer();
+            if (MyTunesRss.REGISTRATION.isRegistered()) {
+                MyTunesRssJmxUtils.stopJmxServer();
+            }
             MyTunesRss.CONFIG.saveWindowPosition(MyTunesRss.ROOT_FRAME.getLocation());
             MyTunesRss.CONFIG.save();
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
@@ -123,8 +126,7 @@ public class MyTunesRssUtils {
                 }
                 MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.finishingUpdate"), null, false, new MyTunesRssTask() {
                     public void execute() {
-                        DatabaseBuilderTask databaseBuilderTask = MyTunesRss.createDatabaseBuilderTask();
-                        while (databaseBuilderTask.isRunning()) {
+                        while (DatabaseBuilderTask.isRunning()) {
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {

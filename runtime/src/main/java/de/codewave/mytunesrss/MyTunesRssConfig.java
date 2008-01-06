@@ -129,7 +129,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isAvailableOnLocalNet() {
-        return MyTunesRss.REGISTRATION.isRegistered() && myAvailableOnLocalNet;
+        return myAvailableOnLocalNet;
     }
 
     public void setAvailableOnLocalNet(boolean availableOnLocalNet) {
@@ -217,7 +217,7 @@ public class MyTunesRssConfig {
     }
 
     public String getUploadDir() {
-        return MyTunesRss.REGISTRATION.isRegistered() ? myUploadDir : null;
+        return myUploadDir;
     }
 
     public void setUploadDir(String uploadDir) {
@@ -400,7 +400,7 @@ public class MyTunesRssConfig {
     }
 
     public String getMyTunesRssComUser() {
-        return MyTunesRss.REGISTRATION.isRegistered() ? myMyTunesRssComUser : null;
+        return myMyTunesRssComUser;
     }
 
     public void setMyTunesRssComUser(String myTunesRssComUser) {
@@ -490,6 +490,19 @@ public class MyTunesRssConfig {
         setStreamingCacheMaxFiles(Preferences.userRoot().node(PREF_ROOT).getInt("streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
         setBandwidthLimit(Preferences.userRoot().node(PREF_ROOT).getBoolean("bandwidthLimit", false));
         setBandwidthLimitFactor(new BigDecimal(Preferences.userRoot().node(PREF_ROOT).get("bandwidthLimitFactor", "0")));
+        if (!MyTunesRss.REGISTRATION.isRegistered()) {
+            adjustSettingsToUnregisteredState();
+        }
+    }
+
+    private void adjustSettingsToUnregisteredState() {
+        setAvailableOnLocalNet(false);
+        setUploadDir(null);
+        setMyTunesRssComUser(null);
+        setWebWelcomeMessage(null);
+        setAlacBinary(null);
+        setLameBinary(null);
+        setFaad2Binary(null);
     }
 
     private void readPathInfoEncryptionKey() {

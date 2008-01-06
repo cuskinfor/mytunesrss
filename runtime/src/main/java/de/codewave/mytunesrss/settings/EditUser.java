@@ -226,6 +226,7 @@ public class EditUser {
         myRestrictionsPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myQuotaInfoPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myPermTranscoderInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myBandwidthLimit.setVisible(MyTunesRss.REGISTRATION.isRegistered());
     }
 
     private void refreshInfo() {

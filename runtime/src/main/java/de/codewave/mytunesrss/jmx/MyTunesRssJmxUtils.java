@@ -118,7 +118,7 @@ public class MyTunesRssJmxUtils {
                 unregisterUsers();
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not start JMX server.", e);
+                    LOG.error("Could not stop JMX server.", e);
                 }
             }
         }

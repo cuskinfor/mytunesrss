@@ -6,6 +6,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="mtt" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -130,7 +131,7 @@
                 </c:if>
                 <c:if test="${authUser.player && config.showPlayer}">
                     <th class="icon">
-                        <a href="#" onclick="openPlayer('${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">type=Xspf/tc=${transcodeParam}/playerRequest=true/tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.xspf&displaywidth=256'); return false">
+                        <a href="#" onclick="openPlayer('<mtt:flashplayer playlistParams="tracklist=${cwfn:encodeUrl(track.sectionIds)}" filename="${mtfn:webSafeFileName(sectionFileName)}.xspf"/>'); return false">
                             <img src="${appUrl}/images/player_th.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                     </th>
                 </c:if>
@@ -204,7 +205,7 @@
             </c:if>
             <c:if test="${authUser.player && config.showPlayer}">
                 <td class="icon">
-                    <a href="#" onclick="openPlayer('${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">type=Xspf/tc=${transcodeParam}/playerRequest=true/track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xspf&displaywidth=256'); return false">
+                    <a href="#" onclick="openPlayer('<mtt:flashplayer playlistParams="track=${track.id}" filename="${mtfn:virtualTrackName(track)}.xspf"/>'); return false">
                         <img src="${appUrl}/images/player${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                 </td>
             </c:if>
