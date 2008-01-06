@@ -14,6 +14,8 @@ import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
 import javax.servlet.http.*;
+import javax.servlet.jsp.jstl.core.*;
+import javax.servlet.jsp.jstl.fmt.*;
 import java.io.*;
 import java.util.*;
 import java.text.*;
@@ -183,7 +185,8 @@ public class MyTunesFunctions {
     }
 
     public static String formatDateAsDateAndTime(HttpServletRequest request, long milliseconds) {
-        ResourceBundle bundle = ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb", request.getLocale());
+        LocalizationContext context = (LocalizationContext)request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+        ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb", request.getLocale());
         SimpleDateFormat format = new SimpleDateFormat(bundle.getString("dateAndTimeFormat"));
         return format.format(new Date(milliseconds));
     }
