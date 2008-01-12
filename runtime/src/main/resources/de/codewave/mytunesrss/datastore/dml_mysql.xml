@@ -81,8 +81,8 @@
     </statement>
 
     <statement name="nextPlaylistId">
+        <sql>DELETE FROM playlist_id_sequence</sql>
         <sql>INSERT INTO playlist_id_sequence VALUES (0)</sql>
-        <sql>DELETE FROM playlist_id_sequence WHERE id = LAST_INSERT_ID()</sql>
         <sql>SELECT LAST_INSERT_ID() AS id FROM playlist_id_sequence LIMIT 1</sql>
     </statement>
 
