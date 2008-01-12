@@ -153,7 +153,7 @@ public class Streaming implements MyTunesRssEventListener {
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
                 public boolean accept(File file) {
-                    return file.isFile();
+                    return true;
                 }
 
                 public String getDescription() {
