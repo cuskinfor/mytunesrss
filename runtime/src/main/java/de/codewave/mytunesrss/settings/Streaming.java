@@ -151,16 +151,7 @@ public class Streaming implements MyTunesRssEventListener {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle(myDialogTitle);
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-                public boolean accept(File file) {
-                    return true;
-                }
-
-                public String getDescription() {
-                    return null;
-                }
-            });
-            int result = fileChooser.showOpenDialog(MyTunesRss.ROOT_FRAME);
+            int result = fileChooser.showDialog(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("filechooser.approve.transcoding"));
             if (result == JFileChooser.APPROVE_OPTION) {
                 myInput.setText(fileChooser.getSelectedFile().getAbsolutePath());
             }

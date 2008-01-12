@@ -147,6 +147,7 @@ public class Addons implements MyTunesRssEventListener {
         public void actionPerformed(ActionEvent e) {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle(myTitle);
+            fileChooser.setAcceptAllFileFilterUsed(false);
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
                 public boolean accept(File file) {
@@ -154,10 +155,10 @@ public class Addons implements MyTunesRssEventListener {
                 }
 
                 public String getDescription() {
-                    return null;
+                    return MyTunesRssUtils.getBundleString("filechooser.filter.addons");
                 }
             });
-            int result = fileChooser.showOpenDialog(MyTunesRss.ROOT_FRAME);
+            int result = fileChooser.showDialog(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("filechooser.approve.addons"));
             if (result == JFileChooser.APPROVE_OPTION) {
                 final File selectedFile = fileChooser.getSelectedFile();
                 MyTunesRssUtils.executeTask(null, myPleaseWaitText, null, false, new MyTunesRssTask() {

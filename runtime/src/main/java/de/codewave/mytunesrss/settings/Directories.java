@@ -184,6 +184,7 @@ public class Directories implements MyTunesRssEventListener {
         public void actionPerformed(ActionEvent event) {
             if (MyTunesRss.REGISTRATION.isRegistered() || MyTunesRss.CONFIG.getDatasources().length < MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
                 JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setAcceptAllFileFilterUsed(false);
                 fileChooser.setCurrentDirectory(myFileChooserDierctory);
                 fileChooser.setDialogTitle(MyTunesRssUtils.getBundleString("dialog.lookupBaseDir"));
                 fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -193,10 +194,10 @@ public class Directories implements MyTunesRssEventListener {
                     }
 
                     public String getDescription() {
-                        return null;
+                        return MyTunesRssUtils.getBundleString("filechooser.filter.watchfolder");
                     }
                 });
-                int result = fileChooser.showOpenDialog(MyTunesRss.ROOT_FRAME);
+                int result = fileChooser.showDialog(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("filechooser.approve.watchfolder"));
                 if (result == JFileChooser.APPROVE_OPTION) {
                     try {
                         myFileChooserDierctory = fileChooser.getCurrentDirectory();
