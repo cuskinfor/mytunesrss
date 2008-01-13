@@ -70,31 +70,40 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     }
 
     private void addToDatasources(File file) {
-        for (Iterator<File> iter = myDatasources.iterator(); iter.hasNext(); ) {
-            File each = iter.next();
-            try {
-                if (de.codewave.utils.io.IOUtils.isContained(each, file)) {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Not adding \"" + file.getAbsolutePath() + "\" to database update sources.");
+        if (file.isDirectory()) {
+            for (Iterator<File> iter = myDatasources.iterator(); iter.hasNext(); ) {
+                File each = iter.next();
+                if (each.isDirectory()) {
+                    try {
+                        if (de.codewave.utils.io.IOUtils.isContained(each, file)) {
+                            if (LOG.isInfoEnabled()) {
+                                LOG.info("Not adding \"" + file.getAbsolutePath() + "\" to database update sources.");
+                            }
+                            return; // new dir is already scanned through other dir
+                        } else if (de.codewave.utils.io.IOUtils.isContained(file, each)) {
+                            // existing one will be scanned by adding new one, so remove existing one
+                            if (LOG.isInfoEnabled()) {
+                                LOG.info("Removing folder \"" + each.getAbsolutePath() + "\" from database update sources.");
+                            }
+                            iter.remove();
+                        }
+                    } catch (IOException e) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("Could not check whether or not folder may be added, so adding it.", e);
+                        }
                     }
-                    return; // new dir is already scanned through other dir
-                } else if (de.codewave.utils.io.IOUtils.isContained(file, each)) {
-                    // existing one will be scanned by adding new one, so remove existing one
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Removing folder \"" + each.getAbsolutePath() + "\" from database update sources.");
-                    }
-                    iter.remove();
-                }
-            } catch (IOException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not check whether or not folder may be added, so adding it.", e);
                 }
             }
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Adding folder \"" + file.getAbsolutePath() + "\" to database update sources.");
+            }
+            myDatasources.add(file);
+        } else if (file.isFile()) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Adding iTunes XML file \"" + file.getAbsolutePath() + "\" to database update sources.");
+            }
+            myDatasources.add(file);
         }
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Adding folder \"" + file.getAbsolutePath() + "\" to database update sources.");
-        }
-        myDatasources.add(file); // add new one
     }
 
     public boolean needsUpdate() throws SQLException {
