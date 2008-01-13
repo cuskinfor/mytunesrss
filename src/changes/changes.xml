@@ -1,0 +1,36 @@
+<document>
+    <properties>
+        <title>MyTunesRSS</title>
+        <author email="mdescher@codewave.de">Michael Descher</author>
+    </properties>
+    <body>
+        <release version="3.1.1" date="????-??-??" description="Bugfix release">
+            <action dev="mdescher" type="add">
+                Yahoo media player integration in browse track page.
+            </action>
+            <action dev="mdescher" type="fix">
+                Navigating through folders was not possible when selecting transcoding binaries.
+            </action>
+            <action dev="mdescher" type="fix">
+                Watch folders included by other watch folders removed before database update.
+            </action>
+            <action dev="mdescher" type="fix">
+                Could not create playliats with a MySQL database.
+            </action>
+        </release>
+
+        <release version="3.1" date="2008-01-06" description="First release with changes.xml file">
+            <action dev="mdescher" type="add">
+                First release with changes.xml file.
+            </action>
+        </release>
+
+        <!--
+        <release version="???.???.???" date="????-??-??" description="???">
+            <action dev="???" type="add|update|fix|remove" issue="???" due-to="???" due-to-email="???">
+                ???
+            </action>
+        </release>
+        -->
+    </body>
+</document>

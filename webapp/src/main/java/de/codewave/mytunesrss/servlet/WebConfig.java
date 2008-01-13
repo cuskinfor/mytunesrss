@@ -41,6 +41,7 @@ public class WebConfig {
     private static final String CFG_TRANSCODE_OTF_IF_POSSIBLE = "transcodeOnTheFlyIfPossible";
     private static final String CFG_RANDOM_SOURCE = "rndSrc";
     private static final String CFG_FLASH_PLAYER_TYPE = "flashplayerType";
+    private static final String CFG_YAHOO_MEDIAPLAYER = "yahooMediaPlayer";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -108,6 +109,7 @@ public class WebConfig {
         myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, "false");
         myConfigValues.put(CFG_RANDOM_SOURCE, "");
         myConfigValues.put(CFG_FLASH_PLAYER_TYPE, "jw");
+        myConfigValues.put(CFG_YAHOO_MEDIAPLAYER, "false");
     }
 
     public void load(User user) {
@@ -427,5 +429,13 @@ public class WebConfig {
 
     public void setFlashplayerType(String type) {
         myConfigValues.put(CFG_FLASH_PLAYER_TYPE, type);
+    }
+
+    public boolean isYahooMediaPlayer() {
+        return Boolean.parseBoolean(myConfigValues.get(CFG_YAHOO_MEDIAPLAYER));
+    }
+
+    public void setYahooMediaPlayer(boolean yahooMediaPlayer) {
+        myConfigValues.put(CFG_YAHOO_MEDIAPLAYER, Boolean.toString(yahooMediaPlayer));
     }
 }

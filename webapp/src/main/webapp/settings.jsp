@@ -184,6 +184,12 @@
                         <img src="${appUrl}/images/download.gif" alt="playlist" style="vertical-align:text-top;" />
                     </td>
                 </tr>
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.showYahooMediaPlayer" /></td>
+                    <td>
+                        <input type="checkbox" name="showYahooMediaPlayer" value="true" <c:if test="${config.yahooMediaPlayer}">checked="checked"</c:if> />
+                    </td>
+                </tr>
             </c:if>
             <c:if test="${authUser.player}">
                 <tr <mt:flipFlop/>>

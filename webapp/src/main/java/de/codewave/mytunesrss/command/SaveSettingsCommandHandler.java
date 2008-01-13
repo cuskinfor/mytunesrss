@@ -55,6 +55,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setTranscodeOnTheFlyIfPossible(getBooleanRequestParameter("transcodeOnTheFlyIfPossible", false));
         webConfig.setRandomSource(getRequestParameter("randomSource", ""));
         webConfig.setFlashplayerType(getRequestParameter("flashplayerType", "jw"));
+        webConfig.setYahooMediaPlayer(getBooleanRequestParameter("showYahooMediaPlayer", false));
         boolean error = false;
         error |= transferAndValidatePageSize(webConfig);
         error |= transferAndValidateRssFeedLimit(webConfig);

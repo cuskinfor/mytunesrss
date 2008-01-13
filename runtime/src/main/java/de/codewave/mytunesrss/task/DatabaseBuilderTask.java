@@ -278,15 +278,16 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, trackIds, m3uPlaylistIds);
                 }
             }
-            // ensure the help tables are created with all the data
-            storeSession.executeStatement(new RecreateHelpTablesStatement());
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
-
         }
         if (LOG.isInfoEnabled()) {
             LOG.info("Removing " + trackIds.size() + " tracks from database.");
         }
         storeSession.executeStatement(new RemoveTrackStatement(trackIds));
+        DatabaseBuilderTask.doCheckpoint(storeSession, true);
+        // ensure the help tables are created with all the data
+        storeSession.executeStatement(new RecreateHelpTablesStatement());
+        DatabaseBuilderTask.doCheckpoint(storeSession, true);
         if (LOG.isInfoEnabled()) {
             LOG.info("Removing " + (itunesPlaylistIds.size() + m3uPlaylistIds.size()) + " playlists from database.");
         }
