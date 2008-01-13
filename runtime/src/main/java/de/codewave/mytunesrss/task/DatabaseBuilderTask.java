@@ -156,13 +156,10 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     }
 
     public void internalExecute() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Database builder task started.");
-        }
         DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Starting database update.");
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Starting database update.");
             }
             final long timeUpdateStart = System.currentTimeMillis();
             SystemInformation systemInformation = storeSession.executeQuery(new GetSystemInformationQuery());
@@ -176,9 +173,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
             runImageUpdate(storeSession, timeUpdateStart);
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating database checkpoint.");
-                LOG.debug("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Creating database checkpoint.");
+                LOG.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
             }
         } catch (Exception e) {
             storeSession.rollback();
@@ -193,6 +190,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         MyTunesRssEventManager.getInstance().fireEvent(event);
         TX_BEGIN = System.currentTimeMillis();
         DataStoreSession trackQuerySession = MyTunesRss.STORE.getTransaction();
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Processing track imags.");
+        }
         try {
             DataStoreQuery.QueryResult<Track> result = trackQuerySession.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Track>>() {
                 public QueryResult<Track> execute(Connection connection) throws SQLException {
@@ -217,6 +217,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             }
         } finally {
             trackQuerySession.commit();
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Finished processing track images.");
+            }
         }
     }
 
@@ -271,12 +274,12 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
 
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Removing " + trackIds.size() + " tracks from database.");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Removing " + trackIds.size() + " tracks from database.");
         }
         storeSession.executeStatement(new RemoveTrackStatement(trackIds));
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Removing " + (itunesPlaylistIds.size() + m3uPlaylistIds.size()) + " playlists from database.");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Removing " + (itunesPlaylistIds.size() + m3uPlaylistIds.size()) + " playlists from database.");
         }
         if (!itunesPlaylistIds.isEmpty()) {
             removeObsoletePlaylists(storeSession, itunesPlaylistIds);
@@ -285,8 +288,8 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             removeObsoletePlaylists(storeSession, m3uPlaylistIds);
         }
         DatabaseBuilderTask.doCheckpoint(storeSession, true);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Obsolete tracks and playlists removed from database.");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Obsolete tracks and playlists removed from database.");
         }
     }
 
