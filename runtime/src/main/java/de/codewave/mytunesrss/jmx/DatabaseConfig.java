@@ -19,11 +19,14 @@ import org.apache.commons.logging.*;
 /**
  * de.codewave.mytunesrss.jmx.DatabaseConfig
  */
-public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBean {
+public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBean, MyTunesRssEventListener {
     private static final Log LOG = LogFactory.getLog(DatabaseConfig.class);
+
+    private String myCurrentUpdateAction;
 
     DatabaseConfig() throws NotCompliantMBeanException {
         super(DatabaseConfigMBean.class);
+        MyTunesRssEventManager.getInstance().addListener(this);
     }
 
     public boolean isIgnoreTimestampsOnUpdate() {
@@ -63,8 +66,8 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
     }
 
     public String getDatabaseStatus() {
-        if (DatabaseBuilderTask.isRunning()) {
-            return MyTunesRssUtils.getBundleString("jmx.databaseUpdateRunning");
+        if (myCurrentUpdateAction != null) {
+            return myCurrentUpdateAction;
         }
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
@@ -135,5 +138,13 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
     public void setRemoveMissingItunesTracks(boolean removeMissingTracks) {
         MyTunesRss.CONFIG.setItunesDeleteMissingFiles(removeMissingTracks);
         onChange();
+    }
+
+    public void handleEvent(MyTunesRssEvent event) {
+        if (event == MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED) {
+            myCurrentUpdateAction = MyTunesRssUtils.getBundleString(event.getMessageKey());
+        } else if (event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED || event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN) {
+            myCurrentUpdateAction = null;
+        }
     }
 }

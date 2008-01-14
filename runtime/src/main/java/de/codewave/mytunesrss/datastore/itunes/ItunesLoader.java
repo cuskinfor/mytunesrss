@@ -19,6 +19,17 @@ import java.util.*;
 public class ItunesLoader {
     private static final Log LOG = LogFactory.getLog(ItunesLoader.class);
 
+    static String getFileNameForLocation(String location) {
+        try {
+            return new URI(location).getPath();
+        } catch (URISyntaxException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not create URI from location \"" + location + "\".", e);
+            }
+        }
+        return null;
+    }
+
     static File getFileForLocation(String location) {
         try {
             return new File(new URI(location).getPath());

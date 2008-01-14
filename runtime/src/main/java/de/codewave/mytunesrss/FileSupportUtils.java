@@ -66,12 +66,20 @@ public class FileSupportUtils {
     }
 
     public static boolean isMp3(File file) {
-        return file != null && file.isFile() && "mp3".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()));
+        return file != null && isMp3(file.getName());
+    }
+
+    public static boolean isMp3(String filename) {
+        return StringUtils.isNotEmpty(filename) && "mp3".equalsIgnoreCase(FilenameUtils.getExtension(filename));
     }
 
     public static boolean isMp4(File file) {
-        if (file != null && file.isFile()) {
-            String extension = FilenameUtils.getExtension(file.getName());
+        return file != null && isMp4(file.getName());
+    }
+
+    public static boolean isMp4(String filename) {
+        if (StringUtils.isNotEmpty(filename)) {
+            String extension = FilenameUtils.getExtension(filename);
             return "mp4".equalsIgnoreCase(extension) || "m4a".equalsIgnoreCase(extension) || "m4v".equalsIgnoreCase(extension) ||
                     "m4p".equalsIgnoreCase(extension);
         }

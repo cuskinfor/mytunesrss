@@ -26,7 +26,8 @@ public class TrackListener implements PListHandlerListener {
     private Collection<Map> myTrackCache = new HashSet<Map>();
     private Collection<String> myTrackIds;
 
-    public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId, Collection<String> trackIds) throws SQLException {
+    public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
+            Collection<String> trackIds) throws SQLException {
         myDataStoreSession = dataStoreSession;
         myLibraryListener = libraryListener;
         myTrackIdToPersId = trackIdToPersId;
@@ -64,58 +65,54 @@ public class TrackListener implements PListHandlerListener {
         String name = (String)track.get("Name");
         String trackType = (String)track.get("Track Type");
         if (trackType == null || "File".equals(trackType)) {
-            File file = ItunesLoader.getFileForLocation((String)track.get("Location"));
-            if (trackId != null && StringUtils.isNotEmpty(name) && file != null && new SupportedFileFilter().accept(file.getParentFile(),
-                                                                                                                    file.getName())) {
-                Date dateModified = ((Date)track.get("Date Modified"));
-                long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
-                Date dateAdded = ((Date)track.get("Date Added"));
-                long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
-                if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() || dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
-                    try {
-                        InsertOrUpdateTrackStatement statement = existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);
-                        statement.clear();
-                        statement.setId(trackId);
-                        statement.setName(name.trim());
-                        statement.setArtist(StringUtils.trimToNull((String)track.get("Artist")));
-                        statement.setAlbum(StringUtils.trimToNull((String)track.get("Album")));
-                        statement.setTime((int)(track.get("Total Time") != null ? (Long)track.get("Total Time") / 1000 : 0));
-                        statement.setTrackNumber((int)(track.get("Track Number") != null ? (Long)track.get("Track Number") : 0));
-                        String fileName = file.getAbsolutePath();
-                        statement.setFileName(fileName);
-                        statement.setProtected(FileSupportUtils.isProtected(fileName));
-                        statement.setVideo(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue());
-                        statement.setGenre(StringUtils.trimToNull((String)track.get("Genre")));
-                        statement.setComment(StringUtils.trimToNull((String)track.get("Comments")));
-                        if (FileSupportUtils.isMp4(file)) {
-                            String kind = (String)track.get("Kind");
-                            if (StringUtils.isNotEmpty(kind)) {
-                                kind = kind.toLowerCase();
-                                if (kind.contains("aac")) {
-                                    statement.setMp4Codec("mp4a");
-                                } else if (kind.contains("apple lossless")) {
-                                    statement.setMp4Codec("alac");
+            String filename = ItunesLoader.getFileNameForLocation((String)track.get("Location"));
+            if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && FileSupportUtils.isSupported(filename)) {
+                if (!MyTunesRss.CONFIG.isItunesDeleteMissingFiles() || new File(filename).isFile()) {
+                    Date dateModified = ((Date)track.get("Date Modified"));
+                    long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
+                    Date dateAdded = ((Date)track.get("Date Added"));
+                    long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
+                    if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() ||
+                            dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
+                        try {
+                            InsertOrUpdateTrackStatement statement =
+                                    existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);
+                            statement.clear();
+                            statement.setId(trackId);
+                            statement.setName(name.trim());
+                            statement.setArtist(StringUtils.trimToNull((String)track.get("Artist")));
+                            statement.setAlbum(StringUtils.trimToNull((String)track.get("Album")));
+                            statement.setTime((int)(track.get("Total Time") != null ? (Long)track.get("Total Time") / 1000 : 0));
+                            statement.setTrackNumber((int)(track.get("Track Number") != null ? (Long)track.get("Track Number") : 0));
+                            statement.setFileName(filename);
+                            statement.setProtected(FileSupportUtils.isProtected(filename));
+                            statement.setVideo(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue());
+                            statement.setGenre(StringUtils.trimToNull((String)track.get("Genre")));
+                            statement.setComment(StringUtils.trimToNull((String)track.get("Comments")));
+                            if (FileSupportUtils.isMp4(filename)) {
+                                String kind = (String)track.get("Kind");
+                                if (StringUtils.isNotEmpty(kind)) {
+                                    kind = kind.toLowerCase();
+                                    if (kind.contains("aac")) {
+                                        statement.setMp4Codec("mp4a");
+                                    } else if (kind.contains("apple lossless")) {
+                                        statement.setMp4Codec("alac");
+                                    }
                                 }
                             }
-                        }
-                        myDataStoreSession.executeStatement(statement);
-                        return true;
-                    } catch (SQLException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not insert track \"" + name + "\" into database", e);
+                            myDataStoreSession.executeStatement(statement);
+                            return true;
+                        } catch (SQLException e) {
+                            if (LOG.isErrorEnabled()) {
+                                LOG.error("Could not insert track \"" + name + "\" into database", e);
+                            }
                         }
                     }
+                    return false;
                 }
-                return false;
             }
         }
         myTrackIdToPersId.remove(track.get("Track ID"));
         return false;
-    }
-
-    public static class SupportedFileFilter implements FilenameFilter {
-        public boolean accept(File parent, String filename) {
-            return FileSupportUtils.isSupported(filename);
-        }
     }
 }
