@@ -10,7 +10,7 @@ import de.codewave.utils.sql.*;
 import java.sql.*;
 
 /**
- * de.codewave.mytunesrss.datastore.statement.DeleteTrackStatement
+ * de.codewave.mytunesrss.datastore.statement.DeletePlaylistStatement
  */
 public class DeletePlaylistStatement implements DataStoreStatement {
     private String myId;

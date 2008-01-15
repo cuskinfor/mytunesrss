@@ -185,6 +185,15 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             }
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
             if (LOG.isInfoEnabled()) {
+                LOG.info("Deleting orphaned images.");
+            }
+            storeSession.executeStatement(new DataStoreStatement() {
+                public void execute(Connection connection) throws SQLException {
+                    MyTunesRssUtils.createStatement(connection, "deleteOrphanedImages").execute();
+                }
+            });
+            DatabaseBuilderTask.doCheckpoint(storeSession, true);
+            if (LOG.isInfoEnabled()) {
                 LOG.info("Creating database checkpoint.");
                 LOG.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
             }

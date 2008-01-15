@@ -10,7 +10,7 @@ import de.codewave.utils.sql.*;
 import java.sql.*;
 
 /**
- * de.codewave.mytunesrss.datastore.statement.DeleteTrackStatement
+ * de.codewave.mytunesrss.datastore.statement.UpdateStatisticsStatement
  */
 public class UpdateStatisticsStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {

@@ -385,15 +385,9 @@
         </sql>
     </statement>
 
-    <statement name="deleteTrackById">
+    <statement name="deleteOrphanedImages">
         <sql>
-            DELETE FROM link_track_playlist WHERE track_id = :id
-        </sql>
-        <sql>
-            DELETE FROM track WHERE id = :id
-        </sql>
-        <sql>
-            DELETE FROM image WHERE track_id = :id
+            DELETE FROM image WHERE NOT EXISTS ( SELECT * FROM track t WHERE t.id = track_id )
         </sql>
     </statement>
 
