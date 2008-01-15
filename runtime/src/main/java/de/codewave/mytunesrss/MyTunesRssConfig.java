@@ -63,6 +63,7 @@ public class MyTunesRssConfig {
     private int myStreamingCacheMaxFiles = 300;
     private boolean myBandwidthLimit;
     private BigDecimal myBandwidthLimitFactor;
+    private boolean myIgnoreArtwork;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -329,6 +330,14 @@ public class MyTunesRssConfig {
         myBandwidthLimitFactor = bandwidthLimitFactor;
     }
 
+    public boolean isIgnoreArtwork() {
+        return myIgnoreArtwork;
+    }
+
+    public void setIgnoreArtwork(boolean ignoreArtwork) {
+        myIgnoreArtwork = ignoreArtwork;
+    }
+
     public Collection<User> getUsers() {
         return new HashSet<User>(myUsers);
     }
@@ -490,6 +499,7 @@ public class MyTunesRssConfig {
         setStreamingCacheMaxFiles(Preferences.userRoot().node(PREF_ROOT).getInt("streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
         setBandwidthLimit(Preferences.userRoot().node(PREF_ROOT).getBoolean("bandwidthLimit", false));
         setBandwidthLimitFactor(new BigDecimal(Preferences.userRoot().node(PREF_ROOT).get("bandwidthLimitFactor", "0")));
+        setIgnoreArtwork(Preferences.userRoot().node(PREF_ROOT).getBoolean("ignoreArtwork", false));
         if (!MyTunesRss.REGISTRATION.isRegistered()) {
             adjustSettingsToUnregisteredState();
         }
@@ -611,6 +621,7 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node(PREF_ROOT).putInt("streamingCacheMaxFiles", myStreamingCacheMaxFiles);
         Preferences.userRoot().node(PREF_ROOT).putBoolean("bandwidthLimit", myBandwidthLimit);
         Preferences.userRoot().node(PREF_ROOT).put("bandwidthLimitFactor", myBandwidthLimitFactor.toString());
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("ignoreArtwork", myIgnoreArtwork);
     }
 
     private void checkPrefsVersion() {

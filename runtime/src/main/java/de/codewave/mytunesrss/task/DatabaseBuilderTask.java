@@ -180,7 +180,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 }
             });
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
-            runImageUpdate(storeSession, timeUpdateStart);
+            if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
+                runImageUpdate(storeSession, timeUpdateStart);
+            }
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
             if (LOG.isInfoEnabled()) {
                 LOG.info("Creating database checkpoint.");

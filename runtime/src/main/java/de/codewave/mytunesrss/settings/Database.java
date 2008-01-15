@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.swing.*;
@@ -36,6 +37,7 @@ public class Database implements MyTunesRssEventListener {
     private JCheckBox myAutoUpdateDatabaseInput;
     private JSpinner myAutoUpdateDatabaseIntervalInput;
     private JCheckBox myDeleteMissingFiles;
+    private JCheckBox myIgnoreArtworkInput;
 
     public void init() {
         refreshLastUpdate();
@@ -53,12 +55,14 @@ public class Database implements MyTunesRssEventListener {
             myUpdateDatabaseButton.setEnabled(false);
             myDeleteDatabaseButton.setEnabled(false);
             myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString(event.getMessageKey()));
+            setGuiMode(GuiMode.DatabaseUpdating);
         } else if (event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED || event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN) {
             if (event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED) {
                 refreshLastUpdate();
             }
             myUpdateDatabaseButton.setEnabled(true);
             myDeleteDatabaseButton.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
+            setGuiMode(GuiMode.DatabaseIdle);
         }
     }
 
@@ -78,6 +82,7 @@ public class Database implements MyTunesRssEventListener {
         myDeleteMissingFiles.setSelected(MyTunesRss.CONFIG.isItunesDeleteMissingFiles());
         myFileTypes.setText(MyTunesRss.CONFIG.getFileTypes());
         myArtistDropWords.setText(MyTunesRss.CONFIG.getArtistDropWords());
+        myIgnoreArtworkInput.setSelected(MyTunesRss.CONFIG.isIgnoreArtwork());
     }
 
     public void refreshLastUpdate() {
@@ -119,6 +124,7 @@ public class Database implements MyTunesRssEventListener {
             MyTunesRss.CONFIG.setItunesDeleteMissingFiles(myDeleteMissingFiles.isSelected());
             MyTunesRss.CONFIG.setFileTypes(myFileTypes.getText());
             MyTunesRss.CONFIG.setArtistDropWords(myArtistDropWords.getText());
+            MyTunesRss.CONFIG.setIgnoreArtwork(myIgnoreArtworkInput.isSelected());
         }
         return null;
     }
@@ -134,16 +140,32 @@ public class Database implements MyTunesRssEventListener {
                 myDeleteMissingFiles.setEnabled(false);
                 SwingUtils.enableElementAndLabel(myFileTypes, false);
                 SwingUtils.enableElementAndLabel(myArtistDropWords, false);
+                myIgnoreArtworkInput.setEnabled(false);
                 break;
             case ServerIdle:
                 myUpdateDatabaseOnServerStart.setEnabled(true);
                 myAutoUpdateDatabaseInput.setEnabled(true);
-                myIgnoreTimestampsInput.setEnabled(true);
+                myIgnoreTimestampsInput.setEnabled(!DatabaseBuilderTask.isRunning());
                 myDeleteDatabaseButton.setEnabled(!DatabaseBuilderTask.isRunning());
                 SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
-                myDeleteMissingFiles.setEnabled(true);
-                SwingUtils.enableElementAndLabel(myFileTypes, true);
-                SwingUtils.enableElementAndLabel(myArtistDropWords, true);
+                myDeleteMissingFiles.setEnabled(!DatabaseBuilderTask.isRunning());
+                SwingUtils.enableElementAndLabel(myFileTypes, !DatabaseBuilderTask.isRunning());
+                SwingUtils.enableElementAndLabel(myArtistDropWords, !DatabaseBuilderTask.isRunning());
+                myIgnoreArtworkInput.setEnabled(!DatabaseBuilderTask.isRunning());
+                break;
+            case DatabaseUpdating:
+                myIgnoreTimestampsInput.setEnabled(false);
+                myDeleteMissingFiles.setEnabled(false);
+                SwingUtils.enableElementAndLabel(myFileTypes, false);
+                SwingUtils.enableElementAndLabel(myArtistDropWords, false);
+                myIgnoreArtworkInput.setEnabled(false);
+                break;
+            case DatabaseIdle:
+                myIgnoreTimestampsInput.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
+                myDeleteMissingFiles.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
+                SwingUtils.enableElementAndLabel(myFileTypes, !MyTunesRss.WEBSERVER.isRunning());
+                SwingUtils.enableElementAndLabel(myArtistDropWords, !MyTunesRss.WEBSERVER.isRunning());
+                myIgnoreArtworkInput.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
                 break;
         }
     }

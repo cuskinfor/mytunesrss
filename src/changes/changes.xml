@@ -26,6 +26,12 @@
             <action dev="mdescher" type="update">
                 Do not create java.io.File instances when parsing iTunes XML but only use the path string.
             </action>
+            <action dev="mdescher" type="add">
+                Option to not read cover artwork from MP3 and MP4 files.
+            </action>
+            <action dev="mdescher" type="fix">
+                Disable the database options while updating the database.
+            </action>
         </release>
 
         <release version="3.1" date="2008-01-06" description="First release with changes.xml file">

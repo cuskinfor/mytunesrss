@@ -5,5 +5,5 @@
 package de.codewave.mytunesrss.settings;
 
 public enum GuiMode {
-    ServerRunning(), ServerIdle();
+    ServerRunning(), ServerIdle(), DatabaseUpdating(), DatabaseIdle();
 }
