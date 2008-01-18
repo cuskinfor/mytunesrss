@@ -34,7 +34,7 @@
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM
                 link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId)
             GROUP BY {groupByTrackColumns}
-            ORDER BY ts_playcount DESC
+            ORDER BY playcount DESC
         </sql>
     </statement>
 
@@ -72,7 +72,7 @@
                 link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId)
             AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
             GROUP BY {groupByTrackColumns}
-            ORDER BY ts_playcount DESC
+            ORDER BY playcount DESC
         </sql>
     </statement>
 
