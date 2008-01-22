@@ -4,7 +4,14 @@
         <author email="mdescher@codewave.de">Michael Descher</author>
     </properties>
     <body>
-        <release version="3.1.1" date="????-??-??" description="Bugfix release">
+        <release version="3.1.2" date="2008-??-??" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Fixed NullPointerException when saving user without selected restriction playlist ID.
+                Catch all Exceptions when trying to register MyTunesRSS.
+            </action>
+        </release>
+
+        <release version="3.1.1" date="2008-01-18" description="Bugfix release">
             <action dev="mdescher" type="add">
                 Yahoo media player integration in browse track page.
             </action>
