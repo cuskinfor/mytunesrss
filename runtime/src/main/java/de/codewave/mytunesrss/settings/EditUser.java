@@ -291,7 +291,11 @@ public class EditUser {
                     myUser.setSessionTimeout(MyTunesRssUtils.getTextFieldInteger(mySessionTimeoutInput, 10));
                     myUser.setTranscoder(myPermTranscoderInput.isSelected());
                     myUser.setBandwidthLimit(MyTunesRssUtils.getTextFieldInteger(myBandwidthLimit, 0));
-                    myUser.setPlaylistId(((Playlist)myRestrictionPlaylistInput.getSelectedItem()).getId());
+                    if (myRestrictionPlaylistInput.getSelectedItem() != null) {
+                        myUser.setPlaylistId(((Playlist)myRestrictionPlaylistInput.getSelectedItem()).getId());
+                    } else {
+                        myUser.setPlaylistId(null);
+                    }
                     myUser.setSaveWebSettings(mySaveUserSettingsInput.isSelected());
                     MyTunesRss.CONFIG.addUser(myUser);
                     if (myClose) {
