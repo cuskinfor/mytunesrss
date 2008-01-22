@@ -83,7 +83,7 @@ public class MyTunesRssRegistration {
     private static boolean isValidRegistration(File file) {
         try {
             return RegistrationUtils.getRegistrationData(file.toURL(), getPublicKey()) != null;
-        } catch (IOException e) {
+        } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not check registration file, assuming it is invalid.", e);
             }
