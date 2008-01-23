@@ -24,6 +24,7 @@ import snoozesoft.systray4j.*;
 
 import javax.imageio.*;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -168,7 +169,14 @@ public class MyTunesRss {
         STREAMING_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER, 10000, CONFIG.getStreamingCacheMaxFiles());
         File streamingCacheFile = new File(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/transcoder/cache.xml");
         if (streamingCacheFile.isFile()) {
-            STREAMING_CACHE.setContent(JXPathUtils.getContext(streamingCacheFile.toURL()));
+            try {
+                STREAMING_CACHE.setContent(JXPathUtils.getContext(streamingCacheFile.toURL()));
+            } catch (MalformedURLException e) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Could not read streaming cache file. Starting with empty cache.", e);
+                }
+                STREAMING_CACHE.clearCache();
+            }
         }
         if (MyTunesRss.REGISTRATION.isRegistered()) {
             MyTunesRssJmxUtils.startJmxServer();
@@ -322,11 +330,19 @@ public class MyTunesRss {
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
         SETTINGS.init();
         DUMMY_FRAME.dispose();
-        if (x != Integer.MAX_VALUE && y != Integer.MAX_VALUE) {
+        if (x == Integer.MAX_VALUE && y == Integer.MAX_VALUE) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Initial start with no saved window postion, centering on screen.");
+            }
+            ROOT_FRAME.setLocation(0, 0);
+            SwingUtils.packAndShowRelativeTo(ROOT_FRAME, null);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Setting window to (" + x + ", " + y + ")");
+            }
             ROOT_FRAME.setLocation(x, y);
             SwingUtils.packAndShow(ROOT_FRAME);
-        } else {
-            SwingUtils.packAndShowRelativeTo(ROOT_FRAME, null);
+            ensureCompletelyOnScreen(ROOT_FRAME);
         }
         if (CONFIG.isAutoStartServer()) {
             SETTINGS.doStartServer();
@@ -336,6 +352,50 @@ public class MyTunesRss {
                 ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
             }
         }
+    }
+
+    private static void ensureCompletelyOnScreen(final JFrame frame) {
+        SwingUtils.invokeAndWait(new Runnable() {
+            public void run() {
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                Point location = ROOT_FRAME.getLocation();
+                Dimension size = ROOT_FRAME.getSize();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Frame is (" + location.x + ", " + location.y + ") - (" + (location.x + size.width) + ", " + (location.y + size.height) + ")");
+                }
+                if (location.x >= screenSize.width || location.y  >= screenSize.height || location.x + size.width <= 0 || location.y + size.height <= 0) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Frame is completely off-screen, centering it on screen.");
+                    }
+                    SwingUtils.packAndShowRelativeTo(frame, null);
+                } else {
+                    if (location.x < 0) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Frame is left off-screen.");
+                        }
+                        location.x = 0;
+                    } else if (location.x + size.width > screenSize.width) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Frame is right off-screen.");
+                        }
+                        location.x = screenSize.width - size.width;
+                    }
+                    if (location.y < 0) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Frame is top off-screen.");
+                        }
+                        location.y = 0;
+                    } else if (location.y + size.height > screenSize.height) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Frame is bottom off-screen.");
+                        }
+                        location.y = screenSize.height - size.height;
+                    }
+                    frame.setLocation(location);
+                    frame.pack();
+                }
+            }
+        });
     }
 
     private static void showNewVersionInfo() {

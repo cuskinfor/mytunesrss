@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.settings;
 
+import com.intellij.uiDesigner.core.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.*;
@@ -53,22 +54,24 @@ public class Content implements MyTunesRssEventListener {
                             return o1.getName().compareTo(o2.getName());
                         }
                     });
+                    myPlaylistsPanel.setLayout(new GridLayoutManager(playlists.size() + 1, 2));
+                    int row = 0;
                     for (Playlist playlist : playlists) {
                         if (playlist.getType() == PlaylistType.ITunes || playlist.getType() == PlaylistType.M3uFile) {
-                            addPlaylist(playlist);
+                            addPlaylist(playlist, row++);
                         }
                     }
-                    addPanelComponent(new JLabel(""), new GridBagConstraints(GridBagConstraints.RELATIVE,
-                                                                             GridBagConstraints.RELATIVE,
-                                                                             2,
-                                                                             1,
-                                                                             1.0,
-                                                                             1.0,
-                                                                             GridBagConstraints.WEST,
-                                                                             GridBagConstraints.BOTH,
-                                                                             new Insets(0, 0, 0, 0),
-                                                                             0,
-                                                                             0));
+                    addPanelComponent(new JLabel(""), new GridConstraints(row,
+                                                                          0,
+                                                                          1,
+                                                                          2,
+                                                                          GridConstraints.ANCHOR_WEST,
+                                                                          GridConstraints.FILL_HORIZONTAL,
+                                                                          GridConstraints.SIZEPOLICY_WANT_GROW,
+                                                                          GridConstraints.SIZEPOLICY_FIXED,
+                                                                          null,
+                                                                          null,
+                                                                          null));
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error(null, e);
@@ -81,29 +84,29 @@ public class Content implements MyTunesRssEventListener {
         });
     }
 
-    private void addPlaylist(final Playlist playlist) {
-        GridBagConstraints gbcActive = new GridBagConstraints(GridBagConstraints.RELATIVE,
-                                                              GridBagConstraints.RELATIVE,
-                                                              1,
-                                                              1,
-                                                              0,
-                                                              0,
-                                                              GridBagConstraints.WEST,
-                                                              GridBagConstraints.HORIZONTAL,
-                                                              new Insets(5, 5, 0, 0),
-                                                              0,
-                                                              0);
-        GridBagConstraints gbcName = new GridBagConstraints(GridBagConstraints.RELATIVE,
-                                                            GridBagConstraints.RELATIVE,
-                                                            GridBagConstraints.REMAINDER,
-                                                            1,
-                                                            1.0,
-                                                            0,
-                                                            GridBagConstraints.WEST,
-                                                            GridBagConstraints.HORIZONTAL,
-                                                            new Insets(5, 5, 0, 0),
-                                                            0,
-                                                            0);
+    private void addPlaylist(final Playlist playlist, int row) {
+        GridConstraints gbcName = new GridConstraints(row,
+                                                      1,
+                                                      1,
+                                                      1,
+                                                      GridConstraints.ANCHOR_WEST,
+                                                      GridConstraints.FILL_HORIZONTAL,
+                                                      GridConstraints.SIZEPOLICY_WANT_GROW,
+                                                      GridConstraints.SIZEPOLICY_FIXED,
+                                                      null,
+                                                      null,
+                                                      null);
+        GridConstraints gbcActive = new GridConstraints(row,
+                                                        0,
+                                                        1,
+                                                        1,
+                                                        GridConstraints.ANCHOR_WEST,
+                                                        GridConstraints.FILL_HORIZONTAL,
+                                                        GridConstraints.SIZEPOLICY_FIXED,
+                                                        GridConstraints.SIZEPOLICY_FIXED,
+                                                        null,
+                                                        null,
+                                                        null);
         final JCheckBox active = new JCheckBox();
         active.setOpaque(false);
         active.setSelected(!playlist.isHidden());
@@ -139,8 +142,7 @@ public class Content implements MyTunesRssEventListener {
         addPanelComponent(name, gbcName);
     }
 
-    private void addPanelComponent(JComponent component, GridBagConstraints gbcName) {
-        myPlaylistsPanel.add(component);
-        ((GridBagLayout)myPlaylistsPanel.getLayout()).setConstraints(component, gbcName);
+    private void addPanelComponent(JComponent component, GridConstraints gridConstraints) {
+        myPlaylistsPanel.add(component, gridConstraints);
     }
 }
