@@ -4,14 +4,13 @@
 
 package de.codewave.mytunesrss.settings;
 
+import com.intellij.uiDesigner.core.*;
 import de.codewave.mytunesrss.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * de.codewave.mytunesrss.settings.UserManagement
@@ -45,62 +44,71 @@ public class UserManagement implements MyTunesRssEventListener {
                 return o1.getName().compareTo(o2.getName());
             }
         });
+        myUserPanel.setLayout(new GridLayoutManager(users.size() + 1, 4));
+        int row = 0;
         for (User user : users) {
-            addUser(user);
+            addUser(user, row++);
         }
-        addPanelComponent(new JLabel(""), new GridBagConstraints(GridBagConstraints.RELATIVE,
-                                                                 GridBagConstraints.RELATIVE,
-                                                                 3,
-                                                                 1,
-                                                                 1.0,
-                                                                 1.0,
-                                                                 GridBagConstraints.WEST,
-                                                                 GridBagConstraints.BOTH,
-                                                                 new Insets(0, 0, 0, 0),
-                                                                 0,
-                                                                 0));
+        addPanelComponent(new JLabel(""), new GridConstraints(row,
+                                                              0,
+                                                              1,
+                                                              4,
+                                                              GridConstraints.ANCHOR_WEST,
+                                                              GridConstraints.FILL_HORIZONTAL,
+                                                              GridConstraints.SIZEPOLICY_WANT_GROW,
+                                                              GridConstraints.SIZEPOLICY_FIXED,
+                                                              null,
+                                                              null,
+                                                              null));
         myUserPanel.validate();
     }
 
-    private void addUser(final User user) {
-        GridBagConstraints gbcActive = new GridBagConstraints(GridBagConstraints.RELATIVE, GridBagConstraints.RELATIVE, 1, 1, 0, 0, GridBagConstraints.WEST,
-                                                              GridBagConstraints.HORIZONTAL,
-                                                              new Insets(5, 5, 0, 0),
-                                                              0,
-                                                              0);
-        GridBagConstraints gbcName = new GridBagConstraints(GridBagConstraints.RELATIVE,
-                                                            GridBagConstraints.RELATIVE,
-                                                            1,
-                                                            1,
-                                                            1.0,
-                                                            0,
-                                                            GridBagConstraints.WEST,
-                                                            GridBagConstraints.HORIZONTAL,
-                                                            new Insets(5, 5, 0, 0),
-                                                            0,
-                                                            0);
-        GridBagConstraints gbcEdit = new GridBagConstraints(GridBagConstraints.RELATIVE,
-                                                            GridBagConstraints.RELATIVE,
-                                                            1,
-                                                            1,
-                                                            0,
-                                                            0,
-                                                            GridBagConstraints.WEST,
-                                                            GridBagConstraints.HORIZONTAL,
-                                                            new Insets(5, 5, 0, 0),
-                                                            0,
-                                                            0);
-        GridBagConstraints gbcDelete = new GridBagConstraints(GridBagConstraints.RELATIVE,
-                                                              GridBagConstraints.RELATIVE,
-                                                              GridBagConstraints.REMAINDER,
-                                                              1,
-                                                              0,
-                                                              0,
-                                                              GridBagConstraints.WEST,
-                                                              GridBagConstraints.HORIZONTAL,
-                                                              new Insets(5, 5, 0, 5),
-                                                              0,
-                                                              0);
+    private void addUser(final User user, int row) {
+        GridConstraints gbcActive = new GridConstraints(row,
+                                                        0,
+                                                        1,
+                                                        1,
+                                                        GridConstraints.ANCHOR_WEST,
+                                                        GridConstraints.FILL_HORIZONTAL,
+                                                        GridConstraints.SIZEPOLICY_FIXED,
+                                                        GridConstraints.SIZEPOLICY_FIXED,
+                                                        null,
+                                                        null,
+                                                        null);
+        GridConstraints gbcName = new GridConstraints(row,
+                                                      1,
+                                                      1,
+                                                      1,
+                                                      GridConstraints.ANCHOR_WEST,
+                                                      GridConstraints.FILL_HORIZONTAL,
+                                                      GridConstraints.SIZEPOLICY_WANT_GROW,
+                                                      GridConstraints.SIZEPOLICY_FIXED,
+                                                      null,
+                                                      null,
+                                                      null);
+        GridConstraints gbcEdit = new GridConstraints(row,
+                                                      2,
+                                                      1,
+                                                      1,
+                                                      GridConstraints.ANCHOR_WEST,
+                                                      GridConstraints.FILL_HORIZONTAL,
+                                                      GridConstraints.SIZEPOLICY_FIXED,
+                                                      GridConstraints.SIZEPOLICY_FIXED,
+                                                      null,
+                                                      null,
+                                                      null);
+        GridConstraints gbcDelete = new GridConstraints(row,
+                                                        3,
+                                                        1,
+                                                        1,
+                                                        GridConstraints.ANCHOR_WEST,
+                                                        GridConstraints.FILL_HORIZONTAL,
+                                                        GridConstraints.SIZEPOLICY_FIXED,
+                                                        GridConstraints.SIZEPOLICY_FIXED,
+                                                        null,
+                                                        null,
+                                                        null);
+        ;
         final JCheckBox active = new JCheckBox();
         active.setOpaque(false);
         active.setSelected(user.isActive());
@@ -128,17 +136,18 @@ public class UserManagement implements MyTunesRssEventListener {
         addPanelComponent(delete, gbcDelete);
     }
 
-    private void addPanelComponent(JComponent component, GridBagConstraints gbcName) {
-        myUserPanel.add(component);
-        ((GridBagLayout)myUserPanel.getLayout()).setConstraints(component, gbcName);
+    private void addPanelComponent(JComponent component, GridConstraints gridConstraints) {
+        myUserPanel.add(component, gridConstraints);
     }
 
     public class CreateUserActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (MyTunesRss.REGISTRATION.isRegistered() || MyTunesRss.CONFIG.getUsers().size() < MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
-            new EditUser().display(MyTunesRss.ROOT_FRAME, null);
-            refreshUserList();} else {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.unregisteredMaxUsers", MyTunesRssRegistration.UNREGISTERED_MAX_USERS));
+                new EditUser().display(MyTunesRss.ROOT_FRAME, null);
+                refreshUserList();
+            } else {
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.unregisteredMaxUsers",
+                                                                                 MyTunesRssRegistration.UNREGISTERED_MAX_USERS));
             }
         }
     }
