@@ -1,12 +1,12 @@
-package de.codewave.mytunesrss.xmlrpc.render;
+package de.codewave.mytunesrss.remote.render;
 
 import de.codewave.utils.sql.*;
-import de.codewave.mytunesrss.xmlrpc.service.*;
+import de.codewave.mytunesrss.remote.service.*;
 
 import java.util.*;
 
 /**
- * de.codewave.mytunesrss.xmlrpc.render.RenderMachine
+ * de.codewave.mytunesrss.remote.render.RenderMachine
  */
 public class RenderMachine {
     private static final XmlRpcRenderer SELF_RENDERER = new XmlRpcRenderer() {

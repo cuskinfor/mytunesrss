@@ -1,4 +1,4 @@
-package de.codewave.mytunesrss.xmlrpc.render;
+package de.codewave.mytunesrss.remote.render;
 
 import de.codewave.mytunesrss.datastore.statement.*;
 
@@ -7,7 +7,7 @@ import java.util.*;
 import org.apache.commons.lang.*;
 
 /**
- * de.codewave.mytunesrss.xmlrpc.render.PlaylistRenderer
+ * de.codewave.mytunesrss.remote.render.PlaylistRenderer
  */
 public class PlaylistRenderer implements XmlRpcRenderer<Map<String, Object>, Playlist> {
     public Map<String, Object> render(Playlist playlist) {

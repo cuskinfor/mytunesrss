@@ -1,4 +1,4 @@
-package de.codewave.mytunesrss.xmlrpc.service;
+package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.utils.sql.*;
 

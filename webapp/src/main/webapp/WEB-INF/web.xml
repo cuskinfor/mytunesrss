@@ -106,7 +106,11 @@
     </servlet>
     <servlet>
         <servlet-name>XmlRpcServlet</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.xmlrpc.MyTunesRssXmlRpcServlet</servlet-class>
+        <servlet-class>de.codewave.mytunesrss.remote.MyTunesRssXmlRpcServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JsonRpcServlet</servlet-name>
+        <servlet-class>de.codewave.mytunesrss.remote.MyTunesRssJsonRpcServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
@@ -123,6 +127,10 @@
     <servlet-mapping>
         <servlet-name>XmlRpcServlet</servlet-name>
         <url-pattern>/xmlrpc</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JsonRpcServlet</servlet-name>
+        <url-pattern>/jsonrpc</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

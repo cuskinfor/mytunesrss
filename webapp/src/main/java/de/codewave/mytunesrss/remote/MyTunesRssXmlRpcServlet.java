@@ -2,7 +2,8 @@ package de.codewave.mytunesrss.xmlrpc;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.xmlrpc.render.*;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.remote.render.*;
 import de.codewave.mytunesrss.command.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.lang.*;
@@ -21,14 +22,8 @@ import java.util.*;
  */
 public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
     private static final Log LOG = LogFactory.getLog(MyTunesRssXmlRpcServlet.class);
-    private static final ThreadLocal<User> USERS = new ThreadLocal<User>();
-    private static final ThreadLocal<HttpServletRequest> REQUESTS = new ThreadLocal<HttpServletRequest>();
 
-    public static User getAuthUser() {
-        return USERS.get();
-    }
-
-    public static final RenderMachine RENDER_MACHINE = new RenderMachine();
+    private static final RenderMachine RENDER_MACHINE = new RenderMachine();
 
     static {
         RENDER_MACHINE.addRenderer(Playlist.class, new PlaylistRenderer());
@@ -36,9 +31,11 @@ public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
     }
 
     public static String getServerCall(MyTunesRssCommand command, String pathInfo) {
-        String auth = MyTunesRssWebUtils.encryptPathInfo("auth=" + MyTunesRssBase64Utils.encode(USERS.get().getName()) + " " +
-                MyTunesRssBase64Utils.encode(USERS.get().getPasswordHash()));
-        String url = MyTunesRssWebUtils.getServletUrl(REQUESTS.get()) + "/" + command.getName() + "/" + auth;
+        User user = MyTunesRssRemoteEnv.getUser();
+        HttpServletRequest request = MyTunesRssRemoteEnv.getRequest();
+        String auth = MyTunesRssWebUtils.encryptPathInfo("auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " +
+                MyTunesRssBase64Utils.encode(user.getPasswordHash()));
+        String url = MyTunesRssWebUtils.getServletUrl(request) + "/" + command.getName() + "/" + auth;
         if (StringUtils.isNotEmpty(pathInfo)) {
             url += "/" + MyTunesRssWebUtils.encryptPathInfo(pathInfo);
         }
@@ -56,7 +53,7 @@ public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
                             .getBasicPassword().getBytes("UTF-8")) : new byte[0];
                     boolean authorized = user != null && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
                     if (authorized) {
-                        USERS.set(user);
+                        MyTunesRssRemoteEnv.setUser(user);
                     }
                     return authorized;
                 } catch (UnsupportedEncodingException e) {
@@ -73,12 +70,15 @@ public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
 
     @Override
     public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
-        REQUESTS.set(httpServletRequest);
+        MyTunesRssRemoteEnv.setRequest(httpServletRequest);
+        MyTunesRssRemoteEnv.setRenderMachine(RENDER_MACHINE);
+        httpServletRequest.setAttribute("remoteRenderMachine", RENDER_MACHINE);
         try {
             super.doPost(httpServletRequest, httpServletResponse);
         } finally {
-            USERS.remove();
-            REQUESTS.remove();
+            MyTunesRssRemoteEnv.removeUser();
+            MyTunesRssRemoteEnv.removeRequest();
+            MyTunesRssRemoteEnv.removeRenderMachine();
         }
     }
 }

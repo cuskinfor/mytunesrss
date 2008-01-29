@@ -1,7 +1,8 @@
-package de.codewave.mytunesrss.xmlrpc.service;
+package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.command.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.xmlrpc.*;
 import org.apache.commons.lang.*;
@@ -20,8 +21,8 @@ public class PlaylistService {
      * @throws SQLException
      */
     public Object getPlaylists() throws SQLException {
-        FindPlaylistQuery query = new FindPlaylistQuery(MyTunesRssXmlRpcServlet.getAuthUser(), null, null, false, false);
-        return MyTunesRssXmlRpcServlet.RENDER_MACHINE.render(TransactionFilter.getTransaction().executeQuery(query));
+        FindPlaylistQuery query = new FindPlaylistQuery(MyTunesRssRemoteEnv.getUser(), null, null, false, false);
+        return MyTunesRssRemoteEnv.getRenderMachine().render(TransactionFilter.getTransaction().executeQuery(query));
     }
 
     /**
@@ -32,8 +33,8 @@ public class PlaylistService {
      * @throws SQLException
      */
     public Object getOwnPlaylists() throws SQLException {
-        FindPlaylistQuery query = new FindPlaylistQuery(MyTunesRssXmlRpcServlet.getAuthUser(), null, null, false, true);
-        return MyTunesRssXmlRpcServlet.RENDER_MACHINE.render(TransactionFilter.getTransaction().executeQuery(query));
+        FindPlaylistQuery query = new FindPlaylistQuery(MyTunesRssRemoteEnv.getUser(), null, null, false, true);
+        return MyTunesRssRemoteEnv.getRenderMachine().render(TransactionFilter.getTransaction().executeQuery(query));
     }
 
     /**

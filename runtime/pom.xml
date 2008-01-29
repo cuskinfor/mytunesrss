@@ -21,13 +21,13 @@
         <uidesigner />
     </properties>
     <dependencies>
-        <dependency>
+        <!--dependency>
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>apple</artifactId>
             <version>3.2-SNAPSHOT</version>
             <scope>runtime</scope>
             <optional />
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -245,7 +245,6 @@
             <groupId>com.intellij</groupId>
             <artifactId>forms_rt</artifactId>
             <version>6.0.3</version>
-            <scope>runtime</scope>
             <optional />
         </dependency>
         <dependency>
