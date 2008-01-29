@@ -1,4 +1,4 @@
-package de.codewave.mytunesrss.xmlrpc;
+package de.codewave.mytunesrss.remote;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -18,7 +18,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * de.codewave.mytunesrss.xmlrpc.MyTunesRssXmlRpcServlet
+ * de.codewave.mytunesrss.remote.MyTunesRssXmlRpcServlet
  */
 public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
     private static final Log LOG = LogFactory.getLog(MyTunesRssXmlRpcServlet.class);
@@ -28,18 +28,6 @@ public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
     static {
         RENDER_MACHINE.addRenderer(Playlist.class, new PlaylistRenderer());
         RENDER_MACHINE.addRenderer(Album.class, new AlbumRenderer());
-    }
-
-    public static String getServerCall(MyTunesRssCommand command, String pathInfo) {
-        User user = MyTunesRssRemoteEnv.getUser();
-        HttpServletRequest request = MyTunesRssRemoteEnv.getRequest();
-        String auth = MyTunesRssWebUtils.encryptPathInfo("auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " +
-                MyTunesRssBase64Utils.encode(user.getPasswordHash()));
-        String url = MyTunesRssWebUtils.getServletUrl(request) + "/" + command.getName() + "/" + auth;
-        if (StringUtils.isNotEmpty(pathInfo)) {
-            url += "/" + MyTunesRssWebUtils.encryptPathInfo(pathInfo);
-        }
-        return url;
     }
 
     protected XmlRpcHandlerMapping newXmlRpcHandlerMapping() throws XmlRpcException {
@@ -72,7 +60,6 @@ public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
     public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
         MyTunesRssRemoteEnv.setRequest(httpServletRequest);
         MyTunesRssRemoteEnv.setRenderMachine(RENDER_MACHINE);
-        httpServletRequest.setAttribute("remoteRenderMachine", RENDER_MACHINE);
         try {
             super.doPost(httpServletRequest, httpServletResponse);
         } finally {

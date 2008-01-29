@@ -2,7 +2,10 @@ package de.codewave.mytunesrss.remote;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.remote.render.*;
 
 public class MyTunesRssRemoteEnv {
@@ -44,5 +47,17 @@ public class MyTunesRssRemoteEnv {
 
     public static void removeRenderMachine() {
         RENDER_MACHINES.remove();
+    }
+
+    public static String getServerCall(MyTunesRssCommand command, String pathInfo) {
+        User user = MyTunesRssRemoteEnv.getUser();
+        HttpServletRequest request = MyTunesRssRemoteEnv.getRequest();
+        String auth = MyTunesRssWebUtils.encryptPathInfo("auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " +
+                MyTunesRssBase64Utils.encode(user.getPasswordHash()));
+        String url = MyTunesRssWebUtils.getServletUrl(request) + "/" + command.getName() + "/" + auth;
+        if (StringUtils.isNotEmpty(pathInfo)) {
+            url += "/" + MyTunesRssWebUtils.encryptPathInfo(pathInfo);
+        }
+        return url;
     }
 }

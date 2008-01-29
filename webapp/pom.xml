@@ -108,6 +108,11 @@
             <artifactId>xmlrpc-server</artifactId>
             <version>3.1</version>
         </dependency>
+        <dependency>
+            <groupId>jabsorb</groupId>
+            <artifactId>jabsorb</artifactId>
+            <version>1.2.2</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
