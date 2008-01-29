@@ -9,7 +9,7 @@ import org.apache.commons.lang.*;
 /**
  * de.codewave.mytunesrss.remote.render.PlaylistRenderer
  */
-public class PlaylistRenderer implements XmlRpcRenderer<Map<String, Object>, Playlist> {
+public class PlaylistRenderer implements Renderer<Map<String, Object>, Playlist> {
     public Map<String, Object> render(Playlist playlist) {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("id", StringUtils.trimToEmpty(playlist.getId()));

@@ -9,7 +9,7 @@ import org.apache.commons.lang.*;
 /**
  * de.codewave.mytunesrss.remote.render.AlbumRenderer
  */
-public class AlbumRenderer implements XmlRpcRenderer<Map, Album> {
+public class AlbumRenderer implements Renderer<Map, Album> {
     public Map render(Album album) {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("name", StringUtils.trimToEmpty(album.getName()));

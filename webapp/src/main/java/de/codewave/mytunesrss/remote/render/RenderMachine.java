@@ -9,13 +9,13 @@ import java.util.*;
  * de.codewave.mytunesrss.remote.render.RenderMachine
  */
 public class RenderMachine {
-    private static final XmlRpcRenderer SELF_RENDERER = new XmlRpcRenderer() {
+    private static final Renderer SELF_RENDERER = new Renderer() {
         public Object render(Object o) {
             return o;
         }
     };
 
-    private Map<Class, XmlRpcRenderer> myRenderers = new HashMap<Class, XmlRpcRenderer>();
+    private Map<Class, Renderer> myRenderers = new HashMap<Class, Renderer>();
 
     public RenderMachine() {
         addRenderer(Integer.class, SELF_RENDERER);
@@ -34,21 +34,21 @@ public class RenderMachine {
         addRenderer(QueryResultWrapper.class, new QueryResultWrapperRenderer());
     }
 
-    public void addRenderer(Class type, XmlRpcRenderer renderer) {
+    public void addRenderer(Class type, Renderer renderer) {
         myRenderers.put(type, renderer);
     }
 
-    public XmlRpcRenderer getRendererForClass(Class type) {
+    public Renderer getRendererForClass(Class type) {
         return myRenderers.get(type);
     }
 
-    public XmlRpcRenderer getRendererForObject(Object o) {
+    public Renderer getRendererForObject(Object o) {
         return getRendererForClass(o.getClass());
     }
 
     public Object render(Object o) {
         if (o != null) {
-            XmlRpcRenderer renderer = getRendererForObject(o);
+            Renderer renderer = getRendererForObject(o);
             if (renderer != null) {
                 return renderer.render(o);
             } else {
@@ -59,7 +59,7 @@ public class RenderMachine {
         }
     }
 
-    private class ListRenderer implements XmlRpcRenderer<List, List> {
+    private class ListRenderer implements Renderer<List, List> {
         public List render(List input) {
             List output = new ArrayList(input.size());
             for (Object item : input) {
@@ -69,7 +69,7 @@ public class RenderMachine {
         }
     }
 
-    private class MapRenderer implements XmlRpcRenderer<Map, Map> {
+    private class MapRenderer implements Renderer<Map, Map> {
         public Map render(Map input) {
             Map output = new HashMap(input.size());
             for (Object o : input.entrySet()) {
@@ -80,7 +80,7 @@ public class RenderMachine {
         }
     }
 
-    private class ArrayRenderer implements XmlRpcRenderer<Object[], Object[]> {
+    private class ArrayRenderer implements Renderer<Object[], Object[]> {
         public Object[] render(Object[] input) {
             Object[] output = new Object[input.length];
             for (int i = 0; i < input.length; i++) {
@@ -90,7 +90,7 @@ public class RenderMachine {
         }
     }
 
-    private class QueryResultRenderer implements XmlRpcRenderer<List, DataStoreQuery.QueryResult> {
+    private class QueryResultRenderer implements Renderer<List, DataStoreQuery.QueryResult> {
         public List render(DataStoreQuery.QueryResult input) {
             List output = new ArrayList(input.getResultSize());
             for (Object item = input.nextResult(); item != null; item = input.nextResult()) {
@@ -100,7 +100,7 @@ public class RenderMachine {
         }
     }
 
-    private class QueryResultWrapperRenderer implements XmlRpcRenderer<List, QueryResultWrapper> {
+    private class QueryResultWrapperRenderer implements Renderer<List, QueryResultWrapper> {
         public List render(QueryResultWrapper input) {
             List output = new ArrayList(input.getResultSize());
             for (Object item = input.nextResult(); item != null; item = input.nextResult()) {
