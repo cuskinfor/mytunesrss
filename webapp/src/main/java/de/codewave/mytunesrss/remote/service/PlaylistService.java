@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.remote.service;
 
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.command.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
@@ -20,8 +21,12 @@ public class PlaylistService {
      * @throws SQLException
      */
     public Object getPlaylists() throws SQLException {
-        FindPlaylistQuery query = new FindPlaylistQuery(MyTunesRssRemoteEnv.getUser(), null, null, false, false);
+        User user = MyTunesRssRemoteEnv.getUser();
+        if (user != null) {
+        FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, false, false);
         return MyTunesRssRemoteEnv.getRenderMachine().render(TransactionFilter.getTransaction().executeQuery(query));
+        }
+        return null;
     }
 
     /**
@@ -32,8 +37,12 @@ public class PlaylistService {
      * @throws SQLException
      */
     public Object getOwnPlaylists() throws SQLException {
-        FindPlaylistQuery query = new FindPlaylistQuery(MyTunesRssRemoteEnv.getUser(), null, null, false, true);
+        User user = MyTunesRssRemoteEnv.getUser();
+        if (user != null) {
+        FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, false, true);
         return MyTunesRssRemoteEnv.getRenderMachine().render(TransactionFilter.getTransaction().executeQuery(query));
+        }
+        return null;
     }
 
     /**

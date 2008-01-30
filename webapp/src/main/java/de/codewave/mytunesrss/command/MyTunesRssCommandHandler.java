@@ -16,7 +16,6 @@ import de.codewave.utils.swing.*;
 import de.codewave.utils.sql.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
-import org.apache.log4j.helpers.*;
 
 import javax.servlet.*;
 import javax.servlet.jsp.jstl.core.*;
