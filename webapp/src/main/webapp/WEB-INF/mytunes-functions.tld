@@ -85,6 +85,18 @@
 
     <function>
         <description>
+            Get the lower case suffix for the file of a track.
+        </description>
+        <name>lowerSuffix</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String lowerSuffix(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.User,de.codewave.mytunesrss.datastore.statement.Track)</function-signature>
+        <example>
+            &lt;c:out value="${mtfn:lowerSuffix(config, user, track)}"/&gt;
+        </example>
+    </function>
+
+    <function>
+        <description>
             Get the suffix for the file of a track.
         </description>
         <name>suffix</name>

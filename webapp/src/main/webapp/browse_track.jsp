@@ -212,7 +212,7 @@
             <c:if test="${authUser.download && config.showDownload}">
                 <td class="icon">
                     <a href="${servletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}">
-                        <c:if test="${!config.yahooMediaPlayer || mtfn:suffix(config, authUser, track) ne 'mp3'}"><img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" /></c:if>
+                        <c:if test="${!config.yahooMediaPlayer || mtfn:lowerSuffix(config, authUser, track) ne 'mp3'}"><img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" /></c:if>
                     </a>
                 </td>
             </c:if>
