@@ -9,6 +9,9 @@
                 Fixed NullPointerException when saving user without selected restriction playlist ID.
                 Catch all Exceptions when trying to register MyTunesRSS.
             </action>
+            <action dev="mdescher" type="fix">
+                Compare lower case suffix to check for MP3 files when using Yahoo Media Player.
+            </action>
         </release>
 
         <release version="3.1.1" date="2008-01-18" description="Bugfix release">

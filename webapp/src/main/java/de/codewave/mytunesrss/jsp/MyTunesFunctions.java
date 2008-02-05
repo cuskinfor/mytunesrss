@@ -81,6 +81,11 @@ public class MyTunesFunctions {
         return webSafeFileName(genre.getName());
     }
 
+    public static String lowerSuffix(WebConfig config, User user, Track track) {
+        String suffix = suffix(config, user, track);
+        return suffix != null ? suffix.toLowerCase() : suffix;
+    }
+
     public static String suffix(WebConfig config, User user, Track track) {
         if (config != null && user != null && FileSupportUtils.isMp4(track.getFile()) && MyTunesRss.REGISTRATION.isRegistered() && user.isTranscoder()) {
             if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
