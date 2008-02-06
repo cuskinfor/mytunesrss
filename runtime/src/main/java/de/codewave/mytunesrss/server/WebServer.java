@@ -168,6 +168,11 @@ public class WebServer {
         server.addEngine(engine);
         Connector httpConnector = createConnector(server, listenAddress, listenPort, "http");
         if (httpConnector != null) {
+            String maxThreads = System.getProperty("tomcat.maxThreads", "200");
+            httpConnector.setAttribute("maxThreads", maxThreads);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Setting tomcat HTTP connector maximum threads to " + maxThreads + ".");
+            }
             httpConnector.setURIEncoding("UTF-8");
             server.addConnector(httpConnector);
             if (StringUtils.isNotEmpty(System.getProperty("ajp.port"))) {

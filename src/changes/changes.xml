@@ -12,6 +12,10 @@
             <action dev="mdescher" type="fix">
                 Compare lower case suffix to check for MP3 files when using Yahoo Media Player.
             </action>
+            <action dev="mdescher" type="add">
+                Use system property "tomcat.maxThreads" for the maximum threads of the HTTP connector.
+                Default is 200 threads.
+            </action>
         </release>
 
         <release version="3.1.1" date="2008-01-18" description="Bugfix release">
