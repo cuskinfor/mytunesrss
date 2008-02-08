@@ -7,18 +7,16 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import org.apache.commons.logging.*;
 import org.apache.log4j.*;
-import org.apache.log4j.spi.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.*;
 
 /**
  * de.codewave.mytunesrss.settings.Info
  */
-public class Info {
+public class Info implements MyTunesRssEventListener {
     private static final Log LOG = LogFactory.getLog(Info.class);
 
     private JPanel myRootPanel;
@@ -30,6 +28,10 @@ public class Info {
     private JButton myRegisterButton;
     private JCheckBox myLogDebugInput;
     private JButton mySupportContactButton;
+
+    public Info() {
+        MyTunesRssEventManager.getInstance().addListener(this);
+    }
 
     private void createUIComponents() {
         myUnregisteredTextArea = new JTextArea() {
@@ -46,27 +48,22 @@ public class Info {
         myRegisterButton.addActionListener(new LicenseLookupButtonListener());
         myLogDebugInput.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Level level = Level.INFO;
-                if (myLogDebugInput.isSelected()) {
-                    level = Level.DEBUG;
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Setting codewave log to DEBUG logging.");
-                    }
-                } else {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Setting codewave log to INFO logging.");
-                    }
-                }
-                LoggerRepository repository = Logger.getRootLogger().getLoggerRepository();
-                for (Enumeration loggerEnum = repository.getCurrentLoggers(); loggerEnum.hasMoreElements(); ) {
-                    Logger logger = (Logger)loggerEnum.nextElement();
-                    if (logger.getName().startsWith("de.codewave.")) {
-                        logger.setLevel(level);
-                    }
-                }
-                Logger.getLogger("de.codewave").setLevel(level);
+                MyTunesRssUtils.setCodewaveLogLevel(myLogDebugInput.isSelected() ? Level.DEBUG : Level.INFO);
             }
         });
+        initValues();
+    }
+
+    public void handleEvent(MyTunesRssEvent event) {
+        switch (event) {
+            case CONFIGURATION_CHANGED:
+                initValues();
+                break;
+        }
+    }
+
+    private void initValues() {
+        myLogDebugInput.setSelected(MyTunesRss.CONFIG.isDebugLogging());
     }
 
     private void refreshRegistration() {
@@ -85,6 +82,11 @@ public class Info {
             myExpirationInput.setVisible(false);
             myUnregisteredTextArea.setVisible(true);
         }
+    }
+
+    public String updateConfigFromGui() {
+        MyTunesRss.CONFIG.setDebugLogging(myLogDebugInput.isSelected());
+        return null;
     }
 
     public class LicenseLookupButtonListener implements ActionListener {

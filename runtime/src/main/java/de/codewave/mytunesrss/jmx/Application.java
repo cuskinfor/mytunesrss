@@ -4,6 +4,8 @@ import de.codewave.mytunesrss.*;
 
 import javax.management.*;
 
+import org.apache.log4j.*;
+
 /**
  * de.codewave.mytunesrss.jmx.Application
  */
@@ -44,5 +46,15 @@ public class Application extends MyTunesRssMBean implements ApplicationMBean {
         } else {
             return MyTunesRssUtils.getBundleString("settings.unregistered");
         }
+    }
+
+    public boolean isDebugLogging() {
+        return MyTunesRss.CONFIG.isDebugLogging();
+    }
+
+    public void setDebugLogging(boolean debugLogging) {
+        MyTunesRssUtils.setCodewaveLogLevel(debugLogging ? Level.DEBUG : Level.INFO);
+        MyTunesRss.CONFIG.setDebugLogging(debugLogging);
+        onChange();
     }
 }
