@@ -115,9 +115,7 @@ public class MyTunesRss {
             InstantiationException, ClassNotFoundException, IOException, SQLException {
         final Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
         HEADLESS = arguments.containsKey("headless");
-        if (arguments.containsKey("debug")) {
-            Logger.getLogger("de.codewave").setLevel(Level.DEBUG);
-        }
+        MyTunesRssUtils.setCodewaveLogLevel(arguments.containsKey("debug") || MyTunesRssConfig.loadDebugLogging() ? Level.DEBUG : Level.INFO);
         MyTunesRssRegistration.RegistrationResult registrationResult = REGISTRATION.init(null, true);
         registerDatabaseDriver();
         VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");

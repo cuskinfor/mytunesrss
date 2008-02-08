@@ -64,6 +64,7 @@ public class MyTunesRssConfig {
     private boolean myBandwidthLimit;
     private BigDecimal myBandwidthLimitFactor;
     private boolean myIgnoreArtwork;
+    private boolean myDebugLogging;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -338,6 +339,14 @@ public class MyTunesRssConfig {
         myIgnoreArtwork = ignoreArtwork;
     }
 
+    public boolean isDebugLogging() {
+        return myDebugLogging;
+    }
+
+    public void setDebugLogging(boolean debugLogging) {
+        myDebugLogging = debugLogging;
+    }
+
     public Collection<User> getUsers() {
         return new HashSet<User>(myUsers);
     }
@@ -500,9 +509,14 @@ public class MyTunesRssConfig {
         setBandwidthLimit(Preferences.userRoot().node(PREF_ROOT).getBoolean("bandwidthLimit", false));
         setBandwidthLimitFactor(new BigDecimal(Preferences.userRoot().node(PREF_ROOT).get("bandwidthLimitFactor", "0")));
         setIgnoreArtwork(Preferences.userRoot().node(PREF_ROOT).getBoolean("ignoreArtwork", false));
+        setDebugLogging(loadDebugLogging());
         if (!MyTunesRss.REGISTRATION.isRegistered()) {
             adjustSettingsToUnregisteredState();
         }
+    }
+
+    public static boolean loadDebugLogging() {
+        return Preferences.userRoot().node(PREF_ROOT).getBoolean("debugLogging", false);
     }
 
     private void adjustSettingsToUnregisteredState() {
@@ -622,6 +636,7 @@ public class MyTunesRssConfig {
         Preferences.userRoot().node(PREF_ROOT).putBoolean("bandwidthLimit", myBandwidthLimit);
         Preferences.userRoot().node(PREF_ROOT).put("bandwidthLimitFactor", myBandwidthLimitFactor.toString());
         Preferences.userRoot().node(PREF_ROOT).putBoolean("ignoreArtwork", myIgnoreArtwork);
+        Preferences.userRoot().node(PREF_ROOT).putBoolean("debugLogging", myDebugLogging);
     }
 
     private void checkPrefsVersion() {

@@ -9,11 +9,14 @@ import de.codewave.utils.*;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.io.*;
+import org.apache.log4j.*;
+import org.apache.log4j.spi.*;
 
 import javax.swing.*;
 import java.io.*;
 import java.sql.*;
 import java.text.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -219,5 +222,19 @@ public class MyTunesRssUtils {
         } else {
             MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateAlreadyRunning"));
         }
+    }
+
+    public static void setCodewaveLogLevel(Level level) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Setting codewave log to level \"" + level + "\".");
+        }
+        LoggerRepository repository = Logger.getRootLogger().getLoggerRepository();
+        for (Enumeration loggerEnum = repository.getCurrentLoggers(); loggerEnum.hasMoreElements();) {
+            Logger logger = (Logger)loggerEnum.nextElement();
+            if (logger.getName().startsWith("de.codewave.")) {
+                logger.setLevel(level);
+            }
+        }
+        Logger.getLogger("de.codewave").setLevel(level);
     }
 }

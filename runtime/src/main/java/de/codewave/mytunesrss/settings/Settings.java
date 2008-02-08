@@ -101,6 +101,10 @@ public class Settings implements MyTunesRssEventListener {
         if (message != null) {
             messages.append(message).append(" ");
         }
+        message = myInfoForm.updateConfigFromGui();
+        if (message != null) {
+            messages.append(message).append(" ");
+        }
         String returnValue = messages.toString().trim();
         return returnValue.length() > 0 ? returnValue : null;
     }
