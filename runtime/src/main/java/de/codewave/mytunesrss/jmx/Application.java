@@ -1,10 +1,12 @@
 package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.task.*;
 
 import javax.management.*;
 
 import org.apache.log4j.*;
+import org.apache.commons.lang.*;
 
 /**
  * de.codewave.mytunesrss.jmx.Application
@@ -56,5 +58,22 @@ public class Application extends MyTunesRssMBean implements ApplicationMBean {
         MyTunesRssUtils.setCodewaveLogLevel(debugLogging ? Level.DEBUG : Level.INFO);
         MyTunesRss.CONFIG.setDebugLogging(debugLogging);
         onChange();
+    }
+
+    public String sendSupportRequest(String name, String email, String comment, boolean includeItunesXml) {
+        MyTunesRss.CONFIG.setSupportName(name);
+        MyTunesRss.CONFIG.setSupportEmail(email);
+        SendSupportRequestTask requestTask = new SendSupportRequestTask(name, email, comment, includeItunesXml);
+        if (!MyTunesRss.CONFIG.isProxyServer() ||
+                (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getProxyHost()) && MyTunesRss.CONFIG.getProxyPort() > 0)) {
+            requestTask.execute();
+            if (requestTask.isSuccess()) {
+                return MyTunesRssUtils.getBundleString("info.supportRequestSent");
+            } else {
+                return MyTunesRssUtils.getBundleString("error.couldNotSendSupportRequest");
+            }
+        } else {
+            return MyTunesRssUtils.getBundleString("error.illegalProxySettings");
+        }
     }
 }
