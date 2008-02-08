@@ -9,4 +9,5 @@ public interface ApplicationMBean {
     String getLicense();
     boolean isDebugLogging();
     void setDebugLogging(boolean debugLogging);
+    String sendSupportRequest(String name, String email, String comment, boolean includeItunesXml);
 }
