@@ -22,6 +22,9 @@
             <action dev="mdescher" type="add">
                 Support request via JMX console.
             </action>
+            <action dev="mdescher" type="fix">
+                Catalina base paths with special characters should work now.
+            </action>
         </release>
 
         <release version="3.1.1" date="2008-01-18" description="Bugfix release">
