@@ -43,16 +43,11 @@ public class WebServer {
                     final Map<String, Object> contextEntries = new HashMap<String, Object>();
                     contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
                     contextEntries.put(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
-                    String catalinaBase = URLDecoder.decode(getClass().getResource("WebServer.class").getFile());
-                    int index = catalinaBase.toLowerCase().indexOf("mytunesrss.jar");
-                    if (index > -1) {
-                        // get the directory containing the main jar file and use it as the catalina base directory
-                        catalinaBase = catalinaBase.substring(0, index);
-                        catalinaBase = catalinaBase.split("file:")[catalinaBase.split("file:").length - 1];
-                        catalinaBase = new File(catalinaBase).getAbsolutePath();
-                    } else {
-                        // not started from a jar file, i.e. development environment, use the current working directory as catalina base
-                        catalinaBase = new File(".").getAbsolutePath();
+                    String catalinaBase = getCatalinaBase(null);
+                    File catalinaBaseFile = new File(catalinaBase);
+                    if (!catalinaBaseFile.exists() || !catalinaBaseFile.isDirectory()) {
+                        // try UTF-8 in case resulting dir seems to be non-existant, probably fixes MacOSX problems with special characters
+                        catalinaBase = getCatalinaBase("UTF-8");
                     }
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Using catalina base: \"" + catalinaBase + "\".");
@@ -97,6 +92,27 @@ public class WebServer {
             }
         }
         return false;
+    }
+
+    private String getCatalinaBase(String encoding) {
+        String catalinaBase = null;
+        try {
+            catalinaBase = encoding != null ? URLDecoder.decode(getClass().getResource("WebServer.class").getFile(), encoding) : URLDecoder.decode(
+                    getClass().getResource("WebServer.class").getFile());
+        } catch (UnsupportedEncodingException e) {
+            catalinaBase = URLDecoder.decode(getClass().getResource("WebServer.class").getFile());
+        }
+        int index = catalinaBase.toLowerCase().indexOf("mytunesrss.jar");
+        if (index > -1) {
+            // get the directory containing the main jar file and use it as the catalina base directory
+            catalinaBase = catalinaBase.substring(0, index);
+            catalinaBase = catalinaBase.split("file:")[catalinaBase.split("file:").length - 1];
+            catalinaBase = new File(catalinaBase).getAbsolutePath();
+        } else {
+            // not started from a jar file, i.e. development environment, use the current working directory as catalina base
+            catalinaBase = new File(".").getAbsolutePath();
+        }
+        return catalinaBase;
     }
 
     private byte checkServerHealth(int port, boolean logging) {
