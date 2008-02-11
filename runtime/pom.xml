@@ -21,13 +21,13 @@
         <uidesigner />
     </properties>
     <dependencies>
-        <!--dependency>
+        <dependency>
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>apple</artifactId>
             <version>3.2-SNAPSHOT</version>
             <scope>runtime</scope>
             <optional />
-        </dependency-->
+        </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -232,7 +232,7 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>codewave-utils</artifactId>
-            <version>0.32</version>
+            <version>0.33-SNAPSHOT</version>
             <optional />
         </dependency>
         <dependency>
