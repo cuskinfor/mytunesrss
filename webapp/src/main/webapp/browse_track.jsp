@@ -33,8 +33,8 @@
 <ul class="links">
     <c:if test="${sortOrderLink}">
         <li>
-            <c:if test="${sortOrder != 'Album'}"><a href="#" onClick="sort('${servletUrl}', 'Album'); return false"><fmt:message key="groupByAlbum" /></a></c:if>
-            <c:if test="${sortOrder != 'Artist'}"><a href="#" onClick="sort('${servletUrl}', 'Artist'); return false"><fmt:message key="groupByArtist" /></a></c:if>
+            <c:if test="${sortOrder != 'Album'}"><a href="#" onclick="sort('${servletUrl}', 'Album'); return false"><fmt:message key="groupByAlbum" /></a></c:if>
+            <c:if test="${sortOrder != 'Artist'}"><a href="#" onclick="sort('${servletUrl}', 'Artist'); return false"><fmt:message key="groupByArtist" /></a></c:if>
         </li>
     </c:if>
     <c:if test="${empty sessionScope.playlist}">
@@ -168,7 +168,7 @@
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
         <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
         <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:if>
-        <a href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" <c:if test="${!empty track.comment}">title="<c:out value="${track.comment}"/></c:if>">
+        <a href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" <c:if test="${!empty track.comment}">title="<c:out value="${track.comment}"/>"</c:if>>
         <c:choose>
             <c:when test="${sortOrder == 'Album'}">
                 <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>

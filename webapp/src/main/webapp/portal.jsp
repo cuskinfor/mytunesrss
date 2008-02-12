@@ -96,7 +96,7 @@
                             <td><fmt:message key="statistics.tracks" />: ${statistics.trackCount}</td>
                             <td><fmt:message key="statistics.albums" />: ${statistics.albumCount}</td>
                             <td><fmt:message key="statistics.artists" />: ${statistics.artistCount}</td>
-                            <td width="100%"><fmt:message key="statistics.genres" />: ${statistics.genreCount}</td>
+                            <td style="width:100%"><fmt:message key="statistics.genres" />: ${statistics.genreCount}</td>
                         </tr>
                     </table>
                 </td>
