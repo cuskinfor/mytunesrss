@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
-    <version>3.1.3-SNAPSHOT</version>
+    <version>3.1.4</version>
     <name>Codewave MyTunesRSS Runtime</name>
     <distributionManagement>
         <site>
@@ -24,7 +24,7 @@
         <dependency>
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>apple</artifactId>
-            <version>3.1.3-SNAPSHOT</version>
+            <version>3.1.4</version>
             <scope>runtime</scope>
             <optional />
         </dependency>
@@ -232,13 +232,13 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>codewave-utils</artifactId>
-            <version>0.32</version>
+            <version>0.33</version>
             <optional />
         </dependency>
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>camel</artifactId>
-            <version>0.9.4</version>
+            <version>0.9.5</version>
             <optional />
         </dependency>
         <dependency>
@@ -308,4 +308,7 @@
         </plugins>
     </build>
 
+  <scm>
+    <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/codewave-maven2-base/tags/mytunesrss-3.1.4</developerConnection>
+  </scm>
 </project>

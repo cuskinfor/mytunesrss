@@ -109,11 +109,11 @@
         </c:if>
 
         <div class="buttons">
-            <input type="button" onClick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist/${auth}';document.forms['playlist'].submit()" value="<fmt:message key="removeSelected"/>" />
+            <input type="button" onclick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist/${auth}';document.forms['playlist'].submit()" value="<fmt:message key="removeSelected"/>" />
             <input type="submit"
-                   onClick="document.forms['playlist'].action = '${servletUrl}/savePlaylist/${auth}';document.forms['playlist'].elements['backUrl'].value = '${mtfn:encode64(backUrl)}'"
+                   onclick="document.forms['playlist'].action = '${servletUrl}/savePlaylist/${auth}';document.forms['playlist'].elements['backUrl'].value = '${mtfn:encode64(backUrl)}'"
                    value="<fmt:message key="savePlaylist"/>" />
-            <input type="button" onClick="document.location.href = '${servletUrl}/cancelEditPlaylist/${auth}/backUrl=${param.backUrl}'" value="<fmt:message key="doCancel"/>" />
+            <input type="button" onclick="document.location.href = '${servletUrl}/cancelEditPlaylist/${auth}/backUrl=${param.backUrl}'" value="<fmt:message key="doCancel"/>" />
         </div>
     </form>
 

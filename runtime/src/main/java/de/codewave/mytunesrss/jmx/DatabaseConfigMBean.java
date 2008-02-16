@@ -41,4 +41,8 @@ public interface DatabaseConfigMBean {
     boolean isRemoveMissingItunesTracks();
 
     void setRemoveMissingItunesTracks(boolean removeMissingTracks);
+
+    boolean isIgnoreCoverArtworkFromFiles();
+
+    void setIgnoreCoverArtworkFromFiles(boolean ignoreCoverArtwork);
 }

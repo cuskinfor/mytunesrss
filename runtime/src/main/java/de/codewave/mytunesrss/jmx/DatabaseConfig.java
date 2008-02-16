@@ -147,4 +147,13 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
             myCurrentUpdateAction = null;
         }
     }
+
+    public boolean isIgnoreCoverArtworkFromFiles() {
+        return MyTunesRss.CONFIG.isIgnoreArtwork();
+    }
+
+    public void setIgnoreCoverArtworkFromFiles(boolean ignoreCoverArtwork) {
+        MyTunesRss.CONFIG.setIgnoreArtwork(ignoreCoverArtwork);
+        onChange();
+    }
 }
