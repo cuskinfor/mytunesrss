@@ -17,8 +17,8 @@ import javax.servlet.http.*;
 import javax.servlet.jsp.jstl.core.*;
 import javax.servlet.jsp.jstl.fmt.*;
 import java.io.*;
-import java.util.*;
 import java.text.*;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
@@ -87,7 +87,8 @@ public class MyTunesFunctions {
     }
 
     public static String suffix(WebConfig config, User user, Track track) {
-        if (config != null && user != null && FileSupportUtils.isMp4(track.getFile()) && MyTunesRss.REGISTRATION.isRegistered() && user.isTranscoder()) {
+        if (config != null && user != null && FileSupportUtils.isMp4(track.getFile()) && MyTunesRss.REGISTRATION.isRegistered() &&
+                user.isTranscoder()) {
             if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
                 return "mp3";
             } else if ("mp4a".equals(track.getMp4Codec()) && config.isFaad2() && MyTunesRss.CONFIG.isValidFaad2Binary()) {
@@ -95,6 +96,21 @@ public class MyTunesFunctions {
             }
         }
         return FilenameUtils.getExtension(track.getFile().getName());
+    }
+
+    public static String tcParamValue(WebConfig config, User user, Track track) {
+        if (config != null && user != null && MyTunesRss.REGISTRATION.isRegistered() && user.isTranscoder() && MyTunesRss.CONFIG.isValidLameBinary()) {
+            if (FileSupportUtils.isMp4(track.getFile())) {
+                if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
+                    return config.getLameTargetBitrate() + "," + config.getLameTargetSampleRate() + "," + config.isTranscodeOnTheFlyIfPossible();
+                } else if ("mp4a".equals(track.getMp4Codec()) && config.isFaad2() && MyTunesRss.CONFIG.isValidFaad2Binary()) {
+                    return config.getLameTargetBitrate() + "," + config.getLameTargetSampleRate() + "," + config.isTranscodeOnTheFlyIfPossible();
+                }
+            } else if (FileSupportUtils.isMp3(track.getFile()) && config.isLame()) {
+                return config.getLameTargetBitrate() + "," + config.getLameTargetSampleRate() + "," + config.isTranscodeOnTheFlyIfPossible();
+            }
+        }
+        return "";
     }
 
     public static String replace(String string, String target, String replacement) {
@@ -191,7 +207,8 @@ public class MyTunesFunctions {
 
     public static String formatDateAsDateAndTime(HttpServletRequest request, long milliseconds) {
         LocalizationContext context = (LocalizationContext)request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
-        ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb", request.getLocale());
+        ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb",
+                                                                                                         request.getLocale());
         SimpleDateFormat format = new SimpleDateFormat(bundle.getString("dateAndTimeFormat"));
         return format.format(new Date(milliseconds));
     }

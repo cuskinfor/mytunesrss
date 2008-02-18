@@ -5,7 +5,16 @@
     </properties>
     <body>
 
-        <release version="3.1.4" date="????-??-??" description="Bugfix release">
+        <release version="3.1.4" date="2008-02-16" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                New version of codewave-utils.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed transcoding issues.
+            </action>
+        </release>
+
+        <release version="3.1.4" date="2008-02-16" description="Bugfix release">
             <action dev="mdescher" type="add">
                 Ignore cover artfrom in files option added to JMX console.
             </action>

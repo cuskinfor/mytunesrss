@@ -232,7 +232,7 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>codewave-utils</artifactId>
-            <version>0.33</version>
+            <version>0.34-SNAPSHOT</version>
             <optional />
         </dependency>
         <dependency>

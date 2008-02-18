@@ -84,14 +84,14 @@
                         <c:when test="${empty sessionScope.playlist}">
                             <c:if test="${authUser.rss && config.showRss}">
                                 <td class="icon">
-                                    <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/tc=${transcodeParam}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.xml">
+                                    <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.xml">
                                         <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
                                 </td>
                             </c:if>
                             <c:if test="${authUser.playlist && config.showPlaylist}">
                                 <td class="icon">
-                                    <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/tc=${transcodeParam}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.${config.playlistFileSuffix}">
+                                    <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.${config.playlistFileSuffix}">
                                         <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
                                 </td>

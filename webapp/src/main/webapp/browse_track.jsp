@@ -119,13 +119,13 @@
             <c:when test="${empty sessionScope.playlist}">
                 <c:if test="${authUser.rss && config.showRss}">
                     <th class="icon">
-                        <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}/tc=${transcodeParam}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.xml">
+                        <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.xml">
                             <img src="${appUrl}/images/rss_th.gif" alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
                     </th>
                 </c:if>
                 <c:if test="${authUser.playlist && config.showPlaylist}">
                     <th class="icon">
-                        <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}/tc=${transcodeParam}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.${config.playlistFileSuffix}">
+                        <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.${config.playlistFileSuffix}">
                             <img src="${appUrl}/images/playlist_th.gif" alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
                     </th>
                 </c:if>
@@ -193,13 +193,13 @@
         <c:when test="${empty sessionScope.playlist}">
             <c:if test="${authUser.rss && config.showRss}">
                 <td class="icon">
-                    <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/tc=${transcodeParam}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml">
+                    <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml">
                         <img src="${appUrl}/images/rss${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
                 </td>
             </c:if>
             <c:if test="${authUser.playlist && config.showPlaylist}">
                 <td class="icon">
-                    <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/tc=${transcodeParam}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}">
+                    <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}">
                         <img src="${appUrl}/images/playlist${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
                 </td>
             </c:if>
