@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.command;
 
 import org.apache.commons.logging.*;
 import org.apache.commons.lang.*;
+import org.apache.commons.io.*;
 
 import java.io.*;
 import java.text.*;
@@ -29,6 +30,23 @@ public class LameTranscoderStream extends InputStream {
             LOG.debug("executing command \"" + StringUtils.join(command, " ") + "\".");
         }
         myProcess = Runtime.getRuntime().exec(command);
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    OutputStream nullOutputStream = new OutputStream() {
+                        public void write(int b) throws IOException {
+                            // ignore => NULL-Writer
+                        }
+                    };
+                    IOUtils.copy(myProcess.getErrorStream(), nullOutputStream);
+                    nullOutputStream.close();
+                } catch (IOException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not dump error stream.", e);
+                    }
+                }
+            }
+        }).start();
     }
 
     public int read() throws IOException {

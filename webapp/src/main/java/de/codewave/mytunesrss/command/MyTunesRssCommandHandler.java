@@ -160,11 +160,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("encryptionKey", MyTunesRss.CONFIG.getPathInfoKey());
         getRequest().setAttribute("globalConfig", MyTunesRss.CONFIG);
         setResourceBundle();
-        if (MyTunesRss.REGISTRATION.isRegistered() && webConfig.isValidTranscoder()) {
-            getRequest().setAttribute("tc",
-                                      webConfig.getLameTargetBitrate() + "," + webConfig.getLameTargetSampleRate() + "," +
-                                              webConfig.isTranscodeOnTheFlyIfPossible());
-        }
         if (DatabaseBuilderTask.isRunning()) {
             if (DatabaseBuilderTask.getState() == DatabaseBuilderTask.State.UpdatingTracksFromFolder ||
                     DatabaseBuilderTask.getState() == DatabaseBuilderTask.State.UpdatingTracksFromItunes) {

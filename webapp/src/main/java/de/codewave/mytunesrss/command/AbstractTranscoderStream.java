@@ -41,8 +41,13 @@ public abstract class AbstractTranscoderStream extends InputStream {
     private Process mySourceProcess;
 
     public AbstractTranscoderStream(File file, String targetBinary, String sourceBinary, int outputBitRate, int outputSampleRate) throws IOException {
-        String[] targetCommand = (targetBinary + " " + getTargetArguments()).split(" ");
-        for (int i = 0; i < targetCommand.length; i++) {
+        String[] targetCommand = new String[getTargetArguments().split(" ").length + 1];
+        targetCommand[0] = targetBinary;
+        int i = 1;
+        for (String part : getTargetArguments().split(" ")) {
+            targetCommand[i++] = part;
+        }
+        for (i = 0; i < targetCommand.length; i++) {
             if ("{bitrate}".equals(targetCommand[i])) {
                 targetCommand[i] = Integer.toString(outputBitRate);
             } else if ("{samplerate}".equals(targetCommand[i])) {
@@ -52,8 +57,13 @@ public abstract class AbstractTranscoderStream extends InputStream {
         if (LOG.isDebugEnabled()) {
             LOG.debug("executing " + getTargetName() + " command \"" + StringUtils.join(targetCommand, " ") + "\".");
         }
-        String[] sourceCommand = (sourceBinary + " " + getSourceArguments()).split(" ");
-        for (int i = 0; i < sourceCommand.length; i++) {
+        String[] sourceCommand = new String[getSourceArguments().split(" ").length + 1];
+        sourceCommand[0] = sourceBinary;
+        i = 1;
+        for (String part : getSourceArguments().split(" ")) {
+            sourceCommand[i++] = part;
+        }
+        for (i = 0; i < sourceCommand.length; i++) {
             if ("{infile}".equals(sourceCommand[i])) {
                 sourceCommand[i] = file.getAbsolutePath();
             }
@@ -71,6 +81,40 @@ public abstract class AbstractTranscoderStream extends InputStream {
                 } catch (IOException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not copy " + getSourceName() + " output to " + getTargetName() + " input stream.", e);
+                    }
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    OutputStream nullOutputStream = new OutputStream() {
+                        public void write(int b) throws IOException {
+                            // ignore => NULL-Writer
+                        }
+                    };
+                    IOUtils.copy(mySourceProcess.getErrorStream(), nullOutputStream);
+                    nullOutputStream.close();
+                } catch (IOException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not dump error stream.", e);
+                    }
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    OutputStream nullOutputStream = new OutputStream() {
+                        public void write(int b) throws IOException {
+                            // ignore => NULL-Writer
+                        }
+                    };
+                    IOUtils.copy(myTargetProcess.getErrorStream(), nullOutputStream);
+                    nullOutputStream.close();
+                } catch (IOException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not dump error stream.", e);
                     }
                 }
             }

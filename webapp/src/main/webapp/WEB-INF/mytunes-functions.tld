@@ -246,4 +246,16 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Get the value for the tc parameter (transcoding).
+        </description>
+        <name>tcParamValue</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String tcParamValue(de.codewave.mytunesrss.servlet.WebConfig, de.codewave.mytunesrss.User, de.codewave.mytunesrss.datastore.statement.Track)</function-signature>
+        <example>
+            &lt;c:out value="${mtfn:tcParamValue(config, user, track)}"/&gt;
+        </example>
+    </function>
+
 </taglib>
