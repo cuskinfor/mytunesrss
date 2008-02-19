@@ -157,13 +157,20 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     for (int s = comment.indexOf("${"); s > -1; s = comment.indexOf("${")) {
                         int e = comment.indexOf("}", s);
                         if (e != -1) {
-                            String[] tokens = comment.substring(s + 2, e).split(",");
+                            String[] tokensAndDefault = comment.substring(s + 2, e).split(";");
+                            String[] tokens = tokensAndDefault[0].split(",");
                             if (tokens.length == 1) {
-                                comment = comment.substring(0, s) + ((Id3v2Tag)tag).getTextFrameBodyValue(tokens[0].trim(), tokens[0].trim()) +
-                                        comment.substring(e + 1);
+                                String value = StringUtils.trimToEmpty(((Id3v2Tag)tag).getTextFrameBodyValue(tokens[0].trim(), tokens[0].trim()));
+                                if (StringUtils.isEmpty(value) && tokensAndDefault.length > 1) {
+                                    value = tokensAndDefault[1];
+                                }
+                                comment = comment.substring(0, s) + value + comment.substring(e + 1);
                             } else {
-                                comment = comment.substring(0, s) + ((Id3v2Tag)tag).getTextFrameBodyValue(tokens[0].trim(), tokens[1].trim()) +
-                                        comment.substring(e + 1);
+                                String value = StringUtils.trimToEmpty(((Id3v2Tag)tag).getTextFrameBodyValue(tokens[0].trim(), tokens[1].trim()));
+                                if (StringUtils.isEmpty(value) && tokensAndDefault.length > 1) {
+                                    value = tokensAndDefault[1];
+                                }
+                                comment = comment.substring(0, s) + value + comment.substring(e + 1);
                             }
                         }
                     }
