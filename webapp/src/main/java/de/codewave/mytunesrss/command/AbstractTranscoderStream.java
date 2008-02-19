@@ -2,7 +2,8 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.*;
-import org.apache.commons.io.*;
+import de.codewave.utils.io.*;
+import org.apache.commons.io.output.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 
@@ -73,53 +74,25 @@ public abstract class AbstractTranscoderStream extends InputStream {
         }
         mySourceProcess = Runtime.getRuntime().exec(sourceCommand);
         myTargetProcess = Runtime.getRuntime().exec(targetCommand);
-        new Thread(new Runnable() {
-            public void run() {
+        new StreamCopyThread(mySourceProcess.getInputStream(), false, myTargetProcess.getOutputStream(), true).start();
+        new StreamCopyThread(mySourceProcess.getErrorStream(), false, getErrorStream(1), true).start();
+        new StreamCopyThread(myTargetProcess.getErrorStream(), false, getErrorStream(2), true).start();
+                    }
+
+    private OutputStream getErrorStream(int pipelinePosition) {
+        if (MyTunesRss.CONFIG.isDebugLogging()) {
                 try {
-                    IOUtils.copy(mySourceProcess.getInputStream(), myTargetProcess.getOutputStream());
-                    myTargetProcess.getOutputStream().close();
+                return new FileOutputStream(getErrorLogFile(pipelinePosition), true);
                 } catch (IOException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not copy " + getSourceName() + " output to " + getTargetName() + " input stream.", e);
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Could not create error log file.", e);
                     }
                 }
             }
-        }).start();
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    OutputStream nullOutputStream = new OutputStream() {
-                        public void write(int b) throws IOException {
-                            // ignore => NULL-Writer
-                        }
-                    };
-                    IOUtils.copy(mySourceProcess.getErrorStream(), nullOutputStream);
-                    nullOutputStream.close();
-                } catch (IOException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not dump error stream.", e);
-                    }
-                }
-            }
-        }).start();
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    OutputStream nullOutputStream = new OutputStream() {
-                        public void write(int b) throws IOException {
-                            // ignore => NULL-Writer
-                        }
-                    };
-                    IOUtils.copy(myTargetProcess.getErrorStream(), nullOutputStream);
-                    nullOutputStream.close();
-                } catch (IOException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not dump error stream.", e);
-                    }
-                }
-            }
-        }).start();
+        return new NullOutputStream();
     }
+
+    protected abstract File getErrorLogFile(int pipelinePosition) throws IOException;
 
     public int read() throws IOException {
         return myTargetProcess.getInputStream().read();

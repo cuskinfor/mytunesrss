@@ -47,6 +47,16 @@ public class MyTunesRss {
         } catch (IOException e) {
             System.setProperty("MyTunesRSS.logDir", ".");
         }
+        try {
+            for (Iterator<File> iter =
+                    (Iterator<File>)FileUtils.iterateFiles(new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER)),
+                                                                       new String[] {"log"},
+                                                           false); iter.hasNext();) {
+                iter.next().delete();
+            }
+        } catch (Exception e) {
+            // ignore exceptions when deleting log files
+        }
     }
 
     private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
