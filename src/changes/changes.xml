@@ -5,7 +5,13 @@
     </properties>
     <body>
 
-        <release version="3.1.4" date="2008-02-16" description="Bugfix release">
+        <release version="3.1.5" date="????-??-??" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                commons-io 1.4
+            </action>
+            <action dev="mdescher" type="add">
+                Writing transcoder log error output log files in debug mode.
+            </action>
             <action dev="mdescher" type="update">
                 New version of codewave-utils.
             </action>

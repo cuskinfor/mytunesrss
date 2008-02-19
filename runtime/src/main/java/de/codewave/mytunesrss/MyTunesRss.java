@@ -47,6 +47,16 @@ public class MyTunesRss {
         } catch (IOException e) {
             System.setProperty("MyTunesRSS.logDir", ".");
         }
+        try {
+            for (Iterator<File> iter =
+                    (Iterator<File>)FileUtils.iterateFiles(new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER)),
+                                                           new String[] {"log"},
+                                                           false); iter.hasNext();) {
+                iter.next().delete();
+            }
+        } catch (Exception e) {
+            // ignore exceptions when deleting log files
+        }
     }
 
     private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
@@ -359,9 +369,11 @@ public class MyTunesRss {
                 Point location = ROOT_FRAME.getLocation();
                 Dimension size = ROOT_FRAME.getSize();
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Frame is (" + location.x + ", " + location.y + ") - (" + (location.x + size.width) + ", " + (location.y + size.height) + ")");
+                    LOG.debug("Frame is (" + location.x + ", " + location.y + ") - (" + (location.x + size.width) + ", " +
+                            (location.y + size.height) + ")");
                 }
-                if (location.x >= screenSize.width || location.y  >= screenSize.height || location.x + size.width <= 0 || location.y + size.height <= 0) {
+                if (location.x >= screenSize.width || location.y >= screenSize.height || location.x + size.width <= 0 ||
+                        location.y + size.height <= 0) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Frame is completely off-screen, centering it on screen.");
                     }
