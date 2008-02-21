@@ -160,13 +160,13 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             String[] tokensAndDefault = comment.substring(s + 2, e).split(";");
                             String[] tokens = tokensAndDefault[0].split(",");
                             if (tokens.length == 1) {
-                                String value = StringUtils.trimToEmpty(((Id3v2Tag)tag).getTextFrameBodyValue(tokens[0].trim(), tokens[0].trim()));
+                                String value = StringUtils.trimToEmpty(((Id3v2Tag)tag).getFrameBodyToString(tokens[0].trim(), tokens[0].trim()));
                                 if (StringUtils.isEmpty(value) && tokensAndDefault.length > 1) {
                                     value = tokensAndDefault[1];
                                 }
                                 comment = comment.substring(0, s) + value + comment.substring(e + 1);
                             } else {
-                                String value = StringUtils.trimToEmpty(((Id3v2Tag)tag).getTextFrameBodyValue(tokens[0].trim(), tokens[1].trim()));
+                                String value = StringUtils.trimToEmpty(((Id3v2Tag)tag).getFrameBodyToString(tokens[0].trim(), tokens[1].trim()));
                                 if (StringUtils.isEmpty(value) && tokensAndDefault.length > 1) {
                                     value = tokensAndDefault[1];
                                 }
