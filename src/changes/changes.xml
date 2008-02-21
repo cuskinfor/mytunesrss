@@ -5,7 +5,13 @@
     </properties>
     <body>
 
-        <release version="3.1.5" date="????-??-??" description="Bugfix release">
+        <release version="3.1.5" date="2008-??-??" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                New version of camel.
+            </action>
+            <action dev="mdescher" type="add">
+                Support for all ID3 tags in comments that are supported by camel.
+            </action>
             <action dev="mdescher" type="add">
                 Support for default values in ID3v2 tag comment descriptions in the system property
                 "track.comment.id3v2".
@@ -15,7 +21,7 @@
                 or empty fields.
             </action>
             <action dev="mdescher" type="update">
-                commons-io 1.4
+                commons-io 1.4 used.
             </action>
             <action dev="mdescher" type="add">
                 Writing transcoder log error output log files in debug mode.
