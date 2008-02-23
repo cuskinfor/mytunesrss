@@ -464,6 +464,17 @@
         </sql>
     </statement>
 
+    <statement name="insertTrackAndImage">
+        <parameter name="time" type="java.lang.Integer"/>
+        <parameter name="track_number" type="java.lang.Integer"/>
+        <parameter name="protected" type="java.lang.Boolean"/>
+        <parameter name="video" type="java.lang.Boolean"/>
+        <sql>
+            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment)
+            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment)
+        </sql>
+    </statement>
+
     <statement name="updateTrack">
         <parameter name="time" type="java.lang.Integer"/>
         <parameter name="track_number" type="java.lang.Integer"/>
@@ -473,6 +484,19 @@
             UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, video = :video, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment
+            WHERE id = :id
+        </sql>
+    </statement>
+
+    <statement name="updateTrackAndImage">
+        <parameter name="time" type="java.lang.Integer"/>
+        <parameter name="track_number" type="java.lang.Integer"/>
+        <parameter name="protected" type="java.lang.Boolean"/>
+        <parameter name="video" type="java.lang.Boolean"/>
+        <sql>
+            UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
+                             file = :file, protected = :protected, video = :video, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
+                             ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated
             WHERE id = :id
         </sql>
     </statement>

@@ -21,6 +21,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
 
     private File myFile;
     private String myTrackId;
+    private Image myImage;
     private static final int MAX_IMAGE_DATA_SIZE = 1024 * 1000 * 2; // maximum image size is 2 MB
 
     public HandleTrackImagesStatement(File file, String trackId) {
@@ -28,17 +29,25 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         myTrackId = trackId;
     }
 
+    public HandleTrackImagesStatement(File file, String trackId, Image image) {
+        myFile = file;
+        myTrackId = trackId;
+        myImage = image;
+    }
+
     public void execute(Connection connection) throws SQLException {
-        if (FileSupportUtils.isMp3(myFile) || FileSupportUtils.isMp4(myFile)) {
+        if (myImage != null || FileSupportUtils.isMp3(myFile) || FileSupportUtils.isMp4(myFile)) {
             try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
-                }
-                Image image = null;
-                if (FileSupportUtils.isMp3(myFile)) {
-                    image = MyTunesRssMp3Utils.getImage(myFile);
-                } else {
-                    image = MyTunesRssMp4Utils.getImage(myFile);
+                Image image = myImage;
+                if (image == null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
+                    }
+                    if (FileSupportUtils.isMp3(myFile)) {
+                        image = MyTunesRssMp3Utils.getImage(myFile);
+                    } else {
+                        image = MyTunesRssMp4Utils.getImage(myFile);
+                    }
                 }
                 boolean existing = new FindTrackImageQuery(myTrackId, 32).execute(connection) != null;
                 if (image != null && image.getData() != null && image.getData().length > MAX_IMAGE_DATA_SIZE) {

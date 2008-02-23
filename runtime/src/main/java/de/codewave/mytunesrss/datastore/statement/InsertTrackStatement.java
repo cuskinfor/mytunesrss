@@ -85,11 +85,15 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
         myComment = comment;
     }
 
+    protected String getStatementName() {
+        return "insertTrack";
+    }
+
     public synchronized void execute(Connection connection) throws SQLException {
         try {
             myArtist = UpdateTrackStatement.dropWordsFromArtist(myArtist);
             if (myStatement == null) {
-                myStatement = MyTunesRssUtils.createStatement(connection, "insertTrack");
+                myStatement = MyTunesRssUtils.createStatement(connection, getStatementName());
             }
             myStatement.clearParameters();
             myStatement.setString("id", myId);

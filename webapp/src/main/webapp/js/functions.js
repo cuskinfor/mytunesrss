@@ -1,3 +1,7 @@
+var tooltipElement;
+
+document.onmousemove = updateTooltipPosition;
+
 function sort(servletUrl, sortOrder) {
     document.forms["browse"].action = servletUrl + "/browseTrack";
     document.forms["browse"].elements["sortOrder"].value = sortOrder;
@@ -53,3 +57,29 @@ function getElementValue(element) {
     }
     return '';
 }
+
+function updateTooltipPosition(e) {
+    var x = (document.all) ? window.event.x + document.body.scrollLeft : e.pageX;
+    var y = (document.all) ? window.event.y + document.body.scrollTop  : e.pageY;
+    if (tooltipElement != null) {
+        tooltipElement.style.position = "fixed";
+        tooltipElement.style.left = (x + 20) + "px";
+        tooltipElement.style.top = (y + 20) + "px";
+    }
+}
+
+function showTooltip(element) {
+    tooltipElement = document.getElementById("tooltip_" + element.id);
+    if (tooltipElement != null) {
+        tooltipElement.style.display = "block";
+    }
+}
+
+function hideTooltip(element) {
+    tooltipElement = document.getElementById("tooltip_" + element.id);
+    if (tooltipElement != null) {
+        tooltipElement.style.display = "none";
+    }
+}
+
+
