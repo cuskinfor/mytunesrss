@@ -5,12 +5,22 @@
     </properties>
     <body>
 
-        <release version="3.1.5" date="2008-??-??" description="Bugfix release">
+        <release version="3.1.5" date="2008-02-23" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                Improved cover art tooltip.
+            </action>
+            <action dev="mdescher" type="update">
+                Performance improvement when scanning watch folders since cover art is scanned
+                in the same run, i.e. files are parsed only once.
+            </action>
             <action dev="mdescher" type="update">
                 New version of camel.
             </action>
             <action dev="mdescher" type="add">
                 Support for all ID3 tags in comments that are supported by camel.
+            </action>
+            <action dev="mdescher" type="add">
+                Support for single frame or multiple frame usage for ID3 tag comments.
             </action>
             <action dev="mdescher" type="add">
                 Support for default values in ID3v2 tag comment descriptions in the system property

@@ -39,7 +39,7 @@ public class MyTunesRssMp3Utils {
         return null;
     }
 
-    private static Image getImage(Id3v2Tag id3v2Tag) {
+    public static Image getImage(Id3v2Tag id3v2Tag) {
         if (id3v2Tag != null && id3v2Tag.getFrames() != null) {
             for (Frame frame : id3v2Tag.getFrames()) {
                 if ("APIC".equals(frame.getId())) {

@@ -210,4 +210,8 @@ public class MyTunesFunctions {
         SimpleDateFormat format = new SimpleDateFormat(bundle.getString("dateAndTimeFormat"));
         return format.format(new Date(milliseconds));
     }
+
+    public static String[] splitComments(String comments) {
+        return StringUtils.split(comments, '\n');
+    }
 }
