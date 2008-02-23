@@ -49,20 +49,25 @@ public class Database implements MyTunesRssEventListener {
     }
 
     public void handleEvent(MyTunesRssEvent event) {
-        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+        switch (event) {
+            case CONFIGURATION_CHANGED:
             initValues();
-        } else if (event == MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED) {
-            myUpdateDatabaseButton.setEnabled(false);
-            myDeleteDatabaseButton.setEnabled(false);
+                break;
+            case DATABASE_UPDATE_STATE_CHANGED:
             myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString(event.getMessageKey()));
             setGuiMode(GuiMode.DatabaseUpdating);
-        } else if (event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED || event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN) {
-            if (event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED) {
+                break;
+            case DATABASE_UPDATE_FINISHED:
                 refreshLastUpdate();
-            }
-            myUpdateDatabaseButton.setEnabled(true);
-            myDeleteDatabaseButton.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
+            case DATABASE_UPDATE_FINISHED_NOT_RUN:
             setGuiMode(GuiMode.DatabaseIdle);
+                break;
+            case SERVER_STARTED:
+                setGuiMode(GuiMode.ServerRunning);
+                break;
+            case SERVER_STOPPED:
+                setGuiMode(GuiMode.ServerIdle);
+                break;
         }
     }
 
@@ -130,44 +135,17 @@ public class Database implements MyTunesRssEventListener {
     }
 
     public void setGuiMode(GuiMode mode) {
-        switch (mode) {
-            case ServerRunning:
-                myAutoUpdateDatabaseInput.setEnabled(false);
-                myUpdateDatabaseOnServerStart.setEnabled(false);
-                myIgnoreTimestampsInput.setEnabled(false);
-                myDeleteDatabaseButton.setEnabled(false);
-                SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, false);
-                myDeleteMissingFiles.setEnabled(false);
-                SwingUtils.enableElementAndLabel(myFileTypes, false);
-                SwingUtils.enableElementAndLabel(myArtistDropWords, false);
-                myIgnoreArtworkInput.setEnabled(false);
-                break;
-            case ServerIdle:
-                myUpdateDatabaseOnServerStart.setEnabled(true);
-                myAutoUpdateDatabaseInput.setEnabled(true);
-                myIgnoreTimestampsInput.setEnabled(!DatabaseBuilderTask.isRunning());
-                myDeleteDatabaseButton.setEnabled(!DatabaseBuilderTask.isRunning());
-                SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
-                myDeleteMissingFiles.setEnabled(!DatabaseBuilderTask.isRunning());
-                SwingUtils.enableElementAndLabel(myFileTypes, !DatabaseBuilderTask.isRunning());
-                SwingUtils.enableElementAndLabel(myArtistDropWords, !DatabaseBuilderTask.isRunning());
-                myIgnoreArtworkInput.setEnabled(!DatabaseBuilderTask.isRunning());
-                break;
-            case DatabaseUpdating:
-                myIgnoreTimestampsInput.setEnabled(false);
-                myDeleteMissingFiles.setEnabled(false);
-                SwingUtils.enableElementAndLabel(myFileTypes, false);
-                SwingUtils.enableElementAndLabel(myArtistDropWords, false);
-                myIgnoreArtworkInput.setEnabled(false);
-                break;
-            case DatabaseIdle:
-                myIgnoreTimestampsInput.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
-                myDeleteMissingFiles.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
-                SwingUtils.enableElementAndLabel(myFileTypes, !MyTunesRss.WEBSERVER.isRunning());
-                SwingUtils.enableElementAndLabel(myArtistDropWords, !MyTunesRss.WEBSERVER.isRunning());
-                myIgnoreArtworkInput.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
-                break;
-        }
+        boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
+        boolean databaseActive = DatabaseBuilderTask.isRunning() || mode == GuiMode.DatabaseUpdating;
+        myAutoUpdateDatabaseInput.setEnabled(!serverActive);
+        myUpdateDatabaseOnServerStart.setEnabled(!serverActive);
+        myIgnoreTimestampsInput.setEnabled(!databaseActive);
+        myDeleteDatabaseButton.setEnabled(!databaseActive);
+        SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected() && !serverActive);
+        myDeleteMissingFiles.setEnabled(!databaseActive);
+        SwingUtils.enableElementAndLabel(myFileTypes, !databaseActive);
+        SwingUtils.enableElementAndLabel(myArtistDropWords, !databaseActive);
+        myIgnoreArtworkInput.setEnabled(!databaseActive);
     }
 
     public class AutoUpdateDatabaseInputListener implements ActionListener {
