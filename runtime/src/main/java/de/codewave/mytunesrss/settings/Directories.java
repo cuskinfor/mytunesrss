@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.task.*;
 import org.apache.commons.io.*;
 
 import javax.swing.*;
@@ -97,8 +98,23 @@ public class Directories implements MyTunesRssEventListener {
     }
 
     public void handleEvent(MyTunesRssEvent event) {
-        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+        switch (event) {
+            case CONFIGURATION_CHANGED:
             initValues();
+                break;
+            case DATABASE_UPDATE_STATE_CHANGED:
+                setGuiMode(GuiMode.DatabaseUpdating);
+                break;
+            case DATABASE_UPDATE_FINISHED:
+            case DATABASE_UPDATE_FINISHED_NOT_RUN:
+                setGuiMode(GuiMode.DatabaseIdle);
+                break;
+            case SERVER_STARTED:
+                setGuiMode(GuiMode.ServerRunning);
+                break;
+            case SERVER_STOPPED:
+                setGuiMode(GuiMode.ServerIdle);
+                break;
         }
     }
 
@@ -148,36 +164,19 @@ public class Directories implements MyTunesRssEventListener {
     }
 
     public void setGuiMode(GuiMode mode) {
-        switch (mode) {
-            case ServerRunning:
-                myBaseDirsList.setEnabled(false);
-                myAddBaseDirButton.setEnabled(false);
-                myDeleteBaseDirButton.setEnabled(false);
-                myFolderStructureGrandparent.setEnabled(false);
-                myFolderStructureParent.setEnabled(false);
-                myUploadDirInput.setEnabled(false);
-                myUploadDirLookupButton.setEnabled(false);
-                myCreateUserDir.setEnabled(false);
-                myStructureLabel.setEnabled(false);
-                mySeparatorLabel1.setEnabled(false);
-                mySeparatorLabel2.setEnabled(false);
-                myTrackLabel.setEnabled(false);
-                break;
-            case ServerIdle:
-                myBaseDirsList.setEnabled(true);
-                myAddBaseDirButton.setEnabled(true);
-                myDeleteBaseDirButton.setEnabled(myBaseDirsList.getSelectedIndex() > -1);
-                myFolderStructureGrandparent.setEnabled(true);
-                myFolderStructureParent.setEnabled(true);
-                myUploadDirInput.setEnabled(true);
-                myUploadDirLookupButton.setEnabled(true);
-                myCreateUserDir.setEnabled(true);
-                myStructureLabel.setEnabled(true);
-                mySeparatorLabel1.setEnabled(true);
-                mySeparatorLabel2.setEnabled(true);
-                myTrackLabel.setEnabled(true);
-                break;
-        }
+        boolean databaseOrServerActive = DatabaseBuilderTask.isRunning() || MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.DatabaseUpdating || mode == GuiMode.ServerRunning;
+        myBaseDirsList.setEnabled(!databaseOrServerActive);
+        myAddBaseDirButton.setEnabled(!databaseOrServerActive);
+        myDeleteBaseDirButton.setEnabled(!databaseOrServerActive && myBaseDirsList.getSelectedIndex() > -1);
+        myFolderStructureGrandparent.setEnabled(!databaseOrServerActive);
+        myFolderStructureParent.setEnabled(!databaseOrServerActive);
+        myUploadDirInput.setEnabled(!databaseOrServerActive);
+        myUploadDirLookupButton.setEnabled(!databaseOrServerActive);
+        myCreateUserDir.setEnabled(!databaseOrServerActive);
+        myStructureLabel.setEnabled(!databaseOrServerActive);
+        mySeparatorLabel1.setEnabled(!databaseOrServerActive);
+        mySeparatorLabel2.setEnabled(!databaseOrServerActive);
+        myTrackLabel.setEnabled(!databaseOrServerActive);
     }
 
     public class AddWatchFolderButtonListener implements ActionListener {
