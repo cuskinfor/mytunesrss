@@ -258,4 +258,16 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Split track comment string into array of comments.
+        </description>
+        <name>splitComments</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String[] splitComments(java.lang.String)</function-signature>
+        <example>
+            &lt;c:forEach items="${mtfn:splitComments(comment)}"/&gt;&lt;c:forEach&gt;
+        </example>
+    </function>
+
 </taglib>

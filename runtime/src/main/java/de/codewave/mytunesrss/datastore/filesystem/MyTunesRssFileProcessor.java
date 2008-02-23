@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.datastore.filesystem;
 import de.codewave.camel.mp3.*;
 import de.codewave.camel.mp4.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.meta.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.io.*;
@@ -11,6 +12,7 @@ import de.codewave.utils.sql.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.codec.binary.*;
 
 import java.io.*;
 import java.sql.*;
@@ -27,6 +29,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private static final String ATOM_TRACK_NUMBER = "moov.udta.meta.ilst.trkn.data";
     private static final String ATOM_GENRE = "moov.udta.meta.ilst.\u00a9gen.data";
     private static final String ATOM_STSD = "moov.trak.mdia.minf.stbl.stsd";
+    private static final String ATOM_COVER = "moov.udta.meta.ilst.covr.data";
 
     private File myBaseDir;
     private long myLastUpdateTime;
@@ -62,14 +65,19 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         myExistingIds.add(fileId);
                     }
                     if ((file.lastModified() >= myLastUpdateTime || !existing)) {
-                        InsertOrUpdateTrackStatement statement =
-                                existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
+                        InsertOrUpdateTrackStatement statement;
+                        if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
+                            statement = existing ? new UpdateTrackAndImageStatement() : new InsertTrackAndImageStatement(TrackSource.FileSystem);
+                        } else {
+                            statement = existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
+                        }
                         statement.clear();
                         statement.setId(fileId);
+                        TrackMetaData meta = null;
                         if (FileSupportUtils.isMp3(file)) {
-                            parseMp3MetaData(file, statement, fileId);
+                            meta = parseMp3MetaData(file, statement, fileId);
                         } else if (FileSupportUtils.isMp4(file)) {
-                            parseMp4MetaData(file, statement, fileId);
+                            meta = parseMp4MetaData(file, statement, fileId);
                         }
                         FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
                         statement.setProtected(fileSuffixInfo.isProtected());
@@ -77,6 +85,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         statement.setFileName(canonicalFilePath);
                         try {
                             myStoreSession.executeStatement(statement);
+                            if (meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
+                                HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, meta.getImage());
+                                myStoreSession.executeStatement(handleTrackImagesStatement);
+                            }
                             myUpdatedCount++;
                             DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
                             myExistingIds.add(fileId);
@@ -97,7 +109,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         myTrackIds.removeAll(myExistingIds);
     }
 
-    private void parseMp3MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId) {
+    private TrackMetaData parseMp3MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId) {
+        TrackMetaData meta = new TrackMetaData();
         Id3Tag tag = null;
         try {
             if (LOG.isDebugEnabled()) {
@@ -132,6 +145,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     Id3v2Tag id3v2Tag = ((Id3v2Tag)tag);
                     statement.setTime(id3v2Tag.getTimeSeconds());
                     statement.setTrackNumber(id3v2Tag.getTrackNumber());
+                    meta.setImage(MyTunesRssMp3Utils.getImage(id3v2Tag));
                 }
                 String genre = tag.getGenreAsString();
                 if (genre != null) {
@@ -147,33 +161,35 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 setSimpleInfo(statement, file);
             }
         }
+        return meta;
     }
 
     private String createComment(Id3Tag tag) {
         try {
             if (tag.isId3v2()) {
-                String comment = " " + System.getProperty("track.comment.id3v2") + " "; // make sure the comment does neither start nor end with a token
+                String comment = " " + StringUtils.trimToEmpty(System.getProperty("track.comment.id3v2")) + " "; // make sure the comment does neither start nor end with a token
                 if (StringUtils.isNotBlank(comment)) {
                     for (int s = comment.indexOf("${"); s > -1; s = comment.indexOf("${")) {
                         int e = comment.indexOf("}", s);
                         if (e != -1) {
-                            String[] tokensAndDefault = comment.substring(s + 2, e).split(";");
-                            String[] tokens = tokensAndDefault[0].split(",");
-                            if (tokens.length == 1) {
-                                String value = StringUtils.trimToEmpty(((Id3v2Tag)tag).getTextFrameBodyValue(tokens[0].trim(), tokens[0].trim()));
-                                if (StringUtils.isEmpty(value) && tokensAndDefault.length > 1) {
-                                    value = tokensAndDefault[1];
-                                }
-                                comment = comment.substring(0, s) + value + comment.substring(e + 1);
+                            String[] instructions = comment.substring(s + 2, e).split(";");
+                            String[] tokens = instructions[0].split(",");
+                            String tagData;
+                            if (instructions.length > 2 && instructions[2].trim().toUpperCase().contains("M")) {
+                                tagData = ((Id3v2Tag)tag).getFrameBodiesToString(tokens[0].trim(), tokens.length == 1 ? tokens[0].trim() : tokens[1].trim(), "\n");
                             } else {
-                                String value = StringUtils.trimToEmpty(((Id3v2Tag)tag).getTextFrameBodyValue(tokens[0].trim(), tokens[1].trim()));
-                                if (StringUtils.isEmpty(value) && tokensAndDefault.length > 1) {
-                                    value = tokensAndDefault[1];
-                                }
-                                comment = comment.substring(0, s) + value + comment.substring(e + 1);
+                                tagData = ((Id3v2Tag)tag).getFrameBodyToString(tokens[0].trim(),
+                                                                                 tokens.length == 1 ? tokens[0].trim() : tokens[1].trim());
                             }
+                            String value = StringUtils.trimToEmpty(tagData);
+                            if (StringUtils.isEmpty(value) && instructions.length > 1) {
+                                value = instructions[1];
+                            }
+                            comment = comment.substring(0, s) + value + comment.substring(e + 1);
                         }
                     }
+                }
+                if (StringUtils.isNotBlank(comment)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Created comment for ID3 tag: \"" + StringUtils.trimToEmpty(comment) + "\"");
                     }
@@ -189,13 +205,14 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         return null;
     }
 
-    private void parseMp4MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId) {
+    private TrackMetaData parseMp4MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId) {
+        TrackMetaData meta = new TrackMetaData();
         Map<String, Mp4Atom> atoms = null;
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
             }
-            atoms = Mp4Utils.getAtoms(file, Arrays.asList(ATOM_ALBUM, ATOM_ARTIST, ATOM_TITLE, ATOM_TRACK_NUMBER, ATOM_GENRE, ATOM_STSD));
+            atoms = Mp4Utils.getAtoms(file, Arrays.asList(ATOM_ALBUM, ATOM_ARTIST, ATOM_TITLE, ATOM_TRACK_NUMBER, ATOM_GENRE, ATOM_STSD, ATOM_COVER));
         } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
@@ -246,6 +263,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 setSimpleInfo(statement, file);
             }
         }
+        Mp4Atom atom = atoms.get(ATOM_COVER);
+        if (atom != null) {
+            byte type = atom.getData()[3];
+            meta.setImage(new Image(type == 0x0d ? "image/jpeg" : "image/png", ArrayUtils.subarray(atom.getData(), 8, atom.getData().length - 8)));
+        }
+        return meta;
     }
 
     private void setSimpleInfo(InsertOrUpdateTrackStatement statement, File file) {

@@ -168,18 +168,26 @@
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
         <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
         <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:if>
-        <a href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" <c:if test="${!empty track.comment}">title="<c:out value="${track.comment}"/>"</c:if>>
-        <c:choose>
-            <c:when test="${sortOrder == 'Album'}">
-                <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
-                <c:out value="${cwfn:choose(mtfn:unknown(track.name), '(unknown)', track.name)}" />
-            </c:when>
-            <c:otherwise>
-                <c:if test="${!track.simple}"><c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" /> - </c:if>
-                <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
-                <c:out value="${cwfn:choose(mtfn:unknown(track.name), '(unknown)', track.name)}" />
-            </c:otherwise>
-        </c:choose>
+        <a id="tracklink_${track.id}" href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
+            <c:choose>
+                <c:when test="${sortOrder == 'Album'}">
+                    <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
+                    <c:out value="${cwfn:choose(mtfn:unknown(track.name), '(unknown)', track.name)}" />
+                </c:when>
+                <c:otherwise>
+                    <c:if test="${!track.simple}"><c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" /> - </c:if>
+                    <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
+                    <c:out value="${cwfn:choose(mtfn:unknown(track.name), '(unknown)', track.name)}" />
+                </c:otherwise>
+            </c:choose>
+            <c:if test="${!empty track.comment}">
+                <div class="tooltip" id="tooltip_tracklink_${track.id}">
+                    <c:forEach var="comment" varStatus="loopStatus" items="${mtfn:splitComments(track.comment)}">
+                        <c:out value="${comment}"/>
+                        <c:if test="${!loopStatus.last}"><br /></c:if>
+                    </c:forEach>
+                </div>
+            </c:if>
         </a>
     </td>
     <c:if test="${sortOrder == 'Album' && !track.simple}">
