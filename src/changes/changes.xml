@@ -7,7 +7,7 @@
 
         <release version="3.1.6" date="????-??-??" description="Bugfix release">
             <action dev="mdescher" type="fix">
-                Correctly disable data sources tab when updating the database.
+                Event driven GUI enabling/disabling for database, directories.
             </action>
             <action dev="mdescher" type="fix">
                 Display comments on track info page with correct line breaks.
