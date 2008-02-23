@@ -103,7 +103,10 @@
                     <fmt:message key="trackComment" />:
                 </td>
                 <td>
-                    <c:out value="${track.comment}"/>
+                    <c:forEach var="comment" varStatus="loopStatus" items="${mtfn:splitComments(track.comment)}">
+                        <c:out value="${comment}"/>
+                        <c:if test="${!loopStatus.last}"><br /></c:if>
+                    </c:forEach>
                 </td>
             </tr>
         </c:if>

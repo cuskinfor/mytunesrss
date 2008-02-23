@@ -5,6 +5,12 @@
     </properties>
     <body>
 
+        <release version="3.1.6" date="????-??-??" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Display comments on track info page with correct line breaks.
+            </action>
+        </release>
+
         <release version="3.1.5" date="2008-02-23" description="Bugfix release">
             <action dev="mdescher" type="update">
                 Improved cover art tooltip.
