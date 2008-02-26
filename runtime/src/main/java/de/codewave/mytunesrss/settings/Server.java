@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.task.*;
 import de.codewave.mytunesrss.network.*;
 import de.codewave.utils.swing.*;
 import org.apache.commons.logging.*;
@@ -57,10 +58,32 @@ public class Server implements MyTunesRssEventListener {
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myServerNameInput, MyTunesRssUtils.getBundleString("error.emptyServerName")));
     }
 
-    public void handleEvent(MyTunesRssEvent event) {
-        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
-            initValues();
-        }
+    public void handleEvent(final MyTunesRssEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                switch (event) {
+                    case CONFIGURATION_CHANGED:
+                        initValues();
+                        break;
+                    case DATABASE_UPDATE_STATE_CHANGED:
+                        setGuiMode(GuiMode.DatabaseUpdating);
+                        break;
+                    case DATABASE_UPDATE_FINISHED:
+                    case DATABASE_UPDATE_FINISHED_NOT_RUN:
+                        setGuiMode(GuiMode.DatabaseIdle);
+                        break;
+                    case SERVER_STARTED:
+                        setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.running"), null);
+                        myRootPanel.validate();
+                        setGuiMode(GuiMode.ServerRunning);
+                        break;
+                    case SERVER_STOPPED:
+                        setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
+                        setGuiMode(GuiMode.ServerIdle);
+                        break;
+                }
+            }
+        });
     }
 
     private void initValues() {
@@ -79,11 +102,6 @@ public class Server implements MyTunesRssEventListener {
         myServerNameInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
     }
 
-    public void setServerRunningStatus(int serverPort) {
-        setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.running"), null);
-        myRootPanel.validate();
-    }
-
     public String updateConfigFromGui() {
         String messages = JTextFieldValidation.getAllValidationFailureMessage(myRootPanel);
         if (messages != null) {
@@ -99,20 +117,11 @@ public class Server implements MyTunesRssEventListener {
     }
 
     public void setGuiMode(GuiMode mode) {
-        switch (mode) {
-            case ServerRunning:
-                SwingUtils.enableElementAndLabel(myPortInput, false);
-                myAutoStartServerInput.setEnabled(false);
-                myTempZipArchivesInput.setEnabled(false);
-                SwingUtils.enableElementAndLabel(myServerNameInput, false);
-                break;
-            case ServerIdle:
-                SwingUtils.enableElementAndLabel(myPortInput, true);
-                myAutoStartServerInput.setEnabled(true);
-                myTempZipArchivesInput.setEnabled(true);
-                SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected());
-                break;
-        }
+        boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
+        SwingUtils.enableElementAndLabel(myPortInput, !serverActive);
+        myAutoStartServerInput.setEnabled(!serverActive);
+        myTempZipArchivesInput.setEnabled(!serverActive);
+        SwingUtils.enableElementAndLabel(myServerNameInput, !serverActive && myAvailableOnLocalNetInput.isSelected());
     }
 
     public void setServerStatus(String text, String tooltipText) {

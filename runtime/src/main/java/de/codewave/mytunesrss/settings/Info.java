@@ -54,13 +54,17 @@ public class Info implements MyTunesRssEventListener {
         initValues();
                     }
 
-    public void handleEvent(MyTunesRssEvent event) {
-        switch (event) {
-            case CONFIGURATION_CHANGED:
-                initValues();
-                break;
+    public void handleEvent(final MyTunesRssEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                switch (event) {
+                    case CONFIGURATION_CHANGED:
+                        initValues();
+                        break;
                 }
-                    }
+            }
+        });
+    }
 
     private void initValues() {
         myLogDebugInput.setSelected(MyTunesRss.CONFIG.isDebugLogging());

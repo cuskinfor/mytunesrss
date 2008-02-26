@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.swing.*;
 import org.apache.commons.lang.*;
 
@@ -58,10 +59,29 @@ public class Streaming implements MyTunesRssEventListener {
         MyTunesRssEventManager.getInstance().addListener(this);
     }
 
-    public void handleEvent(MyTunesRssEvent event) {
-        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
-            initValues();
-        }
+    public void handleEvent(final MyTunesRssEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                switch (event) {
+                    case CONFIGURATION_CHANGED:
+                        initValues();
+                        break;
+                    case DATABASE_UPDATE_STATE_CHANGED:
+                        setGuiMode(GuiMode.DatabaseUpdating);
+                        break;
+                    case DATABASE_UPDATE_FINISHED:
+                    case DATABASE_UPDATE_FINISHED_NOT_RUN:
+                        setGuiMode(GuiMode.DatabaseIdle);
+                        break;
+                    case SERVER_STARTED:
+                        setGuiMode(GuiMode.ServerRunning);
+                        break;
+                    case SERVER_STOPPED:
+                        setGuiMode(GuiMode.ServerIdle);
+                        break;
+                }
+            }
+        });
     }
 
     private void initValues() {
@@ -108,34 +128,18 @@ public class Streaming implements MyTunesRssEventListener {
     }
 
     public void setGuiMode(GuiMode mode) {
-        switch (mode) {
-            case ServerRunning:
-                SwingUtils.enableElementAndLabel(myLameBinaryInput, false);
-                SwingUtils.enableElementAndLabel(myFaad2BinaryInput, false);
-                SwingUtils.enableElementAndLabel(myAlacBinaryInput, false);
-                SwingUtils.enableElementAndLabel(myCacheTimeout, false);
-                SwingUtils.enableElementAndLabel(myCacheLimit, false);
-                myLameBinaryLookupButton.setEnabled(false);
-                myFaad2BinaryLookupButton.setEnabled(false);
-                myAlacBinaryLookupButton.setEnabled(false);
-                myLimitBandwidthCheckBox.setEnabled(false);
-                myBandwidthLimitInput.setEnabled(false);
-                myBandwidthLimitLabel.setEnabled(false);
-                break;
-            case ServerIdle:
-                SwingUtils.enableElementAndLabel(myLameBinaryInput, true);
-                SwingUtils.enableElementAndLabel(myFaad2BinaryInput, true);
-                SwingUtils.enableElementAndLabel(myAlacBinaryInput, true);
-                SwingUtils.enableElementAndLabel(myCacheTimeout, true);
-                SwingUtils.enableElementAndLabel(myCacheLimit, true);
-                myLameBinaryLookupButton.setEnabled(true);
-                myFaad2BinaryLookupButton.setEnabled(true);
-                myAlacBinaryLookupButton.setEnabled(true);
-                myLimitBandwidthCheckBox.setEnabled(true);
-                myBandwidthLimitInput.setEnabled(myLimitBandwidthCheckBox.isSelected());
-                myBandwidthLimitLabel.setEnabled(true);
-                break;
-        }
+        boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
+        SwingUtils.enableElementAndLabel(myLameBinaryInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myFaad2BinaryInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myAlacBinaryInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myCacheTimeout, !serverActive);
+        SwingUtils.enableElementAndLabel(myCacheLimit, !serverActive);
+        myLameBinaryLookupButton.setEnabled(!serverActive);
+        myFaad2BinaryLookupButton.setEnabled(!serverActive);
+        myAlacBinaryLookupButton.setEnabled(!serverActive);
+        myLimitBandwidthCheckBox.setEnabled(!serverActive);
+        myBandwidthLimitInput.setEnabled(myLimitBandwidthCheckBox.isSelected() && !serverActive);
+        myBandwidthLimitLabel.setEnabled(!serverActive);
     }
 
     public class SelectBinaryActionListener implements ActionListener {

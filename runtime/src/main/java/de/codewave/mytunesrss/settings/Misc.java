@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.components.*;
 
@@ -39,7 +40,8 @@ public class Misc implements MyTunesRssEventListener {
         initValues();
         myUseProxyInput.addActionListener(new UseProxyActionListener());
         myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
-        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput, MyTunesRssUtils.getBundleString("error.emptyProxyHost")));
+        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput,
+                                                                           MyTunesRssUtils.getBundleString("error.emptyProxyHost")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myProxyPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
                 "error.illegalProxyPort")));
     }
@@ -71,30 +73,15 @@ public class Misc implements MyTunesRssEventListener {
     }
 
     public void setGuiMode(GuiMode mode) {
-        switch (mode) {
-            case ServerRunning:
-                SwingUtils.enableElementAndLabel(myProxyHostInput, false);
-                SwingUtils.enableElementAndLabel(myProxyPortInput, false);
-                myUseProxyInput.setEnabled(false);
-                SwingUtils.enableElementAndLabel(myUsernameInput, false);
-                myPasswordLabel.setEnabled(false);
-                myPasswordInput.setEnabled(false);
-                myQuitConfirmationInput.setEnabled(false);
-                myUpdateOnStartInput.setEnabled(false);
-                myProgramUpdateButton.setEnabled(false);
-                break;
-            case ServerIdle:
-                SwingUtils.enableElementAndLabel(myProxyHostInput, myUseProxyInput.isSelected());
-                SwingUtils.enableElementAndLabel(myProxyPortInput, myUseProxyInput.isSelected());
-                myUseProxyInput.setEnabled(true);
-                SwingUtils.enableElementAndLabel(myUsernameInput, true);
-                myPasswordLabel.setEnabled(true);
-                myPasswordInput.setEnabled(true);
-                myQuitConfirmationInput.setEnabled(true);
-                myUpdateOnStartInput.setEnabled(!myAutoStartServer);
-                myProgramUpdateButton.setEnabled(true);
-                break;
-        }
+        boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
+        SwingUtils.enableElementAndLabel(myProxyHostInput, !serverActive && myUseProxyInput.isSelected());
+        SwingUtils.enableElementAndLabel(myProxyPortInput, !serverActive && myUseProxyInput.isSelected());
+        myUseProxyInput.setEnabled(!serverActive);
+        SwingUtils.enableElementAndLabel(myUsernameInput, !serverActive);
+        myPasswordLabel.setEnabled(!serverActive);
+        myPasswordInput.setEnabled(!serverActive);
+        myUpdateOnStartInput.setEnabled(!serverActive && !myAutoStartServer);
+        myProgramUpdateButton.setEnabled(!serverActive);
     }
 
     public String updateConfigFromGui() {
@@ -115,25 +102,43 @@ public class Misc implements MyTunesRssEventListener {
         return null;
     }
 
-    public void handleEvent(MyTunesRssEvent event) {
-        switch (event) {
-            case ENABLE_AUTO_START_SERVER:
-                myUpdateOnStartInputCache = myUpdateOnStartInput.isSelected();
-                myUpdateOnStartInput.setSelected(false);
-                myUpdateOnStartInput.setEnabled(false);
-                myAutoStartServer = true;
-                break;
-            case DISABLE_AUTO_START_SERVER:
-                myUpdateOnStartInput.setSelected(myUpdateOnStartInputCache);
-                myUpdateOnStartInput.setEnabled(true);
-                myAutoStartServer = false;
-                break;
-            case CONFIGURATION_CHANGED:
-                initValues();
-                break;
-            case MYTUNESRSS_COM_UPDATED:
-                myMyTunesRssComStatus.setText(MyTunesRssUtils.getBundleString(event.getMessageKey(), event.getMessageParams()));
-        }
+    public void handleEvent(final MyTunesRssEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                switch (event) {
+                    case ENABLE_AUTO_START_SERVER:
+                        myUpdateOnStartInputCache = myUpdateOnStartInput.isSelected();
+                        myUpdateOnStartInput.setSelected(false);
+                        myUpdateOnStartInput.setEnabled(false);
+                        myAutoStartServer = true;
+                        break;
+                    case DISABLE_AUTO_START_SERVER:
+                        myUpdateOnStartInput.setSelected(myUpdateOnStartInputCache);
+                        myUpdateOnStartInput.setEnabled(true);
+                        myAutoStartServer = false;
+                        break;
+                    case MYTUNESRSS_COM_UPDATED:
+                        myMyTunesRssComStatus.setText(MyTunesRssUtils.getBundleString(event.getMessageKey(), event.getMessageParams()));
+                        break;
+                    case CONFIGURATION_CHANGED:
+                        initValues();
+                        break;
+                    case DATABASE_UPDATE_STATE_CHANGED:
+                        setGuiMode(GuiMode.DatabaseUpdating);
+                        break;
+                    case DATABASE_UPDATE_FINISHED:
+                    case DATABASE_UPDATE_FINISHED_NOT_RUN:
+                        setGuiMode(GuiMode.DatabaseIdle);
+                        break;
+                    case SERVER_STARTED:
+                        setGuiMode(GuiMode.ServerRunning);
+                        break;
+                    case SERVER_STOPPED:
+                        setGuiMode(GuiMode.ServerIdle);
+                        break;
+                }
+            }
+        });
     }
 
     public class UseProxyActionListener implements ActionListener {

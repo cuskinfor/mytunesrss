@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.swing.*;
 import org.apache.commons.io.*;
 
@@ -85,10 +86,29 @@ public class Addons implements MyTunesRssEventListener {
         MyTunesRssEventManager.getInstance().addListener(this);
     }
 
-    public void handleEvent(MyTunesRssEvent event) {
-        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
-            initValues();
-        }
+    public void handleEvent(final MyTunesRssEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                switch (event) {
+                    case CONFIGURATION_CHANGED:
+                        initValues();
+                        break;
+                    case DATABASE_UPDATE_STATE_CHANGED:
+                        setGuiMode(GuiMode.DatabaseUpdating);
+                        break;
+                    case DATABASE_UPDATE_FINISHED:
+                    case DATABASE_UPDATE_FINISHED_NOT_RUN:
+                        setGuiMode(GuiMode.DatabaseIdle);
+                        break;
+                    case SERVER_STARTED:
+                        setGuiMode(GuiMode.ServerRunning);
+                        break;
+                    case SERVER_STOPPED:
+                        setGuiMode(GuiMode.ServerIdle);
+                        break;
+                }
+            }
+        });
     }
 
     private void initValues() {
@@ -108,26 +128,9 @@ public class Addons implements MyTunesRssEventListener {
     }
 
     public void setGuiMode(GuiMode mode) {
-        switch (mode) {
-            case ServerRunning:
-                myThemesList.setEnabled(false);
-                myAddThemeButton.setEnabled(false);
-                myDeleteThemeButton.setEnabled(false);
-                myLanguagesList.setEnabled(false);
-                myAddLanguageButton.setEnabled(false);
-                myDeleteLanguageButton.setEnabled(false);
-                SwingUtils.enableElementAndLabel(myWelcomeMessageInput, false);
-                break;
-            case ServerIdle:
-                myThemesList.setEnabled(true);
-                myAddThemeButton.setEnabled(true);
-                myDeleteThemeButton.setEnabled(myThemesList.getSelectedIndex() > -1);
-                myLanguagesList.setEnabled(true);
-                myAddLanguageButton.setEnabled(true);
-                myDeleteLanguageButton.setEnabled(myLanguagesList.getSelectedIndex() > -1);
-                SwingUtils.enableElementAndLabel(myWelcomeMessageInput, true);
-                break;
-        }
+        boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
+        myDeleteThemeButton.setEnabled(!serverActive);
+        myDeleteLanguageButton.setEnabled(!serverActive);
     }
 
     public String updateConfigFromGui() {

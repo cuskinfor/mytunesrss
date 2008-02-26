@@ -30,10 +30,14 @@ public class UserManagement implements MyTunesRssEventListener {
         MyTunesRssEventManager.getInstance().addListener(this);
     }
 
-    public void handleEvent(MyTunesRssEvent event) {
-        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
-            refreshUserList();
-        }
+    public void handleEvent(final MyTunesRssEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+                    refreshUserList();
+                }
+            }
+        });
     }
 
     private void refreshUserList() {

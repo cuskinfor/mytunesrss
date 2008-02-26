@@ -97,25 +97,29 @@ public class Directories implements MyTunesRssEventListener {
         MyTunesRssEventManager.getInstance().addListener(this);
     }
 
-    public void handleEvent(MyTunesRssEvent event) {
-        switch (event) {
-            case CONFIGURATION_CHANGED:
-            initValues();
-                break;
-            case DATABASE_UPDATE_STATE_CHANGED:
-                setGuiMode(GuiMode.DatabaseUpdating);
-                break;
-            case DATABASE_UPDATE_FINISHED:
-            case DATABASE_UPDATE_FINISHED_NOT_RUN:
-                setGuiMode(GuiMode.DatabaseIdle);
-                break;
-            case SERVER_STARTED:
-                setGuiMode(GuiMode.ServerRunning);
-                break;
-            case SERVER_STOPPED:
-                setGuiMode(GuiMode.ServerIdle);
-                break;
-        }
+    public void handleEvent(final MyTunesRssEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                switch (event) {
+                    case CONFIGURATION_CHANGED:
+                        initValues();
+                        break;
+                    case DATABASE_UPDATE_STATE_CHANGED:
+                        setGuiMode(GuiMode.DatabaseUpdating);
+                        break;
+                    case DATABASE_UPDATE_FINISHED:
+                    case DATABASE_UPDATE_FINISHED_NOT_RUN:
+                        setGuiMode(GuiMode.DatabaseIdle);
+                        break;
+                    case SERVER_STARTED:
+                        setGuiMode(GuiMode.ServerRunning);
+                        break;
+                    case SERVER_STOPPED:
+                        setGuiMode(GuiMode.ServerIdle);
+                        break;
+                }
+            }
+        });
     }
 
     private void initValues() {

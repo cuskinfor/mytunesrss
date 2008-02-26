@@ -5,6 +5,12 @@
     </properties>
     <body>
 
+        <release version="3.2" date="????-??-??" description="Minor release">
+            <action dev="mdescher" type="update">
+                Event driven GUI enabling/disabling for all tabs.
+            </action>
+        </release>
+
         <release version="3.1.6" date="????-??-??" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 Event driven GUI enabling/disabling for database, directories.

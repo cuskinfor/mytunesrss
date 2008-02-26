@@ -34,12 +34,16 @@ public class Content implements MyTunesRssEventListener {
         refreshPlaylistList();
     }
 
-    public void handleEvent(MyTunesRssEvent event) {
-        if (event == MyTunesRssEvent.DATABASE_PLAYLIST_UPDATED || event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED) {
-            refreshPlaylistList();
-        } else if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
-            initValues();
-        }
+    public void handleEvent(final MyTunesRssEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (event == MyTunesRssEvent.DATABASE_PLAYLIST_UPDATED || event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED) {
+                    refreshPlaylistList();
+                } else if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+                    initValues();
+                }
+            }
+        });
     }
 
     private void refreshPlaylistList() {

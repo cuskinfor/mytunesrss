@@ -48,27 +48,31 @@ public class Database implements MyTunesRssEventListener {
         MyTunesRssEventManager.getInstance().addListener(this);
     }
 
-    public void handleEvent(MyTunesRssEvent event) {
-        switch (event) {
-            case CONFIGURATION_CHANGED:
-            initValues();
-                break;
-            case DATABASE_UPDATE_STATE_CHANGED:
-            myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString(event.getMessageKey()));
-            setGuiMode(GuiMode.DatabaseUpdating);
-                break;
-            case DATABASE_UPDATE_FINISHED:
-                refreshLastUpdate();
-            case DATABASE_UPDATE_FINISHED_NOT_RUN:
-            setGuiMode(GuiMode.DatabaseIdle);
-                break;
-            case SERVER_STARTED:
-                setGuiMode(GuiMode.ServerRunning);
-                break;
-            case SERVER_STOPPED:
-                setGuiMode(GuiMode.ServerIdle);
-                break;
-        }
+    public void handleEvent(final MyTunesRssEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                switch (event) {
+                    case CONFIGURATION_CHANGED:
+                        initValues();
+                        break;
+                    case DATABASE_UPDATE_STATE_CHANGED:
+                        myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString(event.getMessageKey()));
+                        setGuiMode(GuiMode.DatabaseUpdating);
+                        break;
+                    case DATABASE_UPDATE_FINISHED:
+                        refreshLastUpdate();
+                    case DATABASE_UPDATE_FINISHED_NOT_RUN:
+                        setGuiMode(GuiMode.DatabaseIdle);
+                        break;
+                    case SERVER_STARTED:
+                        setGuiMode(GuiMode.ServerRunning);
+                        break;
+                    case SERVER_STOPPED:
+                        setGuiMode(GuiMode.ServerIdle);
+                        break;
+                }
+            }
+        });
     }
 
     private void initValues() {
@@ -140,6 +144,7 @@ public class Database implements MyTunesRssEventListener {
         myAutoUpdateDatabaseInput.setEnabled(!serverActive);
         myUpdateDatabaseOnServerStart.setEnabled(!serverActive);
         myIgnoreTimestampsInput.setEnabled(!databaseActive);
+        myUpdateDatabaseButton.setEnabled(!databaseActive);
         myDeleteDatabaseButton.setEnabled(!databaseActive);
         SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected() && !serverActive);
         myDeleteMissingFiles.setEnabled(!databaseActive);

@@ -109,22 +109,30 @@ public class Settings implements MyTunesRssEventListener {
         return returnValue.length() > 0 ? returnValue : null;
     }
 
-    public void setGuiMode(GuiMode mode) {
-        switch (mode) {
-            case ServerRunning:
+    public void handleEvent(MyTunesRssEvent event) {
+        switch (event) {
+            case SERVER_STARTED:
                 if (MyTunesRss.SYSTRAYMENU != null) {
                     MyTunesRss.SYSTRAYMENU.setServerRunning();
                 }
                 myStartServerButton.setEnabled(false);
                 myStopServerButton.setEnabled(true);
                 break;
-            case ServerIdle:
+            case SERVER_STOPPED:
                 if (MyTunesRss.SYSTRAYMENU != null) {
                     MyTunesRss.SYSTRAYMENU.setServerStopped();
                 }
                 myStartServerButton.setEnabled(true);
                 myStopServerButton.setEnabled(false);
+                break;
         }
+    }
+
+    /**
+     * @deprecated The methods called by this method are correctly called by events
+     * now. Remove this method as soon as possible.
+     */
+    public void setGuiMode(GuiMode mode) {
         myServerForm.setGuiMode(mode);
         myDatabaseForm.setGuiMode(mode);
         myDirectoriesForm.setGuiMode(mode);
@@ -137,25 +145,8 @@ public class Settings implements MyTunesRssEventListener {
         String messages = updateConfigFromGui();
         if (messages == null) {
             MyTunesRss.startWebserver();
-            setServerStateInGui();
         } else {
             MyTunesRssUtils.showErrorMessage(messages);
-        }
-    }
-
-    public void handleEvent(MyTunesRssEvent event) {
-        if (event == MyTunesRssEvent.SERVER_STARTED || event == MyTunesRssEvent.SERVER_STOPPED) {
-            setServerStateInGui();
-        }
-    }
-
-    private void setServerStateInGui() {
-        if (MyTunesRss.WEBSERVER.isRunning()) {
-            setGuiMode(GuiMode.ServerRunning);
-            myServerForm.setServerRunningStatus(MyTunesRss.CONFIG.getPort());
-        } else {
-            setGuiMode(GuiMode.ServerIdle);
-            myServerForm.setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
         }
     }
 
