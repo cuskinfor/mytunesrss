@@ -7,6 +7,10 @@
 
         <release version="3.2" date="????-??-??" description="Minor release">
             <action dev="mdescher" type="update">
+                All settings stored in an XML file in the settings directory. No remaining usage of
+                java.util.prefs API, so no registry usage on Windows anymore.
+            </action>
+            <action dev="mdescher" type="update">
                 Event driven GUI enabling/disabling for all tabs.
             </action>
         </release>

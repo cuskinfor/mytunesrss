@@ -4,27 +4,27 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.utils.*;
 import de.codewave.utils.io.*;
-import org.apache.commons.codec.binary.Base64;
+import de.codewave.utils.xml.*;
+import org.apache.commons.jxpath.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.w3c.dom.*;
 
 import javax.crypto.*;
 import javax.crypto.spec.*;
-import java.awt.*;
+import javax.xml.parsers.*;
 import java.io.*;
 import java.math.*;
 import java.security.*;
 import java.util.*;
-import java.util.List;
-import java.util.prefs.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssConfig
  */
 public class MyTunesRssConfig {
     private static final Log LOG = LogFactory.getLog(MyTunesRssConfig.class);
-    public static final String PREF_ROOT = "/de/codewave/mytunesrss3";
 
     private int myPort = 8080;
     private String myServerName = "MyTunesRSS";
@@ -65,6 +65,11 @@ public class MyTunesRssConfig {
     private BigDecimal myBandwidthLimitFactor;
     private boolean myIgnoreArtwork;
     private boolean myDebugLogging;
+    private int myWindowX;
+    private int myWindowY;
+    private String myLastNewVersionInfo;
+    private boolean myDeleteDatabaseOnNextStartOnError;
+    private String myUpdateIgnoreVersion;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -441,82 +446,154 @@ public class MyTunesRssConfig {
         myWebWelcomeMessage = webWelcomeMessage;
     }
 
-    public void loadFromPrefs() {
+    public int getWindowX() {
+        return myWindowX;
+    }
+
+    public void setWindowX(int windowX) {
+        myWindowX = windowX;
+    }
+
+    public int getWindowY() {
+        return myWindowY;
+    }
+
+    public void setWindowY(int windowY) {
+        myWindowY = windowY;
+    }
+
+    public String getLastNewVersionInfo() {
+        return myLastNewVersionInfo;
+    }
+
+    public void setLastNewVersionInfo(String lastNewVersionInfo) {
+        myLastNewVersionInfo = lastNewVersionInfo;
+    }
+
+    public boolean isDeleteDatabaseOnNextStartOnError() {
+        return myDeleteDatabaseOnNextStartOnError;
+    }
+
+    public void setDeleteDatabaseOnNextStartOnError(boolean deleteDatabaseOnNextStartOnError) {
+        myDeleteDatabaseOnNextStartOnError = deleteDatabaseOnNextStartOnError;
+    }
+
+    public String getUpdateIgnoreVersion() {
+        return myUpdateIgnoreVersion;
+    }
+
+    public void setUpdateIgnoreVersion(String updateIgnoreVersion) {
+        myUpdateIgnoreVersion = updateIgnoreVersion;
+    }
+
+    public void load() {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Loading configuration.");
         }
-        checkPrefsVersion();
-        setVersion(Preferences.userRoot().node(PREF_ROOT).get("version", ""));
-        migrate();
-        setPort(Preferences.userRoot().node(PREF_ROOT).getInt("serverPort", getPort()));
-        setServerName(Preferences.userRoot().node(PREF_ROOT).get("serverName", getServerName()));
-        setAvailableOnLocalNet(Preferences.userRoot().node(PREF_ROOT).getBoolean("availableOnLocalNet", isAvailableOnLocalNet()));
-        setCheckUpdateOnStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("checkUpdateOnStart", isCheckUpdateOnStart()));
-        setAutoStartServer(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoStartServer", isAutoStartServer()));
-        setAutoUpdateDatabase(Preferences.userRoot().node(PREF_ROOT).getBoolean("autoUpdateDatabase", isAutoUpdateDatabase()));
-        setUpdateDatabaseOnServerStart(Preferences.userRoot().node(PREF_ROOT).getBoolean("updateDatabaseOnServerStart",
-                                                                                         isUpdateDatabaseOnServerStart()));
-        setAutoUpdateDatabaseInterval(Preferences.userRoot().node(PREF_ROOT).getInt("autoUpdateDatabaseInterval", getAutoUpdateDatabaseInterval()));
-        setIgnoreTimestamps(Preferences.userRoot().node(PREF_ROOT).getBoolean("ignoreTimestamps", isIgnoreTimestamps()));
-        String[] baseDirs = new String[Preferences.userRoot().node(PREF_ROOT).getInt("baseDirCount", 0)];
-        for (int i = 0; i < baseDirs.length; i++) {
-            baseDirs[i] = Preferences.userRoot().node(PREF_ROOT + "/basedir").get(Integer.toString(i), "");
-            if (!MyTunesRss.REGISTRATION.isRegistered() && i + 1 == MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
-                break;
-            }
-        }
-        setDatasources(baseDirs);
-        setFileSystemArtistNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("artistFolder", getFileSystemArtistNameFolder()));
-        setFileSystemAlbumNameFolder(Preferences.userRoot().node(PREF_ROOT).getInt("albumFolder", getFileSystemAlbumNameFolder()));
-        setItunesDeleteMissingFiles(Preferences.userRoot().node(PREF_ROOT).getBoolean("iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
-        setUploadDir(Preferences.userRoot().node(PREF_ROOT).get("uploadDir", getUploadDir()));
-        setUploadCreateUserDir(Preferences.userRoot().node(PREF_ROOT).getBoolean("uploadCreateUserDir", isUploadCreateUserDir()));
-        setLocalTempArchive(Preferences.userRoot().node(PREF_ROOT).getBoolean("localTempArchive", isLocalTempArchive()));
-        Preferences userNode = Preferences.userRoot().node(PREF_ROOT + "/user");
-        if (userNode != null) {
-            try {
-                for (String userName : userNode.childrenNames()) {
-                    User user = new User(userName);
-                    user.loadFromPreferences(userNode.node(userName));
-                    addUser(user);
-                    if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
-                        break;
-                    }
-                }
-            } catch (BackingStoreException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not read users.", e);
+        try {
+            File file = getSettingsFile();
+            JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURL()), "settings");
+            setVersion(JXPathUtils.getStringValue(settings, "version", ""));
+            migrate();
+            setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
+            setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
+            setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
+            setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
+            setAutoStartServer(JXPathUtils.getBooleanValue(settings, "autoStartServer", isAutoStartServer()));
+            setAutoUpdateDatabase(JXPathUtils.getBooleanValue(settings, "autoUpdateDatabase", isAutoUpdateDatabase()));
+            setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
+            setAutoUpdateDatabaseInterval(JXPathUtils.getIntValue(settings, "autoUpdateDatabaseInterval", getAutoUpdateDatabaseInterval()));
+            setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
+            List<String> dataSources = new ArrayList<String>();
+            Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
+            int count = 0;
+            while (contextIterator.hasNext()) {
+                dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
+                if (!MyTunesRss.REGISTRATION.isRegistered() && count + 1 == MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
+                    break;
                 }
             }
-        }
-        setSupportName(Preferences.userRoot().node(PREF_ROOT).get("supportName", getSupportName()));
-        setSupportEmail(Preferences.userRoot().node(PREF_ROOT).get("supportEmail", getSupportEmail()));
-        setProxyServer(Preferences.userRoot().node(PREF_ROOT).getBoolean("proxyServer", isProxyServer()));
-        setProxyHost(Preferences.userRoot().node(PREF_ROOT).get("proxyHost", getProxyHost()));
-        setProxyPort(Preferences.userRoot().node(PREF_ROOT).getInt("proxyPort", getProxyPort()));
-        setMyTunesRssComUser(Preferences.userRoot().node(PREF_ROOT).get("myTunesRssComUser", getMyTunesRssComUser()));
-        setMyTunesRssComPasswordHash(Preferences.userRoot().node(PREF_ROOT).getByteArray("myTunesRssComPassword", getMyTunesRssComPasswordHash()));
-        setFileTypes(Preferences.userRoot().node(PREF_ROOT).get("fileTypes", getFileTypes()));
-        setArtistDropWords(Preferences.userRoot().node(PREF_ROOT).get("artistDropWords", getArtistDropWords()));
-        setQuitConfirmation(Preferences.userRoot().node(PREF_ROOT).getBoolean("quitConfirmation", isQuitConfirmation()));
-        setWebWelcomeMessage(Preferences.userRoot().node(PREF_ROOT).get("webWelcomeMessage", getWebWelcomeMessage()));
-        readPathInfoEncryptionKey();
-        setLameBinary(Preferences.userRoot().node(PREF_ROOT).get("lameBinary", getLameBinary()));
-        setFaad2Binary(Preferences.userRoot().node(PREF_ROOT).get("faad2Binary", getFaad2Binary()));
-        setAlacBinary(Preferences.userRoot().node(PREF_ROOT).get("alacBinary", getAlacBinary()));
-        setStreamingCacheTimeout(Preferences.userRoot().node(PREF_ROOT).getInt("streamingCacheTimeout", getStreamingCacheTimeout()));
-        setStreamingCacheMaxFiles(Preferences.userRoot().node(PREF_ROOT).getInt("streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
-        setBandwidthLimit(Preferences.userRoot().node(PREF_ROOT).getBoolean("bandwidthLimit", false));
-        setBandwidthLimitFactor(new BigDecimal(Preferences.userRoot().node(PREF_ROOT).get("bandwidthLimitFactor", "0")));
-        setIgnoreArtwork(Preferences.userRoot().node(PREF_ROOT).getBoolean("ignoreArtwork", false));
-        setDebugLogging(loadDebugLogging());
-        if (!MyTunesRss.REGISTRATION.isRegistered()) {
-            adjustSettingsToUnregisteredState();
+            setDatasources(dataSources.toArray(new String[dataSources.size()]));
+            setFileSystemArtistNameFolder(JXPathUtils.getIntValue(settings, "artistFolder", getFileSystemArtistNameFolder()));
+            setFileSystemAlbumNameFolder(JXPathUtils.getIntValue(settings, "albumFolder", getFileSystemAlbumNameFolder()));
+            setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(settings, "iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
+            setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
+            setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
+            setLocalTempArchive(JXPathUtils.getBooleanValue(settings, "localTempArchive", isLocalTempArchive()));
+            Iterator<JXPathContext> users = JXPathUtils.getContextIterator(settings, "users/user");
+            while (users != null && users.hasNext()) {
+                JXPathContext userContext = users.next();
+                User user = new User(JXPathUtils.getStringValue(userContext, "name", null));
+                user.loadFromPreferences(userContext);
+                addUser(user);
+                if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
+                    break;
+                }
+            }
+            setSupportName(JXPathUtils.getStringValue(settings, "supportName", getSupportName()));
+            setSupportEmail(JXPathUtils.getStringValue(settings, "supportEmail", getSupportEmail()));
+            setProxyServer(JXPathUtils.getBooleanValue(settings, "proxyServer", isProxyServer()));
+            setProxyHost(JXPathUtils.getStringValue(settings, "proxyHost", getProxyHost()));
+            setProxyPort(JXPathUtils.getIntValue(settings, "proxyPort", getProxyPort()));
+            setMyTunesRssComUser(JXPathUtils.getStringValue(settings, "myTunesRssComUser", getMyTunesRssComUser()));
+            setMyTunesRssComPasswordHash(JXPathUtils.getByteArray(settings, "myTunesRssComPassword", getMyTunesRssComPasswordHash()));
+            setFileTypes(JXPathUtils.getStringValue(settings, "fileTypes", getFileTypes()));
+            setArtistDropWords(JXPathUtils.getStringValue(settings, "artistDropWords", getArtistDropWords()));
+            setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
+            setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
+            readPathInfoEncryptionKey(settings);
+            setLameBinary(JXPathUtils.getStringValue(settings, "lameBinary", getLameBinary()));
+            setFaad2Binary(JXPathUtils.getStringValue(settings, "faad2Binary", getFaad2Binary()));
+            setAlacBinary(JXPathUtils.getStringValue(settings, "alacBinary", getAlacBinary()));
+            setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
+            setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
+            setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
+            setBandwidthLimitFactor(new BigDecimal(JXPathUtils.getStringValue(settings, "bandwidthLimitFactor", "0")));
+            setIgnoreArtwork(JXPathUtils.getBooleanValue(settings, "ignoreArtwork", false));
+            setDebugLogging(JXPathUtils.getBooleanValue(settings, "debugLogging", false));
+            if (!MyTunesRss.REGISTRATION.isRegistered()) {
+                adjustSettingsToUnregisteredState();
+            }
+            setWindowX(JXPathUtils.getIntValue(settings, "window/x", Integer.MAX_VALUE));
+            setWindowY(JXPathUtils.getIntValue(settings, "window/y", Integer.MAX_VALUE));
+            setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
+            setDeleteDatabaseOnNextStartOnError(JXPathUtils.getBooleanValue(settings, "deleteDatabaseOnNextStartOnError", false));
+            setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not read configuration file.", e);
+            }
         }
     }
 
+    private static File getSettingsFile() throws IOException {
+        return new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/settings.xml");
+    }
+
     public static boolean loadDebugLogging() {
-        return Preferences.userRoot().node(PREF_ROOT).getBoolean("debugLogging", false);
+        try {
+            File file = getSettingsFile();
+            JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURL()), "settings");
+            return JXPathUtils.getBooleanValue(settings, "debugLogging", false);
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not load debug logging setting.", e);
+            }
+        }
+        return false;
+    }
+
+    public static boolean loadDeleteDatabaseOnNextStartOnError() {
+        try {
+            File file = getSettingsFile();
+            JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURL()), "settings");
+            return JXPathUtils.getBooleanValue(settings, "deleteDatabaseOnNextStartOnError", false);
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not load deleteDatabaseOnNextStartOnError flag.", e);
+            }
+        }
+        return false;
     }
 
     private void adjustSettingsToUnregisteredState() {
@@ -529,15 +606,9 @@ public class MyTunesRssConfig {
         setFaad2Binary(null);
     }
 
-    private void readPathInfoEncryptionKey() {
-        String pathInfoKey = Preferences.userRoot().node(PREF_ROOT).get("pathInfoKey", null);
-        if (StringUtils.isNotEmpty(pathInfoKey)) {
-            byte[] keyBytes = new byte[0];
-            try {
-                keyBytes = Base64.decodeBase64(pathInfoKey.getBytes("UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                keyBytes = Base64.decodeBase64(pathInfoKey.getBytes());
-            }
+    private void readPathInfoEncryptionKey(JXPathContext settings) {
+        byte[] keyBytes = JXPathUtils.getByteArray(settings, "pathInfoKey", null);
+        if (keyBytes != null && keyBytes.length > 0) {
             myPathInfoKey = new SecretKeySpec(keyBytes, "DES");
         }
         if (myPathInfoKey == null) {
@@ -560,108 +631,87 @@ public class MyTunesRssConfig {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Saving configuration.");
         }
-        Preferences.userRoot().node(PREF_ROOT).put("version", MyTunesRss.VERSION);
-        Preferences.userRoot().node(PREF_ROOT).putInt("serverPort", myPort);
-        Preferences.userRoot().node(PREF_ROOT).put("serverName", myServerName);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("availableOnLocalNet", myAvailableOnLocalNet);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("checkUpdateOnStart", myCheckUpdateOnStart);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("autoStartServer", myAutoStartServer);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("updateDatabaseOnServerStart", myUpdateDatabaseOnServerStart);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("autoUpdateDatabase", myAutoUpdateDatabase);
-        Preferences.userRoot().node(PREF_ROOT).putInt("autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval);
-        Preferences.userRoot().node(PREF_ROOT).put("version", myVersion);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("ignoreTimestamps", myIgnoreTimestamps);
-        Preferences.userRoot().node(PREF_ROOT).putInt("baseDirCount", myDatasources.size());
         try {
-            Preferences.userRoot().node(PREF_ROOT + "/basedir").removeNode();
+            Document settings = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            Element root = settings.createElement("settings");
+            settings.appendChild(root);
+            root.appendChild(DOMUtils.createTextElement(settings, "version", MyTunesRss.VERSION));
+            root.appendChild(DOMUtils.createIntElement(settings, "serverPort", myPort));
+            root.appendChild(DOMUtils.createTextElement(settings, "serverName", myServerName));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "availableOnLocalNet", myAvailableOnLocalNet));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "checkUpdateOnStart", myCheckUpdateOnStart));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "autoStartServer", myAutoStartServer));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "updateDatabaseOnServerStart", myUpdateDatabaseOnServerStart));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "autoUpdateDatabase", myAutoUpdateDatabase));
+            root.appendChild(DOMUtils.createIntElement(settings, "autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval));
+            root.appendChild(DOMUtils.createTextElement(settings, "version", myVersion));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreTimestamps", myIgnoreTimestamps));
+            root.appendChild(DOMUtils.createIntElement(settings, "baseDirCount", myDatasources.size()));
+            Element dataSources = settings.createElement("datasources");
+            root.appendChild(dataSources);
             for (int i = 0; i < myDatasources.size(); i++) {
-                Preferences.userRoot().node(PREF_ROOT + "/basedir").put(Integer.toString(i), myDatasources.get(i));
+                dataSources.appendChild(DOMUtils.createTextElement(settings, "datasource", myDatasources.get(i)));
             }
-        } catch (BackingStoreException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not write base directories.", e);
-            }
-
-        }
-        Preferences.userRoot().node(PREF_ROOT).putInt("artistFolder", myFileSystemArtistNameFolder);
-        Preferences.userRoot().node(PREF_ROOT).putInt("albumFolder", myFileSystemAlbumNameFolder);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("iTunesDeleteMissingFiles", myItunesDeleteMissingFiles);
-        Preferences.userRoot().node(PREF_ROOT).put("uploadDir", myUploadDir);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("uploadCreateUserDir", myUploadCreateUserDir);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("localTempArchive", myLocalTempArchive);
-        Preferences userNode = Preferences.userRoot().node(PREF_ROOT + "/user");
-        try {
-            // remove obsolete users
-            for (String username : userNode.childrenNames()) {
-                if (!myUsers.contains(new User(username))) {
-                    userNode.node(username).removeNode();
-                }
-            }
-            // create and update existing users
+            root.appendChild(DOMUtils.createIntElement(settings, "artistFolder", myFileSystemArtistNameFolder));
+            root.appendChild(DOMUtils.createIntElement(settings, "albumFolder", myFileSystemAlbumNameFolder));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "iTunesDeleteMissingFiles", myItunesDeleteMissingFiles));
+            root.appendChild(DOMUtils.createTextElement(settings, "uploadDir", myUploadDir));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "uploadCreateUserDir", myUploadCreateUserDir));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "localTempArchive", myLocalTempArchive));
+            Element users = settings.createElement("users");
+            root.appendChild(users);
             for (User user : myUsers) {
-                user.saveToPreferences(userNode.node(user.getName()));
+                Element userElement = settings.createElement("user");
+                users.appendChild(userElement);
+                user.saveToPreferences(settings, userElement);
             }
-        } catch (BackingStoreException e) {
+            root.appendChild(DOMUtils.createTextElement(settings, "supportName", mySupportName));
+            root.appendChild(DOMUtils.createTextElement(settings, "supportEmail", mySupportEmail));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "proxyServer", myProxyServer));
+            root.appendChild(DOMUtils.createTextElement(settings, "proxyHost", myProxyHost));
+            root.appendChild(DOMUtils.createIntElement(settings, "proxyPort", myProxyPort));
+            root.appendChild(DOMUtils.createTextElement(settings, "myTunesRssComUser", myMyTunesRssComUser));
+            if (myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0) {
+                root.appendChild(DOMUtils.createByteArrayElement(settings, "myTunesRssComPassword", myMyTunesRssComPasswordHash));
+            }
+            root.appendChild(DOMUtils.createTextElement(settings, "fileTypes", myFileTypes));
+            root.appendChild(DOMUtils.createTextElement(settings, "artistDropWords", myArtistDropWords));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "quitConfirmation", myQuitConfirmation));
+            root.appendChild(DOMUtils.createTextElement(settings, "webWelcomeMessage", myWebWelcomeMessage));
+            if (myPathInfoKey != null) {
+                root.appendChild(DOMUtils.createByteArrayElement(settings, "pathInfoKey", myPathInfoKey.getEncoded()));
+            }
+            root.appendChild(DOMUtils.createTextElement(settings, "lameBinary", myLameBinary));
+            root.appendChild(DOMUtils.createTextElement(settings, "faad2Binary", myFaad2Binary));
+            root.appendChild(DOMUtils.createTextElement(settings, "alacBinary", myAlacBinary));
+            root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheTimeout", myStreamingCacheTimeout));
+            root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheMaxFiles", myStreamingCacheMaxFiles));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "bandwidthLimit", myBandwidthLimit));
+            root.appendChild(DOMUtils.createTextElement(settings, "bandwidthLimitFactor", myBandwidthLimitFactor.toString()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreArtwork", myIgnoreArtwork));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "debugLogging", myDebugLogging));
+            Element window = settings.createElement("window");
+            root.appendChild(window);
+            window.appendChild(DOMUtils.createIntElement(settings, "x", myWindowX));
+            window.appendChild(DOMUtils.createIntElement(settings, "y", myWindowY));
+            root.appendChild(DOMUtils.createTextElement(settings, "lastNewVersionInfo", myLastNewVersionInfo));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "deleteDatabaseOnNextStartOnError", myDeleteDatabaseOnNextStartOnError));
+            root.appendChild(DOMUtils.createTextElement(settings, "updateIgnoreVersion", myUpdateIgnoreVersion));
+            FileOutputStream outputStream = null;
+            try {
+                outputStream = new FileOutputStream(getSettingsFile());
+                DOMUtils.prettyPrint(settings, outputStream);
+            } finally {
+                IOUtils.close(outputStream);
+            }
+        } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
-                LOG.error("Could not write users.", e);
-            }
-        }
-        Preferences.userRoot().node(PREF_ROOT).put("supportName", mySupportName);
-        Preferences.userRoot().node(PREF_ROOT).put("supportEmail", mySupportEmail);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("proxyServer", myProxyServer);
-        Preferences.userRoot().node(PREF_ROOT).put("proxyHost", myProxyHost);
-        Preferences.userRoot().node(PREF_ROOT).putInt("proxyPort", myProxyPort);
-        Preferences.userRoot().node(PREF_ROOT).put("myTunesRssComUser", myMyTunesRssComUser);
-        if (myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0) {
-            Preferences.userRoot().node(PREF_ROOT).putByteArray("myTunesRssComPassword", myMyTunesRssComPasswordHash);
-        } else {
-            Preferences.userRoot().node(PREF_ROOT).remove("myTunesRssComPassword");
-        }
-        Preferences.userRoot().node(PREF_ROOT).put("fileTypes", myFileTypes);
-        Preferences.userRoot().node(PREF_ROOT).put("artistDropWords", myArtistDropWords);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("quitConfirmation", myQuitConfirmation);
-        Preferences.userRoot().node(PREF_ROOT).put("webWelcomeMessage", myWebWelcomeMessage);
-        if (myPathInfoKey != null) {
-            try {
-                Preferences.userRoot().node(PREF_ROOT).put("pathInfoKey", new String(Base64.encodeBase64(myPathInfoKey.getEncoded()), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                Preferences.userRoot().node(PREF_ROOT).put("pathInfoKey", new String(Base64.encodeBase64(myPathInfoKey.getEncoded())));
-            }
-        }
-        Preferences.userRoot().node(PREF_ROOT).put("lameBinary", myLameBinary);
-        Preferences.userRoot().node(PREF_ROOT).put("faad2Binary", myFaad2Binary);
-        Preferences.userRoot().node(PREF_ROOT).put("alacBinary", myAlacBinary);
-        Preferences.userRoot().node(PREF_ROOT).putInt("streamingCacheTimeout", myStreamingCacheTimeout);
-        Preferences.userRoot().node(PREF_ROOT).putInt("streamingCacheMaxFiles", myStreamingCacheMaxFiles);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("bandwidthLimit", myBandwidthLimit);
-        Preferences.userRoot().node(PREF_ROOT).put("bandwidthLimitFactor", myBandwidthLimitFactor.toString());
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("ignoreArtwork", myIgnoreArtwork);
-        Preferences.userRoot().node(PREF_ROOT).putBoolean("debugLogging", myDebugLogging);
-    }
-
-    private void checkPrefsVersion() {
-        String version = Preferences.userRoot().node(PREF_ROOT).get("version", "");
-        if ("".equals(version)) {
-            try {
-                Preferences.userRoot().node(PREF_ROOT).removeNode();
-            } catch (BackingStoreException e) {
-                // intentionally left blank
+                LOG.error("Could not write settings file.", e);
             }
         }
     }
 
     private void migrate() {
-        setVersion("3.1");
-    }
-
-    public Point loadWindowPosition() {
-        Preferences preferences = Preferences.userRoot().node(PREF_ROOT);
-        return new Point(preferences.getInt("window_x", Integer.MAX_VALUE), preferences.getInt("window_y", Integer.MAX_VALUE));
-    }
-
-    public void saveWindowPosition(Point point) {
-        Preferences preferences = Preferences.userRoot().node(PREF_ROOT);
-        preferences.putInt("window_x", point.x);
-        preferences.putInt("window_y", point.y);
+        setVersion("3.2");
     }
 }

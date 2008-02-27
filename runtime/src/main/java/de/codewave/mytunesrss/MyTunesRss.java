@@ -33,7 +33,6 @@ import java.security.*;
 import java.sql.*;
 import java.util.*;
 import java.util.Timer;
-import java.util.prefs.*;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -168,9 +167,7 @@ public class MyTunesRss {
         } else if (registrationResult == MyTunesRssRegistration.RegistrationResult.ExternalExpired) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
         }
-        if (System.getProperty("database.type") == null && Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).getBoolean(
-                "deleteDatabaseOnNextStartOnError",
-                false)) {
+        if (System.getProperty("database.type") == null && MyTunesRssConfig.loadDeleteDatabaseOnNextStartOnError()) {
             new DeleteDatabaseFilesTask().execute();
         }
         loadConfiguration();
@@ -330,8 +327,8 @@ public class MyTunesRss {
         ROOT_FRAME.setResizable(false);
         SETTINGS.setGuiMode(GuiMode.ServerIdle);
         SwingUtils.removeEmptyTooltips(ROOT_FRAME.getRootPane());
-        int x = CONFIG.loadWindowPosition().x;
-        int y = CONFIG.loadWindowPosition().y;
+        int x = CONFIG.getWindowX();
+        int y = CONFIG.getWindowY();
         if (CONFIG.isCheckUpdateOnStart()) {
             UpdateUtils.checkForUpdate(true);
         }
@@ -407,8 +404,7 @@ public class MyTunesRss {
     }
 
     private static void showNewVersionInfo() {
-        String lastNewVersionInfo = Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).get("lastNewVersionInfo", "0");
-        if (!VERSION.equals(lastNewVersionInfo)) {
+        if (!VERSION.equals(CONFIG.getLastNewVersionInfo())) {
             try {
                 String message = BUNDLE.getString("info.newVersion");
                 if (StringUtils.isNotEmpty(message)) {
@@ -417,7 +413,7 @@ public class MyTunesRss {
             } catch (MissingResourceException e) {
                 // intentionally left blank
             }
-            Preferences.userRoot().node(MyTunesRssConfig.PREF_ROOT).put("lastNewVersionInfo", VERSION);
+            CONFIG.setLastNewVersionInfo(VERSION);
         }
     }
 
@@ -491,7 +487,7 @@ public class MyTunesRss {
     }
 
     private static void loadConfiguration() throws MalformedURLException {
-        CONFIG.loadFromPrefs();
+        CONFIG.load();
     }
 
     private static void executeWindows(Settings settingsForm) {

@@ -1,12 +1,14 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.utils.servlet.*;
+import de.codewave.utils.xml.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.jxpath.*;
+import org.w3c.dom.*;
 
 import java.io.*;
 import java.util.*;
-import java.util.prefs.*;
 
 /**
  * de.codewave.mytunesrss.User
@@ -322,67 +324,62 @@ public class User {
         myWebSettings = webSettings;
     }
 
-    public void loadFromPreferences(Preferences userNode) {
-        setActive(userNode.getBoolean("active", true));
-        setPasswordHash(userNode.getByteArray("password", null));
-        setRss(userNode.getBoolean("featureRss", false));
-        setPlaylist(userNode.getBoolean("featurePlaylist", false));
-        setDownload(userNode.getBoolean("featureDownload", false));
-        setUpload(userNode.getBoolean("featureUpload", false));
-        setPlayer(userNode.getBoolean("featurePlayer", false));
-        setChangePassword(userNode.getBoolean("featureChangePassword", false));
-        setSpecialPlaylists(userNode.getBoolean("featureSpecialPlaylists", false));
-        setResetTime(userNode.getLong("resetTime", System.currentTimeMillis()));
-        setQuotaResetTime(userNode.getLong("quotaResetTime", System.currentTimeMillis()));
-        setDownBytes(userNode.getLong("downBytes", 0));
-        setQuotaDownBytes(userNode.getLong("quotaDownBytes", 0));
-        setBytesQuota(userNode.getLong("bytesQuota", 0));
-        setQuotaType(QuotaType.valueOf(userNode.get("quotaType", QuotaType.None.name())));
-        setMaximumZipEntries(userNode.getInt("maximumZipEntries", 0));
-        setFileTypes(userNode.get("fileTypes", null));
-        setTranscoder(userNode.getBoolean("featureTranscoder", false));
-        setSessionTimeout(userNode.getInt("sessionTimeout", 10));
-        setBandwidthLimit(MyTunesRss.REGISTRATION.isRegistered() ? userNode.getInt("bandwidthLimit", 0) : 0);
-        setPlaylistId(MyTunesRss.REGISTRATION.isRegistered() ? userNode.get("playlistId", null) : null);
-        setSaveWebSettings(MyTunesRss.REGISTRATION.isRegistered() && userNode.getBoolean("saveWebSettings", false));
-        setWebSettings(MyTunesRss.REGISTRATION.isRegistered() ? userNode.get("webSettings", null) : null);
+    public void loadFromPreferences(JXPathContext settings) {
+        setActive(JXPathUtils.getBooleanValue(settings, "active", true));
+        setPasswordHash(JXPathUtils.getByteArray(settings, "password", null));
+        setRss(JXPathUtils.getBooleanValue(settings, "featureRss", false));
+        setPlaylist(JXPathUtils.getBooleanValue(settings, "featurePlaylist", false));
+        setDownload(JXPathUtils.getBooleanValue(settings, "featureDownload", false));
+        setUpload(JXPathUtils.getBooleanValue(settings, "featureUpload", false));
+        setPlayer(JXPathUtils.getBooleanValue(settings, "featurePlayer", false));
+        setChangePassword(JXPathUtils.getBooleanValue(settings, "featureChangePassword", false));
+        setSpecialPlaylists(JXPathUtils.getBooleanValue(settings, "featureSpecialPlaylists", false));
+        setResetTime(JXPathUtils.getLongValue(settings, "resetTime", System.currentTimeMillis()));
+        setQuotaResetTime(JXPathUtils.getLongValue(settings, "quotaResetTime", System.currentTimeMillis()));
+        setDownBytes(JXPathUtils.getLongValue(settings, "downBytes", 0));
+        setQuotaDownBytes(JXPathUtils.getLongValue(settings, "quotaDownBytes", 0));
+        setBytesQuota(JXPathUtils.getLongValue(settings, "bytesQuota", 0));
+        setQuotaType(QuotaType.valueOf(JXPathUtils.getStringValue(settings, "quotaType", QuotaType.None.name())));
+        setMaximumZipEntries(JXPathUtils.getIntValue(settings, "maximumZipEntries", 0));
+        setFileTypes(JXPathUtils.getStringValue(settings, "fileTypes", null));
+        setTranscoder(JXPathUtils.getBooleanValue(settings, "featureTranscoder", false));
+        setSessionTimeout(JXPathUtils.getIntValue(settings, "sessionTimeout", 10));
+        setBandwidthLimit(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getIntValue(settings, "bandwidthLimit", 0) : 0);
+        setPlaylistId(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "playlistId", null) : null);
+        setSaveWebSettings(MyTunesRss.REGISTRATION.isRegistered() && JXPathUtils.getBooleanValue(settings, "saveWebSettings", false));
+        setWebSettings(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "webSettings", null) : null);
     }
 
-    public void saveToPreferences(Preferences userNode) {
+    public void saveToPreferences(Document settings, Element users) {
+        users.appendChild(DOMUtils.createTextElement(settings, "name", getName()));
         if (getPasswordHash() != null && getPasswordHash().length > 0) {
-            userNode.putByteArray("password", getPasswordHash());
-        } else {
-            userNode.remove("password");
+            users.appendChild(DOMUtils.createByteArrayElement(settings, "password", getPasswordHash()));
         }
-        userNode.putBoolean("active", isActive());
-        userNode.putBoolean("featureRss", isRss());
-        userNode.putBoolean("featurePlaylist", isPlaylist());
-        userNode.putBoolean("featureDownload", isDownload());
-        userNode.putBoolean("featureUpload", isUpload());
-        userNode.putBoolean("featurePlayer", isPlayer());
-        userNode.putBoolean("featureChangePassword", isChangePassword());
-        userNode.putBoolean("featureSpecialPlaylists", isSpecialPlaylists());
-        userNode.putLong("resetTime", getResetTime());
-        userNode.putLong("quotaResetTime", getQuotaResetTime());
-        userNode.putLong("downBytes", getDownBytes());
-        userNode.putLong("quotaDownBytes", getQuotaDownBytes());
-        userNode.putLong("bytesQuota", getBytesQuota());
-        userNode.put("quotaType", getQuotaType().name());
-        userNode.putInt("maximumZipEntries", getMaximumZipEntries());
-        userNode.put("fileTypes", getFileTypes() != null ? getFileTypes() : "");
-        userNode.putBoolean("featureTranscoder", isTranscoder());
-        userNode.putInt("sessionTimeout", getSessionTimeout());
-        userNode.putInt("bandwidthLimit", getBandwidthLimit());
+        users.appendChild(DOMUtils.createBooleanElement(settings, "active", isActive()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureRss", isRss()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featurePlaylist", isPlaylist()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureDownload", isDownload()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureUpload", isUpload()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featurePlayer", isPlayer()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureChangePassword", isChangePassword()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureSpecialPlaylists", isSpecialPlaylists()));
+        users.appendChild(DOMUtils.createLongElement(settings, "resetTime", getResetTime()));
+        users.appendChild(DOMUtils.createLongElement(settings, "quotaResetTime", getQuotaResetTime()));
+        users.appendChild(DOMUtils.createLongElement(settings, "downBytes", getDownBytes()));
+        users.appendChild(DOMUtils.createLongElement(settings, "quotaDownBytes", getQuotaDownBytes()));
+        users.appendChild(DOMUtils.createLongElement(settings, "bytesQuota", getBytesQuota()));
+        users.appendChild(DOMUtils.createTextElement(settings, "quotaType", getQuotaType().name()));
+        users.appendChild(DOMUtils.createIntElement(settings, "maximumZipEntries", getMaximumZipEntries()));
+        users.appendChild(DOMUtils.createTextElement(settings, "fileTypes", getFileTypes() != null ? getFileTypes() : ""));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureTranscoder", isTranscoder()));
+        users.appendChild(DOMUtils.createIntElement(settings, "sessionTimeout", getSessionTimeout()));
+        users.appendChild(DOMUtils.createIntElement(settings, "bandwidthLimit", getBandwidthLimit()));
         if (StringUtils.isNotEmpty(getPlaylistId())) {
-            userNode.put("playlistId", getPlaylistId());
-        } else {
-            userNode.remove("playlistId");
+            users.appendChild(DOMUtils.createTextElement(settings, "playlistId", getPlaylistId()));
         }
-        userNode.putBoolean("saveWebSettings", isSaveWebSettings());
+        users.appendChild(DOMUtils.createBooleanElement(settings, "saveWebSettings", isSaveWebSettings()));
         if (StringUtils.isNotEmpty(getWebSettings())) {
-            userNode.put("webSettings", getWebSettings());
-        } else {
-            userNode.remove("webSettings");
+            users.appendChild(DOMUtils.createTextElement(settings, "webSettings", getWebSettings()));
         }
     }
 }

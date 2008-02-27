@@ -120,7 +120,8 @@ public class MyTunesRssUtils {
             if (MyTunesRss.REGISTRATION.isRegistered()) {
                 MyTunesRssJmxUtils.stopJmxServer();
             }
-            MyTunesRss.CONFIG.saveWindowPosition(MyTunesRss.ROOT_FRAME.getLocation());
+            MyTunesRss.CONFIG.setWindowX(MyTunesRss.ROOT_FRAME.getLocation().x);
+            MyTunesRss.CONFIG.setWindowY(MyTunesRss.ROOT_FRAME.getLocation().y);
             MyTunesRss.CONFIG.save();
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             if (DatabaseBuilderTask.isRunning()) {
