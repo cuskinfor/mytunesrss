@@ -22,14 +22,6 @@ public interface DatabaseConfigMBean {
 
     void setUpdateOnServerStart(boolean updateOnServerStart);
 
-    boolean isAutoUpdate();
-
-    void setAutoUpdate(boolean autoUpdate);
-
-    int getAutoUpdateIntervalMinutes();
-
-    void setAutoUpdateIntervalMinutes(int minutes);
-
     String getFileTypes();
 
     void setFileTypes(String fileTypes);

@@ -23,8 +23,6 @@ import java.util.Date;
  */
 public class Database implements MyTunesRssEventListener {
     private static final Log LOG = LogFactory.getLog(Database.class);
-    private static final int MAX_UPDATE_INTERVAL = 1440;
-    private static final int MIN_UPDATE_INTERVAL = 1;
 
     private JPanel myRootPanel;
     private JLabel myLastUpdatedLabel;
@@ -34,14 +32,11 @@ public class Database implements MyTunesRssEventListener {
     private JTextField myArtistDropWords;
     private JTextField myFileTypes;
     private JCheckBox myUpdateDatabaseOnServerStart;
-    private JCheckBox myAutoUpdateDatabaseInput;
-    private JSpinner myAutoUpdateDatabaseIntervalInput;
     private JCheckBox myDeleteMissingFiles;
     private JCheckBox myIgnoreArtworkInput;
 
     public void init() {
         refreshLastUpdate();
-        myAutoUpdateDatabaseInput.addActionListener(new AutoUpdateDatabaseInputListener());
         myDeleteDatabaseButton.addActionListener(new DeleteDatabaseButtonListener());
         myUpdateDatabaseButton.addActionListener(new UpdateDatabaseButtonListener());
         initValues();
@@ -76,18 +71,8 @@ public class Database implements MyTunesRssEventListener {
     }
 
     private void initValues() {
-        int interval = MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval();
-        if (interval < MIN_UPDATE_INTERVAL) {
-            interval = MIN_UPDATE_INTERVAL;
-        } else if (interval > MAX_UPDATE_INTERVAL) {
-            interval = MAX_UPDATE_INTERVAL;
-        }
-        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(interval, MIN_UPDATE_INTERVAL, MAX_UPDATE_INTERVAL, 1);
-        myAutoUpdateDatabaseIntervalInput.setModel(spinnerNumberModel);
-        myAutoUpdateDatabaseInput.setSelected(MyTunesRss.CONFIG.isAutoUpdateDatabase());
         myUpdateDatabaseOnServerStart.setSelected(MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart());
         myIgnoreTimestampsInput.setSelected(MyTunesRss.CONFIG.isIgnoreTimestamps());
-        SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, MyTunesRss.CONFIG.isAutoUpdateDatabase());
         myDeleteMissingFiles.setSelected(MyTunesRss.CONFIG.isItunesDeleteMissingFiles());
         myFileTypes.setText(MyTunesRss.CONFIG.getFileTypes());
         myArtistDropWords.setText(MyTunesRss.CONFIG.getArtistDropWords());
@@ -127,8 +112,6 @@ public class Database implements MyTunesRssEventListener {
             return messages;
         } else {
             MyTunesRss.CONFIG.setUpdateDatabaseOnServerStart(myUpdateDatabaseOnServerStart.isSelected());
-            MyTunesRss.CONFIG.setAutoUpdateDatabase(myAutoUpdateDatabaseInput.isSelected());
-            MyTunesRss.CONFIG.setAutoUpdateDatabaseInterval((Integer)myAutoUpdateDatabaseIntervalInput.getValue());
             MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestampsInput.isSelected());
             MyTunesRss.CONFIG.setItunesDeleteMissingFiles(myDeleteMissingFiles.isSelected());
             MyTunesRss.CONFIG.setFileTypes(myFileTypes.getText());
@@ -141,23 +124,14 @@ public class Database implements MyTunesRssEventListener {
     public void setGuiMode(GuiMode mode) {
         boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
         boolean databaseActive = DatabaseBuilderTask.isRunning() || mode == GuiMode.DatabaseUpdating;
-        myAutoUpdateDatabaseInput.setEnabled(!serverActive);
         myUpdateDatabaseOnServerStart.setEnabled(!serverActive);
         myIgnoreTimestampsInput.setEnabled(!databaseActive);
         myUpdateDatabaseButton.setEnabled(!databaseActive);
         myDeleteDatabaseButton.setEnabled(!databaseActive);
-        SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected() && !serverActive);
         myDeleteMissingFiles.setEnabled(!databaseActive);
         SwingUtils.enableElementAndLabel(myFileTypes, !databaseActive);
         SwingUtils.enableElementAndLabel(myArtistDropWords, !databaseActive);
         myIgnoreArtworkInput.setEnabled(!databaseActive);
-    }
-
-    public class AutoUpdateDatabaseInputListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected());
-            myRootPanel.validate();
-        }
     }
 
     public class DeleteDatabaseButtonListener implements ActionListener {

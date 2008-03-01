@@ -156,7 +156,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 CURRENTLY_RUNNING.unlock();
             }
         } else {
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Database update not running since another update is still active.");
+            }
         }
     }
 

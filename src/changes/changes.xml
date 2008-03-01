@@ -6,6 +6,16 @@
     <body>
 
         <release version="3.2" date="????-??-??" description="Minor release">
+            <action dev="mdescher" type="add">
+                Database updates based on quartz cron expression triggers no matter whether or not the
+                server is running.
+            </action>
+            <action dev="mdescher" type="add">
+                Quartz scheduler.
+            </action>
+            <action dev="mdescher" type="remove">
+                Optional database updates every X seconds while server is running.
+            </action>
             <action dev="mdescher" type="update">
                 All settings stored in an XML file in the settings directory. No remaining usage of
                 java.util.prefs API, so no registry usage on Windows anymore.

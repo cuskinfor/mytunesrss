@@ -32,8 +32,6 @@ public class MyTunesRssConfig {
     private List<String> myDatasources = new ArrayList<String>();
     private boolean myCheckUpdateOnStart = true;
     private boolean myAutoStartServer;
-    private boolean myAutoUpdateDatabase;
-    private int myAutoUpdateDatabaseInterval = 10;
     private String myVersion;
     private boolean myIgnoreTimestamps;
     private int myFileSystemAlbumNameFolder = 1;
@@ -70,6 +68,7 @@ public class MyTunesRssConfig {
     private String myLastNewVersionInfo;
     private boolean myDeleteDatabaseOnNextStartOnError;
     private String myUpdateIgnoreVersion;
+    private List<String> myDatabaseCronTriggers = new ArrayList<String>();
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -157,22 +156,6 @@ public class MyTunesRssConfig {
 
     public void setAutoStartServer(boolean autoStartServer) {
         myAutoStartServer = autoStartServer;
-    }
-
-    public boolean isAutoUpdateDatabase() {
-        return myAutoUpdateDatabase;
-    }
-
-    public void setAutoUpdateDatabase(boolean autoUpdateDatabase) {
-        myAutoUpdateDatabase = autoUpdateDatabase;
-    }
-
-    public int getAutoUpdateDatabaseInterval() {
-        return myAutoUpdateDatabaseInterval;
-    }
-
-    public void setAutoUpdateDatabaseInterval(int autoUpdateDatabaseInterval) {
-        myAutoUpdateDatabaseInterval = autoUpdateDatabaseInterval;
     }
 
     public String getVersion() {
@@ -486,6 +469,14 @@ public class MyTunesRssConfig {
         myUpdateIgnoreVersion = updateIgnoreVersion;
     }
 
+    public List<String> getDatabaseCronTriggers() {
+        return myDatabaseCronTriggers;
+    }
+
+    public void setDatabaseCronTriggers(List<String> databaseCronTriggers) {
+        myDatabaseCronTriggers = databaseCronTriggers;
+    }
+
     public void load() {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Loading configuration.");
@@ -500,9 +491,7 @@ public class MyTunesRssConfig {
             setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
             setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
             setAutoStartServer(JXPathUtils.getBooleanValue(settings, "autoStartServer", isAutoStartServer()));
-            setAutoUpdateDatabase(JXPathUtils.getBooleanValue(settings, "autoUpdateDatabase", isAutoUpdateDatabase()));
             setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
-            setAutoUpdateDatabaseInterval(JXPathUtils.getIntValue(settings, "autoUpdateDatabaseInterval", getAutoUpdateDatabaseInterval()));
             setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
             List<String> dataSources = new ArrayList<String>();
             Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
@@ -559,6 +548,11 @@ public class MyTunesRssConfig {
             setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
             setDeleteDatabaseOnNextStartOnError(JXPathUtils.getBooleanValue(settings, "deleteDatabaseOnNextStartOnError", false));
             setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
+            Iterator<JXPathContext> cronTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database");
+            myDatabaseCronTriggers = new ArrayList<String>();
+            while (cronTriggerIterator.hasNext()) {
+                myDatabaseCronTriggers.add(JXPathUtils.getStringValue(cronTriggerIterator.next(), ".", ""));
+            }
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not read configuration file.", e);
@@ -642,8 +636,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "checkUpdateOnStart", myCheckUpdateOnStart));
             root.appendChild(DOMUtils.createBooleanElement(settings, "autoStartServer", myAutoStartServer));
             root.appendChild(DOMUtils.createBooleanElement(settings, "updateDatabaseOnServerStart", myUpdateDatabaseOnServerStart));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "autoUpdateDatabase", myAutoUpdateDatabase));
-            root.appendChild(DOMUtils.createIntElement(settings, "autoUpdateDatabaseInterval", myAutoUpdateDatabaseInterval));
             root.appendChild(DOMUtils.createTextElement(settings, "version", myVersion));
             root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreTimestamps", myIgnoreTimestamps));
             root.appendChild(DOMUtils.createIntElement(settings, "baseDirCount", myDatasources.size()));
@@ -697,6 +689,13 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "lastNewVersionInfo", myLastNewVersionInfo));
             root.appendChild(DOMUtils.createBooleanElement(settings, "deleteDatabaseOnNextStartOnError", myDeleteDatabaseOnNextStartOnError));
             root.appendChild(DOMUtils.createTextElement(settings, "updateIgnoreVersion", myUpdateIgnoreVersion));
+            if (myDatabaseCronTriggers != null && myDatabaseCronTriggers.size() > 0) {
+                Element cronTriggers = settings.createElement("crontriggers");
+                root.appendChild(cronTriggers);
+                for (String databaseCronTrigger : myDatabaseCronTriggers) {
+                    cronTriggers.appendChild(DOMUtils.createTextElement(settings, "database", databaseCronTrigger));
+                }
+            }
             FileOutputStream outputStream = null;
             try {
                 outputStream = new FileOutputStream(getSettingsFile());

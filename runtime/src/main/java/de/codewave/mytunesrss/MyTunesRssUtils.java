@@ -2,6 +2,7 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.task.*;
 import de.codewave.mytunesrss.jmx.*;
+import de.codewave.mytunesrss.job.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.pleasewait.*;
@@ -11,6 +12,8 @@ import org.apache.commons.logging.*;
 import org.apache.commons.io.*;
 import org.apache.log4j.*;
 import org.apache.log4j.spi.*;
+import org.quartz.*;
+import org.quartz.Trigger;
 
 import javax.swing.*;
 import java.io.*;
@@ -100,6 +103,16 @@ public class MyTunesRssUtils {
                     LOG.error("Could not write streaming cache contents, all files will be lost on next start.", e);
                 }
                 MyTunesRss.STREAMING_CACHE.clearCache();
+            }
+        }
+        try {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Shutting down quartz scheduler.");
+            }
+            MyTunesRss.QUARTZ_SCHEDULER.shutdown();
+        } catch (SchedulerException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not shutdown quartz scheduler.", e);
             }
         }
         if (LOG.isDebugEnabled()) {

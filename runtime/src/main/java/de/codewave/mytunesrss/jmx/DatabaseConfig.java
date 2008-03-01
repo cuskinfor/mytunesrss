@@ -95,24 +95,6 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
         onChange();
     }
 
-    public boolean isAutoUpdate() {
-        return MyTunesRss.CONFIG.isAutoUpdateDatabase();
-    }
-
-    public void setAutoUpdate(boolean autoUpdate) {
-        MyTunesRss.CONFIG.setAutoUpdateDatabase(autoUpdate);
-        onChange();
-    }
-
-    public int getAutoUpdateIntervalMinutes() {
-        return MyTunesRss.CONFIG.getAutoUpdateDatabaseInterval();
-    }
-
-    public void setAutoUpdateIntervalMinutes(int minutes) {
-        MyTunesRss.CONFIG.setAutoUpdateDatabaseInterval(minutes);
-        onChange();
-    }
-
     public String getArtistDropWords() {
         return MyTunesRss.CONFIG.getArtistDropWords();
     }

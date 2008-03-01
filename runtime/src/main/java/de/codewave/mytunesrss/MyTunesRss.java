@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.network.*;
 import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.settings.*;
 import de.codewave.mytunesrss.task.*;
+import de.codewave.mytunesrss.job.*;
 import de.codewave.utils.*;
 import de.codewave.utils.io.*;
 import de.codewave.utils.maven.*;
@@ -20,6 +21,8 @@ import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.logging.*;
 import org.apache.log4j.*;
+import org.quartz.*;
+import org.quartz.impl.*;
 import snoozesoft.systray4j.*;
 
 import javax.imageio.*;
@@ -119,9 +122,10 @@ public class MyTunesRss {
     public static boolean QUIT_REQUEST;
     public static Driver DATABASE_DRIVER;
     public static FileCache STREAMING_CACHE;
+    public static Scheduler QUARTZ_SCHEDULER;
 
     public static void main(final String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException,
-            InstantiationException, ClassNotFoundException, IOException, SQLException {
+            InstantiationException, ClassNotFoundException, IOException, SQLException, SchedulerException {
         final Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
         HEADLESS = arguments.containsKey("headless");
         MyTunesRssUtils.setCodewaveLogLevel(arguments.containsKey("debug") || MyTunesRssConfig.loadDebugLogging() ? Level.DEBUG : Level.INFO);
@@ -171,6 +175,13 @@ public class MyTunesRss {
             new DeleteDatabaseFilesTask().execute();
         }
         loadConfiguration();
+        QUARTZ_SCHEDULER = new StdSchedulerFactory().getScheduler();
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Starting quartz scheduler.");
+        }
+        QUARTZ_SCHEDULER.start();
+        MyTunesRssJobUtils.addJobs();
+        MyTunesRssJobUtils.scheduleDatabaseJob();
         STREAMING_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER, 10000, CONFIG.getStreamingCacheMaxFiles());
         File streamingCacheFile = new File(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/transcoder/cache.xml");
         if (streamingCacheFile.isFile()) {
@@ -453,10 +464,6 @@ public class MyTunesRss {
             }
         });
         if (WEBSERVER.isRunning()) {
-            if (CONFIG.isAutoUpdateDatabase()) {
-                DatabaseWatchdogTask databaseWatchdogTask = new DatabaseWatchdogTask(SERVER_RUNNING_TIMER, CONFIG.getAutoUpdateDatabaseInterval());
-                SERVER_RUNNING_TIMER.schedule(databaseWatchdogTask, 60000 * CONFIG.getAutoUpdateDatabaseInterval());
-            }
             if (StringUtils.isNotEmpty(CONFIG.getMyTunesRssComUser()) && CONFIG.getMyTunesRssComPasswordHash() != null &&
                     CONFIG.getMyTunesRssComPasswordHash().length > 0) {
                 MyTunesRssComUpdateTask myTunesRssComUpdater = new MyTunesRssComUpdateTask(SERVER_RUNNING_TIMER,
