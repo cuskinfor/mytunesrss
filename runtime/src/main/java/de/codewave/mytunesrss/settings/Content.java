@@ -70,9 +70,9 @@ public class Content implements MyTunesRssEventListener {
                                                                           1,
                                                                           2,
                                                                           GridConstraints.ANCHOR_WEST,
-                                                                          GridConstraints.FILL_HORIZONTAL,
+                                                                          GridConstraints.FILL_BOTH,
                                                                           GridConstraints.SIZEPOLICY_WANT_GROW,
-                                                                          GridConstraints.SIZEPOLICY_FIXED,
+                                                                          GridConstraints.SIZEPOLICY_WANT_GROW,
                                                                           null,
                                                                           null,
                                                                           null));

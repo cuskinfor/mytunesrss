@@ -4,18 +4,20 @@
 
 package de.codewave.mytunesrss.settings;
 
+import com.intellij.uiDesigner.core.*;
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.server.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
-import de.codewave.utils.swing.*;
 import de.codewave.utils.sql.*;
+import de.codewave.utils.swing.*;
 import org.apache.commons.logging.*;
+import org.apache.commons.lang.*;
 
 import javax.swing.*;
 import java.awt.event.*;
 import java.sql.*;
 import java.text.*;
+import java.util.*;
 import java.util.Date;
 
 /**
@@ -34,13 +36,132 @@ public class Database implements MyTunesRssEventListener {
     private JCheckBox myUpdateDatabaseOnServerStart;
     private JCheckBox myDeleteMissingFiles;
     private JCheckBox myIgnoreArtworkInput;
+    private JScrollPane myScrollPane;
+    private JPanel mySchedulePanel;
+    private DeleteTriggerActionListener myDeleteTriggerActionListener = new DeleteTriggerActionListener();
 
     public void init() {
+        myScrollPane.getViewport().setOpaque(false);
+        refreshTriggers();
         refreshLastUpdate();
         myDeleteDatabaseButton.addActionListener(new DeleteDatabaseButtonListener());
         myUpdateDatabaseButton.addActionListener(new UpdateDatabaseButtonListener());
         initValues();
         MyTunesRssEventManager.getInstance().addListener(this);
+    }
+
+    private void refreshTriggers() {
+        mySchedulePanel.removeAll();
+        List<String> triggers = new ArrayList<String>(MyTunesRss.CONFIG.getDatabaseCronTriggers());
+        mySchedulePanel.setLayout(new GridLayoutManager(triggers.size() + 2, 4));
+        int row = 0;
+        for (String trigger : triggers) {
+            addTrigger(trigger, row++);
+        }
+        JButton addButton = new JButton(MyTunesRssUtils.getBundleString("settings.newTrigger"));
+        addButton.setToolTipText(MyTunesRssUtils.getBundleString("settings.newTriggerTooltip"));
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MyTunesRss.CONFIG.getDatabaseCronTriggers().add("0 0 0 * * MON-SUN");
+                refreshTriggers();
+            }
+        });
+        addPanelComponent(addButton, new GridConstraints(row++,
+                                                         0,
+                                                         1,
+                                                         4,
+                                                         GridConstraints.ANCHOR_WEST,
+                                                         GridConstraints.FILL_NONE,
+                                                         GridConstraints.SIZEPOLICY_FIXED,
+                                                         GridConstraints.SIZEPOLICY_FIXED,
+                                                         null,
+                                                         null,
+                                                         null));
+        addPanelComponent(new JLabel(""), new GridConstraints(row++,
+                                                              0,
+                                                              1,
+                                                              4,
+                                                              GridConstraints.ANCHOR_WEST,
+                                                              GridConstraints.FILL_BOTH,
+                                                              GridConstraints.SIZEPOLICY_WANT_GROW,
+                                                              GridConstraints.SIZEPOLICY_WANT_GROW,
+                                                              null,
+                                                              null,
+                                                              null));
+        mySchedulePanel.validate();
+    }
+
+    private void addTrigger(String triggerText, int row) {
+        String[] triggerParts = triggerText.split(" ");
+        JComboBox comboBox = new JComboBox(getDays());
+        comboBox.setSelectedItem(new TriggerItem(triggerParts[5], MyTunesRssUtils.getBundleString("settings.cron.day." + triggerParts[5])));
+        comboBox.addItemListener(new ChangeTriggerActionListener(row, 5));
+        addPanelComponent(comboBox, createConstraints(row, 0));
+        comboBox = new JComboBox(getHours());
+        comboBox.setSelectedItem(new TriggerItem(triggerParts[2], triggerParts[2]));
+        comboBox.addItemListener(new ChangeTriggerActionListener(row, 2));
+        addPanelComponent(comboBox, createConstraints(row, 1));
+        comboBox = new JComboBox(getMinutes());
+        comboBox.setSelectedItem(new TriggerItem(triggerParts[1], triggerParts[1]));
+        comboBox.addItemListener(new ChangeTriggerActionListener(row, 1));
+        addPanelComponent(comboBox, createConstraints(row, 2));
+        JButton delete = new JButton(MyTunesRssUtils.getBundleString("settings.deleteTrigger"));
+        delete.setToolTipText(MyTunesRssUtils.getBundleString("settings.deleteTriggerTooltip"));
+        delete.setActionCommand(Integer.toString(row));
+        delete.setOpaque(false);
+        delete.addActionListener(myDeleteTriggerActionListener);
+        addPanelComponent(delete, createConstraints(row, 3));
+    }
+
+    private TriggerItem[] getDays() {
+        String[] keys = new String[] {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN", "MON-FRI", "MON-SUN", "SAT-SUN"};
+        TriggerItem[] items = new TriggerItem[keys.length];
+        for (int i = 0; i < keys.length; i++) {
+            items[i] = new TriggerItem(keys[i], MyTunesRssUtils.getBundleString("settings.cron.day." + keys[i]));
+        }
+        return items;
+    }
+
+    private TriggerItem[] getHours() {
+        TriggerItem[] values = new TriggerItem[25];
+        values[24] = new TriggerItem("0/1", "00/01");
+        for (int i = 0; i < 24; i++) {
+            String key = (i < 10 ? "0" : "") + Integer.toString(i);
+            values[i] = new TriggerItem(key, key);
+        }
+        return values;
+    }
+
+    private TriggerItem[] getMinutes() {
+        TriggerItem[] values = new TriggerItem[16];
+        values[12] = new TriggerItem("0/5", "00/05");
+        values[13] = new TriggerItem("0/10", "00/10");
+        values[14] = new TriggerItem("0/15", "00/15");
+        values[15] = new TriggerItem("0/20", "00/20");
+        for (int i = 0; i < 60; i += 5) {
+            String key = Integer.toString(i);
+            String value = (i < 10 ? "0" : "") + Integer.toString(i);
+            values[i / 5] = new TriggerItem(key, value);
+        }
+        return values;
+    }
+
+    private GridConstraints createConstraints(int row, int column) {
+        return new GridConstraints(row,
+                                   column,
+                                   1,
+                                   1,
+                                   GridConstraints.ANCHOR_WEST,
+                                   GridConstraints.FILL_NONE,
+                                   GridConstraints.SIZEPOLICY_FIXED,
+                                   GridConstraints.SIZEPOLICY_FIXED,
+                                   null,
+                                   null,
+                                   null);
+    }
+
+    private void addPanelComponent(JComponent component, GridConstraints gridConstraints) {
+        mySchedulePanel.add(component, gridConstraints);
     }
 
     public void handleEvent(final MyTunesRssEvent event) {
@@ -87,9 +208,8 @@ public class Database implements MyTunesRssEventListener {
                 public void run() {
                     if (systemInformation.getLastUpdate() > 0) {
                         Date date = new Date(systemInformation.getLastUpdate());
-                        myLastUpdatedLabel.setText(
-                                MyTunesRssUtils.getBundleString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRssUtils.getBundleString(
-                                        "settings.lastDatabaseUpdateDateFormat")).format(date));
+                        myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(
+                                MyTunesRssUtils.getBundleString("settings.lastDatabaseUpdateDateFormat")).format(date));
                     } else {
                         myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString("settings.databaseNotYetCreated"));
                     }
@@ -153,6 +273,67 @@ public class Database implements MyTunesRssEventListener {
     public class UpdateDatabaseButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             MyTunesRssUtils.executeDatabaseUpdate();
+        }
+    }
+
+    public class ChangeTriggerActionListener implements ItemListener {
+        private int myListIndex;
+        private int myTokenIndex;
+
+        public ChangeTriggerActionListener(int listIndex, int tokenIndex) {
+            myListIndex = listIndex;
+            myTokenIndex = tokenIndex;
+        }
+
+        public void itemStateChanged(ItemEvent e) {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                List<String> triggers = MyTunesRss.CONFIG.getDatabaseCronTriggers();
+                String[] tokens = triggers.remove(myListIndex).split(" ");
+                tokens[myTokenIndex] = ((TriggerItem)e.getItem()).getKey();
+                triggers.add(myListIndex, StringUtils.join(tokens, " "));
+            }
+        }
+    }
+
+    public class DeleteTriggerActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int result = JOptionPane.showConfirmDialog(myRootPanel,
+                                                       MyTunesRssUtils.getBundleString("confirmation.deleteTrigger"),
+                                                       MyTunesRssUtils.getBundleString("confirmation.titleDeleteTrigger"),
+                                                       JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                MyTunesRss.CONFIG.getDatabaseCronTriggers().remove(Integer.parseInt(e.getActionCommand()));
+            }
+            refreshTriggers();
+        }
+    }
+
+    public static class TriggerItem {
+        private String myKey;
+        private String myValue;
+
+        public TriggerItem(String key, String value) {
+            myKey = key;
+            myValue = value;
+        }
+
+        public String getKey() {
+            return myKey;
+        }
+
+        @Override
+        public String toString() {
+            return myValue;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj != null && obj instanceof TriggerItem && myKey.equals(((TriggerItem)obj).myKey);
+        }
+
+        @Override
+        public int hashCode() {
+            return myKey.hashCode();
         }
     }
 }
