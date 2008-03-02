@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.settings;
 
 import com.intellij.uiDesigner.core.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.job.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.sql.*;
@@ -62,7 +63,7 @@ public class Database implements MyTunesRssEventListener {
         addButton.setToolTipText(MyTunesRssUtils.getBundleString("settings.newTriggerTooltip"));
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                MyTunesRss.CONFIG.getDatabaseCronTriggers().add("0 0 0 * * MON-SUN");
+                MyTunesRss.CONFIG.getDatabaseCronTriggers().add("0 0 0 ? * SUN-SAT");
                 refreshTriggers();
             }
         });
@@ -114,7 +115,7 @@ public class Database implements MyTunesRssEventListener {
     }
 
     private TriggerItem[] getDays() {
-        String[] keys = new String[] {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN", "MON-FRI", "MON-SUN", "SAT-SUN"};
+        String[] keys = new String[] {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN", "MON-FRI", "SUN-SAT", "SAT,SUN"};
         TriggerItem[] items = new TriggerItem[keys.length];
         for (int i = 0; i < keys.length; i++) {
             items[i] = new TriggerItem(keys[i], MyTunesRssUtils.getBundleString("settings.cron.day." + keys[i]));
@@ -133,11 +134,12 @@ public class Database implements MyTunesRssEventListener {
     }
 
     private TriggerItem[] getMinutes() {
-        TriggerItem[] values = new TriggerItem[16];
-        values[12] = new TriggerItem("0/5", "00/05");
-        values[13] = new TriggerItem("0/10", "00/10");
-        values[14] = new TriggerItem("0/15", "00/15");
-        values[15] = new TriggerItem("0/20", "00/20");
+        TriggerItem[] values = new TriggerItem[17];
+        values[12] = new TriggerItem("0/1", "00/01");
+        values[13] = new TriggerItem("0/5", "00/05");
+        values[14] = new TriggerItem("0/10", "00/10");
+        values[15] = new TriggerItem("0/15", "00/15");
+        values[16] = new TriggerItem("0/20", "00/20");
         for (int i = 0; i < 60; i += 5) {
             String key = Integer.toString(i);
             String value = (i < 10 ? "0" : "") + Integer.toString(i);
@@ -291,6 +293,7 @@ public class Database implements MyTunesRssEventListener {
                 String[] tokens = triggers.remove(myListIndex).split(" ");
                 tokens[myTokenIndex] = ((TriggerItem)e.getItem()).getKey();
                 triggers.add(myListIndex, StringUtils.join(tokens, " "));
+                MyTunesRssJobUtils.scheduleDatabaseJob();
             }
         }
     }
@@ -304,6 +307,7 @@ public class Database implements MyTunesRssEventListener {
             if (result == JOptionPane.YES_OPTION) {
                 MyTunesRss.CONFIG.getDatabaseCronTriggers().remove(Integer.parseInt(e.getActionCommand()));
             }
+            MyTunesRssJobUtils.scheduleDatabaseJob();
             refreshTriggers();
         }
     }

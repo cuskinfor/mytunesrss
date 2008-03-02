@@ -1,19 +1,17 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.task.*;
 import de.codewave.mytunesrss.jmx.*;
-import de.codewave.mytunesrss.job.*;
+import de.codewave.mytunesrss.task.*;
+import de.codewave.utils.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.pleasewait.*;
-import de.codewave.utils.*;
 import org.apache.commons.httpclient.*;
-import org.apache.commons.logging.*;
 import org.apache.commons.io.*;
+import org.apache.commons.logging.*;
 import org.apache.log4j.*;
 import org.apache.log4j.spi.*;
 import org.quartz.*;
-import org.quartz.Trigger;
 
 import javax.swing.*;
 import java.io.*;
@@ -41,18 +39,18 @@ public class MyTunesRssUtils {
 
     public static void showErrorMessage(JFrame parent, String message) {
         SwingUtils.showMessage(parent,
-            JOptionPane.ERROR_MESSAGE,
-            MyTunesRssUtils.getBundleString("error.title"),
-            message,
-            MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
+                               JOptionPane.ERROR_MESSAGE,
+                               MyTunesRssUtils.getBundleString("error.title"),
+                               message,
+                               MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
     }
 
     public static void showInfoMessage(JFrame parent, String message) {
         SwingUtils.showMessage(parent,
-            JOptionPane.INFORMATION_MESSAGE,
-            MyTunesRssUtils.getBundleString("info.title"),
-            message,
-            MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
+                               JOptionPane.INFORMATION_MESSAGE,
+                               MyTunesRssUtils.getBundleString("info.title"),
+                               message,
+                               MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
     }
 
     public static void executeTask(String title, String text, String cancelButtonText, boolean progressBar, PleaseWaitTask task) {
@@ -105,14 +103,16 @@ public class MyTunesRssUtils {
                 MyTunesRss.STREAMING_CACHE.clearCache();
             }
         }
-        try {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Shutting down quartz scheduler.");
-            }
-            MyTunesRss.QUARTZ_SCHEDULER.shutdown();
-        } catch (SchedulerException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not shutdown quartz scheduler.", e);
+        if (MyTunesRss.QUARTZ_SCHEDULER != null) {
+            try {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Shutting down quartz scheduler.");
+                }
+                MyTunesRss.QUARTZ_SCHEDULER.shutdown();
+            } catch (SchedulerException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not shutdown quartz scheduler.", e);
+                }
             }
         }
         if (LOG.isDebugEnabled()) {

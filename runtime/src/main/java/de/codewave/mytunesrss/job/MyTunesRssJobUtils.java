@@ -13,19 +13,6 @@ public class MyTunesRssJobUtils {
     private static final Log LOG = LogFactory.getLog(MyTunesRssJobUtils.class);
 
     /**
-     * Add all MyTunesRSS jobs to the scheduler.
-     */
-    public static void addJobs() {
-        try {
-            MyTunesRss.QUARTZ_SCHEDULER.addJob(new JobDetail(DatabaseUpdateJob.class.getSimpleName(), null, DatabaseUpdateJob.class), true);
-        } catch (SchedulerException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not add job to quartz scheduler.", e);
-            }
-        }
-    }
-
-    /**
      * Schedule the database update job for all cron triggers in the configuration. Remove possibly existing triggers for that job first.
      */
     public static void scheduleDatabaseJob() {
@@ -33,6 +20,7 @@ public class MyTunesRssJobUtils {
             for (String trigger : MyTunesRss.QUARTZ_SCHEDULER.getTriggerNames("DatabaseUpdate")) {
                 MyTunesRss.QUARTZ_SCHEDULER.unscheduleJob(trigger, "DatabaseUpdate");
             }
+            MyTunesRss.QUARTZ_SCHEDULER.addJob(new JobDetail(DatabaseUpdateJob.class.getSimpleName(), null, DatabaseUpdateJob.class), true);
             for (String cronTrigger : MyTunesRss.CONFIG.getDatabaseCronTriggers()) {
                 try {
                     Trigger trigger = new CronTrigger("crontrigger[" + cronTrigger + "]",
@@ -50,7 +38,7 @@ public class MyTunesRssJobUtils {
             }
         } catch (SchedulerException e) {
             if (LOG.isErrorEnabled()) {
-                LOG.error("Could not unschedule database update job.", e);
+                LOG.error("Could not schedule database update job.", e);
             }
         }
     }
