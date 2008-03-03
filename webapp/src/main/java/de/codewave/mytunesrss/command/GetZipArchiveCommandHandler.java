@@ -36,6 +36,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             }
             if (MyTunesRss.CONFIG.isLocalTempArchive()) {
                 File tempFile = File.createTempFile("MyTunesRSS_", null);
+                tempFile.deleteOnExit();
                 try {
                     createZipArchive(new FileOutputStream(tempFile), tracks, baseName, null);
                     FileSender fileSender = new FileSender(tempFile, "application/zip", (int)tempFile.length());
