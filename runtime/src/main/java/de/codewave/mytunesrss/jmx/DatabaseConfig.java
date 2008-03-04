@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.job.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.sql.*;
@@ -15,6 +16,7 @@ import java.text.*;
 import java.util.Date;
 
 import org.apache.commons.logging.*;
+import org.apache.commons.lang.*;
 
 /**
  * de.codewave.mytunesrss.jmx.DatabaseConfig
@@ -137,5 +139,63 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
     public void setIgnoreCoverArtworkFromFiles(boolean ignoreCoverArtwork) {
         MyTunesRss.CONFIG.setIgnoreArtwork(ignoreCoverArtwork);
         onChange();
+    }
+
+    public String addSchedule(String schedule) {
+        String technicalSchedule = getTechnicalSchedule(schedule);
+        if (technicalSchedule != null) {
+            MyTunesRss.CONFIG.getDatabaseCronTriggers().add(technicalSchedule);
+            MyTunesRssJobUtils.scheduleDatabaseJob();
+            onChange();
+            return MyTunesRssUtils.getBundleString("jmx.databaseScheduleAdded", schedule);
+        } else {
+            return MyTunesRssUtils.getBundleString("jmx.databaseScheduleInvalid", schedule);
+        }
+    }
+
+    public String[] getSchedules() {
+        String[] schedules = new String[MyTunesRss.CONFIG.getDatabaseCronTriggers().size()];
+        for (int i = 0; i < schedules.length && i < MyTunesRss.CONFIG.getDatabaseCronTriggers().size(); i++) {
+            schedules[i] = getDisplaySchedule(MyTunesRss.CONFIG.getDatabaseCronTriggers().get(i));
+        }
+        return schedules;
+    }
+
+    private String getDisplaySchedule(String technicalSchedule) {
+        String[] tokens = technicalSchedule.split(" ");
+        return tokens[5] + " " + tokens[2] + " " + tokens[1];
+    }
+
+    public String removeSchedule(int index) {
+        if (MyTunesRss.CONFIG.getDatabaseCronTriggers().size() > index) {
+            String schedule = MyTunesRss.CONFIG.getDatabaseCronTriggers().remove(index);
+            MyTunesRssJobUtils.scheduleDatabaseJob();
+            onChange();
+            return MyTunesRssUtils.getBundleString("jmx.databaseScheduleRemoved", getDisplaySchedule(schedule));
+        } else {
+            return MyTunesRssUtils.getBundleString("jmx.noSuchDatabaseScheduleToRemove", index);
+        }
+    }
+
+    private String getTechnicalSchedule(String schedule) {
+        String[] tokens = schedule.split(" ");
+        if (tokens.length == 3) {
+            tokens[0] = getCorrectTechnicalToken(MyTunesRssJobUtils.getDays(), tokens[0]);
+            tokens[1] = getCorrectTechnicalToken(MyTunesRssJobUtils.getHours(), tokens[1]);
+            tokens[2] = getCorrectTechnicalToken(MyTunesRssJobUtils.getMinutes(), tokens[2]);
+            if (tokens[0] != null && tokens[1] != null && tokens[2] != null) {
+                return "* " + tokens[2] + " " + tokens[1] + " ? * " + tokens[0];
+            }
+        }
+        return null;
+    }
+
+    private String getCorrectTechnicalToken(MyTunesRssJobUtils.TriggerItem[] items, String sample) {
+        for (MyTunesRssJobUtils.TriggerItem item : items) {
+            if (sample.trim().equalsIgnoreCase(item.getKey()) || sample.trim().equalsIgnoreCase(item.toString())) {
+                return item.getKey();
+            }
+        }
+        return null;
     }
 }

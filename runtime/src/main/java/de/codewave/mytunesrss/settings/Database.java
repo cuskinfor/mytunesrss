@@ -6,13 +6,13 @@ package de.codewave.mytunesrss.settings;
 
 import com.intellij.uiDesigner.core.*;
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.job.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.job.*;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.swing.*;
-import org.apache.commons.logging.*;
 import org.apache.commons.lang.*;
+import org.apache.commons.logging.*;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -94,16 +94,17 @@ public class Database implements MyTunesRssEventListener {
 
     private void addTrigger(String triggerText, int row) {
         String[] triggerParts = triggerText.split(" ");
-        JComboBox comboBox = new JComboBox(getDays());
-        comboBox.setSelectedItem(new TriggerItem(triggerParts[5], MyTunesRssUtils.getBundleString("settings.cron.day." + triggerParts[5])));
+        JComboBox comboBox = new JComboBox(MyTunesRssJobUtils.getDays());
+        comboBox.setSelectedItem(new MyTunesRssJobUtils.TriggerItem(triggerParts[5], MyTunesRssUtils.getBundleString(
+                "settings.cron.day." + triggerParts[5])));
         comboBox.addItemListener(new ChangeTriggerActionListener(row, 5));
         addPanelComponent(comboBox, createConstraints(row, 0));
-        comboBox = new JComboBox(getHours());
-        comboBox.setSelectedItem(new TriggerItem(triggerParts[2], triggerParts[2]));
+        comboBox = new JComboBox(MyTunesRssJobUtils.getHours());
+        comboBox.setSelectedItem(new MyTunesRssJobUtils.TriggerItem(triggerParts[2], triggerParts[2]));
         comboBox.addItemListener(new ChangeTriggerActionListener(row, 2));
         addPanelComponent(comboBox, createConstraints(row, 1));
-        comboBox = new JComboBox(getMinutes());
-        comboBox.setSelectedItem(new TriggerItem(triggerParts[1], triggerParts[1]));
+        comboBox = new JComboBox(MyTunesRssJobUtils.getMinutes());
+        comboBox.setSelectedItem(new MyTunesRssJobUtils.TriggerItem(triggerParts[1], triggerParts[1]));
         comboBox.addItemListener(new ChangeTriggerActionListener(row, 1));
         addPanelComponent(comboBox, createConstraints(row, 2));
         JButton delete = new JButton(MyTunesRssUtils.getBundleString("settings.deleteTrigger"));
@@ -112,40 +113,6 @@ public class Database implements MyTunesRssEventListener {
         delete.setOpaque(false);
         delete.addActionListener(myDeleteTriggerActionListener);
         addPanelComponent(delete, createConstraints(row, 3));
-    }
-
-    private TriggerItem[] getDays() {
-        String[] keys = new String[] {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN", "MON-FRI", "SUN-SAT", "SAT,SUN"};
-        TriggerItem[] items = new TriggerItem[keys.length];
-        for (int i = 0; i < keys.length; i++) {
-            items[i] = new TriggerItem(keys[i], MyTunesRssUtils.getBundleString("settings.cron.day." + keys[i]));
-        }
-        return items;
-    }
-
-    private TriggerItem[] getHours() {
-        TriggerItem[] values = new TriggerItem[25];
-        values[24] = new TriggerItem("0/1", "00/01");
-        for (int i = 0; i < 24; i++) {
-            String key = (i < 10 ? "0" : "") + Integer.toString(i);
-            values[i] = new TriggerItem(key, key);
-        }
-        return values;
-    }
-
-    private TriggerItem[] getMinutes() {
-        TriggerItem[] values = new TriggerItem[17];
-        values[12] = new TriggerItem("0/1", "00/01");
-        values[13] = new TriggerItem("0/5", "00/05");
-        values[14] = new TriggerItem("0/10", "00/10");
-        values[15] = new TriggerItem("0/15", "00/15");
-        values[16] = new TriggerItem("0/20", "00/20");
-        for (int i = 0; i < 60; i += 5) {
-            String key = Integer.toString(i);
-            String value = (i < 10 ? "0" : "") + Integer.toString(i);
-            values[i / 5] = new TriggerItem(key, value);
-        }
-        return values;
     }
 
     private GridConstraints createConstraints(int row, int column) {
@@ -291,7 +258,7 @@ public class Database implements MyTunesRssEventListener {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 List<String> triggers = MyTunesRss.CONFIG.getDatabaseCronTriggers();
                 String[] tokens = triggers.remove(myListIndex).split(" ");
-                tokens[myTokenIndex] = ((TriggerItem)e.getItem()).getKey();
+                tokens[myTokenIndex] = ((MyTunesRssJobUtils.TriggerItem)e.getItem()).getKey();
                 triggers.add(myListIndex, StringUtils.join(tokens, " "));
                 MyTunesRssJobUtils.scheduleDatabaseJob();
             }
@@ -309,35 +276,6 @@ public class Database implements MyTunesRssEventListener {
             }
             MyTunesRssJobUtils.scheduleDatabaseJob();
             refreshTriggers();
-        }
-    }
-
-    public static class TriggerItem {
-        private String myKey;
-        private String myValue;
-
-        public TriggerItem(String key, String value) {
-            myKey = key;
-            myValue = value;
-        }
-
-        public String getKey() {
-            return myKey;
-        }
-
-        @Override
-        public String toString() {
-            return myValue;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj != null && obj instanceof TriggerItem && myKey.equals(((TriggerItem)obj).myKey);
-        }
-
-        @Override
-        public int hashCode() {
-            return myKey.hashCode();
         }
     }
 }

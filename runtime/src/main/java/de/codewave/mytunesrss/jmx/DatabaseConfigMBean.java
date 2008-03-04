@@ -37,4 +37,10 @@ public interface DatabaseConfigMBean {
     boolean isIgnoreCoverArtworkFromFiles();
 
     void setIgnoreCoverArtworkFromFiles(boolean ignoreCoverArtwork);
+
+    String[] getSchedules();
+
+    String addSchedule(String schedule);
+
+    String removeSchedule(int index);
 }
