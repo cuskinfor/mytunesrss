@@ -6,6 +6,9 @@
     <body>
 
         <release version="3.2" date="????-??-??" description="Minor release">
+            <action dev="mdescher" type="update">
+                JW Media Player 3.15
+            </action>
             <action dev="mdescher" type="add">
                 Database updates based on quartz cron expression triggers no matter whether or not the
                 server is running.
