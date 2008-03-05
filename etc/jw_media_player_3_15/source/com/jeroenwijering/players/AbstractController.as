@@ -10,7 +10,7 @@ import com.jeroenwijering.players.*;
 import com.jeroenwijering.utils.*;
 
 
-class com.jeroenwijering.players.AbstractController 
+class com.jeroenwijering.players.AbstractController
 	implements com.jeroenwijering.feeds.FeedListener {
 
 
@@ -36,6 +36,12 @@ class com.jeroenwijering.players.AbstractController
 	function AbstractController(cfg:Object,fed:Object) {
 		config = cfg;
 		feeder = fed;
+		if(config["shuffle"] == "true") {
+            randomizer = new Randomizer(feeder.feed);
+			currentItem = randomizer.pick();
+		} else {
+			currentItem = 0;
+		}
 		feeder.addListener(this);
 	};
 
@@ -48,7 +54,7 @@ class com.jeroenwijering.players.AbstractController
 	public function getEvent(typ:String,prm:Number) {
 		trace("controller: "+typ+": "+prm);
 		switch(typ) {
-			case "playpause": 
+			case "playpause":
 				setPlaypause();
 				break;
 			case "prev":
@@ -83,6 +89,9 @@ class com.jeroenwijering.players.AbstractController
 				break;
 			case "audio":
 				setAudio();
+				break;
+			case "shuffle":
+				setShuffle();
 				break;
 			default:
 				trace("controller: incompatible event received");
@@ -139,6 +148,22 @@ class com.jeroenwijering.players.AbstractController
 
 	/** Switch audiotrack on and off **/
 	private function setAudio() {};
+
+
+	/** Switch shuffle on and off **/
+	private function setShuffle() {
+		var tgt = config["clip"].controlbar;
+		if(config["shuffle"] == "true") {
+			config["shuffle"] = "false";
+    	    tgt.shufOn._visible = false;
+            tgt.shufOff._visible = true;
+		} else {
+			config["shuffle"] = "true";
+            randomizer = new Randomizer(feeder.feed);
+    	    tgt.shufOff._visible = false;
+            tgt.shufOn._visible = true;
+		}
+	};
 
 
 	/** Sending changes to all registered models. **/

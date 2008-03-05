@@ -11,8 +11,8 @@ import com.jeroenwijering.utils.*;
 import com.jeroenwijering.feeds.FeedListener;
 
 
-class com.jeroenwijering.players.ControlbarView extends AbstractView 
-	implements FeedListener { 
+class com.jeroenwijering.players.ControlbarView extends AbstractView
+	implements FeedListener {
 
 
 	/** currently active item **/
@@ -30,7 +30,7 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 
 
 	/** Constructor **/
-	function ControlbarView(ctr:AbstractController,cfg:Object,fed:Object) { 
+	function ControlbarView(ctr:AbstractController,cfg:Object,fed:Object) {
 		super(ctr,cfg,fed);
 		setColorsClicks();
 		setDimensions();
@@ -50,39 +50,39 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 		tgt.playpause.col1.setRGB(config["frontcolor"]);
 		tgt.playpause.col2 = new Color(tgt.playpause.pas);
 		tgt.playpause.col2.setRGB(config["frontcolor"]);
-		tgt.playpause.onRollOver = function() { 
+		tgt.playpause.onRollOver = function() {
 			this.col1.setRGB(ref.config["lightcolor"]);
 			this.col2.setRGB(ref.config["lightcolor"]);
 		};
-		tgt.playpause.onRollOut = function() { 
+		tgt.playpause.onRollOut = function() {
 			this.col1.setRGB(ref.config["frontcolor"]);
 			this.col2.setRGB(ref.config["frontcolor"]);
 		};
 		tgt.playpause.onRelease = function() { ref.sendEvent("playpause"); };
 		tgt.stop.col = new Color(tgt.stop.icn);
 		tgt.stop.col.setRGB(config["frontcolor"]);
-		tgt.stop.onRollOver = function() { 
+		tgt.stop.onRollOver = function() {
 			this.col.setRGB(ref.config["lightcolor"]);
 		};
-		tgt.stop.onRollOut = function() { 
+		tgt.stop.onRollOut = function() {
 			this.col.setRGB(ref.config["frontcolor"]);
 		};
 		tgt.stop.onRelease = function() { ref.sendEvent("stop"); };
 		tgt.prev.col = new Color(tgt.prev.icn);
 		tgt.prev.col.setRGB(config["frontcolor"]);
-		tgt.prev.onRollOver = function() { 
+		tgt.prev.onRollOver = function() {
 			this.col.setRGB(ref.config["lightcolor"]);
 		};
-		tgt.prev.onRollOut = function() { 
+		tgt.prev.onRollOut = function() {
 			this.col.setRGB(ref.config["frontcolor"]);
 		};
 		tgt.prev.onRelease = function() { ref.sendEvent("prev"); };
 		tgt.next.col = new Color(tgt.next.icn);
 		tgt.next.col.setRGB(config["frontcolor"]);
-		tgt.next.onRollOver = function() { 
+		tgt.next.onRollOver = function() {
 			this.col.setRGB(ref.config["lightcolor"]);
 		};
-		tgt.next.onRollOut = function() { 
+		tgt.next.onRollOut = function() {
 			this.col.setRGB(ref.config["frontcolor"]);
 		};
 		tgt.next.onRelease = function() { ref.sendEvent("next"); };
@@ -94,16 +94,16 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 		tgt.scrub.col2.setRGB(config["frontcolor"]);
 		tgt.scrub.col3 = new Color(tgt.scrub.bck);
 		tgt.scrub.col3.setRGB(config["frontcolor"]);
-		tgt.scrub.bck.onRollOver = function() { 
-			this._parent.col.setRGB(ref.config["lightcolor"]); 
+		tgt.scrub.bck.onRollOver = function() {
+			this._parent.col.setRGB(ref.config["lightcolor"]);
 		};
-		tgt.scrub.bck.onRollOut = function() { 
-			this._parent.col.setRGB(ref.config["frontcolor"]); 
+		tgt.scrub.bck.onRollOut = function() {
+			this._parent.col.setRGB(ref.config["frontcolor"]);
 		};
 		tgt.scrub.bck.onPress= function() {
 			this.onEnterFrame = function() {
 				var xm = this._parent._xmouse;
-				if(xm < this._parent.bck._width + this._parent.bck._x && 
+				if(xm < this._parent.bck._width + this._parent.bck._x &&
 					xm > this._parent.bck._x) {
 					this._parent.icn._x = this._parent._xmouse - 1;
 				}
@@ -120,11 +120,11 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 		tgt.fs.col2 = new Color(tgt.fs.fs);
 		tgt.fs.col.setRGB(ref.config["frontcolor"]);
 		tgt.fs.col2.setRGB(ref.config["frontcolor"]);
-		tgt.fs.onRollOver = function() { 
-			this.col1.setRGB(ref.config["lightcolor"]); 
+		tgt.fs.onRollOver = function() {
+			this.col1.setRGB(ref.config["lightcolor"]);
 			this.col2.setRGB(ref.config["lightcolor"]);
 		};
-		tgt.fs.onRollOut = function() { 
+		tgt.fs.onRollOut = function() {
 			this.col1.setRGB(ref.config["frontcolor"]);
 			this.col2.setRGB(ref.config["frontcolor"]);
 		};
@@ -135,10 +135,10 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 		};
 		tgt.cc.col = new Color(tgt.cc.icn);
 		tgt.cc.col.setRGB(ref.config["frontcolor"]);
-		tgt.cc.onRollOver = function() { 
-			this.col.setRGB(ref.config["lightcolor"]); 
+		tgt.cc.onRollOver = function() {
+			this.col.setRGB(ref.config["lightcolor"]);
 		};
-		tgt.cc.onRollOut = function() { 
+		tgt.cc.onRollOut = function() {
 			this.col.setRGB(ref.config["frontcolor"]);
 		};
 		tgt.cc.onRelease = function() {
@@ -146,10 +146,10 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 		};
 		tgt.au.col = new Color(tgt.au.icn);
 		tgt.au.col.setRGB(ref.config["frontcolor"]);
-		tgt.au.onRollOver = function() { 
-			this.col.setRGB(ref.config["lightcolor"]); 
+		tgt.au.onRollOver = function() {
+			this.col.setRGB(ref.config["lightcolor"]);
 		};
-		tgt.au.onRollOut = function() { 
+		tgt.au.onRollOut = function() {
 			this.col.setRGB(ref.config["frontcolor"]);
 		};
 		tgt.au.onRelease = function() {
@@ -157,14 +157,36 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 		};
 		tgt.dl.col = new Color(tgt.dl.icn);
 		tgt.dl.col.setRGB(ref.config["frontcolor"]);
-		tgt.dl.onRollOver = function() { 
-			this.col.setRGB(ref.config["lightcolor"]); 
+		tgt.dl.onRollOver = function() {
+			this.col.setRGB(ref.config["lightcolor"]);
 		};
-		tgt.dl.onRollOut = function() { 
+		tgt.dl.onRollOut = function() {
 			this.col.setRGB(ref.config["frontcolor"]);
 		};
 		tgt.dl.onRelease = function() {
 			ref.sendEvent("getlink",ref.currentItem);
+		};
+		tgt.shufOn.col = new Color(tgt.shufOn.icn);
+		tgt.shufOn.col.setRGB(ref.config["frontcolor"]);
+		tgt.shufOn.onRollOver = function() {
+			this.col.setRGB(ref.config["lightcolor"]);
+		};
+		tgt.shufOn.onRollOut = function() {
+			this.col.setRGB(ref.config["frontcolor"]);
+		};
+		tgt.shufOn.onRelease = function() {
+			ref.sendEvent("shuffle",ref.currentItem);
+		};
+		tgt.shufOff.col = new Color(tgt.dl.icn);
+		tgt.shufOff.col.setRGB(ref.config["frontcolor"]);
+		tgt.shufOff.onRollOver = function() {
+			this.col.setRGB(ref.config["lightcolor"]);
+		};
+		tgt.shufOff.onRollOut = function() {
+			this.col.setRGB(ref.config["frontcolor"]);
+		};
+		tgt.shufOff.onPress = function() {
+			ref.sendEvent("shuffle",ref.currentItem);
 		};
 		tgt.vol.col = new Color(tgt.vol.bar);
 		tgt.vol.col.setRGB(config["frontcolor"]);
@@ -172,22 +194,22 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 		tgt.vol.col2.setRGB(config["frontcolor"]);
 		tgt.vol.col3 = new Color(tgt.vol.icn);
 		tgt.vol.col3.setRGB(config["frontcolor"]);
-		tgt.vol.onRollOver = function() { 
+		tgt.vol.onRollOver = function() {
 			this.col.setRGB(ref.config["lightcolor"]);
 			this.col3.setRGB(ref.config["lightcolor"]);
 		};
-		tgt.vol.onRollOut = function() { 
+		tgt.vol.onRollOut = function() {
 			this.col.setRGB(ref.config["frontcolor"]);
 			this.col3.setRGB(ref.config["frontcolor"]);
 		};
-		tgt.vol.onRelease = function() { 
-			this.onEnterFrame = function() { 
+		tgt.vol.onRelease = function() {
+			this.onEnterFrame = function() {
 				this.msk._width = this._xmouse-12;
-			}; 
+			};
 		};
-		tgt.vol.onRelease = tgt.vol.onReleaseOutside = function() { 
+		tgt.vol.onRelease = tgt.vol.onReleaseOutside = function() {
 			ref.sendEvent("volume",(this._xmouse-12)*5);
-			delete this.onEnterFrame; 
+			delete this.onEnterFrame;
 		};
 	};
 
@@ -207,7 +229,7 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 			tgt.fs.ns._visible = true;
 		} else if(config["displayheight"] == config["height"]) {
 			tgt._y = config["displayheight"] - 40;
-			if(config["displaywidth"] > 450 && 
+			if(config["displaywidth"] > 450 &&
 				config["displaywidth"] == config["width"]) {
 				tgt._x = Math.round(Stage.width/2-200);
 			} else {
@@ -236,10 +258,10 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 				cbw /= 2;
 			}
 		}
-		tgt.back._width = cbw;
+        tgt.back._width = cbw;
 		// all buttons
-		if(config["displayheight"] < config["height"] - 40 ||
-			config["displaywidth"] < config["width"] - 40 || 
+		if(//config["displayheight"] < config["height"] - 40 ||
+			//config["displaywidth"] < config["width"] - 40 ||
 			cbw < 200 || feeder.feed.length < 2) {
 			tgt.prev._visible = tgt.next._visible = false;
 			tgt.scrub.shd._width = cbw-17;
@@ -290,9 +312,23 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 		} else {
 			tgt.dl._visible = false;
 		}
+		if (config["showshuffle"] == "true") {
+			xp -= 24;
+			tgt.scrub.shd._width -= 24;
+			tgt.shufOn._x = xp;
+			tgt.shufOff._x = xp;
+			if (config["shuffle"] == "true") {
+    			tgt.shufOff._visible = false;
+			} else {
+    			tgt.shufOn._visible = false;
+			}
+		} else {
+			tgt.shufOn._visible = false;
+			tgt.shufOff._visible = false;
+		}
 		if((Stage["displayState"] == undefined ||
 			config["usefullscreen"] == "false" ||
-			feeder.onlymp3s == true) && 
+			feeder.onlymp3s == true) &&
 			config["fsbuttonlink"] == undefined) {
 			tgt.fs._visible = false;
 		} else {
@@ -305,12 +341,12 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 			tgt.scrub.elpTxt._visible = tgt.scrub.remTxt._visible = false;
 			tgt.scrub.bar._x = tgt.scrub.bck._x = tgt.scrub.icn._x = 5;
 			barWidths = tgt.scrub.bck._width = tgt.scrub.shd._width - 10;
-		} else {	
+		} else {
 			tgt.scrub.elpTxt._visible = tgt.scrub.remTxt._visible = true;
 			tgt.scrub.bar._x = tgt.scrub.bck._x = tgt.scrub.icn._x = 42;
 			barWidths = tgt.scrub.bck._width = tgt.scrub.shd._width - 84;
 			tgt.scrub.remTxt._x = tgt.scrub.shd._width - 39;
-		}	
+		}
 		tgt.scrub.bar._width = 0;
 	};
 
@@ -341,7 +377,7 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 		itemProgress = Math.round(rem/(itemLength)*100);
 		var tgt = config["clip"].controlbar.scrub;
 		var w = Math.floor(elp/(elp+rem)*barWidths) - 2;
-		if(rem > 0) { 
+		if(rem > 0) {
 			tgt.icn._visible = true;
 			tgt.bar._visible = true;
 			elp == 0 || w < 2 ? tgt.bar._width = 0: tgt.bar._width = w - 2;
@@ -364,9 +400,9 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 	};
 
 
-	/** New item is loaded **/ 
-	private function setItem(prm:Number) { 
-		wasLoaded = false; 
+	/** New item is loaded **/
+	private function setItem(prm:Number) {
+		wasLoaded = false;
 		currentItem = prm;
 		config["clip"].controlbar.scrub.icn._alpha = 100;
 	};
@@ -401,16 +437,16 @@ class com.jeroenwijering.players.ControlbarView extends AbstractView
 			config["height"] = config["displayheight"] = Stage.height;
 			config["width"] = config["displaywidth"] = Stage.width;
 		}
-		setDimensions(); 
+		setDimensions();
 	};
 
 
 	/** Catches fullscreen escape  **/
 	public function onFullScreen(fs:Boolean) {
-		if(fs == false) { 
+		if(fs == false) {
 			setDimensions();
 			Animations.fadeIn(config['clip'].controlbar);
-		} else { 
+		} else {
 			hideInt = setInterval(this,"hideBar",500);
 		}
 	};

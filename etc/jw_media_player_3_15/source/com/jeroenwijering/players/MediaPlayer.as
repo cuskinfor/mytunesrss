@@ -31,20 +31,21 @@ class com.jeroenwijering.players.MediaPlayer extends AbstractPlayer {
 		logo:undefined,
 		showdigits:"true",
 		showdownload:"false",
+		showshuffle:"true",
 		showeq:"false",
 		showicons:"true",
 		shownavigation:"true",
 		showstop:"false",
-		thumbsinplaylist:"true",
+		thumbsinplaylist:"false",
 		usefullscreen:"true",
 		fsbuttonlink:undefined,
-		autostart:"false",
+		autostart:"true",
 		bufferlength:3,
 		deblocking:4,
 		overstretch:"false",
-		repeat:"false",
+		repeat:"list",
 		rotatetime:5,
-		shuffle:"true",
+		shuffle:"false",
 		smoothing:"true",
 		volume:80,
 		bwfile:"100k.jpg",
@@ -82,7 +83,7 @@ class com.jeroenwijering.players.MediaPlayer extends AbstractPlayer {
 			var bwm = new ContextMenuItem("Detected bandwidth: "+kbps+" kbps");
 			bwm.separatorBefore = true;
 			ref.manager.context.customItems.push(bwm);
-			if(ref.config['enablejs'] == "true" && 
+			if(ref.config['enablejs'] == "true" &&
 				flash.external.ExternalInterface.available) {
 				flash.external.ExternalInterface.call("getBandwidth",kbps);
 			}
@@ -116,7 +117,7 @@ class com.jeroenwijering.players.MediaPlayer extends AbstractPlayer {
 			var plv = new PlaylistView(controller,config,feeder);
 			vws.push(plv);
 		} else {
-			config["clip"].playlist._visible = 
+			config["clip"].playlist._visible =
 				config["clip"].playlistmask._visible  = false;
 		}
 		if(config["usekeys"] == "true") {
