@@ -1,4 +1,6 @@
 var tooltipElement;
+var mouseX;
+var mouseY;
 
 document.onmousemove = updateTooltipPosition;
 
@@ -59,18 +61,21 @@ function getElementValue(element) {
 }
 
 function updateTooltipPosition(e) {
-    var x = (document.all) ? window.event.x + document.body.scrollLeft : e.pageX;
-    var y = (document.all) ? window.event.y + document.body.scrollTop  : e.pageY;
+    mouseX = (document.all) ? window.event.x + document.body.scrollLeft : e.pageX;
+    mouseY = (document.all) ? window.event.y + document.body.scrollTop  : e.pageY;
     if (tooltipElement != null) {
-        tooltipElement.style.position = "fixed";
-        tooltipElement.style.left = (x + 20) + "px";
-        tooltipElement.style.top = (y + 20) + "px";
+        tooltipElement.style.position = "absolute";
+        tooltipElement.style.left = (mouseX + 20) + "px";
+        tooltipElement.style.top = (mouseY + 20) + "px";
     }
 }
 
 function showTooltip(element) {
     tooltipElement = document.getElementById("tooltip_" + element.id);
     if (tooltipElement != null) {
+        tooltipElement.style.position = "absolute";
+        tooltipElement.style.left = (mouseX + 20) + "px";
+        tooltipElement.style.top = (mouseY + 20) + "px";
         tooltipElement.style.display = "block";
     }
 }

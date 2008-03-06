@@ -7,6 +7,9 @@
 
         <release version="3.1.6" date="????-??-??" description="Bugfix release">
             <action dev="mdescher" type="fix">
+                Tooltip javascript was buggy.
+            </action>
+            <action dev="mdescher" type="fix">
                 Event driven GUI enabling/disabling for database, directories.
             </action>
             <action dev="mdescher" type="fix">
