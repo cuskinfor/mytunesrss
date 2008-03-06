@@ -141,7 +141,7 @@
                 </c:if>
                 <c:if test="${authUser.player && config.showPlayer}">
                     <td class="icon">
-                        <a href="#" onclick="openPlayer('<mtt:flashplayer playlistParams="playlist=${playlist.id}" filename="${mtfn:webSafeFileName(playlist.name)}.xspf"/>'); return false">
+                        <a href="#" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=playlist=${playlist.id}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:webSafeFileName(playlist.name)}.xspf</mt:encrypt>'); return false">
                             <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                     </td>
                 </c:if>

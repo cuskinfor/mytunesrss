@@ -139,7 +139,7 @@
                         </c:if>
                         <c:if test="${authUser.player && config.showPlayer}">
                             <td class="icon">
-                                <a href="#" onclick="openPlayer('<mtt:flashplayer playlistParams="album=${cwfn:encodeUrl(mtfn:encode64(album.name))}" filename="${mtfn:virtualAlbumName(album)}.xspf"/>'); return false">
+                                <a href="#" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualAlbumName(album)}.xspf</mt:encrypt>'); return false">
                                     <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                             </td>
@@ -195,7 +195,7 @@
                         </c:if>
                         <c:if test="${authUser.player && config.showPlayer}">
                             <td class="icon">
-                                <a href="#" onclick="openPlayer('<mtt:flashplayer playlistParams="fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}" filename="${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xspf"/>'); return false">
+                                <a href="#" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xspf</mt:encrypt>'); return false">
                                     <img src="${appUrl}/images/player${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                             </td>
@@ -265,7 +265,7 @@
                         </c:if>
                         <c:if test="${authUser.player && config.showPlayer}">
                             <td class="icon">
-                                <a href="#" onclick="openPlayer('<mtt:flashplayer playlistParams="artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}" filename="${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xspf"/>'); return false">
+                                <a href="#" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xspf</mt:encrypt>'); return false">
                                     <img src="${appUrl}/images/player${cwfn:choose(fn:length(albums) % 2 == 0, '_odd', '')}.gif"
                                          alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                             </td>

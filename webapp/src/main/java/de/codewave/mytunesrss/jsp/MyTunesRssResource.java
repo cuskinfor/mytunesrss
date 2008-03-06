@@ -30,6 +30,7 @@ public enum MyTunesRssResource {
     BrowseServers("/browse_servers.jsp"),
     UploadProgress("/upload_progress.jsp"),
     BrowseGenre("/browse_genre.jsp"),
+    Jukebox("/jukebox.jsp"),
     UploadFinished("/upload_finished.jsp");
 
     private String myValue;
