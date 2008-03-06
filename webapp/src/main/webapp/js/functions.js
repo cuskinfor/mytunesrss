@@ -62,7 +62,7 @@ function updateTooltipPosition(e) {
     var x = (document.all) ? window.event.x + document.body.scrollLeft : e.pageX;
     var y = (document.all) ? window.event.y + document.body.scrollTop  : e.pageY;
     if (tooltipElement != null) {
-        tooltipElement.style.position = "fixed";
+        tooltipElement.style.position = "absolute";
         tooltipElement.style.left = (x + 20) + "px";
         tooltipElement.style.top = (y + 20) + "px";
     }
