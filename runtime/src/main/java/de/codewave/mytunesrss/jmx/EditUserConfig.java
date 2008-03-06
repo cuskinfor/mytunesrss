@@ -134,6 +134,24 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         onChange();
     }
 
+    public boolean isPermissionCreatePlaylists() {
+        return MyTunesRss.CONFIG.getUser(myUsername).isCreatePlaylists();
+    }
+
+    public void setPermissionCreatePlaylists(boolean permissionCreatePlaylists) {
+        MyTunesRss.CONFIG.getUser(myUsername).setCreatePlaylists(permissionCreatePlaylists);
+        onChange();
+    }
+
+    public boolean isPermissionEditWebSettings() {
+        return MyTunesRss.CONFIG.getUser(myUsername).isEditWebSettings();
+    }
+
+    public void setPermissionEditWebSettings(boolean permissionEditWebSettings) {
+        MyTunesRss.CONFIG.getUser(myUsername).setEditWebSettings(permissionEditWebSettings);
+        onChange();
+    }
+
     public boolean isPermissionTranscoding() {
         return MyTunesRss.CONFIG.getUser(myUsername).isTranscoder();
     }

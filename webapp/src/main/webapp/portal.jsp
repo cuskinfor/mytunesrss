@@ -27,9 +27,11 @@
     <h1 class="search" onclick="window.open('http://www.codewave.de')" style="cursor: pointer"><span><fmt:message key="myTunesRss" /></span></h1>
 
     <ul class="links">
-        <li><a href="${servletUrl}/showSettings/${auth}">
-            <fmt:message key="doSettings" />
-        </a></li>
+        <c:if test="${authUser.editWebSettings}">
+            <li><a href="${servletUrl}/showSettings/${auth}">
+                <fmt:message key="doSettings" />
+            </a></li>
+        </c:if>
         <c:if test="${registered}">
             <li><a href="${servletUrl}/browseServers/${auth}">
                 <fmt:message key="browseServers" />
@@ -56,19 +58,21 @@
                     <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=1</mt:encrypt>" style="background-image:url('${appUrl}/images/library_small.gif');">
                         <fmt:message key="browseLibrary" />
                     </a>
-                    <c:choose>
-                        <c:when test="${empty sessionScope.playlist}">
-                            <a href="${servletUrl}/showPlaylistManager/${auth}" style="background-image:url('${appUrl}/images/feeds_small.gif');">
-                                <fmt:message key="managePlaylists" />
-                            </a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="${servletUrl}/editPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"
-                               style="background-image:url('${appUrl}/images/feeds_small.gif');">
-                                <fmt:message key="finishPlaylist" />
-                            </a>
-                        </c:otherwise>
-                    </c:choose>
+                    <c:if test="${authUser.createPlaylists}">
+                        <c:choose>
+                            <c:when test="${empty sessionScope.playlist}">
+                                <a href="${servletUrl}/showPlaylistManager/${auth}" style="background-image:url('${appUrl}/images/feeds_small.gif');">
+                                    <fmt:message key="managePlaylists" />
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="${servletUrl}/editPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"
+                                   style="background-image:url('${appUrl}/images/feeds_small.gif');">
+                                    <fmt:message key="finishPlaylist" />
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:if>
                     <c:if test="${uploadLink}">
                         <a href="${servletUrl}/showUpload/${auth}" style="background-image:url('${appUrl}/images/upload_small.gif');">
                             <fmt:message key="showUpload" />

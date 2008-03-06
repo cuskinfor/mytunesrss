@@ -51,6 +51,14 @@ public interface EditUserConfigMBean {
 
     void setPermissionSpecialPlaylists(boolean permissionSpecialPlaylists);
 
+    boolean isPermissionCreatePlaylists();
+
+    void setPermissionCreatePlaylists(boolean permissionCreatePlaylists);
+
+    boolean isPermissionEditWebSettings();
+
+    void setPermissionEditWebSettings(boolean permissionEditWebSettings);
+
     void disableQuota();
 
     void setQuotaTypeToDay();

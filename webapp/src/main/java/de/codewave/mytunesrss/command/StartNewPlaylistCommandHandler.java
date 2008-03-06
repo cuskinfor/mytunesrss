@@ -17,7 +17,7 @@ import java.util.*;
 public class StartNewPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        if (isSessionAuthorized()) {
+        if (isSessionAuthorized() && getAuthUser().isCreatePlaylists()) {
             getStates().put("addToPlaylistMode", Boolean.TRUE);
             getSession().setAttribute("playlist", new Playlist());
             getSession().setAttribute("playlistContent", new LinkedHashSet<Track>());

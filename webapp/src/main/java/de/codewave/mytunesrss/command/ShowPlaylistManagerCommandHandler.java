@@ -18,18 +18,22 @@ public class ShowPlaylistManagerCommandHandler extends MyTunesRssCommandHandler 
 
     @Override
     public void executeAuthorized() throws Exception {
-        DataStoreQuery.QueryResult<Playlist> queryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), PlaylistType.MyTunes, null, false, true));
-        int pageSize = getWebConfig().getEffectivePageSize();
-        List<Playlist> playlists;
-        if (pageSize > 0 && queryResult.getResultSize() > pageSize) {
-            int current = getSafeIntegerRequestParameter("index", 0);
-            Pager pager = createPager(queryResult.getResultSize(), current);
-            getRequest().setAttribute("pager", pager);
-            playlists = queryResult.getResults(current * pageSize, pageSize);
+        if (getAuthUser().isCreatePlaylists()) {
+            DataStoreQuery.QueryResult<Playlist> queryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), PlaylistType.MyTunes, null, false, true));
+            int pageSize = getWebConfig().getEffectivePageSize();
+            List<Playlist> playlists;
+            if (pageSize > 0 && queryResult.getResultSize() > pageSize) {
+                int current = getSafeIntegerRequestParameter("index", 0);
+                Pager pager = createPager(queryResult.getResultSize(), current);
+                getRequest().setAttribute("pager", pager);
+                playlists = queryResult.getResults(current * pageSize, pageSize);
+            } else {
+                playlists = queryResult.getResults();
+            }
+            getRequest().setAttribute("playlists", playlists);
+            forward(MyTunesRssResource.PlaylistManager);
         } else {
-            playlists = queryResult.getResults();
+            forward(MyTunesRssCommand.Login);
         }
-        getRequest().setAttribute("playlists", playlists);
-        forward(MyTunesRssResource.PlaylistManager);
     }
 }

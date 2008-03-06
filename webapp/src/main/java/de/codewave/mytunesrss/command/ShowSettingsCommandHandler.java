@@ -15,7 +15,7 @@ public class ShowSettingsCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        if (isSessionAuthorized()) {
+        if (isSessionAuthorized() && getAuthUser().isEditWebSettings()) {
             getRequest().setAttribute("themes", AddonsUtils.getThemes());
             getRequest().setAttribute("playlists", getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, null, false, false)).getResults());
             forward(MyTunesRssResource.Settings);

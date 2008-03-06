@@ -14,7 +14,7 @@ import de.codewave.utils.sql.*;
 public class DeletePlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        if (isSessionAuthorized()) {
+        if (isSessionAuthorized() && getAuthUser().isCreatePlaylists()) {
             String playlistId = getRequestParameter("playlist", null);
             DeletePlaylistStatement statement = new DeletePlaylistStatement();
             statement.setId(playlistId);

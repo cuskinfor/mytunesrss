@@ -19,7 +19,7 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        if (isSessionAuthorized()) {
+        if (isSessionAuthorized() && getAuthUser().isCreatePlaylists()) {
             String name = getRequestParameter("name", "");
             Playlist playlist = (Playlist)getSession().getAttribute("playlist");
             Collection<Track> playlistContent = (Collection<Track>)getSession().getAttribute("playlistContent");

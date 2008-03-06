@@ -37,7 +37,7 @@
             <c:if test="${sortOrder != 'Artist'}"><a href="#" onclick="sort('${servletUrl}', 'Artist'); return false"><fmt:message key="groupByArtist" /></a></c:if>
         </li>
     </c:if>
-    <c:if test="${empty sessionScope.playlist}">
+    <c:if test="${empty sessionScope.playlist && authUser.createPlaylists}">
         <li>
             <a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><fmt:message key="newPlaylist"/></a>
         </li>

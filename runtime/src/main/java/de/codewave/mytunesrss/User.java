@@ -49,6 +49,8 @@ public class User {
     private String myPlaylistId;
     private boolean mySaveWebSettings;
     private String myWebSettings;
+    private boolean myCreatePlaylists;
+    private boolean myEditWebSettings;
 
     public User(String name) {
         myName = name;
@@ -245,6 +247,22 @@ public class User {
         mySaveWebSettings = saveWebSettings;
     }
 
+    public boolean isCreatePlaylists() {
+        return myCreatePlaylists;
+    }
+
+    public void setCreatePlaylists(boolean createPlaylists) {
+        myCreatePlaylists = createPlaylists;
+    }
+
+    public boolean isEditWebSettings() {
+        return myEditWebSettings;
+    }
+
+    public void setEditWebSettings(boolean editWebSettings) {
+        myEditWebSettings = editWebSettings;
+    }
+
     @Override
     public boolean equals(Object object) {
         return object != null && object instanceof User && getName().equals(((User)object).getName());
@@ -334,6 +352,8 @@ public class User {
         setPlayer(JXPathUtils.getBooleanValue(settings, "featurePlayer", false));
         setChangePassword(JXPathUtils.getBooleanValue(settings, "featureChangePassword", false));
         setSpecialPlaylists(JXPathUtils.getBooleanValue(settings, "featureSpecialPlaylists", false));
+        setCreatePlaylists(JXPathUtils.getBooleanValue(settings, "featureCreatePlaylists", false));
+        setEditWebSettings(JXPathUtils.getBooleanValue(settings, "featureEditWebSettings", false));
         setResetTime(JXPathUtils.getLongValue(settings, "resetTime", System.currentTimeMillis()));
         setQuotaResetTime(JXPathUtils.getLongValue(settings, "quotaResetTime", System.currentTimeMillis()));
         setDownBytes(JXPathUtils.getLongValue(settings, "downBytes", 0));
@@ -363,6 +383,8 @@ public class User {
         users.appendChild(DOMUtils.createBooleanElement(settings, "featurePlayer", isPlayer()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureChangePassword", isChangePassword()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureSpecialPlaylists", isSpecialPlaylists()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureCreatePlaylists", isCreatePlaylists()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureEditWebSettings", isEditWebSettings()));
         users.appendChild(DOMUtils.createLongElement(settings, "resetTime", getResetTime()));
         users.appendChild(DOMUtils.createLongElement(settings, "quotaResetTime", getQuotaResetTime()));
         users.appendChild(DOMUtils.createLongElement(settings, "downBytes", getDownBytes()));

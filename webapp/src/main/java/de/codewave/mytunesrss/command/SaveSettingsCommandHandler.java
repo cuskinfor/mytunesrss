@@ -20,7 +20,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        if (isSessionAuthorized()) {
+        if (isSessionAuthorized() && getAuthUser().isEditWebSettings()) {
             WebConfig webConfig = getWebConfig();
             if (transferAndValidate(webConfig)) {
                 webConfig.save(getRequest(), getResponse());
