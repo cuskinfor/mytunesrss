@@ -186,7 +186,7 @@ public class MyTunesRss {
         if (streamingCacheFile.isFile()) {
             try {
                 STREAMING_CACHE.setContent(JXPathUtils.getContext(streamingCacheFile.toURL()));
-            } catch (MalformedURLException e) {
+            } catch (Exception e) {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("Could not read streaming cache file. Starting with empty cache.", e);
                 }
