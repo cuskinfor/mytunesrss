@@ -19,11 +19,11 @@ public class LoginService {
         if (user != null) {
             byte[] passwordHash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
             if (Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive()) {
-                MyTunesRssRemoteEnv.getRequest().getSession().setAttribute("jsonUser", user);
+                MyTunesRssRemoteEnv.getRequest().getSession().setAttribute("remoteApiUser", user);
                 return true;
             }
         }
-        MyTunesRssRemoteEnv.getRequest().getSession().removeAttribute("jsonUser");
+        MyTunesRssRemoteEnv.getRequest().getSession().removeAttribute("remoteApiUser");
         return false;
     }
 }

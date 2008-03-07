@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<methodCall>
+    <methodName>PlaylistService.getPlaylistUrl</methodName>
+    <params>
+      <param>
+         <value>7BCDC71A8B3A7148_67EB31D035889C49</value>
+      </param>
+      <param>
+         <value>M3u</value>
+      </param>
+    </params>
+</methodCall>

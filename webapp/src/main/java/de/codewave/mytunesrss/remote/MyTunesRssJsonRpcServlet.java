@@ -30,16 +30,16 @@ public class MyTunesRssJsonRpcServlet extends JSONRPCServlet {
     static {
         RENDER_MACHINE.addRenderer(Playlist.class, new PlaylistRenderer());
         RENDER_MACHINE.addRenderer(Album.class, new AlbumRenderer());
-        JSONRPCBridge.getGlobalBridge().registerObject("albumService", new AlbumService());
-        JSONRPCBridge.getGlobalBridge().registerObject("playlistService", new PlaylistService());
-        JSONRPCBridge.getGlobalBridge().registerObject("loginService", new LoginService());
+        JSONRPCBridge.getGlobalBridge().registerObject("AlbumService", new AlbumService());
+        JSONRPCBridge.getGlobalBridge().registerObject("PlaylistService", new PlaylistService());
+        JSONRPCBridge.getGlobalBridge().registerObject("LoginService", new LoginService());
     }
 
     @Override
     public void service(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
         MyTunesRssRemoteEnv.setRequest(httpServletRequest);
         MyTunesRssRemoteEnv.setRenderMachine(RENDER_MACHINE);
-        MyTunesRssRemoteEnv.setUser((User)httpServletRequest.getSession().getAttribute("jsonUser"));
+        MyTunesRssRemoteEnv.setUser((User)httpServletRequest.getSession().getAttribute("remoteApiUser"));
         try {
             super.service(httpServletRequest, httpServletResponse);
         } finally {

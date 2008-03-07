@@ -43,7 +43,7 @@ public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
                     if (authorized) {
                         MyTunesRssRemoteEnv.setUser(user);
                     }
-                    return authorized;
+                    return "LoginService.login".equals(request.getMethodName()) || MyTunesRssRemoteEnv.getUser() != null;
                 } catch (UnsupportedEncodingException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not create password hash from plain text password.", e);
@@ -60,6 +60,7 @@ public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
     public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
         MyTunesRssRemoteEnv.setRequest(httpServletRequest);
         MyTunesRssRemoteEnv.setRenderMachine(RENDER_MACHINE);
+        MyTunesRssRemoteEnv.setUser((User)httpServletRequest.getSession().getAttribute("remoteApiUser"));
         try {
             super.doPost(httpServletRequest, httpServletResponse);
         } finally {
