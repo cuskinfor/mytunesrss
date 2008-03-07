@@ -155,6 +155,7 @@
                     <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                         <img src="${appUrl}/images/add_th.gif" alt="add" /> </a>
                 </th>
+                <th>&nbsp;</th>
             </c:otherwise>
         </c:choose>
     </tr>
@@ -230,6 +231,16 @@
                 <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                     <img src="${appUrl}/images/add${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
             </td>
+            <c:choose>
+                <c:when test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3'}">
+                    <td class="icon">
+                        <a href="${servletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" />
+                    </td>
+                </c:when>
+                <c:otherwise>
+                    <td>&nbsp;</td>
+                </c:otherwise>
+            </c:choose>
         </c:otherwise>
     </c:choose>
 </tr>
@@ -256,7 +267,7 @@
 
 </div>
 
-<c:if test="${config.yahooMediaPlayer}"><script type="text/javascript" src="http://mediaplayer.yahoo.com/js"></script></c:if>
+<c:if test="${config.yahooMediaPlayer || !empty sessionScope.playlist}"><script type="text/javascript" src="http://mediaplayer.yahoo.com/js"></script></c:if>
 
 </body>
 

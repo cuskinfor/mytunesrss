@@ -7,7 +7,10 @@
 
         <release version="3.2" date="????-??-??" description="Minor release">
             <action dev="mdescher" type="add">
-                New user permissions "create playlists" and "edit web settings"                
+                Yahoo media player for individual tracks in playlist edit mode.                 
+            </action>
+            <action dev="mdescher" type="add">
+                New user permissions "create playlists" and "edit web settings"
             </action>
             <action dev="mdescher" type="fix">
                 Tooltip javascript was buggy.
