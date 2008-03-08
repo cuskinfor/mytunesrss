@@ -34,5 +34,7 @@ public interface InsertOrUpdateTrackStatement extends DataStoreStatement {
 
     void setComment(String comment);
 
+    void setPos(int number, int size);
+
     void clear();
 }

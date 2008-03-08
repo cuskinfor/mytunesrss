@@ -221,7 +221,7 @@
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
             GROUP BY {groupByTrackColumns}
-            ORDER BY album, track_number, name
+            ORDER BY album, pos_number, track_number, name
             ]]>
         </sql>
     </statement>
@@ -241,7 +241,7 @@
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
             GROUP BY {groupByTrackColumns}
-            ORDER BY album, track_number, name
+            ORDER BY album, pos_number, track_number, name
             ]]>
         </sql>
     </statement>
@@ -259,7 +259,7 @@
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
             GROUP BY {groupByTrackColumns}
-            ORDER BY artist, album, track_number, name
+            ORDER BY artist, album, pos_number, track_number, name
             ]]>
         </sql>
     </statement>
@@ -279,7 +279,7 @@
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
             GROUP BY {groupByTrackColumns}
-            ORDER BY artist, album, track_number, name
+            ORDER BY artist, album, pos_number, track_number, name
             ]]>
         </sql>
     </statement>
@@ -291,7 +291,7 @@
             FROM track t
             LEFT OUTER JOIN image i ON i.track_id = t.id
             GROUP BY {groupByTrackColumns}
-            ORDER BY album, track_number, name
+            ORDER BY album, pos_number, track_number, name
             ]]>
         </sql>
     </statement>
@@ -305,7 +305,7 @@
             WHERE rltp.playlist_id = :restrictedPlaylistId
             AND t.id = rltp.track_id
             GROUP BY {groupByTrackColumns}
-            ORDER BY album, track_number, name
+            ORDER BY album, pos_number, track_number, name
             ]]>
         </sql>
     </statement>
@@ -317,7 +317,7 @@
             FROM track t
             LEFT OUTER JOIN image i ON i.track_id = t.id
             GROUP BY {groupByTrackColumns}
-            ORDER BY artist, album, track_number, name
+            ORDER BY artist, album, pos_number, track_number, name
             ]]>
         </sql>
     </statement>
@@ -331,7 +331,7 @@
             WHERE rltp.playlist_id = :restrictedPlaylistId
             AND t.id = rltp.track_id
             GROUP BY {groupByTrackColumns}
-            ORDER BY artist, album, track_number, name
+            ORDER BY artist, album, pos_number, track_number, name
             ]]>
         </sql>
     </statement>
@@ -345,7 +345,7 @@
     <statement name="findTracks">
       <sql>
         {findTracksQuery}
-        ORDER BY album, track_number, name
+        ORDER BY album, pos_number, track_number, name
       </sql>
     </statement>
 
@@ -358,21 +358,21 @@
     <statement name="findTracksRestricted">
       <sql>
         {findTracksQueryRestricted}
-        ORDER BY album, track_number, name
+        ORDER BY album, pos_number, track_number, name
       </sql>
     </statement>
 
     <statement name="findTracksWithArtistOrder">
       <sql>
         {findTracksQuery}
-        ORDER BY artist, album, track_number, name
+        ORDER BY artist, album, pos_number, track_number, name
       </sql>
     </statement>
 
     <statement name="findTracksWithArtistOrderRestricted">
       <sql>
         {findTracksQueryRestricted}
-        ORDER BY artist, album, track_number, name
+        ORDER BY artist, album, pos_number, track_number, name
       </sql>
     </statement>
 
@@ -459,8 +459,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="video" type="java.lang.Boolean"/>
         <sql>
-            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment)
-            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment)
+            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
+            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size)
         </sql>
     </statement>
 
@@ -470,8 +470,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="video" type="java.lang.Boolean"/>
         <sql>
-            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment)
-            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment)
+            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
+            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size)
         </sql>
     </statement>
 
@@ -483,7 +483,7 @@
         <sql>
             UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, video = :video, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
-                             ts_updated = :ts_updated, comment = :comment
+                             ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size
             WHERE id = :id
         </sql>
     </statement>
@@ -496,7 +496,8 @@
         <sql>
             UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, video = :video, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
-                             ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated
+                             ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated, pos_number = :pos_number,
+                             pos_size = :pos_size
             WHERE id = :id
         </sql>
     </statement>
@@ -571,11 +572,12 @@
     <fragment name="trackColumns">
         t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.file AS file,
         t.protected AS protected, t.video AS video, t.genre AS genre, t.mp4codec AS mp4codec, t.ts_played AS ts_played, t.ts_updated AS ts_updated,
-        t.playcount AS playcount, t.last_image_update AS last_image_update, t.comment AS comment
+        t.playcount AS playcount, t.last_image_update AS last_image_update, t.comment AS comment, t.pos_number AS pos_number, t.pos_count AS pos_count
     </fragment>
 
     <fragment name="groupByTrackColumns">
-        id, name, artist, album, time, track_number, file, protected, video, genre, mp4codec, ts_played, ts_updated, playcount, last_image_update, comment
+        id, name, artist, album, time, track_number, file, protected, video, genre, mp4codec, ts_played, ts_updated, playcount, last_image_update,
+        comment, pos_number, pos_size
     </fragment>
 
     <fragment name="updatePlaylistCount">

@@ -89,6 +89,8 @@ public class TrackListener implements PListHandlerListener {
                             statement.setVideo(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue());
                             statement.setGenre(StringUtils.trimToNull((String)track.get("Genre")));
                             statement.setComment(StringUtils.trimToNull((String)track.get("Comments")));
+                            statement.setPos((int)(track.get("Disc Number") != null ? ((Long)track.get("Disc Number")).longValue() : 0),
+                                             (int)(track.get("Disc Count") != null ? ((Long)track.get("Disc Count")).longValue() : 0));
                             if (FileSupportUtils.isMp4(filename)) {
                                 String kind = (String)track.get("Kind");
                                 if (StringUtils.isNotEmpty(kind)) {

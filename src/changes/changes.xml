@@ -7,7 +7,12 @@
 
         <release version="3.2" date="????-??-??" description="Minor release">
             <action dev="mdescher" type="add">
-                Yahoo media player for individual tracks in playlist edit mode.                 
+                Support for multi disc albums (disc number, disc count from iTunesXml,
+                TPA, TPOS from ID3 tags. Sort order of tracks according to disc number
+                and track number.
+            </action>
+            <action dev="mdescher" type="add">
+                Yahoo media player for individual tracks in playlist edit mode.
             </action>
             <action dev="mdescher" type="add">
                 New user permissions "create playlists" and "edit web settings"

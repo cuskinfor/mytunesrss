@@ -31,6 +31,8 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
     private TrackSource mySource;
     private String myMp4Codec;
     private String myComment;
+    private int myPosNumber;
+    private int myPosSize;
     private SmartStatement myStatement;
 
     public InsertTrackStatement(TrackSource source) {
@@ -85,6 +87,11 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
         myComment = comment;
     }
 
+    public void setPos(int number, int size) {
+        myPosNumber = number;
+        myPosSize = size;
+    }
+
     protected String getStatementName() {
         return "insertTrack";
     }
@@ -112,6 +119,8 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setLong("ts_updated", System.currentTimeMillis());
             myStatement.setLong("playcount", 0);
             myStatement.setString("comment", myComment);
+            myStatement.setInt("pos_number", myPosNumber);
+            myStatement.setInt("pos_size", myPosSize);
             myStatement.execute();
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {

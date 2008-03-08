@@ -31,6 +31,8 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
     private String myGenre;
     private String myMp4Codec;
     private String myComment;
+    private int myPosNumber;
+    private int myPosSize;
     private SmartStatement myStatement;
 
     public void setAlbum(String album) {
@@ -81,6 +83,11 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
         myComment = comment;
     }
 
+    public void setPos(int number, int size) {
+        myPosNumber = number;
+        myPosSize = size;
+    }
+
     protected String getStatementName() {
         return "updateTrack";
     }
@@ -106,6 +113,8 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setString("mp4codec", myMp4Codec);
             myStatement.setLong("ts_updated", System.currentTimeMillis());
             myStatement.setString("comment", myComment);
+            myStatement.setInt("pos_number", myPosNumber);
+            myStatement.setInt("pos_size", myPosSize);
             myStatement.execute();
         } catch (SQLException e) {
             if (UpdateTrackStatement.LOG.isErrorEnabled()) {

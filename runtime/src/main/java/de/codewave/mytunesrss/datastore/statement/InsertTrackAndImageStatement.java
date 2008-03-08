@@ -12,4 +12,5 @@ public class InsertTrackAndImageStatement extends InsertTrackStatement {
     protected String getStatementName() {
         return "insertTrackAndImage";
     }
+
 }

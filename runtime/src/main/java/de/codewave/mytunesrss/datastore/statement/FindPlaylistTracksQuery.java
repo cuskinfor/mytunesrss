@@ -115,6 +115,8 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
             track.setPlayCount(resultSet.getLong("PLAYCOUNT"));
             track.setImageCount(resultSet.getInt("IMAGECOUNT"));
             track.setComment(resultSet.getString("COMMENT"));
+            track.setPosNumber(resultSet.getInt("POS_NUMBER"));
+            track.setPosSize(resultSet.getInt("POS_SIZE"));
             return track;
         }
     }

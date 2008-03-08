@@ -146,6 +146,15 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     statement.setTime(id3v2Tag.getTimeSeconds());
                     statement.setTrackNumber(id3v2Tag.getTrackNumber());
                     meta.setImage(MyTunesRssMp3Utils.getImage(id3v2Tag));
+                    String pos = id3v2Tag.getFrameBodyToString("TPA", "TPOS");
+                    if (StringUtils.isNotEmpty(pos)) {
+                        String[] posParts = pos.split("/");
+                        if (posParts.length == 1) {
+                            statement.setPos(Integer.parseInt(posParts[0].trim()), 0);
+                        } else if (posParts.length == 2) {
+                            statement.setPos(Integer.parseInt(posParts[0].trim()), Integer.parseInt(posParts[1].trim()));
+                        }
+                    }
                 }
                 String genre = tag.getGenreAsString();
                 if (genre != null) {

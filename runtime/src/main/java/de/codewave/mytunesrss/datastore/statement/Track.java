@@ -29,6 +29,8 @@ public class Track {
     private long myPlayCount;
     private long myLastImageUpdate;
     private String myComment;
+    private int myPosNumber;
+    private int myPosSize;
 
     public String getAlbum() {
         return myAlbum;
@@ -173,6 +175,22 @@ public class Track {
 
     public void setLastImageUpdate(long lastImageUpdate) {
         myLastImageUpdate = lastImageUpdate;
+    }
+
+    public int getPosNumber() {
+        return myPosNumber;
+    }
+
+    public void setPosNumber(int posNumber) {
+        myPosNumber = posNumber;
+    }
+
+    public int getPosSize() {
+        return myPosSize;
+    }
+
+    public void setPosSize(int posSize) {
+        myPosSize = posSize;
     }
 
     @Override

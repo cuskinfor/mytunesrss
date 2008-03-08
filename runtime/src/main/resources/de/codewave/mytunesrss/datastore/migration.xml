@@ -66,4 +66,9 @@
         <sql>ALTER TABLE track ADD COLUMN comment VARCHAR(2048)</sql>
     </statement>
 
+    <statement name="migrate_3.2_eap_1">
+        <sql>ALTER TABLE track ADD COLUMN pos_number INTEGER</sql>
+        <sql>ALTER TABLE track ADD COLUMN pos_size INTEGER</sql>
+    </statement>
+
 </statements>

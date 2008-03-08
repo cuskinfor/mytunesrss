@@ -172,6 +172,8 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             setPlayCount(track.getPlayCount());
             setImageCount(track.getImageCount());
             setComment(track.getComment());
+            setPosNumber(track.getPosNumber());
+            setPosSize(track.getPosSize());
         }
 
         public boolean isNewSection() {
