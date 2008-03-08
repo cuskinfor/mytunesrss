@@ -5,6 +5,15 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-2" date="2008-03-08" description="EAP release">
+            <action dev="mdescher" type="update">
+                EAP license.
+            </action>
+            <action dev="mdescher" type="update">
+                Use generic version number in welcome message.
+            </action>
+        </release>
+
         <release version="3.2-EAP-1" date="2008-03-08" description="EAP release">
             <action dev="mdescher" type="add">
                 Support for multi disc albums (disc number, disc count from iTunesXml,

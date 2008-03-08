@@ -416,7 +416,7 @@ public class MyTunesRss {
     private static void showNewVersionInfo() {
         if (!VERSION.equals(CONFIG.getLastNewVersionInfo())) {
             try {
-                String message = BUNDLE.getString("info.newVersion");
+                String message = MyTunesRssUtils.getBundleString("info.newVersion", MyTunesRss.VERSION);
                 if (StringUtils.isNotEmpty(message)) {
                     MyTunesRssUtils.showInfoMessage(ROOT_FRAME, message);
                 }
