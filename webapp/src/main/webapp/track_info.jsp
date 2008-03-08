@@ -62,6 +62,21 @@
                 <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
             </td>
         </tr>
+            <c:if test="${track.posNumber > 0}">
+                <tr <mt:flipFlop/>>
+                    <td>
+                        <fmt:message key="discnumber.label" />:
+                    </td>
+                    <td>
+                        <c:set var="msg"><fmt:message key="${cwfn:choose(track.posSize == 0, 'discnumber.numberonly', 'discnumber.numberofsize')}"/></c:set>
+                        <mt:array var="params">
+                            <mt:arrayElement value="${track.posNumber}"/>
+                            <mt:arrayElement value="${track.posSize}"/>
+                        </mt:array>
+                        <c:out value="${cwfn:choose(track.posSize == 0, track.posNumber, cwfn:message(msg, params))}" />
+                    </td>
+                </tr>
+            </c:if>
         <tr <mt:flipFlop/>>
             <td>
                 <fmt:message key="artist" />:
