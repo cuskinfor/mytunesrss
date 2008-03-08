@@ -629,14 +629,13 @@ public class MyTunesRssConfig {
             Document settings = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             Element root = settings.createElement("settings");
             settings.appendChild(root);
-            root.appendChild(DOMUtils.createTextElement(settings, "version", MyTunesRss.VERSION));
+            root.appendChild(DOMUtils.createTextElement(settings, "version", myVersion));
             root.appendChild(DOMUtils.createIntElement(settings, "serverPort", myPort));
             root.appendChild(DOMUtils.createTextElement(settings, "serverName", myServerName));
             root.appendChild(DOMUtils.createBooleanElement(settings, "availableOnLocalNet", myAvailableOnLocalNet));
             root.appendChild(DOMUtils.createBooleanElement(settings, "checkUpdateOnStart", myCheckUpdateOnStart));
             root.appendChild(DOMUtils.createBooleanElement(settings, "autoStartServer", myAutoStartServer));
             root.appendChild(DOMUtils.createBooleanElement(settings, "updateDatabaseOnServerStart", myUpdateDatabaseOnServerStart));
-            root.appendChild(DOMUtils.createTextElement(settings, "version", myVersion));
             root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreTimestamps", myIgnoreTimestamps));
             root.appendChild(DOMUtils.createIntElement(settings, "baseDirCount", myDatasources.size()));
             Element dataSources = settings.createElement("datasources");
@@ -711,6 +710,6 @@ public class MyTunesRssConfig {
     }
 
     private void migrate() {
-        setVersion("3.2");
+        setVersion(MyTunesRss.VERSION);
     }
 }
