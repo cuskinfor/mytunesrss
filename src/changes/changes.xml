@@ -5,7 +5,7 @@
     </properties>
     <body>
 
-        <release version="3.2" date="????-??-??" description="Minor release">
+        <release version="3.2-EAP-1" date="2008-03-08" description="EAP release">
             <action dev="mdescher" type="add">
                 Support for multi disc albums (disc number, disc count from iTunesXml,
                 TPA, TPOS from ID3 tags. Sort order of tracks according to disc number
@@ -40,9 +40,6 @@
             <action dev="mdescher" type="update">
                 Event driven GUI enabling/disabling for all tabs.
             </action>
-        </release>
-
-        <release version="3.1.6" date="????-??-??" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 Tooltip javascript was buggy.
             </action>
