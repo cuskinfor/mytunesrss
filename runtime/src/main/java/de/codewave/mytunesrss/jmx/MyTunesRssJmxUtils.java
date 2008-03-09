@@ -66,16 +66,10 @@ public class MyTunesRssJmxUtils {
                 HttpAdaptor adaptor = new HttpAdaptor();
                 ObjectName name = HTTP_ADAPTOR_NAME;
                 server.registerMBean(adaptor, name);
-                int port;
-                try {
-                    port = Integer.parseInt(System.getProperty("jmx.port", "8500"));
-                } catch (NumberFormatException e) {
-                    port = 8500;
-                }
-                adaptor.setPort(port);
-                adaptor.setHost(System.getProperty("jmx.host", "0.0.0.0"));
-                String username = System.getProperty("jmx.username");
-                String password = System.getProperty("jmx.password");
+                adaptor.setPort(MyTunesRss.CONFIG.getJmxPort());
+                adaptor.setHost(MyTunesRss.CONFIG.getJmxHost());
+                String username = MyTunesRss.CONFIG.getJmxUser();
+                String password = MyTunesRss.CONFIG.getJmxPassword();
                 if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
                     adaptor.setAuthenticationMethod("basic");
                     adaptor.addAuthorization(username, password);

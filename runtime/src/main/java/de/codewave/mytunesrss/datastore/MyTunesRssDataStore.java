@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.datastore;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.utils.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.*;
 import org.apache.commons.jxpath.*;
@@ -23,43 +22,36 @@ import java.sql.*;
  */
 public class MyTunesRssDataStore extends DataStore {
     private static final Log LOG = LogFactory.getLog(MyTunesRssDataStore.class);
-    public static final String DIRNAME = "h2";
     public static final int UPDATE_HELP_TABLES_FREQUENCY = 30000;
 
     private SmartStatementFactory mySmartStatementFactory;
 
     public void init() throws IOException {
         initSmartStatementFactory();
-        String filename = DIRNAME + "/MyTunesRSS";
-        String pathname = PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
-        final String connectString = MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.connection",
-                                                                                                 "jdbc:h2:file:" + pathname + "/" + filename) :
-                "jdbc:h2:file:" + pathname + "/" + filename;
+        LOG.info("Creating database connection pool for connect string \"" + MyTunesRss.CONFIG.getDatabaseConnection() + "\".");
         setConnectionPool(new GenericObjectPool(new BasePoolableObjectFactory() {
             public Object makeObject() throws Exception {
                 long endTime = System.currentTimeMillis() + 10000;
                 do {
                     try {
-                        return DriverManager.getConnection(connectString,
-                                                           MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.user",
-                                                                                                                       "sa") : "sa",
-                                                           MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.password", "") : "");
-                    } catch (SQLException e1) {
+                        return DriverManager.getConnection(MyTunesRss.CONFIG.getDatabaseConnection(),
+                                                           MyTunesRss.CONFIG.getDatabaseUser(),
+                                                           MyTunesRss.CONFIG.getDatabasePassword());
+                    } catch (SQLException e) {
                         if (LOG.isWarnEnabled()) {
                             LOG.warn("Could not get a database connection.");
                         }
                     }
                     try {
                         Thread.sleep(1000);
-                    } catch (InterruptedException e1) {
+                    } catch (InterruptedException e) {
                         // intentionally left blank
                     }
                 } while (System.currentTimeMillis() < endTime);
                 try {
-                    return DriverManager.getConnection(connectString,
-                                                       MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.user",
-                                                                                                                   "sa") : "sa",
-                                                       MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.password", "") : "");
+                    return DriverManager.getConnection(MyTunesRss.CONFIG.getDatabaseConnection(),
+                                                       MyTunesRss.CONFIG.getDatabaseUser(),
+                                                       MyTunesRss.CONFIG.getDatabasePassword());
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not get a database connection.", e);
@@ -81,13 +73,14 @@ public class MyTunesRssDataStore extends DataStore {
 
     @Override
     protected void beforeDestroy(Connection connection) throws SQLException {
-        if (System.getProperty("database.connection") == null) {
+        if (MyTunesRss.CONFIG.isDefaultDatabase()) {
             connection.createStatement().execute("SHUTDOWN COMPACT");
         }
     }
 
     private void initSmartStatementFactory() {
-        String databaseType = MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.type", "h2") : "h2";
+        String databaseType = MyTunesRss.CONFIG.getDatabaseType();
+        LOG.info("Using DML/DDL for database type \"" + databaseType + "\".");
         JXPathContext[] contexts =
                 new JXPathContext[] {JXPathUtils.getContext(getClass().getResource("ddl.xml")), JXPathUtils.getContext(getClass().getResource(
                         "dml.xml")), JXPathUtils.getContext(getClass().getResource("migration.xml"))};

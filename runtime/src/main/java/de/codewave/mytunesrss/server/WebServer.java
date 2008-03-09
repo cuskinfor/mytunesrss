@@ -52,9 +52,13 @@ public class WebServer {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Using catalina base: \"" + catalinaBase + "\".");
                     }
-                    myEmbeddedTomcat = createServer("mytunesrss", null, MyTunesRss.CONFIG.getPort(), new File(catalinaBase), "ROOT", System.getProperty(
-                            "webapp.context",
-                            ""), contextEntries);
+                    myEmbeddedTomcat = createServer("mytunesrss",
+                                                    null,
+                                                    MyTunesRss.CONFIG.getPort(),
+                                                    new File(catalinaBase),
+                                                    "ROOT",
+                                                    MyTunesRss.CONFIG.getWebappContext(),
+                                                    contextEntries);
                     if (myEmbeddedTomcat != null) {
                         myEmbeddedTomcat.start();
                         byte health = checkServerHealth(MyTunesRss.CONFIG.getPort(), true);
@@ -69,7 +73,7 @@ public class WebServer {
                             myEmbeddedTomcat = null;
                             return false;
                         }
-                        MyTunesRss.CONFIG.save(); // save on successful server start
+                        MyTunesRss.CONFIG.save();// save on successful server start
                         return true;
                     } else {
                         MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverStart"));
@@ -118,7 +122,7 @@ public class WebServer {
     private byte checkServerHealth(int port, boolean logging) {
         HttpURLConnection connection = null;
         try {
-            URL targetUrl = new URL("http://127.0.0.1:" + port + System.getProperty("webapp.context", "") +
+            URL targetUrl = new URL("http://127.0.0.1:" + port + MyTunesRss.CONFIG.getWebappContext() +
                     "/mytunesrss/checkHealth?ignoreSession=true");
             if (LOG.isInfoEnabled() && logging) {
                 LOG.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
@@ -172,7 +176,8 @@ public class WebServer {
         Host host = server.createHost("host." + name, new File(catalinaBasePath, "webapps").getCanonicalPath());
         File workDir = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/tomcat-work");
         if (workDir.exists()) {
-            MyTunesRssUtils.deleteRecursivly(workDir); // at least try to delete the working directory before starting the server to dump outdated stuff
+            MyTunesRssUtils
+                    .deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
         }
         ((StandardHost)host).setWorkDir(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/tomcat-work");
         engine.addChild(host);
@@ -184,23 +189,22 @@ public class WebServer {
         server.addEngine(engine);
         Connector httpConnector = createConnector(server, listenAddress, listenPort, "http");
         if (httpConnector != null) {
-            String maxThreads = System.getProperty("tomcat.maxThreads", "200");
-            httpConnector.setAttribute("maxThreads", maxThreads);
+            httpConnector.setAttribute("maxThreads", MyTunesRss.CONFIG.getTomcatMaxThreads());
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Setting tomcat HTTP connector maximum threads to " + maxThreads + ".");
+                LOG.debug("Setting tomcat HTTP connector maximum threads to " + MyTunesRss.CONFIG.getTomcatMaxThreads() + ".");
             }
             httpConnector.setURIEncoding("UTF-8");
             server.addConnector(httpConnector);
-            if (StringUtils.isNotEmpty(System.getProperty("ajp.port"))) {
+            if (MyTunesRss.CONFIG.getTomcatAjpPort() > 0) {
                 Connector ajpConnector = null;
                 try {
-                    ajpConnector = createConnector(server, listenAddress, Integer.parseInt(System.getProperty("ajp.port")), "ajp");
+                    ajpConnector = createConnector(server, listenAddress, MyTunesRss.CONFIG.getTomcatAjpPort(), "ajp");
                     if (ajpConnector != null) {
                         server.addConnector(ajpConnector);
                     }
                 } catch (Exception e) {
                     if (LOG.isErrorEnabled()) {
-                        LOG.error("Illegal AJP port \"" + System.getProperty("ajp.port") + "\" specified. Connector not added.");
+                        LOG.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
                     }
                 }
             }
@@ -249,7 +253,7 @@ public class WebServer {
                 return false;
             }
         }
-        MyTunesRss.CONFIG.save(); // save on successful server stop
+        MyTunesRss.CONFIG.save();// save on successful server stop
         return true;
     }
 

@@ -128,8 +128,9 @@ public class MyTunesRss {
             InstantiationException, ClassNotFoundException, IOException, SQLException, SchedulerException {
         final Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
         HEADLESS = arguments.containsKey("headless");
-        MyTunesRssUtils.setCodewaveLogLevel(arguments.containsKey("debug") || MyTunesRssConfig.loadDebugLogging() ? Level.DEBUG : Level.INFO);
+        MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.isDebugLogging() ? Level.DEBUG : Level.INFO);
         MyTunesRssRegistration.RegistrationResult registrationResult = REGISTRATION.init(null, true);
+        MyTunesRss.CONFIG.load();
         registerDatabaseDriver();
         VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
         if (StringUtils.isEmpty(VERSION)) {
@@ -171,10 +172,9 @@ public class MyTunesRss {
         } else if (registrationResult == MyTunesRssRegistration.RegistrationResult.ExternalExpired) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
         }
-        if (System.getProperty("database.type") == null && MyTunesRssConfig.loadDeleteDatabaseOnNextStartOnError()) {
+        if (MyTunesRss.CONFIG.isDefaultDatabase() && MyTunesRss.CONFIG.isDeleteDatabaseOnNextStartOnError()) {
             new DeleteDatabaseFilesTask().execute();
         }
-        loadConfiguration();
         QUARTZ_SCHEDULER = new StdSchedulerFactory().getScheduler();
         if (LOG.isInfoEnabled()) {
             LOG.info("Starting quartz scheduler.");
@@ -218,7 +218,8 @@ public class MyTunesRss {
             throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         File libDir = new File(PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER) + "/lib");
         Collection<File> files = libDir.isDirectory() ? (Collection<File>)FileUtils.listFiles(libDir, new String[] {"jar"}, false) : null;
-        String driverClassName = MyTunesRss.REGISTRATION.isRegistered() ? System.getProperty("database.driver", "org.h2.Driver") : "org.h2.Driver";
+        String driverClassName = MyTunesRss.CONFIG.getDatabaseDriver();
+        LOG.info("Using database driver class \"" + driverClassName + "\".");
         if (files != null && !files.isEmpty()) {
             Collection<URL> urls = new ArrayList<URL>();
             for (File file : files) {
@@ -490,10 +491,6 @@ public class MyTunesRss {
             MulticastService.stopListener();
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.SERVER_STOPPED);
         }
-    }
-
-    private static void loadConfiguration() throws MalformedURLException {
-        CONFIG.load();
     }
 
     private static void executeWindows(Settings settingsForm) {

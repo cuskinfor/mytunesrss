@@ -176,7 +176,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private String createComment(Id3Tag tag) {
         try {
             if (tag.isId3v2()) {
-                String comment = " " + StringUtils.trimToEmpty(System.getProperty("track.comment.id3v2")) + " "; // make sure the comment does neither start nor end with a token
+                String comment = " " + MyTunesRss.CONFIG.getId3v2TrackComment() + " "; // make sure the comment does neither start nor end with a token
                 if (StringUtils.isNotBlank(comment)) {
                     for (int s = comment.indexOf("${"); s > -1; s = comment.indexOf("${")) {
                         int e = comment.indexOf("}", s);

@@ -24,7 +24,7 @@ public class FileSuffixInfo {
             }
         }
         try {
-            File file = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/system.properties");
+            File file = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/file-suffixes.properties");
             if (file.isFile()) {
                 USER_PROPERTIES.load(new FileInputStream(file));
                 for (Enumeration e = USER_PROPERTIES.keys(); e.hasMoreElements();) {

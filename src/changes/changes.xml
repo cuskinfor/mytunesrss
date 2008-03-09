@@ -5,6 +5,21 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-3" date="2008-03-10" description="EAP release">
+            <action dev="mdescher" type="update">
+                Moved from system properties to settings.xml:
+                - Database configuration -> database/type,driver,connection,user,password
+                - webapp.context -> tomcat/webapp-context
+                - track.comment.id3v2 -> id3v2-track-comment
+                - Jmx -> jmx/port,host,user,password
+                - tomcat.maxThreads -> tomcat/max-threads
+                - ajp.port -> tomcat/ajp-port
+            </action>
+            <action dev="mdescher" type="add">
+                Create settings.xml backup before saving a new version.
+            </action>
+        </release>
+
         <release version="3.2-EAP-2" date="2008-03-08" description="EAP release">
             <action dev="mdescher" type="update">
                 EAP license.

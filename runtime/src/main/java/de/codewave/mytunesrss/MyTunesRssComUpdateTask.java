@@ -47,7 +47,7 @@ public class MyTunesRssComUpdateTask extends TimerTask {
         postMethod.addParameter("user", myUsername);
         postMethod.addParameter("pass", base64Hash);
         postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getPort()));
-        postMethod.addParameter("context", System.getProperty("webapp.context", ""));
+        postMethod.addParameter("context", MyTunesRss.CONFIG.getWebappContext());
         HttpClient client = MyTunesRssUtils.createHttpClient();
         try {
             MyTunesRssEvent event = MyTunesRssEvent.MYTUNESRSS_COM_UPDATED;

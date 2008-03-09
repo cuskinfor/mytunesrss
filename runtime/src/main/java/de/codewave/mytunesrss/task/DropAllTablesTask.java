@@ -10,6 +10,8 @@ import de.codewave.utils.sql.*;
 
 import java.sql.*;
 
+import org.apache.commons.lang.*;
+
 /**
  * de.codewave.mytunesrss.task.InitializeDatabaseTask
  */
@@ -20,7 +22,7 @@ public class DropAllTablesTask extends MyTunesRssTask {
             storeSession.executeStatement(new DropAllTablesStatement());
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
         } catch (SQLException e) {
-            if (System.getProperty("database.type") == null) {
+            if (MyTunesRss.CONFIG.isDefaultDatabase()) {
                 MyTunesRss.CONFIG.setDeleteDatabaseOnNextStartOnError(true);
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.deleteDatabaseOnNextStartOnError"));
             } else {

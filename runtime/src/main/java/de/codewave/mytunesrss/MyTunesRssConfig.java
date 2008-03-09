@@ -69,6 +69,19 @@ public class MyTunesRssConfig {
     private boolean myDeleteDatabaseOnNextStartOnError;
     private String myUpdateIgnoreVersion;
     private List<String> myDatabaseCronTriggers = new ArrayList<String>();
+    private String myDatabaseType;
+    private String myDatabaseConnection;
+    private String myDatabaseUser;
+    private String myDatabasePassword;
+    private String myDatabaseDriver;
+    private String myWebappContext;
+    private String myId3v2TrackComment;
+    private String myJmxHost;
+    private int myJmxPort;
+    private String myJmxUser;
+    private String myJmxPassword;
+    private String myTomcatMaxThreads;
+    private int myTomcatAjpPort;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -96,9 +109,7 @@ public class MyTunesRssConfig {
                         return MyTunesRssUtils.getBundleString("error.newWatchFolderContainsExistingOne", eachDatasource);
                     }
                 } catch (IOException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not check if existing datasource contains new datasource or vice versa, assuming everything is okay.", e);
-                    }
+                    LOG.error("Could not check if existing datasource contains new datasource or vice versa, assuming everything is okay.", e);
                 }
             }
             myDatasources.add(datasource);
@@ -477,117 +488,217 @@ public class MyTunesRssConfig {
         myDatabaseCronTriggers = databaseCronTriggers;
     }
 
+    public String getDatabaseConnection() {
+        return myDatabaseConnection;
+    }
+
+    public void setDatabaseConnection(String databaseConnection) {
+        myDatabaseConnection = databaseConnection;
+    }
+
+    public String getDatabasePassword() {
+        return myDatabasePassword;
+    }
+
+    public void setDatabasePassword(String databasePassword) {
+        myDatabasePassword = databasePassword;
+    }
+
+    public String getDatabaseType() {
+        return myDatabaseType;
+    }
+
+    public void setDatabaseType(String databaseType) {
+        myDatabaseType = databaseType;
+    }
+
+    public String getDatabaseUser() {
+        return myDatabaseUser;
+    }
+
+    public void setDatabaseUser(String databaseUser) {
+        myDatabaseUser = databaseUser;
+    }
+
+    public String getDatabaseDriver() {
+        return myDatabaseDriver;
+    }
+
+    public void setDatabaseDriver(String databaseDriver) {
+        myDatabaseDriver = databaseDriver;
+    }
+
+    public String getWebappContext() {
+        return myWebappContext;
+    }
+
+    public void setWebappContext(String webappContext) {
+        myWebappContext = webappContext;
+    }
+
+    public String getId3v2TrackComment() {
+        return myId3v2TrackComment;
+    }
+
+    public void setId3v2TrackComment(String id3v2TrackComment) {
+        myId3v2TrackComment = id3v2TrackComment;
+    }
+
+    public String getJmxHost() {
+        return myJmxHost;
+    }
+
+    public void setJmxHost(String jmxHost) {
+        myJmxHost = jmxHost;
+    }
+
+    public String getJmxPassword() {
+        return myJmxPassword;
+    }
+
+    public void setJmxPassword(String jmxPassword) {
+        myJmxPassword = jmxPassword;
+    }
+
+    public int getJmxPort() {
+        return myJmxPort;
+    }
+
+    public void setJmxPort(int jmxPort) {
+        myJmxPort = jmxPort;
+    }
+
+    public String getJmxUser() {
+        return myJmxUser;
+    }
+
+    public void setJmxUser(String jmxUser) {
+        myJmxUser = jmxUser;
+    }
+
+    public String getTomcatMaxThreads() {
+        return myTomcatMaxThreads;
+    }
+
+    public void setTomcatMaxThreads(String tomcatMaxThreads) {
+        myTomcatMaxThreads = tomcatMaxThreads;
+    }
+
+    public int getTomcatAjpPort() {
+        return myTomcatAjpPort;
+    }
+
+    public void setTomcatAjpPort(int tomcatAjpPort) {
+        myTomcatAjpPort = tomcatAjpPort;
+    }
+
     public void load() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Loading configuration.");
-        }
+        LOG.info("Loading configuration.");
         try {
             File file = getSettingsFile();
-            JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURL()), "settings");
-            setVersion(JXPathUtils.getStringValue(settings, "version", ""));
-            migrate();
-            setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
-            setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
-            setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
-            setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
-            setAutoStartServer(JXPathUtils.getBooleanValue(settings, "autoStartServer", isAutoStartServer()));
-            setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
-            setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
-            List<String> dataSources = new ArrayList<String>();
-            Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
-            int count = 0;
-            while (contextIterator.hasNext()) {
-                dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
-                if (!MyTunesRss.REGISTRATION.isRegistered() && count + 1 == MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
-                    break;
+            if (file.isFile()) {
+                JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURL()), "settings");
+                setVersion(JXPathUtils.getStringValue(settings, "version", ""));
+                migrate();
+                setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
+                setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
+                setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
+                setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
+                setAutoStartServer(JXPathUtils.getBooleanValue(settings, "autoStartServer", isAutoStartServer()));
+                setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
+                setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
+                List<String> dataSources = new ArrayList<String>();
+                Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
+                int count = 0;
+                while (contextIterator.hasNext()) {
+                    dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
+                    if (!MyTunesRss.REGISTRATION.isRegistered() && count + 1 == MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
+                        break;
+                    }
                 }
-            }
-            setDatasources(dataSources.toArray(new String[dataSources.size()]));
-            setFileSystemArtistNameFolder(JXPathUtils.getIntValue(settings, "artistFolder", getFileSystemArtistNameFolder()));
-            setFileSystemAlbumNameFolder(JXPathUtils.getIntValue(settings, "albumFolder", getFileSystemAlbumNameFolder()));
-            setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(settings, "iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
-            setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
-            setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
-            setLocalTempArchive(JXPathUtils.getBooleanValue(settings, "localTempArchive", isLocalTempArchive()));
-            Iterator<JXPathContext> users = JXPathUtils.getContextIterator(settings, "users/user");
-            while (users != null && users.hasNext()) {
-                JXPathContext userContext = users.next();
-                User user = new User(JXPathUtils.getStringValue(userContext, "name", null));
-                user.loadFromPreferences(userContext);
-                addUser(user);
-                if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
-                    break;
+                setDatasources(dataSources.toArray(new String[dataSources.size()]));
+                setFileSystemArtistNameFolder(JXPathUtils.getIntValue(settings, "artistFolder", getFileSystemArtistNameFolder()));
+                setFileSystemAlbumNameFolder(JXPathUtils.getIntValue(settings, "albumFolder", getFileSystemAlbumNameFolder()));
+                setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(settings, "iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
+                setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
+                setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
+                setLocalTempArchive(JXPathUtils.getBooleanValue(settings, "localTempArchive", isLocalTempArchive()));
+                Iterator<JXPathContext> users = JXPathUtils.getContextIterator(settings, "users/user");
+                while (users != null && users.hasNext()) {
+                    JXPathContext userContext = users.next();
+                    User user = new User(JXPathUtils.getStringValue(userContext, "name", null));
+                    user.loadFromPreferences(userContext);
+                    addUser(user);
+                    if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
+                        break;
+                    }
                 }
-            }
-            setSupportName(JXPathUtils.getStringValue(settings, "supportName", getSupportName()));
-            setSupportEmail(JXPathUtils.getStringValue(settings, "supportEmail", getSupportEmail()));
-            setProxyServer(JXPathUtils.getBooleanValue(settings, "proxyServer", isProxyServer()));
-            setProxyHost(JXPathUtils.getStringValue(settings, "proxyHost", getProxyHost()));
-            setProxyPort(JXPathUtils.getIntValue(settings, "proxyPort", getProxyPort()));
-            setMyTunesRssComUser(JXPathUtils.getStringValue(settings, "myTunesRssComUser", getMyTunesRssComUser()));
-            setMyTunesRssComPasswordHash(JXPathUtils.getByteArray(settings, "myTunesRssComPassword", getMyTunesRssComPasswordHash()));
-            setFileTypes(JXPathUtils.getStringValue(settings, "fileTypes", getFileTypes()));
-            setArtistDropWords(JXPathUtils.getStringValue(settings, "artistDropWords", getArtistDropWords()));
-            setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
-            setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
-            readPathInfoEncryptionKey(settings);
-            setLameBinary(JXPathUtils.getStringValue(settings, "lameBinary", getLameBinary()));
-            setFaad2Binary(JXPathUtils.getStringValue(settings, "faad2Binary", getFaad2Binary()));
-            setAlacBinary(JXPathUtils.getStringValue(settings, "alacBinary", getAlacBinary()));
-            setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
-            setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
-            setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
-            setBandwidthLimitFactor(new BigDecimal(JXPathUtils.getStringValue(settings, "bandwidthLimitFactor", "0")));
-            setIgnoreArtwork(JXPathUtils.getBooleanValue(settings, "ignoreArtwork", false));
-            setDebugLogging(JXPathUtils.getBooleanValue(settings, "debugLogging", false));
-            if (!MyTunesRss.REGISTRATION.isRegistered()) {
-                adjustSettingsToUnregisteredState();
-            }
-            setWindowX(JXPathUtils.getIntValue(settings, "window/x", Integer.MAX_VALUE));
-            setWindowY(JXPathUtils.getIntValue(settings, "window/y", Integer.MAX_VALUE));
-            setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
-            setDeleteDatabaseOnNextStartOnError(JXPathUtils.getBooleanValue(settings, "deleteDatabaseOnNextStartOnError", false));
-            setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
-            Iterator<JXPathContext> cronTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database");
-            myDatabaseCronTriggers = new ArrayList<String>();
-            while (cronTriggerIterator.hasNext()) {
-                myDatabaseCronTriggers.add(JXPathUtils.getStringValue(cronTriggerIterator.next(), ".", ""));
+                setSupportName(JXPathUtils.getStringValue(settings, "supportName", getSupportName()));
+                setSupportEmail(JXPathUtils.getStringValue(settings, "supportEmail", getSupportEmail()));
+                setProxyServer(JXPathUtils.getBooleanValue(settings, "proxyServer", isProxyServer()));
+                setProxyHost(JXPathUtils.getStringValue(settings, "proxyHost", getProxyHost()));
+                setProxyPort(JXPathUtils.getIntValue(settings, "proxyPort", getProxyPort()));
+                setMyTunesRssComUser(JXPathUtils.getStringValue(settings, "myTunesRssComUser", getMyTunesRssComUser()));
+                setMyTunesRssComPasswordHash(JXPathUtils.getByteArray(settings, "myTunesRssComPassword", getMyTunesRssComPasswordHash()));
+                setFileTypes(JXPathUtils.getStringValue(settings, "fileTypes", getFileTypes()));
+                setArtistDropWords(JXPathUtils.getStringValue(settings, "artistDropWords", getArtistDropWords()));
+                setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
+                setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
+                readPathInfoEncryptionKey(settings);
+                setLameBinary(JXPathUtils.getStringValue(settings, "lameBinary", getLameBinary()));
+                setFaad2Binary(JXPathUtils.getStringValue(settings, "faad2Binary", getFaad2Binary()));
+                setAlacBinary(JXPathUtils.getStringValue(settings, "alacBinary", getAlacBinary()));
+                setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
+                setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
+                setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
+                setBandwidthLimitFactor(new BigDecimal(JXPathUtils.getStringValue(settings, "bandwidthLimitFactor", "0")));
+                setIgnoreArtwork(JXPathUtils.getBooleanValue(settings, "ignoreArtwork", false));
+                setDebugLogging(JXPathUtils.getBooleanValue(settings, "debugLogging", false));
+                if (!MyTunesRss.REGISTRATION.isRegistered()) {
+                    adjustSettingsToUnregisteredState();
+                }
+                setWindowX(JXPathUtils.getIntValue(settings, "window/x", Integer.MAX_VALUE));
+                setWindowY(JXPathUtils.getIntValue(settings, "window/y", Integer.MAX_VALUE));
+                setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
+                setDeleteDatabaseOnNextStartOnError(JXPathUtils.getBooleanValue(settings, "deleteDatabaseOnNextStartOnError", false));
+                setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
+                Iterator<JXPathContext> cronTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database");
+                myDatabaseCronTriggers = new ArrayList<String>();
+                while (cronTriggerIterator.hasNext()) {
+                    myDatabaseCronTriggers.add(JXPathUtils.getStringValue(cronTriggerIterator.next(), ".", ""));
+                }
+                loadDatabaseSettings(settings);
+                setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
+                setJmxHost(JXPathUtils.getStringValue(settings, "jmx/host", "0.0.0.0"));
+                setJmxPort(JXPathUtils.getIntValue(settings, "jmx/port", 8500));
+                setJmxUser(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/user", null)));
+                setJmxPassword(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/password", null)));
+                setTomcatMaxThreads(JXPathUtils.getStringValue(settings, "tomcat/max-threads", "200"));
+                setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/max-threads", 0));
+                setWebappContext(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""));
             }
         } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not read configuration file.", e);
-            }
+            LOG.error("Could not read configuration file.", e);
+        }
+    }
+
+    private void loadDatabaseSettings(JXPathContext settings) throws IOException {
+        setDatabaseType("h2");
+        setDatabaseDriver("org.h2.Driver");
+        setDatabaseConnection("jdbc:h2:file:" + PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/" + "h2/MyTunesRSS");
+        setDatabaseUser("sa");
+        setDatabasePassword("");
+        if (MyTunesRss.REGISTRATION.isRegistered()) {
+            setDatabaseType(JXPathUtils.getStringValue(settings, "database/type", getDatabaseType()));
+            setDatabaseDriver(JXPathUtils.getStringValue(settings, "database/driver", getDatabaseDriver()));
+            setDatabaseConnection(JXPathUtils.getStringValue(settings, "database/connection", getDatabaseConnection()));
+            setDatabaseUser(JXPathUtils.getStringValue(settings, "database/user", getDatabaseUser()));
+            setDatabasePassword(JXPathUtils.getStringValue(settings, "database/password", getDatabasePassword()));
         }
     }
 
     private static File getSettingsFile() throws IOException {
         return new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/settings.xml");
-    }
-
-    public static boolean loadDebugLogging() {
-        try {
-            File file = getSettingsFile();
-            JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURL()), "settings");
-            return JXPathUtils.getBooleanValue(settings, "debugLogging", false);
-        } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not load debug logging setting.", e);
-            }
-        }
-        return false;
-    }
-
-    public static boolean loadDeleteDatabaseOnNextStartOnError() {
-        try {
-            File file = getSettingsFile();
-            JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURL()), "settings");
-            return JXPathUtils.getBooleanValue(settings, "deleteDatabaseOnNextStartOnError", false);
-        } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not load deleteDatabaseOnNextStartOnError flag.", e);
-            }
-        }
-        return false;
     }
 
     private void adjustSettingsToUnregisteredState() {
@@ -606,25 +717,19 @@ public class MyTunesRssConfig {
             myPathInfoKey = new SecretKeySpec(keyBytes, "DES");
         }
         if (myPathInfoKey == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("No path info encryption key found, generating a new one.");
-            }
+            LOG.info("No path info encryption key found, generating a new one.");
             try {
                 KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
                 keyGenerator.init(56);
                 myPathInfoKey = keyGenerator.generateKey();
             } catch (NoSuchAlgorithmException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not generate path info encryption key.", e);
-                }
+                LOG.error("Could not generate path info encryption key.", e);
             }
         }
     }
 
     public void save() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Saving configuration.");
-        }
+        LOG.info("Saving configuration.");
         try {
             Document settings = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             Element root = settings.createElement("settings");
@@ -695,21 +800,48 @@ public class MyTunesRssConfig {
                     cronTriggers.appendChild(DOMUtils.createTextElement(settings, "database", databaseCronTrigger));
                 }
             }
+            if (MyTunesRss.REGISTRATION.isRegistered()) {
+                Element database = settings.createElement("database");
+                root.appendChild(database);
+                database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType()));
+                database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
+                database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
+                database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
+                database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
+            }
+            root.appendChild(DOMUtils.createTextElement(settings, "id3v2-track-comment", getId3v2TrackComment()));
+            Element jmx = settings.createElement("jmx");
+            root.appendChild(jmx);
+            jmx.appendChild(DOMUtils.createTextElement(settings, "host", getJmxHost()));
+            jmx.appendChild(DOMUtils.createIntElement(settings, "port", getJmxPort()));
+            jmx.appendChild(DOMUtils.createTextElement(settings, "user", getJmxUser()));
+            jmx.appendChild(DOMUtils.createTextElement(settings, "password", getJmxPassword()));
+            Element tomcat = settings.createElement("tomcat");
+            root.appendChild(tomcat);
+            tomcat.appendChild(DOMUtils.createTextElement(settings, "max-threads", getTomcatMaxThreads()));
+            if (getTomcatAjpPort() > 0) {
+                tomcat.appendChild(DOMUtils.createIntElement(settings, "ajp-port", getTomcatAjpPort()));
+            }
+            tomcat.appendChild(DOMUtils.createTextElement(settings, "webapp-context", getWebappContext()));
             FileOutputStream outputStream = null;
             try {
-                outputStream = new FileOutputStream(getSettingsFile());
+                File settingsFile = getSettingsFile();
+                settingsFile.renameTo(new File(settingsFile.getParentFile(), settingsFile.getName() + ".bak"));
+                outputStream = new FileOutputStream(settingsFile);
                 DOMUtils.prettyPrint(settings, outputStream);
             } finally {
                 IOUtils.close(outputStream);
             }
         } catch (Exception e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not write settings file.", e);
-            }
+            LOG.error("Could not write settings file.", e);
         }
     }
 
     private void migrate() {
         setVersion(MyTunesRss.VERSION);
+    }
+
+    public boolean isDefaultDatabase() {
+        return StringUtils.isEmpty(myDatabaseType) || "h2".equalsIgnoreCase(myDatabaseType);
     }
 }
