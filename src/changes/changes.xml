@@ -5,7 +5,7 @@
     </properties>
     <body>
 
-        <release version="3.1.6" date="2008-03-??" description="Bugfix release">
+        <release version="3.1.6" date="2008-03-11" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 codewave-utils-0.36: fixes range header problems with VLC
             </action>
