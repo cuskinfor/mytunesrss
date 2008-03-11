@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.remote.service;
 
-import de.codewave.utils.sql.*;
+import de.codewave.utils.sql.DataStoreQuery;
 
 /**
  * de.codewave.mytunesrss.xmlrpc.service.QueryResultWrapper

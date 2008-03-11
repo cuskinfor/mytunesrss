@@ -5,13 +5,15 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import org.apache.commons.logging.*;
-import org.apache.log4j.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Level;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * de.codewave.mytunesrss.settings.Info

@@ -4,14 +4,14 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.jsp.*;
-import de.codewave.mytunesrss.servlet.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.jsp.BundleError;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
+import de.codewave.mytunesrss.servlet.WebConfig;
+import org.apache.commons.lang.StringUtils;
 
-import javax.servlet.*;
-import java.io.*;
-
-import org.apache.commons.lang.*;
+import javax.servlet.ServletException;
+import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.commanDoLoginCommandHandlerer

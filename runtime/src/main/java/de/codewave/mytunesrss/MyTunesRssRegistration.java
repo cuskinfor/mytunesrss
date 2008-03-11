@@ -1,16 +1,18 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.*;
-import de.codewave.utils.registration.*;
-import de.codewave.utils.xml.*;
-import org.apache.commons.jxpath.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
+import de.codewave.utils.PrefsUtils;
+import de.codewave.utils.registration.RegistrationUtils;
+import de.codewave.utils.xml.JXPathUtils;
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
-import java.net.*;
-import java.text.*;
-import java.util.*;
+import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssRegistration

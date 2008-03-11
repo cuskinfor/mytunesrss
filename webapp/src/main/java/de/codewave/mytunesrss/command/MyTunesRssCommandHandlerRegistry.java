@@ -4,7 +4,7 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.utils.servlet.*;
+import de.codewave.utils.servlet.CommandHandlerRegistry;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandlerRegistry

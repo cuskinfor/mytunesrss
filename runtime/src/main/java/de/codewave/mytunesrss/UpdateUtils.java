@@ -4,14 +4,19 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.network.*;
-import de.codewave.utils.swing.*;
-import de.codewave.utils.*;
+import de.codewave.utils.Version;
+import de.codewave.utils.network.DownloadProgressListener;
+import de.codewave.utils.network.Downloader;
+import de.codewave.utils.network.NetworkUtils;
+import de.codewave.utils.network.UpdateInfo;
+import de.codewave.utils.swing.SwingUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
 
 /**
  * de.codewave.mytunesrss.UpdateUtils

@@ -4,12 +4,15 @@
 
 package de.codewave.mytunesrss.jmx;
 
-import de.codewave.mytunesrss.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.User;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.management.*;
-import java.io.*;
+import java.io.UnsupportedEncodingException;
 
 /**
  * de.codewave.mytunesrss.jmx.UserConfig

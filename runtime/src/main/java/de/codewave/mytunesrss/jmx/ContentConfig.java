@@ -1,14 +1,19 @@
 package de.codewave.mytunesrss.jmx;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
+import de.codewave.mytunesrss.datastore.statement.Playlist;
+import de.codewave.mytunesrss.datastore.statement.PlaylistType;
+import de.codewave.mytunesrss.datastore.statement.SavePlaylistAttributesStatement;
+import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.DataStoreSession;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import javax.management.*;
-import java.util.*;
-import java.sql.*;
-
-import org.apache.commons.logging.*;
+import javax.management.NotCompliantMBeanException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.jmx.ContentConfig

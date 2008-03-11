@@ -7,11 +7,12 @@
  */
 package de.codewave.mytunesrss.remote.service;
 
-import java.io.*;
-import java.util.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.remote.*;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 public class LoginService {
     public boolean login(String username, String password) throws UnsupportedEncodingException {

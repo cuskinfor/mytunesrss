@@ -1,10 +1,13 @@
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.utils.sql.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.sql.DataStoreStatement;
+import de.codewave.utils.sql.SmartStatement;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.LastImageUpdateTimeStatement

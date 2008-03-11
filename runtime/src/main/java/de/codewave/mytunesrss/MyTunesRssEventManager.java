@@ -4,7 +4,8 @@
 
 package de.codewave.mytunesrss;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssEventManager

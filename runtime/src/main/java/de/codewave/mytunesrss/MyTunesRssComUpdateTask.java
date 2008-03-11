@@ -4,14 +4,18 @@
 
 package de.codewave.mytunesrss;
 
-import org.apache.commons.codec.binary.*;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.*;
-import org.apache.commons.logging.*;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.util.*;
-import java.text.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * de.codewave.mytunesrss.DatabaseWatchdogTask

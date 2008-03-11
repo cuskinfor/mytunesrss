@@ -5,15 +5,17 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-4" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="update">
+                codewave-utils-0.36
+            </action>
+        </release>
+
         <release version="3.2-EAP-3" date="2008-03-10" description="EAP release">
             <action dev="mdescher" type="update">
-                Moved from system properties to settings.xml:
-                - Database configuration -> database/type,driver,connection,user,password
-                - webapp.context -> tomcat/webapp-context
-                - track.comment.id3v2 -> id3v2-track-comment
-                - Jmx -> jmx/port,host,user,password
-                - tomcat.maxThreads -> tomcat/max-threads
-                - ajp.port -> tomcat/ajp-port
+                Moved from system properties to settings.xml: - Database configuration -> database/type,driver,connection,user,password -
+                webapp.context -> tomcat/webapp-context - track.comment.id3v2 -> id3v2-track-comment - Jmx -> jmx/port,host,user,password -
+                tomcat.maxThreads -> tomcat/max-threads - ajp.port -> tomcat/ajp-port
             </action>
             <action dev="mdescher" type="add">
                 Create settings.xml backup before saving a new version.
@@ -31,9 +33,8 @@
 
         <release version="3.2-EAP-1" date="2008-03-08" description="EAP release">
             <action dev="mdescher" type="add">
-                Support for multi disc albums (disc number, disc count from iTunesXml,
-                TPA, TPOS from ID3 tags. Sort order of tracks according to disc number
-                and track number.
+                Support for multi disc albums (disc number, disc count from iTunesXml, TPA, TPOS from ID3 tags. Sort order of tracks according to disc
+                number and track number.
             </action>
             <action dev="mdescher" type="add">
                 Yahoo media player for individual tracks in playlist edit mode.
@@ -48,8 +49,7 @@
                 JW Media Player 3.15
             </action>
             <action dev="mdescher" type="add">
-                Database updates based on quartz cron expression triggers no matter whether or not the
-                server is running.
+                Database updates based on quartz cron expression triggers no matter whether or not the server is running.
             </action>
             <action dev="mdescher" type="add">
                 Quartz scheduler.
@@ -58,8 +58,8 @@
                 Optional database updates every X seconds while server is running.
             </action>
             <action dev="mdescher" type="update">
-                All settings stored in an XML file in the settings directory. No remaining usage of
-                java.util.prefs API, so no registry usage on Windows anymore.
+                All settings stored in an XML file in the settings directory. No remaining usage of java.util.prefs API, so no registry usage on
+                Windows anymore.
             </action>
             <action dev="mdescher" type="update">
                 Event driven GUI enabling/disabling for all tabs.
@@ -80,8 +80,7 @@
                 Improved cover art tooltip.
             </action>
             <action dev="mdescher" type="update">
-                Performance improvement when scanning watch folders since cover art is scanned
-                in the same run, i.e. files are parsed only once.
+                Performance improvement when scanning watch folders since cover art is scanned in the same run, i.e. files are parsed only once.
             </action>
             <action dev="mdescher" type="update">
                 New version of camel.
@@ -93,12 +92,10 @@
                 Support for single frame or multiple frame usage for ID3 tag comments.
             </action>
             <action dev="mdescher" type="add">
-                Support for default values in ID3v2 tag comment descriptions in the system property
-                "track.comment.id3v2".
+                Support for default values in ID3v2 tag comment descriptions in the system property "track.comment.id3v2".
             </action>
             <action dev="mdescher" type="fix">
-                ID3v2 tag comments: use empty string instead of the word "null" for missing
-                or empty fields.
+                ID3v2 tag comments: use empty string instead of the word "null" for missing or empty fields.
             </action>
             <action dev="mdescher" type="update">
                 commons-io 1.4 used.
@@ -122,8 +119,7 @@
                 New version of codewave-utils.
             </action>
             <action dev="mdescher" type="fix">
-                Fixed some bugs in JSPs which resulted in invalid HTML. This fixes
-                a display problem in Internet Explorer (missing track names).
+                Fixed some bugs in JSPs which resulted in invalid HTML. This fixes a display problem in Internet Explorer (missing track names).
             </action>
             <action dev="mdescher" type="update">
                 New version of camel.
@@ -135,8 +131,7 @@
                 Compare lower case suffix to check for MP3 files when using Yahoo Media Player.
             </action>
             <action dev="mdescher" type="add">
-                Use system property "tomcat.maxThreads" for the maximum threads of the HTTP connector.
-                Default is 200 threads.
+                Use system property "tomcat.maxThreads" for the maximum threads of the HTTP connector. Default is 200 threads.
             </action>
             <action dev="mdescher" type="add">
                 Debug logging option in JMX console and persistent.
@@ -151,8 +146,8 @@
 
         <release version="3.1.2" date="2008-01-23" description="Bugfix release">
             <action dev="mdescher" type="fix">
-                Fixed NullPointerException when saving user without selected restriction playlist ID.
-                Catch all Exceptions when trying to register MyTunesRSS.
+                Fixed NullPointerException when saving user without selected restriction playlist ID. Catch all Exceptions when trying to register
+                MyTunesRSS.
             </action>
         </release>
 

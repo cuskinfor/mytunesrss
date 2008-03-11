@@ -1,11 +1,14 @@
 package de.codewave.mytunesrss.command;
 
-import org.apache.commons.logging.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.io.*;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.text.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * de.codewave.mytunesrss.command.LameTranscoderStream

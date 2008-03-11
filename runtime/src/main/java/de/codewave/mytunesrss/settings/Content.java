@@ -1,17 +1,26 @@
 package de.codewave.mytunesrss.settings;
 
-import com.intellij.uiDesigner.core.*;
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.utils.sql.*;
-import de.codewave.utils.swing.*;
-import org.apache.commons.logging.*;
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssEvent;
+import de.codewave.mytunesrss.MyTunesRssEventListener;
+import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
+import de.codewave.mytunesrss.datastore.statement.Playlist;
+import de.codewave.mytunesrss.datastore.statement.PlaylistType;
+import de.codewave.mytunesrss.datastore.statement.SavePlaylistAttributesStatement;
+import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.swing.SwingUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.sql.*;
-import java.util.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**

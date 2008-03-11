@@ -1,12 +1,15 @@
 package de.codewave.mytunesrss.jmx;
 
-import de.codewave.mytunesrss.*;
-import mx4j.tools.adaptor.http.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.User;
+import mx4j.tools.adaptor.http.HttpAdaptor;
+import mx4j.tools.adaptor.http.XSLTProcessor;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.management.*;
-import java.lang.management.*;
+import java.lang.management.ManagementFactory;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>

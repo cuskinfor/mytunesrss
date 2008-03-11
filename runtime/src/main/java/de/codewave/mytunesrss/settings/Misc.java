@@ -5,12 +5,15 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.task.*;
-import de.codewave.utils.swing.*;
-import de.codewave.utils.swing.components.*;
+import de.codewave.utils.swing.JTextFieldValidation;
+import de.codewave.utils.swing.MinMaxValueTextFieldValidation;
+import de.codewave.utils.swing.NotEmptyTextFieldValidation;
+import de.codewave.utils.swing.SwingUtils;
+import de.codewave.utils.swing.components.PasswordHashField;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * de.codewave.mytunesrss.settings.Misc

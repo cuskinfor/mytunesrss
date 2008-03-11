@@ -4,21 +4,32 @@
 
 package de.codewave.mytunesrss.server;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.*;
-import de.codewave.utils.*;
-import de.codewave.utils.servlet.*;
-import org.apache.catalina.*;
-import org.apache.catalina.connector.*;
-import org.apache.catalina.core.*;
-import org.apache.catalina.session.*;
-import org.apache.catalina.startup.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
-import org.apache.tomcat.util.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssConfig;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.utils.PrefsUtils;
+import de.codewave.utils.servlet.SessionManager;
+import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.connector.Connector;
+import org.apache.catalina.core.StandardHost;
+import org.apache.catalina.session.StandardManager;
+import org.apache.catalina.startup.Embedded;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.util.IntrospectionUtils;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.*;
 
 /**

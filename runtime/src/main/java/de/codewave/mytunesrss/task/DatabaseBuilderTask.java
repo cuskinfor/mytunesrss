@@ -5,20 +5,25 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.*;
-import de.codewave.mytunesrss.datastore.filesystem.*;
-import de.codewave.mytunesrss.datastore.itunes.*;
+import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
+import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.*;
-import de.codewave.utils.swing.*;
-import org.apache.commons.io.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
+import de.codewave.utils.swing.Task;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.sql.*;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.locks.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * de.codewave.mytunesrss.task.DatabaseBuilderTaskk

@@ -4,20 +4,26 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.*;
-import de.codewave.utils.io.*;
-import de.codewave.utils.xml.*;
-import org.apache.commons.jxpath.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
-import org.w3c.dom.*;
+import de.codewave.utils.PrefsUtils;
+import de.codewave.utils.io.IOUtils;
+import de.codewave.utils.xml.DOMUtils;
+import de.codewave.utils.xml.JXPathUtils;
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import javax.crypto.*;
-import javax.crypto.spec.*;
-import javax.xml.parsers.*;
-import java.io.*;
-import java.math.*;
-import java.security.*;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 /**
@@ -674,8 +680,9 @@ public class MyTunesRssConfig {
                 setJmxUser(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/user", null)));
                 setJmxPassword(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/password", null)));
                 setTomcatMaxThreads(JXPathUtils.getStringValue(settings, "tomcat/max-threads", "200"));
-                setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/max-threads", 0));
-                setWebappContext(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""));
+                setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/ajp-port", 0));
+                String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
+                setWebappContext(context != null ? "/" + context : "");
             }
         } catch (IOException e) {
             LOG.error("Could not read configuration file.", e);

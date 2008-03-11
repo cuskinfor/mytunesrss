@@ -1,21 +1,31 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
-import de.codewave.camel.mp3.*;
-import de.codewave.camel.mp4.*;
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.meta.*;
+import de.codewave.camel.mp3.Id3Tag;
+import de.codewave.camel.mp3.Id3v1Tag;
+import de.codewave.camel.mp3.Id3v2Tag;
+import de.codewave.camel.mp3.Mp3Utils;
+import de.codewave.camel.mp4.Mp4Atom;
+import de.codewave.camel.mp4.Mp4Utils;
+import de.codewave.mytunesrss.FileSuffixInfo;
+import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.task.*;
-import de.codewave.utils.io.*;
+import de.codewave.mytunesrss.meta.Image;
+import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
+import de.codewave.mytunesrss.meta.TrackMetaData;
+import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.utils.io.FileProcessor;
 import de.codewave.utils.io.IOUtils;
-import de.codewave.utils.sql.*;
-import org.apache.commons.io.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
-import org.apache.commons.codec.binary.*;
+import de.codewave.utils.sql.DataStoreSession;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.sql.*;
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 
 /**

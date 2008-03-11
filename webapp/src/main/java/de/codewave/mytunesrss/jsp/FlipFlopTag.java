@@ -4,11 +4,13 @@
 
 package de.codewave.mytunesrss.jsp;
 
-import org.apache.commons.logging.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import javax.servlet.jsp.tagext.*;
-import javax.servlet.jsp.*;
-import java.io.*;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.jsp.tagext.TagSupport;
+import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.jsp.FlipFlopTag

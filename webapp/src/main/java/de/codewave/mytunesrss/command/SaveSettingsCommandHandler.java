@@ -4,13 +4,15 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.jsp.*;
-import de.codewave.mytunesrss.servlet.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.jsp.BundleError;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
+import de.codewave.mytunesrss.servlet.WebConfig;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
+import java.io.UnsupportedEncodingException;
 
 /**
  * de.codewave.mytunesrss.command.SaveSettingsCommandHandler

@@ -4,17 +4,18 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.jsp.*;
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.Pager;
+import de.codewave.mytunesrss.datastore.statement.FindGenreQuery;
+import de.codewave.mytunesrss.datastore.statement.Genre;
+import de.codewave.mytunesrss.datastore.statement.PagerConfig;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
+import de.codewave.utils.sql.DataStoreQuery;
+import org.apache.commons.lang.StringUtils;
 
-import javax.servlet.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
-
-import org.apache.commons.lang.*;
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.command.BrowseAlbumCommandHandler

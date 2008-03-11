@@ -1,14 +1,18 @@
 package de.codewave.mytunesrss.servlet;
 
-import de.codewave.mytunesrss.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
 import javax.servlet.*;
-import javax.servlet.http.*;
-import java.io.*;
-import java.net.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import java.io.IOException;
+import java.net.URLDecoder;
 
 /**
  * de.codewave.mytunesrss.servlet.EncodingFilter

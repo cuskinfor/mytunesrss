@@ -1,11 +1,14 @@
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.meta.*;
-import de.codewave.mytunesrss.*;
-import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.meta.Image;
+import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultBuilder;
+import de.codewave.utils.sql.SmartStatement;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumImageQuery

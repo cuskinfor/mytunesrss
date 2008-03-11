@@ -1,13 +1,12 @@
 package de.codewave.mytunesrss.remote.service;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.remote.*;
-import de.codewave.mytunesrss.servlet.*;
+import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.datastore.statement.FindAlbumQuery;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.servlet.TransactionFilter;
+import org.apache.commons.lang.StringUtils;
 
-import java.sql.*;
-
-import org.apache.commons.lang.*;
+import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.remote.service.AlbumService

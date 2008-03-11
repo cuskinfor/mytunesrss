@@ -1,10 +1,15 @@
 package de.codewave.mytunesrss.job;
 
-import de.codewave.mytunesrss.*;
-import org.apache.commons.logging.*;
-import org.quartz.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.quartz.CronTrigger;
+import org.quartz.JobDetail;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 
-import java.text.*;
+import java.text.ParseException;
 
 /**
  * de.codewave.mytunesrss.job.MyTunesRssJobUtils

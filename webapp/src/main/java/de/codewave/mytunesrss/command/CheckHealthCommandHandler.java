@@ -4,12 +4,13 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.datastore.*;
-import de.codewave.mytunesrss.server.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.server.CheckHealthResult;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.sql.*;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.command.CheckHealthCommandHandler

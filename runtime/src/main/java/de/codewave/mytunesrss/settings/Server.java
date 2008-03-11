@@ -5,14 +5,19 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.task.*;
-import de.codewave.mytunesrss.network.*;
-import de.codewave.utils.swing.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.network.MulticastService;
+import de.codewave.utils.swing.JTextFieldValidation;
+import de.codewave.utils.swing.MinMaxValueTextFieldValidation;
+import de.codewave.utils.swing.NotEmptyTextFieldValidation;
+import de.codewave.utils.swing.SwingUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Server settings panel

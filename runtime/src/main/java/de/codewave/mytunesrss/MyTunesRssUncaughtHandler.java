@@ -1,8 +1,9 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.settings.*;
-import de.codewave.utils.swing.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.settings.SupportContact;
+import de.codewave.utils.swing.SwingUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
 

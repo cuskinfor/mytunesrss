@@ -1,10 +1,10 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.utils.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.utils.PrefsUtils;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.command.LameTranscoderStream

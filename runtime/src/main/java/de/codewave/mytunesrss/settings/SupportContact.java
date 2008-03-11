@@ -1,21 +1,16 @@
 package de.codewave.mytunesrss.settings;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.task.*;
-import de.codewave.utils.*;
-import de.codewave.utils.io.*;
-import de.codewave.utils.swing.*;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.*;
-import org.apache.commons.httpclient.methods.multipart.*;
-import org.apache.commons.io.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.task.SendSupportRequestTask;
+import de.codewave.utils.swing.SwingUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.zip.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * de.codewave.mytunesrss.settings.SupportContact

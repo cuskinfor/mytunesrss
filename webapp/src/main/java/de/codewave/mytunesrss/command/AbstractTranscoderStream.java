@@ -1,14 +1,16 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.utils.*;
-import de.codewave.utils.io.*;
-import org.apache.commons.io.output.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.FileSuffixInfo;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.utils.PrefsUtils;
+import de.codewave.utils.io.StreamCopyThread;
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
-import java.util.*;
+import java.util.Properties;
 
 /**
  * de.codewave.mytunesrss.command.LameTranscoderStream

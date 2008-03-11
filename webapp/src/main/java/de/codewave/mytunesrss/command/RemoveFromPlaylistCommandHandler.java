@@ -4,10 +4,12 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.datastore.statement.Playlist;
+import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.jsp.BundleError;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 
-import java.util.*;
+import java.util.Collection;
 
 /**
  * de.codewave.mytunesrss.command.RemoveFromPlaylistCommandHandler

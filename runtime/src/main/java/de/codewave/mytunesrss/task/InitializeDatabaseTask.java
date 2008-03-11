@@ -4,12 +4,18 @@
 
 package de.codewave.mytunesrss.task;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssTask;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement;
+import de.codewave.mytunesrss.datastore.statement.MigrationStatement;
+import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.DataStoreSession;
 
-import java.io.*;
-import java.sql.*;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.task.InitializeDatabaseTask

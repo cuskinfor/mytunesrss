@@ -1,21 +1,30 @@
 package de.codewave.mytunesrss.settings;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
+import de.codewave.mytunesrss.datastore.statement.Playlist;
+import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.swing.*;
-import de.codewave.utils.swing.components.*;
-import de.codewave.utils.sql.*;
-import org.apache.commons.logging.*;
-import org.apache.commons.lang.*;
+import de.codewave.utils.swing.components.PasswordHashField;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.sql.*;
-import java.text.*;
-import java.util.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>

@@ -1,9 +1,11 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.utils.xml.*;
-import org.apache.commons.logging.*;
+import de.codewave.utils.xml.PListHandlerListener;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.itunes.LibraryListener

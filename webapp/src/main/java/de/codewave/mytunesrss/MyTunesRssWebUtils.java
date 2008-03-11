@@ -1,14 +1,15 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.servlet.*;
-import de.codewave.mytunesrss.servlet.*;
 import de.codewave.mytunesrss.jsp.Error;
+import de.codewave.mytunesrss.servlet.WebConfig;
+import de.codewave.utils.servlet.ServletUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import javax.crypto.*;
-import javax.servlet.http.*;
-import java.util.*;
-
-import org.apache.commons.logging.*;
+import javax.crypto.Cipher;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>

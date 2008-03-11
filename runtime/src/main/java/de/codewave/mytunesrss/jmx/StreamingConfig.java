@@ -1,9 +1,9 @@
 package de.codewave.mytunesrss.jmx;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
 
-import javax.management.*;
-import java.math.*;
+import javax.management.NotCompliantMBeanException;
+import java.math.BigDecimal;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       Cologne Systems GmbH<br> <b>Creation Date:</b>

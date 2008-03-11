@@ -3,9 +3,10 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.util.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * de.codewave.mytunesrss.settings.Settings

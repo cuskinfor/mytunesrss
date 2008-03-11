@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.jsp.*;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 
 /**
  * de.codewave.mytunesrss.command.ShowJukeboxCommandHandler

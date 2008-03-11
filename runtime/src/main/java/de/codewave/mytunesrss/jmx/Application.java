@@ -1,12 +1,12 @@
 package de.codewave.mytunesrss.jmx;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.task.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.task.SendSupportRequestTask;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 
-import javax.management.*;
-
-import org.apache.log4j.*;
-import org.apache.commons.lang.*;
+import javax.management.NotCompliantMBeanException;
 
 /**
  * de.codewave.mytunesrss.jmx.Application

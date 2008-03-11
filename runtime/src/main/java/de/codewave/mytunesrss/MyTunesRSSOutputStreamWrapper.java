@@ -1,10 +1,12 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.io.*;
-import de.codewave.utils.servlet.*;
-import org.apache.commons.logging.*;
+import de.codewave.utils.io.LimitedBandwidthOutputStream;
+import de.codewave.utils.servlet.StreamSender;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * de.codewave.mytunesrss.MyTunesRSSOutputStreamWrapper

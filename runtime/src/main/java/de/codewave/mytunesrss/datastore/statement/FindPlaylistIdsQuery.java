@@ -1,10 +1,15 @@
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultBuilder;
+import de.codewave.utils.sql.SmartStatement;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindPlaylistIdsQuery

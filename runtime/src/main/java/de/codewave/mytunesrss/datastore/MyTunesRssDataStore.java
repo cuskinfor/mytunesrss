@@ -4,18 +4,23 @@
 
 package de.codewave.mytunesrss.datastore;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.utils.sql.*;
-import de.codewave.utils.xml.*;
-import org.apache.commons.jxpath.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
-import org.apache.commons.pool.*;
-import org.apache.commons.pool.impl.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.sql.DataStore;
+import de.codewave.utils.sql.SmartStatementFactory;
+import de.codewave.utils.xml.JXPathUtils;
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.pool.BasePoolableObjectFactory;
+import org.apache.commons.pool.impl.GenericObjectPool;
 
-import java.io.*;
-import java.net.*;
-import java.sql.*;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.datastore.MyTunesRssDataStore

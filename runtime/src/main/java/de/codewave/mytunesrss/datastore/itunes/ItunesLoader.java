@@ -4,14 +4,20 @@
 
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.utils.sql.*;
-import de.codewave.utils.xml.*;
-import org.apache.commons.logging.*;
+import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.xml.PListHandler;
+import de.codewave.utils.xml.XmlUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.net.*;
-import java.sql.*;
-import java.util.*;
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.itunes.ItunesLoaderr

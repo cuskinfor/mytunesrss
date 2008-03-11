@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.jmx;
 
-import java.math.*;
+import java.math.BigDecimal;
 
 /**
  * de.codewave.mytunesrss.jmx.AddonsConfigMBean

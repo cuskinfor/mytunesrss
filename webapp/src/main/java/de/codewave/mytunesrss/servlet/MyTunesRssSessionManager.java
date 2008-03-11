@@ -4,11 +4,13 @@
 
 package de.codewave.mytunesrss.servlet;
 
-import de.codewave.utils.servlet.*;
+import de.codewave.utils.servlet.SessionManager;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpSessionEvent;
-import java.io.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.servlet.MyTunesRssSessionManager

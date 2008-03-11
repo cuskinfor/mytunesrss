@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.jmx;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 
 /**
  * de.codewave.mytunesrss.jmx.ErrorQueue

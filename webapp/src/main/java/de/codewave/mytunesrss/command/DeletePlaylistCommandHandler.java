@@ -4,9 +4,8 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.jsp.*;
-import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.datastore.statement.DeletePlaylistStatement;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 
 /**
  * de.codewave.mytunesrss.command.DeletePlaylistCommandHandler

@@ -1,0 +1,13 @@
+{
+    "version": "1.1",
+    "method": "ArtistService.getArtists",
+    "id": "12345",
+    "params": [
+        null,
+        null,
+        null,
+        -1,
+        0,
+        0
+    ]
+}

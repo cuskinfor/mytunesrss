@@ -4,8 +4,8 @@
 
 package de.codewave.mytunesrss.command;
 
-import javax.servlet.*;
-import java.io.*;
+import javax.servlet.ServletException;
+import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.command.StartCommandHandler

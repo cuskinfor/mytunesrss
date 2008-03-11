@@ -4,7 +4,8 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.utils.servlet.*;
+import de.codewave.utils.servlet.Command;
+import de.codewave.utils.servlet.CommandHandler;
 
 public enum MyTunesRssCommand implements Command {
     Login("login", DoLoginCommandHandler.class),

@@ -4,13 +4,22 @@
 
 package de.codewave.mytunesrss.servlet;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.jsp.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import javax.servlet.http.*;
-import java.util.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.servlet.WebConfig

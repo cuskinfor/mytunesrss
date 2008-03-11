@@ -4,13 +4,19 @@
 
 package de.codewave.mytunesrss.settings;
 
-import com.intellij.uiDesigner.core.*;
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 import de.codewave.mytunesrss.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.util.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.settings.UserManagement

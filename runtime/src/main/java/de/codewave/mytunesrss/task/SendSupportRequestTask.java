@@ -1,17 +1,21 @@
 package de.codewave.mytunesrss.task;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.utils.io.*;
-import de.codewave.utils.*;
-
-import java.util.zip.*;
-import java.io.*;
-
-import org.apache.commons.httpclient.methods.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssTask;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.PrefsUtils;
+import de.codewave.utils.io.ZipUtils;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.*;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.io.*;
-import org.apache.commons.logging.*;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.zip.ZipOutputStream;
 
 /**
  * de.codewave.mytunesrss.task.SendSupportRequestTask

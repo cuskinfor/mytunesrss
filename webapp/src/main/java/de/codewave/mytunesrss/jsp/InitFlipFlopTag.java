@@ -4,8 +4,10 @@
 
 package de.codewave.mytunesrss.jsp;
 
-import javax.servlet.jsp.tagext.*;
-import javax.servlet.jsp.*;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.jsp.tagext.TagSupport;
 
 /**
  * de.codewave.mytunesrss.jsp.InitFlipFlopTag

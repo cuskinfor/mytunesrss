@@ -1,7 +1,8 @@
 package de.codewave.mytunesrss;
 
-import java.io.*;
-import java.security.*;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * de.codewave.mytunesrss.Crypt

@@ -1,10 +1,10 @@
 package de.codewave.mytunesrss.jmx;
 
-import de.codewave.mytunesrss.*;
-import org.apache.commons.lang.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import org.apache.commons.lang.StringUtils;
 
-import javax.management.*;
-import java.io.*;
+import javax.management.NotCompliantMBeanException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       Cologne Systems GmbH<br> <b>Creation Date:</b>

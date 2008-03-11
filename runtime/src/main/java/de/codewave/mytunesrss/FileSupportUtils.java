@@ -4,11 +4,11 @@
 
 package de.codewave.mytunesrss;
 
-import org.apache.commons.io.*;
-import org.apache.commons.lang.*;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.StringTokenizer;
 
 /**
  * de.codewave.mytunesrss.FileSupportUtils

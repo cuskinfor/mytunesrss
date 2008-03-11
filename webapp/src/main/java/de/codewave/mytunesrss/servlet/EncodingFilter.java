@@ -4,10 +4,10 @@
 
 package de.codewave.mytunesrss.servlet;
 
-import org.apache.commons.lang.*;
+import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.*;
-import java.io.*;
+import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.servlet.EncodingFilter

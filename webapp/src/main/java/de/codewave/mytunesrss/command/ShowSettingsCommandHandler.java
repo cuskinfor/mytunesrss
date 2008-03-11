@@ -4,9 +4,9 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.jsp.*;
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.AddonsUtils;
+import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 
 /**
  * de.codewave.mytunesrss.command.ShowSettingsCommandHandler

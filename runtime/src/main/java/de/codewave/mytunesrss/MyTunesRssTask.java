@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.swing.pleasewait.*;
+import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssTask

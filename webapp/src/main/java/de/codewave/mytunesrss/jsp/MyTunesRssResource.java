@@ -4,13 +4,15 @@
 
 package de.codewave.mytunesrss.jsp;
 
-import de.codewave.mytunesrss.*;
-import org.apache.commons.lang.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import org.apache.commons.lang.StringUtils;
 
-import javax.servlet.http.*;
-import javax.servlet.jsp.jstl.core.*;
-import javax.servlet.jsp.jstl.fmt.*;
-import java.util.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.jstl.core.Config;
+import javax.servlet.jsp.jstl.fmt.LocalizationContext;
+import java.util.Map;
 
 public enum MyTunesRssResource {
     Login("/login.jsp"),

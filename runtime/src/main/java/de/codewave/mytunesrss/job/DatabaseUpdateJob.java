@@ -1,9 +1,12 @@
 package de.codewave.mytunesrss.job;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.task.*;
-import org.apache.commons.logging.*;
-import org.quartz.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
 /**
  * Job implementation for database updates. This job simply starts the database builder task which

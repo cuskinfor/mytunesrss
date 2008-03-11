@@ -1,9 +1,11 @@
 package de.codewave.mytunesrss.jmx;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.settings.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssEvent;
+import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.settings.ServerInfo;
 
-import javax.management.*;
+import javax.management.NotCompliantMBeanException;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>

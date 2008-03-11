@@ -1,12 +1,12 @@
 package de.codewave.mytunesrss.servlet;
 
-import de.codewave.mytunesrss.datastore.*;
-import de.codewave.mytunesrss.command.*;
-import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.utils.sql.DataStore;
+import de.codewave.utils.sql.DataStoreSession;
 
 import javax.servlet.*;
-import javax.servlet.http.*;
-import java.io.*;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.servlet.TransactionFilter

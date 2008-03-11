@@ -1,23 +1,31 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.jmx.*;
-import de.codewave.mytunesrss.task.*;
-import de.codewave.utils.*;
-import de.codewave.utils.sql.*;
-import de.codewave.utils.swing.*;
-import de.codewave.utils.swing.pleasewait.*;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.io.*;
-import org.apache.commons.logging.*;
-import org.apache.log4j.*;
-import org.apache.log4j.spi.*;
-import org.quartz.*;
+import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
+import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.utils.PrefsUtils;
+import de.codewave.utils.sql.SmartStatement;
+import de.codewave.utils.swing.SwingUtils;
+import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
+import de.codewave.utils.swing.pleasewait.PleaseWaitUtils;
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggerRepository;
+import org.quartz.SchedulerException;
 
 import javax.swing.*;
-import java.io.*;
-import java.sql.*;
-import java.text.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.util.Enumeration;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils

@@ -4,9 +4,9 @@
 
 package de.codewave.mytunesrss;
 
-import org.apache.commons.codec.binary.*;
+import org.apache.commons.codec.binary.Base64;
 
-import java.io.*;
+import java.io.UnsupportedEncodingException;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssBase64Utils

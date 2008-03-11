@@ -4,8 +4,8 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.jsp.*;
-import de.codewave.mytunesrss.servlet.*;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
+import de.codewave.mytunesrss.servlet.WebConfig;
 
 /**
  * de.codewave.mytunesrss.command.DoLogoutCommandHandler

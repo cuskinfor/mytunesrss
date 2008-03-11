@@ -1,13 +1,16 @@
 package de.codewave.mytunesrss.meta;
 
-import de.codewave.camel.mp4.*;
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
+import de.codewave.camel.mp4.Mp4Atom;
+import de.codewave.camel.mp4.Mp4Utils;
+import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.datastore.statement.Track;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
 
 /**
  * de.codewave.mytunesrss.meta.MyTunesRssMp3Utils

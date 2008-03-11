@@ -4,9 +4,7 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.settings.*;
-import de.codewave.mytunesrss.task.*;
-import de.codewave.utils.swing.*;
+import de.codewave.mytunesrss.settings.Settings;
 import snoozesoft.systray4j.*;
 
 import javax.swing.*;

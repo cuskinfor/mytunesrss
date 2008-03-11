@@ -4,7 +4,10 @@
 
 package de.codewave.mytunesrss;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * de.codewave.mytunesrss.jsp.Pager

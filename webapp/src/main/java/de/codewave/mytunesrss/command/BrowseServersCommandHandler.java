@@ -4,11 +4,16 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.jsp.*;
-import de.codewave.mytunesrss.network.*;
+import de.codewave.mytunesrss.Pager;
+import de.codewave.mytunesrss.jsp.BundleError;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
+import de.codewave.mytunesrss.network.MulticastService;
+import de.codewave.mytunesrss.network.RemoteServer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.command.BrowseServersCommandHandler

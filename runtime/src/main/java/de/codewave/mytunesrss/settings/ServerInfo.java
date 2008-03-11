@@ -4,21 +4,30 @@
 
 package de.codewave.mytunesrss.settings;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.server.*;
-import de.codewave.utils.network.*;
-import de.codewave.utils.swing.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
+import de.codewave.utils.network.NetworkUtils;
+import de.codewave.utils.swing.SwingUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
-import javax.swing.table.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
-import java.text.*;
-import java.util.*;
+import javax.swing.table.AbstractTableModel;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.Timer;
+import java.util.TimerTask;
 
 public class ServerInfo {
     private static final Log LOG = LogFactory.getLog(ServerInfo.class);

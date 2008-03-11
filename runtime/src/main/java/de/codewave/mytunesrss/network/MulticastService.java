@@ -4,11 +4,12 @@
 
 package de.codewave.mytunesrss.network;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.settings.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.settings.ServerInfo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.*;
 import java.util.*;
 

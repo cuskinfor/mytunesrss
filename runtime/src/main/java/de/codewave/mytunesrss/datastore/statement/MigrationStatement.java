@@ -4,14 +4,15 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.utils.sql.*;
-import de.codewave.utils.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.Version;
+import de.codewave.utils.sql.DataStoreStatement;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.sql.*;
-
-import com.sun.java_cup.internal.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement

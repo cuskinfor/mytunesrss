@@ -4,13 +4,15 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.meta.*;
-import de.codewave.utils.sql.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
-
-import java.util.*;
+import de.codewave.mytunesrss.datastore.statement.FindTrackImageQuery;
+import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
+import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.meta.Image;
+import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
+import de.codewave.utils.sql.DataStoreQuery;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * de.codewave.mytunesrss.command.ShowTrackImageCommandHandler

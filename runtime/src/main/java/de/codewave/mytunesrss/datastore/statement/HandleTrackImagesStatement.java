@@ -1,17 +1,17 @@
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.camel.mp3.*;
-import de.codewave.camel.mp4.*;
-import de.codewave.mytunesrss.meta.*;
-import de.codewave.mytunesrss.*;
-import de.codewave.utils.graphics.*;
-import de.codewave.utils.sql.*;
-import org.apache.commons.logging.*;
-import org.apache.commons.lang.*;
+import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.meta.Image;
+import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
+import de.codewave.mytunesrss.meta.MyTunesRssMp4Utils;
+import de.codewave.utils.graphics.ImageUtils;
+import de.codewave.utils.sql.DataStoreStatement;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackImagesStatement

@@ -4,14 +4,19 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.*;
-import org.apache.commons.io.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.logging.*;
+import de.codewave.utils.PrefsUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
 import java.util.*;
-import java.util.zip.*;
+import java.util.zip.CodewaveZipInputStream;
+import java.util.zip.CodewaveZipInputStreamFactory;
+import java.util.zip.ZipEntry;
 
 /**
  * de.codewave.mytunesrss.AddonsUtils

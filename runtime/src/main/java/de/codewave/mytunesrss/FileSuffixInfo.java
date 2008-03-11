@@ -1,10 +1,16 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.*;
-import org.apache.commons.logging.*;
+import de.codewave.utils.PrefsUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 public class FileSuffixInfo {
     private static final Log LOG = LogFactory.getLog(FileSuffixInfo.class);

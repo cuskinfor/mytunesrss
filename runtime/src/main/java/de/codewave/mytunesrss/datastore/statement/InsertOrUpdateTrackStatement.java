@@ -4,7 +4,7 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.utils.sql.*;
+import de.codewave.utils.sql.DataStoreStatement;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement

@@ -1,6 +1,8 @@
 package de.codewave.mytunesrss.task;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRssEvent;
+import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.MyTunesRssTask;
 
 /**
  * de.codewave.mytunesrss.task.RecreateDatabaseTask

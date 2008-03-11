@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.command;
 
-import org.apache.commons.lang.*;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * de.codewave.mytunesrss.command.DisplayFilter

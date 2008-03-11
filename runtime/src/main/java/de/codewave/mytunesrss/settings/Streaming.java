@@ -1,15 +1,15 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.swing.*;
-import org.apache.commons.lang.*;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.io.*;
-import java.math.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 
 /**
  * de.codewave.mytunesrss.settings.Streaming

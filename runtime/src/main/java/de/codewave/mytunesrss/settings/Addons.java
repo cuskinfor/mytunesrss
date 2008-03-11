@@ -1,15 +1,15 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.task.*;
-import de.codewave.utils.swing.*;
-import org.apache.commons.io.*;
+import org.apache.commons.io.FilenameUtils;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * de.codewave.mytunesrss.settings.Addons

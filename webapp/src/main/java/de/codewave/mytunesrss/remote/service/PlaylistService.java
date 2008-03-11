@@ -1,13 +1,13 @@
 package de.codewave.mytunesrss.remote.service;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.command.*;
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
-import de.codewave.mytunesrss.servlet.*;
-import org.apache.commons.lang.*;
+import de.codewave.mytunesrss.servlet.TransactionFilter;
+import org.apache.commons.lang.StringUtils;
 
-import java.sql.*;
+import java.sql.SQLException;
 
 /**
  * Service for playlist retrieval and management.

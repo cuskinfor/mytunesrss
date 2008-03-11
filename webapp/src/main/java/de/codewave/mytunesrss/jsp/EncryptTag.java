@@ -1,12 +1,15 @@
 package de.codewave.mytunesrss.jsp;
 
-import de.codewave.mytunesrss.*;
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import javax.crypto.*;
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.*;
-import java.io.*;
+import javax.crypto.SecretKey;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.BodyTag;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.servlet.jsp.tagext.Tag;
+import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.jsp.FlipFlopTag

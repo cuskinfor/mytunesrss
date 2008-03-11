@@ -4,10 +4,11 @@
 
 package de.codewave.mytunesrss.jmx;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.settings.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.settings.Directories;
 
-import javax.management.*;
+import javax.management.NotCompliantMBeanException;
 
 /**
  * de.codewave.mytunesrss.jmx.DirectoriesConfig

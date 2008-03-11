@@ -1,15 +1,17 @@
 package de.codewave.mytunesrss.command;
 
-import org.apache.commons.logging.*;
+import de.codewave.mytunesrss.meta.Image;
+import de.codewave.utils.graphics.ImageUtils;
+import de.codewave.utils.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.util.*;
-
-import de.codewave.mytunesrss.meta.*;
-import de.codewave.utils.graphics.*;
-import de.codewave.utils.io.*;
-
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.command.ShowTrackImageCommandHandler

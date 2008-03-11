@@ -1,9 +1,10 @@
 package de.codewave.mytunesrss.server;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.utils.servlet.*;
+import de.codewave.mytunesrss.User;
+import de.codewave.utils.servlet.FileSender;
+import de.codewave.utils.servlet.SessionManager;
 
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * de.codewave.mytunesrss.common.MyTunesRssSessionInfo

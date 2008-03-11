@@ -1,15 +1,21 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.servlet.*;
-import de.codewave.utils.*;
-import de.codewave.utils.servlet.*;
-import org.apache.commons.io.*;
-import org.apache.commons.lang.*;
+import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.servlet.WebConfig;
+import de.codewave.utils.PrefsUtils;
+import de.codewave.utils.servlet.FileSender;
+import de.codewave.utils.servlet.ServletUtils;
+import de.codewave.utils.servlet.StreamSender;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 
-import javax.servlet.http.*;
-import java.io.*;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * de.codewave.mytunesrss.command.Transcoder
@@ -39,8 +45,7 @@ public abstract class Transcoder {
 
     protected Transcoder(String trackId, File file, HttpServletRequest request, WebConfig webConfig) {
         myPlayerRequest = "true".equalsIgnoreCase(request.getParameter("playerRequest"));
-        myTempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request) ||
-                (!webConfig.isTranscodeOnTheFlyIfPossible() && !myPlayerRequest);
+        myTempFile = (ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request) || !webConfig.isTranscodeOnTheFlyIfPossible()) && !myPlayerRequest;
         myTrackId = trackId;
         myFile = file;
         myTargetBitrate = webConfig.getLameTargetBitrate();
@@ -51,7 +56,7 @@ public abstract class Transcoder {
                 myActive = true;
                 myTargetBitrate = Integer.parseInt(splitted[0]);
                 myTargetSampleRate = Integer.parseInt(splitted[1]);
-                setTempFileRequested(!Boolean.parseBoolean(splitted[2]));
+                setTempFileRequested(ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request) || !Boolean.parseBoolean(splitted[2]));
             }
         }
     }

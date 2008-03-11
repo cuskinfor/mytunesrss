@@ -4,9 +4,10 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.Pager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.PagerConfig
