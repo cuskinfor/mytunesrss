@@ -5,7 +5,19 @@
     </properties>
     <body>
 
-        <release version="3.1.6" date="????-??-??" description="Bugfix release">
+        <release version="3.1.7" date="2008-03-11" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                RSS feed JSP was broken.
+            </action>
+        </release>
+
+        <release version="3.1.6" date="2008-03-11" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                codewave-utils-0.36: fixes range header problems with VLC
+            </action>
+            <action dev="mdescher" type="fix">
+                Tooltip javascript was buggy.
+            </action>
             <action dev="mdescher" type="fix">
                 Event driven GUI enabling/disabling for database, directories.
             </action>
