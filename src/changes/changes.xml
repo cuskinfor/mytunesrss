@@ -7,7 +7,14 @@
 
         <release version="3.2-EAP-4" date="????-??-??" description="EAP release">
             <action dev="mdescher" type="update">
-                codewave-utils-0.36
+                codewave-utils-0.37
+            </action>
+            <action dev="mdescher" type="fix">
+                Fix for Yahoo Media Player requesting stupid image.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed codewave log level setting after loading configuration.
+                Set default log level (until config is loaded) from info to debug.
             </action>
         </release>
 

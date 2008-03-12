@@ -11,7 +11,7 @@
         </layout>
     </appender>
     <logger name="de.codewave" additivity="false">
-        <level value="info"/>
+        <level value="debug"/>
         <appender-ref ref="file"/>
     </logger>
     <logger name="org.apache.catalina.startup" additivity="false">

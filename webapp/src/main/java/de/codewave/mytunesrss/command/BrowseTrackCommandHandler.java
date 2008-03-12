@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.StringUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -73,7 +74,11 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             }
             if (tracks == null || tracks.isEmpty()) {
                 addError(new BundleError("error.browseTrackNoResult"));
-                redirect(MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null)));
+                if (StringUtils.isNotEmpty(getRequestParameter("backUrl", null))) {
+                    redirect(MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null)));
+                } else {
+                    getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
+                }
             } else {
                 forward(MyTunesRssResource.BrowseTrack);
             }
