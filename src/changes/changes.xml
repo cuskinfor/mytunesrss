@@ -6,7 +6,10 @@
     <body>
 
         <release version="3.2-EAP-5" date="2008-03-12" description="EAP release">
-            <action dev="mdescher" type="update">
+            <action dev="mdescher" type="add">
+                Log entry for each file being processed by the file processor.
+            </action>
+            <action dev="mdescher" type="fix">
                 Bugfix for files which are neither MP3 nor MP4 when scanning
                 watch folders.
             </action>

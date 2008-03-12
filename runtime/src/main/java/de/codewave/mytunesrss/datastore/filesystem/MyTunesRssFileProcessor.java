@@ -75,6 +75,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         myExistingIds.add(fileId);
                     }
                     if ((file.lastModified() >= myLastUpdateTime || !existing)) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Processing file \"" + file.getAbsolutePath() + "\".");
+                        }
                         InsertOrUpdateTrackStatement statement;
                         if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
                             statement = existing ? new UpdateTrackAndImageStatement() : new InsertTrackAndImageStatement(TrackSource.FileSystem);
