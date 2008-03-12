@@ -5,9 +5,10 @@
     </properties>
     <body>
 
-        <release version="3.2-EAP-4" date="????-??-??" description="EAP release">
+        <release version="3.2-EAP-4" date="2008-03-12" description="EAP release">
             <action dev="mdescher" type="update">
-                codewave-utils-0.37
+                codewave-utils-0.37 to hopefully fix playback on iPhone/iPod Touch
+                by adding response headers for range requests.
             </action>
             <action dev="mdescher" type="fix">
                 Fix for Yahoo Media Player requesting stupid image.
