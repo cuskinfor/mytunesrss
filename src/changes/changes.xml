@@ -5,6 +5,12 @@
     </properties>
     <body>
 
+        <release version="3.1.8" date="????-??-??" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                Bugfix for files which are neither MP3 nor MP4 when scanning watch folders.
+            </action>
+        </release>
+
         <release version="3.1.7" date="2008-03-11" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 RSS feed JSP was broken.
