@@ -16,6 +16,9 @@
                 Fixed codewave log level setting after loading configuration.
                 Set default log level (until config is loaded) from info to debug.
             </action>
+            <action dev="mdescher" type="fix">
+                Create an empty settings file when none is available.
+            </action>
         </release>
 
         <release version="3.2-EAP-3" date="2008-03-10" description="EAP release">

@@ -12,6 +12,7 @@ import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -22,6 +23,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -602,88 +604,89 @@ public class MyTunesRssConfig {
         LOG.info("Loading configuration.");
         try {
             File file = getSettingsFile();
-            if (file.isFile()) {
-                JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURL()), "settings");
-                setVersion(JXPathUtils.getStringValue(settings, "version", ""));
-                migrate();
-                setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
-                setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
-                setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
-                setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
-                setAutoStartServer(JXPathUtils.getBooleanValue(settings, "autoStartServer", isAutoStartServer()));
-                setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
-                setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
-                List<String> dataSources = new ArrayList<String>();
-                Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
-                int count = 0;
-                while (contextIterator.hasNext()) {
-                    dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
-                    if (!MyTunesRss.REGISTRATION.isRegistered() && count + 1 == MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
-                        break;
-                    }
-                }
-                setDatasources(dataSources.toArray(new String[dataSources.size()]));
-                setFileSystemArtistNameFolder(JXPathUtils.getIntValue(settings, "artistFolder", getFileSystemArtistNameFolder()));
-                setFileSystemAlbumNameFolder(JXPathUtils.getIntValue(settings, "albumFolder", getFileSystemAlbumNameFolder()));
-                setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(settings, "iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
-                setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
-                setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
-                setLocalTempArchive(JXPathUtils.getBooleanValue(settings, "localTempArchive", isLocalTempArchive()));
-                Iterator<JXPathContext> users = JXPathUtils.getContextIterator(settings, "users/user");
-                while (users != null && users.hasNext()) {
-                    JXPathContext userContext = users.next();
-                    User user = new User(JXPathUtils.getStringValue(userContext, "name", null));
-                    user.loadFromPreferences(userContext);
-                    addUser(user);
-                    if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
-                        break;
-                    }
-                }
-                setSupportName(JXPathUtils.getStringValue(settings, "supportName", getSupportName()));
-                setSupportEmail(JXPathUtils.getStringValue(settings, "supportEmail", getSupportEmail()));
-                setProxyServer(JXPathUtils.getBooleanValue(settings, "proxyServer", isProxyServer()));
-                setProxyHost(JXPathUtils.getStringValue(settings, "proxyHost", getProxyHost()));
-                setProxyPort(JXPathUtils.getIntValue(settings, "proxyPort", getProxyPort()));
-                setMyTunesRssComUser(JXPathUtils.getStringValue(settings, "myTunesRssComUser", getMyTunesRssComUser()));
-                setMyTunesRssComPasswordHash(JXPathUtils.getByteArray(settings, "myTunesRssComPassword", getMyTunesRssComPasswordHash()));
-                setFileTypes(JXPathUtils.getStringValue(settings, "fileTypes", getFileTypes()));
-                setArtistDropWords(JXPathUtils.getStringValue(settings, "artistDropWords", getArtistDropWords()));
-                setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
-                setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
-                readPathInfoEncryptionKey(settings);
-                setLameBinary(JXPathUtils.getStringValue(settings, "lameBinary", getLameBinary()));
-                setFaad2Binary(JXPathUtils.getStringValue(settings, "faad2Binary", getFaad2Binary()));
-                setAlacBinary(JXPathUtils.getStringValue(settings, "alacBinary", getAlacBinary()));
-                setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
-                setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
-                setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
-                setBandwidthLimitFactor(new BigDecimal(JXPathUtils.getStringValue(settings, "bandwidthLimitFactor", "0")));
-                setIgnoreArtwork(JXPathUtils.getBooleanValue(settings, "ignoreArtwork", false));
-                setDebugLogging(JXPathUtils.getBooleanValue(settings, "debugLogging", false));
-                if (!MyTunesRss.REGISTRATION.isRegistered()) {
-                    adjustSettingsToUnregisteredState();
-                }
-                setWindowX(JXPathUtils.getIntValue(settings, "window/x", Integer.MAX_VALUE));
-                setWindowY(JXPathUtils.getIntValue(settings, "window/y", Integer.MAX_VALUE));
-                setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
-                setDeleteDatabaseOnNextStartOnError(JXPathUtils.getBooleanValue(settings, "deleteDatabaseOnNextStartOnError", false));
-                setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
-                Iterator<JXPathContext> cronTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database");
-                myDatabaseCronTriggers = new ArrayList<String>();
-                while (cronTriggerIterator.hasNext()) {
-                    myDatabaseCronTriggers.add(JXPathUtils.getStringValue(cronTriggerIterator.next(), ".", ""));
-                }
-                loadDatabaseSettings(settings);
-                setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
-                setJmxHost(JXPathUtils.getStringValue(settings, "jmx/host", "0.0.0.0"));
-                setJmxPort(JXPathUtils.getIntValue(settings, "jmx/port", 8500));
-                setJmxUser(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/user", null)));
-                setJmxPassword(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/password", null)));
-                setTomcatMaxThreads(JXPathUtils.getStringValue(settings, "tomcat/max-threads", "200"));
-                setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/ajp-port", 0));
-                String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
-                setWebappContext(context != null ? "/" + context : "");
+            if (!file.isFile()) {
+                FileUtils.writeStringToFile(file, "<settings/>");
             }
+            JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURL()), "settings");
+            setVersion(JXPathUtils.getStringValue(settings, "version", ""));
+            migrate();
+            setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
+            setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
+            setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
+            setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
+            setAutoStartServer(JXPathUtils.getBooleanValue(settings, "autoStartServer", isAutoStartServer()));
+            setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
+            setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
+            List<String> dataSources = new ArrayList<String>();
+            Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
+            int count = 0;
+            while (contextIterator.hasNext()) {
+                dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
+                if (!MyTunesRss.REGISTRATION.isRegistered() && count + 1 == MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
+                    break;
+                }
+            }
+            setDatasources(dataSources.toArray(new String[dataSources.size()]));
+            setFileSystemArtistNameFolder(JXPathUtils.getIntValue(settings, "artistFolder", getFileSystemArtistNameFolder()));
+            setFileSystemAlbumNameFolder(JXPathUtils.getIntValue(settings, "albumFolder", getFileSystemAlbumNameFolder()));
+            setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(settings, "iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
+            setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
+            setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
+            setLocalTempArchive(JXPathUtils.getBooleanValue(settings, "localTempArchive", isLocalTempArchive()));
+            Iterator<JXPathContext> users = JXPathUtils.getContextIterator(settings, "users/user");
+            while (users != null && users.hasNext()) {
+                JXPathContext userContext = users.next();
+                User user = new User(JXPathUtils.getStringValue(userContext, "name", null));
+                user.loadFromPreferences(userContext);
+                addUser(user);
+                if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
+                    break;
+                }
+            }
+            setSupportName(JXPathUtils.getStringValue(settings, "supportName", getSupportName()));
+            setSupportEmail(JXPathUtils.getStringValue(settings, "supportEmail", getSupportEmail()));
+            setProxyServer(JXPathUtils.getBooleanValue(settings, "proxyServer", isProxyServer()));
+            setProxyHost(JXPathUtils.getStringValue(settings, "proxyHost", getProxyHost()));
+            setProxyPort(JXPathUtils.getIntValue(settings, "proxyPort", getProxyPort()));
+            setMyTunesRssComUser(JXPathUtils.getStringValue(settings, "myTunesRssComUser", getMyTunesRssComUser()));
+            setMyTunesRssComPasswordHash(JXPathUtils.getByteArray(settings, "myTunesRssComPassword", getMyTunesRssComPasswordHash()));
+            setFileTypes(JXPathUtils.getStringValue(settings, "fileTypes", getFileTypes()));
+            setArtistDropWords(JXPathUtils.getStringValue(settings, "artistDropWords", getArtistDropWords()));
+            setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
+            setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
+            readPathInfoEncryptionKey(settings);
+            setLameBinary(JXPathUtils.getStringValue(settings, "lameBinary", getLameBinary()));
+            setFaad2Binary(JXPathUtils.getStringValue(settings, "faad2Binary", getFaad2Binary()));
+            setAlacBinary(JXPathUtils.getStringValue(settings, "alacBinary", getAlacBinary()));
+            setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
+            setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
+            setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
+            setBandwidthLimitFactor(new BigDecimal(JXPathUtils.getStringValue(settings, "bandwidthLimitFactor", "0")));
+            setIgnoreArtwork(JXPathUtils.getBooleanValue(settings, "ignoreArtwork", false));
+            setDebugLogging(JXPathUtils.getBooleanValue(settings, "debugLogging", false));
+            if (!MyTunesRss.REGISTRATION.isRegistered()) {
+                adjustSettingsToUnregisteredState();
+            }
+            setWindowX(JXPathUtils.getIntValue(settings, "window/x", Integer.MAX_VALUE));
+            setWindowY(JXPathUtils.getIntValue(settings, "window/y", Integer.MAX_VALUE));
+            setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
+            setDeleteDatabaseOnNextStartOnError(JXPathUtils.getBooleanValue(settings, "deleteDatabaseOnNextStartOnError", false));
+            setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
+            Iterator<JXPathContext> cronTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database");
+            myDatabaseCronTriggers = new ArrayList<String>();
+            while (cronTriggerIterator.hasNext()) {
+                myDatabaseCronTriggers.add(JXPathUtils.getStringValue(cronTriggerIterator.next(), ".", ""));
+            }
+            loadDatabaseSettings(settings);
+            setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
+            setJmxHost(JXPathUtils.getStringValue(settings, "jmx/host", "0.0.0.0"));
+            setJmxPort(JXPathUtils.getIntValue(settings, "jmx/port", 8500));
+            setJmxUser(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/user", null)));
+            setJmxPassword(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/password", null)));
+            setTomcatMaxThreads(JXPathUtils.getStringValue(settings, "tomcat/max-threads", "200"));
+            setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/ajp-port", 0));
+            String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
+            setWebappContext(context != null ? "/" + context : "");
         } catch (IOException e) {
             LOG.error("Could not read configuration file.", e);
         }
