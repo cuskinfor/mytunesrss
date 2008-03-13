@@ -8,6 +8,12 @@
                 <include name="conf/**"/>
             </fileset>
         </copy>
+        <mkdir dir="target/idea/webapps/ROOT/WEB-INF/classes"/>
+        <copy todir="target/idea/webapps/ROOT/WEB-INF/classes" overwrite="true">
+            <fileset dir="webapp/target/classes">
+                <include name="**"/>
+            </fileset>
+        </copy>
         <artifact:dependencies filesetid="zislib">
             <artifact:dependency groupid="de.codewave" artifactid="codewave-zis" version="1.0"/>
         </artifact:dependencies>
