@@ -85,6 +85,14 @@
         <filter-name>TransactionFilter</filter-name>
         <url-pattern>/jsonrpc</url-pattern>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>TransactionFilter</filter-name>
+        <url-pattern>/xmlrpc/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>TransactionFilter</filter-name>
+        <url-pattern>/jsonrpc/*</url-pattern>
+    </filter-mapping>
     <context-param>
         <description>Session info class</description>
         <param-name>sessionInfoClass</param-name>
@@ -111,6 +119,10 @@
     <servlet>
         <servlet-name>XmlRpcServlet</servlet-name>
         <servlet-class>de.codewave.mytunesrss.remote.MyTunesRssXmlRpcServlet</servlet-class>
+        <init-param>
+            <param-name>enabledForExceptions</param-name>
+            <param-value>false</param-value>
+        </init-param>
     </servlet>
     <servlet>
         <servlet-name>JsonRpcServlet</servlet-name>
@@ -135,6 +147,18 @@
     <servlet-mapping>
         <servlet-name>JsonRpcServlet</servlet-name>
         <url-pattern>/jsonrpc</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>XmlRpcServlet</servlet-name>
+        <url-pattern>/xmlrpc/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JsonRpcServlet</servlet-name>
+        <url-pattern>/jsonrpc/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JsonRpcServlet</servlet-name>
+        <url-pattern>/crossdo</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

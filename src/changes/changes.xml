@@ -5,7 +5,16 @@
     </properties>
     <body>
 
-        <release version="3.2-EAP-5" date="2008-03-12" description="EAP release">
+        <release version="3.2-EAP-5" date="2008-03-??" description="EAP release">
+            <action dev="mdescher" type="add">
+                crossdomain.xml which allows all domains.
+            </action>
+            <action dev="mdescher" type="add">
+                Session handling for remote API calls. The LoginService.login function now returns a
+                session ID which can be used in the path info of subsequent calls to identify the session.
+                The LoginService.login call also gets a
+                desired session timeout in seconds.
+            </action>
             <action dev="mdescher" type="update">
                 camel-0.9.7.
             </action>

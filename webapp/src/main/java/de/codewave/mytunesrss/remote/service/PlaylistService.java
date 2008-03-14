@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import org.apache.commons.lang.StringUtils;
 
@@ -20,13 +21,13 @@ public class PlaylistService {
      *
      * @throws SQLException
      */
-    public Object getPlaylists() throws SQLException {
-        User user = MyTunesRssRemoteEnv.getUser();
+    public Object getPlaylists() throws SQLException, IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-        FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, false, false);
-        return MyTunesRssRemoteEnv.getRenderMachine().render(TransactionFilter.getTransaction().executeQuery(query));
+            FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, false, false);
+            return RenderMachine.getInstance().render(TransactionFilter.getTransaction().executeQuery(query));
         }
-        return null;
+        throw new IllegalAccessException("Unauthorized");
     }
 
     /**
@@ -36,13 +37,13 @@ public class PlaylistService {
      *
      * @throws SQLException
      */
-    public Object getOwnPlaylists() throws SQLException {
-        User user = MyTunesRssRemoteEnv.getUser();
+    public Object getOwnPlaylists() throws SQLException, IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-        FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, false, true);
-        return MyTunesRssRemoteEnv.getRenderMachine().render(TransactionFilter.getTransaction().executeQuery(query));
+            FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, false, true);
+            return RenderMachine.getInstance().render(TransactionFilter.getTransaction().executeQuery(query));
         }
-        return null;
+        throw new IllegalAccessException("Unauthorized");
     }
 
     /**
@@ -54,8 +55,8 @@ public class PlaylistService {
      * @return The URL for the specified playlist.
      */
     public String getPlaylistUrl(String playlistId, String type) {
-        return MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, "playlist=" + playlistId + "/type=" + StringUtils.capitalize(
-                type.toLowerCase()));
+        return MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist,
+                                                 "playlist=" + playlistId + "/type=" + StringUtils.capitalize(type.toLowerCase()));
     }
 
     /**

@@ -1,6 +1,9 @@
 package de.codewave.mytunesrss.remote.render;
 
 import de.codewave.mytunesrss.remote.service.QueryResultWrapper;
+import de.codewave.mytunesrss.datastore.statement.Playlist;
+import de.codewave.mytunesrss.datastore.statement.Album;
+import de.codewave.mytunesrss.datastore.statement.Artist;
 import de.codewave.utils.sql.DataStoreQuery;
 
 import java.util.*;
@@ -14,6 +17,12 @@ public class RenderMachine {
             return o;
         }
     };
+
+    private static final RenderMachine SINGLETON = new RenderMachine();
+
+    public static RenderMachine getInstance() {
+        return SINGLETON;
+    }
 
     private Map<Class, Renderer> myRenderers = new HashMap<Class, Renderer>();
 
@@ -32,6 +41,9 @@ public class RenderMachine {
         addRenderer(List.class, new ListRenderer());
         addRenderer(DataStoreQuery.QueryResult.class, new QueryResultRenderer());
         addRenderer(QueryResultWrapper.class, new QueryResultWrapperRenderer());
+        addRenderer(Playlist.class, new PlaylistRenderer());
+        addRenderer(Album.class, new AlbumRenderer());
+        addRenderer(Artist.class, new ArtistRenderer());
     }
 
     public void addRenderer(Class type, Renderer renderer) {

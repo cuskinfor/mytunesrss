@@ -2,11 +2,14 @@
 <methodCall>
     <methodName>LoginService.login</methodName>
     <params>
-      <param>
-         <value>mdescher</value>
-      </param>
-      <param>
-         <value>Xtreme72</value>
-      </param>
+        <param>
+            <value>mdescher</value>
+        </param>
+        <param>
+            <value>Xtreme72</value>
+        </param>
+        <param>
+            <value><i4>2</i4></value>
+        </param>
     </params>
 </methodCall>

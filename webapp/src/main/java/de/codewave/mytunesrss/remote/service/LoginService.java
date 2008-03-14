@@ -10,21 +10,43 @@ package de.codewave.mytunesrss.remote.service;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.remote.Session;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class LoginService {
-    public boolean login(String username, String password) throws UnsupportedEncodingException {
+    private static final Log LOG = LogFactory.getLog(LoginService.class);
+
+    static {
+        try {
+            DIGEST = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not create message digest.", e);
+            }
+        }
+    }
+
+    private static MessageDigest DIGEST;
+
+    public String login(String username, String password, int sessionTimeoutMinutes) throws UnsupportedEncodingException, IllegalAccessException {
         User user = MyTunesRss.CONFIG.getUser(username);
         if (user != null) {
             byte[] passwordHash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
             if (Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive()) {
                 MyTunesRssRemoteEnv.getRequest().getSession().setAttribute("remoteApiUser", user);
-                return true;
+                String sid = new String(Hex.encodeHex(DIGEST.digest((MyTunesRssRemoteEnv.getRequest().getSession().getId() +
+                        System.currentTimeMillis()).getBytes("UTF-8"))));
+                MyTunesRssRemoteEnv.addSession(new Session(sid, user, sessionTimeoutMinutes * 60000));
+                return sid;
             }
         }
-        MyTunesRssRemoteEnv.getRequest().getSession().removeAttribute("remoteApiUser");
-        return false;
+        throw new IllegalAccessException("Unauthorized");
     }
 }
