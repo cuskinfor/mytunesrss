@@ -5,7 +5,7 @@
     </properties>
     <body>
 
-        <release version="3.1.8" date="????-??-??" description="Bugfix release">
+        <release version="3.1.8" date="2008-03-??" description="Bugfix release">
             <action dev="mdescher" type="update">
                 Bugfix for files which are neither MP3 nor MP4 when scanning watch folders.
             </action>
