@@ -5,7 +5,31 @@
     </properties>
     <body>
 
-        <release version="3.1.6" date="????-??-??" description="Bugfix release">
+        <release version="3.1.8" date="2008-03-17" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                codewave-utils-0.37.
+            </action>
+            <action dev="mdescher" type="update">
+                Bugfix for files which are neither MP3 nor MP4 when scanning watch folders.
+            </action>
+            <action dev="mdescher" type="update">
+                camel 0.9.7.
+            </action>
+        </release>
+
+        <release version="3.1.7" date="2008-03-11" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                RSS feed JSP was broken.
+            </action>
+        </release>
+
+        <release version="3.1.6" date="2008-03-11" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                codewave-utils-0.36: fixes range header problems with VLC
+            </action>
+            <action dev="mdescher" type="fix">
+                Tooltip javascript was buggy.
+            </action>
             <action dev="mdescher" type="fix">
                 Event driven GUI enabling/disabling for database, directories.
             </action>
