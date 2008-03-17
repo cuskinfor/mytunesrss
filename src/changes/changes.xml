@@ -5,7 +5,13 @@
     </properties>
     <body>
 
-        <release version="3.2-EAP-5" date="2008-03-??" description="EAP release">
+        <release version="3.2-EAP-6" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="fix">
+                Ignore TPA/TPOS if value is illegal, i.e. not a number.
+            </action>
+        </release>
+
+        <release version="3.2-EAP-5" date="2008-03-15" description="EAP release">
             <action dev="mdescher" type="add">
                 crossdomain.xml which allows all domains.
             </action>
