@@ -12,6 +12,10 @@
             <action dev="mdescher" type="add">
                 Last.fm music social network support.
             </action>
+            <action dev="mdescher" type="add">
+                TrackService.getDownloadUrl remote API function.
+                TrackService.getPlaybackUrl remote API function.
+            </action>
         </release>
 
         <release version="3.2-EAP-5" date="2008-03-15" description="EAP release">
