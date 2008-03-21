@@ -28,7 +28,7 @@ public class UserConfig extends MyTunesRssMBean implements UserConfigMBean {
             NotCompliantMBeanException, InstanceAlreadyExistsException {
         User user = new User(name);
         try {
-            user.setPasswordHash(MyTunesRss.MESSAGE_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
+            user.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
             MyTunesRssJmxUtils.unregisterUsers();
             MyTunesRss.CONFIG.addUser(user);
             MyTunesRssJmxUtils.registerUsers();

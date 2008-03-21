@@ -23,25 +23,13 @@ import java.security.NoSuchAlgorithmException;
 public class LoginService {
     private static final Log LOG = LogFactory.getLog(LoginService.class);
 
-    static {
-        try {
-            DIGEST = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create message digest.", e);
-            }
-        }
-    }
-
-    private static MessageDigest DIGEST;
-
     public String login(String username, String password, int sessionTimeoutMinutes) throws UnsupportedEncodingException, IllegalAccessException {
         User user = MyTunesRss.CONFIG.getUser(username);
         if (user != null) {
-            byte[] passwordHash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
+            byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8"));
             if (Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive()) {
                 MyTunesRssRemoteEnv.getRequest().getSession().setAttribute("remoteApiUser", user);
-                String sid = new String(Hex.encodeHex(DIGEST.digest((MyTunesRssRemoteEnv.getRequest().getSession().getId() +
+                String sid = new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest((MyTunesRssRemoteEnv.getRequest().getSession().getId() +
                         System.currentTimeMillis()).getBytes("UTF-8"))));
                 MyTunesRssRemoteEnv.addSession(new Session(sid, user, sessionTimeoutMinutes * 60000));
                 return sid;

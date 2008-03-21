@@ -66,7 +66,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     public void setPassword(String password) {
         if (StringUtils.isNotEmpty(password)) {
             try {
-                MyTunesRss.CONFIG.getUser(myUsername).setPasswordHash(MyTunesRss.MESSAGE_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
+                MyTunesRss.CONFIG.getUser(myUsername).setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
                 onChange();
             } catch (UnsupportedEncodingException e) {
                 if (LOG.isErrorEnabled()) {

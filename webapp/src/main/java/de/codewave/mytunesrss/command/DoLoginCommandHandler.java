@@ -21,7 +21,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
         String userName = getRequest().getParameter("username");
         String password = getRequest().getParameter("password");
         if (password != null && !isSessionAuthorized()) {
-            byte[] passwordHash = MyTunesRss.MESSAGE_DIGEST.digest(password.getBytes("UTF-8"));
+            byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8"));
             if (isAuthorized(userName, passwordHash)) {
                 authorize(WebAppScope.Session, userName);
                 if (getAuthUser() != null && StringUtils.isNotEmpty(getAuthUser().getWebSettings())) {

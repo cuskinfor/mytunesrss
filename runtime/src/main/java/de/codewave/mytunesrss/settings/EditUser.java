@@ -258,7 +258,7 @@ public class EditUser {
     }
 
     private void createUIComponents() {
-        myPasswordInput = new PasswordHashField(MyTunesRssUtils.getBundleString("passwordHasBeenSet"), MyTunesRss.MESSAGE_DIGEST);
+        myPasswordInput = new PasswordHashField(MyTunesRssUtils.getBundleString("passwordHasBeenSet"), MyTunesRss.SHA1_DIGEST);
     }
 
     public class SaveButtonActionListener implements ActionListener {

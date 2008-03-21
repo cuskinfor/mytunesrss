@@ -72,7 +72,7 @@ public class Misc implements MyTunesRssEventListener {
     }
 
     private void createUIComponents() {
-        myPasswordInput = new PasswordHashField(MyTunesRssUtils.getBundleString("passwordHasBeenSet"), MyTunesRss.MESSAGE_DIGEST);
+        myPasswordInput = new PasswordHashField(MyTunesRssUtils.getBundleString("passwordHasBeenSet"), MyTunesRss.SHA1_DIGEST);
     }
 
     public void setGuiMode(GuiMode mode) {

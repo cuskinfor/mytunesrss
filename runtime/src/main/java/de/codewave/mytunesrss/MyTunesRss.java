@@ -106,10 +106,17 @@ public class MyTunesRss {
             }
         }
         try {
-            MESSAGE_DIGEST = MessageDigest.getInstance("SHA-1");
+            SHA1_DIGEST = MessageDigest.getInstance("SHA-1");
         } catch (NoSuchAlgorithmException e) {
             if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create message digest.", e);
+                LOG.error("Could not create SHA-1 digest.", e);
+            }
+        }
+        try {
+            MD5_DIGEST = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not create MD5 digest.", e);
             }
         }
     }
@@ -125,7 +132,8 @@ public class MyTunesRss {
     public static WebServer WEBSERVER = new WebServer();
     public static Timer SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
     public static SysTray SYSTRAYMENU;
-    public static MessageDigest MESSAGE_DIGEST;
+    public static MessageDigest SHA1_DIGEST;
+    public static MessageDigest MD5_DIGEST;
     public static JFrame ROOT_FRAME;
     public static JFrame DUMMY_FRAME;
     public static ImageIcon PLEASE_WAIT_ICON;

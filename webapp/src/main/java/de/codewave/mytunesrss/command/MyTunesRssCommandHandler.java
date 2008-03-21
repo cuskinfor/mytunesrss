@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.lastfm.LastFmClient;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.Error;
@@ -66,10 +67,12 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected void authorize(WebAppScope scope, String userName) {
         User user = getMyTunesRssConfig().getUser(userName);
         if (scope == WebAppScope.Request) {
+            LOG.debug("Authorizing request for user \"" + userName + "\".");
             getRequest().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(
                     "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
             getRequest().setAttribute("authUser", user);
         } else if (scope == WebAppScope.Session) {
+            LOG.debug("Authorizing session for user \"" + userName + "\".");
             getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(
                     "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
             getSession().setAttribute("authUser", user);

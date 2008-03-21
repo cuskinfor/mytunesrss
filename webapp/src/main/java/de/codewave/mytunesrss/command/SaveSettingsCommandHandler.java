@@ -74,7 +74,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
             if (StringUtils.equals(password1, password2)) {
                 try {
-                    getAuthUser().setPasswordHash(MyTunesRss.MESSAGE_DIGEST.digest(password1.getBytes("UTF-8")));
+                    getAuthUser().setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(password1.getBytes("UTF-8")));
                 } catch (UnsupportedEncodingException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not get bytes from password string.", e);

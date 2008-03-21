@@ -1,6 +1,8 @@
 package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.MyTunesRssEvent;
 import org.apache.commons.lang.StringUtils;
 
 import javax.management.NotCompliantMBeanException;
@@ -55,7 +57,7 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
     }
 
     public void setMyTunesRssComPassword(String password) throws UnsupportedEncodingException {
-        MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(MyTunesRss.MESSAGE_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
+        MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(MyTunesRss.SHA1_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
         onChange();
     }
 }

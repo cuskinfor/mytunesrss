@@ -66,6 +66,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         }
                         getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
                         streamSender.setCounter((FileSender.ByteSentCounter)SessionManager.getSessionInfo(getRequest()));
+                        getAuthUser().playLastFmTrack(track);
                     }
                 } else {
                     if (LOG.isWarnEnabled()) {

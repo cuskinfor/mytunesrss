@@ -4,6 +4,10 @@ import de.codewave.utils.servlet.RangeHeader;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
+import de.codewave.mytunesrss.lastfm.LastFmSession;
+import de.codewave.mytunesrss.lastfm.LastFmClient;
+import de.codewave.mytunesrss.lastfm.LastFmSubmission;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -19,8 +23,16 @@ import java.util.GregorianCalendar;
 /**
  * de.codewave.mytunesrss.User
  */
-public class User {
+public class User implements MyTunesRssEventListener {
     private static final Log LOG = LogFactory.getLog(User.class);
+
+    public void handleEvent(MyTunesRssEvent event) {
+        if (event == MyTunesRssEvent.SERVER_STOPPED) {
+            if (myLastFmSession != null) {
+                new LastFmClient().sendSubmissions(myLastFmSession);
+            }
+        }
+    }
 
     public enum QuotaType {
         None, Day, Week, Month;
@@ -57,6 +69,9 @@ public class User {
     private String myWebSettings;
     private boolean myCreatePlaylists;
     private boolean myEditWebSettings;
+    private String myLastFmUser;
+    private byte[] myLastFmPasswordHash;
+    private LastFmSession myLastFmSession;
 
     public User(String name) {
         myName = name;
@@ -269,6 +284,27 @@ public class User {
         myEditWebSettings = editWebSettings;
     }
 
+    public String getLastFmUser() {
+        return myLastFmUser;
+    }
+
+    public void setLastFmUser(String lastFmUser) {
+        myLastFmUser = lastFmUser;
+    }
+
+    public byte[] getLastFmPasswordHash() {
+        return myLastFmPasswordHash;
+    }
+
+    public void setLastFmPasswordHash(byte[] lastFmPasswordHash) {
+        myLastFmPasswordHash = lastFmPasswordHash;
+    }
+
+    public boolean isLastFmAccount() {
+        return StringUtils.isNotEmpty(getLastFmUser()) && getLastFmPasswordHash() != null && getLastFmPasswordHash().length > 0 &&
+                MyTunesRss.REGISTRATION.isRegistered();
+    }
+
     @Override
     public boolean equals(Object object) {
         return object != null && object instanceof User && getName().equals(((User)object).getName());
@@ -374,6 +410,13 @@ public class User {
         setPlaylistId(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "playlistId", null) : null);
         setSaveWebSettings(MyTunesRss.REGISTRATION.isRegistered() && JXPathUtils.getBooleanValue(settings, "saveWebSettings", false));
         setWebSettings(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "webSettings", null) : null);
+        setLastFmUser(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "lastFmUser", null) : null);
+        setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getByteArray(settings, "lastFmPassword", null) : null);
+        //        try {
+        //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
+        //        } catch (Exception e) {
+        //                LOG.error("Could not create password hash for last fm user.", e);
+        //        }
     }
 
     public void saveToPreferences(Document settings, Element users) {
@@ -408,6 +451,31 @@ public class User {
         users.appendChild(DOMUtils.createBooleanElement(settings, "saveWebSettings", isSaveWebSettings()));
         if (StringUtils.isNotEmpty(getWebSettings())) {
             users.appendChild(DOMUtils.createTextElement(settings, "webSettings", getWebSettings()));
+        }
+        if (StringUtils.isNotEmpty(getLastFmUser()) && getLastFmPasswordHash() != null && getLastFmPasswordHash().length > 0) {
+            users.appendChild(DOMUtils.createTextElement(settings, "lastFmUser", getLastFmUser()));
+            users.appendChild(DOMUtils.createByteArrayElement(settings, "lastFmPassword", getLastFmPasswordHash()));
+        }
+    }
+
+    public synchronized void playLastFmTrack(final Track track) {
+        if (isLastFmAccount()) {
+            final long playTime = System.currentTimeMillis();
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    LastFmClient lastFmClient = new LastFmClient();
+                    if (myLastFmSession == null) {
+                        myLastFmSession = lastFmClient.doHandshake(User.this);
+                        MyTunesRssEventManager.getInstance().addListener(User.this);
+                    }
+                    if (myLastFmSession != null) {
+                        lastFmClient.sendSubmissions(myLastFmSession);
+                        lastFmClient.sendNowPlaying(myLastFmSession, track);
+                        myLastFmSession.offerSubmission(new LastFmSubmission(track, playTime));
+                    }
+                }
+            };
+            new Thread(runnable).start();
         }
     }
 }
