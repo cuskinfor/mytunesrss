@@ -6,6 +6,9 @@
     <body>
 
         <release version="3.2-EAP-6" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="add">
+                Apple Touch Icon in web application.
+            </action>
             <action dev="mdescher" type="fix">
                 Ignore TPA/TPOS if value is illegal, i.e. not a number.
             </action>
