@@ -27,6 +27,10 @@ public interface EditUserConfigMBean {
 
     void setPermissionChangePassword(boolean permissionChangePassword);
 
+    boolean isPermissionEditLastFmAccount();
+
+    void setPermissionEditLastFmAccount(boolean permissionEditLastFmAccount);
+
     boolean isPermissionDownload();
 
     void setPermissionDownload(boolean permissionDownload);
@@ -101,4 +105,10 @@ public interface EditUserConfigMBean {
     boolean isSaveWebSettings();
 
     void setSaveWebSettings(boolean saveWebSettings);
+
+    String getLastFmUsername();
+
+    void setLastFmUsername(String username);
+
+    void setLastFmPassword(String password);
 }

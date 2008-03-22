@@ -5,6 +5,8 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.MyTunesRssEvent;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.WebConfig;
@@ -40,6 +42,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         } else {
             forward(MyTunesRssResource.Login);
         }
+        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.CONFIGURATION_CHANGED);
     }
 
     private boolean transferAndValidate(WebConfig webConfig) {
@@ -65,7 +68,30 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         error |= transferAndValidateLastUpdatedTrackCount(webConfig);
         error |= transferAndValidateMostPlayedTrackCount(webConfig);
         error |= transferAndValidatePassword();
+        error |= transferAndValidateLastFmAccount();
         return !error;
+    }
+
+    private boolean transferAndValidateLastFmAccount() {
+        String username = getRequestParameter("lastfmusername", null);
+        String password1 = getRequestParameter("lastfmpassword1", null);
+        String password2 = getRequestParameter("lastfmpassword2", null);
+        getAuthUser().setLastFmUsername(username);
+        if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
+            if (StringUtils.equals(password1, password2)) {
+                try {
+                    getAuthUser().setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.digest(password1.getBytes("UTF-8")));
+                } catch (UnsupportedEncodingException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not get bytes from password string.", e);
+                    }
+                }
+            } else {
+                addError(new BundleError("error.settingsLastFmPasswordMismatch"));
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean transferAndValidatePassword() {

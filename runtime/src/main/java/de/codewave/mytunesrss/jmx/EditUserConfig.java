@@ -85,6 +85,15 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         onChange();
     }
 
+    public boolean isPermissionEditLastFmAccount() {
+        return MyTunesRss.CONFIG.getUser(myUsername).isEditLastFmAccount();
+    }
+
+    public void setPermissionEditLastFmAccount(boolean permissionEditLastFmAccount) {
+        MyTunesRss.CONFIG.getUser(myUsername).setEditLastFmAccount(permissionEditLastFmAccount);
+        onChange();
+    }
+
     public boolean isPermissionDownload() {
         return MyTunesRss.CONFIG.getUser(myUsername).isDownload();
     }
@@ -314,5 +323,27 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     public void setSaveWebSettings(boolean saveWebSettings) {
         MyTunesRss.CONFIG.getUser(myUsername).setSaveWebSettings(saveWebSettings);
         onChange();
+    }
+
+    public String getLastFmUsername() {
+        return MyTunesRss.CONFIG.getUser(myUsername).getLastFmUsername();
+    }
+
+    public void setLastFmUsername(String username) {
+        MyTunesRss.CONFIG.getUser(myUsername).setLastFmUsername(username);
+        onChange();
+    }
+
+    public void setLastFmPassword(String password) {
+        if (StringUtils.isNotEmpty(password)) {
+            try {
+                MyTunesRss.CONFIG.getUser(myUsername).setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
+                onChange();
+            } catch (UnsupportedEncodingException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not create password hash.", e);
+                }
+            }
+        }
     }
 }

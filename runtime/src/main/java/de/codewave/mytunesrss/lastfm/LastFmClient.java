@@ -43,14 +43,14 @@ public class LastFmClient {
      * @return The last.fm session or <code>null</code> for any hard error.
      */
     public LastFmSession doHandshake(User user) {
-        LOG.debug("Handshaking with last.fm for user \"" + user.getName() + "\" using last.fm user \"" + user.getLastFmUser() + "\".");
+        LOG.debug("Handshaking with last.fm for user \"" + user.getName() + "\" using last.fm user \"" + user.getLastFmUsername() + "\".");
         long timestamp = System.currentTimeMillis() / 1000L;
         try {
             String passwordHashHex = new String(Hex.encodeHex(user.getLastFmPasswordHash()));
             LOG.debug("Password hash in hex is \"" + passwordHashHex + "\".");
             String authToken = new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest((passwordHashHex + timestamp).getBytes("UTF-8"))));
             String uri =
-                    "http://post.audioscrobbler.com/?hs=true&p=1.2&c=tst&v=1.0&u=" + user.getLastFmUser() + "&t=" + timestamp + "&a=" + authToken;
+                    "http://post.audioscrobbler.com/?hs=true&p=1.2&c=tst&v=1.0&u=" + user.getLastFmUsername() + "&t=" + timestamp + "&a=" + authToken;
             LOG.debug("Last.fm URI is \"" + uri + "\".");
             GetMethod getMethod = new GetMethod(uri);
             try {

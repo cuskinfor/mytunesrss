@@ -52,6 +52,7 @@ public class User implements MyTunesRssEventListener {
     private boolean myUpload;
     private boolean myPlayer;
     private boolean myChangePassword;
+    private boolean myEditLastFmAccount;
     private QuotaType myQuotaType;
     private long myDownBytes;
     private long myQuotaDownBytes;
@@ -69,7 +70,7 @@ public class User implements MyTunesRssEventListener {
     private String myWebSettings;
     private boolean myCreatePlaylists;
     private boolean myEditWebSettings;
-    private String myLastFmUser;
+    private String myLastFmUsername;
     private byte[] myLastFmPasswordHash;
     private LastFmSession myLastFmSession;
 
@@ -150,6 +151,14 @@ public class User implements MyTunesRssEventListener {
 
     public void setChangePassword(boolean changePassword) {
         myChangePassword = changePassword;
+    }
+
+    public boolean isEditLastFmAccount() {
+        return myEditLastFmAccount;
+    }
+
+    public void setEditLastFmAccount(boolean editLastFmAccount) {
+        myEditLastFmAccount = editLastFmAccount;
     }
 
     public long getBytesQuota() {
@@ -284,12 +293,12 @@ public class User implements MyTunesRssEventListener {
         myEditWebSettings = editWebSettings;
     }
 
-    public String getLastFmUser() {
-        return myLastFmUser;
+    public String getLastFmUsername() {
+        return myLastFmUsername;
     }
 
-    public void setLastFmUser(String lastFmUser) {
-        myLastFmUser = lastFmUser;
+    public void setLastFmUsername(String lastFmUsername) {
+        myLastFmUsername = lastFmUsername;
     }
 
     public byte[] getLastFmPasswordHash() {
@@ -301,7 +310,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isLastFmAccount() {
-        return StringUtils.isNotEmpty(getLastFmUser()) && getLastFmPasswordHash() != null && getLastFmPasswordHash().length > 0 &&
+        return StringUtils.isNotEmpty(getLastFmUsername()) && getLastFmPasswordHash() != null && getLastFmPasswordHash().length > 0 &&
                 MyTunesRss.REGISTRATION.isRegistered();
     }
 
@@ -393,6 +402,7 @@ public class User implements MyTunesRssEventListener {
         setUpload(JXPathUtils.getBooleanValue(settings, "featureUpload", false));
         setPlayer(JXPathUtils.getBooleanValue(settings, "featurePlayer", false));
         setChangePassword(JXPathUtils.getBooleanValue(settings, "featureChangePassword", false));
+        setEditLastFmAccount(JXPathUtils.getBooleanValue(settings, "featureLastFmAccount", true));
         setSpecialPlaylists(JXPathUtils.getBooleanValue(settings, "featureSpecialPlaylists", false));
         setCreatePlaylists(JXPathUtils.getBooleanValue(settings, "featureCreatePlaylists", false));
         setEditWebSettings(JXPathUtils.getBooleanValue(settings, "featureEditWebSettings", false));
@@ -410,7 +420,7 @@ public class User implements MyTunesRssEventListener {
         setPlaylistId(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "playlistId", null) : null);
         setSaveWebSettings(MyTunesRss.REGISTRATION.isRegistered() && JXPathUtils.getBooleanValue(settings, "saveWebSettings", false));
         setWebSettings(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "webSettings", null) : null);
-        setLastFmUser(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "lastFmUser", null) : null);
+        setLastFmUsername(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "lastFmUser", null) : null);
         setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getByteArray(settings, "lastFmPassword", null) : null);
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
@@ -431,6 +441,7 @@ public class User implements MyTunesRssEventListener {
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureUpload", isUpload()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featurePlayer", isPlayer()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureChangePassword", isChangePassword()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureLastFmAccount", isEditLastFmAccount()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureSpecialPlaylists", isSpecialPlaylists()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureCreatePlaylists", isCreatePlaylists()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureEditWebSettings", isEditWebSettings()));
@@ -452,8 +463,8 @@ public class User implements MyTunesRssEventListener {
         if (StringUtils.isNotEmpty(getWebSettings())) {
             users.appendChild(DOMUtils.createTextElement(settings, "webSettings", getWebSettings()));
         }
-        if (StringUtils.isNotEmpty(getLastFmUser()) && getLastFmPasswordHash() != null && getLastFmPasswordHash().length > 0) {
-            users.appendChild(DOMUtils.createTextElement(settings, "lastFmUser", getLastFmUser()));
+        if (StringUtils.isNotEmpty(getLastFmUsername()) && getLastFmPasswordHash() != null && getLastFmPasswordHash().length > 0) {
+            users.appendChild(DOMUtils.createTextElement(settings, "lastFmUser", getLastFmUsername()));
             users.appendChild(DOMUtils.createByteArrayElement(settings, "lastFmPassword", getLastFmPasswordHash()));
         }
     }

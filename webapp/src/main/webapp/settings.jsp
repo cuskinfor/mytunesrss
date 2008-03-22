@@ -38,6 +38,12 @@
                 <td><fmt:message key="settings.username" /></td>
                 <td><c:out value="${authUser.name}"/></td>
             </tr>
+            <c:if test="${!authUser.editLastFmAccount && !empty authUser.lastFmUsername}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.lastFmUsername" /></td>
+                    <td><c:out value="${authUser.lastFmUsername}"/></td>
+                </tr>
+            </c:if>
             <c:if test="${authUser.quota}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.quota" /></td>
@@ -71,6 +77,37 @@
                                name="password2"
                                maxlength="30"
                                value="<c:out value="${param.password2}"/>"
+                               style="width: 170px;" />
+                    </td>
+                </tr>
+            </c:if>
+            <c:if test="${registered && authUser.editLastFmAccount}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.lastFmUsername" /></td>
+                    <td>
+                        <input name="lastfmusername"
+                               maxlength="30"
+                               value="<c:out value="${authUser.lastFmUsername}"/>"
+                               style="width: 170px;" />
+                    </td>
+                </tr>
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.lastFmPassword" /></td>
+                    <td>
+                        <input type="password"
+                               name="lastfmpassword1"
+                               maxlength="30"
+                               value="<c:out value="${param.lastfmpassword1}"/>"
+                               style="width: 170px;" />
+                    </td>
+                </tr>
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.retypeLastFmPassword" /></td>
+                    <td>
+                        <input type="password"
+                               name="lastfmpassword2"
+                               maxlength="30"
+                               value="<c:out value="${param.lastfmpassword2}"/>"
                                style="width: 170px;" />
                     </td>
                 </tr>

@@ -1,8 +1,6 @@
 package de.codewave.mytunesrss.settings;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -33,7 +31,7 @@ import java.util.TimerTask;
  * @author Michael Descher
  * @version $Id:$
  */
-public class EditUser {
+public class EditUser implements MyTunesRssEventListener {
     private static final Log LOG = LogFactory.getLog(EditUser.class);
     private static final int MEGABYTE = 1024 * 1024;
 
@@ -71,6 +69,11 @@ public class EditUser {
     private JCheckBox mySaveUserSettingsInput;
     private JCheckBox myPermEditSettings;
     private JCheckBox myPermCreatePlaylists;
+    private JTextField myLastFmUsernameInput;
+    private PasswordHashField myLastFmPasswordInput;
+    private JCheckBox myPermEditLastFMAccountInput;
+    private JLabel myLastFmUsernameLabel;
+    private JLabel myLastFmPasswordLabel;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -90,7 +93,9 @@ public class EditUser {
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         init(dialog);
         myTimer.schedule(new RefreshTask(), 1000);
+        MyTunesRssEventManager.getInstance().addListener(this);
         SwingUtils.packAndShowRelativeTo(dialog, parent);
+        MyTunesRssEventManager.getInstance().removeListener(this);
     }
 
     private void init(JDialog dialog) {
@@ -110,43 +115,6 @@ public class EditUser {
                 }
             }
         });
-        fillPlaylistSelect();
-        myUserNameInput.setText(myUser != null ? myUser.getName() : "");
-        if (myUser != null) {
-            myPasswordInput.setPasswordHash(myUser.getPasswordHash());
-        }
-        if (myUser != null) {
-            myPermRssInput.setSelected(myUser.isRss());
-            myPermPlaylistInput.setSelected(myUser.isPlaylist());
-            myPermDownloadInput.setSelected(myUser.isDownload());
-            myPermUploadInput.setSelected(myUser.isUpload());
-            myPermPlayerInput.setSelected(myUser.isPlayer());
-            myPermChangePasswordInput.setSelected(myUser.isChangePassword());
-            myPermSpecialPlaylists.setSelected(myUser.isSpecialPlaylists());
-            myPermEditSettings.setSelected(myUser.isEditWebSettings());
-            myPermCreatePlaylists.setSelected(myUser.isCreatePlaylists());
-            myQuotaTypeInput.setSelectedItem(myUser.getQuotaType());
-            myBytesQuotaInput.setText(myUser.getBytesQuota() > 0 ? Long.toString(myUser.getBytesQuota() / MEGABYTE) : "");
-            myMaxZipEntriesInput.setText(myUser.getMaximumZipEntries() > 0 ? Integer.toString(myUser.getMaximumZipEntries()) : "");
-            myFileTypesInput.setText(myUser.getFileTypes());
-            mySessionTimeoutInput.setText(Integer.toString(myUser.getSessionTimeout()));
-            myPermTranscoderInput.setSelected(myUser.isTranscoder());
-            myBandwidthLimit.setText(myUser.getBandwidthLimit() > 0 ? Integer.toString(myUser.getBandwidthLimit()) : "");
-            mySaveUserSettingsInput.setSelected(myUser.isSaveWebSettings());
-        } else {
-            myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
-            myPermRssInput.setSelected(true);
-            myPermPlaylistInput.setSelected(true);
-            myPermPlayerInput.setSelected(true);
-            myPermChangePasswordInput.setSelected(true);
-            myPermSpecialPlaylists.setSelected(true);
-            myPermEditSettings.setSelected(true);
-            myPermCreatePlaylists.setSelected(true);
-            mySessionTimeoutInput.setText("10");
-        }
-        if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
-            SwingUtils.enableElementAndLabel(myBytesQuotaInput, false);
-        }
         mySaveButton.addActionListener(new SaveButtonActionListener(dialog, true));
         myApplyButton.addActionListener(new SaveButtonActionListener(dialog, false));
         myCancelButton.addActionListener(new SupportContact.CancelButtonActionListener(dialog));
@@ -201,6 +169,50 @@ public class EditUser {
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myBandwidthLimit, 10, 1024, true, MyTunesRssUtils.getBundleString(
                 "error.illegalBandwidthLimit")));
         JTextFieldValidation.validateAll(myRootPanel);
+        initValues();
+    }
+
+    private void initValues() {
+        fillPlaylistSelect();
+        myUserNameInput.setText(myUser != null ? myUser.getName() : "");
+        if (myUser != null) {
+            myPasswordInput.setPasswordHash(myUser.getPasswordHash());
+            myLastFmPasswordInput.setText(myUser.getLastFmUsername());
+            myPermRssInput.setSelected(myUser.isRss());
+            myPermPlaylistInput.setSelected(myUser.isPlaylist());
+            myPermDownloadInput.setSelected(myUser.isDownload());
+            myPermUploadInput.setSelected(myUser.isUpload());
+            myPermPlayerInput.setSelected(myUser.isPlayer());
+            myPermChangePasswordInput.setSelected(myUser.isChangePassword());
+            myPermSpecialPlaylists.setSelected(myUser.isSpecialPlaylists());
+            myPermEditSettings.setSelected(myUser.isEditWebSettings());
+            myPermCreatePlaylists.setSelected(myUser.isCreatePlaylists());
+            myQuotaTypeInput.setSelectedItem(myUser.getQuotaType());
+            myBytesQuotaInput.setText(myUser.getBytesQuota() > 0 ? Long.toString(myUser.getBytesQuota() / MEGABYTE) : "");
+            myMaxZipEntriesInput.setText(myUser.getMaximumZipEntries() > 0 ? Integer.toString(myUser.getMaximumZipEntries()) : "");
+            myFileTypesInput.setText(myUser.getFileTypes());
+            mySessionTimeoutInput.setText(Integer.toString(myUser.getSessionTimeout()));
+            myPermTranscoderInput.setSelected(myUser.isTranscoder());
+            myBandwidthLimit.setText(myUser.getBandwidthLimit() > 0 ? Integer.toString(myUser.getBandwidthLimit()) : "");
+            mySaveUserSettingsInput.setSelected(myUser.isSaveWebSettings());
+            myLastFmUsernameInput.setText(myUser.getLastFmUsername());
+            myLastFmPasswordInput.setPasswordHash(myUser.getLastFmPasswordHash());
+            myPermEditLastFMAccountInput.setSelected(myUser.isEditLastFmAccount());
+        } else {
+            myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
+            myPermRssInput.setSelected(true);
+            myPermPlaylistInput.setSelected(true);
+            myPermPlayerInput.setSelected(true);
+            myPermChangePasswordInput.setSelected(true);
+            myPermSpecialPlaylists.setSelected(true);
+            myPermEditSettings.setSelected(true);
+            myPermCreatePlaylists.setSelected(true);
+            mySessionTimeoutInput.setText("10");
+            myPermEditLastFMAccountInput.setSelected(true);
+        }
+        if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
+            SwingUtils.enableElementAndLabel(myBytesQuotaInput, false);
+        }
     }
 
     private void fillPlaylistSelect() {
@@ -242,6 +254,11 @@ public class EditUser {
         myQuotaInfoPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myPermTranscoderInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myBandwidthLimit.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myPermEditLastFMAccountInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myLastFmUsernameLabel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myLastFmUsernameInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myLastFmPasswordLabel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myLastFmPasswordInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
     }
 
     private void refreshInfo() {
@@ -259,6 +276,19 @@ public class EditUser {
 
     private void createUIComponents() {
         myPasswordInput = new PasswordHashField(MyTunesRssUtils.getBundleString("passwordHasBeenSet"), MyTunesRss.SHA1_DIGEST);
+        myLastFmPasswordInput = new PasswordHashField(MyTunesRssUtils.getBundleString("passwordHasBeenSet"), MyTunesRss.MD5_DIGEST);
+    }
+
+    public void handleEvent(final MyTunesRssEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                switch (event) {
+                    case CONFIGURATION_CHANGED:
+                        initValues();
+                        break;
+                }
+            }
+        });
     }
 
     public class SaveButtonActionListener implements ActionListener {
@@ -309,11 +339,14 @@ public class EditUser {
                     myUser.setTranscoder(myPermTranscoderInput.isSelected());
                     myUser.setBandwidthLimit(MyTunesRssUtils.getTextFieldInteger(myBandwidthLimit, 0));
                     if (myRestrictionPlaylistInput.getSelectedItem() != null) {
-                    myUser.setPlaylistId(((Playlist)myRestrictionPlaylistInput.getSelectedItem()).getId());
+                        myUser.setPlaylistId(((Playlist)myRestrictionPlaylistInput.getSelectedItem()).getId());
                     } else {
                         myUser.setPlaylistId(null);
                     }
                     myUser.setSaveWebSettings(mySaveUserSettingsInput.isSelected());
+                    myUser.setLastFmUsername(myLastFmUsernameInput.getText());
+                    myUser.setLastFmPasswordHash(myLastFmPasswordInput.getPasswordHash());
+                    myUser.setEditLastFmAccount(myPermEditLastFMAccountInput.isSelected());
                     MyTunesRss.CONFIG.addUser(myUser);
                     if (myClose) {
                         myDialog.dispose();
