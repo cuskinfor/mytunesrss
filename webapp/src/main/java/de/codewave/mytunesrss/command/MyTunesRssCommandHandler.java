@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.lastfm.LastFmClient;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.Error;
@@ -274,7 +273,16 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     public void execute() throws Exception {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Command handler \"" + this.getClass().getName() + "\" called.");
+            LOG.debug("Command handler \"" + this.getClass().getName() + "\" called (\"" + getRequest().getScheme() + "://" +
+                    getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getRequestURI() + "\").");
+            LOG.debug("Request parameters:");
+            for (Map.Entry entry : (Iterable<? extends Map.Entry>)getRequest().getParameterMap().entrySet()) {
+                StringBuilder msg = new StringBuilder("\"").append(entry.getKey()).append("\"=");
+                for (String value : (String[])entry.getValue()) {
+                    msg.append("\"").append(value).append("\",");
+                }
+                LOG.debug(msg.substring(0, msg.length() - 1));
+            }
         }
         if (SCHEDULE_DATABASE_UPDATE) {
             runDatabaseUpdate();

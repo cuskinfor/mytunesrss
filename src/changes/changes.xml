@@ -6,6 +6,12 @@
     <body>
 
         <release version="3.2-EAP-6" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="fix">
+                Removed duplicate file suffix for flash player.
+            </action>
+            <action dev="mdescher" type="add">
+                More request debug logging.
+            </action>
             <action dev="mdescher" type="add">
                 Apple Touch Icon in web application.
             </action>

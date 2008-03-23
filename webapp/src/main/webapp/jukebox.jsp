@@ -9,7 +9,7 @@
 <c:choose>
     <c:when test="${config.flashplayerType eq 'jw'}">
         <embed
-          src="${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${param.playlistParams}/playerRequest=true/type=Xspf</mt:encrypt>/${param.filename}.xspf"
+          src="${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${param.playlistParams}/playerRequest=true/type=Xspf</mt:encrypt>/${param.filename}"
           width="100%"
           height="100%"
           allowscriptaccess="always"
