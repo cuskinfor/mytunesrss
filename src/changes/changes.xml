@@ -5,6 +5,15 @@
     </properties>
     <body>
 
+        <release version="3.1.9" date="????-??-??" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Removed duplicate file suffix for flash player.
+            </action>
+            <action dev="mdescher" type="add">
+                More request debug logging.
+            </action>
+        </release>
+
         <release version="3.1.8" date="2008-03-17" description="Bugfix release">
             <action dev="mdescher" type="update">
                 codewave-utils-0.37.
