@@ -369,8 +369,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected void restartMyTunesRssCom() throws IOException {
-        redirect(MyTunesRss.MYTUNESRSSCOM_TOOLS_URL + "/redirect.php?username=" + getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) +
-                "&cookie=" + URLEncoder.encode(getWebConfig().createCookieValue(), "UTF-8"));
+        String url = MyTunesRss.MYTUNESRSSCOM_TOOLS_URL + "/redirect.php?username=" + getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) +
+                "&cookie=" + URLEncoder.encode(getWebConfig().createCookieValue(), "UTF-8");
+        LOG.debug("Restarting mytunesrss.com after saving web settings: \"" + url + "\".");
+        redirect(url);
     }
 
     protected int getValidIndex(int index, int pageSize, int listSize) {
