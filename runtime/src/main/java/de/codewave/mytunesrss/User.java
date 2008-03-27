@@ -5,7 +5,7 @@ import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import de.codewave.mytunesrss.lastfm.LastFmSession;
-import de.codewave.mytunesrss.lastfm.LastFmClient;
+import de.codewave.mytunesrss.lastfm.LastFmUtils;
 import de.codewave.mytunesrss.lastfm.LastFmSubmission;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.jxpath.JXPathContext;
@@ -19,8 +19,6 @@ import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * de.codewave.mytunesrss.User
@@ -31,7 +29,7 @@ public class User implements MyTunesRssEventListener {
     public void handleEvent(MyTunesRssEvent event) {
         if (event == MyTunesRssEvent.SERVER_STOPPED) {
             if (myLastFmSession != null) {
-                new LastFmClient().sendSubmissions(myLastFmSession);
+                LastFmUtils.sendSubmissions(myLastFmSession);
             }
         }
     }
@@ -479,10 +477,9 @@ public class User implements MyTunesRssEventListener {
             final long playTime = System.currentTimeMillis();
             Runnable runnable = new Runnable() {
                 public void run() {
-                    LastFmClient lastFmClient = new LastFmClient();
                     if (myLastFmSession == null && myLastFmHandshakeTime + myLastFmHandshakeWaitTime < System.currentTimeMillis()) {
                         LOG.debug("Trying to create a new LastFM session for user \"" + getName() + "\".");
-                        myLastFmSession = lastFmClient.doHandshake(User.this);
+                        myLastFmSession = LastFmUtils.doHandshake(User.this);
                         if (myLastFmSession != null) {
                             LOG.debug("Got LastFM session, adding user as event listener.");
                             MyTunesRssEventManager.getInstance().addListener(User.this);
@@ -492,7 +489,7 @@ public class User implements MyTunesRssEventListener {
                         }
                     }
                     if (myLastFmSession != null) {
-                        if (lastFmClient.sendSubmissions(myLastFmSession) && lastFmClient.sendNowPlaying(myLastFmSession, track)) {
+                        if (LastFmUtils.sendSubmissions(myLastFmSession) && LastFmUtils.sendNowPlaying(myLastFmSession, track)) {
                             myLastFmSession.offerSubmission(new LastFmSubmission(track, playTime));
                         } else {
                             myLastFmHardFailureCount++;
