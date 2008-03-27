@@ -7,9 +7,8 @@ import de.codewave.utils.sql.SmartStatement;
 import de.codewave.utils.swing.SwingUtils;
 import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
 import de.codewave.utils.swing.pleasewait.PleaseWaitUtils;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -86,7 +85,11 @@ public class MyTunesRssUtils {
 
     public static HttpClient createHttpClient() {
         HttpClient httpClient = new HttpClient();
-        httpClient.setHttpConnectionManager(new MultiThreadedHttpConnectionManager());
+        DefaultHttpMethodRetryHandler retryhandler = new DefaultHttpMethodRetryHandler(1, true);
+        httpClient.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, retryhandler);
+        MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
+        connectionManager.getParams().setSoTimeout(10000);
+        httpClient.setHttpConnectionManager(connectionManager);
         if (MyTunesRss.CONFIG.isProxyServer()) {
             HostConfiguration hostConfiguration = new HostConfiguration();
             hostConfiguration.setProxy(MyTunesRss.CONFIG.getProxyHost(), MyTunesRss.CONFIG.getProxyPort());

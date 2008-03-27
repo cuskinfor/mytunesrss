@@ -30,6 +30,7 @@ public class Info implements MyTunesRssEventListener {
     private JButton myRegisterButton;
     private JCheckBox myLogDebugInput;
     private JButton mySupportContactButton;
+    private JCheckBox mySendAnonyStats;
 
     public Info() {
         MyTunesRssEventManager.getInstance().addListener(this);
@@ -51,10 +52,10 @@ public class Info implements MyTunesRssEventListener {
         myLogDebugInput.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 MyTunesRssUtils.setCodewaveLogLevel(myLogDebugInput.isSelected() ? Level.DEBUG : Level.INFO);
-                    }
+            }
         });
         initValues();
-                    }
+    }
 
     public void handleEvent(final MyTunesRssEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -70,6 +71,7 @@ public class Info implements MyTunesRssEventListener {
 
     private void initValues() {
         myLogDebugInput.setSelected(MyTunesRss.CONFIG.isDebugLogging());
+        mySendAnonyStats.setSelected(MyTunesRss.CONFIG.isSendAnonyStat());
     }
 
     private void refreshRegistration() {
@@ -92,6 +94,7 @@ public class Info implements MyTunesRssEventListener {
 
     public String updateConfigFromGui() {
         MyTunesRss.CONFIG.setDebugLogging(myLogDebugInput.isSelected());
+        MyTunesRss.CONFIG.setSendAnonyStat(mySendAnonyStats.isSelected());
         return null;
     }
 

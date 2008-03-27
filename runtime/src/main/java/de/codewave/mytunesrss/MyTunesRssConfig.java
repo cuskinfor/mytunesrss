@@ -90,6 +90,7 @@ public class MyTunesRssConfig {
     private String myJmxPassword;
     private String myTomcatMaxThreads;
     private int myTomcatAjpPort;
+    private boolean mySendAnonyStat;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -600,6 +601,14 @@ public class MyTunesRssConfig {
         myTomcatAjpPort = tomcatAjpPort;
     }
 
+    public boolean isSendAnonyStat() {
+        return mySendAnonyStat;
+    }
+
+    public void setSendAnonyStat(boolean sendAnonyStat) {
+        mySendAnonyStat = sendAnonyStat;
+    }
+
     public void load() {
         LOG.info("Loading configuration.");
         try {
@@ -687,6 +696,7 @@ public class MyTunesRssConfig {
             setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/ajp-port", 0));
             String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
             setWebappContext(context != null ? "/" + context : "");
+            setSendAnonyStat(JXPathUtils.getBooleanValue(settings, "anonymous-statistics", true));
         } catch (IOException e) {
             LOG.error("Could not read configuration file.", e);
         }
@@ -833,6 +843,7 @@ public class MyTunesRssConfig {
                 tomcat.appendChild(DOMUtils.createIntElement(settings, "ajp-port", getTomcatAjpPort()));
             }
             tomcat.appendChild(DOMUtils.createTextElement(settings, "webapp-context", getWebappContext()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "anonymous-statistics", isSendAnonyStat()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

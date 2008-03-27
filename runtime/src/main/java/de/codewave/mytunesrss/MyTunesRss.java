@@ -17,6 +17,7 @@ import de.codewave.mytunesrss.settings.Settings;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesTask;
 import de.codewave.mytunesrss.task.InitializeDatabaseTask;
+import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.io.FileCache;
@@ -157,6 +158,7 @@ public class MyTunesRss {
         MyTunesRss.CONFIG.load();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.isDebugLogging() ? Level.DEBUG : Level.INFO);
         registerDatabaseDriver();
+        AnonyStatUtils.sendApplicationStarted();
         VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
         if (StringUtils.isEmpty(VERSION)) {
             VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");

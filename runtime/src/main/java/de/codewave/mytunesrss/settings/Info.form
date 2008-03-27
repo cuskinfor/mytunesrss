@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
     <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="921" height="2240"/>
+      <xy x="20" y="20" width="921" height="2339"/>
     </constraints>
     <properties>
       <opaque value="false"/>
@@ -139,7 +139,7 @@
           </component>
         </children>
       </grid>
-      <grid id="eae9f" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="eae9f" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -151,7 +151,7 @@
         <children>
           <component id="f6db7" class="javax.swing.JCheckBox" binding="myLogDebugInput">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <opaque value="false"/>
@@ -160,13 +160,22 @@
           </component>
           <component id="4c0c8" class="javax.swing.JButton" binding="mySupportContactButton">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font swing-font="Button.font"/>
               <opaque value="false"/>
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.supportRequest"/>
               <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.supportTooltip"/>
+            </properties>
+          </component>
+          <component id="f0c4a" class="javax.swing.JCheckBox" binding="mySendAnonyStats">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.sendAnonyStats"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.sendAnonyStatsTooltip"/>
             </properties>
           </component>
         </children>

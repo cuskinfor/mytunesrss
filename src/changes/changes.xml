@@ -6,6 +6,9 @@
     <body>
 
         <release version="3.2-EAP-6" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="add">
+                Send anonymous usage information.
+            </action>
             <action dev="mdescher" type="fix">
                 Removed duplicate file suffix for flash player.
             </action>
