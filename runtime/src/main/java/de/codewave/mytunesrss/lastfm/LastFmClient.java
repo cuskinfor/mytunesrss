@@ -22,6 +22,8 @@ import java.util.List;
  */
 public class LastFmClient {
     private static final Log LOG = LogFactory.getLog(LastFmClient.class);
+    private static final String CLIENT_ID = "mtr";
+    private static final String CLIENT_VERSION = "0.1";
 
     private HttpClient myHttpClient;
 
@@ -49,8 +51,8 @@ public class LastFmClient {
             String passwordHashHex = new String(Hex.encodeHex(user.getLastFmPasswordHash()));
             LOG.debug("Password hash in hex is \"" + passwordHashHex + "\".");
             String authToken = new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest((passwordHashHex + timestamp).getBytes("UTF-8"))));
-            String uri =
-                    "http://post.audioscrobbler.com/?hs=true&p=1.2&c=tst&v=1.0&u=" + user.getLastFmUsername() + "&t=" + timestamp + "&a=" + authToken;
+            String uri = "http://post.audioscrobbler.com/?hs=true&p=1.2&c=" + CLIENT_ID + "&v=" + CLIENT_VERSION + "&u=" + user.getLastFmUsername() +
+                    "&t=" + timestamp + "&a=" + authToken;
             LOG.debug("Last.fm URI is \"" + uri + "\".");
             GetMethod getMethod = new GetMethod(uri);
             try {
@@ -87,60 +89,66 @@ public class LastFmClient {
         return null;
     }
 
-    public void sendNowPlaying(LastFmSession session, Track track) {
-        if (session != null) {
-            if (track != null) {
-                LOG.debug("Sending NOW PLAYING information to last.fm.");
-                PostMethod postMethod = new PostMethod(session.getNowPlayingUrl());
-                postMethod.setParameter("s", session.getSessionId());
-                postMethod.setParameter("a", track.getArtist());
-                postMethod.setParameter("t", track.getName());
-                postMethod.setParameter("b", track.getAlbum());
-                postMethod.setParameter("l", Integer.toString(track.getTime()));
-                postMethod.setParameter("n", Integer.toString(track.getPosNumber()));
-                postMethod.setParameter("m", "");
-                try {
-                    if (myHttpClient.executeMethod(postMethod) == 200) {
-                        List<String> responseLines = IOUtils.readLines(postMethod.getResponseBodyAsStream());
-                        if (responseLines.isEmpty()) {
-                            LOG.info("No response from last.fm.");
-                        } else {
-                            LOG.info("Response from last.fm: \"" + responseLines.get(0) + "\".");
-                        }
+    public boolean sendNowPlaying(LastFmSession session, Track track) {
+        if (session != null && track != null) {
+            LOG.debug("Sending NOW PLAYING information to last.fm.");
+            PostMethod postMethod = new PostMethod(session.getNowPlayingUrl());
+            postMethod.getParams().setContentCharset("UTF-8");
+            postMethod.setParameter("s", session.getSessionId());
+            postMethod.setParameter("a", track.getArtist());
+            postMethod.setParameter("t", track.getName());
+            postMethod.setParameter("b", track.getAlbum());
+            postMethod.setParameter("l", Integer.toString(track.getTime()));
+            postMethod.setParameter("n", Integer.toString(track.getPosNumber()));
+            postMethod.setParameter("m", "");
+            try {
+                if (myHttpClient.executeMethod(postMethod) == 200) {
+                    List<String> responseLines = IOUtils.readLines(postMethod.getResponseBodyAsStream());
+                    if (responseLines.isEmpty()) {
+                        LOG.info("No response from last.fm.");
                     } else {
-                        LOG.warn("HTTP response code from last.fm was " + postMethod.getStatusCode());
+                        LOG.info("Response from last.fm: \"" + responseLines.get(0) + "\".");
+                        return "OK".equals(responseLines.get(0));
                     }
-                } catch (IOException e) {
-                    LOG.warn("Sending NOW PLAYING to last.fm failed.", e);
-                } finally {
-                    postMethod.releaseConnection();
+                } else {
+                    LOG.warn("HTTP response code from last.fm was " + postMethod.getStatusCode());
                 }
+            } catch (IOException e) {
+                LOG.warn("Sending NOW PLAYING to last.fm failed.", e);
+            } finally {
+                postMethod.releaseConnection();
             }
+            return false;
         }
+        // nothing sent, so no error here
+        return true;
     }
 
-    public void sendSubmissions(LastFmSession session) {
+    public boolean sendSubmissions(LastFmSession session) {
         if (session != null) {
             while (true) {
                 int index = 0;
                 PostMethod postMethod = new PostMethod(session.getSubmissionUrl());
+                postMethod.getParams().setContentCharset("UTF-8");
                 postMethod.setParameter("s", session.getSessionId());
                 List<LastFmSubmission> submissions = new ArrayList<LastFmSubmission>();
                 for (LastFmSubmission submission = session.pollSubmission(); submission != null && index < 50;
                         submission = session.pollSubmission()) {
-                    submissions.add(submission);
-                    postMethod.setParameter("a[" + index + "]", submission.getTrack().getArtist());
-                    postMethod.setParameter("t[" + index + "]", submission.getTrack().getName());
-                    postMethod.setParameter("b[" + index + "]", submission.getTrack().getAlbum());
-                    LOG.debug("Adding submission for \"" + submission.getTrack().getAlbum() + " -- " + submission.getTrack().getArtist() + " -- " +
-                            submission.getTrack().getName());
-                    postMethod.setParameter("l[" + index + "]", Integer.toString(submission.getTrack().getTime()));
-                    postMethod.setParameter("n[" + index + "]", Integer.toString(submission.getTrack().getPosNumber()));
-                    postMethod.setParameter("m[" + index + "]", "");
-                    postMethod.setParameter("o[" + index + "]", "P");
-                    postMethod.setParameter("r[" + index + "]", "");
-                    postMethod.setParameter("i[" + index + "]", Long.toString(submission.getPlaybackStartTime() / 1000L));
-                    index++;
+                    if (submission.getTrack().getTime() >= 30) { // only track with at least 30 seconds
+                        submissions.add(submission);
+                        postMethod.setParameter("a[" + index + "]", submission.getTrack().getArtist());
+                        postMethod.setParameter("t[" + index + "]", submission.getTrack().getName());
+                        postMethod.setParameter("b[" + index + "]", submission.getTrack().getAlbum());
+                        LOG.debug("Adding submission for \"" + submission.getTrack().getAlbum() + " -- " + submission.getTrack().getArtist() + " -- " +
+                                submission.getTrack().getName());
+                        postMethod.setParameter("l[" + index + "]", Integer.toString(submission.getTrack().getTime()));
+                        postMethod.setParameter("n[" + index + "]", Integer.toString(submission.getTrack().getPosNumber()));
+                        postMethod.setParameter("m[" + index + "]", "");
+                        postMethod.setParameter("o[" + index + "]", "P");
+                        postMethod.setParameter("r[" + index + "]", "");
+                        postMethod.setParameter("i[" + index + "]", Long.toString(submission.getPlaybackStartTime() / 1000L));
+                        index++;
+                    }
                 }
                 if (index > 0) {
                     LOG.debug("Sending SUBMISSION for " + index + " track(s) to last.fm.");
@@ -151,6 +159,7 @@ public class LastFmClient {
                                 LOG.info("No response from last.fm.");
                             } else {
                                 LOG.info("Response from last.fm: \"" + responseLines.get(0) + "\".");
+                                return "OK".equals(responseLines.get(0));
                             }
                         } else {
                             LOG.warn("HTTP response code from last.fm was " + postMethod.getStatusCode());
@@ -165,9 +174,13 @@ public class LastFmClient {
                         postMethod.releaseConnection();
                     }
                 } else {
-                    break;
+                    // nothing sent, so no error here
+                    return true;
                 }
             }
+            return false;// hard error
         }
+        // nothing sent, so no error here
+        return true;
     }
 }
