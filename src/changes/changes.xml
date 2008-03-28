@@ -5,7 +5,7 @@
     </properties>
     <body>
 
-        <release version="3.2-EAP-7" date="2008-??-??" description="EAP release">
+        <release version="3.2-EAP-7" date="????-??-??" description="EAP release">
             <action dev="mdescher" type="fix">
                 Fixed wide theme.
             </action>
