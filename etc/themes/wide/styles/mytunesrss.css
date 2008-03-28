@@ -690,28 +690,18 @@ a.albumthumb img {
     z-index:10;
 }
 
-span.albumthumbfull {
-    display:none;
-}
-
-span.albumthumbfull {
-    z-index:20;
-}
-
-a.albumthumb:HOVER span.albumthumbfull {
-    display:block;
-    position:absolute;
-    left:-48px;
-    top:-48px;
-    width:128px;
-    height:128px;
-    text-align:center;
-    border-style:solid;
-    border-color:black;
-    border-width:1px;
-    background-color:black;
-}
-
 table.displayfilter td.wide {
     width:100%;
 }
+
+div.tooltip {
+    display:none;
+    z-index:20;
+    border-style:solid;
+    border-color:black;
+    border-width:1px;
+    background-color:#FFFFCC;
+    padding: 2px;
+    max-width: 500px;
+}
+
