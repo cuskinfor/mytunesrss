@@ -5,6 +5,12 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-7" date="2008-??-??" description="EAP release">
+            <action dev="mdescher" type="fix">
+                Fixed wide theme.
+            </action>
+        </release>
+
         <release version="3.2-EAP-6" date="2008-03-27" description="EAP release">
             <action dev="mdescher" type="add">
                 Send anonymous usage information.
