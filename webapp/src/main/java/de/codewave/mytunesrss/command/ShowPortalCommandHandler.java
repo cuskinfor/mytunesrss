@@ -103,7 +103,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                 int endIndex = Math.min(startIndex + maxCount - 1, playlist.getTrackCount() - 1);
                 Playlist splittedPlaylist = new Playlist();
                 splittedPlaylist.setType(playlist.getType());
-                splittedPlaylist.setId(playlist.getId() + "_" + startIndex + "_" + endIndex);
+                splittedPlaylist.setId(playlist.getId() + "@" + startIndex + "@" + endIndex);
                 splittedPlaylist.setName(playlist.getName() + " [" + createFixedLengthNumber(startIndex + 1, playlist.getTrackCount()) + "-" +
                         createFixedLengthNumber(endIndex + 1, playlist.getTrackCount()) + "]");
                 splittedPlaylist.setTrackCount(endIndex - startIndex + 1);
