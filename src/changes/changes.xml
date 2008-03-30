@@ -6,6 +6,9 @@
     <body>
 
         <release version="3.1.9" date="????-??-??" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Bugfix for splitted playlists.
+            </action>
             <action dev="mdescher" type="add">
                 Icu4j library.
             </action>
