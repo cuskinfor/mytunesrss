@@ -9,6 +9,7 @@ import de.codewave.utils.*;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.logging.*;
 import org.apache.commons.io.*;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.*;
 import org.apache.log4j.spi.*;
 
@@ -17,6 +18,8 @@ import java.io.*;
 import java.sql.*;
 import java.text.*;
 import java.util.*;
+
+import com.ibm.icu.text.Normalizer;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
