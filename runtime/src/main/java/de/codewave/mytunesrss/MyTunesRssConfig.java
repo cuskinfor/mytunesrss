@@ -718,7 +718,8 @@ public class MyTunesRssConfig {
     }
 
     private static File getSettingsFile() throws IOException {
-        return new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/settings.xml");
+        String filename = System.getProperty("settings-file", "settings.xml");
+        return new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/" + filename);
     }
 
     private void adjustSettingsToUnregisteredState() {

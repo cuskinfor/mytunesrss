@@ -6,6 +6,12 @@
     <body>
 
         <release version="3.2-EAP-7" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="add">
+                Icu4j library.
+            </action>
+            <action dev="mdescher" type="fix">
+                Normalize track name, album, artist and comment before inserting into database.
+            </action>
             <action dev="mdescher" type="fix">
                 Fixed wide theme.
             </action>

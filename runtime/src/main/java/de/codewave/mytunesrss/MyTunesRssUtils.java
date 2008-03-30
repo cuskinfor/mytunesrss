@@ -12,8 +12,10 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.lf5.util.StreamUtils;
 import org.apache.log4j.spi.LoggerRepository;
 import org.quartz.SchedulerException;
 
@@ -26,6 +28,8 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Enumeration;
+
+import com.ibm.icu.text.Normalizer;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -263,5 +267,9 @@ public class MyTunesRssUtils {
             }
         }
         Logger.getLogger("de.codewave").setLevel(level);
+    }
+
+    public static String normalize(String text) {
+        return StringUtils.isBlank(text) ? text : Normalizer.compose(text, false);
     }
 }

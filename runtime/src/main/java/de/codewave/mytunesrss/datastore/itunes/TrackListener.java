@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
@@ -16,6 +17,8 @@ import org.apache.commons.logging.LogFactory;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.*;
+
+import com.ibm.icu.text.Normalizer;
 
 /**
  * de.codewave.mytunesrss.datastore.itunes.TrackListenerr
@@ -83,16 +86,16 @@ public class TrackListener implements PListHandlerListener {
                                     existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);
                             statement.clear();
                             statement.setId(trackId);
-                            statement.setName(name.trim());
-                            statement.setArtist(StringUtils.trimToNull((String)track.get("Artist")));
-                            statement.setAlbum(StringUtils.trimToNull((String)track.get("Album")));
+                            statement.setName(MyTunesRssUtils.normalize(name.trim()));
+                            statement.setArtist(MyTunesRssUtils.normalize(StringUtils.trimToNull((String)track.get("Artist"))));
+                            statement.setAlbum(MyTunesRssUtils.normalize(StringUtils.trimToNull((String)track.get("Album"))));
                             statement.setTime((int)(track.get("Total Time") != null ? (Long)track.get("Total Time") / 1000 : 0));
                             statement.setTrackNumber((int)(track.get("Track Number") != null ? (Long)track.get("Track Number") : 0));
                             statement.setFileName(filename);
                             statement.setProtected(FileSupportUtils.isProtected(filename));
                             statement.setVideo(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue());
                             statement.setGenre(StringUtils.trimToNull((String)track.get("Genre")));
-                            statement.setComment(StringUtils.trimToNull((String)track.get("Comments")));
+                            statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String)track.get("Comments"))));
                             statement.setPos((int)(track.get("Disc Number") != null ? ((Long)track.get("Disc Number")).longValue() : 0),
                                              (int)(track.get("Disc Count") != null ? ((Long)track.get("Disc Count")).longValue() : 0));
                             if (FileSupportUtils.isMp4(filename)) {
