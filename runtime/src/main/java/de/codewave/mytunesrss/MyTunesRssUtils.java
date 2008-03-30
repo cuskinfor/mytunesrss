@@ -237,4 +237,8 @@ public class MyTunesRssUtils {
         }
         Logger.getLogger("de.codewave").setLevel(level);
     }
+
+    public static String normalize(String text) {
+        return StringUtils.isBlank(text) ? text : Normalizer.compose(text, false);
+    }
 }

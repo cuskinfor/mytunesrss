@@ -6,6 +6,15 @@
     <body>
 
         <release version="3.1.9" date="????-??-??" description="Bugfix release">
+            <action dev="mdescher" type="add">
+                Icu4j library.
+            </action>
+            <action dev="mdescher" type="fix">
+                Normalize track name, album, artist and comment before inserting into database.
+            </action>
+            <action dev="mdescher" type="fix">
+                Creating canonical file path for iTunes XML URIs.
+            </action>
             <action dev="mdescher" type="fix">
                 Removed duplicate file suffix for flash player.
             </action>
