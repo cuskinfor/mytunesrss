@@ -89,4 +89,40 @@ function hideTooltip(element) {
     }
 }
 
+var dialogFunctions;
+var dialogElement;
 
+function showDialog(dialogId, functions) {
+    dialogFunctions = functions;
+    var content = document.getElementById("body");
+    var glasspane = document.getElementById("glasspane");
+    dialogElement = document.getElementById(dialogId);
+    content.style.overflow = "hidden";
+    glasspane.style.zIndex = 999;
+    glasspane.style.display = "block";
+    dialogElement.style.zIndex = -1000;
+    dialogElement.style.display = "block";
+    var left = (document.width - dialogElement.scrollWidth) / 2;
+    if (left < 0) {
+        left = 0;
+    }
+    dialogElement.style.left = left + "px";
+    var top = (document.height - dialogElement.scrollHeight) / 2;
+    if (top < 0) {
+        top = 0;
+    }
+    dialogElement.style.top = top + "px";
+    dialogElement.style.zIndex = 1000;
+}
+
+function clickDialog(functionIndex) {
+    var content = document.getElementById("body");
+    var glasspane = document.getElementById("glasspane");
+    dialogElement.style.display = "none";
+    glasspane.style.display = "none";
+    glasspane.style.zIndex = -999;
+    content.style.overflow = "visible";
+    if (dialogFunctions[functionIndex]) {
+        dialogFunctions[functionIndex]();
+    }
+}

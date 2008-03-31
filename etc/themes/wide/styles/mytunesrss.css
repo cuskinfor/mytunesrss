@@ -708,3 +708,22 @@ div.tooltip {
 table.displayfilter td.wide {
     width:100%;
 }
+
+div.glasspane {
+    display:none;
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-image:url('../images/glasspane.gif')
+}
+
+div.dialogbox {
+    display:none;
+    position:absolute;
+    width:500px;
+    border:2px solid;
+    padding:5px;
+    background-color:#FFFFCC
+}

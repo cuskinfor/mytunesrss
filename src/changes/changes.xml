@@ -6,6 +6,9 @@
     <body>
 
         <release version="3.2-EAP-7" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="add">
+                Confirmation before deleting mytunesrss playlists in the web interface.
+            </action>
             <action dev="mdescher" type="fix">
                 Bugfix for splitted playlists.
             </action>

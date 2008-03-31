@@ -21,7 +21,7 @@
 
 <body>
 
-<div class="body">
+<div id="body" class="body">
 
     <h1 class="manager">
         <a class="portal" href="${servletUrl}/showPortal/${auth}"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
@@ -49,7 +49,7 @@
                         <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                 </td>
                 <td class="icon">
-                    <a href="${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>">
+                    <a href="#" onclick="showDialog('confirmDeletePlaylist', [function() {document.location.href='${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}'}, null])">
                         <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                 </td>
             </tr>
@@ -65,6 +65,21 @@
         <jsp:include page="incl_bottomPager.jsp" />
     </c:if>
 
+</div>
+
+<div id="glasspane" class="glasspane">
+</div>
+
+<div id="confirmDeletePlaylist" class="dialogbox">
+    <div id="dialogMessage">
+        <fmt:message key="dialog.confirmDeletePlaylist"/>
+    </div>
+    <div class="dialogButton">
+        <input type="button" onclick="clickDialog(1)" value="<fmt:message key="no" />" />
+    </div>
+    <div class="dialogButton">
+        <input type="button" onclick="clickDialog(0)" value="<fmt:message key="yes" />" />
+    </div>
 </div>
 
 </body>
