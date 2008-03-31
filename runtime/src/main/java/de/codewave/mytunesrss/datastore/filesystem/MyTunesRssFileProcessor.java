@@ -65,6 +65,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         myExistingIds.add(fileId);
                     }
                     if ((file.lastModified() >= myLastUpdateTime || !existing)) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Processing file \"" + file.getAbsolutePath() + "\".");
+                        }
                         InsertOrUpdateTrackStatement statement;
                         if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
                             statement = existing ? new UpdateTrackAndImageStatement() : new InsertTrackAndImageStatement(TrackSource.FileSystem);
@@ -85,7 +88,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         statement.setFileName(canonicalFilePath);
                         try {
                             myStoreSession.executeStatement(statement);
-                            if (meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
+                            if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
                                 HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, meta.getImage());
                                 myStoreSession.executeStatement(handleTrackImagesStatement);
                             }
@@ -130,17 +133,17 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (StringUtils.isEmpty(album)) {
                     album = getAncestorAlbumName(file);
                 }
-                statement.setAlbum(album);
+                statement.setAlbum(MyTunesRssUtils.normalize(album));
                 String artist = tag.getArtist();
                 if (StringUtils.isEmpty(artist)) {
                     artist = getAncestorArtistName(file);
                 }
-                statement.setArtist(artist);
+                statement.setArtist(MyTunesRssUtils.normalize(artist));
                 String name = tag.getTitle();
                 if (StringUtils.isEmpty(name)) {
                     name = FilenameUtils.getBaseName(file.getName());
                 }
-                statement.setName(name);
+                statement.setName(MyTunesRssUtils.normalize(name));
                 if (tag.isId3v2()) {
                     Id3v2Tag id3v2Tag = ((Id3v2Tag)tag);
                     statement.setTime(id3v2Tag.getTimeSeconds());
@@ -151,7 +154,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (genre != null) {
                     statement.setGenre(StringUtils.trimToNull(genre));
                 }
-                statement.setComment(StringUtils.trimToNull(createComment(tag)));
+                statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull(createComment(tag))));
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
@@ -227,19 +230,19 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (StringUtils.isEmpty(album)) {
                     album = getAncestorAlbumName(file);
                 }
-                statement.setAlbum(album);
+                statement.setAlbum(MyTunesRssUtils.normalize(album));
                 atom = atoms.get(ATOM_ARTIST);
                 String artist = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                 if (StringUtils.isEmpty(artist)) {
                     artist = getAncestorArtistName(file);
                 }
-                statement.setArtist(artist);
+                statement.setArtist(MyTunesRssUtils.normalize(artist));
                 atom = atoms.get(ATOM_TITLE);
                 String name = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                 if (StringUtils.isEmpty(name)) {
                     name = FilenameUtils.getBaseName(file.getName());
                 }
-                statement.setName(name);
+                statement.setName(MyTunesRssUtils.normalize(name));
                 //statement.setTime(atoms.get(ATOM_TIME).getData()[11]);
                 atom = atoms.get(ATOM_TRACK_NUMBER);
                 if (atom != null) {

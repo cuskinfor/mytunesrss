@@ -80,7 +80,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
             statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracksOrderedByIndex" + suffix);
         }
         if (myId != null) {
-            String[] parts = StringUtils.split(myId);
+            String[] parts = StringUtils.split(myId, "@");
             statement.setString("id", parts[0]);
             if (parts.length == 3) {
                 statement.setInt("firstIndex", Integer.parseInt(parts[1]));
