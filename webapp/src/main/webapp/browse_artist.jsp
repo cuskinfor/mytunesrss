@@ -87,7 +87,14 @@
                         <td class="check"><input type="checkbox" name="artist" id="artist${loopStatus.count}" value="${mtfn:encode64(artist.name)}" /></td>
                     </c:if>
                     <td class="artist">
-                        <c:out value="${cwfn:choose(mtfn:unknown(artist.name), '(unknown)', artist.name)}" />
+                        <c:choose>
+                            <c:when test="${mtfn:unknown(artist.name)}">
+                                <fmt:message key="unknown"/>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${artist.name}" /></a>
+                            </c:otherwise>
+                        </c:choose>
                     </td>
                     <td class="album">
                         <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${artist.albumCount} </a>

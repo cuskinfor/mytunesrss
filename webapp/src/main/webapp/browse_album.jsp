@@ -95,10 +95,10 @@
                         </c:if>
                     <c:choose>
                         <c:when test="${mtfn:unknown(album.name)}">
-                            (unknown)
+                            <fmt:message key="unknown"/>
                         </c:when>
                         <c:otherwise>
-                            <c:out value="${album.name}"/>
+                            <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${album.name}"/></a>
                         </c:otherwise>
                     </c:choose>
                 </td>
@@ -107,11 +107,11 @@
                         <c:when test="${album.artistCount == 1}">
                             <c:choose>
                                 <c:when test="${singleArtist}">
-                                    <c:out value="${cwfn:choose(mtfn:unknown(album.artist), '(unknown)', album.artist)}" />
+                                    <c:out value="${cwfn:choose(mtfn:unknown(album.artist), cwfn:message('unknown', null), album.artist)}" />
                                 </c:when>
                                 <c:otherwise>
                                     <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(album.artist))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                        <c:out value="${cwfn:choose(mtfn:unknown(album.artist), '(unknown)', album.artist)}" /></a>
+                                        <c:out value="${cwfn:choose(mtfn:unknown(album.artist), cwfn:message('unknown', null), album.artist)}" /></a>
                                 </c:otherwise>
                             </c:choose>
                         </c:when>
@@ -173,7 +173,9 @@
                 <c:if test="${!empty sessionScope.playlist}">
                     <td class="check">&nbsp;</td>
                 </c:if>
-                <td colspan="2"><em><fmt:message key="allTracksOfAboveAlbums"/></em></td>
+                <td colspan="2"><em>
+                    <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><fmt:message key="allTracksOfAboveAlbums"/></a>
+                </em></td>
                 <td class="tracks">
                     <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${allAlbumsTrackCount}</a>
                 </td>
@@ -242,7 +244,7 @@
                             <fmt:message var="localizedMessage" key="allTracksOfGenre"/>
                         </c:otherwise>
                     </c:choose>
-                    <c:out value="${cwfn:message(localizedMessage, params)}"/>
+                    <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${cwfn:message(localizedMessage, params)}"/></a>
                 </em></td>
                 <td class="tracks">
                     <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${allArtistGenreTrackCount}</a>

@@ -40,7 +40,7 @@
     <table cellspacing="0">
         <tr>
             <th colspan="2" class="active">
-                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
+                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), cwfn:message('unknown', null), track.artist)}" />
                 -
                 <c:out value="${track.name}" />
             </th>
@@ -59,7 +59,7 @@
                 <fmt:message key="album" />:
             </td>
             <td>
-                <c:out value="${cwfn:choose(mtfn:unknown(track.album), '(unknown)', track.album)}" />
+                <c:out value="${cwfn:choose(mtfn:unknown(track.album), cwfn:message('unknown', null), track.album)}" />
             </td>
         </tr>
             <c:if test="${track.posNumber > 0}">
@@ -82,7 +82,7 @@
                 <fmt:message key="artist" />:
             </td>
             <td>
-                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), '(unknown)', track.artist)}" />
+                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), cwfn:message('unknown', null), track.artist)}" />
             </td>
         </tr>
         <tr <mt:flipFlop/>>
