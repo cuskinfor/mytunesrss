@@ -151,11 +151,11 @@
                 </c:if>
             </c:when>
             <c:otherwise>
+                <th></th>
                 <th class="icon">
                     <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                         <img src="${appUrl}/images/add_th.gif" alt="add" /> </a>
                 </th>
-                <th>&nbsp;</th>
             </c:otherwise>
         </c:choose>
     </tr>
@@ -220,27 +220,33 @@
             </c:if>
             <c:if test="${authUser.download && config.showDownload}">
                 <td class="icon">
-                    <a href="${servletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}">
-                        <c:if test="${!config.yahooMediaPlayer || mtfn:lowerSuffix(config, authUser, track) ne 'mp3'}"><img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" /></c:if>
+                    <a href="${servletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" title="${track.name}">
+                        <c:choose>
+                            <c:when test="${!config.yahooMediaPlayer || mtfn:lowerSuffix(config, authUser, track) ne 'mp3'}"><img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" /></c:when>
+                            <c:otherwise><c:set var="yahoo" value="true"/><img src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=64</mt:encrypt>" style="display:none"/></c:otherwise>
+                        </c:choose>
                     </a>
                 </td>
             </c:if>
         </c:when>
         <c:otherwise>
+            <c:choose>
+                <c:when test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && config.showDownload && authUser.download && config.yahooMediaPlayer}">
+                    <c:set var="yahoo" value="true"/>
+                    <td class="icon">
+                        <a href="${servletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" title="${track.name}">
+                            <img src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=64</mt:encrypt>" style="display:none"/>
+                        </a>
+                    </td>
+                </c:when>
+                <c:otherwise>
+                    <td></td>
+                </c:otherwise>
+            </c:choose>
             <td class="icon">
                 <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                     <img src="${appUrl}/images/add${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
             </td>
-            <c:choose>
-                <c:when test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3'}">
-                    <td class="icon">
-                        <a href="${servletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" />
-                    </td>
-                </c:when>
-                <c:otherwise>
-                    <td>&nbsp;</td>
-                </c:otherwise>
-            </c:choose>
         </c:otherwise>
     </c:choose>
 </tr>
@@ -267,7 +273,7 @@
 
 </div>
 
-<c:if test="${config.yahooMediaPlayer || !empty sessionScope.playlist}"><script type="text/javascript" src="http://mediaplayer.yahoo.com/js"></script></c:if>
+<c:if test="${yahoo}"><script type="text/javascript" src="http://mediaplayer.yahoo.com/js"></script></c:if>
 
 </body>
 

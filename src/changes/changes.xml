@@ -6,6 +6,18 @@
     <body>
 
         <release version="3.2-EAP-7" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="update">
+                Disable yahoo media player checkbox on settings page if download is disabled.
+            </action>
+            <action dev="mdescher" type="fix">
+                Yahoo media player preview links in browse_track.jsp only if yahoo player and download are enabled.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fix for yahoo media player image request in BrowseTrackCommandHandler.
+            </action>
+            <action dev="mdescher" type="add">
+                Track images and track title for yahoo media player.
+            </action>
             <action dev="mdescher" type="add">
                 More links in the web interface (artist, album, etc.)
             </action>

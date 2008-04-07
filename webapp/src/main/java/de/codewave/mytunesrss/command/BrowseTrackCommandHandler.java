@@ -27,6 +27,9 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
+        if (getRequest().getPathInfo() != null && getRequest().getPathInfo().toLowerCase().endsWith(".gif")) {
+            return; // fix for those stupid yahoo media player img requests
+        }
         if (isSessionAuthorized()) {
             String searchTerm = getRequestParameter("searchTerm", null);
             String sortOrderName = getRequestParameter("sortOrder", FindPlaylistTracksQuery.SortOrder.Album.name());

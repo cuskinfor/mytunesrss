@@ -15,6 +15,15 @@
 
     <jsp:include page="incl_head.jsp"/>
 
+    <script type="text/javascript">
+        function toggleDownload() {
+            if (document.getElementById("downloadCheckbox").checked) {
+                document.getElementById("yahooPlayerCheckbox").disabled = false;
+            } else {
+                document.getElementById("yahooPlayerCheckbox").disabled = true;
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -27,7 +36,7 @@
 
     <jsp:include page="/incl_error.jsp" />
 
-    <form action="${servletUrl}/saveSettings/${auth}" method="post">
+    <form action="${servletUrl}/saveSettings/${auth}" method="post" onsubmit="document.getElementById('yahooPlayerCheckbox').disabled=false;return true">
         <table cellspacing="0">
             <tr>
                 <th class="active"><fmt:message key="settings.info" /></th>
@@ -218,14 +227,14 @@
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.showDownload" /></td>
                     <td>
-                        <input type="checkbox" name="showDownload" value="true" <c:if test="${config.showDownload}">checked="checked"</c:if> />
+                        <input id="downloadCheckbox" type="checkbox" name="showDownload" value="true" <c:if test="${config.showDownload}">checked="checked"</c:if> onclick="toggleDownload()"/>
                         <img src="${appUrl}/images/download.gif" alt="playlist" style="vertical-align:text-top;" />
                     </td>
                 </tr>
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.showYahooMediaPlayer" /></td>
                     <td>
-                        <input type="checkbox" name="showYahooMediaPlayer" value="true" <c:if test="${config.yahooMediaPlayer}">checked="checked"</c:if> />
+                        <input id="yahooPlayerCheckbox" type="checkbox" name="showYahooMediaPlayer" value="true" <c:if test="${config.yahooMediaPlayer}">checked="checked"</c:if> <c:if test="${!config.showDownload}">disabled="disabled"</c:if> />
                     </td>
                 </tr>
             </c:if>
