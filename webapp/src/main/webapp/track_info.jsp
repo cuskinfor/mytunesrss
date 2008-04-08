@@ -47,7 +47,7 @@
         </tr>
         <mt:initFlipFlop value1="" value2="class=\"odd\""/>
         <tr <mt:flipFlop/>>
-            <td>
+            <td style="white-space:nowrap">
                 <fmt:message key="track" />:
             </td>
             <td>
@@ -55,7 +55,7 @@
             </td>
         </tr>
         <tr <mt:flipFlop/>>
-            <td>
+            <td style="white-space:nowrap">
                 <fmt:message key="album" />:
             </td>
             <td>
@@ -64,7 +64,7 @@
         </tr>
             <c:if test="${track.posNumber > 0}">
                 <tr <mt:flipFlop/>>
-                    <td>
+                    <td style="white-space:nowrap">
                         <fmt:message key="discnumber.label" />:
                     </td>
                     <td>
@@ -78,7 +78,7 @@
                 </tr>
             </c:if>
         <tr <mt:flipFlop/>>
-            <td>
+            <td style="white-space:nowrap">
                 <fmt:message key="artist" />:
             </td>
             <td>
@@ -86,7 +86,7 @@
             </td>
         </tr>
         <tr <mt:flipFlop/>>
-            <td>
+            <td style="white-space:nowrap">
                 <fmt:message key="duration" />:
             </td>
             <td>
@@ -96,7 +96,7 @@
         <c:if test="${mp3info}">
             <fmt:message var="localizedUnknown" key="unknown" />
             <tr <mt:flipFlop/>>
-                <td>
+                <td style="white-space:nowrap">
                     <fmt:message key="bitrate" />:
                 </td>
                 <td>
@@ -104,7 +104,7 @@
                 </td>
             </tr>
             <tr <mt:flipFlop/>>
-                <td>
+                <td style="white-space:nowrap">
                     <fmt:message key="samplerate" />:
                 </td>
                 <td>
@@ -114,7 +114,7 @@
         </c:if>
         <c:if test="${!empty track.comment}">
             <tr <mt:flipFlop/>>
-                <td>
+                <td style="white-space:nowrap;vertical-align:top">
                     <fmt:message key="trackComment" />:
                 </td>
                 <td>
@@ -126,11 +126,33 @@
             </tr>
         </c:if>
         <tr <mt:flipFlop/>>
-            <td><fmt:message key="type"/>:</td>
+            <td style="white-space:nowrap"><fmt:message key="type"/>:</td>
             <td>
                 <c:if test="${track.protected}"><img src="${appUrl}/images/protected.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle" /></c:if>
                 <c:if test="${track.video}"><img src="${appUrl}/images/movie.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle" /></c:if>
                 <c:out value="${mtfn:suffix(null, null, track)}" />
+            </td>
+        </tr>
+        <tr <mt:flipFlop/>>
+            <td>&nbsp;</td>
+            <td>
+                        <c:if test="${authUser.rss && config.showRss}">
+                                <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml">
+                                    <img src="${appUrl}/images/rss${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
+                        </c:if>
+                        <c:if test="${authUser.playlist && config.showPlaylist}">
+                                <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}">
+                                    <img src="${appUrl}/images/playlist${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
+                        </c:if>
+                        <c:if test="${authUser.player && config.showPlayer}">
+                                <a href="#" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=track=${track.id}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false">
+                                    <img src="${appUrl}/images/player${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
+                        </c:if>
+                        <c:if test="${authUser.download && config.showDownload}">
+                                <a href="${servletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" title="${track.name}">
+                                    <img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" />
+                                </a>
+                        </c:if>
             </td>
         </tr>
         <c:if test="${authUser.download && config.showDownload}">
@@ -140,8 +162,8 @@
                 </td>
                 <td>
                     <a href="${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(null, null, track)}">
-                        <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" />
-                        <fmt:message key="doDownload"/>
+                        <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="tooltip.originalDownload"/>" title="<fmt:message key="tooltip.originalDownload"/>" />
+                        <fmt:message key="originalDownload"/>
                     </a>
                 </td>
             </tr>
@@ -153,7 +175,7 @@
         </tr>
         <mt:initFlipFlop value1="" value2="class=\"odd\""/>
         <tr <mt:flipFlop/>>
-            <td>
+            <td style="white-space:nowrap">
                 <fmt:message key="trackinfo.playcount" />:
             </td>
             <td>
@@ -162,7 +184,7 @@
         </tr>
         <c:if test="${track.tsPlayed > 0}">
             <tr <mt:flipFlop/>>
-                <td>
+                <td style="white-space:nowrap">
                     <fmt:message key="trackinfo.lastPlayed" />:
                 </td>
                 <td>
@@ -172,7 +194,7 @@
         </c:if>
         <c:if test="${track.tsUpdated > 0}">
             <tr <mt:flipFlop/>>
-                <td>
+                <td style="white-space:nowrap">
                     <fmt:message key="trackinfo.lastUpdate" />:
                 </td>
                 <td>
@@ -194,7 +216,7 @@
               </td>
             </tr>
         </c:if>
-    </table>
+        </table>
 
 </div>
 
