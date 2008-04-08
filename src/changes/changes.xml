@@ -13,6 +13,9 @@
 
         <release version="3.2-EAP-7" date="2008-04-08" description="EAP release">
             <action dev="mdescher" type="add">
+                New playlist type "iPhone" which makes the iPhone or iPod Touch play the playlist in the Quicktime plugin.
+            </action>
+            <action dev="mdescher" type="add">
                 HTTPS support.
             </action>
             <action dev="mdescher" type="add">
