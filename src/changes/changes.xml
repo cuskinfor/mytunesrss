@@ -5,6 +5,12 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-8" date="2008-04-08" description="EAP release">
+            <action dev="mdescher" type="update">
+                Some HTTPS changes.
+            </action>
+        </release>
+
         <release version="3.2-EAP-7" date="2008-04-08" description="EAP release">
             <action dev="mdescher" type="add">
                 HTTPS support.

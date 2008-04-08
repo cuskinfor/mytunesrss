@@ -153,25 +153,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private void prepareRequestForResource() {
         String myTunesRssComUsername = (String)getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER);
         String servletUrl = MyTunesRssWebUtils.getServletUrl(getRequest());
-        String plainServletUrl = servletUrl.replace("https://", "http://").replace(":" + MyTunesRss.CONFIG.getSslPort(),
-                                                                                   ":" + MyTunesRss.CONFIG.getPort());
-        String secureServletUrl = servletUrl.replace("http://", "https://").replace(":" + MyTunesRss.CONFIG.getPort(),
-                                                                                    ":" + MyTunesRss.CONFIG.getSslPort());
-        if (MyTunesRss.CONFIG.isSsl() && MyTunesRss.CONFIG.getSslUsage() == SslUsage.All) {
-            getRequest().setAttribute("servletUrl", secureServletUrl);
-        } else {
-            getRequest().setAttribute("servletUrl", plainServletUrl);
-        }
-        if (MyTunesRss.CONFIG.isSsl() && MyTunesRss.CONFIG.getSslUsage() != SslUsage.None) {
-            getRequest().setAttribute("loginServletUrl", secureServletUrl);
-        } else {
-            getRequest().setAttribute("loginServletUrl", plainServletUrl);
-        }
-        getRequest().setAttribute("plainServletUrl", plainServletUrl);
-        getRequest().setAttribute("secureServletUrl", secureServletUrl);
+        getRequest().setAttribute("servletUrl", servletUrl);
         if (StringUtils.isEmpty(myTunesRssComUsername)) {
-            getRequest().setAttribute("permServletUrl", MyTunesRss.CONFIG.isSsl() && MyTunesRss.CONFIG.getSslUsage() == SslUsage.All ? secureServletUrl : plainServletUrl);
-            getRequest().setAttribute("plainPermServletUrl", plainServletUrl);
+            getRequest().setAttribute("permServletUrl", servletUrl);
         } else {
             String appUrl = ServletUtils.getApplicationUrl(getRequest());
             getRequest().setAttribute("permServletUrl",

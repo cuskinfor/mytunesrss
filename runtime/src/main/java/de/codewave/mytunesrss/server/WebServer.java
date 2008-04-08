@@ -205,7 +205,7 @@ public class WebServer {
             }
             httpConnector.setURIEncoding("UTF-8");
             server.addConnector(httpConnector);
-            if (MyTunesRss.CONFIG.getTomcatAjpPort() > 0) {
+            if (MyTunesRss.CONFIG.getTomcatAjpPort() > 0 && MyTunesRss.CONFIG.getTomcatAjpPort() < 65536) {
                 Connector ajpConnector = null;
                 try {
                     ajpConnector = createConnector(server, listenAddress, MyTunesRss.CONFIG.getTomcatAjpPort(), "ajp");
@@ -218,7 +218,7 @@ public class WebServer {
                     }
                 }
             }
-            if (MyTunesRss.CONFIG.isSsl()) {
+            if (MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536) {
                 Connector sslConnector = null;
                 try {
                     LOG.debug("Adding SSL connector.");
@@ -236,9 +236,6 @@ public class WebServer {
                             sslConnector.setAttribute("keystoreFile", MyTunesRss.CONFIG.getSslKeystoreFile());
                             if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystorePass())) {
                                 sslConnector.setAttribute("keystorePass", MyTunesRss.CONFIG.getSslKeystorePass());
-                            }
-                            if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystoreType())) {
-                                sslConnector.setAttribute("keystoreType", MyTunesRss.CONFIG.getSslKeystoreType());
                             }
                             if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystoreKeyAlias())) {
                                 sslConnector.setAttribute("keyAlias", MyTunesRss.CONFIG.getSslKeystoreKeyAlias());

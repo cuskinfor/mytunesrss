@@ -22,7 +22,7 @@
 
   <jsp:include page="/incl_error.jsp"/>
 
-  <form id="login" action="${loginServletUrl}/login" method="post">
+  <form id="login" action="${servletUrl}/login" method="post">
 
     <h2>
       <fmt:message key="loginCaption"/>

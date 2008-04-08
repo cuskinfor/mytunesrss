@@ -92,10 +92,8 @@ public class MyTunesRssConfig {
     private boolean mySendAnonyStat;
     private String mySslKeystoreFile;
     private String mySslKeystorePass;
-    private String mySslKeystoreType;
     private int mySslPort;
     private String mySslKeystoreKeyAlias;
-    private SslUsage mySslUsage;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -638,32 +636,12 @@ public class MyTunesRssConfig {
         mySslKeystorePass = sslKeystorePass;
     }
 
-    public String getSslKeystoreType() {
-        return mySslKeystoreType;
-    }
-
-    public void setSslKeystoreType(String sslKeystoreType) {
-        mySslKeystoreType = sslKeystoreType;
-    }
-
     public int getSslPort() {
         return mySslPort;
     }
 
     public void setSslPort(int sslPort) {
         mySslPort = sslPort;
-    }
-
-    public SslUsage getSslUsage() {
-        return mySslUsage;
-    }
-
-    public void setSslUsage(SslUsage sslUsage) {
-        mySslUsage = sslUsage;
-    }
-
-    public boolean isSsl() {
-        return getSslUsage() != SslUsage.None && getSslPort() > 0 && getSslPort() < 65536;
     }
 
     public void load() {
@@ -757,14 +735,7 @@ public class MyTunesRssConfig {
             setSslKeystoreFile(JXPathUtils.getStringValue(settings, "ssl/keystore/file", null));
             setSslKeystoreKeyAlias(JXPathUtils.getStringValue(settings, "ssl/keystore/keyalias", null));
             setSslKeystorePass(JXPathUtils.getStringValue(settings, "ssl/keystore/pass", null));
-            setSslKeystoreType(JXPathUtils.getStringValue(settings, "ssl/keystore/type", null));
-            setSslPort(JXPathUtils.getIntValue(settings, "ssl/port", 8443));
-            try {
-                setSslUsage(SslUsage.valueOf(JXPathUtils.getStringValue(settings, "ssl/usage", SslUsage.None.name())));
-            } catch (IllegalArgumentException e) {
-                LOG.warn("No such SSL usage type: \"" + JXPathUtils.getStringValue(settings, "ssl/usage", SslUsage.None.name()) + "\".");
-                setSslUsage(SslUsage.None);
-            }
+            setSslPort(JXPathUtils.getIntValue(settings, "ssl/port", 0));
         } catch (IOException e) {
             LOG.error("Could not read configuration file.", e);
         }
@@ -916,13 +887,11 @@ public class MyTunesRssConfig {
             Element ssl = settings.createElement("ssl");
             root.appendChild(ssl);
             ssl.appendChild(DOMUtils.createIntElement(settings, "port", getSslPort()));
-            ssl.appendChild(DOMUtils.createTextElement(settings, "usage", getSslUsage().name()));
             Element keystore = settings.createElement("keystore");
             ssl.appendChild(keystore);
             keystore.appendChild(DOMUtils.createTextElement(settings, "file", getSslKeystoreFile()));
             keystore.appendChild(DOMUtils.createTextElement(settings, "pass", getSslKeystorePass()));
             keystore.appendChild(DOMUtils.createTextElement(settings, "keyalias", getSslKeystoreKeyAlias()));
-            keystore.appendChild(DOMUtils.createTextElement(settings, "type", getSslKeystoreType()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
