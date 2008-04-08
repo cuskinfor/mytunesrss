@@ -28,10 +28,10 @@
             <param name="autoplay" value="true" />
             <param name="kioskmode" value="true" />
             <param name="type" value="video/quicktime" />
-            <embed src="${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(tracks[0].id)}/tc=${mtfn:tcParamValue(config, authUser, tracks[0])}/playerRequest=${param.playerRequest}</mt:encrypt>/${mtfn:virtualTrackName(tracks[0])}.${mtfn:suffix(config, authUser, tracks[0])}"
+            <embed src="${plainServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(tracks[0].id)}/tc=${mtfn:tcParamValue(config, authUser, tracks[0])}/playerRequest=${param.playerRequest}</mt:encrypt>/${mtfn:virtualTrackName(tracks[0])}.${mtfn:suffix(config, authUser, tracks[0])}"
                    controller="true" autoplay="true" kioskmode="true" width="100%" height="16" type="video/quicktime"
                 <c:forEach items="${tracks}" var="item" begin="1" varStatus="itemLoopStatus">
-                    qtnext${itemLoopStatus.index}="<${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}/tc=${mtfn:tcParamValue(config, authUser, item)}/playerRequest=${param.playerRequest}</mt:encrypt>/${mtfn:virtualTrackName(item)}.${mtfn:suffix(config, authUser, item)}>T<myself>"
+                    qtnext${itemLoopStatus.index}="<${plainServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}/tc=${mtfn:tcParamValue(config, authUser, item)}/playerRequest=${param.playerRequest}</mt:encrypt>/${mtfn:virtualTrackName(item)}.${mtfn:suffix(config, authUser, item)}>T<myself>"
                 </c:forEach>
                 >
             </embed>

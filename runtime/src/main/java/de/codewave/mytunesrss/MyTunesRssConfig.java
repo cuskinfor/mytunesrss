@@ -8,11 +8,11 @@ import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -23,7 +23,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -91,6 +90,12 @@ public class MyTunesRssConfig {
     private String myTomcatMaxThreads;
     private int myTomcatAjpPort;
     private boolean mySendAnonyStat;
+    private String mySslKeystoreFile;
+    private String mySslKeystorePass;
+    private String mySslKeystoreType;
+    private int mySslPort;
+    private String mySslKeystoreKeyAlias;
+    private SslUsage mySslUsage;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -609,6 +614,58 @@ public class MyTunesRssConfig {
         mySendAnonyStat = sendAnonyStat;
     }
 
+    public String getSslKeystoreFile() {
+        return mySslKeystoreFile;
+    }
+
+    public void setSslKeystoreFile(String sslKeystoreFile) {
+        mySslKeystoreFile = sslKeystoreFile;
+    }
+
+    public String getSslKeystoreKeyAlias() {
+        return mySslKeystoreKeyAlias;
+    }
+
+    public void setSslKeystoreKeyAlias(String sslKeystoreKeyAlias) {
+        mySslKeystoreKeyAlias = sslKeystoreKeyAlias;
+    }
+
+    public String getSslKeystorePass() {
+        return mySslKeystorePass;
+    }
+
+    public void setSslKeystorePass(String sslKeystorePass) {
+        mySslKeystorePass = sslKeystorePass;
+    }
+
+    public String getSslKeystoreType() {
+        return mySslKeystoreType;
+    }
+
+    public void setSslKeystoreType(String sslKeystoreType) {
+        mySslKeystoreType = sslKeystoreType;
+    }
+
+    public int getSslPort() {
+        return mySslPort;
+    }
+
+    public void setSslPort(int sslPort) {
+        mySslPort = sslPort;
+    }
+
+    public SslUsage getSslUsage() {
+        return mySslUsage;
+    }
+
+    public void setSslUsage(SslUsage sslUsage) {
+        mySslUsage = sslUsage;
+    }
+
+    public boolean isSsl() {
+        return getSslUsage() != SslUsage.None && getSslPort() > 0 && getSslPort() < 65536 && new File(getSslKeystoreFile()).isFile();
+    }
+
     public void load() {
         LOG.info("Loading configuration.");
         try {
@@ -697,6 +754,19 @@ public class MyTunesRssConfig {
             String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
             setWebappContext(context != null ? "/" + context : "");
             setSendAnonyStat(JXPathUtils.getBooleanValue(settings, "anonymous-statistics", true));
+            setSslKeystoreFile(JXPathUtils.getStringValue(settings,
+                                                          "ssl/keystore/file",
+                                                          PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/keystore"));
+            setSslKeystoreKeyAlias(JXPathUtils.getStringValue(settings, "ssl/keystore/keyalias", null));
+            setSslKeystorePass(JXPathUtils.getStringValue(settings, "ssl/keystore/pass", null));
+            setSslKeystoreType(JXPathUtils.getStringValue(settings, "ssl/keystore/type", null));
+            setSslPort(JXPathUtils.getIntValue(settings, "ssl/port", 8443));
+            try {
+                setSslUsage(SslUsage.valueOf(JXPathUtils.getStringValue(settings, "ssl/usage", SslUsage.None.name())));
+            } catch (IllegalArgumentException e) {
+                LOG.warn("No such SSL usage type: \"" + JXPathUtils.getStringValue(settings, "ssl/usage", SslUsage.None.name()) + "\".");
+                setSslUsage(SslUsage.None);
+            }
         } catch (IOException e) {
             LOG.error("Could not read configuration file.", e);
         }
@@ -845,6 +915,16 @@ public class MyTunesRssConfig {
             }
             tomcat.appendChild(DOMUtils.createTextElement(settings, "webapp-context", getWebappContext()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "anonymous-statistics", isSendAnonyStat()));
+            Element ssl = settings.createElement("ssl");
+            root.appendChild(ssl);
+            ssl.appendChild(DOMUtils.createIntElement(settings, "port", getSslPort()));
+            ssl.appendChild(DOMUtils.createTextElement(settings, "usage", getSslUsage().name()));
+            Element keystore = settings.createElement("keystore");
+            ssl.appendChild(keystore);
+            keystore.appendChild(DOMUtils.createTextElement(settings, "file", getSslKeystoreFile()));
+            keystore.appendChild(DOMUtils.createTextElement(settings, "pass", getSslKeystorePass()));
+            keystore.appendChild(DOMUtils.createTextElement(settings, "keyalias", getSslKeystoreKeyAlias()));
+            keystore.appendChild(DOMUtils.createTextElement(settings, "type", getSslKeystoreType()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

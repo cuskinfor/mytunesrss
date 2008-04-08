@@ -20,6 +20,7 @@ import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Embedded;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tomcat.util.IntrospectionUtils;
 
 import java.io.File;
@@ -217,6 +218,30 @@ public class WebServer {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
                     }
+                }
+            }
+            if (MyTunesRss.CONFIG.isSsl()) {
+                Connector sslConnector = null;
+                try {
+                    LOG.debug("Adding SSL connector.");
+                    sslConnector = createConnector(server, listenAddress, MyTunesRss.CONFIG.getSslPort(), "https");
+                    if (sslConnector != null) {
+                        LOG.debug("Configuring SSL connector.");
+                        sslConnector.setURIEncoding("UTF-8");
+                        sslConnector.setAttribute("keystoreFile", MyTunesRss.CONFIG.getSslKeystoreFile());
+                        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystorePass())) {
+                            sslConnector.setAttribute("keystorePass", MyTunesRss.CONFIG.getSslKeystorePass());
+                        }
+                        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystoreType())) {
+                            sslConnector.setAttribute("keystoreType", MyTunesRss.CONFIG.getSslKeystoreType());
+                        }
+                        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystoreKeyAlias())) {
+                            sslConnector.setAttribute("keyAlias", MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
+                        }
+                        server.addConnector(sslConnector);
+                    }
+                } catch (Exception e) {
+                    LOG.error("Could not add/configure SSL connector.", e);
                 }
             }
             for (Map.Entry<String, Object> contextEntry : contextEntries.entrySet()) {

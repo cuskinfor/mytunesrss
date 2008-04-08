@@ -6,7 +6,10 @@
     <body>
 
         <release version="3.2-EAP-7" date="????-??-??" description="EAP release">
-            <action dev="mdescher" type="update">
+            <action dev="mdescher" type="add">
+                HTTPS support.
+            </action>
+            <action dev="mdescher" type="add">
                 All track action links on track info page.
             </action>
             <action dev="mdescher" type="update">
