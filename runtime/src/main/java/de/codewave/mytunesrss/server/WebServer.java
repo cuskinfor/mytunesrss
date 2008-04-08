@@ -21,12 +21,10 @@ import org.apache.catalina.startup.Embedded;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.IntrospectionUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
@@ -228,15 +226,23 @@ public class WebServer {
                     if (sslConnector != null) {
                         LOG.debug("Configuring SSL connector.");
                         sslConnector.setURIEncoding("UTF-8");
-                        sslConnector.setAttribute("keystoreFile", MyTunesRss.CONFIG.getSslKeystoreFile());
-                        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystorePass())) {
-                            sslConnector.setAttribute("keystorePass", MyTunesRss.CONFIG.getSslKeystorePass());
-                        }
-                        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystoreType())) {
-                            sslConnector.setAttribute("keystoreType", MyTunesRss.CONFIG.getSslKeystoreType());
-                        }
-                        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystoreKeyAlias())) {
-                            sslConnector.setAttribute("keyAlias", MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
+                        if (StringUtils.isEmpty(MyTunesRss.CONFIG.getSslKeystoreFile()) || !new File(MyTunesRss.CONFIG.getSslKeystoreFile()).isFile()) {
+                            // copy default keystore to configured location
+                            LOG.warn("Using default keystore because configured one does not exist but SSL is enabled.");
+                            File tempFile = File.createTempFile("mytunesrss-", ".keystore");
+                            IOUtils.copy(getClass().getResourceAsStream("/keystore"), new FileOutputStream(tempFile));
+                            sslConnector.setAttribute("keystoreFile", tempFile);
+                        } else {
+                            sslConnector.setAttribute("keystoreFile", MyTunesRss.CONFIG.getSslKeystoreFile());
+                            if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystorePass())) {
+                                sslConnector.setAttribute("keystorePass", MyTunesRss.CONFIG.getSslKeystorePass());
+                            }
+                            if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystoreType())) {
+                                sslConnector.setAttribute("keystoreType", MyTunesRss.CONFIG.getSslKeystoreType());
+                            }
+                            if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystoreKeyAlias())) {
+                                sslConnector.setAttribute("keyAlias", MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
+                            }
                         }
                         server.addConnector(sslConnector);
                     }

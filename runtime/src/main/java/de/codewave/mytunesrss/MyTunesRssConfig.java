@@ -663,7 +663,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isSsl() {
-        return getSslUsage() != SslUsage.None && getSslPort() > 0 && getSslPort() < 65536 && new File(getSslKeystoreFile()).isFile();
+        return getSslUsage() != SslUsage.None && getSslPort() > 0 && getSslPort() < 65536;
     }
 
     public void load() {
@@ -754,9 +754,7 @@ public class MyTunesRssConfig {
             String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
             setWebappContext(context != null ? "/" + context : "");
             setSendAnonyStat(JXPathUtils.getBooleanValue(settings, "anonymous-statistics", true));
-            setSslKeystoreFile(JXPathUtils.getStringValue(settings,
-                                                          "ssl/keystore/file",
-                                                          PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/keystore"));
+            setSslKeystoreFile(JXPathUtils.getStringValue(settings, "ssl/keystore/file", null));
             setSslKeystoreKeyAlias(JXPathUtils.getStringValue(settings, "ssl/keystore/keyalias", null));
             setSslKeystorePass(JXPathUtils.getStringValue(settings, "ssl/keystore/pass", null));
             setSslKeystoreType(JXPathUtils.getStringValue(settings, "ssl/keystore/type", null));
