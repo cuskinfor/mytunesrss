@@ -5,6 +5,16 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-9" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="update">
+                Playlist display in iPhone playlist mode. Playlist with pager
+                and links for starting any track. Works at least in Firefox.
+            </action>
+            <action dev="mdescher" type="update">
+                New version 0.39 of codewave-utils.
+            </action>
+        </release>
+
         <release version="3.2-EAP-8" date="2008-04-08" description="EAP release">
             <action dev="mdescher" type="update">
                 Some HTTPS changes.

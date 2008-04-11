@@ -379,7 +379,7 @@ public class User implements MyTunesRssEventListener {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Using bandwidth limited output stream with " + limit + " kbit.");
             }
-            return new MyTunesRSSOutputStreamWrapper(bitrate, dataOffset, rangeHeader.getFirstByte(), 2);
+            return new MyTunesRSSOutputStreamWrapper(bitrate, dataOffset, rangeHeader.getRangeFrom(), 2);
         }
         return new StreamSender.OutputStreamWrapper() {
             public OutputStream wrapStream(OutputStream stream) {
