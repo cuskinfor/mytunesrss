@@ -27,7 +27,7 @@
         );
         function createPlayer(index) {
             var firstTrack = (currentPage * itemsPerPage) + index;
-            var iframe = top.frames.player; // document.getElementById("player");
+            var iframe = top.frames.player;
             iframe.document.write("<html><body style='border:0;margin:0;padding:0'>");
             iframe.document.write("<object classid='clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B' width='100%' height='16' codebase='http://www.apple.com/qtactivex/qtplugin.cab'>");
             iframe.document.write("<param name='controller' value='true' />");
