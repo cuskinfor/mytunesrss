@@ -6,6 +6,12 @@
     <body>
 
         <release version="3.2-EAP-9" date="2008-04-13" description="EAP release">
+            <action dev="mdescher" type="fix">
+                JMX object name for users quoted.
+            </action>
+        </release>
+
+        <release version="3.2-EAP-9" date="2008-04-13" description="EAP release">
             <action dev="mdescher" type="update">
                 Playlist display in iPhone playlist mode. Playlist with pager
                 and links for starting any track.
