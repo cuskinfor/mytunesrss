@@ -47,7 +47,7 @@
                 <td><fmt:message key="settings.username" /></td>
                 <td><c:out value="${authUser.name}"/></td>
             </tr>
-            <c:if test="${!authUser.editLastFmAccount && !empty authUser.lastFmUsername}">
+            <c:if test="${!authUser.editLastFmAccount && !empty authUser.lastFmUsername && registered}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.lastFmUsername" /></td>
                     <td><c:out value="${authUser.lastFmUsername}"/></td>
@@ -218,7 +218,9 @@
                         <select name="playlistType">
                             <option value="M3u" <c:if test="${config.playlistType eq 'M3u'}">selected="selected"</c:if>>m3u</option>
                             <option value="Xspf" <c:if test="${config.playlistType eq 'Xspf'}">selected="selected"</c:if>>xspf</option>
-                            <option value="QtPlugin" <c:if test="${config.playlistType eq 'QtPlugin'}">selected="selected"</c:if>>qt-plugin</option>
+                            <c:if test="${registered}">
+                                <option value="QtPlugin" <c:if test="${config.playlistType eq 'QtPlugin'}">selected="selected"</c:if>>iPhone</option>
+                            </c:if>
                         </select>
                     </td>
                 </tr>

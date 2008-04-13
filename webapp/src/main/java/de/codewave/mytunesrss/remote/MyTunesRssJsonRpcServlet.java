@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.remote;
 
 import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.datastore.statement.Album;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.remote.render.AlbumRenderer;
@@ -30,12 +31,16 @@ public class MyTunesRssJsonRpcServlet extends JSONRPCServlet {
 
     @Override
     public void service(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
-        MyTunesRssRemoteEnv.setRequest(httpServletRequest);
-        try {
-            super.service(httpServletRequest, httpServletResponse);
-        } finally {
-            MyTunesRssRemoteEnv.removeRequest();
-            httpServletRequest.getSession().invalidate();
+        if (MyTunesRss.REGISTRATION.isRegistered()) {
+            MyTunesRssRemoteEnv.setRequest(httpServletRequest);
+            try {
+                super.service(httpServletRequest, httpServletResponse);
+            } finally {
+                MyTunesRssRemoteEnv.removeRequest();
+                httpServletRequest.getSession().invalidate();
+            }
+        } else {
+            throw new IllegalStateException("JSON RPC is available in the registered version of MyTunesRSS only.");
         }
     }
 }
