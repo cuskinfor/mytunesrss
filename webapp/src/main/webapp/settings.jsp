@@ -218,7 +218,7 @@
                         <select name="playlistType">
                             <option value="M3u" <c:if test="${config.playlistType eq 'M3u'}">selected="selected"</c:if>>m3u</option>
                             <option value="Xspf" <c:if test="${config.playlistType eq 'Xspf'}">selected="selected"</c:if>>xspf</option>
-                            <option value="QtPlugin" <c:if test="${config.playlistType eq 'QtPlugin'}">selected="selected"</c:if>>iPhone</option>
+                            <option value="QtPlugin" <c:if test="${config.playlistType eq 'QtPlugin'}">selected="selected"</c:if>>qt-plugin</option>
                         </select>
                     </td>
                 </tr>

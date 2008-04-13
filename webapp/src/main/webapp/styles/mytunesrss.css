@@ -96,6 +96,10 @@ tr.odd td {
     background: #edf3fe;
 }
 
+tr.qtplayback td {
+    background: #ffaaaa;
+}
+
 td a {
     color: #000;
     text-decoration: none;

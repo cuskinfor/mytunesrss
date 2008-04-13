@@ -25,16 +25,21 @@
                 "${servletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}/tc=${mtfn:tcParamValue(config, authUser, track)}/playerRequest=${param.playerRequest}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}"<c:if test="${!trackLoopStatus.last}">,</c:if>
             </c:forEach>
         );
+        var itemsPerPage = 10;
+        var pagesPerPager = 10;
+        var currentPage = 0;
+
         function createPlayer(index) {
             var firstTrack = (currentPage * itemsPerPage) + index;
             var iframe = top.frames.player;
             iframe.document.write("<html><body style='border:0;margin:0;padding:0'>");
-            iframe.document.write("<object classid='clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B' width='100%' height='16' codebase='http://www.apple.com/qtactivex/qtplugin.cab'>");
+            iframe.document.write("<object classid='clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B' width='100%' height='16' codebase='http://www.apple.com/qtactivex/qtplugin.cab' id='jukebox'>");
             iframe.document.write("<param name='controller' value='true' />");
             iframe.document.write("<param name='autoplay' value='true' />");
             iframe.document.write("<param name='kioskmode' value='true' />");
+            iframe.document.write("<param name='postdomevents' value='true' />");
             iframe.document.write("<param name='type' value='video/quicktime' />");
-            iframe.document.write("<embed src='" + trackLinks[firstTrack] + "' controller='true' autoplay='true' kioskmode='true' width='100%' height='16' type='video/quicktime'");
+            iframe.document.write("<embed id='embed_jukebox' src='" + trackLinks[firstTrack] + "' controller='true' autoplay='true' kioskmode='true' width='100%' height='16' type='video/quicktime' postdomevents='true' name='jukebox'");
             for (var i = firstTrack + 1; i < trackLinks.length; i++) {
                 iframe.document.write(" qtnext" + (i - 1) + "='<" + trackLinks[i] + ">T<myself>'");
             }
@@ -42,10 +47,17 @@
             iframe.document.write("</object>");
             iframe.document.write("</body></html>");
             iframe.document.close();
+            if (document.addEventListener) {
+                getPlayer().addEventListener("qt_play", playbackStarted, false);
+                getPlayer().addEventListener("qt_ended", playbackEnded, false);
+                getPlayer().addEventListener("qt_paused", playbackEnded, false);
+            } else {
+                getPlayer().attachEvent("on_qt_play", playbackStarted);
+                getPlayer().attachEvent("on_qt_ended", playbackEnded);
+                getPlayer().attachEvent("on_qt_paused", playbackEnded);
+            }
         }
-        var itemsPerPage = 10;
-        var pagesPerPager = 10;
-        var currentPage = 0;
+
         function createPlaylist() {
             var start = currentPage * itemsPerPage;
             for (var i = 0; i < itemsPerPage; i++) {
@@ -88,6 +100,42 @@
                 }
             }
         }
+
+        function getPlayer() {
+            var obj = top.frames.player.document.getElementById("jukebox");
+            if (!obj) {
+                obj = top.frames.player.document.getElementById("embed_jukebox");
+            }
+            return obj;
+        }
+
+        function playbackStarted() {
+            var url = top.frames.player.document.jukebox.GetURL();
+            unhighlightAllTracks();
+            for (var i = 0; i < trackLinks.length; i++) {
+                if (decodeURI(url) == decodeURI(trackLinks[i])) {
+                    currentPage = Math.floor(i / itemsPerPage);
+                    createPlaylist();
+                    highlightTrack(i - (currentPage * itemsPerPage));
+                    break;
+                }
+            }
+        }
+
+        function playbackEnded() {
+            unhighlightAllTracks();
+        }
+
+        function highlightTrack(index) {
+            document.getElementById("trackrow" + index).className = "qtplayback";
+        }
+
+        function unhighlightAllTracks() {
+            for (var i = 0; i < itemsPerPage; i++) {
+                document.getElementById("trackrow" + i).className = (i % 2 == 1 ? "even" : "odd");
+            }
+        }
+
     </script>
 
 </head>
@@ -101,12 +149,8 @@
         <table cellspacing="0">
 
             <c:forEach begin="0" end="9" varStatus="itemLoopStatus">
-                <tr id="trackrow${itemLoopStatus.index}" class="${cwfn:choose(itemLoopStatus.count % 2 == 0, 'even', 'odd')}">
+                <tr id="trackrow${itemLoopStatus.index}" class="${cwfn:choose(itemLoopStatus.count % 2 == 0, 'even', 'odd')}" style="cursor:pointer" onclick="createPlayer(${itemLoopStatus.index})">
                     <td class="artist" id="track${itemLoopStatus.index}"/>
-                    <td class="icon">
-                        <a href="#" onclick="createPlayer(${itemLoopStatus.index});return false;">
-                            <img id="button${itemLoopStatus.index}"src="${appUrl}/images/playlist${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" /> </a>
-                    </td>
                 </tr>
             </c:forEach>
 
