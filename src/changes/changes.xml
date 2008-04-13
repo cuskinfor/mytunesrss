@@ -7,6 +7,15 @@
 
         <release version="3.1.9" date="2008-03-31" description="Bugfix release">
             <action dev="mdescher" type="fix">
+                JMX object name for users quoted.
+            </action>
+            <action dev="mdescher" type="update">
+                codewave-utils-0.39.
+            </action>
+        </release>
+
+        <release version="3.1.9" date="2008-03-31" description="Bugfix release">
+            <action dev="mdescher" type="fix">
                 Bugfix for splitted playlists.
             </action>
             <action dev="mdescher" type="add">
