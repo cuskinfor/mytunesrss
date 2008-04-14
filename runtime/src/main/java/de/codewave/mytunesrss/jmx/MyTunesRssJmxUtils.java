@@ -94,7 +94,7 @@ public class MyTunesRssJmxUtils {
             throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         for (User user : MyTunesRss.CONFIG.getUsers()) {
-            server.registerMBean(new EditUserConfig(user.getName()), new ObjectName("MyTunesRSS:type=user,name=" + user.getName()));
+            server.registerMBean(new EditUserConfig(user.getName()), new ObjectName("MyTunesRSS:type=user,name=" + ObjectName.quote(user.getName())));
         }
     }
 

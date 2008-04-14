@@ -140,6 +140,7 @@ public class Database implements MyTunesRssEventListener {
         myAutoUpdateDatabaseInput.setEnabled(!serverActive);
         myUpdateDatabaseOnServerStart.setEnabled(!serverActive);
         myIgnoreTimestampsInput.setEnabled(!databaseActive);
+        myUpdateDatabaseButton.setEnabled(!databaseActive);
         myDeleteDatabaseButton.setEnabled(!databaseActive);
         SwingUtils.enableElementAndLabel(myAutoUpdateDatabaseIntervalInput, myAutoUpdateDatabaseInput.isSelected() && !serverActive);
         myDeleteMissingFiles.setEnabled(!databaseActive);

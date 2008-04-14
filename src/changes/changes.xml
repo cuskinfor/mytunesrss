@@ -5,7 +5,67 @@
     </properties>
     <body>
 
-        <release version="3.1.6" date="????-??-??" description="Bugfix release">
+        <release version="3.1.10" date="????-??-??" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Album and artist name were always "unknown" for anything but MP3 and MP4.
+            </action>
+            <action dev="mdescher" type="fix">
+                JMX object name for users quoted.
+            </action>
+            <action dev="mdescher" type="update">
+                codewave-utils-0.39.
+            </action>
+        </release>
+
+        <release version="3.1.9" date="2008-03-31" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Bugfix for splitted playlists.
+            </action>
+            <action dev="mdescher" type="add">
+                Icu4j library.
+            </action>
+            <action dev="mdescher" type="fix">
+                Normalize track name, album, artist and comment before inserting into database.
+            </action>
+            <action dev="mdescher" type="fix">
+                Creating canonical file path for iTunes XML URIs.
+            </action>
+            <action dev="mdescher" type="fix">
+                Removed duplicate file suffix for flash player.
+            </action>
+            <action dev="mdescher" type="add">
+                More request debug logging.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed wide theme.
+            </action>
+        </release>
+
+        <release version="3.1.8" date="2008-03-17" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                codewave-utils-0.37.
+            </action>
+            <action dev="mdescher" type="update">
+                Bugfix for files which are neither MP3 nor MP4 when scanning watch folders.
+            </action>
+            <action dev="mdescher" type="update">
+                camel 0.9.7.
+            </action>
+        </release>
+
+        <release version="3.1.7" date="2008-03-11" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                RSS feed JSP was broken.
+            </action>
+        </release>
+
+        <release version="3.1.6" date="2008-03-11" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                codewave-utils-0.36: fixes range header problems with VLC
+            </action>
+            <action dev="mdescher" type="fix">
+                Tooltip javascript was buggy.
+            </action>
             <action dev="mdescher" type="fix">
                 Event driven GUI enabling/disabling for database, directories.
             </action>
