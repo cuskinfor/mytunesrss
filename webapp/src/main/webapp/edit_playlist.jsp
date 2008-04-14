@@ -89,10 +89,10 @@
                     <td>
                         <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
                         <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:if>
-                        <c:out value="${cwfn:choose(mtfn:unknown(track.name), cwfn:message('unknown', null), track.name)}" />
+                        <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />
                     </td>
                     <td>
-                        <c:out value="${cwfn:choose(mtfn:unknown(track.artist), cwfn:message('unknown', null), track.artist)}" />
+                        <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
                     </td>
                     <td class="icon">
                         <a href="${servletUrl}/removeFromPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/track=${track.id}</mt:encrypt>/backUrl=${param.backUrl}">

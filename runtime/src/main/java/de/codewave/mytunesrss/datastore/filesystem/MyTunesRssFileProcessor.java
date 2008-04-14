@@ -92,6 +92,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             meta = parseMp3MetaData(file, statement, fileId);
                         } else if (FileSupportUtils.isMp4(file)) {
                             meta = parseMp4MetaData(file, statement, fileId);
+                        } else {
+                            setSimpleInfo(statement, file);
                         }
                         FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
                         statement.setProtected(fileSuffixInfo.isProtected());

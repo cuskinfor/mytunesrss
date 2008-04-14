@@ -17,7 +17,7 @@
     <script type="text/javascript">
         var trackNames = new Array(
             <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus">
-                "<c:out value="${cwfn:choose(mtfn:unknown(track.artist), cwfn:message('unknown', null), track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.name), cwfn:message('unknown', null), track.name)}" />"<c:if test="${!trackLoopStatus.last}">,</c:if>
+                "<c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />"<c:if test="${!trackLoopStatus.last}">,</c:if>
             </c:forEach>
         );
         var trackLinks = new Array(

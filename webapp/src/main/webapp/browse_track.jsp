@@ -77,38 +77,38 @@
             <c:choose>
                 <c:when test="${sortOrder == 'Album'}">
                     <c:if test="${track.simple}">
-                        <c:set var="sectionFileName">${cwfn:choose(mtfn:unknown(track.artist), cwfn:message('unknown', null), track.artist)} -</c:set>
+                        <c:set var="sectionFileName">${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)} -</c:set>
                         <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(track.artist))}</mt:encrypt>">
-                            <c:out value="${cwfn:choose(mtfn:unknown(track.artist), cwfn:message('unknown', null), track.artist)}" />
+                            <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
                         </a> -</c:if>
-                    <c:set var="sectionFileName">${sectionFileName} ${cwfn:choose(mtfn:unknown(track.album), cwfn:message('unknown', null), track.album)}</c:set>
+                    <c:set var="sectionFileName">${sectionFileName} ${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}</c:set>
                     <c:choose>
                         <c:when test="${empty param.album}">
                             <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(track.album))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                <c:out value="${cwfn:choose(mtfn:unknown(track.album), cwfn:message('unknown', null), track.album)}" />
+                                <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" />
                             </a>
                         </c:when>
                         <c:otherwise>
-                            <c:out value="${cwfn:choose(mtfn:unknown(track.album), cwfn:message('unknown', null), track.album)}" />
+                            <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" />
                         </c:otherwise>
                     </c:choose>
                 </c:when>
                 <c:otherwise>
                     <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(track.artist))}</mt:encrypt>">
-                        <c:out value="${cwfn:choose(mtfn:unknown(track.artist), cwfn:message('unknown', null), track.artist)}" />
+                        <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
                     </a>
-                    <c:set var="sectionFileName" value="${cwfn:choose(mtfn:unknown(track.artist), cwfn:message('unknown', null), track.artist)}" />
+                    <c:set var="sectionFileName" value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
                     <c:if test="${track.simple}">
-                        <c:set var="sectionFileName">${sectionFileName} - ${cwfn:choose(mtfn:unknown(track.album), cwfn:message('unknown', null), track.album)}</c:set>
+                        <c:set var="sectionFileName">${sectionFileName} - ${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}</c:set>
                         -
                         <c:choose>
                             <c:when test="${empty param.album}">
                                 <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(track.album))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                    <c:out value="${cwfn:choose(mtfn:unknown(track.album), cwfn:message('unknown', null), track.album)}" />
+                                    <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" />
                                 </a>
                             </c:when>
                             <c:otherwise>
-                                <c:out value="${cwfn:choose(mtfn:unknown(track.album), cwfn:message('unknown', null), track.album)}" />
+                                <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" />
                             </c:otherwise>
                         </c:choose>
                     </c:if>
@@ -173,12 +173,12 @@
             <c:choose>
                 <c:when test="${sortOrder == 'Album'}">
                     <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
-                    <c:out value="${cwfn:choose(mtfn:unknown(track.name), cwfn:message('unknown', null), track.name)}" />
+                    <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />
                 </c:when>
                 <c:otherwise>
-                    <c:if test="${!track.simple}"><c:out value="${cwfn:choose(mtfn:unknown(track.album), cwfn:message('unknown', null), track.album)}" /> - </c:if>
+                    <c:if test="${!track.simple}"><c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" /> - </c:if>
                     <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
-                    <c:out value="${cwfn:choose(mtfn:unknown(track.name), cwfn:message('unknown', null), track.name)}" />
+                    <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />
                 </c:otherwise>
             </c:choose>
             <c:if test="${!empty track.comment}">
@@ -194,7 +194,7 @@
     <c:if test="${sortOrder == 'Album' && !track.simple}">
         <td>
             <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(track.artist))}</mt:encrypt>">
-                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), cwfn:message('unknown', null), track.artist)}" />
+                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
             </a>
         </td>
     </c:if>

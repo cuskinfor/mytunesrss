@@ -76,7 +76,7 @@
             <th class="active">
                 <c:if test="${!empty param.genre}">${mtfn:capitalize(mtfn:decode64(param.genre))}</c:if>
                 <fmt:message key="albums"/>
-                <c:if test="${!empty param.artist}"> <fmt:message key="with"/> "${mtfn:decode64(param.artist)}"</c:if>
+                <c:if test="${!empty param.artist}"> <fmt:message key="with"/> "${cwfn:choose(mtfn:unknown(mtfn:decode64(param.artist)), msgUnknown, mtfn:decode64(param.artist))}"</c:if>
             </th>
             <th><fmt:message key="artist"/></th>
             <th colspan="${1 + mtfn:buttonColumns(authUser, config)}"><fmt:message key="tracks"/></th>
@@ -107,11 +107,11 @@
                         <c:when test="${album.artistCount == 1}">
                             <c:choose>
                                 <c:when test="${singleArtist}">
-                                    <c:out value="${cwfn:choose(mtfn:unknown(album.artist), cwfn:message('unknown', null), album.artist)}" />
+                                    <c:out value="${cwfn:choose(mtfn:unknown(album.artist), msgUnknown, album.artist)}" />
                                 </c:when>
                                 <c:otherwise>
                                     <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(album.artist))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                        <c:out value="${cwfn:choose(mtfn:unknown(album.artist), cwfn:message('unknown', null), album.artist)}" /></a>
+                                        <c:out value="${cwfn:choose(mtfn:unknown(album.artist), msgUnknown, album.artist)}" /></a>
                                 </c:otherwise>
                             </c:choose>
                         </c:when>

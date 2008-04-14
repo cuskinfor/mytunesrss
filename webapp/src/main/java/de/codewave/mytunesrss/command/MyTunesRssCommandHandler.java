@@ -181,6 +181,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 addMessage(new BundleError("info.databaseUpdatingImages"));
             }
         }
+        getRequest().setAttribute("msgUnknown", getBundleString("unknown"));
     }
 
     private void setResourceBundle() {
