@@ -28,8 +28,8 @@ public class ItunesLoader {
                 LOG.error("Could not create URI from location \"" + location + "\".", e);
             }
         } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create canonical path from location \"" + location + "\".", e);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Could not create canonical path from location \"" + location + "\".", e);
             }
             try {
                 return MyTunesRssUtils.normalize(new File(new URI(location).getPath()).getAbsolutePath());
