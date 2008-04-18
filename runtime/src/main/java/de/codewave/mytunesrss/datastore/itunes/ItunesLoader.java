@@ -31,19 +31,13 @@ public class ItunesLoader {
         try {
             return new File(new URI(location).getPath()).getCanonicalPath();
         } catch (URISyntaxException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create URI from location \"" + location + "\".", e);
-            }
+            LOG.error("Could not create URI from location \"" + location + "\".", e);
         } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create canonical path from location \"" + location + "\".", e);
-            }
+            LOG.debug("Could not create canonical path from location \"" + location + "\".", e);
             try {
                 return MyTunesRssUtils.normalize(new File(new URI(location).getPath()).getAbsolutePath());
             } catch (URISyntaxException e1) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not create URI from location \"" + location + "\".", e1);
-                }
+                LOG.error("Could not create URI from location \"" + location + "\".", e1);
             }
         }
         return null;
@@ -53,9 +47,7 @@ public class ItunesLoader {
         try {
             return new File(new URI(location).getPath());
         } catch (URISyntaxException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create URI from location \"" + location + "\".", e);
-            }
+            LOG.error("Could not create URI from location \"" + location + "\".", e);
         }
         return null;
     }
@@ -74,18 +66,12 @@ public class ItunesLoader {
             handler.addListener("/plist/dict[Tracks]/dict", trackListener);
             handler.addListener("/plist/dict[Playlists]/array", playlistListener);
             try {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Parsing iTunes: \"" + iTunesLibraryXml.toString() + "\".");
-                }
+                LOG.info("Parsing iTunes: \"" + iTunesLibraryXml.toString() + "\".");
                 XmlUtils.parseApplePList(iTunesLibraryXml, handler);
             } catch (Exception e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not read data from iTunes xml file.", e);
-                }
+                LOG.error("Could not read data from iTunes xml file.", e);
             }
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks.");
-            }
+            LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks.");
             existsingPlaylistIds.removeAll(playlistListener.getExistingIds());
         }
     }
