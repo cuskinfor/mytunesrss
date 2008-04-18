@@ -7,6 +7,10 @@
 
         <release version="3.2-EAP-10" date="????-??-??" description="EAP release">
             <action dev="mdescher" type="fix">
+                If getting canonical file path for iTunes XML files fails, use
+                the absolute path and Icu4j to normalize it.
+            </action>
+            <action dev="mdescher" type="fix">
                 Album and artist name were always "unknown" for anything but MP3 and MP4.
             </action>
         </release>

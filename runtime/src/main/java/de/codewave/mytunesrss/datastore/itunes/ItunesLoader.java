@@ -27,10 +27,21 @@ public class ItunesLoader {
 
     static String getFileNameForLocation(String location) {
         try {
-            return new URI(location).getPath();
+            return new File(new URI(location).getPath()).getCanonicalPath();
         } catch (URISyntaxException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not create URI from location \"" + location + "\".", e);
+            }
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not create canonical path from location \"" + location + "\".", e);
+            }
+            try {
+                return MyTunesRssUtils.normalize(new File(new URI(location).getPath()).getAbsolutePath());
+            } catch (URISyntaxException e1) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not create URI from location \"" + location + "\".", e1);
+                }
             }
         }
         return null;
