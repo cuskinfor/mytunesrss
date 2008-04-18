@@ -4,10 +4,10 @@
 
 package de.codewave.mytunesrss.datastore.itunes;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.XmlUtils;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -60,8 +60,8 @@ public class ItunesLoader {
         return null;
     }
 
-    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds, Collection<String> existsingPlaylistIds)
-            throws SQLException {
+    public static void loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds,
+            Collection<String> existsingPlaylistIds) throws SQLException {
         TrackListener trackListener = null;
         PlaylistListener playlistListener = null;
         if (iTunesLibraryXml != null) {
