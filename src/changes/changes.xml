@@ -6,6 +6,9 @@
     <body>
 
         <release version="3.2-EAP-10" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="update">
+                Log level setting for codewave log (de.codewave): OFF, FATAL, ERROR, WARN, INFO, DEBUG.
+            </action>
             <action dev="mdescher" type="fix">
                 If getting canonical file path for iTunes XML files fails, use
                 the absolute path and Icu4j to normalize it.

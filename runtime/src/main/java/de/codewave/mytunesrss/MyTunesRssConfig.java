@@ -13,6 +13,7 @@ import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Level;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -69,7 +70,7 @@ public class MyTunesRssConfig {
     private boolean myBandwidthLimit;
     private BigDecimal myBandwidthLimitFactor;
     private boolean myIgnoreArtwork;
-    private boolean myDebugLogging;
+    private Level myCodewaveLogLevel;
     private int myWindowX;
     private int myWindowY;
     private String myLastNewVersionInfo;
@@ -350,12 +351,12 @@ public class MyTunesRssConfig {
         myIgnoreArtwork = ignoreArtwork;
     }
 
-    public boolean isDebugLogging() {
-        return myDebugLogging;
+    public Level getCodewaveLogLevel() {
+        return myCodewaveLogLevel;
     }
 
-    public void setDebugLogging(boolean debugLogging) {
-        myDebugLogging = debugLogging;
+    public void setCodewaveLogLevel(Level codewaveLogLevel) {
+        myCodewaveLogLevel = codewaveLogLevel;
     }
 
     public Collection<User> getUsers() {
@@ -707,7 +708,7 @@ public class MyTunesRssConfig {
             setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
             setBandwidthLimitFactor(new BigDecimal(JXPathUtils.getStringValue(settings, "bandwidthLimitFactor", "0")));
             setIgnoreArtwork(JXPathUtils.getBooleanValue(settings, "ignoreArtwork", false));
-            setDebugLogging(JXPathUtils.getBooleanValue(settings, "debugLogging", false));
+            setCodewaveLogLevel(Level.toLevel(JXPathUtils.getStringValue(settings, "codewaveLogLevel", Level.INFO.toString()).toUpperCase()));
             if (!MyTunesRss.REGISTRATION.isRegistered()) {
                 adjustSettingsToUnregisteredState();
             }
@@ -845,7 +846,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "bandwidthLimit", myBandwidthLimit));
             root.appendChild(DOMUtils.createTextElement(settings, "bandwidthLimitFactor", myBandwidthLimitFactor.toString()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreArtwork", myIgnoreArtwork));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "debugLogging", myDebugLogging));
+            root.appendChild(DOMUtils.createTextElement(settings, "codewaveLogLevel", myCodewaveLogLevel.toString().toUpperCase()));
             Element window = settings.createElement("window");
             root.appendChild(window);
             window.appendChild(DOMUtils.createIntElement(settings, "x", myWindowX));

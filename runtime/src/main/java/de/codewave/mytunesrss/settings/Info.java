@@ -28,7 +28,7 @@ public class Info implements MyTunesRssEventListener {
     private JLabel myRegistrationNameLabel;
     private JLabel myExpirationLabel;
     private JButton myRegisterButton;
-    private JCheckBox myLogDebugInput;
+    private JComboBox myLogLevelInput;
     private JButton mySupportContactButton;
     private JCheckBox mySendAnonyStats;
 
@@ -49,11 +49,17 @@ public class Info implements MyTunesRssEventListener {
         refreshRegistration();
         mySupportContactButton.addActionListener(new SupportContactActionListener());
         myRegisterButton.addActionListener(new LicenseLookupButtonListener());
-        myLogDebugInput.addActionListener(new ActionListener() {
+        myLogLevelInput.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                MyTunesRssUtils.setCodewaveLogLevel(myLogDebugInput.isSelected() ? Level.DEBUG : Level.INFO);
+                MyTunesRssUtils.setCodewaveLogLevel(Level.toLevel(myLogLevelInput.getSelectedItem().toString()));
             }
         });
+        myLogLevelInput.addItem("OFF");
+        myLogLevelInput.addItem("FATAL");
+        myLogLevelInput.addItem("ERROR");
+        myLogLevelInput.addItem("WARN");
+        myLogLevelInput.addItem("INFO");
+        myLogLevelInput.addItem("DEBUG");
         initValues();
     }
 
@@ -70,7 +76,7 @@ public class Info implements MyTunesRssEventListener {
     }
 
     private void initValues() {
-        myLogDebugInput.setSelected(MyTunesRss.CONFIG.isDebugLogging());
+        myLogLevelInput.setSelectedItem(MyTunesRss.CONFIG.getCodewaveLogLevel().toString());
         mySendAnonyStats.setSelected(MyTunesRss.CONFIG.isSendAnonyStat());
     }
 
@@ -93,7 +99,7 @@ public class Info implements MyTunesRssEventListener {
     }
 
     public String updateConfigFromGui() {
-        MyTunesRss.CONFIG.setDebugLogging(myLogDebugInput.isSelected());
+        MyTunesRss.CONFIG.setCodewaveLogLevel(Level.toLevel(myLogLevelInput.getSelectedItem().toString()));
         MyTunesRss.CONFIG.setSendAnonyStat(mySendAnonyStats.isSelected());
         return null;
     }

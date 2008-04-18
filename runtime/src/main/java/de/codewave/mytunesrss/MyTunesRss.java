@@ -156,7 +156,7 @@ public class MyTunesRss {
         HEADLESS = arguments.containsKey("headless");
         MyTunesRssRegistration.RegistrationResult registrationResult = REGISTRATION.init(null, true);
         MyTunesRss.CONFIG.load();
-        MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.isDebugLogging() ? Level.DEBUG : Level.INFO);
+        MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
         registerDatabaseDriver();
         AnonyStatUtils.sendApplicationStarted();
         VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");

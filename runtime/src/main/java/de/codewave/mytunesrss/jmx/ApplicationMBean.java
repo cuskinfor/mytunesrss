@@ -7,7 +7,7 @@ public interface ApplicationMBean {
     String getVersion();
     String quit();
     String getLicense();
-    boolean isDebugLogging();
-    void setDebugLogging(boolean debugLogging);
+    String getCodewaveLogLevel();
+    void setCodewaveLogLevel(String level);
     String sendSupportRequest(String name, String email, String comment, boolean includeItunesXml);
 }

@@ -50,13 +50,12 @@ public class Application extends MyTunesRssMBean implements ApplicationMBean {
         }
     }
 
-    public boolean isDebugLogging() {
-        return MyTunesRss.CONFIG.isDebugLogging();
+    public String getCodewaveLogLevel() {
+        return MyTunesRss.CONFIG.getCodewaveLogLevel().toString();
     }
 
-    public void setDebugLogging(boolean debugLogging) {
-        MyTunesRssUtils.setCodewaveLogLevel(debugLogging ? Level.DEBUG : Level.INFO);
-        MyTunesRss.CONFIG.setDebugLogging(debugLogging);
+    public void setCodewaveLogLevel(String level) {
+        MyTunesRssUtils.setCodewaveLogLevel(Level.toLevel(level.toUpperCase()));
         onChange();
     }
 

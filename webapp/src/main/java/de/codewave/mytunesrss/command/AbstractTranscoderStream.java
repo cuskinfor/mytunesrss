@@ -8,6 +8,7 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Level;
 
 import java.io.*;
 import java.util.Properties;
@@ -79,18 +80,18 @@ public abstract class AbstractTranscoderStream extends InputStream {
         new StreamCopyThread(mySourceProcess.getInputStream(), false, myTargetProcess.getOutputStream(), true).start();
         new StreamCopyThread(mySourceProcess.getErrorStream(), false, getErrorStream(1), true).start();
         new StreamCopyThread(myTargetProcess.getErrorStream(), false, getErrorStream(2), true).start();
-                    }
+    }
 
     private OutputStream getErrorStream(int pipelinePosition) {
-        if (MyTunesRss.CONFIG.isDebugLogging()) {
-                try {
+        if (MyTunesRss.CONFIG.getCodewaveLogLevel() != Level.OFF) {
+            try {
                 return new FileOutputStream(getErrorLogFile(pipelinePosition), true);
-                } catch (IOException e) {
+            } catch (IOException e) {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("Could not create error log file.", e);
-                    }
                 }
             }
+        }
         return new NullOutputStream();
     }
 

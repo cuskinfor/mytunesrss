@@ -256,8 +256,8 @@ public class MyTunesRssUtils {
     }
 
     public static void setCodewaveLogLevel(Level level) {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Setting codewave log to level \"" + level + "\".");
+        if (level == Level.OFF) {
+            LOG.fatal("Setting codewave log to level \"" + level + "\".");
         }
         LoggerRepository repository = Logger.getRootLogger().getLoggerRepository();
         for (Enumeration loggerEnum = repository.getCurrentLoggers(); loggerEnum.hasMoreElements();) {
@@ -267,6 +267,7 @@ public class MyTunesRssUtils {
             }
         }
         Logger.getLogger("de.codewave").setLevel(level);
+        LOG.fatal("Setting codewave log to level \"" + level + "\".");
     }
 
     public static String normalize(String text) {
