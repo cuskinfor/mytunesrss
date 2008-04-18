@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.*;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import org.apache.commons.logging.*;
 
 import java.io.*;
@@ -29,6 +30,13 @@ public class ItunesLoader {
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not create canonical path from location \"" + location + "\".", e);
+            }
+            try {
+                return MyTunesRssUtils.normalize(new File(new URI(location).getPath()).getAbsolutePath());
+            } catch (URISyntaxException e1) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not create URI from location \"" + location + "\".", e1);
+                }
             }
         }
         return null;

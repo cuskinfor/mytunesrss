@@ -5,7 +5,11 @@
     </properties>
     <body>
 
-        <release version="3.1.10" date="????-??-??" description="Bugfix release">
+        <release version="3.1.10" date="2008-04-18" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                If getting canonical file path for iTunes XML files fails, use the absolute
+                path and Icu4j to normalize it.
+            </action>
             <action dev="mdescher" type="fix">
                 Album and artist name were always "unknown" for anything but MP3 and MP4.
             </action>
