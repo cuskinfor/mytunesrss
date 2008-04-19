@@ -14,17 +14,6 @@ public class AlacLameTranscoderStream extends AbstractTranscoderStream {
         super(file, MyTunesRss.CONFIG.getLameBinary(), MyTunesRss.CONFIG.getAlacBinary(), outputBitRate, outputSampleRate);
     }
 
-    protected File getErrorLogFile(int pipelinePosition) throws IOException {
-        switch (pipelinePosition) {
-            case 1:
-                return new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/alac.log");
-            case 2:
-                return new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/lame.log");
-            default:
-                throw new IllegalArgumentException("Illegal pipeline position \"" + pipelinePosition + "\" specified.");
-        }
-    }
-
     protected String getSourceName() {
         return "alac";
     }

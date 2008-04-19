@@ -6,6 +6,13 @@
     <body>
 
         <release version="3.2-EAP-10" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="fix">
+                Use LogStreamCopyThread for transcoder error streams instead of writing to a file
+                which was not thread safe.
+            </action>
+            <action dev="mdescher" type="update">
+                codewave-utils 0.40
+            </action>
             <action dev="mdescher" type="update">
                 Log level setting for codewave log (de.codewave): OFF, FATAL, ERROR, WARN, INFO, DEBUG.
             </action>

@@ -4,11 +4,10 @@ import de.codewave.mytunesrss.FileSuffixInfo;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.io.StreamCopyThread;
-import org.apache.commons.io.output.NullOutputStream;
+import de.codewave.utils.io.LogStreamCopyThread;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Level;
 
 import java.io.*;
 import java.util.Properties;
@@ -78,24 +77,9 @@ public abstract class AbstractTranscoderStream extends InputStream {
         mySourceProcess = Runtime.getRuntime().exec(sourceCommand);
         myTargetProcess = Runtime.getRuntime().exec(targetCommand);
         new StreamCopyThread(mySourceProcess.getInputStream(), false, myTargetProcess.getOutputStream(), true).start();
-        new StreamCopyThread(mySourceProcess.getErrorStream(), false, getErrorStream(1), true).start();
-        new StreamCopyThread(myTargetProcess.getErrorStream(), false, getErrorStream(2), true).start();
+        new LogStreamCopyThread(mySourceProcess.getErrorStream(), false, LogFactory.getLog(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
+        new LogStreamCopyThread(myTargetProcess.getErrorStream(), false, LogFactory.getLog(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
     }
-
-    private OutputStream getErrorStream(int pipelinePosition) {
-        if (MyTunesRss.CONFIG.getCodewaveLogLevel() != Level.OFF) {
-            try {
-                return new FileOutputStream(getErrorLogFile(pipelinePosition), true);
-            } catch (IOException e) {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("Could not create error log file.", e);
-                }
-            }
-        }
-        return new NullOutputStream();
-    }
-
-    protected abstract File getErrorLogFile(int pipelinePosition) throws IOException;
 
     public int read() throws IOException {
         return myTargetProcess.getInputStream().read();
