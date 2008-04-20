@@ -5,7 +5,7 @@
     </properties>
     <body>
 
-        <release version="3.2-EAP-10" date="????-??-??" description="EAP release">
+        <release version="3.2-EAP-10" date="2008-04-20" description="EAP release">
             <action dev="mdescher" type="update">
                 Images with same hash value only inserted once into database. Images linked to tracks
                 via their hash instead of the track id.
