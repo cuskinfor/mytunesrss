@@ -4,9 +4,9 @@
 
     <statement name="findRandomTracks">
         <sql>
-            SELECT random() AS rnd, {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT random() AS rnd, {trackColumns}, COUNT(i.hash) AS imagecount
             FROM track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId)
             GROUP BY rnd, {groupByTrackColumns}
@@ -16,9 +16,9 @@
 
     <statement name="findLastUpdatedTracks">
         <sql>
-            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
             FROM track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId)
             GROUP BY {groupByTrackColumns}
@@ -28,9 +28,9 @@
 
     <statement name="findMostPlayedTracks">
         <sql>
-            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
             FROM track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId)
             GROUP BY {groupByTrackColumns}
@@ -40,9 +40,9 @@
 
     <statement name="findRandomTracksRestricted">
         <sql>
-            SELECT random() AS rnd, {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT random() AS rnd, {trackColumns}, COUNT(i.hash) AS imagecount
             FROM link_track_playlist rltp, track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
                 ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
             AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
@@ -53,9 +53,9 @@
 
     <statement name="findLastUpdatedTracksRestricted">
         <sql>
-            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
             FROM tlink_track_playlist rltp, rack t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId)
             AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
@@ -66,9 +66,9 @@
 
     <statement name="findMostPlayedTracksRestricted">
         <sql>
-            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
             FROM link_track_playlist rltp, track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId)
             AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
@@ -79,7 +79,7 @@
 
     <statement name="findAlbumImage">
         <sql>
-            SELECT data AS data FROM image i, track t WHERE t.album = :album AND i.track_id = t.id AND i.size = :size LIMIT 1 OFFSET 0
+            SELECT data AS data FROM image i, track t WHERE t.album = :album AND i.hash = t.image_hash AND i.size = :size LIMIT 1 OFFSET 0
         </sql>
     </statement>
 

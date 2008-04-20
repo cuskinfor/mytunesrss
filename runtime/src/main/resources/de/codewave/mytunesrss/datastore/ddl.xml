@@ -25,6 +25,7 @@
                 comment VARCHAR(2048),
                 pos_number INTEGER,
                 pos_size INTEGER,
+                image_hash CHAR(24),
                 UNIQUE (id)
             )
         </sql>
@@ -87,10 +88,10 @@
         </sql>
         <sql>
             {create_table_prefix} image (
-                track_id VARCHAR(100) NOT NULL,
+                hash CHAR(24) NOT NULL,
                 size INTEGER NOT NULL,
                 data {image_datatype} NOT NULL,
-                UNIQUE (track_id, size)
+                UNIQUE (hash, size)
             )
         </sql>
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>

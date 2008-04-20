@@ -71,4 +71,11 @@
         <sql>ALTER TABLE track ADD COLUMN pos_size INTEGER</sql>
     </statement>
 
+    <statement name="migrate_3.2_eap_10">
+        <sql>ALTER TABLE track ADD COLUMN image_hash CHAR(24)</sql>
+        <sql>UPDATE track SET last_image_update = 0</sql>
+        <sql>DROP TABLE image</sql>
+        <sql>{create_table_prefix} image ( hash CHAR(24) NOT NULL, size INTEGER NOT NULL, data {image_datatype} NOT NULL, UNIQUE (hash, size) )</sql>
+    </statement>
+
 </statements>

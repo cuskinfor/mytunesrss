@@ -1,6 +1,8 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.mytunesrss.meta.MyTunesRssMp4Utils;
@@ -49,33 +51,33 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                         image = MyTunesRssMp4Utils.getImage(myFile);
                     }
                 }
-                boolean existing = new FindTrackImageQuery(myTrackId, 32).execute(connection) != null;
                 if (image != null && image.getData() != null && image.getData().length > MAX_IMAGE_DATA_SIZE) {
                     if (LOG.isInfoEnabled()) {
                         LOG.info("Ignoring overly large image from file \"" + myFile.getAbsolutePath() + "\" (size = " + image.getData().length + ").");
                     }
                     image = null;
                 }
-                if (image != null  && image.getData() != null && image.getData().length > 0 && !existing) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Original image size is " + image.getData().length + " bytes.");
+                String imageHash = image != null && image.getData() != null ? MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData())) :
+                        null;
+                if (imageHash != null) {
+                    LOG.debug("Image hash is \"" + imageHash + "\".");
+                    boolean existing = new FindImageQuery(imageHash, 32).execute(connection) != null;
+                    if (existing) {
+                        LOG.debug("Image with hash \"" + imageHash + "\" already exists in database.");
+                    } else {
+                        LOG.debug("Image with hash \"" + imageHash + "\" does not exist in database.");
                     }
-                    new InsertImageStatement(myTrackId, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
-                    new InsertImageStatement(myTrackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
-                    new InsertImageStatement(myTrackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
-                    new InsertImageStatement(myTrackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
-                } else if (image != null && image.getData() != null && image.getData().length > 0 && existing) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Original image size is " + image.getData().length + " bytes.");
+                    if (image != null  && image.getData() != null && image.getData().length > 0 && !existing) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Original image size is " + image.getData().length + " bytes.");
+                        }
+                        new InsertImageStatement(imageHash, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
+                        new InsertImageStatement(imageHash, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
+                        new InsertImageStatement(imageHash, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
+                        new InsertImageStatement(imageHash, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
                     }
-                    new UpdateImageStatement(myTrackId, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
-                    new UpdateImageStatement(myTrackId, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
-                    new UpdateImageStatement(myTrackId, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
-                    new UpdateImageStatement(myTrackId, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
-                } else if ((image == null || image.getData() == null || image.getData().length == 0) && existing) {
-                    new DeleteImageStatement(myTrackId).execute(connection);
                 }
-                new LastImageUpdateTimeStatement(myTrackId).execute(connection);
+                new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
             } catch (Throwable t) {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("Could not extract image from MP3 file.", t);

@@ -6,6 +6,10 @@
     <body>
 
         <release version="3.2-EAP-10" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="update">
+                Images with same hash value only inserted once into database. Images linked to tracks
+                via their hash instead of the track id.
+            </action>
             <action dev="mdescher" type="fix">
                 Use LogStreamCopyThread for transcoder error streams instead of writing to a file
                 which was not thread safe.

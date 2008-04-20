@@ -5,10 +5,10 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT a.name AS albumname, track_count AS track_count, artist_count AS artist_count, a.artist AS artist, COUNT(i.track_id) AS imagecount
+            SELECT a.name AS albumname, track_count AS track_count, artist_count AS artist_count, a.artist AS artist, COUNT(i.hash) AS imagecount
             FROM album a
                 INNER JOIN track t ON a.name = t.album
-                LEFT OUTER JOIN image i ON i.track_id = t.id
+                LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE ((:artist IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
             OR (:artist IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE LOWER(artist) = LOWER(:artist)))
             OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE LOWER(genre) = LOWER(:genre)))
@@ -24,9 +24,9 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, COUNT(i.track_id) AS imagecount
+            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, COUNT(i.hash) AS imagecount
             FROM album a, link_track_playlist rltp, track t
-                LEFT OUTER JOIN image i ON i.track_id = t.id
+                LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE ((:artist IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
             OR (:artist IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE LOWER(artist) = LOWER(:artist)))
             OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE LOWER(genre) = LOWER(:genre)))
@@ -175,9 +175,9 @@
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT ltp.idx AS idx, {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT ltp.idx AS idx, {trackColumns}, COUNT(i.hash) AS imagecount
             FROM link_track_playlist ltp, track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
@@ -193,9 +193,9 @@
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT ltp.idx AS idx, {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT ltp.idx AS idx, {trackColumns}, COUNT(i.hash) AS imagecount
             FROM link_track_playlist ltp, link_track_playlist rltp, track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
             AND rltp.playlist_id = :restrictedPlaylistId
@@ -213,9 +213,9 @@
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
             FROM link_track_playlist ltp, track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
@@ -231,9 +231,9 @@
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
             FROM link_track_playlist ltp, link_track_playlist rltp, track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
             AND rltp.playlist_id = :restrictedPlaylistId
@@ -251,9 +251,9 @@
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
             FROM link_track_playlist ltp, track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
@@ -269,9 +269,9 @@
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
             FROM link_track_playlist ltp, link_track_playlist rltp, track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
             AND rltp.playlist_id = :restrictedPlaylistId
@@ -287,9 +287,9 @@
     <statement name="findAllTracksOrderedByAlbum">
         <sql>
             <![CDATA[
-            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
             FROM track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             GROUP BY {groupByTrackColumns}
             ORDER BY album, pos_number, track_number, name
             ]]>
@@ -299,9 +299,9 @@
     <statement name="findAllTracksOrderedByAlbumRestricted">
         <sql>
             <![CDATA[
-            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
             FROM link_track_playlist rltp, track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE rltp.playlist_id = :restrictedPlaylistId
             AND t.id = rltp.track_id
             GROUP BY {groupByTrackColumns}
@@ -313,9 +313,9 @@
     <statement name="findAllTracksOrderedByArtist">
         <sql>
             <![CDATA[
-            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
             FROM track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             GROUP BY {groupByTrackColumns}
             ORDER BY artist, album, pos_number, track_number, name
             ]]>
@@ -325,9 +325,9 @@
     <statement name="findAllTracksOrderedByArtistRestricted">
         <sql>
             <![CDATA[
-            SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
             FROM link_track_playlist rltp, track t
-            LEFT OUTER JOIN image i ON i.track_id = t.id
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE rltp.playlist_id = :restrictedPlaylistId
             AND t.id = rltp.track_id
             GROUP BY {groupByTrackColumns}
@@ -387,7 +387,7 @@
 
     <statement name="deleteOrphanedImages">
         <sql>
-            DELETE FROM image WHERE NOT EXISTS ( SELECT * FROM track t WHERE t.id = track_id )
+            DELETE FROM image WHERE NOT EXISTS ( SELECT * FROM track t WHERE t.image_hash = hash )
         </sql>
     </statement>
 
@@ -414,18 +414,11 @@
     </statement>
 
     <statement name="insertImage">
-        <sql>
-            INSERT INTO image (track_id, size, data) VALUES (:track_id, :size, :data)
-        </sql>
+        <sql>INSERT INTO image (hash, size, data) VALUES (:hash, :size, :data)</sql>
     </statement>
 
-    <statement name="updateImage">
-        <sql>
-            UPDATE image SET data = :data WHERE track_id = :track_id AND size = :size
-        </sql>
-    </statement>
-
-    <statement name="updateLastImageUpdateTime">
+    <statement name="updateImageForTrack">
+            <sql>UPDATE track SET image_hash = :hash WHERE id = :track_id</sql>
         <sql>
             UPDATE track SET last_image_update = :updateTime WHERE id = :track_id
         </sql>
@@ -441,15 +434,15 @@
         <sql>DELETE FROM track WHERE id = :track_id</sql>
     </statement>
 
-    <statement name="deleteImage">
+    <statement name="findImage">
         <sql>
-            DELETE FROM image WHERE track_id = :track_id
+            SELECT data AS data FROM image WHERE hash = :hash AND size = :size
         </sql>
     </statement>
 
     <statement name="findTrackImage">
         <sql>
-            SELECT data AS data FROM image WHERE track_id = :track_id AND size = :size
+            SELECT i.data AS data FROM image AS i, track AS t WHERE i.hash = t.image_hash AND size = :size AND t.id = :track_id
         </sql>
     </statement>
 
@@ -592,9 +585,9 @@
 
     <fragment name="findTracksQuery">
         <![CDATA[
-        SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+        SELECT {trackColumns}, COUNT(i.hash) AS imagecount
         FROM track t
-        LEFT OUTER JOIN image i ON i.track_id = t.id
+        LEFT OUTER JOIN image i ON i.hash = t.image_hash
         WHERE (:size_of_id = 0 OR t.id IN (:id[]))
         AND (:size_of_genre = 0 OR LOWER(t.genre) IN (:genre[]))
         AND (:size_of_artist = 0 OR LOWER(t.artist) IN (:artist[]))
@@ -615,9 +608,9 @@
 
     <fragment name="findTracksQueryRestricted">
         <![CDATA[
-        SELECT {trackColumns}, COUNT(i.track_id) AS imagecount
+        SELECT {trackColumns}, COUNT(i.hash) AS imagecount
         FROM link_track_playlist rltp, track t
-        LEFT OUTER JOIN image i ON i.track_id = t.id
+        LEFT OUTER JOIN image i ON i.hash = t.image_hash
         WHERE rltp.playlist_id = :restrictedPlaylistId
         AND rltp.track_id = t.id
         AND (:size_of_id = 0 OR t.id IN (:id[]))

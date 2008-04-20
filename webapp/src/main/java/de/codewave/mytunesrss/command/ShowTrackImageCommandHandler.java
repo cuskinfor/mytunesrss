@@ -4,9 +4,9 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.datastore.statement.FindTrackImageQuery;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.FindTrackImageQuery;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.utils.sql.DataStoreQuery;
