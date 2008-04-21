@@ -5,6 +5,12 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-11" date="xxxx-xx-xx" description="EAP release">
+            <action dev="mdescher" type="fix">
+                Fixed bug when unregistering users from JMX server.
+            </action>
+        </release>
+
         <release version="3.2-EAP-10" date="2008-04-20" description="EAP release">
             <action dev="mdescher" type="update">
                 Images with same hash value only inserted once into database. Images linked to tracks

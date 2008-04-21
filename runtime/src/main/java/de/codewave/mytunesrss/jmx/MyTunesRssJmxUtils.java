@@ -124,7 +124,7 @@ public class MyTunesRssJmxUtils {
     static void unregisterUsers() throws InstanceNotFoundException, MBeanRegistrationException, MalformedObjectNameException {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         for (User user : MyTunesRss.CONFIG.getUsers()) {
-            server.unregisterMBean(new ObjectName("MyTunesRSS:type=user,name=" + user.getName()));
+            server.unregisterMBean(new ObjectName("MyTunesRSS:type=user,name=" + ObjectName.quote(user.getName())));
         }
     }
 }
