@@ -5,7 +5,7 @@
     </properties>
     <body>
 
-        <release version="3.1.11" date="xxxx-xx-xx" description="Bugfix release">
+        <release version="3.1.11" date="2008-04-21" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 Fixed bug when unregistering users from JMX server.
             </action>
