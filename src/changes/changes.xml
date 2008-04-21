@@ -5,6 +5,12 @@
     </properties>
     <body>
 
+        <release version="3.1.11" date="xxxx-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Fixed bug when unregistering users from JMX server.
+            </action>
+        </release>
+
         <release version="3.1.10" date="2008-04-18" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 If getting canonical file path for iTunes XML files fails, use the absolute
