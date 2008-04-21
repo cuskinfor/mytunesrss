@@ -187,30 +187,6 @@ public class MyTunesFunctions {
         return StringUtils.split(sectionIds, ",").length;
     }
 
-    public static String getDisplaySampleRate(Track track) {
-        try {
-            Mp3Info info = Mp3Utils.getMp3Info(new FileInputStream(track.getFile()));
-            return info.getAvgSampleRate() + " Hz";
-        } catch (IOException e) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn(null, e);
-            }
-        }
-        return null;
-    }
-
-    public static String getDisplayBitrate(Track track) {
-        try {
-            Mp3Info info = Mp3Utils.getMp3Info(new FileInputStream(track.getFile()));
-            return info.getAvgBitrate() + " kbit";
-        } catch (IOException e) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn(null, e);
-            }
-        }
-        return null;
-    }
-
     public static String formatDateAsDateAndTime(HttpServletRequest request, long milliseconds) {
         LocalizationContext context = (LocalizationContext)request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
         ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb", request.getLocale());

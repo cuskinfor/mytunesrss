@@ -100,7 +100,7 @@
                     <fmt:message key="bitrate" />:
                 </td>
                 <td>
-                    <c:out value="${mtfn:bitrate(track)}" default="${localizedUnknown}"/>
+                    <c:out value="${avgBitRate}" default="${localizedUnknown}"/>
                 </td>
             </tr>
             <tr <mt:flipFlop/>>
@@ -108,7 +108,7 @@
                     <fmt:message key="samplerate" />:
                 </td>
                 <td>
-                    <c:out value="${mtfn:samplerate(track)}" default="${localizedUnknown}"/>
+                    <c:out value="${avgSampleRate}" default="${localizedUnknown}"/>
                 </td>
             </tr>
         </c:if>
