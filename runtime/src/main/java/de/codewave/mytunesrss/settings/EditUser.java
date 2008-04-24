@@ -58,7 +58,7 @@ public class EditUser implements MyTunesRssEventListener {
     private JTextField myFileTypesInput;
     private JTextField mySessionTimeoutInput;
     private JCheckBox myPermPlayerInput;
-    private JPanel myRestrictionsPanel;
+    private JPanel myOptionsPanel;
     private JCheckBox myPermSpecialPlaylists;
     private JPanel myPermissionsPanel;
     private JScrollPane myScrollPane;
@@ -74,6 +74,7 @@ public class EditUser implements MyTunesRssEventListener {
     private JCheckBox myPermEditLastFMAccountInput;
     private JLabel myLastFmUsernameLabel;
     private JLabel myLastFmPasswordLabel;
+    private JCheckBox myUrlEncryptionInput;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -198,6 +199,7 @@ public class EditUser implements MyTunesRssEventListener {
             myLastFmUsernameInput.setText(myUser.getLastFmUsername());
             myLastFmPasswordInput.setPasswordHash(myUser.getLastFmPasswordHash());
             myPermEditLastFMAccountInput.setSelected(myUser.isEditLastFmAccount());
+            myUrlEncryptionInput.setSelected(myUser.isUrlEncryption());
         } else {
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
             myPermRssInput.setSelected(true);
@@ -209,6 +211,7 @@ public class EditUser implements MyTunesRssEventListener {
             myPermCreatePlaylists.setSelected(true);
             mySessionTimeoutInput.setText("10");
             myPermEditLastFMAccountInput.setSelected(true);
+            myUrlEncryptionInput.setSelected(true);
         }
         if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
             SwingUtils.enableElementAndLabel(myBytesQuotaInput, false);
@@ -250,7 +253,7 @@ public class EditUser implements MyTunesRssEventListener {
         myPermUploadInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myPermChangePasswordInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myPermPlayerInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myRestrictionsPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
+        myOptionsPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myQuotaInfoPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myPermTranscoderInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
         myBandwidthLimit.setVisible(MyTunesRss.REGISTRATION.isRegistered());
@@ -347,6 +350,7 @@ public class EditUser implements MyTunesRssEventListener {
                     myUser.setLastFmUsername(myLastFmUsernameInput.getText());
                     myUser.setLastFmPasswordHash(myLastFmPasswordInput.getPasswordHash());
                     myUser.setEditLastFmAccount(myPermEditLastFMAccountInput.isSelected());
+                    myUser.setUrlEncryption(myUrlEncryptionInput.isSelected());
                     MyTunesRss.CONFIG.addUser(myUser);
                     if (myClose) {
                         myDialog.dispose();

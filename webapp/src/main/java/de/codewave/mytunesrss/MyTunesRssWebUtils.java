@@ -25,12 +25,22 @@ public class MyTunesRssWebUtils {
         return ServletUtils.getApplicationUrl(request) + "/mytunesrss";
     }
 
-    public static String encryptPathInfo(String pathInfo) {
+    public static User getAuthUser(HttpServletRequest request) {
+        User user = (User)request.getSession().getAttribute("authUser");
+        if (user == null) {
+            user = (User)request.getAttribute("authUser");
+        }
+        return user;
+    }
+
+    public static String encryptPathInfo(HttpServletRequest request, String pathInfo) {
         try {
-            if (MyTunesRss.CONFIG.getPathInfoKey() != null) {
+            if (MyTunesRss.CONFIG.getPathInfoKey() != null && (getAuthUser(request) == null || getAuthUser(request).isUrlEncryption())) {
                 Cipher cipher = Cipher.getInstance(MyTunesRss.CONFIG.getPathInfoKey().getAlgorithm());
                 cipher.init(Cipher.ENCRYPT_MODE, MyTunesRss.CONFIG.getPathInfoKey());
                 return "{" + MyTunesRssBase64Utils.encode(cipher.doFinal(pathInfo.getBytes("UTF-8"))) + "}";
+            } else {
+                return pathInfo;
             }
         } catch (Exception e) {
             if (LOG.isWarnEnabled()) {

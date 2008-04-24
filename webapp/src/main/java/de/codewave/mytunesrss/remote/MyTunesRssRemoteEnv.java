@@ -73,11 +73,12 @@ public class MyTunesRssRemoteEnv {
     public static String getServerCall(MyTunesRssCommand command, String pathInfo) {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         HttpServletRequest request = MyTunesRssRemoteEnv.getRequest();
-        String auth = MyTunesRssWebUtils.encryptPathInfo("auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(
-                user.getPasswordHash()));
+        String auth = MyTunesRssWebUtils.encryptPathInfo(request,
+                                                         "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(
+                                                                 user.getPasswordHash()));
         String url = MyTunesRssWebUtils.getServletUrl(request) + "/" + command.getName() + "/" + auth;
         if (StringUtils.isNotEmpty(pathInfo)) {
-            url += "/" + MyTunesRssWebUtils.encryptPathInfo(pathInfo);
+            url += "/" + MyTunesRssWebUtils.encryptPathInfo(request, pathInfo);
         }
         return url;
     }

@@ -76,6 +76,7 @@ public class User implements MyTunesRssEventListener {
     private int myLastFmHardFailureCount;
     private long myLastFmHandshakeTime;
     private long myLastFmHandshakeWaitTime;
+    private boolean myUrlEncryption;
 
     public User(String name) {
         myName = name;
@@ -317,6 +318,14 @@ public class User implements MyTunesRssEventListener {
                 MyTunesRss.REGISTRATION.isRegistered();
     }
 
+    public boolean isUrlEncryption() {
+        return myUrlEncryption;
+    }
+
+    public void setUrlEncryption(boolean urlEncryption) {
+        myUrlEncryption = urlEncryption;
+    }
+
     @Override
     public boolean equals(Object object) {
         return object != null && object instanceof User && getName().equals(((User)object).getName());
@@ -425,6 +434,7 @@ public class User implements MyTunesRssEventListener {
         setWebSettings(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "webSettings", null) : null);
         setLastFmUsername(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "lastFmUser", null) : null);
         setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getByteArray(settings, "lastFmPassword", null) : null);
+        setUrlEncryption(JXPathUtils.getBooleanValue(settings, "urlEncryption", true));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -470,6 +480,7 @@ public class User implements MyTunesRssEventListener {
             users.appendChild(DOMUtils.createTextElement(settings, "lastFmUser", getLastFmUsername()));
             users.appendChild(DOMUtils.createByteArrayElement(settings, "lastFmPassword", getLastFmPasswordHash()));
         }
+        users.appendChild(DOMUtils.createBooleanElement(settings, "urlEncryption", isUrlEncryption()));
     }
 
     public synchronized void playLastFmTrack(final Track track) {
@@ -480,6 +491,7 @@ public class User implements MyTunesRssEventListener {
                     if (myLastFmSession == null && myLastFmHandshakeTime + myLastFmHandshakeWaitTime < System.currentTimeMillis()) {
                         LOG.debug("Trying to create a new LastFM session for user \"" + getName() + "\".");
                         myLastFmSession = LastFmUtils.doHandshake(User.this);
+                        myLastFmHandshakeTime = System.currentTimeMillis();
                         if (myLastFmSession != null) {
                             LOG.debug("Got LastFM session, adding user as event listener.");
                             MyTunesRssEventManager.getInstance().addListener(User.this);

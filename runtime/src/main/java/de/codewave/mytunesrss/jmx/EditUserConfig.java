@@ -346,4 +346,13 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
             }
         }
     }
+
+    public boolean isUrlEncryption() {
+        return MyTunesRss.CONFIG.getUser(myUsername).isUrlEncryption();
+    }
+
+    public void setUrlEncryption(boolean urlEncryption) {
+        MyTunesRss.CONFIG.getUser(myUsername).setUrlEncryption(urlEncryption);
+        onChange();
+    }
 }

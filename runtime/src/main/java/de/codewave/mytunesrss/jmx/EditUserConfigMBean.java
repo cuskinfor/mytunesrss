@@ -111,4 +111,8 @@ public interface EditUserConfigMBean {
     void setLastFmUsername(String username);
 
     void setLastFmPassword(String password);
+
+    boolean isUrlEncryption();
+
+    void setUrlEncryption(boolean urlEncryption);
 }

@@ -67,25 +67,21 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         User user = getMyTunesRssConfig().getUser(userName);
         if (scope == WebAppScope.Request) {
             LOG.debug("Authorizing request for user \"" + userName + "\".");
-            getRequest().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(
-                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
             getRequest().setAttribute("authUser", user);
+            getRequest().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(getRequest(),
+                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
         } else if (scope == WebAppScope.Session) {
             LOG.debug("Authorizing session for user \"" + userName + "\".");
-            getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(
-                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
             getSession().setAttribute("authUser", user);
+            getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(getRequest(), 
+                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
         }
         ((MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest())).setUser(user);
         getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);
     }
 
     protected User getAuthUser() {
-        User user = (User)getSession().getAttribute("authUser");
-        if (user == null) {
-            user = (User)getRequest().getAttribute("authUser");
-        }
-        return user;
+        return MyTunesRssWebUtils.getAuthUser(getRequest());
     }
 
     protected boolean isRequestAuthorized() {
