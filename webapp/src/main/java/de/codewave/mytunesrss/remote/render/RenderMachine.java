@@ -102,23 +102,29 @@ public class RenderMachine {
         }
     }
 
-    private class QueryResultRenderer implements Renderer<List, DataStoreQuery.QueryResult> {
-        public List render(DataStoreQuery.QueryResult input) {
+    private class QueryResultRenderer implements Renderer<Map, DataStoreQuery.QueryResult> {
+        public Map render(DataStoreQuery.QueryResult input) {
+            Map outputMap = new HashMap();
+            outputMap.put("totalResults", input.getResultSize());
             List output = new ArrayList(input.getResultSize());
             for (Object item = input.nextResult(); item != null; item = input.nextResult()) {
                 output.add(RenderMachine.this.render(item));
             }
-            return output;
+            outputMap.put("results", output);
+            return outputMap;
         }
     }
 
-    private class QueryResultWrapperRenderer implements Renderer<List, QueryResultWrapper> {
-        public List render(QueryResultWrapper input) {
+    private class QueryResultWrapperRenderer implements Renderer<Map, QueryResultWrapper> {
+        public Map render(QueryResultWrapper input) {
+            Map outputMap = new HashMap();
+            outputMap.put("totalResults", input.getTotalItems());
             List output = new ArrayList(input.getResultSize());
             for (Object item = input.nextResult(); item != null; item = input.nextResult()) {
                 output.add(RenderMachine.this.render(item));
             }
-            return output;
+            outputMap.put("results", output);
+            return outputMap;
         }
     }
 }

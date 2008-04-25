@@ -34,6 +34,7 @@ public class MyTunesRssRemoteEnv {
                     for (Iterator<Map.Entry<String, Session>> iter = SESSIONS.entrySet().iterator(); iter.hasNext();) {
                         Map.Entry<String, Session> entry = iter.next();
                         if (entry.getValue().isExpired()) {
+                            LOG.debug("Removing expired session \"" + entry.getValue().getId() + "\" of user \"" + entry.getValue().getUser().getName() + "\".");
                             iter.remove();
                         }
                     }
@@ -53,8 +54,11 @@ public class MyTunesRssRemoteEnv {
             sid = sid.substring(1);
             synchronized (SESSIONS) {
                 if (SESSIONS.containsKey(sid)) {
-                    LOG.debug("Received remote API call for session \"" + sid.substring(1) + "\".");
-                    THREAD_SESSIONS.set(SESSIONS.get(sid));
+                    SESSIONS.get(sid).touch();
+                    if (SESSIONS.containsKey(sid)) {
+                        LOG.debug("Received remote API call for session \"" + sid.substring(1) + "\".");
+                        THREAD_SESSIONS.set(SESSIONS.get(sid));
+                    }
                 }
             }
         }

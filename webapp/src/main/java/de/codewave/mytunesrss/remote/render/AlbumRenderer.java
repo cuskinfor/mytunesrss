@@ -1,6 +1,9 @@
 package de.codewave.mytunesrss.remote.render;
 
 import de.codewave.mytunesrss.datastore.statement.Album;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
@@ -16,6 +19,7 @@ public class AlbumRenderer implements Renderer<Map, Album> {
         result.put("trackCount", album.getTrackCount());
         result.put("artist", StringUtils.trimToEmpty(album.getArtist()));
         result.put("artistCount", album.getArtistCount());
+        result.put("imageUrl", album.isImage() ? MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.ShowAlbumImage, "album=" + album.getName()) : null);
         return result;
     }
 }

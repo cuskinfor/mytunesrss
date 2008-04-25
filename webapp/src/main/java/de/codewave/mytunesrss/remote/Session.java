@@ -15,6 +15,7 @@ public class Session {
         myId = id;
         myUser = user;
         myTimeout = timeout;
+        myExpiration = System.currentTimeMillis() + (long)timeout;
     }
 
     public void touch() {

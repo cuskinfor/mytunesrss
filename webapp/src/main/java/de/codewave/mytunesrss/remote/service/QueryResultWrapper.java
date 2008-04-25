@@ -23,6 +23,10 @@ public class QueryResultWrapper {
         mySize = myItemsLeft;
     }
 
+    public int getTotalItems() {
+        return myQueryResult.getResultSize();
+    }
+
     public int getResultSize() {
         return mySize;
     }

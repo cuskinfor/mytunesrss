@@ -7,6 +7,9 @@
 
         <release version="3.2-EAP-11" date="xxxx-xx-xx" description="EAP release">
             <action dev="mdescher" type="add">
+                JSON-RPC sample application.
+            </action>
+            <action dev="mdescher" type="add">
                 User option to enable/disable (default is enabled) URL encryption.
             </action>
             <action dev="mdescher" type="update">
