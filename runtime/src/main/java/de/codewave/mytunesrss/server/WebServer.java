@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.tomcat.util.IntrospectionUtils;
 
 import java.io.*;
@@ -196,6 +197,13 @@ public class WebServer {
         sessionManager.setPathname("");
         myContext.setManager(sessionManager);
         host.addChild(myContext);
+        for (String contextInfo : MyTunesRss.CONFIG.getAdditionalContexts()) {
+            Context context = server.createContext(contextInfo.split(":", 2)[0], contextInfo.split(":", 2)[1]);
+            StandardManager extraSessionManager = new StandardManager();
+            extraSessionManager.setPathname("");
+            context.setManager(extraSessionManager);
+            host.addChild(context);
+        }
         server.addEngine(engine);
         Connector httpConnector = createConnector(server, listenAddress, listenPort, "http");
         if (httpConnector != null) {

@@ -95,6 +95,7 @@ public class MyTunesRssConfig {
     private String mySslKeystorePass;
     private int mySslPort;
     private String mySslKeystoreKeyAlias;
+    private List<String> myAdditionalContexts;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -645,6 +646,14 @@ public class MyTunesRssConfig {
         mySslPort = sslPort;
     }
 
+    public List<String> getAdditionalContexts() {
+        return myAdditionalContexts;
+    }
+
+    public void setAdditionalContexts(List<String> additionalContexts) {
+        myAdditionalContexts = additionalContexts;
+    }
+
     public void load() {
         LOG.info("Loading configuration.");
         try {
@@ -737,6 +746,12 @@ public class MyTunesRssConfig {
             setSslKeystoreKeyAlias(JXPathUtils.getStringValue(settings, "ssl/keystore/keyalias", null));
             setSslKeystorePass(JXPathUtils.getStringValue(settings, "ssl/keystore/pass", null));
             setSslPort(JXPathUtils.getIntValue(settings, "ssl/port", 0));
+            myAdditionalContexts = new ArrayList<String>();
+            Iterator<JXPathContext> additionalContextsIterator = JXPathUtils.getContextIterator(settings, "tomcat/additionalContexts/context");
+            while (additionalContextsIterator.hasNext()) {
+                JXPathContext additionalContext = additionalContextsIterator.next();
+                myAdditionalContexts.add(JXPathUtils.getStringValue(additionalContext, "name", "").trim() + ":" + JXPathUtils.getStringValue(additionalContext, "docbase", "").trim());
+            }
         } catch (IOException e) {
             LOG.error("Could not read configuration file.", e);
         }
@@ -884,6 +899,16 @@ public class MyTunesRssConfig {
                 tomcat.appendChild(DOMUtils.createIntElement(settings, "ajp-port", getTomcatAjpPort()));
             }
             tomcat.appendChild(DOMUtils.createTextElement(settings, "webapp-context", getWebappContext()));
+            if (myAdditionalContexts != null && !myAdditionalContexts.isEmpty()) {
+                Element additionalContexts = settings.createElement("additionalContexts");
+                tomcat.appendChild(additionalContexts);
+                for (String contextInfo : myAdditionalContexts) {
+                    Element context = settings.createElement("context");
+                    additionalContexts.appendChild(context);
+                    context.appendChild(DOMUtils.createTextElement(settings, "name", contextInfo.split(":", 2)[0]));
+                    context.appendChild(DOMUtils.createTextElement(settings, "docbase", contextInfo.split(":", 2)[1]));
+                }
+            }
             root.appendChild(DOMUtils.createBooleanElement(settings, "anonymous-statistics", isSendAnonyStat()));
             Element ssl = settings.createElement("ssl");
             root.appendChild(ssl);
