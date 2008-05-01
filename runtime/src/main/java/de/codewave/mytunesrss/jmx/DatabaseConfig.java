@@ -199,4 +199,29 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
         }
         return null;
     }
+
+    public String[] getStatistics() {
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
+        try {
+            SystemInformation systemInformation = session.executeQuery(new GetSystemInformationQuery());
+            if (systemInformation.getLastUpdate() > 0) {
+                String[] statistics = new String[6];
+                Date date = new Date(systemInformation.getLastUpdate());
+                statistics[0] = MyTunesRssUtils.getBundleString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(MyTunesRssUtils.getBundleString(
+                        "settings.lastDatabaseUpdateDateFormat")).format(date);
+                statistics[1] = MyTunesRssUtils.getBundleString("dbstat.version", systemInformation.getVersion());
+                statistics[2] = MyTunesRssUtils.getBundleString("dbstat.tracks", systemInformation.getTrackCount());
+                statistics[3] = MyTunesRssUtils.getBundleString("dbstat.albums", systemInformation.getAlbumCount());
+                statistics[4] = MyTunesRssUtils.getBundleString("dbstat.artists", systemInformation.getArtistCount());
+                statistics[5] = MyTunesRssUtils.getBundleString("dbstat.genres", systemInformation.getGenreCount());
+                return statistics;
+            } else {
+                return new String[] {MyTunesRssUtils.getBundleString("settings.databaseNotYetCreated")};
+            }
+        } catch (SQLException e) {
+            return new String[] {e.getMessage()};
+        } finally {
+            session.commit();
+        }
+    }
 }

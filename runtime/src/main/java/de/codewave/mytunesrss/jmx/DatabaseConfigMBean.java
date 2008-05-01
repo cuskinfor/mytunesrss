@@ -43,4 +43,6 @@ public interface DatabaseConfigMBean {
     String addSchedule(String schedule);
 
     String removeSchedule(int index);
+
+    String[] getStatistics();
 }
