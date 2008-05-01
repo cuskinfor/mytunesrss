@@ -94,10 +94,9 @@ var dialogElement;
 
 function showDialog(dialogId, functions) {
     dialogFunctions = functions;
-    var content = document.getElementById("body");
     var glasspane = document.getElementById("glasspane");
     dialogElement = document.getElementById(dialogId);
-    content.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
     glasspane.style.zIndex = 999;
     glasspane.style.display = "block";
     dialogElement.style.zIndex = -1000;
@@ -107,7 +106,7 @@ function showDialog(dialogId, functions) {
         left = 0;
     }
     dialogElement.style.left = left + "px";
-    var top = (document.height - dialogElement.scrollHeight) / 2;
+    var top = (window.innerHeight - dialogElement.scrollHeight) / 2;
     if (top < 0) {
         top = 0;
     }
@@ -116,13 +115,17 @@ function showDialog(dialogId, functions) {
 }
 
 function clickDialog(functionIndex) {
-    var content = document.getElementById("body");
     var glasspane = document.getElementById("glasspane");
     dialogElement.style.display = "none";
     glasspane.style.display = "none";
     glasspane.style.zIndex = -999;
-    content.style.overflow = "visible";
+    document.body.style.overflow = "auto";
     if (dialogFunctions[functionIndex]) {
         dialogFunctions[functionIndex]();
     }
+}
+
+function editExistingPlaylist() {
+    var element = document.getElementById("playlistSelection");
+    document.location.href = element.options[element.selectedIndex].value;
 }

@@ -6,9 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.Pager;
-import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
-import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
-import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -83,6 +81,12 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                     getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
                 }
             } else {
+                DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
+                                                                                                                                PlaylistType.MyTunes,
+                                                                                                                                null,
+                                                                                                                                false,
+                                                                                                                                true));
+                getRequest().setAttribute("editablePlaylists", playlistsQueryResult.getResults());
                 forward(MyTunesRssResource.BrowseTrack);
             }
         } else {

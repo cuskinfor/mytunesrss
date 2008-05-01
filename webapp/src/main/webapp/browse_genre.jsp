@@ -39,7 +39,14 @@
         </li>
         <c:if test="${empty sessionScope.playlist && authUser.createPlaylists}">
             <li>
-                <a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><fmt:message key="newPlaylist"/></a>
+                <c:choose>
+                    <c:when test="${empty editablePlaylists}">
+                        <a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><fmt:message key="newPlaylist"/></a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="#" onclick="showDialog('editPlaylist', [function() {document.location.href='${servletUrl}/startNewPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}'}, editExistingPlaylist, null])"><fmt:message key="editExistingPlaylist"/></a>
+                    </c:otherwise>
+                </c:choose>
             </li>
         </c:if>
     </ul>
@@ -139,6 +146,11 @@
     </form>
 
 </div>
+
+<div id="glasspane" class="glasspane">
+</div>
+
+<jsp:include page="incl_edit_playlist_dialog.jsp"/>
 
 </body>
 

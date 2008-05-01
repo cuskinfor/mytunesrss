@@ -729,7 +729,8 @@ div.dialogbox {
 }
 
 div.dialogMessage {
-    margin-bottom:20px;
+    margin-bottom:10px;
+    text-align:justify;
 }
 
 div.dialogButton {

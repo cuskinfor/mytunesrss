@@ -42,6 +42,7 @@ public enum MyTunesRssCommand implements Command {
     BrowseGenre("browseGenre", BrowseGenreCommandHandler.class),
     ShowAlbumImage("showAlbumImage", ShowAlbumImageCommandHandler.class),
     ShowJukebox("showJukebox", ShowJukeboxCommandHandler.class),
+    ContinueExistingPlaylist("continueExistingPlaylist", ContinueExistingPlaylistCommandHandler.class),
     Upload("upload", UploadCommandHandler.class);
 
     private String myName;

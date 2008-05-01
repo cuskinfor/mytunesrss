@@ -6,9 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.Pager;
-import de.codewave.mytunesrss.datastore.statement.Artist;
-import de.codewave.mytunesrss.datastore.statement.FindArtistQuery;
-import de.codewave.mytunesrss.datastore.statement.PagerConfig;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.StringUtils;
@@ -50,6 +48,12 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
                 artists = queryResult.getResults();
             }
             getRequest().setAttribute("artists", artists);
+            DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
+                                                                                                                            PlaylistType.MyTunes,
+                                                                                                                            null,
+                                                                                                                            false,
+                                                                                                                            true));
+            getRequest().setAttribute("editablePlaylists", playlistsQueryResult.getResults());
             forward(MyTunesRssResource.BrowseArtist);
         } else {
             forward(MyTunesRssResource.Login);

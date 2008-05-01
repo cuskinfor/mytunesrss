@@ -7,6 +7,11 @@
 
         <release version="3.2-EAP-12" date="xxxx-xx-xx" description="EAP release">
             <action dev="mdescher" type="add">
+                New playlist link replaced with edit existing playlist link when
+                editable MyTunesRSS playlists exist. Dialog with selection of
+                playlist to edit and option to create a new playlist.
+            </action>
+            <action dev="mdescher" type="add">
                 Database statistics in JMX console (database config mbean)
             </action>
             <action dev="mdescher" type="update">

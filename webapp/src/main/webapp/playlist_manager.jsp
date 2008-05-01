@@ -21,7 +21,7 @@
 
 <body>
 
-<div id="body" class="body">
+<div class="body">
 
     <h1 class="manager">
         <a class="portal" href="${servletUrl}/showPortal/${auth}"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
@@ -71,7 +71,7 @@
 </div>
 
 <div id="confirmDeletePlaylist" class="dialogbox">
-    <div id="dialogMessage">
+    <div class="dialogMessage">
         <fmt:message key="dialog.confirmDeletePlaylist"/>
     </div>
     <div class="dialogButton">

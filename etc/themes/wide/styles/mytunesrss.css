@@ -731,3 +731,14 @@ div.dialogbox {
     padding:5px;
     background-color:#FFFFCC
 }
+
+div.dialogMessage {
+    margin-bottom:10px;
+    text-align:justify;
+}
+
+div.dialogButton {
+    float:right;
+    margin-top:20px;
+    margin-left:10px;
+}
