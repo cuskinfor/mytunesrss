@@ -5,7 +5,13 @@
     </properties>
     <body>
 
-        <release version="3.2-EAP-11" date="xxxx-xx-xx" description="EAP release">
+        <release version="3.2-EAP-12" date="xxxx-xx-xx" description="EAP release">
+            <action dev="mdescher" type="add">
+                Info link in JW media player opens a new window/tab.
+            </action>
+        </release>
+
+        <release version="3.2-EAP-11" date="2008-04-27" description="EAP release">
             <action dev="mdescher" type="add">
                 Additional contexts can be configured for Tomcat.
             </action>
