@@ -6,6 +6,10 @@
     <body>
 
         <release version="3.2-EAP-12" date="xxxx-xx-xx" description="EAP release">
+            <action dev="mdescher" type="update">
+                Added database index for track.image_hash to speed up removal
+                of orphaned images a lot.
+            </action>
             <action dev="mdescher" type="add">
                 New playlist link replaced with edit existing playlist link when
                 editable MyTunesRSS playlists exist. Dialog with selection of

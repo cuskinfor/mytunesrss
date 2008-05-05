@@ -78,4 +78,8 @@
         <sql>{create_table_prefix} image ( hash CHAR(24) NOT NULL, size INTEGER NOT NULL, data {image_datatype} NOT NULL, UNIQUE (hash, size) )</sql>
     </statement>
 
+    <statement name="migrate_3.2_eap_12">
+        <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
+    </statement>
+
 </statements>

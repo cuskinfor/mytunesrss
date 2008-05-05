@@ -107,6 +107,7 @@
         <sql>CREATE INDEX idx_artist_first ON artist (first_char)</sql>
         <sql>CREATE INDEX idx_genre_first ON genre (first_char)</sql>
         <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
+        <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
         <sql>{create_playlist_id_sequence}</sql>
     </statement>
 
