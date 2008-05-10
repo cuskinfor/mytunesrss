@@ -5,7 +5,7 @@
     </properties>
     <body>
 
-        <release version="3.2-EAP-12" date="xxxx-xx-xx" description="EAP release">
+        <release version="3.2-EAP-12" date="2008-05-10" description="EAP release">
             <action dev="mdescher" type="update">
                 Added database index for track.image_hash to speed up removal
                 of orphaned images a lot.
