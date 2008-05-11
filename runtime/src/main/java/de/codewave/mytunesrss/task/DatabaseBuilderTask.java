@@ -218,7 +218,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         TX_BEGIN = System.currentTimeMillis();
         DataStoreSession trackQuerySession = MyTunesRss.STORE.getTransaction();
         if (LOG.isInfoEnabled()) {
-            LOG.info("Processing track imags.");
+            LOG.info("Processing track images.");
         }
         try {
             DataStoreQuery.QueryResult<Track> result = trackQuerySession.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Track>>() {
