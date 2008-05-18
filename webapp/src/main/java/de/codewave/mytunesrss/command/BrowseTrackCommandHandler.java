@@ -4,29 +4,36 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.io.UnsupportedEncodingException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.command.BrowseTrackCommandHandler
  */
 public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
+    private static final Log LOG = LogFactory.getLog(BrowseTrackCommandHandler.class);
 
     @Override
     public void executeAuthorized() throws Exception {
         if (getRequest().getPathInfo() != null && getRequest().getPathInfo().toLowerCase().endsWith(".gif")) {
-            return; // fix for those stupid yahoo media player img requests
+            return;// fix for those stupid yahoo media player img requests
         }
         if (isSessionAuthorized()) {
             String searchTerm = getRequestParameter("searchTerm", null);
@@ -46,7 +53,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                 } else {
                     addError(new BundleError("error.searchTermMinSize", 3));
                     forward(MyTunesRssCommand.ShowPortal);
-                    return; // early return
+                    return;// early return
                 }
             } else {
                 query = TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), false);
@@ -106,14 +113,16 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             EnhancedTrack enhancedTrack = new EnhancedTrack(track);
             boolean newAlbum = !lastAlbum.equalsIgnoreCase(track.getAlbum());
             boolean newArtist = !lastArtist.equalsIgnoreCase(track.getArtist());
-            if ((sortOrder == FindPlaylistTracksQuery.SortOrder.Album && newAlbum) || (sortOrder == FindPlaylistTracksQuery.SortOrder.Artist && newArtist)) {// new section begins
+            if ((sortOrder == FindPlaylistTracksQuery.SortOrder.Album && newAlbum) ||
+                    (sortOrder == FindPlaylistTracksQuery.SortOrder.Artist && newArtist)) {// new section begins
                 sectionCount++;
                 enhancedTrack.setNewSection(true);
                 finishSection(sectionTracks, variousPerSection);
                 sectionTracks.clear();
                 variousPerSection = false;
             } else {
-                if ((sortOrder == FindPlaylistTracksQuery.SortOrder.Album && newArtist) || (sortOrder == FindPlaylistTracksQuery.SortOrder.Artist && newAlbum)) {
+                if ((sortOrder == FindPlaylistTracksQuery.SortOrder.Album && newArtist) ||
+                        (sortOrder == FindPlaylistTracksQuery.SortOrder.Artist && newAlbum)) {
                     variousPerSection = true;
                 }
             }
@@ -137,7 +146,34 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             }
         }
         if (!sectionTracks.isEmpty()) {
+            String sectionHash = null;
+            if (sectionTracks.size() > 5) { // for more than 5 tracks in a section create or use a temporary section playlist
+                try {
+                    sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.digest(sectionIds.toString().getBytes("UTF-8")));
+                    final String hash = sectionHash;
+                    if (!getTransaction().executeQuery(new DataStoreQuery<Boolean>() {
+                        public Boolean execute(Connection connection) throws SQLException {
+                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "checkTempPlaylistWithId");
+                            statement.setString("id", hash);
+                            ResultSet rs = statement.executeQuery();
+                            return Boolean.valueOf(rs.next());
+                        }
+                    })) {
+                        SaveTempPlaylistStatement statement = new SaveTempPlaylistStatement();
+                        statement.setId(sectionHash);
+                        statement.setName(sectionHash);
+                        statement.setTrackIds(Arrays.<String>asList(StringUtils.split(sectionIds.toString(), ',')));
+                        getTransaction().executeStatement(statement);
+                    }
+                } catch (SQLException e) {
+                    LOG.error("Could not check for existing temporary playlist or could not insert missing temporary playlist.", e);
+                    sectionHash = null; // do not use calculated section hash in case of an sql exception
+                } catch (UnsupportedEncodingException e) {
+                    LOG.error("Could not create section playlist hash.", e);
+                }
+            }
             for (EnhancedTrack rememberedTrack : sectionTracks) {
+                rememberedTrack.setSectionPlaylistId(sectionHash);
                 rememberedTrack.setSectionIds(sectionIds.toString());
                 if (!variousInSection) {
                     rememberedTrack.setSimple(true);
@@ -172,6 +208,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         private boolean myContinuation;
         private boolean mySimple;
         private String mySectionIds;
+        private String mySectionPlaylistId;
 
         private EnhancedTrack(Track track) {
             setId(track.getId());
@@ -225,6 +262,14 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
 
         private void setSectionIds(String sectionIds) {
             mySectionIds = sectionIds;
+        }
+
+        public String getSectionPlaylistId() {
+            return mySectionPlaylistId;
+        }
+
+        public void setSectionPlaylistId(String sectionPlaylistId) {
+            mySectionPlaylistId = sectionPlaylistId;
         }
     }
 }

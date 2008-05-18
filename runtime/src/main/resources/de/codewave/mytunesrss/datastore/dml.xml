@@ -124,6 +124,7 @@
             SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner
             FROM playlist
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
+            AND (type != 'TEMP')
             AND (user_private IS NULL OR user_private = FALSE OR :username IS NULL OR user_owner = :username)
             AND ((:type IS NULL AND :id IS NULL AND track_count > 0)
             OR (:type IS NOT NULL AND :id IS NULL AND track_count > 0 AND type = :type)
@@ -140,6 +141,7 @@
             SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner
             FROM playlist
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
+            AND (type != 'TEMP')
             AND user_owner = :username
             AND ((:type IS NULL AND :id IS NULL AND track_count > 0)
             OR (:type IS NOT NULL AND :id IS NULL AND track_count > 0 AND type = :type)
@@ -157,6 +159,7 @@
             FROM playlist p, link_track_playlist rltp, link_track_playlist ltp
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
             AND (user_private IS NULL OR user_private = FALSE OR :username IS NULL OR user_owner = :username)
+            AND (type != 'TEMP')
             AND rltp.playlist_id = :restrictionPlaylistId
             AND ltp.track_id = rltp.track_id
             AND ltp.playlist_id = p.id
@@ -545,6 +548,10 @@
         <sql>UPDATE system_information SET album_count = (SELECT COUNT(name) FROM album)</sql>
         <sql>UPDATE system_information SET artist_count = (SELECT COUNT(name) FROM artist)</sql>
         <sql>UPDATE system_information SET genre_count = (SELECT COUNT(name) FROM genre)</sql>
+    </statement>
+
+    <statement name="checkTempPlaylistWithId">
+        <sql>SELECT id FROM playlist WHERE id = :id AND type = 'TEMP'</sql>
     </statement>
 
     <!-- reusable sql fragments -->

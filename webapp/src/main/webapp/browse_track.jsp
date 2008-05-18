@@ -122,23 +122,24 @@
                 </c:otherwise>
             </c:choose>
         </th>
+        <c:set var="sectionArguments"><c:choose><c:when test="${empty track.sectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.sectionPlaylistId)}</c:otherwise></c:choose></c:set>
         <c:choose>
             <c:when test="${empty sessionScope.playlist}">
                 <c:if test="${authUser.rss && config.showRss}">
                     <th class="icon">
-                        <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.xml">
+                        <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${sectionArguments}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.xml">
                             <img src="${appUrl}/images/rss_th.gif" alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
                     </th>
                 </c:if>
                 <c:if test="${authUser.playlist && config.showPlaylist}">
                     <th class="icon">
-                        <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.${config.playlistFileSuffix}">
+                        <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${sectionArguments}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.${config.playlistFileSuffix}">
                             <img src="${appUrl}/images/playlist_th.gif" alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
                     </th>
                 </c:if>
                 <c:if test="${authUser.player && config.showPlayer}">
                     <th class="icon">
-                        <a href="#" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:webSafeFileName(sectionFileName)}.xspf</mt:encrypt>'); return false">
+                        <a href="#" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${sectionArguments}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:webSafeFileName(sectionFileName)}.xspf</mt:encrypt>'); return false">
                             <img src="${appUrl}/images/player_th.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                     </th>
                 </c:if>
@@ -146,7 +147,7 @@
                     <th class="icon">
                         <c:choose>
                             <c:when test="${authUser.maximumZipEntries <= 0 || mtfn:sectionTrackCount(track.sectionIds) <= authUser.maximumZipEntries}">
-                                <a href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.zip">
+                                <a href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${sectionArguments}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.zip">
                                 <img src="${appUrl}/images/download_th.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
                             </c:when>
                             <c:otherwise>
@@ -160,7 +161,7 @@
             <c:otherwise>
                 <th></th>
                 <th class="icon">
-                    <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                    <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${sectionArguments}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                         <img src="${appUrl}/images/add_th.gif" alt="add" /> </a>
                 </th>
             </c:otherwise>

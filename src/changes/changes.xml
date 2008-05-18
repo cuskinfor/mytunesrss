@@ -5,6 +5,13 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-13" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="add">
+                For more than 5 tracks in a section create a section playlist
+                or use an existing one.
+            </action>
+        </release>
+
         <release version="3.2-EAP-12" date="2008-05-10" description="EAP release">
             <action dev="mdescher" type="update">
                 Added database index for track.image_hash to speed up removal
