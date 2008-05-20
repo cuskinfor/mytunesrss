@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.servlet.TransactionFilter;
 import org.apache.commons.lang.StringUtils;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * Service for track retrieval and management.
@@ -34,4 +35,13 @@ public class TrackService {
     public String getPlaybackUrl(String trackId) {
         return MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.PlayTrack, "track=" + trackId);
     }
+
+    public void getTrackInfo(String trackId) throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            // todo remote-api
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
 }

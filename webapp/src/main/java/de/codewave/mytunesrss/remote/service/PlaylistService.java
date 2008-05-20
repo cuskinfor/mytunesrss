@@ -126,4 +126,12 @@ public class PlaylistService {
         }
         throw new IllegalAccessException("Unauthorized");
     }
+
+    public Object getEditPlaylist() throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            // todo remote-api
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
 }

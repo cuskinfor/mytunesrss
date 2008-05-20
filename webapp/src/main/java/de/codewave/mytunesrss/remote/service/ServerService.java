@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.remote.service.ServerService
@@ -11,6 +12,14 @@ import java.util.List;
 public class ServerService {
 
     public List<String> discoverOtherServers() throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            // todo remote-api
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    public Object getDatabaseStatistics() throws IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             // todo remote-api
