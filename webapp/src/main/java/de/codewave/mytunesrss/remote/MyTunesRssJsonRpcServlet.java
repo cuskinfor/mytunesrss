@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * de.codewave.mytunesrss.remote.MyTunesRssXmlRpcServlet
+ * de.codewave.mytunesrss.remote.MyTunesRssJsonRpcServlet
  */
 public class MyTunesRssJsonRpcServlet extends JSONRPCServlet {
     static {
