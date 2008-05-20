@@ -12,17 +12,11 @@ import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.Session;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class LoginService {
-    private static final Log LOG = LogFactory.getLog(LoginService.class);
-
     public String login(String username, String password, int sessionTimeoutMinutes) throws UnsupportedEncodingException, IllegalAccessException {
         User user = MyTunesRss.CONFIG.getUser(username);
         if (user != null) {
@@ -36,5 +30,15 @@ public class LoginService {
             }
         }
         throw new IllegalAccessException("Unauthorized");
+    }
+
+    // todo: remote-api: testing
+    public void logout() throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            MyTunesRssRemoteEnv.getSession().invalidate();
+        } else {
+            throw new IllegalAccessException("Unauthorized");
+        }
     }
 }
