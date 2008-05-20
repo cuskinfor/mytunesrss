@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.servlet.TransactionFilter;
 import org.apache.commons.lang.StringUtils;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * Service for playlist retrieval and management.
@@ -68,5 +69,61 @@ public class PlaylistService {
      */
     public String getRssUrl(String playlistId) {
         return MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreateRss, "playlist=" + playlistId);
+    }
+
+    public String startEditPlaylist(String playlistId) throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            // todo remote-api
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    public void addTrackToPlaylist(String trackId) throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            // todo remote-api
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    public void addTracksToPlaylist(String[] trackIds) throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            // todo remote-api
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    public void removeTrackFromPlaylist(String trackId) throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            // todo remote-api
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    public void removeTracksFromPlaylist(String[] trackId) throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            // todo remote-api
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    public void cancelEditPlaylist() throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            // todo remote-api
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    public String savePlaylist(String playlistName, boolean userPrivate) throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            // todo remote-api
+        }
+        throw new IllegalAccessException("Unauthorized");
     }
 }

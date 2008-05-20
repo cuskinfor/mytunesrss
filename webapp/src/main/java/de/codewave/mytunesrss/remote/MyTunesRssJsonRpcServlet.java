@@ -27,6 +27,8 @@ public class MyTunesRssJsonRpcServlet extends JSONRPCServlet {
         JSONRPCBridge.getGlobalBridge().registerObject("LoginService", new LoginService());
         JSONRPCBridge.getGlobalBridge().registerObject("PlaylistService", new PlaylistService());
         JSONRPCBridge.getGlobalBridge().registerObject("TrackService", new TrackService());
+        JSONRPCBridge.getGlobalBridge().registerObject("UserService", new UserService());
+        JSONRPCBridge.getGlobalBridge().registerObject("ServerService", new ServerService());
     }
 
     @Override
