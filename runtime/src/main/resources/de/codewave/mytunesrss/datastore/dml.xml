@@ -499,7 +499,7 @@
     </statement>
 
     <statement name="insertPlaylist">
-        <sql>INSERT INTO playlist (id, name, type, track_count, hidden, user_private, user_owner) VALUES (:id, :name, :type, 0, FALSE, :user_private, :user_name)</sql>
+        <sql>INSERT INTO playlist (id, name, type, track_count, hidden, user_private, user_owner, ts_create) VALUES (:id, :name, :type, 0, FALSE, :user_private, :user_name, :ts)</sql>
         <sql loop="track_id" loopcommit="500">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>
     </statement>
@@ -552,6 +552,14 @@
 
     <statement name="checkTempPlaylistWithId">
         <sql>SELECT id FROM playlist WHERE id = :id AND type = 'TEMP'</sql>
+    </statement>
+
+    <statement name="getTempPlaylistCreationTime">
+        <sql>SELECT ts_create AS ts FROM playlist WHERE type = 'TEMP' ORDER BY ts DESC</sql>
+    </statement>
+
+    <statement name="removeOldTempPlaylists">
+        <sql>DELETE FROM playlist WHERE type = 'TEMP' AND ts_create &lt; :ts</sql>
     </statement>
 
     <!-- reusable sql fragments -->

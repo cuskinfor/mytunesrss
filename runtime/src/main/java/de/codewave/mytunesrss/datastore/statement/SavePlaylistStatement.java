@@ -77,6 +77,7 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
         statement.setObject("track_id", myTrackIds);
         statement.setBoolean("user_private", myUserPrivate);
         statement.setString("user_name", myUserName);
+        statement.setLong("ts", System.currentTimeMillis());
         statement.execute(new ExceptionHandler());
     }
 

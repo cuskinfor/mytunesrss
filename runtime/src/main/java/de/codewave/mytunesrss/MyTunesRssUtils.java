@@ -2,8 +2,10 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.SmartStatement;
+import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.swing.SwingUtils;
 import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
 import de.codewave.utils.swing.pleasewait.PleaseWaitUtils;
@@ -172,9 +174,15 @@ public class MyTunesRssUtils {
             }
             MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
                 public void execute() {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Destroying store.");
+                    try {
+                        LOG.debug("Removing old temporary playlists.");
+                        DataStoreSession session = MyTunesRss.STORE.getTransaction();
+                        session.executeStatement(new RemoveOldTempPlaylistsStatement());
+                        session.commit();
+                    } catch (SQLException e) {
+                        LOG.error("Could not remove old temporary playlists.", e);
                     }
+                        LOG.debug("Destroying store.");
                     MyTunesRss.STORE.destroy();
                 }
             });

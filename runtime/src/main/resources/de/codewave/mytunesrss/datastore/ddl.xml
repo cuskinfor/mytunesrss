@@ -38,6 +38,7 @@
                 hidden BOOLEAN,
                 user_private BOOLEAN,
                 user_owner VARCHAR(256),
+                ts_create NUMERIC(19),
                 UNIQUE (id)
             )
         </sql>
