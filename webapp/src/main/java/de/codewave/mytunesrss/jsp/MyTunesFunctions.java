@@ -104,6 +104,23 @@ public class MyTunesFunctions {
         return FilenameUtils.getExtension(track.getFile().getName());
     }
 
+    public static String contentType(WebConfig config, User user, Track track) {
+        return FileSupportUtils.getContentType("dummy." + suffix(config, user, track), track.isVideo());
+    }
+
+    public static boolean transcoding(WebConfig config, User user, Track track) {
+        if (config != null && user != null && MyTunesRss.REGISTRATION.isRegistered() && user.isTranscoder()) {
+            if (FileSupportUtils.isMp4(track.getFile()) && "alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
+                return true;
+            } else if (FileSupportUtils.isMp4(track.getFile()) && "mp4a".equals(track.getMp4Codec()) && config.isFaad2() && MyTunesRss.CONFIG.isValidFaad2Binary()) {
+                return true;
+            } else if (FileSupportUtils.isMp3(track.getFile()) && config.isLame() && MyTunesRss.CONFIG.isValidLameBinary()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static String tcParamValue(WebConfig config, User user, Track track) {
         if (config != null && user != null && MyTunesRss.REGISTRATION.isRegistered() && user.isTranscoder() && MyTunesRss.CONFIG.isValidLameBinary()) {
             if (FileSupportUtils.isMp4(track.getFile())) {

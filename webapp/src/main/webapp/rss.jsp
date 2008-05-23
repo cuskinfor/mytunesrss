@@ -17,8 +17,9 @@
                 <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></guid>
                 <pubDate>${pubDate}</pubDate>
                 <enclosure url="${permServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/tc=${mtfn:tcParamValue(config, authUser, track)}</mt:encrypt>/${cwfn:encodeUrl(virtualFileName)}"
-                           type="${track.contentType}"
-                           length="${track.contentLength}"/>
+                           type="${mtfn:contentType(config, authUser, track)}"
+                           <c:if test="${!mtfn:transcoding(config, authUser, track)}">length="${track.contentLength}"</c:if>
+                        />
                 <c:if test="${userAgentPsp}"><media:thumbnail url="${permServletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>" width="160"/></c:if>
             </item></c:forEach>
     </channel>

@@ -109,6 +109,30 @@
 
     <function>
         <description>
+            Get the content type for the file of a track.
+        </description>
+        <name>contentType</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String contentType(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.User,de.codewave.mytunesrss.datastore.statement.Track)</function-signature>
+        <example>
+            &lt;c:out value="${mtfn:contentType(config, user, track)}"/&gt;
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Check if transcoding is enabled for the specified track.
+        </description>
+        <name>transcoding</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>boolean transcoding(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.User,de.codewave.mytunesrss.datastore.statement.Track)</function-signature>
+        <example>
+            &lt;c:out value="${mtfn:transcoding(config, user, track)}"/&gt;
+        </example>
+    </function>
+
+    <function>
+        <description>
             Replace all target strings in a string with a replacement string.
         </description>
         <name>replace</name>
