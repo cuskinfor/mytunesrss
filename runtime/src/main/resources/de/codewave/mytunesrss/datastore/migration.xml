@@ -84,7 +84,6 @@
 
     <statement name="migrate_3.2_eap_13">
         <sql>ALTER TABLE playlist ADD COLUMN ts_create NUMERIC(19)</sql>
-        <sql>UPDATE playlist SET ts_create = 0</sql>
     </statement>
 
 </statements>
