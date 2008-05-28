@@ -7,6 +7,10 @@
 
         <release version="3.2-EAP-13" date="????-??-??" description="EAP release">
             <action dev="mdescher" type="fix">
+                Added "-r" option to default lame command line to make it work
+                on Windows as well.
+            </action>
+            <action dev="mdescher" type="fix">
                 Correct content type and no content length for RSS enclosures when file is being
                 transcoded.
             </action>
