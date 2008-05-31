@@ -1,6 +1,12 @@
 package de.codewave.mytunesrss.remote;
 
 import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.datastore.statement.Playlist;
+import de.codewave.mytunesrss.datastore.statement.Track;
+
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * de.codewave.mytunesrss.remote.Session
@@ -10,6 +16,7 @@ public class Session {
     private User myUser;
     private int myTimeout;
     private long myExpiration;
+    private Map<String, Object> myAttributes = new HashMap<String, Object>();
 
     public Session(String id, User user, int timeout) {
         myId = id;
@@ -38,5 +45,17 @@ public class Session {
 
     public User getUser() {
         return myUser;
+    }
+
+    public Object setAttribute(String key, Object value) {
+        return myAttributes.put(key, value);
+    }
+
+    public Object getAttribute(String key) {
+        return myAttributes.get(key);
+    }
+
+    public Object removeAttribute(String key) {
+        return myAttributes.remove(key);
     }
 }
