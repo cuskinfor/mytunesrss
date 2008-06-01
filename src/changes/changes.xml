@@ -7,7 +7,7 @@
 
         <release version="3.2-EAP-13" date="????-??-??" description="EAP release">
             <action dev="mdescher" type="add">
-                Remote-API: PlaylistService
+                Remote-API: PlaylistService and EditPlaylistService
             </action>
             <action dev="mdescher" type="fix">
                 Added "-r" option to default lame command line to make it work

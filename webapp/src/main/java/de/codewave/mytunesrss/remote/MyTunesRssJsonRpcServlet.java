@@ -1,15 +1,7 @@
 package de.codewave.mytunesrss.remote;
 
-import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.datastore.statement.Album;
-import de.codewave.mytunesrss.datastore.statement.Playlist;
-import de.codewave.mytunesrss.remote.render.AlbumRenderer;
-import de.codewave.mytunesrss.remote.render.PlaylistRenderer;
-import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.remote.service.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jabsorb.JSONRPCBridge;
 import org.jabsorb.JSONRPCServlet;
 
@@ -26,6 +18,7 @@ public class MyTunesRssJsonRpcServlet extends JSONRPCServlet {
         JSONRPCBridge.getGlobalBridge().registerObject("ArtistService", new ArtistService());
         JSONRPCBridge.getGlobalBridge().registerObject("LoginService", new LoginService());
         JSONRPCBridge.getGlobalBridge().registerObject("PlaylistService", new PlaylistService());
+        JSONRPCBridge.getGlobalBridge().registerObject("EditPlaylistService", new EditPlaylistService());
         JSONRPCBridge.getGlobalBridge().registerObject("TrackService", new TrackService());
         JSONRPCBridge.getGlobalBridge().registerObject("UserService", new UserService());
         JSONRPCBridge.getGlobalBridge().registerObject("ServerService", new ServerService());
