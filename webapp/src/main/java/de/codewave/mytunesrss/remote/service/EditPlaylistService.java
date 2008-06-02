@@ -291,6 +291,11 @@ public class EditPlaylistService {
 
     }
 
+    /**
+     * Cancel editing the playlist.
+     *
+     * @throws IllegalAccessException
+     */
     public void cancelEditPlaylist() throws IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
@@ -306,7 +311,15 @@ public class EditPlaylistService {
         throw new IllegalAccessException("Unauthorized");
     }
 
-    public void savePlaylist(String playlistName, boolean userPrivate) throws IllegalAccessException {
+    /**
+     * Save the currently edited playlist.
+     *
+     * @param playlistName Name of the playlist.
+     * @param userPrivate  <code>true</code> for a private playlist or <code>false</code> for a public playlist.
+     *
+     * @throws IllegalAccessException
+     */
+    public void savePlaylist(String playlistName, boolean userPrivate) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
@@ -316,7 +329,18 @@ public class EditPlaylistService {
                 playlist.setName(playlistName);
                 playlist.setUserPrivate(userPrivate);
                 playlist.setUserOwner(user.getName());
-                // todo remote-api: save playlist
+                SavePlaylistStatement statement = new SaveMyTunesPlaylistStatement(user.getName(), userPrivate);
+                statement.setId(playlist.getId());
+                statement.setName(StringUtils.isEmpty(playlistName) ? playlist.getName() : playlistName);
+                statement.setUpdate(StringUtils.isNotEmpty(playlist.getId()));
+                List<String> trackIds = new ArrayList<String>(playlistTracks.size());
+                for (Track track : playlistTracks) {
+                    trackIds.add(track.getId());
+                }
+                statement.setTrackIds(trackIds);
+                TransactionFilter.getTransaction().executeStatement(statement);
+                session.removeAttribute(KEY_EDIT_PLAYLIST);
+                session.removeAttribute(KEY_EDIT_PLAYLIST_TRACKS);
             } else {
                 throw new IllegalStateException("Not currently editing a playlist.");
             }
@@ -324,6 +348,13 @@ public class EditPlaylistService {
         throw new IllegalAccessException("Unauthorized");
     }
 
+    /**
+     * Get the playlist and the list of tracks.
+     *
+     * @return The playlist and the list of tracks.
+     *
+     * @throws IllegalAccessException
+     */
     public Object getPlaylist() throws IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
