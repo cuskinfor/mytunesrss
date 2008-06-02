@@ -19,9 +19,6 @@ import java.util.*;
  */
 public class PlaylistService {
     // todo: remote-api: testing
-    private static final Log LOG = LogFactory.getLog(PlaylistService.class);
-    private static final String KEY_EDIT_PLAYLIST = "editPlaylist";
-    private static final String KEY_EDIT_PLAYLIST_TRACKS = "editPlaylistTracks";
 
     /**
      * Get all visible playlist from the database.

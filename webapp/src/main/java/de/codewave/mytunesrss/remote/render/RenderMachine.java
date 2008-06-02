@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.remote.service.QueryResultWrapper;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.Album;
 import de.codewave.mytunesrss.datastore.statement.Artist;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.sql.DataStoreQuery;
 
 import java.util.*;
@@ -44,6 +45,7 @@ public class RenderMachine {
         addRenderer(Playlist.class, new PlaylistRenderer());
         addRenderer(Album.class, new AlbumRenderer());
         addRenderer(Artist.class, new ArtistRenderer());
+        addRenderer(Track.class, new TrackRenderer());
     }
 
     public void addRenderer(Class type, Renderer renderer) {
@@ -64,6 +66,11 @@ public class RenderMachine {
             if (renderer != null) {
                 return renderer.render(o);
             } else {
+                for (Map.Entry<Class, Renderer> entry : myRenderers.entrySet()) {
+                    if (entry.getKey().isAssignableFrom(o.getClass())) {
+                        return entry.getValue().render(o);
+                    }
+                }
                 throw new IllegalArgumentException("No renderer for type \"" + o.getClass() + "\" found.");
             }
         } else {

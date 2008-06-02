@@ -24,7 +24,7 @@ public class EditPlaylistService {
     private static final String KEY_EDIT_PLAYLIST_TRACKS = "editPlaylistTracks";
 
     /**
-     * Start editing a playlist. If an ID is specified it has be to the ID of a MyTunesRSS playlist.
+     * Start editing a playlist. If an ID is specified it has be to the ID of a MyTunesRSS playlist owned by the current user.
      *
      * @param playlistId The ID of the playlist to edit or <code>null</code> to start an empty playlist.
      *
@@ -296,7 +296,7 @@ public class EditPlaylistService {
      *
      * @throws IllegalAccessException
      */
-    public void cancelEditPlaylist() throws IllegalAccessException {
+    public Object cancelEditPlaylist() throws IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
@@ -307,6 +307,7 @@ public class EditPlaylistService {
             } else {
                 throw new IllegalStateException("Not currently editing a playlist.");
             }
+            return null;
         }
         throw new IllegalAccessException("Unauthorized");
     }
@@ -319,7 +320,7 @@ public class EditPlaylistService {
      *
      * @throws IllegalAccessException
      */
-    public void savePlaylist(String playlistName, boolean userPrivate) throws IllegalAccessException, SQLException {
+    public Object savePlaylist(String playlistName, boolean userPrivate) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
@@ -341,6 +342,7 @@ public class EditPlaylistService {
                 TransactionFilter.getTransaction().executeStatement(statement);
                 session.removeAttribute(KEY_EDIT_PLAYLIST);
                 session.removeAttribute(KEY_EDIT_PLAYLIST_TRACKS);
+                return null;
             } else {
                 throw new IllegalStateException("Not currently editing a playlist.");
             }
@@ -366,6 +368,36 @@ public class EditPlaylistService {
             } else {
                 throw new IllegalStateException("Not currently editing a playlist.");
             }
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    /**
+     * Remove playlists. Only playlists owned by the current user can be removed.
+     *
+     * @param playlistIds The IDs of the playlists.
+     *
+     * @return The number of playlists removed.
+     *
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public Object removePlaylists(String[] playlistIds) throws SQLException, IllegalAccessException {
+        Session session = MyTunesRssRemoteEnv.getSession();
+        User user = session.getUser();
+        if (user != null) {
+            int count = 0;
+            List<String> playlistIdList = Arrays.asList(playlistIds);
+            FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, false, true);
+            for (Playlist ownPlaylist : TransactionFilter.getTransaction().executeQuery(query).getResults()) {
+                if (playlistIdList.contains(ownPlaylist.getId())) {
+                    DeletePlaylistStatement statement = new DeletePlaylistStatement();
+                    statement.setId(ownPlaylist.getId());
+                    TransactionFilter.getTransaction().executeStatement(statement);
+                    count++;
+                }
+            }
+            return count;
         }
         throw new IllegalAccessException("Unauthorized");
     }
