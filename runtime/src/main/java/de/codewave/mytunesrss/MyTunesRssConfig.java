@@ -798,7 +798,7 @@ public class MyTunesRssConfig {
                 KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
                 keyGenerator.init(56);
                 myPathInfoKey = keyGenerator.generateKey();
-            } catch (NoSuchAlgorithmException e) {
+            } catch (Exception e) {
                 LOG.error("Could not generate path info encryption key.", e);
             }
         }
