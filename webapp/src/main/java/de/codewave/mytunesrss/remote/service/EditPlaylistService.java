@@ -124,17 +124,17 @@ public class EditPlaylistService {
     /**
      * Add all tracks from the specified albums to the currently edited playist.
      *
-     * @param albumIds IDs of the albums to add.
+     * @param albums IDs of the albums to add.
      *
      * @return The playlist and list of tracks after adding the new tracks from the albums.
      *
      * @throws IllegalAccessException
      */
-    public Object addAlbums(String[] albumIds) throws IllegalAccessException, SQLException {
+    public Object addAlbums(String[] albums) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return addTracks(FindTrackQuery.getForAlbum(user, albumIds, false));
+            return addTracks(FindTrackQuery.getForAlbum(user, albums, false));
         }
         throw new IllegalAccessException("Unauthorized");
     }
@@ -142,17 +142,17 @@ public class EditPlaylistService {
     /**
      * Add all tracks from the specified artists to the currently edited playist.
      *
-     * @param artistIds IDs of the artists to add.
+     * @param artists IDs of the artists to add.
      *
      * @return The playlist and list of tracks after adding the new tracks from the artists.
      *
      * @throws IllegalAccessException
      */
-    public Object addArtists(String[] artistIds) throws IllegalAccessException, SQLException {
+    public Object addArtists(String[] artists) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return addTracks(FindTrackQuery.getForArtist(user, artistIds, false));
+            return addTracks(FindTrackQuery.getForArtist(user, artists, false));
         }
         throw new IllegalAccessException("Unauthorized");
     }
@@ -160,17 +160,17 @@ public class EditPlaylistService {
     /**
      * Add all tracks from the specified genres to the currently edited playist.
      *
-     * @param genreIds IDs of the genres to add.
+     * @param genres IDs of the genres to add.
      *
      * @return The playlist and list of tracks after adding the new tracks from the genres.
      *
      * @throws IllegalAccessException
      */
-    public Object addGenres(String[] genreIds) throws IllegalAccessException, SQLException {
+    public Object addGenres(String[] genres) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return addTracks(FindTrackQuery.getForGenre(user, genreIds, false));
+            return addTracks(FindTrackQuery.getForGenre(user, genres, false));
         }
         throw new IllegalAccessException("Unauthorized");
     }
@@ -210,17 +210,17 @@ public class EditPlaylistService {
     /**
      * Remove all tracks of the specified albums from the currently edited playist.
      *
-     * @param albumIds IDs of the albums to remove.
+     * @param albums IDs of the albums to remove.
      *
      * @return The playlist and list of tracks after removing the tracks of the albums.
      *
      * @throws IllegalAccessException
      */
-    public Object removeAlbums(String[] albumIds) throws IllegalAccessException, SQLException {
+    public Object removeAlbums(String[] albums) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return removeTracks(FindTrackQuery.getForAlbum(user, albumIds, false));
+            return removeTracks(FindTrackQuery.getForAlbum(user, albums, false));
         }
         throw new IllegalAccessException("Unauthorized");
     }
@@ -228,17 +228,17 @@ public class EditPlaylistService {
     /**
      * Remove all tracks of the specified artists from the currently edited playist.
      *
-     * @param artistIds IDs of the artists to remove.
+     * @param artists IDs of the artists to remove.
      *
      * @return The playlist and list of tracks after re,moving the tracks of the artists.
      *
      * @throws IllegalAccessException
      */
-    public Object removeArtists(String[] artistIds) throws IllegalAccessException, SQLException {
+    public Object removeArtists(String[] artists) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return removeTracks(FindTrackQuery.getForArtist(user, artistIds, false));
+            return removeTracks(FindTrackQuery.getForArtist(user, artists, false));
         }
         throw new IllegalAccessException("Unauthorized");
     }
@@ -246,17 +246,17 @@ public class EditPlaylistService {
     /**
      * Remove all tracks of the specified genres from the currently edited playist.
      *
-     * @param genreIds IDs of the genres to remove.
+     * @param genres IDs of the genres to remove.
      *
      * @return The playlist and list of tracks after removing the tracks of the genres.
      *
      * @throws IllegalAccessException
      */
-    public Object removeGenres(String[] genreIds) throws IllegalAccessException, SQLException {
+    public Object removeGenres(String[] genres) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return removeTracks(FindTrackQuery.getForGenre(user, genreIds, false));
+            return removeTracks(FindTrackQuery.getForGenre(user, genres, false));
         }
         throw new IllegalAccessException("Unauthorized");
     }
