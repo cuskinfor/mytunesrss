@@ -69,12 +69,12 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             LOG.debug("Authorizing request for user \"" + userName + "\".");
             getRequest().setAttribute("authUser", user);
             getRequest().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(getRequest(),
-                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
         } else if (scope == WebAppScope.Session) {
             LOG.debug("Authorizing session for user \"" + userName + "\".");
             getSession().setAttribute("authUser", user);
-            getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(getRequest(), 
-                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+            getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(getRequest(),
+                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
         }
         ((MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest())).setUser(user);
         getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);

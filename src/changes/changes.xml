@@ -5,6 +5,12 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-14" date="2008-xx-xx" description="EAP release">
+            <action dev="mdescher" type="fix">
+                Correctly URL encode the space character (%20) in the auth token.
+            </action>
+        </release>
+
         <release version="3.2-EAP-13" date="2008-06-03" description="EAP release">
             <action dev="mdescher" type="update">
                 Catch all exception when generating path info encryption key.
