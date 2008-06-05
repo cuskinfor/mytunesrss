@@ -6,6 +6,9 @@
     <body>
 
         <release version="3.2-EAP-14" date="2008-xx-xx" description="EAP release">
+            <action dev="mdescher" type="add">
+                Display scan count and items per second for database updates (iTunes, folder, cover images).
+            </action>
             <action dev="mdescher" type="fix">
                 Correctly URL encode the space character (%20) in the auth token.
             </action>

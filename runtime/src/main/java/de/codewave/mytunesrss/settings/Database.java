@@ -150,7 +150,7 @@ public class Database implements MyTunesRssEventListener {
                         initValues();
                         break;
                     case DATABASE_UPDATE_STATE_CHANGED:
-                        myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString(event.getMessageKey()));
+                        myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString(event.getMessageKey(), event.getMessageParams()));
                         setGuiMode(GuiMode.DatabaseUpdating);
                         break;
                     case DATABASE_UPDATE_FINISHED:

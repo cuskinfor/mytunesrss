@@ -6,10 +6,7 @@ import de.codewave.camel.mp3.Id3v2Tag;
 import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.camel.mp4.Mp4Utils;
-import de.codewave.mytunesrss.FileSuffixInfo;
-import de.codewave.mytunesrss.FileSupportUtils;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
@@ -48,6 +45,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private int myUpdatedCount;
     private Set<String> myExistingIds = new HashSet<String>();
     private Collection<String> myTrackIds;
+    private long myScannedCount;
+    private long myLastEventTime;
+    private long myStartTime;
 
     public MyTunesRssFileProcessor(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds)
             throws SQLException {
@@ -66,6 +66,17 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     }
 
     public void process(File file) {
+        myScannedCount++;
+        if (myLastEventTime == 0) {
+            myLastEventTime = System.currentTimeMillis();
+            myStartTime = myLastEventTime;
+        } else if (System.currentTimeMillis() - myLastEventTime > 2500L) {
+            MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+            event.setMessageKey("settings.databaseUpdateRunningFolderWithCount");
+            event.setMessageParams(myScannedCount, myScannedCount / ((System.currentTimeMillis() - myStartTime) / 1000L));
+            MyTunesRssEventManager.getInstance().fireEvent(event);
+            myLastEventTime = System.currentTimeMillis();
+        }
         try {
             if (file.isFile() && FileSupportUtils.isSupported(file.getName())) {
                 String fileId = "file_" + IOUtils.getFilenameHash(file);
@@ -196,7 +207,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private String createComment(Id3Tag tag) {
         try {
             if (tag.isId3v2()) {
-                String comment = " " + MyTunesRss.CONFIG.getId3v2TrackComment() + " "; // make sure the comment does neither start nor end with a token
+                String comment = " " + MyTunesRss.CONFIG.getId3v2TrackComment() + " ";// make sure the comment does neither start nor end with a token
                 if (StringUtils.isNotBlank(comment)) {
                     for (int s = comment.indexOf("${"); s > -1; s = comment.indexOf("${")) {
                         int e = comment.indexOf("}", s);
@@ -205,19 +216,21 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             String[] tokens = instructions[0].split(",");
                             String tagData;
                             if (instructions.length > 2 && instructions[2].trim().toUpperCase().contains("M")) {
-                                tagData = ((Id3v2Tag)tag).getFrameBodiesToString(tokens[0].trim(), tokens.length == 1 ? tokens[0].trim() : tokens[1].trim(), "\n");
+                                tagData = ((Id3v2Tag)tag).getFrameBodiesToString(tokens[0].trim(),
+                                                                                 tokens.length == 1 ? tokens[0].trim() : tokens[1].trim(),
+                                                                                 "\n");
                             } else {
                                 tagData = ((Id3v2Tag)tag).getFrameBodyToString(tokens[0].trim(),
-                                                                                 tokens.length == 1 ? tokens[0].trim() : tokens[1].trim());
-                                }
+                                                                               tokens.length == 1 ? tokens[0].trim() : tokens[1].trim());
+                            }
                             String value = StringUtils.trimToEmpty(tagData);
                             if (StringUtils.isEmpty(value) && instructions.length > 1) {
                                 value = instructions[1];
-                                }
-                                comment = comment.substring(0, s) + value + comment.substring(e + 1);
                             }
+                            comment = comment.substring(0, s) + value + comment.substring(e + 1);
                         }
                     }
+                }
                 if (StringUtils.isNotBlank(comment)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Created comment for ID3 tag: \"" + StringUtils.trimToEmpty(comment) + "\"");

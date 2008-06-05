@@ -236,7 +236,18 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     });
                 }
             });
+            long scannedCount = 0;
+            long lastEventTime = System.currentTimeMillis();
+            long startTime = System.currentTimeMillis();
             for (Track track = result.nextResult(); track != null && !getExecutionThread().isInterrupted(); track = result.nextResult()) {
+                scannedCount++;
+                if (System.currentTimeMillis() - lastEventTime > 2500L) {
+                    event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+                    event.setMessageKey("settings.databaseUpdateRunningImagesWithCount");
+                    event.setMessageParams(scannedCount, scannedCount / ((System.currentTimeMillis() - startTime) / 1000L));
+                    MyTunesRssEventManager.getInstance().fireEvent(event);
+                    lastEventTime = System.currentTimeMillis();
+                }
                 if (track.getFile().lastModified() >= track.getLastImageUpdate()) {
                     storeSession.executeStatement(new HandleTrackImagesStatement(track.getFile(), track.getId()));
                 }

@@ -1,8 +1,6 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.mytunesrss.FileSupportUtils;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
@@ -32,6 +30,9 @@ public class TrackListener implements PListHandlerListener {
     private Map<Long, String> myTrackIdToPersId;
     private Collection<Map> myTrackCache = new HashSet<Map>();
     private Collection<String> myTrackIds;
+    private long myScannedCount;
+    private long myLastEventTime;
+    private long myStartTime;
 
     public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
             Collection<String> trackIds) throws SQLException {
@@ -68,6 +69,17 @@ public class TrackListener implements PListHandlerListener {
     }
 
     private boolean processTrack(Map track, boolean existing) {
+        myScannedCount++;
+        if (myLastEventTime == 0) {
+            myLastEventTime = System.currentTimeMillis();
+            myStartTime = myLastEventTime;
+        } else if (System.currentTimeMillis() - myLastEventTime > 2500L) {
+            MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+            event.setMessageKey("settings.databaseUpdateRunningItunesWithCount");
+            event.setMessageParams(myScannedCount, myScannedCount / ((System.currentTimeMillis() - myStartTime) / 1000L));
+            MyTunesRssEventManager.getInstance().fireEvent(event);
+            myLastEventTime = System.currentTimeMillis();
+        }
         String trackId = calculateTrackId(track);
         String name = (String)track.get("Name");
         String trackType = (String)track.get("Track Type");
