@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
 import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
@@ -204,6 +205,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 LOG.info("Creating database checkpoint.");
                 LOG.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
             }
+            AnonyStatUtils.sendDatabaseUpdated((System.currentTimeMillis() - timeUpdateStart), storeSession.executeQuery(new GetSystemInformationQuery()));
         } catch (Exception e) {
             storeSession.rollback();
             throw e;
@@ -312,6 +314,10 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         if (LOG.isInfoEnabled()) {
             LOG.info("Removing " + trackIds.size() + " tracks from database.");
         }
+        MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+        event.setMessageKey("settings.databaseUpdateRemovingTracks");
+        event.setMessageParams(trackIds.size());
+        MyTunesRssEventManager.getInstance().fireEvent(event);
         storeSession.executeStatement(new RemoveTrackStatement(trackIds));
         DatabaseBuilderTask.doCheckpoint(storeSession, true);
         // ensure the help tables are created with all the data
