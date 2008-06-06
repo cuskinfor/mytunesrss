@@ -5,7 +5,7 @@
     </properties>
     <body>
 
-        <release version="3.2-EAP-14" date="2008-xx-xx" description="EAP release">
+        <release version="3.2-EAP-14" date="2008-06-06" description="EAP release">
             <action dev="mdescher" type="add">
                 Display scan count and items per second for database updates (iTunes, folder, cover images).
             </action>
