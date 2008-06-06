@@ -314,10 +314,6 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         if (LOG.isInfoEnabled()) {
             LOG.info("Removing " + trackIds.size() + " tracks from database.");
         }
-        MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
-        event.setMessageKey("settings.databaseUpdateRemovingTracks");
-        event.setMessageParams(trackIds.size());
-        MyTunesRssEventManager.getInstance().fireEvent(event);
         storeSession.executeStatement(new RemoveTrackStatement(trackIds));
         DatabaseBuilderTask.doCheckpoint(storeSession, true);
         // ensure the help tables are created with all the data
