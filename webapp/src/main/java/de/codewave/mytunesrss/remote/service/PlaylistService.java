@@ -18,8 +18,6 @@ import java.util.*;
  * Service for playlist retrieval and management.
  */
 public class PlaylistService {
-    // todo: remote-api: testing
-
     /**
      * Get all visible playlist from the database.
      *

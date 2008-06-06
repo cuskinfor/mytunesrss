@@ -27,11 +27,11 @@ public class AlbumService {
         throw new IllegalAccessException("Unauthorized");
     }
 
-    public Object getTracks(String album) throws IllegalAccessException, SQLException {
+    public Object getTracks(String[] albums) throws IllegalAccessException, SQLException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter
-                    .getTransaction().executeQuery(FindTrackQuery.getForAlbum(user, new String[] {album}, false)), 0, -1));
+                    .getTransaction().executeQuery(FindTrackQuery.getForAlbum(user, albums, false)), 0, -1));
         }
         throw new IllegalAccessException("Unauthorized");
     }

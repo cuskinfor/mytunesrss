@@ -32,7 +32,6 @@ public class LoginService {
         throw new IllegalAccessException("Unauthorized");
     }
 
-    // todo: remote-api: testing
     public void logout() throws IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {

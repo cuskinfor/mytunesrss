@@ -5,6 +5,7 @@ import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.Album;
 import de.codewave.mytunesrss.datastore.statement.Artist;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.network.RemoteServer;
 import de.codewave.utils.sql.DataStoreQuery;
 
 import java.util.*;
@@ -46,6 +47,7 @@ public class RenderMachine {
         addRenderer(Album.class, new AlbumRenderer());
         addRenderer(Artist.class, new ArtistRenderer());
         addRenderer(Track.class, new TrackRenderer());
+        addRenderer(RemoteServer.class, new RemoteServerRenderer());
     }
 
     public void addRenderer(Class type, Renderer renderer) {

@@ -18,7 +18,6 @@ import java.util.*;
  * Service for playlist retrieval and management.
  */
 public class EditPlaylistService {
-    // todo: remote-api: testing
     private static final Log LOG = LogFactory.getLog(PlaylistService.class);
     private static final String KEY_EDIT_PLAYLIST = "editPlaylist";
     private static final String KEY_EDIT_PLAYLIST_TRACKS = "editPlaylistTracks";
