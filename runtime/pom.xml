@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
-    <version>3.2-EAP-14</version>
+    <version>3.2-EAP-15-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Runtime</name>
     <distributionManagement>
         <site>
@@ -24,7 +24,7 @@
         <dependency>
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>apple</artifactId>
-            <version>3.2-EAP-14</version>
+            <version>3.2-EAP-15-SNAPSHOT</version>
             <scope>runtime</scope>
             <optional />
         </dependency>
@@ -339,8 +339,4 @@
             </plugin>
         </plugins>
     </build>
-
-  <scm>
-    <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/codewave-maven2-base/tags/mytunesrss-3.2-EAP-14</developerConnection>
-  </scm>
 </project>
