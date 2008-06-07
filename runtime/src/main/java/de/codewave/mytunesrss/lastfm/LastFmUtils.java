@@ -81,7 +81,7 @@ public class LastFmUtils {
             PostMethod postMethod = new PostMethod(session.getNowPlayingUrl());
             postMethod.getParams().setContentCharset("UTF-8");
             postMethod.setParameter("s", session.getSessionId());
-            postMethod.setParameter("a", track.getArtist());
+            postMethod.setParameter("a", track.getOriginalArtist());
             postMethod.setParameter("t", track.getName());
             postMethod.setParameter("b", track.getAlbum());
             postMethod.setParameter("l", Integer.toString(track.getTime()));
@@ -122,10 +122,10 @@ public class LastFmUtils {
                         submission = session.pollSubmission()) {
                     if (submission.getTrack().getTime() >= 30) {// only track with at least 30 seconds
                         submissions.add(submission);
-                        postMethod.setParameter("a[" + index + "]", submission.getTrack().getArtist());
+                        postMethod.setParameter("a[" + index + "]", submission.getTrack().getOriginalArtist());
                         postMethod.setParameter("t[" + index + "]", submission.getTrack().getName());
                         postMethod.setParameter("b[" + index + "]", submission.getTrack().getAlbum());
-                        LOG.debug("Adding submission for \"" + submission.getTrack().getAlbum() + " -- " + submission.getTrack().getArtist() +
+                        LOG.debug("Adding submission for \"" + submission.getTrack().getAlbum() + " -- " + submission.getTrack().getOriginalArtist() +
                                 " -- " + submission.getTrack().getName());
                         postMethod.setParameter("l[" + index + "]", Integer.toString(submission.getTrack().getTime()));
                         postMethod.setParameter("n[" + index + "]", Integer.toString(submission.getTrack().getPosNumber()));

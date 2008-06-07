@@ -40,7 +40,7 @@
     <table cellspacing="0">
         <tr>
             <th colspan="2" class="active">
-                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
+                <c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknown, track.originalArtist)}" />
                 -
                 <c:out value="${track.name}" />
             </th>
@@ -82,7 +82,7 @@
                 <fmt:message key="artist" />:
             </td>
             <td>
-                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
+                <c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknown, track.originalArtist)}" />
             </td>
         </tr>
         <tr <mt:flipFlop/>>

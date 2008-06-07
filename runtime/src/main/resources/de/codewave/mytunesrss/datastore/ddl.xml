@@ -8,6 +8,7 @@
                 id VARCHAR(100) NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 artist VARCHAR(255) NOT NULL,
+                original_artist VARCHAR(255) NOT NULL,
                 album VARCHAR(255) NOT NULL,
                 time INTEGER,
                 track_number INTEGER,

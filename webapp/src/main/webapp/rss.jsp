@@ -11,8 +11,8 @@
         <description><fmt:message key="rssChannelDescription"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}</c:set>
             <item>
                 <title><c:out value="${track.name}"/></title>
-                <description><c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" /></description>
-                <author><c:out value="${track.artist}"/></author>
+                <description><c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknown, track.originalArtist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" /></description>
+                <author><c:out value="${track.originalArtist}"/></author>
                 <link>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></link>
                 <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></guid>
                 <pubDate>${pubDate}</pubDate>

@@ -98,6 +98,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
 
     public synchronized void execute(Connection connection) throws SQLException {
         try {
+            String originalArtist = myArtist;
             myArtist = dropWordsFromArtist(myArtist);
             if (myStatement == null) {
                 myStatement = MyTunesRssUtils.createStatement(connection, getStatementName());
@@ -106,6 +107,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setString("name", StringUtils.isNotEmpty(myName) ? myName : UpdateTrackStatement.UNKNOWN);
             myStatement.setString("album", StringUtils.isNotEmpty(myAlbum) ? myAlbum : UpdateTrackStatement.UNKNOWN);
             myStatement.setString("artist", StringUtils.isNotEmpty(myArtist) ? myArtist : UpdateTrackStatement.UNKNOWN);
+            myStatement.setString("original_artist", StringUtils.isNotEmpty(originalArtist) ? originalArtist : UpdateTrackStatement.UNKNOWN);
             myStatement.setInt("time", myTime);
             myStatement.setInt("track_number", myTrackNumber);
             myStatement.setString("file", myFileName);

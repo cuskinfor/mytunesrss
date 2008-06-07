@@ -16,6 +16,7 @@ public class Track {
     private String myName;
     private String myAlbum;
     private String myArtist;
+    private String myOriginalArtist;
     private int myTime;
     private int myTrackNumber;
     private File myFile;
@@ -46,6 +47,14 @@ public class Track {
 
     public void setArtist(String artist) {
         myArtist = artist;
+    }
+
+    public String getOriginalArtist() {
+        return myOriginalArtist;
+    }
+
+    public void setOriginalArtist(String originalArtist) {
+        myOriginalArtist = originalArtist;
     }
 
     public File getFile() {

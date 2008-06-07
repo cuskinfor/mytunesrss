@@ -215,6 +215,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             setName(track.getName());
             setAlbum(track.getAlbum());
             setArtist(track.getArtist());
+            setOriginalArtist(track.getOriginalArtist());
             setTime(track.getTime());
             setTrackNumber(track.getTrackNumber());
             setFile(track.getFile());
