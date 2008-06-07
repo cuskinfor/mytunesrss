@@ -9,6 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * de.codewave.mytunesrss.anonystat.AnonyStatUtils
@@ -16,71 +18,45 @@ import java.io.IOException;
 public class AnonyStatUtils {
     private static final Log LOG = LogFactory.getLog(AnonyStatUtils.class);
     private static final String URL = "http://mytunesrss.com/tools/anonystat.php";
+    private static final AtomicInteger failureCount = new AtomicInteger(0);
+    private static final int MAXIMUM_FAILURES_IN_A_ROW = 3;
+    private static AtomicBoolean disabled = new AtomicBoolean(false);
 
     public static void sendApplicationStarted() {
-        if (MyTunesRss.CONFIG.isSendAnonyStat()) {
-            new Thread(new Runnable() {
-                public void run() {
-                    HttpClient client = MyTunesRssUtils.createHttpClient();
-                    PostMethod postMethod = new PostMethod(URL);
-                    postMethod.addParameter("command", "applicationStarted");
-                    postMethod.addParameter("data",
-                                            "v=" + MyTunesRss.VERSION + ",reg=" + MyTunesRss.REGISTRATION.isRegistered() + ",dbtype=" +
-                                                    MyTunesRss.CONFIG.getDatabaseType());
-                    try {
-                        LOG.debug("Sending statistics: \"applicationStarted\".");
-                        client.executeMethod(postMethod);
-                    } catch (IOException e) {
-                        // intentionally left blank
-                    } finally {
-                        postMethod.releaseConnection();
-                    }
-                }
-            }).start();
-        }
+        sendAsync("applicationStarted",
+                  "v=" + MyTunesRss.VERSION + ",reg=" + MyTunesRss.REGISTRATION.isRegistered() + ",dbtype=" + MyTunesRss.CONFIG.getDatabaseType());
     }
 
-    public static void sendPlayTrack(final String transcoderId, final String type) {
-        if (MyTunesRss.CONFIG.isSendAnonyStat()) {
-            new Thread(new Runnable() {
-                public void run() {
-                    HttpClient client = MyTunesRssUtils.createHttpClient();
-                    PostMethod postMethod = new PostMethod(URL);
-                    postMethod.addParameter("command", "playTrack");
-                    postMethod.addParameter("data", "tc=" + transcoderId + ",type=" + type);
-                    try {
-                        LOG.debug("Sending statistics: \"playTrack\".");
-                        client.executeMethod(postMethod);
-                    } catch (IOException e) {
-                        // intentionally left blank
-                    } finally {
-                        postMethod.releaseConnection();
-                    }
-                }
-            }).start();
-        }
+    public static void sendPlayTrack(String transcoderId, String type) {
+        sendAsync("playTrack", "tc=" + transcoderId + ",type=" + type);
     }
 
-    public static void sendDatabaseUpdated(final long time, final SystemInformation systemInformation) {
-        if (MyTunesRss.CONFIG.isSendAnonyStat()) {
+    public static void sendDatabaseUpdated(long time, SystemInformation systemInformation) {
+        sendAsync("databaseUpdated",
+                  "type=" + MyTunesRss.CONFIG.getDatabaseType() + ",time=" + (time / 1000L) + ",tracks=" + systemInformation.getTrackCount());
+    }
+
+    private static void sendAsync(final String command, final String data) {
+        if (MyTunesRss.CONFIG.isSendAnonyStat() && !disabled.get()) {
             new Thread(new Runnable() {
                 public void run() {
                     HttpClient client = MyTunesRssUtils.createHttpClient();
                     PostMethod postMethod = new PostMethod(URL);
-                    postMethod.addParameter("command", "databaseUpdated");
-                    postMethod.addParameter("data",
-                                            "type=" + MyTunesRss.CONFIG.getDatabaseType() + ",time=" + (time / 1000L) + ",tracks=" +
-                                                    systemInformation.getTrackCount());
+                    postMethod.addParameter("command", command);
+                    postMethod.addParameter("data", data);
                     try {
-                        LOG.debug("Sending statistics: \"databaseUpdated\".");
+                        LOG.debug("Sending statistics: \"" + command + "\".");
                         client.executeMethod(postMethod);
+                        failureCount.set(0);
                     } catch (IOException e) {
-                        // intentionally left blank
+                        if (failureCount.incrementAndGet() == MAXIMUM_FAILURES_IN_A_ROW) {
+                            disabled.set(true);
+                        }
                     } finally {
                         postMethod.releaseConnection();
                     }
                 }
-            }).start();
+            }, "AnonyStatSender[" + command + "]").start();
         }
     }
 }

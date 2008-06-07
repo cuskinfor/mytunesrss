@@ -7,6 +7,12 @@
 
         <release version="3.2-EAP-16" date="xxxx-xx-xx" description="EAP release">
             <action dev="mdescher" type="update">
+                Disable anonymous statistics sender after 3 failures in a row.
+            </action>
+            <action dev="mdescher" type="update">
+                Refactoring of anonymous statistics sender.
+            </action>
+            <action dev="mdescher" type="update">
                 Force all links to playTrack, downloadTrack, getZipArchive, showTrackImage and upload
                 to be non-SSL.
             </action>
