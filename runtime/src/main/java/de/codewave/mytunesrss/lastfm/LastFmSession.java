@@ -12,6 +12,7 @@ public class LastFmSession {
     private String myNowPlayingUrl;
     private String mySubmissionUrl;
     private Queue<LastFmSubmission> mySubmissions = new ConcurrentLinkedQueue<LastFmSubmission>();
+    private String myLastSubmittedTrackId;
 
     public String getNowPlayingUrl() {
         return myNowPlayingUrl;
@@ -37,8 +38,19 @@ public class LastFmSession {
         mySubmissionUrl = submissionUrl;
     }
 
+    public String getLastSubmittedTrackId() {
+        return myLastSubmittedTrackId;
+    }
+
+    public void setLastSubmittedTrackId(String lastSubmittedTrackId) {
+        myLastSubmittedTrackId = lastSubmittedTrackId;
+    }
+
     public void offerSubmission(LastFmSubmission submission) {
-        mySubmissions.offer(submission);
+        if (!submission.getTrack().getId().equals(myLastSubmittedTrackId)) {
+            mySubmissions.offer(submission);
+            myLastSubmittedTrackId = submission.getTrack().getId();
+        }
     }
 
     public void offerSubmissions(List<LastFmSubmission> submissions) {

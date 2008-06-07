@@ -7,6 +7,9 @@
 
         <release version="3.2-EAP-16" date="xxxx-xx-xx" description="EAP release">
             <action dev="mdescher" type="add">
+                Do not send a submission for one track multiple times in a row to last.fm.
+            </action>
+            <action dev="mdescher" type="add">
                 Import original artist into database (track table) so we have it even if some words are
                 dropped from the name. This original name is used for last.fm scrobbling and for display
                 purposes on the track info and in playlists and RSS feeds.
