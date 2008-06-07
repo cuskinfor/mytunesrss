@@ -5,6 +5,13 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-16" date="xxxx-xx-xx" description="EAP release">
+            <action dev="mdescher" type="update">
+                Force all links to playTrack, downloadTrack, getZipArchive, showTrackImage and upload
+                to be non-SSL.
+            </action>
+        </release>
+
         <release version="3.2-EAP-15" date="2008-06-06" description="EAP release">
             <action dev="mdescher" type="add">
                 Display message while removing tracks from database during update.
