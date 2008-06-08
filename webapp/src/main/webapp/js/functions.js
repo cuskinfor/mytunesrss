@@ -4,8 +4,8 @@ var mouseY;
 
 document.onmousemove = updateTooltipPosition;
 
-function sort(servletUrl, sortOrder) {
-    document.forms["browse"].action = servletUrl + "/browseTrack";
+function sort(servletUrl, auth, sortOrder) {
+    document.forms["browse"].action = servletUrl + "/browseTrack/" + auth;
     document.forms["browse"].elements["sortOrder"].value = sortOrder;
     document.forms["browse"].submit();
 }
