@@ -5,6 +5,12 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-17" date="2008-06-08" description="EAP release">
+            <action dev="mdescher" type="add">
+                Support for tomcat proxy host and tomcat proxy port (http and https connectors).
+            </action>
+        </release>
+
         <release version="3.2-EAP-16" date="2008-06-08" description="EAP release">
             <action dev="mdescher" type="add">
                 Do not send a submission for one track multiple times in a row to last.fm.

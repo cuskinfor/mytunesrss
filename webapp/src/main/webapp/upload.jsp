@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -44,7 +44,7 @@
         </tr>
         <tr class="odd">
             <td>
-                <form name="upload" enctype="multipart/form-data" method="post" action="${fn:replace(servletUrl, 'https', 'http')}/upload/${auth}" target="resultFrame">
+                <form name="upload" enctype="multipart/form-data" method="post" action="${mtfn:makeHttp(servletUrl)}/upload/${auth}" target="resultFrame">
                     <input type="file" name="file" /> <input type="submit" value="<fmt:message key="doUpload"/>" onclick="initProgress()"/>
                 </form>
             </td>

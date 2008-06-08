@@ -5,13 +5,13 @@
     <trackList>
         <c:forEach items="${tracks}" var="item">
             <track>
-                <location>${fn:replace(permServletUrl, 'https', 'http')}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}/tc=${mtfn:tcParamValue(config, authUser, item)}/playerRequest=${param.playerRequest}</mt:encrypt>/${mtfn:virtualTrackName(item)}.${mtfn:suffix(config, authUser, item)}</location>
+                <location>${mtfn:makeHttp(permServletUrl)}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}/tc=${mtfn:tcParamValue(config, authUser, item)}/playerRequest=${param.playerRequest}</mt:encrypt>/${mtfn:virtualTrackName(item)}.${mtfn:suffix(config, authUser, item)}</location>
                 <creator><c:out value="${cwfn:choose(mtfn:unknown(item.originalArtist), msgUnknown, item.originalArtist)}" /></creator>
                 <album><c:out value="${cwfn:choose(mtfn:unknown(item.album), msgUnknown, item.album)}" /></album>
                 <title><c:out value="${item.name}"/></title>
                 <c:if test="${!empty item.genre}"><annotation><c:out value="${item.genre}"/></annotation></c:if>
                 <duration>${item.time * 1000}</duration>
-                <image>${fn:replace(permServletUrl, 'https', 'http')}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt></image>
+                <image>${mtfn:makeHttp(permServletUrl)}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt></image>
                 <info>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt></info>
             </track>
         </c:forEach>

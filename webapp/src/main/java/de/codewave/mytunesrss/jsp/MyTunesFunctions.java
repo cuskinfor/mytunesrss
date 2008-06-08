@@ -4,8 +4,6 @@
 
 package de.codewave.mytunesrss.jsp;
 
-import de.codewave.camel.mp3.Mp3Info;
-import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
@@ -21,8 +19,6 @@ import org.apache.commons.logging.LogFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -94,7 +90,8 @@ public class MyTunesFunctions {
     }
 
     public static String suffix(WebConfig config, User user, Track track) {
-        if (config != null && user != null && FileSupportUtils.isMp4(track.getFile()) && MyTunesRss.REGISTRATION.isRegistered() && user.isTranscoder()) {
+        if (config != null && user != null && FileSupportUtils.isMp4(track.getFile()) && MyTunesRss.REGISTRATION.isRegistered() &&
+                user.isTranscoder()) {
             if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
                 return "mp3";
             } else if ("mp4a".equals(track.getMp4Codec()) && config.isFaad2() && MyTunesRss.CONFIG.isValidFaad2Binary()) {
@@ -110,9 +107,11 @@ public class MyTunesFunctions {
 
     public static boolean transcoding(WebConfig config, User user, Track track) {
         if (config != null && user != null && MyTunesRss.REGISTRATION.isRegistered() && user.isTranscoder()) {
-            if (FileSupportUtils.isMp4(track.getFile()) && "alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
+            if (FileSupportUtils.isMp4(track.getFile()) && "alac".equals(track.getMp4Codec()) && config.isAlac() &&
+                    MyTunesRss.CONFIG.isValidAlacBinary()) {
                 return true;
-            } else if (FileSupportUtils.isMp4(track.getFile()) && "mp4a".equals(track.getMp4Codec()) && config.isFaad2() && MyTunesRss.CONFIG.isValidFaad2Binary()) {
+            } else if (FileSupportUtils.isMp4(track.getFile()) && "mp4a".equals(track.getMp4Codec()) && config.isFaad2() &&
+                    MyTunesRss.CONFIG.isValidFaad2Binary()) {
                 return true;
             } else if (FileSupportUtils.isMp3(track.getFile()) && config.isLame() && MyTunesRss.CONFIG.isValidLameBinary()) {
                 return true;
@@ -122,7 +121,8 @@ public class MyTunesFunctions {
     }
 
     public static String tcParamValue(WebConfig config, User user, Track track) {
-        if (config != null && user != null && MyTunesRss.REGISTRATION.isRegistered() && user.isTranscoder() && MyTunesRss.CONFIG.isValidLameBinary()) {
+        if (config != null && user != null && MyTunesRss.REGISTRATION.isRegistered() && user.isTranscoder() &&
+                MyTunesRss.CONFIG.isValidLameBinary()) {
             if (FileSupportUtils.isMp4(track.getFile())) {
                 if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
                     return config.getLameTargetBitrate() + "," + config.getLameTargetSampleRate() + "," + config.isTranscodeOnTheFlyIfPossible();
@@ -206,12 +206,31 @@ public class MyTunesFunctions {
 
     public static String formatDateAsDateAndTime(HttpServletRequest request, long milliseconds) {
         LocalizationContext context = (LocalizationContext)request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
-        ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb", request.getLocale());
+        ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb",
+                                                                                                         request.getLocale());
         SimpleDateFormat format = new SimpleDateFormat(bundle.getString("dateAndTimeFormat"));
         return format.format(new Date(milliseconds));
     }
 
     public static String[] splitComments(String comments) {
         return StringUtils.split(comments, '\n');
+    }
+
+    public static String makeHttp(String url) {
+        String schemePrefix = "https://";
+        if (url != null && url.toLowerCase().startsWith(schemePrefix)) {
+            int httpPort = MyTunesRss.CONFIG.getTomcatProxyPort() > 0 && MyTunesRss.CONFIG.getTomcatProxyPort() < 65536 ?
+                    MyTunesRss.CONFIG.getTomcatProxyPort() : MyTunesRss.CONFIG.getPort();
+            int serverSeparator = url.indexOf("/", schemePrefix.length());
+            if (serverSeparator == -1) {
+                serverSeparator = url.length();
+            }
+            int portSeparator = url.indexOf(':', schemePrefix.length());
+            String oldHost = portSeparator != -1 ? url.substring(schemePrefix.length(), portSeparator) : url.substring(schemePrefix.length(),
+                                                                                                                     serverSeparator);
+            String httpHost = StringUtils.isNotEmpty(MyTunesRss.CONFIG.getTomcatProxyHost()) ? MyTunesRss.CONFIG.getTomcatProxyHost() : oldHost;
+            return "http://" + httpHost + ":" + httpPort + (serverSeparator < url.length() ? url.substring(serverSeparator) : "");
+        }
+        return url;
     }
 }

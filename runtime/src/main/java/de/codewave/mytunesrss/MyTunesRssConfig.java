@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 /**
@@ -96,6 +95,10 @@ public class MyTunesRssConfig {
     private int mySslPort;
     private String mySslKeystoreKeyAlias;
     private List<String> myAdditionalContexts;
+    private String myTomcatProxyHost;
+    private int myTomcatProxyPort;
+    private String myTomcatSslProxyHost;
+    private int myTomcatSslProxyPort;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -358,6 +361,38 @@ public class MyTunesRssConfig {
 
     public void setCodewaveLogLevel(Level codewaveLogLevel) {
         myCodewaveLogLevel = codewaveLogLevel;
+    }
+
+    public String getTomcatProxyHost() {
+        return myTomcatProxyHost;
+    }
+
+    public void setTomcatProxyHost(String tomcatProxyHost) {
+        myTomcatProxyHost = tomcatProxyHost;
+    }
+
+    public String getTomcatSslProxyHost() {
+        return myTomcatSslProxyHost;
+    }
+
+    public void setTomcatSslProxyHost(String tomcatSslProxyHost) {
+        myTomcatSslProxyHost = tomcatSslProxyHost;
+    }
+
+    public int getTomcatSslProxyPort() {
+        return myTomcatSslProxyPort;
+    }
+
+    public void setTomcatSslProxyPort(int tomcatSslProxyPort) {
+        myTomcatSslProxyPort = tomcatSslProxyPort;
+    }
+
+    public int getTomcatProxyPort() {
+        return myTomcatProxyPort;
+    }
+
+    public void setTomcatProxyPort(int tomcatProxyPort) {
+        myTomcatProxyPort = tomcatProxyPort;
     }
 
     public Collection<User> getUsers() {
@@ -741,16 +776,23 @@ public class MyTunesRssConfig {
             setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/ajp-port", 0));
             String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
             setWebappContext(context != null ? "/" + context : "");
+            setTomcatProxyHost(JXPathUtils.getStringValue(settings, "tomcat/proxy-host", null));
+            setTomcatProxyPort(JXPathUtils.getIntValue(settings, "tomcat/proxy-port", 0));
             setSendAnonyStat(JXPathUtils.getBooleanValue(settings, "anonymous-statistics", true));
             setSslKeystoreFile(JXPathUtils.getStringValue(settings, "ssl/keystore/file", null));
             setSslKeystoreKeyAlias(JXPathUtils.getStringValue(settings, "ssl/keystore/keyalias", null));
             setSslKeystorePass(JXPathUtils.getStringValue(settings, "ssl/keystore/pass", null));
             setSslPort(JXPathUtils.getIntValue(settings, "ssl/port", 0));
+            setTomcatSslProxyHost(JXPathUtils.getStringValue(settings, "ssl/proxy-host", null));
+            setTomcatSslProxyPort(JXPathUtils.getIntValue(settings, "ssl/proxy-port", 0));
             myAdditionalContexts = new ArrayList<String>();
             Iterator<JXPathContext> additionalContextsIterator = JXPathUtils.getContextIterator(settings, "tomcat/additionalContexts/context");
             while (additionalContextsIterator.hasNext()) {
                 JXPathContext additionalContext = additionalContextsIterator.next();
-                myAdditionalContexts.add(JXPathUtils.getStringValue(additionalContext, "name", "").trim() + ":" + JXPathUtils.getStringValue(additionalContext, "docbase", "").trim());
+                myAdditionalContexts.add(JXPathUtils.getStringValue(additionalContext, "name", "").trim() + ":" + JXPathUtils.getStringValue(
+                        additionalContext,
+                        "docbase",
+                        "").trim());
             }
         } catch (IOException e) {
             LOG.error("Could not read configuration file.", e);
@@ -898,6 +940,12 @@ public class MyTunesRssConfig {
             if (getTomcatAjpPort() > 0) {
                 tomcat.appendChild(DOMUtils.createIntElement(settings, "ajp-port", getTomcatAjpPort()));
             }
+            if (StringUtils.isNotEmpty(getTomcatProxyHost())) {
+                tomcat.appendChild(DOMUtils.createTextElement(settings, "proxy-host", getTomcatProxyHost()));
+            }
+            if (getTomcatProxyPort() > 0 && getTomcatProxyPort() < 65536) {
+                tomcat.appendChild(DOMUtils.createIntElement(settings, "proxy-port", getTomcatProxyPort()));
+            }
             tomcat.appendChild(DOMUtils.createTextElement(settings, "webapp-context", getWebappContext()));
             if (myAdditionalContexts != null && !myAdditionalContexts.isEmpty()) {
                 Element additionalContexts = settings.createElement("additionalContexts");
@@ -913,6 +961,12 @@ public class MyTunesRssConfig {
             Element ssl = settings.createElement("ssl");
             root.appendChild(ssl);
             ssl.appendChild(DOMUtils.createIntElement(settings, "port", getSslPort()));
+            if (StringUtils.isNotEmpty(getTomcatSslProxyHost())) {
+                ssl.appendChild(DOMUtils.createTextElement(settings, "proxy-host", getTomcatSslProxyHost()));
+            }
+            if (getTomcatSslProxyPort() > 0 && getTomcatSslProxyPort() < 65536) {
+                ssl.appendChild(DOMUtils.createIntElement(settings, "proxy-port", getTomcatSslProxyPort()));
+            }
             Element keystore = settings.createElement("keystore");
             ssl.appendChild(keystore);
             keystore.appendChild(DOMUtils.createTextElement(settings, "file", getSslKeystoreFile()));

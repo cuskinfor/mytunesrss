@@ -155,7 +155,7 @@
                             <td class="icon">
                                 <c:choose>
                                     <c:when test="${authUser.maximumZipEntries <= 0 || album.trackCount <= authUser.maximumZipEntries}">
-                                        <a href="${fn:replace(servletUrl, 'https', 'http')}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/${mtfn:virtualAlbumName(album)}.zip">
+                                        <a href="${mtfn:makeHttp(servletUrl)}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/${mtfn:virtualAlbumName(album)}.zip">
                                             <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
                                     </c:when>
                                     <c:otherwise>
@@ -213,7 +213,7 @@
                             <td class="icon">
                                 <c:choose>
                                     <c:when test="${authUser.maximumZipEntries <= 0 || allAlbumsTrackCount <= authUser.maximumZipEntries}">
-                                        <a href="${fn:replace(servletUrl, 'https', 'http')}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/Albums%20with%20${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.zip">
+                                        <a href="${mtfn:makeHttp(servletUrl)}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/Albums%20with%20${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.zip">
                                             <img src="${appUrl}/images/download${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
                                     </c:when>
                                     <c:otherwise>
@@ -283,7 +283,7 @@
                             <td class="icon">
                                 <c:choose>
                                     <c:when test="${authUser.maximumZipEntries <= 0 || allArtistGenreTrackCount <= authUser.maximumZipEntries}">
-                                        <a href="${fn:replace(servletUrl, 'https', 'http')}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.zip">
+                                        <a href="${mtfn:makeHttp(servletUrl)}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.zip">
                                             <img src="${appUrl}/images/download${cwfn:choose(fn:length(albums) % 2 == 0, '_odd', '')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
                                     </c:when>
                                     <c:otherwise>

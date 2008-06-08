@@ -23,7 +23,7 @@
         );
         var trackLinks = new Array(
             <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus">
-                "${fn:replace(servletUrl, 'https', 'http')}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}/tc=${mtfn:tcParamValue(config, authUser, track)}/playerRequest=${param.playerRequest}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}"<c:if test="${!trackLoopStatus.last}">,</c:if>
+                "${mtfn:makeHttp(servletUrl)}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}/tc=${mtfn:tcParamValue(config, authUser, track)}/playerRequest=${param.playerRequest}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}"<c:if test="${!trackLoopStatus.last}">,</c:if>
             </c:forEach>
         );
         var itemsPerPage = 10;

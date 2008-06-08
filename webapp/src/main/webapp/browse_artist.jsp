@@ -136,7 +136,7 @@
                                 <td class="icon">
                                     <c:choose>
                                         <c:when test="${authUser.maximumZipEntries <= 0 || artist.trackCount <= authUser.maximumZipEntries}">
-                                            <a href="${fn:replace(servletUrl, 'https', 'http')}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.zip">
+                                            <a href="${mtfn:makeHttp(servletUrl)}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.zip">
                                                 <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
                                         </c:when>
                                         <c:otherwise>

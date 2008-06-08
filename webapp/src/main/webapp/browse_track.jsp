@@ -147,7 +147,7 @@
                     <th class="icon">
                         <c:choose>
                             <c:when test="${authUser.maximumZipEntries <= 0 || mtfn:sectionTrackCount(track.sectionIds) <= authUser.maximumZipEntries}">
-                                <a href="${fn:replace(servletUrl, 'https', 'http')}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${sectionArguments}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.zip">
+                                <a href="${mtfn:makeHttp(servletUrl)}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${sectionArguments}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.zip">
                                 <img src="${appUrl}/images/download_th.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
                             </c:when>
                             <c:otherwise>
@@ -228,10 +228,10 @@
             </c:if>
             <c:if test="${authUser.download && config.showDownload}">
                 <td class="icon">
-                    <a href="${fn:replace(servletUrl, 'https', 'http')}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" title="${track.name}">
+                    <a href="${mtfn:makeHttp(servletUrl)}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" title="${track.name}">
                         <c:choose>
                             <c:when test="${!config.yahooMediaPlayer || mtfn:lowerSuffix(config, authUser, track) ne 'mp3'}"><img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" /></c:when>
-                            <c:otherwise><c:set var="yahoo" value="true"/><img src="${fn:replace(servletUrl, 'https', 'http')}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=64</mt:encrypt>" style="display:none"/></c:otherwise>
+                            <c:otherwise><c:set var="yahoo" value="true"/><img src="${mtfn:makeHttp(servletUrl)}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=64</mt:encrypt>" style="display:none"/></c:otherwise>
                         </c:choose>
                     </a>
                 </td>
@@ -242,8 +242,8 @@
                 <c:when test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && config.showDownload && authUser.download && config.yahooMediaPlayer}">
                     <c:set var="yahoo" value="true"/>
                     <td class="icon">
-                        <a href="${fn:replace(servletUrl, 'https', 'http')}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" title="${track.name}">
-                            <img src="${fn:replace(servletUrl, 'https', 'http')}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=64</mt:encrypt>" style="display:none"/>
+                        <a href="${mtfn:makeHttp(servletUrl)}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" title="${track.name}">
+                            <img src="${mtfn:makeHttp(servletUrl)}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=64</mt:encrypt>" style="display:none"/>
                         </a>
                     </td>
                 </c:when>
