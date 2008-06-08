@@ -17,9 +17,6 @@
             <action dev="mdescher" type="add">
                 Disable anonymous statistics sender after 3 failures in a row.
             </action>
-            <action dev="mdescher" type="add">
-                Disable anonymous statistics sender after 3 failures in a row.
-            </action>
             <action dev="mdescher" type="update">
                 Force all links to playTrack, downloadTrack, getZipArchive, showTrackImage and upload
                 to be non-SSL.
