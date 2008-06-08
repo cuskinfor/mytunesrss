@@ -455,8 +455,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="video" type="java.lang.Boolean"/>
         <sql>
-            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
-            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size)
+            INSERT INTO track (id, name, artist, original_artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
+            VALUES (:id, :name, :artist, :original_artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size)
         </sql>
     </statement>
 
@@ -466,8 +466,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="video" type="java.lang.Boolean"/>
         <sql>
-            INSERT INTO track (id, name, artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
-            VALUES (:id, :name, :artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size)
+            INSERT INTO track (id, name, artist, original_artist, album, time, track_number, file, protected, video, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
+            VALUES (:id, :name, :artist, :original_artist, :album, :time, :track_number, :file, :protected, :video, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size)
         </sql>
     </statement>
 
@@ -477,7 +477,7 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="video" type="java.lang.Boolean"/>
         <sql>
-            UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
+            UPDATE track SET name = :name, album = :album, artist = :artist, original_artist = :original_artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, video = :video, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size
             WHERE id = :id
@@ -490,7 +490,7 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="video" type="java.lang.Boolean"/>
         <sql>
-            UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
+            UPDATE track SET name = :name, album = :album, artist = :artist, original_artist = :original_artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, video = :video, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated, pos_number = :pos_number,
                              pos_size = :pos_size
