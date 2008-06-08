@@ -502,7 +502,9 @@ public class User implements MyTunesRssEventListener {
                     }
                     if (myLastFmSession != null) {
                         if (LastFmUtils.sendSubmissions(myLastFmSession) && LastFmUtils.sendNowPlaying(myLastFmSession, track)) {
-                            myLastFmSession.offerSubmission(new LastFmSubmission(track, playTime));
+                            if (myLastFmSession != null) {
+                                myLastFmSession.offerSubmission(new LastFmSubmission(track, playTime));
+                            }
                         } else {
                             myLastFmHardFailureCount++;
                             LOG.warn("Hard LastFM failure (count = " + myLastFmHardFailureCount + ").");
