@@ -5,6 +5,12 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-18" date="2008-06-09" description="EAP release">
+            <action dev="mdescher" type="fix">
+                Fix for database migration to EAP-16.
+            </action>
+        </release>
+
         <release version="3.2-EAP-17" date="2008-06-08" description="EAP release">
             <action dev="mdescher" type="add">
                 Support for tomcat proxy host and tomcat proxy port (http and https connectors).
