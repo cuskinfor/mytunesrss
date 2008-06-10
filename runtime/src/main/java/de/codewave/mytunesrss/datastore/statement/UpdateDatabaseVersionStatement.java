@@ -12,9 +12,15 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement
  */
 public class UpdateDatabaseVersionStatement implements DataStoreStatement {
+    private String myVersion;
+
+    public UpdateDatabaseVersionStatement(String version) {
+        myVersion = version;
+    }
+
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateDatabaseVersion");
-        statement.setString("version", MyTunesRss.VERSION);
+        statement.setString("version", myVersion);
         statement.execute();
     }
 }

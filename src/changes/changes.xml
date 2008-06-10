@@ -5,6 +5,12 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-19" date="2008-06-10" description="EAP release">
+            <action dev="mdescher" type="fix">
+                Fix for database migration to EAP-16 (this time really).
+            </action>
+        </release>
+
         <release version="3.2-EAP-18" date="2008-06-09" description="EAP release">
             <action dev="mdescher" type="fix">
                 Fix for database migration to EAP-16.
