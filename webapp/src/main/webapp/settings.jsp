@@ -195,6 +195,16 @@
                            style="width: 50px;" />
                 </td>
             </tr>
+            <tr <mt:flipFlop/>>
+                <td><fmt:message key="settings.browserStartIndex" /></td>
+                <td>
+                    <select name="browserStartIndex">
+                        <option value="" <c:if test="${config.browserStartIndex == ''}">selected="selected"</c:if>><fmt:message key="alphabetPagerAll"/></option>
+                        <option value="0" <c:if test="${config.browserStartIndex == '0'}">selected="selected"</c:if>>0 - 9</option>
+                        <option value="1" <c:if test="${config.browserStartIndex == '1'}">selected="selected"</c:if>>A - C</option>
+                    </select>
+                </td>
+            </tr>
             <c:if test="${authUser.rss}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.playlistTypes.rss" /></td>

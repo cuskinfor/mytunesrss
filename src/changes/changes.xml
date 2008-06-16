@@ -5,6 +5,17 @@
     </properties>
     <body>
 
+        <release version="3.2-EAP-20" date="?" description="EAP release">
+            <action dev="mdescher" type="add">
+                Clickable links for "albums", "artists" and "genres" in
+                database statistics on portal page.
+            </action>
+            <action dev="mdescher" type="add">
+                User selectable start page for alphabet pager (0-9, A-C, all)
+                in web settings.
+            </action>
+        </release>
+
         <release version="3.2-EAP-19" date="2008-06-10" description="EAP release">
             <action dev="mdescher" type="fix">
                 Fix for database migration to EAP-16 (this time really).

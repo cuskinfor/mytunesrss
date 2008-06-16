@@ -55,7 +55,7 @@
                                                                                      value="<fmt:message key="doSearch"/>" />
                 </td>
                 <td class="links">
-                    <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=1</mt:encrypt>" style="background-image:url('${appUrl}/images/library_small.gif');">
+                    <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>" style="background-image:url('${appUrl}/images/library_small.gif');">
                         <fmt:message key="browseLibrary" />
                     </a>
                     <c:if test="${authUser.createPlaylists}">
@@ -98,9 +98,9 @@
                     <table class="statistics">
                         <tr>
                             <td><fmt:message key="statistics.tracks" />: ${statistics.trackCount}</td>
-                            <td><fmt:message key="statistics.albums" />: ${statistics.albumCount}</td>
-                            <td><fmt:message key="statistics.artists" />: ${statistics.artistCount}</td>
-                            <td style="width:100%"><fmt:message key="statistics.genres" />: ${statistics.genreCount}</td>
+                            <td><a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>"><fmt:message key="statistics.albums" />: ${statistics.albumCount}</a></td>
+                            <td><a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>"><fmt:message key="statistics.artists" />: ${statistics.artistCount}</a></td>
+                            <td style="width:100%"><a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>"><fmt:message key="statistics.genres" />: ${statistics.genreCount}</a></td>
                         </tr>
                     </table>
                 </td>
