@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <statements>
+
     <statement name="getVersion">
         <sql>SELECT version AS version FROM system_information</sql>
     </statement>
@@ -88,11 +89,6 @@
 
     <statement name="migrate_3.2_eap_16_part1">
         <sql>ALTER TABLE track ADD COLUMN original_artist VARCHAR(255)</sql>
-    </statement>
-
-    <statement name="migrate_3.2_eap_16_part2">
-        <sql>UPDATE track SET original_artist = artist</sql>
-        <sql>ALTER TABLE track ALTER COLUMN original_artist SET NOT NULL</sql>
     </statement>
 
 </statements>
