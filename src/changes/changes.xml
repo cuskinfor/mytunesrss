@@ -5,7 +5,7 @@
     </properties>
     <body>
 
-        <release version="3.2-EAP-20" date="2008-06-19" description="EAP release">
+        <release version="3.2-EAP-20" date="?" description="EAP release">
             <action dev="mdescher" type="add">
                 Clickable links for "albums", "artists" and "genres" in
                 database statistics on portal page.
