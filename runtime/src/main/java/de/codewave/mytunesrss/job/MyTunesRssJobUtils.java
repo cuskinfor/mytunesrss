@@ -58,8 +58,12 @@ public class MyTunesRssJobUtils {
     }
 
     public static TriggerItem[] getHours() {
-        TriggerItem[] values = new TriggerItem[25];
+        TriggerItem[] values = new TriggerItem[29];
         values[24] = new TriggerItem("0/1", "00/01");
+        values[25] = new TriggerItem("0/2", "00/02");
+        values[26] = new TriggerItem("0/3", "00/03");
+        values[27] = new TriggerItem("0/6", "00/06");
+        values[28] = new TriggerItem("0/12", "00/12");
         for (int i = 0; i < 24; i++) {
             String key = Integer.toString(i);
             String value = (i < 10 ? "0" : "") + Integer.toString(i);
