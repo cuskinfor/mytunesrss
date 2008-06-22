@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>mytunesrss</artifactId>
     <packaging>pom</packaging>
-    <version>3.2-EAP-20</version>
+    <version>3.2-EAP-21-SNAPSHOT</version>
     <name>mytunesrss</name>
     <distributionManagement>
         <site>
@@ -12,7 +12,7 @@
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>
     <scm>
-        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/tags/mytunesrss-3.2-EAP-20</developerConnection>
+        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/trunk</developerConnection>
     </scm>
     <parent>
         <groupId>de.codewave</groupId>
