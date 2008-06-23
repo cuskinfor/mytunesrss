@@ -24,7 +24,7 @@ import java.util.ArrayList;
  */
 public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
     private static final Log LOG = LogFactory.getLog(ServerConfig.class);
-    
+
     ServerConfig() throws NotCompliantMBeanException {
         super(ServerConfigMBean.class);
     }
@@ -239,5 +239,13 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
 
     public void setWebappContext(String context) {
         MyTunesRss.CONFIG.setWebappContext(context);
+    }
+
+    public int getTomcatMaxThreads() {
+        return Integer.parseInt(MyTunesRss.CONFIG.getTomcatMaxThreads());
+    }
+
+    public void setTomcatMaxThreads(int maxThreads) {
+        MyTunesRss.CONFIG.setTomcatMaxThreads(Integer.toString(maxThreads));
     }
 }

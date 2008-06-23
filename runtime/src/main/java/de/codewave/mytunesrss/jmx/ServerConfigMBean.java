@@ -85,6 +85,10 @@ public interface ServerConfigMBean {
     String addAdditionalContext(String context, String docbase);
 
     String removeAdditionalContext(String context);
+
+    int getTomcatMaxThreads();
+
+    void setTomcatMaxThreads(int maxThreads);
 }
 
 
