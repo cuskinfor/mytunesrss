@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss.jmx;
 
+import java.util.List;
+
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
  * 13.02.2007
@@ -37,6 +39,52 @@ public interface ServerConfigMBean {
     String[] getLocalAddresses();
 
     String getExternalAddress();
+
+    int getAjpPort();
+
+    void setAjpPort(int port);
+
+    int getSslPort();
+
+    void setSslPort(int port);
+
+    String getSslKeystoreFile();
+
+    void setSslKeystoreFile(String file);
+
+    String getSslKeystorePassphrase();
+
+    void setSslKeystorePassphrase(String passphrase);
+
+    String getSslKeystoreKeyAlias();
+
+    void setSslKeystoreKeyAlias(String alias);
+
+    String getTomcatProxyHost();
+
+    void setTomcatProxyHost(String host);
+
+    int getTomcatProxyPort();
+
+    void setTomcatProxyPort(int port);
+
+    String getTomcatSslProxyHost();
+
+    void setTomcatSslProxyHost(String host);
+
+    int getTomcatSslProxyPort();
+
+    void setTomcatSslProxyPort(int port);
+
+    String getWebappContext();
+
+    void setWebappContext(String context);
+
+    List<String> getAdditionalContexts();
+
+    String addAdditionalContext(String context, String docbase);
+
+    String removeAdditionalContext(String context);
 }
 
 

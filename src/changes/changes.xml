@@ -6,6 +6,9 @@
     <body>
 
         <release version="3.2-RC-1" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="add">
+                Several JMX options added.
+            </action>
             <action dev="mdescher" type="fix">
                 Do not add a watch folder for scanning if the same folder is
                 already contained in the scanned folders set.
