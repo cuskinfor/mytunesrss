@@ -81,7 +81,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 File each = iter.next();
                 if (each.isDirectory()) {
                     try {
-                        if (de.codewave.utils.io.IOUtils.isContained(each, file)) {
+                        if (each.equals(file) || de.codewave.utils.io.IOUtils.isContained(each, file)) {
                             if (LOG.isInfoEnabled()) {
                                 LOG.info("Not adding \"" + file.getAbsolutePath() + "\" to database update sources.");
                             }

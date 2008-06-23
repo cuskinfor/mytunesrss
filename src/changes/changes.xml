@@ -5,6 +5,13 @@
     </properties>
     <body>
 
+        <release version="3.2-RC-1" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="fix">
+                Do not add a watch folder for scanning if the same folder is
+                already contained in the scanned folders set.
+            </action>
+        </release>
+
         <release version="3.2-EAP-20" date="2008-06-22" description="EAP release">
             <action dev="mdescher" type="update">
                 EAP license key valid until 2008-08-31 now.
