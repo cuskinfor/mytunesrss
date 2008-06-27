@@ -4,11 +4,12 @@
 
 package de.codewave.mytunesrss.datastore;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.utils.sql.DataStore;
-import de.codewave.utils.sql.SmartStatementFactory;
-import de.codewave.utils.xml.JXPathUtils;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
@@ -16,11 +17,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
-import java.io.IOException;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.sql.DataStore;
+import de.codewave.utils.sql.SmartStatementFactory;
+import de.codewave.utils.xml.JXPathUtils;
 
 /**
  * de.codewave.mytunesrss.datastore.MyTunesRssDataStore
@@ -31,49 +32,63 @@ public class MyTunesRssDataStore extends DataStore {
 
     private SmartStatementFactory mySmartStatementFactory;
 
+    @Override
     public void init() throws IOException {
         initSmartStatementFactory();
-        LOG.info("Creating database connection pool for connect string \"" + MyTunesRss.CONFIG.getDatabaseConnection() + "\".");
-        setConnectionPool(new GenericObjectPool(new BasePoolableObjectFactory() {
-            public Object makeObject() throws Exception {
-                long endTime = System.currentTimeMillis() + 10000;
-                do {
-                    try {
-                        return DriverManager.getConnection(MyTunesRss.CONFIG.getDatabaseConnection(),
-                                                           MyTunesRss.CONFIG.getDatabaseUser(),
-                                                           MyTunesRss.CONFIG.getDatabasePassword());
-                    } catch (SQLException e) {
-                        if (LOG.isWarnEnabled()) {
-                            LOG.warn("Could not get a database connection.");
+        LOG.info("Creating database connection pool for connect string \""
+                + MyTunesRss.CONFIG.getDatabaseConnection() + "\".");
+        setConnectionPool(new GenericObjectPool(
+                new BasePoolableObjectFactory() {
+                    @Override
+                    public Object makeObject() throws Exception {
+                        long endTime = System.currentTimeMillis() + 10000;
+                        do {
+                            try {
+                                return DriverManager
+                                        .getConnection(MyTunesRss.CONFIG
+                                                .getDatabaseConnection(),
+                                                MyTunesRss.CONFIG
+                                                        .getDatabaseUser(),
+                                                MyTunesRss.CONFIG
+                                                        .getDatabasePassword());
+                            } catch (SQLException e) {
+                                if (LOG.isWarnEnabled()) {
+                                    LOG
+                                            .warn("Could not get a database connection.");
+                                }
+                            }
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                // intentionally left blank
+                            }
+                        } while (System.currentTimeMillis() < endTime);
+                        try {
+                            return DriverManager.getConnection(
+                                    MyTunesRss.CONFIG.getDatabaseConnection(),
+                                    MyTunesRss.CONFIG.getDatabaseUser(),
+                                    MyTunesRss.CONFIG.getDatabasePassword());
+                        } catch (SQLException e) {
+                            if (LOG.isErrorEnabled()) {
+                                LOG.error(
+                                        "Could not get a database connection.",
+                                        e);
+                            }
+                        }
+                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils
+                                .getBundleString("error.noDatabaseConnection"));
+                        MyTunesRssUtils.shutdown();
+                        return null;
+                    }
+
+                    @Override
+                    public void destroyObject(Object object) throws Exception {
+                        if (object instanceof Connection) {
+                            ((Connection) object).close();
                         }
                     }
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        // intentionally left blank
-                    }
-                } while (System.currentTimeMillis() < endTime);
-                try {
-                    return DriverManager.getConnection(MyTunesRss.CONFIG.getDatabaseConnection(),
-                                                       MyTunesRss.CONFIG.getDatabaseUser(),
-                                                       MyTunesRss.CONFIG.getDatabasePassword());
-                } catch (SQLException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not get a database connection.", e);
-                    }
-                }
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.noDatabaseConnection"));
-                MyTunesRssUtils.shutdown();
-                return null;
-            }
-
-            @Override
-            public void destroyObject(Object object) throws Exception {
-                if (object instanceof Connection) {
-                    ((Connection)object).close();
-                }
-            }
-        }, 50, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, -1, 20, 0, false, false, 5000, 5, 10000, false, 10000));
+                }, 25, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 30000, 10, 5,
+                false, false, 15000, 10, 3600000, false, 60000));
     }
 
     @Override
@@ -86,20 +101,24 @@ public class MyTunesRssDataStore extends DataStore {
     private void initSmartStatementFactory() {
         String databaseType = MyTunesRss.CONFIG.getDatabaseType();
         LOG.info("Using DML/DDL for database type \"" + databaseType + "\".");
-        JXPathContext[] contexts =
-                new JXPathContext[] {JXPathUtils.getContext(getClass().getResource("ddl.xml")), JXPathUtils.getContext(getClass().getResource(
-                        "dml.xml")), JXPathUtils.getContext(getClass().getResource("migration.xml"))};
+        JXPathContext[] contexts = new JXPathContext[] {
+                JXPathUtils.getContext(getClass().getResource("ddl.xml")),
+                JXPathUtils.getContext(getClass().getResource("dml.xml")),
+                JXPathUtils.getContext(getClass().getResource("migration.xml")) };
         URL url = getClass().getResource("ddl_" + databaseType + ".xml");
         if (url != null) {
-            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils.getContext(url));
+            contexts = (JXPathContext[]) ArrayUtils.add(contexts, JXPathUtils
+                    .getContext(url));
         }
         url = getClass().getResource("dml_" + databaseType + ".xml");
         if (url != null) {
-            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils.getContext(url));
+            contexts = (JXPathContext[]) ArrayUtils.add(contexts, JXPathUtils
+                    .getContext(url));
         }
         url = getClass().getResource("migration_" + databaseType + ".xml");
         if (url != null) {
-            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils.getContext(url));
+            contexts = (JXPathContext[]) ArrayUtils.add(contexts, JXPathUtils
+                    .getContext(url));
         }
         mySmartStatementFactory = SmartStatementFactory.getInstance(contexts);
     }
