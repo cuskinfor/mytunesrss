@@ -6,6 +6,12 @@
     <body>
 
         <release version="3.2-RC-1" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="fix">
+                Fixed database pool leak.
+            </action>
+            <action dev="mdescher" type="update">
+                commons-pool-1.4
+            </action>
             <action dev="mdescher" type="add">
                 Several JMX options added.
             </action>
