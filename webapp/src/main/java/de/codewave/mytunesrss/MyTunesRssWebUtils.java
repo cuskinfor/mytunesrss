@@ -5,6 +5,7 @@ import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.servlet.ServletUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.StringUtils;
 
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
@@ -73,6 +74,11 @@ public class MyTunesRssWebUtils {
             }
         }
         errors.add(error);
+    }
+
+    public static boolean isUserAgentPsp(HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        return StringUtils.isNotEmpty(userAgent) && userAgent.contains("PSP");
     }
 }
 

@@ -58,6 +58,12 @@ public enum MyTunesRssResource {
         if (this == Portal && !Boolean.TRUE.equals(request.getSession().getAttribute("welcomeMessageDone"))) {
             handleWelcomeMessage(request);
         }
+        if (this == PlaylistManager) {
+            request.setAttribute("deleteConfirmation", !MyTunesRssWebUtils.isUserAgentPsp(request));
+        }
+        if (this == BrowseAlbum || this == BrowseArtist || this == BrowseGenre || this == BrowseTrack) {
+            request.setAttribute("simpleNewPlaylist", MyTunesRssWebUtils.isUserAgentPsp(request));
+        }
     }
 
     private void handleWelcomeMessage(HttpServletRequest request) {

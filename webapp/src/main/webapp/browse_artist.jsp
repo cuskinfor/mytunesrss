@@ -40,7 +40,7 @@
         <c:if test="${empty sessionScope.playlist && authUser.createPlaylists}">
             <li>
                 <c:choose>
-                    <c:when test="${empty editablePlaylists}">
+                    <c:when test="${empty editablePlaylists || simpleNewPlaylist}">
                         <a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><fmt:message key="newPlaylist"/></a>
                     </c:when>
                     <c:otherwise>

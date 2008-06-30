@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.utils.MiscUtils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +31,7 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
             getRequest().setAttribute("channel", MiscUtils.decodeUrl(channel.replace('_', ' ')));
             getRequest().setAttribute("pubDate", PUBLISH_DATE_FORMAT.format(new Date()));
             getRequest().setAttribute("feedUrl", feedUrl);
-            getRequest().setAttribute("userAgentPsp", isUserAgentPSP());
+            getRequest().setAttribute("userAgentPsp", MyTunesRssWebUtils.isUserAgentPsp(getRequest()));
             Collection<Track> tracks = getTracks().getResults();
             if (tracks != null && !tracks.isEmpty()) {
                 for (Track track : tracks) {

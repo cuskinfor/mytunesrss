@@ -7,6 +7,10 @@
 
         <release version="3.2-RC-1" date="????-??-??" description="EAP release">
             <action dev="mdescher" type="fix">
+                Removed overlay popups on PSP and fixed login/password field
+                visible lengths.
+            </action>
+            <action dev="mdescher" type="fix">
                 Fixed database pool leak.
             </action>
             <action dev="mdescher" type="update">

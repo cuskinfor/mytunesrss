@@ -253,6 +253,10 @@ table.portal td.search input.text {
     width:120px;
 }
 
+table.login input.text {
+    width:120px;
+}
+
 table.portal td.links {
     width: 130px;
     padding: 5px 10px 0 10px;
