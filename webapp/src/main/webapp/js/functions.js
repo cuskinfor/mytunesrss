@@ -97,16 +97,19 @@ function showDialog(dialogId, functions) {
     var glasspane = document.getElementById("glasspane");
     dialogElement = document.getElementById(dialogId);
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    glasspane.style.width = document.documentElement.clientWidth + "px";
+    glasspane.style.height = document.documentElement.clientHeight + "px";
     glasspane.style.zIndex = 999;
     glasspane.style.display = "block";
     dialogElement.style.zIndex = -1000;
     dialogElement.style.display = "block";
-    var left = (document.width - dialogElement.scrollWidth) / 2;
+    var left = ((document.width ? document.width : document.documentElement.clientWidth) - dialogElement.scrollWidth) / 2;
     if (left < 0) {
         left = 0;
     }
     dialogElement.style.left = left + "px";
-    var top = (window.innerHeight - dialogElement.scrollHeight) / 2;
+    var top = ((window.innerHeight ? window.innerHeight : document.documentElement.clientHeight) - dialogElement.scrollHeight) / 2;
     if (top < 0) {
         top = 0;
     }
@@ -120,6 +123,7 @@ function clickDialog(functionIndex) {
     glasspane.style.display = "none";
     glasspane.style.zIndex = -999;
     document.body.style.overflow = "auto";
+    document.documentElement.style.overflow = "auto";
     if (dialogFunctions[functionIndex]) {
         dialogFunctions[functionIndex]();
     }
