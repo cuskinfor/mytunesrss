@@ -7,7 +7,7 @@
 
         <release version="3.2-RC-1" date="????-??-??" description="EAP release">
             <action dev="mdescher" type="fix">
-                Overlay popups work for IE 6 now and hopefully IE 7 as well.
+                Overlay popups now work in Firefox, Safari, Opera and Internet Explorer.
             </action>
             <action dev="mdescher" type="fix">
                 Removed overlay popups on PSP and fixed login/password field

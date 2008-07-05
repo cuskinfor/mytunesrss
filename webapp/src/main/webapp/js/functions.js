@@ -96,32 +96,38 @@ function showDialog(dialogId, functions) {
     dialogFunctions = functions;
     var glasspane = document.getElementById("glasspane");
     dialogElement = document.getElementById(dialogId);
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
-    glasspane.style.width = document.documentElement.clientWidth + "px";
-    glasspane.style.height = document.documentElement.clientHeight + "px";
-    glasspane.style.zIndex = 999;
-    glasspane.style.display = "block";
-    dialogElement.style.zIndex = -1000;
-    dialogElement.style.display = "block";
-    var left = ((document.width ? document.width : document.documentElement.clientWidth) - dialogElement.scrollWidth) / 2;
-    if (left < 0) {
-        left = 0;
+    if (glasspane && dialogFunctions && dialogElement) {
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
+        disableScrollWheel(document.documentElement);
+        glasspane.style.width = document.documentElement.clientWidth + "px";
+        glasspane.style.height = document.documentElement.clientHeight + "px";
+        glasspane.style.zIndex = 999;
+        glasspane.style.display = "block";
+        dialogElement.style.zIndex = -1000;
+        dialogElement.style.display = "block";
+        var left = ((document.width ? document.width : document.documentElement.clientWidth) - dialogElement.scrollWidth) / 2;
+        if (left < 0) {
+            left = 0;
+        }
+        dialogElement.style.left = left + "px";
+        var top = ((window.innerHeight ? window.innerHeight : document.documentElement.clientHeight) - dialogElement.scrollHeight) / 2;
+        if (top < 0) {
+            top = 0;
+        }
+        dialogElement.style.top = top + "px";
+        dialogElement.style.zIndex = 1000;
     }
-    dialogElement.style.left = left + "px";
-    var top = ((window.innerHeight ? window.innerHeight : document.documentElement.clientHeight) - dialogElement.scrollHeight) / 2;
-    if (top < 0) {
-        top = 0;
-    }
-    dialogElement.style.top = top + "px";
-    dialogElement.style.zIndex = 1000;
 }
 
 function clickDialog(functionIndex) {
     var glasspane = document.getElementById("glasspane");
     dialogElement.style.display = "none";
+    glasspane.style.width = "1px";
+    glasspane.style.height = "1px";
     glasspane.style.display = "none";
     glasspane.style.zIndex = -999;
+    enableScrollWheel(document.documentElement);
     document.body.style.overflow = "auto";
     document.documentElement.style.overflow = "auto";
     if (dialogFunctions[functionIndex]) {
@@ -132,4 +138,33 @@ function clickDialog(functionIndex) {
 function editExistingPlaylist() {
     var element = document.getElementById("playlistSelection");
     document.location.href = element.options[element.selectedIndex].value;
+}
+
+function cancelEvent(event) {
+    event = event ? event : window.event;
+    if (event.stopPropagation) {
+        event.stopPropagation();
+    }
+    if (event.preventDefault) {
+        event.preventDefault();
+    }
+    event.cancelBubble = true;
+    event.cancel = true;
+    event.returnValue = false;
+return false;
+}
+
+
+function disableScrollWheel(element) {
+    if (element && element.addEventListener) {
+        element.addEventListener("DOMMouseScroll", cancelEvent, false);
+        element.addEventListener("mousewheel", cancelEvent, false);
+    }
+}
+
+function enableScrollWheel(element) {
+    if (element && element.removeEventListener) {
+        element.removeEventListener('DOMMouseScroll', cancelEvent, false);
+        element.removeEventListener("mousewheel", cancelEvent, false);
+    }
 }
