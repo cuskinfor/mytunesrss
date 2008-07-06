@@ -41,7 +41,6 @@ public class MyTunesRssDataStore extends DataStore {
                 long endTime = System.currentTimeMillis() + 10000;
                 do {
                     try {
-                        LOG.debug("Creating a new database connection.", new Exception());
                         return DriverManager
                                 .getConnection(MyTunesRss.CONFIG
                                         .getDatabaseConnection(), MyTunesRss.CONFIG
@@ -60,7 +59,6 @@ public class MyTunesRssDataStore extends DataStore {
                     }
                 } while (System.currentTimeMillis() < endTime);
                 try {
-                    LOG.debug("Creating a new database connection.", new Exception());
                     return DriverManager.getConnection(MyTunesRss.CONFIG.getDatabaseConnection(),
                                                        MyTunesRss.CONFIG.getDatabaseUser(),
                                                        MyTunesRss.CONFIG.getDatabasePassword());
@@ -78,7 +76,6 @@ public class MyTunesRssDataStore extends DataStore {
             @Override
             public void destroyObject(Object object) throws Exception {
                 if (object instanceof Connection) {
-                    LOG.debug("Closing an old database connection.", new Exception());
                     ((Connection)object).close();
                 }
             }
