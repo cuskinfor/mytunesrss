@@ -152,13 +152,8 @@ public class UserManagement implements MyTunesRssEventListener {
 
     public class CreateUserActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            if (MyTunesRss.REGISTRATION.isRegistered() || MyTunesRss.CONFIG.getUsers().size() < MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
-                new EditUser().display(MyTunesRss.ROOT_FRAME, null);
-                refreshUserList();
-            } else {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.unregisteredMaxUsers",
-                                                                                 MyTunesRssRegistration.UNREGISTERED_MAX_USERS));
-            }
+            new EditUser().display(MyTunesRss.ROOT_FRAME, null);
+            refreshUserList();
         }
     }
 

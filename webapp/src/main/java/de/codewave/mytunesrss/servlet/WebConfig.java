@@ -85,15 +85,6 @@ public class WebConfig {
                     throw new IllegalArgumentException("illegal playlist type: " + this.name());
             }
         }
-
-        public boolean isFreeware() {
-            switch (this) {
-                case QtPlugin:
-                    return false;
-                default:
-                    return true;
-            }
-        }
     }
 
     private Map<String, String> myConfigValues = new HashMap<String, String>();
@@ -302,10 +293,8 @@ public class WebConfig {
         String type = myConfigValues.get(CFG_PLAYLIST_TYPE);
         if (StringUtils.isNotEmpty(type)) {
             try {
-                PlaylistType playlistType = PlaylistType.valueOf(type);
-                if (MyTunesRss.REGISTRATION.isRegistered() || playlistType.isFreeware()) {
-                    return type;
-                }
+                PlaylistType.valueOf(type);
+                return type;
             } catch (IllegalArgumentException e) {
                 // set default value and return it
             }

@@ -197,7 +197,10 @@ public class MyTunesRss {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.defaulRegistrationExpired"));
             MyTunesRssUtils.shutdown();
         } else if (registrationResult == MyTunesRssRegistration.RegistrationResult.ExternalExpired) {
-            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
+            if (HEADLESS) {
+                MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
+                MyTunesRssUtils.shutdown();
+            }
         }
         if (MyTunesRss.CONFIG.isDefaultDatabase() && MyTunesRss.CONFIG.isDeleteDatabaseOnNextStartOnError()) {
             new DeleteDatabaseFilesTask().execute();
@@ -220,9 +223,7 @@ public class MyTunesRss {
                 STREAMING_CACHE.clearCache();
             }
         }
-        if (MyTunesRss.REGISTRATION.isRegistered()) {
-            MyTunesRssJmxUtils.startJmxServer();
-        }
+        MyTunesRssJmxUtils.startJmxServer();
         if (HEADLESS) {
             executeHeadlessMode();
         } else {
@@ -387,6 +388,11 @@ public class MyTunesRss {
             SwingUtils.packAndShow(ROOT_FRAME);
             ensureCompletelyOnScreen(ROOT_FRAME);
         }
+        if (!REGISTRATION.isRegistered()) {
+            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
+            SETTINGS.getInfoForm().forceRegistration();
+            MyTunesRssUtils.shutdown();
+        }
         if (CONFIG.isAutoStartServer()) {
             SETTINGS.doStartServer();
             if (SystemUtils.IS_OS_MAC_OSX) {
@@ -459,24 +465,20 @@ public class MyTunesRss {
         if (LOG.isInfoEnabled()) {
             LOG.info("Headless mode");
         }
-        if (MyTunesRss.REGISTRATION.isRegistered()) {
-            MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
-            if (CONFIG.isAutoStartServer()) {
-                startWebserver();
-            }
-            while (!QUIT_REQUEST) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // intentionally left blank
-
-                }
-            }
-            MyTunesRssJmxUtils.stopJmxServer();
-            CONFIG.save();
-        } else {
-            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.unregisteredNoHeadlessMode"));
+        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
+        if (CONFIG.isAutoStartServer()) {
+            startWebserver();
         }
+        while (!QUIT_REQUEST) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // intentionally left blank
+
+            }
+        }
+        MyTunesRssJmxUtils.stopJmxServer();
+        CONFIG.save();
         SERVER_RUNNING_TIMER.cancel();
         STORE.destroy();
     }

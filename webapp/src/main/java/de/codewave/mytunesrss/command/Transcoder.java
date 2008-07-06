@@ -117,7 +117,7 @@ public abstract class Transcoder {
     }
 
     public boolean isAvailable() {
-        return MyTunesRss.REGISTRATION.isRegistered() && myTargetBitrate > 0 && myTargetSampleRate > 0;
+        return myTargetBitrate > 0 && myTargetSampleRate > 0;
     }
 
     protected int getTargetBitrate() {

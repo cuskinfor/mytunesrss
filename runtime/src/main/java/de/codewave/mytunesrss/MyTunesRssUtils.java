@@ -149,9 +149,7 @@ public class MyTunesRssUtils {
             MyTunesRss.stopWebserver();
         }
         if (!MyTunesRss.WEBSERVER.isRunning()) {
-            if (MyTunesRss.REGISTRATION.isRegistered()) {
-                MyTunesRssJmxUtils.stopJmxServer();
-            }
+            MyTunesRssJmxUtils.stopJmxServer();
             MyTunesRss.CONFIG.setWindowX(MyTunesRss.ROOT_FRAME.getLocation().x);
             MyTunesRss.CONFIG.setWindowY(MyTunesRss.ROOT_FRAME.getLocation().y);
             MyTunesRss.CONFIG.save();

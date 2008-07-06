@@ -34,12 +34,15 @@ public class Settings implements MyTunesRssEventListener {
         return myDatabaseForm;
     }
 
+    public Info getInfoForm() {
+        return myInfoForm;
+    }
+
     public JPanel getRootPanel() {
         return myRootPanel;
     }
 
     public void init() {
-        initRegistration();
         myStartServerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 doStartServer();
@@ -66,14 +69,6 @@ public class Settings implements MyTunesRssEventListener {
         myAddonsForm.init();
         myTabbedPane.addChangeListener(new TabSwitchListener());
         MyTunesRssEventManager.getInstance().addListener(this);
-    }
-
-    private void initRegistration() {
-        if (!MyTunesRss.REGISTRATION.isRegistered()) {
-            myTabbedPane.remove(myAddonsPanel);
-            myTabbedPane.remove(myStreamingPanel);
-            myTabbedPane.remove(myContentPanel);
-        }
     }
 
     public String updateConfigFromGui() {

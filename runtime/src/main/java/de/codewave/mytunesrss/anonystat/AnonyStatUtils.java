@@ -24,7 +24,7 @@ public class AnonyStatUtils {
 
     public static void sendApplicationStarted() {
         sendAsync("applicationStarted",
-                  "v=" + MyTunesRss.VERSION + ",reg=" + MyTunesRss.REGISTRATION.isRegistered() + ",dbtype=" + MyTunesRss.CONFIG.getDatabaseType());
+                  "v=" + MyTunesRss.VERSION + ",dbtype=" + MyTunesRss.CONFIG.getDatabaseType());
     }
 
     public static void sendPlayTrack(String transcoderId, String type) {

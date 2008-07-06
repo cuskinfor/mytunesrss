@@ -711,9 +711,6 @@ public class MyTunesRssConfig {
             int count = 0;
             while (contextIterator.hasNext()) {
                 dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
-                if (!MyTunesRss.REGISTRATION.isRegistered() && count + 1 == MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
-                    break;
-                }
             }
             setDatasources(dataSources.toArray(new String[dataSources.size()]));
             setFileSystemArtistNameFolder(JXPathUtils.getIntValue(settings, "artistFolder", getFileSystemArtistNameFolder()));
@@ -728,9 +725,6 @@ public class MyTunesRssConfig {
                 User user = new User(JXPathUtils.getStringValue(userContext, "name", null));
                 user.loadFromPreferences(userContext);
                 addUser(user);
-                if (!MyTunesRss.REGISTRATION.isRegistered() && getUsers().size() == MyTunesRssRegistration.UNREGISTERED_MAX_USERS) {
-                    break;
-                }
             }
             setSupportName(JXPathUtils.getStringValue(settings, "supportName", getSupportName()));
             setSupportEmail(JXPathUtils.getStringValue(settings, "supportEmail", getSupportEmail()));
@@ -753,9 +747,6 @@ public class MyTunesRssConfig {
             setBandwidthLimitFactor(new BigDecimal(JXPathUtils.getStringValue(settings, "bandwidthLimitFactor", "0")));
             setIgnoreArtwork(JXPathUtils.getBooleanValue(settings, "ignoreArtwork", false));
             setCodewaveLogLevel(Level.toLevel(JXPathUtils.getStringValue(settings, "codewaveLogLevel", Level.INFO.toString()).toUpperCase()));
-            if (!MyTunesRss.REGISTRATION.isRegistered()) {
-                adjustSettingsToUnregisteredState();
-            }
             setWindowX(JXPathUtils.getIntValue(settings, "window/x", Integer.MAX_VALUE));
             setWindowY(JXPathUtils.getIntValue(settings, "window/y", Integer.MAX_VALUE));
             setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
@@ -805,28 +796,16 @@ public class MyTunesRssConfig {
         setDatabaseConnection("jdbc:h2:file:" + PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/" + "h2/MyTunesRSS");
         setDatabaseUser("sa");
         setDatabasePassword("");
-        if (MyTunesRss.REGISTRATION.isRegistered()) {
-            setDatabaseType(JXPathUtils.getStringValue(settings, "database/type", getDatabaseType()));
-            setDatabaseDriver(JXPathUtils.getStringValue(settings, "database/driver", getDatabaseDriver()));
-            setDatabaseConnection(JXPathUtils.getStringValue(settings, "database/connection", getDatabaseConnection()));
-            setDatabaseUser(JXPathUtils.getStringValue(settings, "database/user", getDatabaseUser()));
-            setDatabasePassword(JXPathUtils.getStringValue(settings, "database/password", getDatabasePassword()));
-        }
+        setDatabaseType(JXPathUtils.getStringValue(settings, "database/type", getDatabaseType()));
+        setDatabaseDriver(JXPathUtils.getStringValue(settings, "database/driver", getDatabaseDriver()));
+        setDatabaseConnection(JXPathUtils.getStringValue(settings, "database/connection", getDatabaseConnection()));
+        setDatabaseUser(JXPathUtils.getStringValue(settings, "database/user", getDatabaseUser()));
+        setDatabasePassword(JXPathUtils.getStringValue(settings, "database/password", getDatabasePassword()));
     }
 
     private static File getSettingsFile() throws IOException {
         String filename = System.getProperty("settings-file", "settings.xml");
         return new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/" + filename);
-    }
-
-    private void adjustSettingsToUnregisteredState() {
-        setAvailableOnLocalNet(false);
-        setUploadDir(null);
-        setMyTunesRssComUser(null);
-        setWebWelcomeMessage(null);
-        setAlacBinary(null);
-        setLameBinary(null);
-        setFaad2Binary(null);
     }
 
     private void readPathInfoEncryptionKey(JXPathContext settings) {
@@ -918,15 +897,13 @@ public class MyTunesRssConfig {
                     cronTriggers.appendChild(DOMUtils.createTextElement(settings, "database", databaseCronTrigger));
                 }
             }
-            if (MyTunesRss.REGISTRATION.isRegistered()) {
-                Element database = settings.createElement("database");
-                root.appendChild(database);
-                database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType()));
-                database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
-                database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
-                database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
-                database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
-            }
+            Element database = settings.createElement("database");
+            root.appendChild(database);
+            database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType()));
+            database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
+            database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
+            database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
+            database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
             root.appendChild(DOMUtils.createTextElement(settings, "id3v2-track-comment", getId3v2TrackComment()));
             Element jmx = settings.createElement("jmx");
             root.appendChild(jmx);

@@ -39,7 +39,6 @@ public class Misc implements MyTunesRssEventListener {
     }
 
     public void init() {
-        initRegistration();
         initValues();
         myUseProxyInput.addActionListener(new UseProxyActionListener());
         myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
@@ -65,10 +64,6 @@ public class Misc implements MyTunesRssEventListener {
         myQuitConfirmationInput.setSelected(MyTunesRss.CONFIG.isQuitConfirmation());
         myUpdateOnStartInput.setSelected(MyTunesRss.CONFIG.isCheckUpdateOnStart());
         myMyTunesRssComStatus.setText(MyTunesRssUtils.getBundleString("mytunesrsscom.stateUnknown"));
-    }
-
-    private void initRegistration() {
-        myMyTunesRssComPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
     }
 
     private void createUIComponents() {

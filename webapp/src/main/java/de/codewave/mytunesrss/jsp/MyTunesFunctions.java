@@ -90,7 +90,7 @@ public class MyTunesFunctions {
     }
 
     public static String suffix(WebConfig config, User user, Track track) {
-        if (config != null && user != null && FileSupportUtils.isMp4(track.getFile()) && MyTunesRss.REGISTRATION.isRegistered() &&
+        if (config != null && user != null && FileSupportUtils.isMp4(track.getFile()) &&
                 user.isTranscoder()) {
             if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
                 return "mp3";
@@ -106,7 +106,7 @@ public class MyTunesFunctions {
     }
 
     public static boolean transcoding(WebConfig config, User user, Track track) {
-        if (config != null && user != null && MyTunesRss.REGISTRATION.isRegistered() && user.isTranscoder()) {
+        if (config != null && user != null && user.isTranscoder()) {
             if (FileSupportUtils.isMp4(track.getFile()) && "alac".equals(track.getMp4Codec()) && config.isAlac() &&
                     MyTunesRss.CONFIG.isValidAlacBinary()) {
                 return true;
@@ -121,7 +121,7 @@ public class MyTunesFunctions {
     }
 
     public static String tcParamValue(WebConfig config, User user, Track track) {
-        if (config != null && user != null && MyTunesRss.REGISTRATION.isRegistered() && user.isTranscoder() &&
+        if (config != null && user != null && user.isTranscoder() &&
                 MyTunesRss.CONFIG.isValidLameBinary()) {
             if (FileSupportUtils.isMp4(track.getFile())) {
                 if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {

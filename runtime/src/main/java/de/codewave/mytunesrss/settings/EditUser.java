@@ -100,7 +100,6 @@ public class EditUser implements MyTunesRssEventListener {
     }
 
     private void init(JDialog dialog) {
-        initRegistration();
         myScrollPane.getViewport().setOpaque(false);
         myScrollPane2.getViewport().setOpaque(false);
         myInformationPanel.setVisible(myUser != null);
@@ -247,21 +246,6 @@ public class EditUser implements MyTunesRssEventListener {
         } finally {
             session.commit();
         }
-    }
-
-    private void initRegistration() {
-        myPermUploadInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myPermChangePasswordInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myPermPlayerInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myOptionsPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myQuotaInfoPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myPermTranscoderInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myBandwidthLimit.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myPermEditLastFMAccountInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myLastFmUsernameLabel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myLastFmUsernameInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myLastFmPasswordLabel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myLastFmPasswordInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
     }
 
     private void refreshInfo() {

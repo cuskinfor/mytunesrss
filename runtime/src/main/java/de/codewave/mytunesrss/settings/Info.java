@@ -24,7 +24,6 @@ public class Info implements MyTunesRssEventListener {
     private JPanel myRootPanel;
     private JLabel myRegistrationNameInput;
     private JLabel myExpirationInput;
-    private JTextArea myUnregisteredTextArea;
     private JLabel myRegistrationNameLabel;
     private JLabel myExpirationLabel;
     private JButton myRegisterButton;
@@ -34,15 +33,6 @@ public class Info implements MyTunesRssEventListener {
 
     public Info() {
         MyTunesRssEventManager.getInstance().addListener(this);
-    }
-
-    private void createUIComponents() {
-        myUnregisteredTextArea = new JTextArea() {
-            @Override
-            public Dimension getMinimumSize() {
-                return new Dimension(0, 0);
-            }
-        };
     }
 
     public void init() {
@@ -63,6 +53,10 @@ public class Info implements MyTunesRssEventListener {
         initValues();
     }
 
+    public void forceRegistration() {
+        myRegisterButton.doClick();
+    }
+
     public void handleEvent(final MyTunesRssEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -81,21 +75,12 @@ public class Info implements MyTunesRssEventListener {
     }
 
     private void refreshRegistration() {
-        if (MyTunesRss.REGISTRATION.isRegistered()) {
-            myRegistrationNameLabel.setVisible(true);
-            myRegistrationNameInput.setVisible(true);
-            myRegistrationNameInput.setText(MyTunesRss.REGISTRATION.getName());
-            myExpirationLabel.setVisible(MyTunesRss.REGISTRATION.isExpirationDate());
-            myExpirationInput.setVisible(MyTunesRss.REGISTRATION.isExpirationDate());
-            myExpirationInput.setText(MyTunesRss.REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString("common.dateFormat")));
-            myUnregisteredTextArea.setVisible(false);
-        } else {
-            myRegistrationNameLabel.setVisible(false);
-            myRegistrationNameInput.setVisible(false);
-            myExpirationLabel.setVisible(false);
-            myExpirationInput.setVisible(false);
-            myUnregisteredTextArea.setVisible(true);
-        }
+        myRegistrationNameLabel.setVisible(true);
+        myRegistrationNameInput.setVisible(true);
+        myRegistrationNameInput.setText(MyTunesRss.REGISTRATION.getName());
+        myExpirationLabel.setVisible(MyTunesRss.REGISTRATION.isExpirationDate());
+        myExpirationInput.setVisible(MyTunesRss.REGISTRATION.isExpirationDate());
+        myExpirationInput.setText(MyTunesRss.REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString("common.dateFormat")));
     }
 
     public String updateConfigFromGui() {

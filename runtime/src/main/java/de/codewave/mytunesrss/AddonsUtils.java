@@ -26,58 +26,54 @@ public class AddonsUtils {
 
     public static Collection<String> getThemes() {
         List<String> themes = new ArrayList<String>();
-        if (MyTunesRss.REGISTRATION.isRegistered()) {
-            try {
-                File themesDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes");
-                if (!themesDir.exists()) {
-                    themesDir.mkdirs();
-                }
-                if (themesDir.isDirectory()) {
-                    for (String theme : themesDir.list(new FilenameFilter() {
-                        public boolean accept(File dir, String name) {
-                            return new File(dir, name + "/images").isDirectory() && new File(dir, name + "/styles").isDirectory();
-                        }
-                    })) {
-                        themes.add(theme);
+        try {
+            File themesDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes");
+            if (!themesDir.exists()) {
+                themesDir.mkdirs();
+            }
+            if (themesDir.isDirectory()) {
+                for (String theme : themesDir.list(new FilenameFilter() {
+                    public boolean accept(File dir, String name) {
+                        return new File(dir, name + "/images").isDirectory() && new File(dir, name + "/styles").isDirectory();
                     }
-                }
-            } catch (IOException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Problem reading existing themes.", e);
+                })) {
+                    themes.add(theme);
                 }
             }
-            Collections.sort(themes);
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Problem reading existing themes.", e);
+            }
         }
+        Collections.sort(themes);
         return themes;
     }
 
     public static Collection<String> getLanguages() {
         List<String> languages = new ArrayList<String>();
-        if (MyTunesRss.REGISTRATION.isRegistered()) {
-            try {
-                File languagesDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages");
-                if (!languagesDir.exists()) {
-                    languagesDir.mkdirs();
-                }
-                if (languagesDir.isDirectory()) {
-                    for (String language : languagesDir.list(new FilenameFilter() {
-                        public boolean accept(File dir, String name) {
-                            return name.startsWith("MyTunesRssWeb_") && name.endsWith(".properties");
-                        }
-                    })) {
-                        int underscoreIndex = language.indexOf('_');
-                        if (underscoreIndex > -1 && underscoreIndex + 1 < language.length()) {
-                            languages.add(language.substring("MyTunesRssWeb_".length(), language.length() - ".properties".length()));
-                        }
+        try {
+            File languagesDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages");
+            if (!languagesDir.exists()) {
+                languagesDir.mkdirs();
+            }
+            if (languagesDir.isDirectory()) {
+                for (String language : languagesDir.list(new FilenameFilter() {
+                    public boolean accept(File dir, String name) {
+                        return name.startsWith("MyTunesRssWeb_") && name.endsWith(".properties");
+                    }
+                })) {
+                    int underscoreIndex = language.indexOf('_');
+                    if (underscoreIndex > -1 && underscoreIndex + 1 < language.length()) {
+                        languages.add(language.substring("MyTunesRssWeb_".length(), language.length() - ".properties".length()));
                     }
                 }
-            } catch (IOException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Problem reading existing themes and languages.", e);
-                }
             }
-            Collections.sort(languages);
+        } catch (IOException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Problem reading existing themes and languages.", e);
+            }
         }
+        Collections.sort(languages);
         return languages;
     }
 

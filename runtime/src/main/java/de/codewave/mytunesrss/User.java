@@ -134,7 +134,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isUpload() {
-        return MyTunesRss.REGISTRATION.isRegistered() && myUpload;
+        return myUpload;
     }
 
     public void setUpload(boolean upload) {
@@ -142,7 +142,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isPlayer() {
-        return MyTunesRss.REGISTRATION.isRegistered() && myPlayer;
+        return myPlayer;
     }
 
     public void setPlayer(boolean player) {
@@ -150,7 +150,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isChangePassword() {
-        return MyTunesRss.REGISTRATION.isRegistered() && myChangePassword;
+        return myChangePassword;
     }
 
     public void setChangePassword(boolean changePassword) {
@@ -198,7 +198,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public QuotaType getQuotaType() {
-        return MyTunesRss.REGISTRATION.isRegistered() ? (myQuotaType != null ? myQuotaType : QuotaType.None) : QuotaType.None;
+        return myQuotaType != null ? myQuotaType : QuotaType.None;
     }
 
     public void setQuotaType(QuotaType quotaType) {
@@ -314,8 +314,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isLastFmAccount() {
-        return StringUtils.isNotEmpty(getLastFmUsername()) && getLastFmPasswordHash() != null && getLastFmPasswordHash().length > 0 &&
-                MyTunesRss.REGISTRATION.isRegistered();
+        return StringUtils.isNotEmpty(getLastFmUsername()) && getLastFmPasswordHash() != null && getLastFmPasswordHash().length > 0;
     }
 
     public boolean isUrlEncryption() {
@@ -428,12 +427,12 @@ public class User implements MyTunesRssEventListener {
         setFileTypes(JXPathUtils.getStringValue(settings, "fileTypes", null));
         setTranscoder(JXPathUtils.getBooleanValue(settings, "featureTranscoder", false));
         setSessionTimeout(JXPathUtils.getIntValue(settings, "sessionTimeout", 10));
-        setBandwidthLimit(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getIntValue(settings, "bandwidthLimit", 0) : 0);
-        setPlaylistId(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "playlistId", null) : null);
-        setSaveWebSettings(MyTunesRss.REGISTRATION.isRegistered() && JXPathUtils.getBooleanValue(settings, "saveWebSettings", false));
-        setWebSettings(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "webSettings", null) : null);
-        setLastFmUsername(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getStringValue(settings, "lastFmUser", null) : null);
-        setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? JXPathUtils.getByteArray(settings, "lastFmPassword", null) : null);
+        setBandwidthLimit(JXPathUtils.getIntValue(settings, "bandwidthLimit", 0));
+        setPlaylistId(JXPathUtils.getStringValue(settings, "playlistId", null));
+        setSaveWebSettings(JXPathUtils.getBooleanValue(settings, "saveWebSettings", false));
+        setWebSettings(JXPathUtils.getStringValue(settings, "webSettings", null));
+        setLastFmUsername(JXPathUtils.getStringValue(settings, "lastFmUser", null));
+        setLastFmPasswordHash(JXPathUtils.getByteArray(settings, "lastFmPassword", null));
         setUrlEncryption(JXPathUtils.getBooleanValue(settings, "urlEncryption", true));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);

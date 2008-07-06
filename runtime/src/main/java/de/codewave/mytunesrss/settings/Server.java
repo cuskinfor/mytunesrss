@@ -36,7 +36,6 @@ public class Server implements MyTunesRssEventListener {
     private JLabel myServerNameLabel;
 
     public void init() {
-        initRegistration();
         initValues();
         MyTunesRssEventManager.getInstance().addListener(this);
         myAutoStartServerInput.addActionListener(new AutoStartServerInputListener());
@@ -99,12 +98,6 @@ public class Server implements MyTunesRssEventListener {
         SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected());
         setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
         myTempZipArchivesInput.setSelected(MyTunesRss.CONFIG.isLocalTempArchive());
-    }
-
-    private void initRegistration() {
-        myAvailableOnLocalNetInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myServerNameLabel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-        myServerNameInput.setVisible(MyTunesRss.REGISTRATION.isRegistered());
     }
 
     public String updateConfigFromGui() {

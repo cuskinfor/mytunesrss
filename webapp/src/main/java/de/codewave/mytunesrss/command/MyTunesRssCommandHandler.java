@@ -156,7 +156,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
         getRequest().setAttribute("mytunesrssVersion", MyTunesRss.VERSION);
         getRequest().setAttribute("sessionCreationTime", getSession().getCreationTime());
-        getRequest().setAttribute("registered", MyTunesRss.REGISTRATION.isRegistered());
         WebConfig webConfig = getWebConfig();
         if (getAuthUser() != null && getAuthUser().isQuotaExceeded()) {
             addError(new BundleError("error.quotaExceeded." + getAuthUser().getQuotaType().name()));

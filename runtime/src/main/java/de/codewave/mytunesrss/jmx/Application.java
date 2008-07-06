@@ -37,16 +37,12 @@ public class Application extends MyTunesRssMBean implements ApplicationMBean {
     }
 
     public String getLicense() {
-        if (MyTunesRss.REGISTRATION.isRegistered()) {
-            if (MyTunesRss.REGISTRATION.isExpirationDate()) {
-                return MyTunesRssUtils.getBundleString("jmx.registrationWithExpiration",
-                                                       MyTunesRss.REGISTRATION.getName(),
-                                                       MyTunesRss.REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString("common.dateFormat")));
-            } else {
-                return MyTunesRssUtils.getBundleString("jmx.registration", MyTunesRss.REGISTRATION.getName());
-            }
+        if (MyTunesRss.REGISTRATION.isExpirationDate()) {
+            return MyTunesRssUtils.getBundleString("jmx.registrationWithExpiration",
+                                                   MyTunesRss.REGISTRATION.getName(),
+                                                   MyTunesRss.REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString("common.dateFormat")));
         } else {
-            return MyTunesRssUtils.getBundleString("settings.unregistered");
+            return MyTunesRssUtils.getBundleString("jmx.registration", MyTunesRss.REGISTRATION.getName());
         }
     }
 

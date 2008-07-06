@@ -26,16 +26,12 @@ public class MyTunesRssJsonRpcServlet extends JSONRPCServlet {
 
     @Override
     public void service(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
-        if (MyTunesRss.REGISTRATION.isRegistered()) {
-            MyTunesRssRemoteEnv.setRequest(httpServletRequest);
-            try {
-                super.service(httpServletRequest, httpServletResponse);
-            } finally {
-                MyTunesRssRemoteEnv.removeRequest();
-                httpServletRequest.getSession().invalidate();
-            }
-        } else {
-            throw new IllegalStateException("JSON RPC is available in the registered version of MyTunesRSS only.");
+        MyTunesRssRemoteEnv.setRequest(httpServletRequest);
+        try {
+            super.service(httpServletRequest, httpServletResponse);
+        } finally {
+            MyTunesRssRemoteEnv.removeRequest();
+            httpServletRequest.getSession().invalidate();
         }
     }
 }

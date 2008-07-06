@@ -14,11 +14,7 @@ import java.io.IOException;
 public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (MyTunesRss.REGISTRATION.isRegistered()) {
-            super.service(req, resp);
-        } else {
-            throw new IllegalStateException("XML RPC is available in the registered version of MyTunesRSS only.");
-        }
+        super.service(req, resp);
     }
 
     @Override

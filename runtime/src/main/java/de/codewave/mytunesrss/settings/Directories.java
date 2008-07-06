@@ -64,7 +64,6 @@ public class Directories implements MyTunesRssEventListener {
     }
 
     public void init() {
-        initRegistration();
         myScrollPane.setMaximumSize(myScrollPane.getPreferredSize());
         myScrollPane.getViewport().setOpaque(false);
         myFolderStructureGrandparent.addItem(FolderStructureRole.None);
@@ -135,10 +134,6 @@ public class Directories implements MyTunesRssEventListener {
         myCreateUserDir.setSelected(MyTunesRss.CONFIG.isUploadCreateUserDir());
     }
 
-    private void initRegistration() {
-        myUploadPanel.setVisible(MyTunesRss.REGISTRATION.isRegistered());
-    }
-
     private void addAllToListModel() {
         for (String baseDir : MyTunesRss.CONFIG.getDatasources()) {
             myListModel.addElement(baseDir);
@@ -188,32 +183,28 @@ public class Directories implements MyTunesRssEventListener {
 
     public class AddWatchFolderButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            if (MyTunesRss.REGISTRATION.isRegistered() || MyTunesRss.CONFIG.getDatasources().length < MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS) {
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setAcceptAllFileFilterUsed(false);
-                fileChooser.setCurrentDirectory(myFileChooserDierctory);
-                fileChooser.setDialogTitle(MyTunesRssUtils.getBundleString("dialog.lookupBaseDir"));
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-                    public boolean accept(File file) {
-                        return file.isDirectory() || (file.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())));
-                    }
-
-                    public String getDescription() {
-                        return MyTunesRssUtils.getBundleString("filechooser.filter.watchfolder");
-                    }
-                });
-                int result = fileChooser.showDialog(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("filechooser.approve.watchfolder"));
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        myFileChooserDierctory = fileChooser.getCurrentDirectory();
-                        handleChosenFile(fileChooser.getSelectedFile());
-                    } catch (IOException e) {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.lookupDir", e.getMessage()));
-                    }
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            fileChooser.setCurrentDirectory(myFileChooserDierctory);
+            fileChooser.setDialogTitle(MyTunesRssUtils.getBundleString("dialog.lookupBaseDir"));
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                public boolean accept(File file) {
+                    return file.isDirectory() || (file.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())));
                 }
-            } else {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.unregisteredMaxDataSources", MyTunesRssRegistration.UNREGISTERED_MAX_WATCHFOLDERS));
+
+                public String getDescription() {
+                    return MyTunesRssUtils.getBundleString("filechooser.filter.watchfolder");
+                }
+            });
+            int result = fileChooser.showDialog(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("filechooser.approve.watchfolder"));
+            if (result == JFileChooser.APPROVE_OPTION) {
+                try {
+                    myFileChooserDierctory = fileChooser.getCurrentDirectory();
+                    handleChosenFile(fileChooser.getSelectedFile());
+                } catch (IOException e) {
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.lookupDir", e.getMessage()));
+                }
             }
         }
 
