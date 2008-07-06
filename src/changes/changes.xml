@@ -5,7 +5,10 @@
     </properties>
     <body>
 
-        <release version="3.2-RC-1" date="????-??-??" description="EAP release">
+        <release version="3.5-RC-1" date="????-??-??" description="EAP release">
+            <action dev="mdescher" type="fix">
+                Commercial only, no free more anymore.
+            </action>
             <action dev="mdescher" type="fix">
                 Overlay popups now work in Firefox, Safari, Opera and Internet Explorer.
             </action>
