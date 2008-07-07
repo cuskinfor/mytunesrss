@@ -96,7 +96,7 @@
                     </td>
                 </c:if>
                 <td class="albumthumb">
-                        <c:if test="${album.image && registered}">
+                        <c:if test="${album.image}">
                             <img id="albumthumb_${loopStatus.index}" src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
                             <div class="tooltip" id="tooltip_albumthumb_${loopStatus.index}"><img src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=128</mt:encrypt>" alt=""/></div>
                         </c:if>

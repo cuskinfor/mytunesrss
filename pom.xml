@@ -22,7 +22,6 @@
     <modules>
         <module>runtime</module>
         <module>webapp</module>
-        <module>apple</module>
     </modules>
     <dependencies>
         <dependency>

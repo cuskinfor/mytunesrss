@@ -32,11 +32,9 @@
                 <fmt:message key="doSettings" />
             </a></li>
         </c:if>
-        <c:if test="${registered}">
-            <li><a href="${servletUrl}/browseServers/${auth}">
-                <fmt:message key="browseServers" />
-            </a></li>
-        </c:if>
+        <li><a href="${servletUrl}/browseServers/${auth}">
+            <fmt:message key="browseServers" />
+        </a></li>
         <li style="float:right"><a href="${servletUrl}/logout">
             <fmt:message key="doLogout" />
         </a></li>

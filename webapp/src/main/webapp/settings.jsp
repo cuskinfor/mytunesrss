@@ -47,7 +47,7 @@
                 <td><fmt:message key="settings.username" /></td>
                 <td><c:out value="${authUser.name}"/></td>
             </tr>
-            <c:if test="${!authUser.editLastFmAccount && !empty authUser.lastFmUsername && registered}">
+            <c:if test="${!authUser.editLastFmAccount && !empty authUser.lastFmUsername}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.lastFmUsername" /></td>
                     <td><c:out value="${authUser.lastFmUsername}"/></td>
@@ -90,7 +90,7 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${registered && authUser.editLastFmAccount}">
+            <c:if test="${authUser.editLastFmAccount}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.lastFmUsername" /></td>
                     <td>
@@ -121,7 +121,7 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${registered && !empty themes}">
+            <c:if test="${!empty themes}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.theme" /></td>
                     <td>
@@ -228,9 +228,7 @@
                         <select name="playlistType">
                             <option value="M3u" <c:if test="${config.playlistType eq 'M3u'}">selected="selected"</c:if>>m3u</option>
                             <option value="Xspf" <c:if test="${config.playlistType eq 'Xspf'}">selected="selected"</c:if>>xspf</option>
-                            <c:if test="${registered}">
-                                <option value="QtPlugin" <c:if test="${config.playlistType eq 'QtPlugin'}">selected="selected"</c:if>>iPhone</option>
-                            </c:if>
+                            <option value="QtPlugin" <c:if test="${config.playlistType eq 'QtPlugin'}">selected="selected"</c:if>>iPhone</option>
                         </select>
                     </td>
                 </tr>
@@ -268,7 +266,7 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${registered && authUser.transcoder && globalConfig.validLameBinary}">
+            <c:if test="${authUser.transcoder && globalConfig.validLameBinary}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.useLame" /></td>
                     <td>
@@ -276,7 +274,7 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${registered && authUser.transcoder && globalConfig.validLameBinary && globalConfig.validFaad2Binary}">
+            <c:if test="${authUser.transcoder && globalConfig.validLameBinary && globalConfig.validFaad2Binary}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.useFaad2" /></td>
                     <td>
@@ -284,7 +282,7 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${registered && authUser.transcoder && globalConfig.validLameBinary && globalConfig.validAlacBinary}">
+            <c:if test="${authUser.transcoder && globalConfig.validLameBinary && globalConfig.validAlacBinary}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.useAlac" /></td>
                     <td>
@@ -292,7 +290,7 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${registered && authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaad2Binary)}">
+            <c:if test="${authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaad2Binary)}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.transcodeOnTheFlyIfPossible" /></td>
                     <td>
@@ -300,7 +298,7 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${registered && authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaad2Binary)}">
+            <c:if test="${authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaad2Binary)}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.lameTargetBitrate" /></td>
                     <td>
