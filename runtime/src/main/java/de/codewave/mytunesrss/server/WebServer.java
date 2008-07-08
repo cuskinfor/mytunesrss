@@ -54,12 +54,7 @@ public class WebServer {
                     final Map<String, Object> contextEntries = new HashMap<String, Object>();
                     contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
                     contextEntries.put(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
-                    String catalinaBase = getCatalinaBase(null);
-                    File catalinaBaseFile = new File(catalinaBase);
-                    if (!catalinaBaseFile.exists() || !catalinaBaseFile.isDirectory()) {
-                        // try UTF-8 in case resulting dir seems to be non-existant, probably fixes MacOSX problems with special characters
-                        catalinaBase = getCatalinaBase("UTF-8");
-                    }
+                    String catalinaBase = getCatalinaBase();
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Using catalina base: \"" + catalinaBase + "\".");
                     }
@@ -109,13 +104,23 @@ public class WebServer {
         return false;
     }
 
-    private String getCatalinaBase(String encoding) {
+    public static String getCatalinaBase() {
+        String catalinaBase = getCatalinaBase(null);
+        File catalinaBaseFile = new File(catalinaBase);
+        if (!catalinaBaseFile.exists() || !catalinaBaseFile.isDirectory()) {
+            // try UTF-8 in case resulting dir seems to be non-existant, probably fixes MacOSX problems with special characters
+            catalinaBase = getCatalinaBase("UTF-8");
+        }
+        return catalinaBase;
+    }
+
+    private static String getCatalinaBase(String encoding) {
         String catalinaBase = null;
         try {
-            catalinaBase = encoding != null ? URLDecoder.decode(getClass().getResource("WebServer.class").getFile(), encoding) : URLDecoder.decode(
-                    getClass().getResource("WebServer.class").getFile());
+            catalinaBase = encoding != null ? URLDecoder.decode(WebServer.class.getResource("WebServer.class").getFile(), encoding) : URLDecoder.decode(
+                    WebServer.class.getResource("WebServer.class").getFile());
         } catch (UnsupportedEncodingException e) {
-            catalinaBase = URLDecoder.decode(getClass().getResource("WebServer.class").getFile());
+            catalinaBase = URLDecoder.decode(WebServer.class.getResource("WebServer.class").getFile());
         }
         int index = catalinaBase.toLowerCase().indexOf("mytunesrss.jar");
         if (index > -1) {

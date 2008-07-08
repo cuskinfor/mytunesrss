@@ -7,6 +7,10 @@
 
         <release version="3.5-RC-1" date="????-??-??" description="EAP release">
             <action dev="mdescher" type="fix">
+                Default license file first searched in catalina base (generated per cronjob daily)
+                and then in the classpath (as before, for EAP releases and such).
+            </action>
+            <action dev="mdescher" type="fix">
                 Commercial only, no free more anymore.
             </action>
             <action dev="mdescher" type="fix">

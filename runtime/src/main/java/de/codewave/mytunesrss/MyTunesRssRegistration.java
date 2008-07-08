@@ -3,6 +3,7 @@ package de.codewave.mytunesrss;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.registration.RegistrationUtils;
 import de.codewave.utils.xml.JXPathUtils;
+import de.codewave.mytunesrss.server.WebServer;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -10,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -108,7 +110,7 @@ public class MyTunesRssRegistration {
                     LOG.info("License expired. Using default registration data.");
                 }
                 if (allowDefaultLicense) {
-                    handleRegistration(RegistrationUtils.getRegistrationData(getClass().getResource("/MyTunesRSS.key"), getPublicKey()));
+                    handleRegistration(RegistrationUtils.getRegistrationData(getDefaultLicenseFile(), getPublicKey()));
                     myDefaultData = true;
                     return isExpired() ? RegistrationResult.InternalExpired : RegistrationResult.ExternalExpired;
                 }
@@ -117,11 +119,23 @@ public class MyTunesRssRegistration {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Using default registration data.");
             }
-            handleRegistration(RegistrationUtils.getRegistrationData(getClass().getResource("/MyTunesRSS.key"), getPublicKey()));
+            handleRegistration(RegistrationUtils.getRegistrationData(getDefaultLicenseFile(), getPublicKey()));
             myDefaultData = true;
             return isExpired() ? RegistrationResult.InternalExpired : RegistrationResult.LicenseOk;
         }
         return RegistrationResult.LicenseOk;
+    }
+
+    private URL getDefaultLicenseFile() {
+        String cataBase = WebServer.getCatalinaBase();
+        if (StringUtils.isNotEmpty(cataBase) && new File(cataBase, "MyTunesRSS.key").isFile()) {
+            try {
+                return new File(cataBase, "MyTunesRSS.key").toURL();
+            } catch (MalformedURLException e) {
+                LOG.error("Could not read default license file from catalina base!", e);
+            }
+        }
+        return getClass().getResource("/MyTunesRSS.key");
     }
 
     private void handleRegistration(String registration) {
