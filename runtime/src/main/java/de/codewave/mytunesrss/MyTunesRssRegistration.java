@@ -3,7 +3,6 @@ package de.codewave.mytunesrss;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.registration.RegistrationUtils;
 import de.codewave.utils.xml.JXPathUtils;
-import de.codewave.mytunesrss.server.WebServer;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -11,7 +10,6 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
 import java.net.URL;
-import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,14 +21,10 @@ public class MyTunesRssRegistration {
     private static final Log LOG = LogFactory.getLog(MyTunesRssRegistration.class);
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
-    public enum RegistrationResult {
-        InternalExpired(), ExternalExpired(), LicenseOk();
-    }
-
     private String myName;
     private long myExpiration;
-    private boolean myRegistered;
-    private boolean myDefaultData;
+    private boolean myReleaseVersion;
+    private boolean myValid;
 
     public static MyTunesRssRegistration register(File registrationFile) {
         try {
@@ -38,9 +32,9 @@ public class MyTunesRssRegistration {
                 MyTunesRssRegistration registration = new MyTunesRssRegistration();
                 registration.init(registrationFile, false);
                 if (registration.isExpired()) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicenseExpired", registration.getExpiration(MyTunesRssUtils.getBundleString(
-                            "common.dateFormat"))));
-                } else if (!registration.isRegistered()) {
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicenseExpired", registration.getExpiration(
+                            MyTunesRssUtils.getBundleString("common.dateFormat"))));
+                } else if (!registration.myValid) {
                     MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicense"));
                 } else {
                     copyFile(registrationFile, new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.key"));
@@ -97,9 +91,17 @@ public class MyTunesRssRegistration {
         return MyTunesRssRegistration.class.getResource("/MyTunesRSS.public");
     }
 
-    public RegistrationResult init(File file, boolean allowDefaultLicense) throws IOException {
+    public void init(File file, boolean allowDefaultLicense) throws IOException {
+        if (allowDefaultLicense) {
+            handleRegistration(RegistrationUtils.getRegistrationData(getDefaultLicenseFile(), getPublicKey()));
+            if (!myReleaseVersion) {
+                return; // do not care about external license if this is a pre-release version
+            }
+        }
+
         String path = PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
-        String registration = RegistrationUtils.getRegistrationData(file != null ? file.toURL() : new File(path + "/MyTunesRSS.key").toURL(), getPublicKey());
+        String registration = RegistrationUtils.getRegistrationData(file != null ? file.toURL() : new File(path + "/MyTunesRSS.key").toURL(),
+                                                                    getPublicKey());
         if (registration != null) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Using registration data from preferences.");
@@ -111,8 +113,6 @@ public class MyTunesRssRegistration {
                 }
                 if (allowDefaultLicense) {
                     handleRegistration(RegistrationUtils.getRegistrationData(getDefaultLicenseFile(), getPublicKey()));
-                    myDefaultData = true;
-                    return isExpired() ? RegistrationResult.InternalExpired : RegistrationResult.ExternalExpired;
                 }
             }
         } else if (allowDefaultLicense) {
@@ -120,10 +120,7 @@ public class MyTunesRssRegistration {
                 LOG.info("Using default registration data.");
             }
             handleRegistration(RegistrationUtils.getRegistrationData(getDefaultLicenseFile(), getPublicKey()));
-            myDefaultData = true;
-            return isExpired() ? RegistrationResult.InternalExpired : RegistrationResult.LicenseOk;
         }
-        return RegistrationResult.LicenseOk;
     }
 
     private URL getDefaultLicenseFile() {
@@ -133,7 +130,7 @@ public class MyTunesRssRegistration {
     private void handleRegistration(String registration) {
         if (StringUtils.isNotEmpty(registration)) {
             JXPathContext registrationContext = JXPathUtils.getContext(registration);
-            myRegistered = JXPathUtils.getBooleanValue(registrationContext, "/registration/registered", false);
+            myReleaseVersion = JXPathUtils.getBooleanValue(registrationContext, "/registration/release-version", true);
             myName = JXPathUtils.getStringValue(registrationContext, "/registration/name", "unregistered");
             String expirationDate = JXPathUtils.getStringValue(registrationContext, "/registration/expiration", null);
             if (expirationDate != null) {
@@ -145,6 +142,7 @@ public class MyTunesRssRegistration {
             } else {
                 myExpiration = 0;
             }
+            myValid = true;
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Registration data:");
                 LOG.debug("name=" + getName());
@@ -176,11 +174,7 @@ public class MyTunesRssRegistration {
         return myName;
     }
 
-    public boolean isRegistered() {
-        return myRegistered && !isExpired();
-    }
-
-    public boolean isDefaultData() {
-        return myDefaultData;
+    public boolean isExpiredPreReleaseVersion() {
+        return !myReleaseVersion && isExpired();
     }
 }

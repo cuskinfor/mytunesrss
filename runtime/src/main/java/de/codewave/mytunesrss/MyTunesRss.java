@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.jmx.ErrorQueue;
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
@@ -17,7 +18,6 @@ import de.codewave.mytunesrss.settings.Settings;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesTask;
 import de.codewave.mytunesrss.task.InitializeDatabaseTask;
-import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.io.FileCache;
@@ -30,7 +30,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Level;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -70,7 +69,7 @@ public class MyTunesRss {
         try {
             for (Iterator<File> iter =
                     (Iterator<File>)FileUtils.iterateFiles(new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER)),
-                                                                       new String[] {"log"},
+                                                           new String[] {"log"},
                                                            false); iter.hasNext();) {
                 iter.next().delete();
             }
@@ -154,7 +153,7 @@ public class MyTunesRss {
             InstantiationException, ClassNotFoundException, IOException, SQLException, SchedulerException {
         final Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
         HEADLESS = arguments.containsKey("headless");
-        MyTunesRssRegistration.RegistrationResult registrationResult = REGISTRATION.init(null, true);
+        REGISTRATION.init(null, true);
         MyTunesRss.CONFIG.load();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
         registerDatabaseDriver();
@@ -193,14 +192,15 @@ public class MyTunesRss {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
             MyTunesRssUtils.shutdown();
         }
-        if (registrationResult == MyTunesRssRegistration.RegistrationResult.InternalExpired) {
-            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.defaulRegistrationExpired"));
+        if (REGISTRATION.isExpiredPreReleaseVersion()) {
+            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.preReleaseVersionExpired"));
             MyTunesRssUtils.shutdown();
-        } else if (registrationResult == MyTunesRssRegistration.RegistrationResult.ExternalExpired) {
-            if (HEADLESS) {
-                MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
-                MyTunesRssUtils.shutdown();
-            }
+        } else if (REGISTRATION.isExpired() && HEADLESS) {
+            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
+            MyTunesRssUtils.shutdown();
+        } else if (REGISTRATION.isExpirationDate() && !REGISTRATION.isExpired()) {
+            MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.expirationInfo", REGISTRATION.getExpiration(
+                    MyTunesRssUtils.getBundleString("common.dateFormat"))));
         }
         if (MyTunesRss.CONFIG.isDefaultDatabase() && MyTunesRss.CONFIG.isDeleteDatabaseOnNextStartOnError()) {
             new DeleteDatabaseFilesTask().execute();
@@ -388,7 +388,7 @@ public class MyTunesRss {
             SwingUtils.packAndShow(ROOT_FRAME);
             ensureCompletelyOnScreen(ROOT_FRAME);
         }
-        if (!REGISTRATION.isRegistered()) {
+        if (REGISTRATION.isExpired()) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
             SETTINGS.getInfoForm().forceRegistration();
             MyTunesRssUtils.shutdown();
@@ -410,9 +410,11 @@ public class MyTunesRss {
                 Point location = ROOT_FRAME.getLocation();
                 Dimension size = ROOT_FRAME.getSize();
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Frame is (" + location.x + ", " + location.y + ") - (" + (location.x + size.width) + ", " + (location.y + size.height) + ")");
+                    LOG.debug("Frame is (" + location.x + ", " + location.y + ") - (" + (location.x + size.width) + ", " +
+                            (location.y + size.height) + ")");
                 }
-                if (location.x >= screenSize.width || location.y  >= screenSize.height || location.x + size.width <= 0 || location.y + size.height <= 0) {
+                if (location.x >= screenSize.width || location.y >= screenSize.height || location.x + size.width <= 0 ||
+                        location.y + size.height <= 0) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Frame is completely off-screen, centering it on screen.");
                     }

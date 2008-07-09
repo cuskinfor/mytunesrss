@@ -59,6 +59,18 @@ public class MyTunesRssUtils {
                                MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
     }
 
+    public static void showInfoMessage(String message) {
+        if (MyTunesRss.HEADLESS) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info(message);
+            }
+            System.out.println(message);
+        } else {
+            showInfoMessage(MyTunesRss.ROOT_FRAME, message);
+        }
+    }
+
+
     public static void showInfoMessage(JFrame parent, String message) {
         SwingUtils.showMessage(parent,
                                JOptionPane.INFORMATION_MESSAGE,
