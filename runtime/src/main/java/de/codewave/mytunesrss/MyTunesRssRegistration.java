@@ -127,14 +127,6 @@ public class MyTunesRssRegistration {
     }
 
     private URL getDefaultLicenseFile() {
-        String cataBase = WebServer.getCatalinaBase();
-        if (StringUtils.isNotEmpty(cataBase) && new File(cataBase, "MyTunesRSS.key").isFile()) {
-            try {
-                return new File(cataBase, "MyTunesRSS.key").toURL();
-            } catch (MalformedURLException e) {
-                LOG.error("Could not read default license file from catalina base!", e);
-            }
-        }
         return getClass().getResource("/MyTunesRSS.key");
     }
 

@@ -104,7 +104,7 @@ public class WebServer {
         return false;
     }
 
-    public static String getCatalinaBase() {
+    private String getCatalinaBase() {
         String catalinaBase = getCatalinaBase(null);
         File catalinaBaseFile = new File(catalinaBase);
         if (!catalinaBaseFile.exists() || !catalinaBaseFile.isDirectory()) {
@@ -114,7 +114,7 @@ public class WebServer {
         return catalinaBase;
     }
 
-    private static String getCatalinaBase(String encoding) {
+    private String getCatalinaBase(String encoding) {
         String catalinaBase = null;
         try {
             catalinaBase = encoding != null ? URLDecoder.decode(WebServer.class.getResource("WebServer.class").getFile(), encoding) : URLDecoder.decode(
