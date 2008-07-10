@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <settings>
   <profiles>
@@ -6,9 +6,9 @@
       <id>codewave</id>
       <repositories>
         <repository>
-          <id>codewave</id>
-          <name>Codewave Inhouse Repository</name>
-          <url>http://codewave.dyn-o-saur.com:20111/repository/inhouse</url>
+          <id>codewave-releases</id>
+          <name>Codewave Maven Repository</name>
+          <url>http://localhost:20111/nexus/content/repositories/releases</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -17,9 +17,9 @@
           </snapshots>
         </repository>
         <repository>
-          <id>codewave-snapshot</id>
-          <name>Codewave Inhouse Snapshot Repository</name>
-          <url>http://codewave.dyn-o-saur.com:20111/repository/inhouse.snapshot</url>
+          <id>codewave-snapshots</id>
+          <name>Codewave Maven Repository</name>
+          <url>http://localhost:20111/nexus/content/repositories/snapshots</url>
           <releases>
             <enabled>false</enabled>
           </releases>
@@ -28,14 +28,14 @@
           </snapshots>
         </repository>
         <repository>
-          <id>codewave-public</id>
-          <name>Codewave Public Repository</name>
-          <url>http://codewave.dyn-o-saur.com:20111/repository/public</url>
+          <id>codewave-thirdparty</id>
+          <name>Codewave Maven Repository</name>
+          <url>http://localhost:20111/nexus/content/repositories/thirdparty</url>
           <releases>
             <enabled>true</enabled>
           </releases>
           <snapshots>
-            <enabled>true</enabled>
+            <enabled>false</enabled>
           </snapshots>
         </repository>
       </repositories>
