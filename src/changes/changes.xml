@@ -5,7 +5,14 @@
     </properties>
     <body>
 
-        <release version="3.5-RC-1" date="????-??-??" description="EAP release">
+        <release version="3.5-RC-2" date="2008-xx-xx" description="RC2">
+            <action dev="mdescher" type="fix">
+                Version number not submitted for anonymous statistic when
+                starting application.
+            </action>
+        </release>
+        
+        <release version="3.5-RC-1" date="2008-07-10" description="RC1">
             <action dev="mdescher" type="fix">
                 Commercial only, no free more anymore.
             </action>
