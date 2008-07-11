@@ -26,6 +26,7 @@ public class UserConfig extends MyTunesRssMBean implements UserConfigMBean {
 
     public String addUser(String name, String password) throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException,
             NotCompliantMBeanException, InstanceAlreadyExistsException {
+        if (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(password)) {
         User user = new User(name);
         try {
             user.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
@@ -39,6 +40,8 @@ public class UserConfig extends MyTunesRssMBean implements UserConfigMBean {
                 LOG.error("Could not create password hash.", e);
             }
             return e.getMessage();
+        }} else {
+            return MyTunesRssUtils.getBundleString("jmx.newUserMissingNameOrPassword");
         }
     }
 }
