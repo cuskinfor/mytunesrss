@@ -53,6 +53,7 @@ public class Settings implements MyTunesRssEventListener {
                 doStopServer();
             }
         });
+        myStopServerButton.setEnabled(false);
         myQuitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 doQuitApplication();
