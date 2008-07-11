@@ -5,6 +5,13 @@
     </properties>
     <body>
 
+        <release version="3.5-RC-3" date="2008-xx-xx" description="RC3">
+            <action dev="mdescher" type="fix">
+                Checkbox state not correctly handled for "check for update on start"
+                box.
+            </action>
+        </release>
+
         <release version="3.5-RC-2" date="2008-07-11" description="RC2">
             <action dev="mdescher" type="fix">
                 Username and password mandatory in JMX console when adding a user.

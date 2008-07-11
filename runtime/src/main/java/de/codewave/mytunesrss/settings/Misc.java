@@ -63,6 +63,7 @@ public class Misc implements MyTunesRssEventListener {
         }
         myQuitConfirmationInput.setSelected(MyTunesRss.CONFIG.isQuitConfirmation());
         myUpdateOnStartInput.setSelected(MyTunesRss.CONFIG.isCheckUpdateOnStart());
+        myUpdateOnStartInputCache = myUpdateOnStartInput.isSelected();
         myMyTunesRssComStatus.setText(MyTunesRssUtils.getBundleString("mytunesrsscom.stateUnknown"));
     }
 
