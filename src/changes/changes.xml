@@ -7,6 +7,9 @@
 
         <release version="3.5-RC-2" date="2008-07-11" description="RC2">
             <action dev="mdescher" type="fix">
+                Username and password mandatory in JMX console when adding a user.
+            </action>
+            <action dev="mdescher" type="fix">
                 Version number not submitted for anonymous statistic when
                 starting application.
             </action>
