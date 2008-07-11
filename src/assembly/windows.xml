@@ -21,9 +21,6 @@
                         <includes>
                             <include>*:jar:*</include>
                         </includes>
-                        <excludes>
-                            <exclude>*:junit:jar:*</exclude>
-                        </excludes>
                     </dependencySet>
                 </dependencySets>
             </binaries>
