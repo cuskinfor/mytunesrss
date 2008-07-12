@@ -10,6 +10,11 @@
                 Checkbox state not correctly handled for "check for update on start"
                 box.
             </action>
+            <action dev="mdescher" type="update">
+                Removed apple extensions from project and created a new standalone
+                project for this. So mytunesrss can be built without any problems
+                on non-apple systems now.
+            </action>
         </release>
 
         <release version="3.5-RC-2" date="2008-07-11" description="RC2">

@@ -533,7 +533,7 @@ public class MyTunesRss {
     private static void executeApple(final Settings settings) {
         if (SystemUtils.IS_OS_MAC_OSX) {
             try {
-                Class appleExtensionsClass = Class.forName("de.codewave.mytunesrss.AppleExtensions");
+                Class appleExtensionsClass = Class.forName("de.codewave.apple.AppleExtensions");
                 Method activateMethod = appleExtensionsClass.getMethod("activate", EventListener.class);
                 activateMethod.invoke(null, new EventListener() {
                     public void handleQuit() {
