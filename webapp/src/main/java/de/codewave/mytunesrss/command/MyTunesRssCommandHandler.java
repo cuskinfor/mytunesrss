@@ -22,8 +22,8 @@ import de.codewave.utils.swing.TaskExecutor;
 import de.codewave.utils.swing.TaskFinishedListener;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.jsp.jstl.core.Config;
@@ -39,7 +39,7 @@ import java.util.*;
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
  */
 public abstract class MyTunesRssCommandHandler extends CommandHandler {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssCommandHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssCommandHandler.class);
     private static boolean SCHEDULE_DATABASE_UPDATE;
 
     protected MyTunesRssConfig getMyTunesRssConfig() {

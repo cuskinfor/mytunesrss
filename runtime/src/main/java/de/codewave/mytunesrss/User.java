@@ -10,8 +10,8 @@ import de.codewave.mytunesrss.lastfm.LastFmSubmission;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -24,7 +24,7 @@ import java.util.GregorianCalendar;
  * de.codewave.mytunesrss.User
  */
 public class User implements MyTunesRssEventListener {
-    private static final Log LOG = LogFactory.getLog(User.class);
+    private static final Logger LOG = LoggerFactory.getLogger(User.class);
 
     public void handleEvent(MyTunesRssEvent event) {
         if (event == MyTunesRssEvent.SERVER_STOPPED) {

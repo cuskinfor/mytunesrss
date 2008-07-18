@@ -16,8 +16,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,7 +32,7 @@ import java.util.zip.ZipEntry;
  * de.codewave.mytunesrss.command.UploadCommandHandler
  */
 public class UploadCommandHandler extends MyTunesRssCommandHandler {
-    private static final Log LOG = LogFactory.getLog(UploadCommandHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UploadCommandHandler.class);
 
     @Override
     public void executeAuthorized() throws Exception {

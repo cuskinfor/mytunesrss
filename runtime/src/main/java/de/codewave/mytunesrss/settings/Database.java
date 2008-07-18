@@ -16,8 +16,8 @@ import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.swing.JTextFieldValidation;
 import de.codewave.utils.swing.SwingUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -34,7 +34,7 @@ import java.util.List;
  * de.codewave.mytunesrss.settings.Database
  */
 public class Database implements MyTunesRssEventListener {
-    private static final Log LOG = LogFactory.getLog(Database.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Database.class);
 
     private JPanel myRootPanel;
     private JLabel myLastUpdatedLabel;

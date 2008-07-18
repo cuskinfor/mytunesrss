@@ -8,8 +8,8 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.utils.PrefsUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ import java.io.IOException;
  * de.codewave.mytunesrss.servlet.ThemeServlet
  */
 public abstract class ThemeServlet extends HttpServlet {
-    private static final Log LOG = LogFactory.getLog(ThemeServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ThemeServlet.class);
 
     protected File getFile(HttpServletRequest httpServletRequest, String resourceBasePath) {
         String theme = MyTunesRssWebUtils.getWebConfig(httpServletRequest).getTheme();

@@ -3,14 +3,14 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.datastore.statement.FindAlbumImageQuery;
 import de.codewave.mytunesrss.meta.Image;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * de.codewave.mytunesrss.command.ShowTrackImageCommandHandler
  */
 public class ShowAlbumImageCommandHandler extends ShowImageCommandHandler {
-    private static final Log LOG = LogFactory.getLog(ShowAlbumImageCommandHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ShowAlbumImageCommandHandler.class);
 
     @Override
     public void executeAuthorized() throws Exception {

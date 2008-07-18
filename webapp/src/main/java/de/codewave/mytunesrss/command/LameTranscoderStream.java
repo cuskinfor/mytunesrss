@@ -2,8 +2,8 @@ package de.codewave.mytunesrss.command;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.io.OutputStream;
  * de.codewave.mytunesrss.command.LameTranscoderStream
  */
 public class LameTranscoderStream extends InputStream {
-    private static final Log LOG = LogFactory.getLog(LameTranscoderStream.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LameTranscoderStream.class);
 
     private Process myProcess;
 

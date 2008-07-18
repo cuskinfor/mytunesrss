@@ -16,8 +16,8 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatement;
 import de.codewave.utils.servlet.*;
 import de.codewave.utils.sql.DataStoreQuery;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -34,7 +34,7 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.command.PlayTrackCommandHandler
  */
 public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
-    private static final Log LOG = LogFactory.getLog(PlayTrackCommandHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PlayTrackCommandHandler.class);
 
     @Override
     public void executeAuthorized() throws IOException, SQLException {

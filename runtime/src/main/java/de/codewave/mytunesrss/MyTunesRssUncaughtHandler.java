@@ -2,8 +2,8 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.settings.SupportContact;
 import de.codewave.utils.swing.SwingUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 
@@ -11,7 +11,7 @@ import javax.swing.*;
  * de.codewave.mytunesrss.MyTunesRssUncaughtHandler
  */
 public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandler {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssUncaughtHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssUncaughtHandler.class);
 
     private boolean myTerminate;
     private JFrame myParent;

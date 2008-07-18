@@ -18,8 +18,8 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Embedded;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.FileUtils;
@@ -36,7 +36,7 @@ import java.util.*;
  * de.codewave.mytunesrss.server.WebServer
  */
 public class WebServer {
-    private static final Log LOG = LogFactory.getLog(WebServer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebServer.class);
     private static final int MIN_PORT = 1;
     private static final int MAX_PORT = 65535;
 

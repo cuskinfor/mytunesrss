@@ -3,8 +3,8 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement
  */
 public class RecreateHelpTablesStatement implements DataStoreStatement {
-    private static final Log LOG = LogFactory.getLog(RecreateHelpTablesStatement.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RecreateHelpTablesStatement.class);
 
     public void execute(Connection connection) throws SQLException {
         SmartStatement statementAlbum = MyTunesRssUtils.createStatement(connection, "recreateHelpTablesAlbum");

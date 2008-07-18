@@ -7,8 +7,8 @@ package de.codewave.mytunesrss;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -21,7 +21,7 @@ import java.util.TimerTask;
  * de.codewave.mytunesrss.DatabaseWatchdogTask
  */
 public class MyTunesRssComUpdateTask extends TimerTask {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssComUpdateTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssComUpdateTask.class);
     private static final String MYTUNESRSSCOM_URL = MyTunesRss.MYTUNESRSSCOM_TOOLS_URL + "/save_ip.php";
 
     private int myInterval;

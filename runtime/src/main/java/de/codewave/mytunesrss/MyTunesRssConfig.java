@@ -11,8 +11,8 @@ import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.log4j.Level;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,7 +31,7 @@ import java.util.*;
  * de.codewave.mytunesrss.MyTunesRssConfig
  */
 public class MyTunesRssConfig {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssConfig.class);
 
     private int myPort = 8080;
     private String myServerName = "MyTunesRSS";

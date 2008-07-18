@@ -12,8 +12,8 @@ import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.*;
 import java.io.UnsupportedEncodingException;
@@ -26,7 +26,7 @@ import java.util.Date;
  * de.codewave.mytunesrss.jmx.EditUserConfig
  */
 public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBean {
-    private static final Log LOG = LogFactory.getLog(EditUserConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EditUserConfig.class);
 
     private String myUsername;
 

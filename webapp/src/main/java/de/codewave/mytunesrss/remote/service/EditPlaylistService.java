@@ -8,8 +8,8 @@ import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -18,7 +18,7 @@ import java.util.*;
  * Service for playlist retrieval and management.
  */
 public class EditPlaylistService {
-    private static final Log LOG = LogFactory.getLog(PlaylistService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PlaylistService.class);
     private static final String KEY_EDIT_PLAYLIST = "editPlaylist";
     private static final String KEY_EDIT_PLAYLIST_TRACKS = "editPlaylistTracks";
 

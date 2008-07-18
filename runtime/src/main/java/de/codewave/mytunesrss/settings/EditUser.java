@@ -8,8 +8,8 @@ import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.swing.*;
 import de.codewave.utils.swing.components.PasswordHashField;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -32,7 +32,7 @@ import java.util.TimerTask;
  * @version $Id:$
  */
 public class EditUser implements MyTunesRssEventListener {
-    private static final Log LOG = LogFactory.getLog(EditUser.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EditUser.class);
     private static final int MEGABYTE = 1024 * 1024;
 
     private JTextField myUserNameInput;

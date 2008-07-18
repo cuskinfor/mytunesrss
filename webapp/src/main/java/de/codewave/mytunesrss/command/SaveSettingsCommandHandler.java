@@ -11,8 +11,8 @@ import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 
@@ -20,7 +20,7 @@ import java.io.UnsupportedEncodingException;
  * de.codewave.mytunesrss.command.SaveSettingsCommandHandler
  */
 public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
-    private static final Log LOG = LogFactory.getLog(SaveSettingsCommandHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SaveSettingsCommandHandler.class);
 
     @Override
     public void executeAuthorized() throws Exception {

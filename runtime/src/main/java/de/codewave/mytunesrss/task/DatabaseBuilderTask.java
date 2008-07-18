@@ -14,8 +14,8 @@ import de.codewave.utils.sql.*;
 import de.codewave.utils.swing.Task;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +55,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         UpdatingTracksFromItunes(), UpdatingTracksFromFolder(), UpdatingTrackImages(), Idle();
     }
 
-    private static final Log LOG = LogFactory.getLog(DatabaseBuilderTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatabaseBuilderTask.class);
     private static Lock CURRENTLY_RUNNING = new ReentrantLock();
     private static DatabaseBuilderTask CURRENTLY_RUNNING_TASK;
     private static State myState = State.Idle;

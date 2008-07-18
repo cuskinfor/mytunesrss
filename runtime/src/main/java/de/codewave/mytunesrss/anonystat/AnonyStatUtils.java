@@ -5,8 +5,8 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * de.codewave.mytunesrss.anonystat.AnonyStatUtils
  */
 public class AnonyStatUtils {
-    private static final Log LOG = LogFactory.getLog(AnonyStatUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AnonyStatUtils.class);
     private static final String URL = "http://mytunesrss.com/tools/anonystat.php";
     private static final AtomicInteger failureCount = new AtomicInteger(0);
     private static final int MAXIMUM_FAILURES_IN_A_ROW = 3;

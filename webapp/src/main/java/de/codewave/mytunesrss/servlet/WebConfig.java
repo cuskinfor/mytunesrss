@@ -10,8 +10,8 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +25,7 @@ import java.util.Map;
  * de.codewave.mytunesrss.servlet.WebConfig
  */
 public class WebConfig {
-    private static final Log LOG = LogFactory.getLog(WebConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebConfig.class);
 
     private static final String CONFIG_COOKIE_NAME = MyTunesRss.APPLICATION_IDENTIFIER + "Cookie";
     private static final String CFG_USER_NAME = "userName";

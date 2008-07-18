@@ -6,8 +6,8 @@ import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.io.StreamCopyThread;
 import de.codewave.utils.io.LogStreamCopyThread;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Properties;
@@ -16,7 +16,7 @@ import java.util.Properties;
  * de.codewave.mytunesrss.command.LameTranscoderStream
  */
 public abstract class AbstractTranscoderStream extends InputStream {
-    private static final Log LOG = LogFactory.getLog(AbstractTranscoderStream.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractTranscoderStream.class);
     private static final Properties INTERNAL_PROPERTIES = new Properties();
     private static final Properties USER_PROPERTIES = new Properties();
 
@@ -77,8 +77,8 @@ public abstract class AbstractTranscoderStream extends InputStream {
         mySourceProcess = Runtime.getRuntime().exec(sourceCommand);
         myTargetProcess = Runtime.getRuntime().exec(targetCommand);
         new StreamCopyThread(mySourceProcess.getInputStream(), false, myTargetProcess.getOutputStream(), true).start();
-        new LogStreamCopyThread(mySourceProcess.getErrorStream(), false, LogFactory.getLog(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
-        new LogStreamCopyThread(myTargetProcess.getErrorStream(), false, LogFactory.getLog(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
+        new LogStreamCopyThread(mySourceProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
+        new LogStreamCopyThread(myTargetProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
     }
 
     public int read() throws IOException {

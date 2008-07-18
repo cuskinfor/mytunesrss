@@ -6,14 +6,14 @@ import de.codewave.utils.sql.SmartStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertImageStatement
  */
 public class UpdateImageForTrackStatement {
-    private static final Log LOG = LogFactory.getLog(UpdateImageForTrackStatement.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UpdateImageForTrackStatement.class);
 
     private String myTrackId;
     private String myHash;

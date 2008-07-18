@@ -7,8 +7,8 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,7 +17,7 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.datastore.statement.SavePlaylistStatement
  */
 public class SavePlaylistAttributesStatement implements DataStoreStatement {
-    private static final Log LOG = LogFactory.getLog(SavePlaylistStatement.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SavePlaylistStatement.class);
 
     protected String myId;
     private String myName;

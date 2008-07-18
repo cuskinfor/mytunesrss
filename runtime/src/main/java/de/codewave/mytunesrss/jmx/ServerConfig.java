@@ -6,8 +6,8 @@ import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.settings.ServerInfo;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.NotCompliantMBeanException;
 import java.io.File;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * @version $Id:$
  */
 public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
-    private static final Log LOG = LogFactory.getLog(ServerConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServerConfig.class);
 
     ServerConfig() throws NotCompliantMBeanException {
         super(ServerConfigMBean.class);
@@ -212,7 +212,7 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
                 display.add(context.split(":", 2)[0] + " ---> " + context.split(":", 2)[1]);
             } catch (ArrayIndexOutOfBoundsException e) {
                 if (LOG.isErrorEnabled()) {
-                    LOG.error(e);
+                    LOG.error("Additional context value syntax error.", e);
                 }
             }
         }

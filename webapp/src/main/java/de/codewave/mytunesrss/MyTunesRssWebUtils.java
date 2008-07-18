@@ -3,8 +3,8 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.servlet.ServletUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.lang.StringUtils;
 
 import javax.crypto.Cipher;
@@ -20,7 +20,7 @@ import java.util.Set;
  * @version $Id:$
  */
 public class MyTunesRssWebUtils {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssWebUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssWebUtils.class);
 
     public static String getServletUrl(HttpServletRequest request) {
         return ServletUtils.getApplicationUrl(request) + "/mytunesrss";

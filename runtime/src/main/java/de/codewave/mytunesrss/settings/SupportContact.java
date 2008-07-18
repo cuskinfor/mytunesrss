@@ -5,8 +5,8 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.task.SendSupportRequestTask;
 import de.codewave.utils.swing.SwingUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
  * de.codewave.mytunesrss.settings.SupportContact
  */
 public class SupportContact {
-    private static final Log LOG = LogFactory.getLog(SupportContact.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SupportContact.class);
 
     private JPanel myRootPanel;
     private JButton mySendButton;

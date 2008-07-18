@@ -13,8 +13,8 @@ import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.MiscUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.jstl.core.Config;
@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
  */
 public class MyTunesFunctions {
-    private static final Log LOG = LogFactory.getLog(MyTunesFunctions.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesFunctions.class);
 
     private static final String DEFAULT_NAME = "MyTunesRSS";
 

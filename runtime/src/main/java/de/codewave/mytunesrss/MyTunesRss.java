@@ -28,8 +28,8 @@ import org.apache.catalina.LifecycleException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -78,7 +78,7 @@ public class MyTunesRss {
         }
     }
 
-    private static final Log LOG = LogFactory.getLog(MyTunesRss.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRss.class);
 
     static {
         try {

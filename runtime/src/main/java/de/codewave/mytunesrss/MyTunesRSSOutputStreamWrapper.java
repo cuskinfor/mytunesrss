@@ -2,8 +2,8 @@ package de.codewave.mytunesrss;
 
 import de.codewave.utils.io.LimitedBandwidthOutputStream;
 import de.codewave.utils.servlet.StreamSender;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,7 +12,7 @@ import java.io.OutputStream;
  * de.codewave.mytunesrss.MyTunesRSSOutputStreamWrapper
  */
 public class MyTunesRSSOutputStreamWrapper implements StreamSender.OutputStreamWrapper {
-    private static final Log LOG = LogFactory.getLog(MyTunesRSSOutputStreamWrapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRSSOutputStreamWrapper.class);
     private int myBitrate;
     private int myDataOffset;
     private int myFirstByte;

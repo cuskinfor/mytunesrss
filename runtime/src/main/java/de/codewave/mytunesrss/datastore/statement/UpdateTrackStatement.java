@@ -9,8 +9,8 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,7 +20,7 @@ import java.util.StringTokenizer;
  * de.codewave.mytunesrss.datastore.statement.InsertTrackStatement
  */
 public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
-    private static final Log LOG = LogFactory.getLog(UpdateTrackStatement.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UpdateTrackStatement.class);
     public static final String UNKNOWN = new String("!");
 
     private String myId;

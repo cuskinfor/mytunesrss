@@ -5,8 +5,8 @@ import de.codewave.mytunesrss.User;
 import mx4j.tools.adaptor.http.HttpAdaptor;
 import mx4j.tools.adaptor.http.XSLTProcessor;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.*;
 import java.lang.management.ManagementFactory;
@@ -19,7 +19,7 @@ import java.lang.management.ManagementFactory;
  * @version $Id:$
  */
 public class MyTunesRssJmxUtils {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssJmxUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssJmxUtils.class);
     private static ObjectName HTTP_ADAPTOR_NAME;
     private static ObjectName SERVER_CONFIG_NAME;
     private static ObjectName APPLICATION_NAME;

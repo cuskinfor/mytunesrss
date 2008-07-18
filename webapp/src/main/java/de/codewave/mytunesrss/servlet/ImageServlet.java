@@ -5,8 +5,8 @@
 package de.codewave.mytunesrss.servlet;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ import java.net.URLConnection;
  * Servlet for delivering style sheets depending on the currently chosen theme.
  */
 public class ImageServlet extends ThemeServlet {
-    private static final Log LOG = LogFactory.getLog(ImageServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ImageServlet.class);
 
     @Override
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {

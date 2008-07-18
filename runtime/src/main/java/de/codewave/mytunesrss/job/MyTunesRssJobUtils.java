@@ -2,8 +2,8 @@ package de.codewave.mytunesrss.job;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.quartz.*;
 
 import java.text.ParseException;
@@ -12,7 +12,7 @@ import java.text.ParseException;
  * de.codewave.mytunesrss.job.MyTunesRssJobUtils
  */
 public class MyTunesRssJobUtils {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssJobUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssJobUtils.class);
 
     /**
      * Schedule the database update job for all cron triggers in the configuration. Remove possibly existing triggers for that job first.

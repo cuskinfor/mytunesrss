@@ -1,8 +1,8 @@
 package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +16,7 @@ import java.io.IOException;
  * de.codewave.mytunesrss.jsp.FlipFlopTag
  */
 public class EncryptTag extends BodyTagSupport {
-    private static final Log LOG = LogFactory.getLog(EncryptTag.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EncryptTag.class);
 
     private SecretKey myKey;
 

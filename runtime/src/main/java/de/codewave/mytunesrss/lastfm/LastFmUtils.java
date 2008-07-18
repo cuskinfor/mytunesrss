@@ -8,8 +8,8 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.List;
  * Client for accessing the last.fm music social network.
  */
 public class LastFmUtils {
-    private static final Log LOG = LogFactory.getLog(LastFmUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LastFmUtils.class);
     private static final String CLIENT_ID = "mtr";
     private static final String CLIENT_VERSION = "0.1";
 

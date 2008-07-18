@@ -1,7 +1,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import de.codewave.utils.sql.SmartStatement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 
@@ -12,7 +12,7 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.datastore.statement.InsertImageStatement
  */
 public class InsertImageStatement {
-    private static final Log LOG = LogFactory.getLog(InsertImageStatement.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InsertImageStatement.class);
 
     private String myHash;
     private int mySize;

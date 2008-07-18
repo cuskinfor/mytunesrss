@@ -6,8 +6,8 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreQuery;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -17,7 +17,7 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery
  */
 public class GetSystemInformationQuery extends DataStoreQuery<SystemInformation> {
-    private static final Log LOG = LogFactory.getLog(GetSystemInformationQuery.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GetSystemInformationQuery.class);
 
     public SystemInformation execute(Connection connection) {
         try {

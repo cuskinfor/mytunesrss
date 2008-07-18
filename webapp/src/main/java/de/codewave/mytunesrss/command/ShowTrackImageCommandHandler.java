@@ -11,14 +11,14 @@ import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * de.codewave.mytunesrss.command.ShowTrackImageCommandHandler
  */
 public class ShowTrackImageCommandHandler extends ShowImageCommandHandler {
-    private static final Log LOG = LogFactory.getLog(ShowTrackImageCommandHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ShowTrackImageCommandHandler.class);
 
     @Override
     public void executeAuthorized() throws Exception {

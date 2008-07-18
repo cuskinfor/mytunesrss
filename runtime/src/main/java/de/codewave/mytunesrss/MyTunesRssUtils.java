@@ -12,12 +12,10 @@ import de.codewave.utils.swing.pleasewait.PleaseWaitUtils;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.lf5.util.StreamUtils;
 import org.apache.log4j.spi.LoggerRepository;
 import org.quartz.SchedulerException;
 
@@ -37,7 +35,7 @@ import com.ibm.icu.text.Normalizer;
  * de.codewave.mytunesrss.MyTunesRssUtils
  */
 public class MyTunesRssUtils {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssUtils.class);
 
     public static void showErrorMessage(String message) {
         if (MyTunesRss.HEADLESS) {
@@ -275,17 +273,17 @@ public class MyTunesRssUtils {
 
     public static void setCodewaveLogLevel(Level level) {
         if (level == Level.OFF) {
-            LOG.fatal("Setting codewave log to level \"" + level + "\".");
+            LOG.error("Setting codewave log to level \"" + level + "\".");
         }
-        LoggerRepository repository = Logger.getRootLogger().getLoggerRepository();
+        LoggerRepository repository = org.apache.log4j.Logger.getRootLogger().getLoggerRepository();
         for (Enumeration loggerEnum = repository.getCurrentLoggers(); loggerEnum.hasMoreElements();) {
-            Logger logger = (Logger)loggerEnum.nextElement();
+            org.apache.log4j.Logger logger = (org.apache.log4j.Logger)loggerEnum.nextElement();
             if (logger.getName().startsWith("de.codewave.")) {
                 logger.setLevel(level);
             }
         }
-        Logger.getLogger("de.codewave").setLevel(level);
-        LOG.fatal("Setting codewave log to level \"" + level + "\".");
+        org.apache.log4j.Logger.getLogger("de.codewave").setLevel(level);
+        LOG.error("Setting codewave log to level \"" + level + "\".");
     }
 
     public static String normalize(String text) {

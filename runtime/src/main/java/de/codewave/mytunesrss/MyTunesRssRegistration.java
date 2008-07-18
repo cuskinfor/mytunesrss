@@ -5,8 +5,8 @@ import de.codewave.utils.registration.RegistrationUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
@@ -18,7 +18,7 @@ import java.util.Date;
  * de.codewave.mytunesrss.MyTunesRssRegistration
  */
 public class MyTunesRssRegistration {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssRegistration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssRegistration.class);
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     private String myName;

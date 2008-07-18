@@ -4,8 +4,8 @@
 
 package de.codewave.mytunesrss.jsp;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
@@ -16,7 +16,7 @@ import java.io.IOException;
  * de.codewave.mytunesrss.jsp.FlipFlopTag
  */
 public class FlipFlopTag extends TagSupport {
-    private static final Log LOG = LogFactory.getLog(FlipFlopTag.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FlipFlopTag.class);
 
     @Override
     public int doStartTag() throws JspException {

@@ -8,8 +8,8 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.*;
 import java.io.UnsupportedEncodingException;
@@ -22,7 +22,7 @@ public class UserConfig extends MyTunesRssMBean implements UserConfigMBean {
     super(UserConfigMBean.class);
   }
 
-  private static final Log LOG = LogFactory.getLog(UserConfig.class);
+  private static final Logger LOG = LoggerFactory.getLogger(UserConfig.class);
 
     public String addUser(String name, String password) throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException,
             NotCompliantMBeanException, InstanceAlreadyExistsException {

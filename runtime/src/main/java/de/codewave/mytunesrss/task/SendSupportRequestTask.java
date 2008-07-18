@@ -9,8 +9,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.*;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -21,7 +21,7 @@ import java.util.zip.ZipOutputStream;
  * de.codewave.mytunesrss.task.SendSupportRequestTask
  */
 public class SendSupportRequestTask extends MyTunesRssTask {
-    private static final Log LOG = LogFactory.getLog(SendSupportRequestTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SendSupportRequestTask.class);
     private static final String SUPPORT_URL = "http://www.codewave.de/tools/support.php";
 
     private boolean mySuccess;

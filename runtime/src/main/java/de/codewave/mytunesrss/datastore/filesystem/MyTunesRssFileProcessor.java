@@ -18,8 +18,8 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.util.*;
  * de.codewave.mytunesrss.datastore.filesystem.MyTunesRssFileProcessor
  */
 public class MyTunesRssFileProcessor implements FileProcessor {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssFileProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssFileProcessor.class);
     private static final String ATOM_ALBUM = "moov.udta.meta.ilst.\u00a9alb.data";
     private static final String ATOM_ARTIST = "moov.udta.meta.ilst.\u00a9ART.data";
     private static final String ATOM_TITLE = "moov.udta.meta.ilst.\u00a9nam.data";

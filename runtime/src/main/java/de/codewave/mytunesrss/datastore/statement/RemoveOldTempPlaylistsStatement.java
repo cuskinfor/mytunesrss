@@ -3,8 +3,8 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -14,7 +14,7 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement
  */
 public class RemoveOldTempPlaylistsStatement implements DataStoreStatement {
-    private static final Log LOG = LogFactory.getLog(RemoveOldTempPlaylistsStatement.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RemoveOldTempPlaylistsStatement.class);
     private static final int DEFAULT_KEEP = 10000;
 
     public void execute(Connection connection) throws SQLException {

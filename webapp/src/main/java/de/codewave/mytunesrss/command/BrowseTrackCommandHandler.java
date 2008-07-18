@@ -14,8 +14,8 @@ import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
@@ -28,7 +28,7 @@ import java.util.*;
  * de.codewave.mytunesrss.command.BrowseTrackCommandHandler
  */
 public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
-    private static final Log LOG = LogFactory.getLog(BrowseTrackCommandHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BrowseTrackCommandHandler.class);
 
     @Override
     public void executeAuthorized() throws Exception {

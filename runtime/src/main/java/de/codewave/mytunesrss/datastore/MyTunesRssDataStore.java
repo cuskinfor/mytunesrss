@@ -11,8 +11,8 @@ import de.codewave.utils.sql.SmartStatementFactory;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
@@ -26,7 +26,7 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.datastore.MyTunesRssDataStore
  */
 public class MyTunesRssDataStore extends DataStore {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssDataStore.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssDataStore.class);
     public static final int UPDATE_HELP_TABLES_FREQUENCY = 30000;
 
     private SmartStatementFactory mySmartStatementFactory;

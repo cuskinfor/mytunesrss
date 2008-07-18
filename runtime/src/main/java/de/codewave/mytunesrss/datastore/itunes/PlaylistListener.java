@@ -10,8 +10,8 @@ import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -20,7 +20,7 @@ import java.util.*;
  * de.codewave.mytunesrss.datastore.itunes.PlaylistListenerr
  */
 public class PlaylistListener implements PListHandlerListener {
-    private static final Log LOG = LogFactory.getLog(PlaylistListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PlaylistListener.class);
 
     private DataStoreSession myDataStoreSession;
     private Map<Long, String> myTrackIdToPersId;

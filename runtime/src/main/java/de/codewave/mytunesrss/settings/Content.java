@@ -12,8 +12,8 @@ import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.datastore.statement.SavePlaylistAttributesStatement;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.swing.SwingUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -27,7 +27,7 @@ import java.util.List;
  * de.codewave.mytunesrss.settings.Content
  */
 public class Content implements MyTunesRssEventListener {
-    private static final Log LOG = LogFactory.getLog(Content.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Content.class);
 
     private JPanel myRootPanel;
     private JScrollPane myScrollPane;

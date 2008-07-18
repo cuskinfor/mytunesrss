@@ -7,8 +7,8 @@ import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.datastore.statement.SavePlaylistAttributesStatement;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.NotCompliantMBeanException;
 import java.sql.SQLException;
@@ -19,7 +19,7 @@ import java.util.List;
  * de.codewave.mytunesrss.jmx.ContentConfig
  */
 public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean {
-    private static final Log LOG = LogFactory.getLog(ContentConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContentConfig.class);
 
     public ContentConfig() throws NotCompliantMBeanException {
         super(ContentConfigMBean.class);

@@ -2,8 +2,8 @@ package de.codewave.mytunesrss.job;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -17,7 +17,7 @@ public class DatabaseUpdateJob implements Job {
     /**
      * Logger.
      */
-    private static final Log LOG = LogFactory.getLog(DatabaseUpdateJob.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatabaseUpdateJob.class);
 
     /**
      * Execute the job.

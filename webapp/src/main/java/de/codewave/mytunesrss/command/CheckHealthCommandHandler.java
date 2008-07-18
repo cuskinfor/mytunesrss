@@ -6,8 +6,8 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.server.CheckHealthResult;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -16,7 +16,7 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.command.CheckHealthCommandHandler
  */
 public class CheckHealthCommandHandler extends MyTunesRssCommandHandler {
-    private static final Log LOG = LogFactory.getLog(CheckHealthCommandHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CheckHealthCommandHandler.class);
 
     public void execute() throws SQLException, IOException {
         if (LOG.isInfoEnabled()) {

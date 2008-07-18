@@ -5,15 +5,9 @@
     </properties>
     <body>
 
-        <release version="3.5-RC-3" date="2008-xx-xx" description="RC3">
-            <action dev="mdescher" type="fix">
-                Checkbox state not correctly handled for "check for update on start"
-                box.
-            </action>
+        <release version="3.6-EAP-1" date="2008-xx-xx" description="EAP-1">
             <action dev="mdescher" type="update">
-                Removed apple extensions from project and created a new standalone
-                project for this. So mytunesrss can be built without any problems
-                on non-apple systems now.
+                Switched from commons-logging to slf4j.
             </action>
         </release>
 

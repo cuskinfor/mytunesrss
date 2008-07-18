@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
-    <version>3.5-RC-3-SNAPSHOT</version>
+    <version>3.6-EAP-1-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Runtime</name>
     <distributionManagement>
         <site>
@@ -24,62 +24,95 @@
         <dependency>
             <groupId>de.codewave.apple-extensions</groupId>
             <artifactId>apple-extensions</artifactId>
-            <version>1.0</version>
+            <version>1.0.1</version>
             <scope>runtime</scope>
-            <optional/>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.4</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.0.4</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.2</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.2</version>
+            <scope>runtime</scope>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.5.2</version>
+            <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.14</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>commons-jxpath</groupId>
             <artifactId>commons-jxpath</artifactId>
             <version>1.2</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>
             <version>1.4</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>tomcat</groupId>
             <artifactId>catalina</artifactId>
             <version>${tomcat.version}</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>tomcat</groupId>
             <artifactId>catalina-optional</artifactId>
             <version>${tomcat.version}</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>commons-el</groupId>
             <artifactId>commons-el</artifactId>
             <version>1.0</version>
-            <optional />
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>tomcat</groupId>
             <artifactId>jasper-compiler</artifactId>
             <version>${tomcat.version}</version>
-            <optional />
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>ant</groupId>
@@ -102,13 +135,13 @@
             <groupId>tomcat</groupId>
             <artifactId>jasper-runtime</artifactId>
             <version>${tomcat.version}</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>tomcat</groupId>
             <artifactId>naming-factory</artifactId>
             <version>${tomcat.version}</version>
-            <optional />
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -120,7 +153,7 @@
             <groupId>tomcat</groupId>
             <artifactId>naming-resources</artifactId>
             <version>${tomcat.version}</version>
-            <optional />
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -132,31 +165,31 @@
             <groupId>tomcat</groupId>
             <artifactId>servlets-default</artifactId>
             <version>${tomcat.version}</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>tomcat</groupId>
             <artifactId>tomcat-ajp</artifactId>
             <version>${tomcat.version}</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>tomcat</groupId>
             <artifactId>tomcat-coyote</artifactId>
             <version>${tomcat.version}</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>tomcat</groupId>
             <artifactId>tomcat-http</artifactId>
             <version>${tomcat.version}</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>tomcat</groupId>
             <artifactId>tomcat-util</artifactId>
             <version>${tomcat.version}</version>
-            <optional />
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>tomcat</groupId>
@@ -172,38 +205,44 @@
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
-            <optional />
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.3</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>mx4j</groupId>
             <artifactId>mx4j-tools</artifactId>
             <version>3.0.1</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.4</version>
             <scope>test</scope>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.0.73</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>commons-modeler</groupId>
             <artifactId>commons-modeler</artifactId>
             <version>2.0.1</version>
-            <optional />
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>commons-digester</groupId>
@@ -232,26 +271,38 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>codewave-utils</artifactId>
-            <version>0.40</version>
-            <optional />
+            <version>0.41</version>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>camel</artifactId>
-            <version>0.9.7</version>
-            <optional />
+            <version>0.9.8</version>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>forms_rt</artifactId>
             <version>6.0.5</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>1.4</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -267,13 +318,13 @@
             <groupId>systray4j</groupId>
             <artifactId>systray4j</artifactId>
             <version>2.4.1</version>
-            <optional />
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
             <version>2.8.1</version>
-            <optional />
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>xml-apis</groupId>
@@ -290,6 +341,10 @@
             <artifactId>quartz</artifactId>
             <version>1.5.2</version>
             <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>javax.ejb</groupId>
                     <artifactId>ejb</artifactId>

@@ -12,8 +12,8 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import java.util.*;
  * de.codewave.mytunesrss.datastore.filesystem.PlaylistFileProcessor
  */
 public class PlaylistFileProcessor implements FileProcessor {
-    private static final Log LOG = LogFactory.getLog(PlaylistFileProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PlaylistFileProcessor.class);
 
     private DataStoreSession myDataStoreSession;
     private Collection<String> myExistingIds = new HashSet<String>();

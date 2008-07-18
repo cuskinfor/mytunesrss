@@ -11,8 +11,8 @@ import de.codewave.camel.mp3.framebody.v3.APICFrameBody;
 import de.codewave.camel.mp3.structure.Frame;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -20,7 +20,7 @@ import java.io.File;
  * de.codewave.mytunesrss.meta.MyTunesRssMp3Utils
  */
 public class MyTunesRssMp3Utils {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssMp3Utils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssMp3Utils.class);
 
     public static Image getImage(Track track) {
         File file = track.getFile();

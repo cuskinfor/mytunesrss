@@ -5,8 +5,8 @@ import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.util.Collections;
  * de.codewave.mytunesrss.meta.MyTunesRssMp3Utils
  */
 public class MyTunesRssMp4Utils {
-    private static final Log LOG = LogFactory.getLog(MyTunesRssMp4Utils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssMp4Utils.class);
 
     public static Image getImage(Track track) {
         File file = track.getFile();

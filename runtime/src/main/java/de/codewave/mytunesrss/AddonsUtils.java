@@ -9,8 +9,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
@@ -22,7 +22,7 @@ import java.util.zip.ZipEntry;
  * de.codewave.mytunesrss.AddonsUtils
  */
 public class AddonsUtils {
-    private static final Log LOG = LogFactory.getLog(AddonsUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AddonsUtils.class);
 
     public static Collection<String> getThemes() {
         List<String> themes = new ArrayList<String>();

@@ -10,8 +10,8 @@ import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
 import de.codewave.utils.network.NetworkUtils;
 import de.codewave.utils.swing.SwingUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -30,7 +30,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ServerInfo {
-    private static final Log LOG = LogFactory.getLog(ServerInfo.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServerInfo.class);
 
     private JPanel myRootPanel;
     private JTable myConnections;

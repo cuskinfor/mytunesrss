@@ -1,8 +1,8 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.utils.PrefsUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +13,7 @@ import java.util.Properties;
 import java.util.Set;
 
 public class FileSuffixInfo {
-    private static final Log LOG = LogFactory.getLog(FileSuffixInfo.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileSuffixInfo.class);
     private static final Properties INTERNAL_PROPERTIES = new Properties();
     private static final Properties USER_PROPERTIES = new Properties();
     private static final Set<String> SUFFIXES = new HashSet<String>();

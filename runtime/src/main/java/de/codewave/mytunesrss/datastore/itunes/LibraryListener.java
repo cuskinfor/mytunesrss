@@ -1,8 +1,8 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.utils.xml.PListHandlerListener;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map;
  * de.codewave.mytunesrss.datastore.itunes.LibraryListener
  */
 public class LibraryListener implements PListHandlerListener {
-    private static final Log LOG = LogFactory.getLog(LibraryListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LibraryListener.class);
 
     private String myLibraryId;
     private long myTimeLastUpate;

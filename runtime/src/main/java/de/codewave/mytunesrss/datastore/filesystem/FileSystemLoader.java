@@ -4,8 +4,8 @@ import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -17,7 +17,7 @@ import java.util.Collection;
  * de.codewave.mytunesrss.datastore.filesystem.FileSystemLoaderr
  */
 public class FileSystemLoader {
-    private static final Log LOG = LogFactory.getLog(FileSystemLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileSystemLoader.class);
 
     public static void loadFromFileSystem(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds, Collection<String> playlistIds) throws IOException, SQLException {
         MyTunesRssFileProcessor fileProcessor = null;

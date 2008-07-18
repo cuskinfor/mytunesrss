@@ -11,8 +11,8 @@ import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.task.RecreateDatabaseTask;
 import de.codewave.utils.sql.DataStoreSession;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.NotCompliantMBeanException;
 import java.sql.SQLException;
@@ -23,7 +23,7 @@ import java.util.Date;
  * de.codewave.mytunesrss.jmx.DatabaseConfig
  */
 public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBean, MyTunesRssEventListener {
-    private static final Log LOG = LogFactory.getLog(DatabaseConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatabaseConfig.class);
 
     private String myCurrentUpdateAction;
 

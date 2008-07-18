@@ -10,8 +10,8 @@ import de.codewave.utils.swing.JTextFieldValidation;
 import de.codewave.utils.swing.MinMaxValueTextFieldValidation;
 import de.codewave.utils.swing.NotEmptyTextFieldValidation;
 import de.codewave.utils.swing.SwingUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -23,7 +23,7 @@ import java.awt.event.ActionListener;
  * Server settings panel
  */
 public class Server implements MyTunesRssEventListener {
-    private static final Log LOG = LogFactory.getLog(Server.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Server.class);
 
     private JPanel myRootPanel;
     private JTextField myPortInput;

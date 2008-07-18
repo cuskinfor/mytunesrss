@@ -6,8 +6,8 @@ package de.codewave.mytunesrss.network;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.settings.ServerInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.*;
@@ -17,7 +17,7 @@ import java.util.*;
  * de.codewave.mytunesrss.network.MulticastService
  */
 public class MulticastService extends Thread {
-    private static final Log LOG = LogFactory.getLog(MulticastService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MulticastService.class);
 
     private static final String QUERY = "mtrqs";
     private static final String MULTICAST_IP = "225.24.2.72";

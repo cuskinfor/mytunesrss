@@ -8,8 +8,8 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.XmlUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import java.util.Map;
  * de.codewave.mytunesrss.datastore.itunes.ItunesLoaderr
  */
 public class ItunesLoader {
-    private static final Log LOG = LogFactory.getLog(ItunesLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ItunesLoader.class);
 
     static String getFileNameForLocation(String location) {
         try {

@@ -8,8 +8,8 @@ import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.mytunesrss.meta.MyTunesRssMp4Utils;
 import de.codewave.utils.graphics.ImageUtils;
 import de.codewave.utils.sql.DataStoreStatement;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.datastore.statement.InsertTrackImagesStatement
  */
 public class HandleTrackImagesStatement implements DataStoreStatement {
-    private static final Log LOG = LogFactory.getLog(HandleTrackImagesStatement.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HandleTrackImagesStatement.class);
 
     private File myFile;
     private String myTrackId;
