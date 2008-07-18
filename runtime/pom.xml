@@ -17,7 +17,7 @@
         <version>1.3</version>
     </parent>
     <properties>
-        <tomcat.version>5.5.15</tomcat.version>
+        <tomcat.version>5.5.23</tomcat.version>
         <uidesigner />
     </properties>
     <dependencies>
@@ -38,20 +38,17 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.4</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.5.2</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.5.2</version>
             <scope>runtime</scope>
-            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>log4j</groupId>
@@ -284,7 +281,6 @@
             <groupId>de.codewave</groupId>
             <artifactId>camel</artifactId>
             <version>0.9.8</version>
-            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
