@@ -40,9 +40,6 @@
     <dependencySets>
         <dependencySet>
             <outputDirectory>data/lib</outputDirectory>
-            <includes>
-                <include>*:codewave-zis:*</include>
-            </includes>
         </dependencySet>
     </dependencySets>
     <fileSets>

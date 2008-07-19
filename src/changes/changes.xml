@@ -7,6 +7,10 @@
 
         <release version="3.6-EAP-1" date="2008-xx-xx" description="EAP-1">
             <action dev="mdescher" type="update">
+                Moved xercesImpl into boot class path to prevent rare (OS X specific?)
+                problems when loading the parser implementation classes.
+            </action>
+            <action dev="mdescher" type="update">
                 Switched from commons-logging to slf4j.
                 Updated h2 to 1.0.75.
                 Updated Tomcat to 5.5.23.

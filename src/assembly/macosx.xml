@@ -40,9 +40,6 @@
     <dependencySets>
         <dependencySet>
             <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/lib</outputDirectory>
-            <includes>
-                <include>*:codewave-zis:*</include>
-            </includes>
         </dependencySet>
     </dependencySets>
     <fileSets>
