@@ -4,7 +4,7 @@
     <artifactId>mytunesrss</artifactId>
     <packaging>pom</packaging>
     <version>3.6-EAP-1-SNAPSHOT</version>
-    <name>mytunesrss</name>
+    <name>Codewave MyTunesRSS</name>
     <distributionManagement>
         <site>
             <url>/Users/mdescher/Sites/java-projects/mytunesrss</url>
