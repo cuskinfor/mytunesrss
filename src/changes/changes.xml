@@ -7,16 +7,13 @@
 
         <release version="3.5-RC-3" date="2008-xx-xx" description="RC3">
             <action dev="mdescher" type="fix">
-                Fixed apple extensions problem introduced through extracting the
-                extensions framework into its own project.
+                Fixed apple extensions problem introduced through extracting the extensions framework into its own project.
             </action>
             <action dev="mdescher" type="fix">
-                Checkbox state not correctly handled for "check for update on start"
-                box.
+                Checkbox state not correctly handled for "check for update on start" box.
             </action>
             <action dev="mdescher" type="update">
-                Removed apple extensions from project and created a new standalone
-                project for this. So mytunesrss can be built without any problems
+                Removed apple extensions from project and created a new standalone project for this. So mytunesrss can be built without any problems
                 on non-apple systems now.
             </action>
         </release>
