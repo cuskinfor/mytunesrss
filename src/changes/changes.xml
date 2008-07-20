@@ -1,19 +1,31 @@
 <document>
+
     <properties>
         <title>MyTunesRSS</title>
         <author email="mdescher@codewave.de">Michael Descher</author>
     </properties>
+
     <body>
 
         <release version="3.6-EAP-1" date="2008-xx-xx" description="EAP-1">
             <action dev="mdescher" type="update">
-                Moved xercesImpl into boot class path to prevent rare (OS X specific?)
-                problems when loading the parser implementation classes.
+                Moved xercesImpl into boot class path to prevent rare (OS X specific?) problems when loading the parser implementation classes.
             </action>
             <action dev="mdescher" type="update">
-                Switched from commons-logging to slf4j.
-                Updated h2 to 1.0.75.
-                Updated Tomcat to 5.5.23.
+                Switched from commons-logging to slf4j. Updated h2 to 1.0.75. Updated Tomcat to 5.5.23.
+            </action>
+        </release>
+
+        <release version="3.5-RC-3" date="2008-xx-xx" description="RC3">
+            <action dev="mdescher" type="fix">
+                Fixed apple extensions problem introduced through extracting the extensions framework into its own project.
+            </action>
+            <action dev="mdescher" type="fix">
+                Checkbox state not correctly handled for "check for update on start" box.
+            </action>
+            <action dev="mdescher" type="update">
+                Removed apple extensions from project and created a new standalone project for this. So mytunesrss can be built without any problems
+                on non-apple systems now.
             </action>
         </release>
 
@@ -22,12 +34,10 @@
                 Username and password mandatory in JMX console when adding a user.
             </action>
             <action dev="mdescher" type="fix">
-                Version number not submitted for anonymous statistic when
-                starting application.
+                Version number not submitted for anonymous statistic when starting application.
             </action>
             <action dev="mdescher" type="fix">
-                Downgraded to commons-logging 1.0.4 to prevent strange
-                problems when starting the server for the second time.
+                Downgraded to commons-logging 1.0.4 to prevent strange problems when starting the server for the second time.
             </action>
         </release>
 
@@ -39,8 +49,7 @@
                 Overlay popups now work in Firefox, Safari, Opera and Internet Explorer.
             </action>
             <action dev="mdescher" type="fix">
-                Removed overlay popups on PSP and fixed login/password field
-                visible lengths.
+                Removed overlay popups on PSP and fixed login/password field visible lengths.
             </action>
             <action dev="mdescher" type="fix">
                 Fixed database pool leak.
@@ -52,8 +61,7 @@
                 Several JMX options added.
             </action>
             <action dev="mdescher" type="fix">
-                Do not add a watch folder for scanning if the same folder is
-                already contained in the scanned folders set.
+                Do not add a watch folder for scanning if the same folder is already contained in the scanned folders set.
             </action>
         </release>
 
@@ -62,16 +70,13 @@
                 EAP license key valid until 2008-08-31 now.
             </action>
             <action dev="mdescher" type="add">
-                Clickable links for "albums", "artists" and "genres" in
-                database statistics on portal page.
+                Clickable links for "albums", "artists" and "genres" in database statistics on portal page.
             </action>
             <action dev="mdescher" type="add">
-                User selectable start page for alphabet pager (0-9, A-C, all)
-                in web settings.
+                User selectable start page for alphabet pager (0-9, A-C, all) in web settings.
             </action>
             <action dev="mdescher" type="add">
-                Added options for "0/2", "0/3", "0/6" and "0/12" to the
-                hour setting of a database schedule.
+                Added options for "0/2", "0/3", "0/6" and "0/12" to the hour setting of a database schedule.
             </action>
         </release>
 
@@ -98,16 +103,14 @@
                 Do not send a submission for one track multiple times in a row to last.fm.
             </action>
             <action dev="mdescher" type="add">
-                Import original artist into database (track table) so we have it even if some words are
-                dropped from the name. This original name is used for last.fm scrobbling and for display
-                purposes on the track info and in playlists and RSS feeds.
+                Import original artist into database (track table) so we have it even if some words are dropped from the name. This original name is
+                used for last.fm scrobbling and for display purposes on the track info and in playlists and RSS feeds.
             </action>
             <action dev="mdescher" type="add">
                 Disable anonymous statistics sender after 3 failures in a row.
             </action>
             <action dev="mdescher" type="update">
-                Force all links to playTrack, downloadTrack, getZipArchive, showTrackImage and upload
-                to be non-SSL.
+                Force all links to playTrack, downloadTrack, getZipArchive, showTrackImage and upload to be non-SSL.
             </action>
         </release>
 
@@ -137,27 +140,22 @@
                 Remote-API: PlaylistService and EditPlaylistService
             </action>
             <action dev="mdescher" type="fix">
-                Added "-r" option to default lame command line to make it work
-                on Windows as well.
+                Added "-r" option to default lame command line to make it work on Windows as well.
             </action>
             <action dev="mdescher" type="fix">
-                Correct content type and no content length for RSS enclosures when file is being
-                transcoded.
+                Correct content type and no content length for RSS enclosures when file is being transcoded.
             </action>
             <action dev="mdescher" type="add">
-                For more than 5 tracks in a section create a section playlist
-                or use an existing one.
+                For more than 5 tracks in a section create a section playlist or use an existing one.
             </action>
         </release>
 
         <release version="3.2-EAP-12" date="2008-05-10" description="EAP release">
             <action dev="mdescher" type="update">
-                Added database index for track.image_hash to speed up removal
-                of orphaned images a lot.
+                Added database index for track.image_hash to speed up removal of orphaned images a lot.
             </action>
             <action dev="mdescher" type="add">
-                New playlist link replaced with edit existing playlist link when
-                editable MyTunesRSS playlists exist. Dialog with selection of
+                New playlist link replaced with edit existing playlist link when editable MyTunesRSS playlists exist. Dialog with selection of
                 playlist to edit and option to create a new playlist.
             </action>
             <action dev="mdescher" type="add">
@@ -188,12 +186,10 @@
 
         <release version="3.2-EAP-10" date="2008-04-20" description="EAP release">
             <action dev="mdescher" type="update">
-                Images with same hash value only inserted once into database. Images linked to tracks
-                via their hash instead of the track id.
+                Images with same hash value only inserted once into database. Images linked to tracks via their hash instead of the track id.
             </action>
             <action dev="mdescher" type="fix">
-                Use LogStreamCopyThread for transcoder error streams instead of writing to a file
-                which was not thread safe.
+                Use LogStreamCopyThread for transcoder error streams instead of writing to a file which was not thread safe.
             </action>
             <action dev="mdescher" type="update">
                 codewave-utils 0.40
@@ -202,8 +198,7 @@
                 Log level setting for codewave log (de.codewave): OFF, FATAL, ERROR, WARN, INFO, DEBUG.
             </action>
             <action dev="mdescher" type="fix">
-                If getting canonical file path for iTunes XML files fails, use
-                the absolute path and Icu4j to normalize it.
+                If getting canonical file path for iTunes XML files fails, use the absolute path and Icu4j to normalize it.
             </action>
             <action dev="mdescher" type="fix">
                 Album and artist name were always "unknown" for anything but MP3 and MP4.
@@ -218,8 +213,7 @@
 
         <release version="3.2-EAP-9" date="2008-04-13" description="EAP release">
             <action dev="mdescher" type="update">
-                Playlist display in iPhone playlist mode. Playlist with pager
-                and links for starting any track.
+                Playlist display in iPhone playlist mode. Playlist with pager and links for starting any track.
             </action>
             <action dev="mdescher" type="update">
                 New version 0.39 of codewave-utils.
@@ -294,8 +288,7 @@
                 Last.fm music social network support.
             </action>
             <action dev="mdescher" type="add">
-                TrackService.getDownloadUrl remote API function.
-                TrackService.getPlaybackUrl remote API function.
+                TrackService.getDownloadUrl remote API function. TrackService.getPlaybackUrl remote API function.
             </action>
         </release>
 
@@ -304,10 +297,8 @@
                 crossdomain.xml which allows all domains.
             </action>
             <action dev="mdescher" type="add">
-                Session handling for remote API calls. The LoginService.login function now returns a
-                session ID which can be used in the path info of subsequent calls to identify the session.
-                The LoginService.login call also gets a
-                desired session timeout in seconds.
+                Session handling for remote API calls. The LoginService.login function now returns a session ID which can be used in the path info of
+                subsequent calls to identify the session. The LoginService.login call also gets a desired session timeout in seconds.
             </action>
             <action dev="mdescher" type="update">
                 camel-0.9.7.
@@ -316,22 +307,19 @@
                 Log entry for each file being processed by the file processor.
             </action>
             <action dev="mdescher" type="fix">
-                Bugfix for files which are neither MP3 nor MP4 when scanning
-                watch folders.
+                Bugfix for files which are neither MP3 nor MP4 when scanning watch folders.
             </action>
         </release>
 
         <release version="3.2-EAP-4" date="2008-03-12" description="EAP release">
             <action dev="mdescher" type="update">
-                codewave-utils-0.37 to hopefully fix playback on iPhone/iPod Touch
-                by adding response headers for range requests.
+                codewave-utils-0.37 to hopefully fix playback on iPhone/iPod Touch by adding response headers for range requests.
             </action>
             <action dev="mdescher" type="fix">
                 Fix for Yahoo Media Player requesting stupid image.
             </action>
             <action dev="mdescher" type="fix">
-                Fixed codewave log level setting after loading configuration.
-                Set default log level (until config is loaded) from info to debug.
+                Fixed codewave log level setting after loading configuration. Set default log level (until config is loaded) from info to debug.
             </action>
             <action dev="mdescher" type="fix">
                 Create an empty settings file when none is available.
@@ -527,5 +515,7 @@
             </action>
         </release>
         -->
+
     </body>
+
 </document>
