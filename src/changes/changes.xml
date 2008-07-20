@@ -16,7 +16,7 @@
             </action>
         </release>
 
-        <release version="3.5-RC-3" date="2008-xx-xx" description="RC3">
+        <release version="3.5-RC-3" date="2008-07-20" description="RC3">
             <action dev="mdescher" type="fix">
                 Fixed apple extensions problem introduced through extracting the extensions framework into its own project.
             </action>
