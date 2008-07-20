@@ -7,6 +7,10 @@
 
         <release version="3.5-RC-3" date="2008-xx-xx" description="RC3">
             <action dev="mdescher" type="fix">
+                Fixed apple extensions problem introduced through extracting the
+                extensions framework into its own project.
+            </action>
+            <action dev="mdescher" type="fix">
                 Checkbox state not correctly handled for "check for update on start"
                 box.
             </action>

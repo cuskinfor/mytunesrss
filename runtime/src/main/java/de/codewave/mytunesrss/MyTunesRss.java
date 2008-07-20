@@ -530,22 +530,12 @@ public class MyTunesRss {
         }
     }
 
-    private static void executeApple(final Settings settings) {
+    private static void executeApple(Settings settings) {
         if (SystemUtils.IS_OS_MAC_OSX) {
             try {
                 Class appleExtensionsClass = Class.forName("de.codewave.apple.AppleExtensions");
                 Method activateMethod = appleExtensionsClass.getMethod("activate", EventListener.class);
-                activateMethod.invoke(null, new EventListener() {
-                    public void handleQuit() {
-                        settings.doQuitApplication();
-                    }
-
-                    public void handleReOpenApplication() {
-                        if (!ROOT_FRAME.isVisible()) {
-                            ROOT_FRAME.setVisible(true);
-                        }
-                    }
-                });
+                activateMethod.invoke(null, new AppleExtensionsEventListener(settings));
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not activate apple extensions.", e);
@@ -601,6 +591,24 @@ public class MyTunesRss {
             if (SYSTRAYMENU != null) {
                 ROOT_FRAME.setVisible(false);
                 SYSTRAYMENU.show();
+            }
+        }
+    }
+
+    public static class AppleExtensionsEventListener implements EventListener {
+        private Settings mySettings;
+
+        public AppleExtensionsEventListener(Settings settings) {
+            mySettings = settings;
+        }
+
+        public void handleQuit() {
+            mySettings.doQuitApplication();
+        }
+
+        public void handleReOpenApplication() {
+            if (!ROOT_FRAME.isVisible()) {
+                ROOT_FRAME.setVisible(true);
             }
         }
     }
