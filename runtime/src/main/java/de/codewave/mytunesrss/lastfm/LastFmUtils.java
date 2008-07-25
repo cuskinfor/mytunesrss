@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.net.URLEncoder;
 
 /**
  * Client for accessing the last.fm music social network.
@@ -37,8 +38,8 @@ public class LastFmUtils {
             String passwordHashHex = new String(Hex.encodeHex(user.getLastFmPasswordHash()));
             LOG.debug("Password hash in hex is \"" + passwordHashHex + "\".");
             String authToken = new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest((passwordHashHex + timestamp).getBytes("UTF-8"))));
-            String uri = "http://post.audioscrobbler.com/?hs=true&p=1.2&c=" + CLIENT_ID + "&v=" + CLIENT_VERSION + "&u=" + user.getLastFmUsername() +
-                    "&t=" + timestamp + "&a=" + authToken;
+            String uri = "http://post.audioscrobbler.com/?hs=true&p=1.2&c=" + CLIENT_ID + "&v=" + CLIENT_VERSION + "&u=" + URLEncoder.encode(user.getLastFmUsername(), "UTF-8") +
+                    "&t=" + timestamp + "&a=" + URLEncoder.encode(authToken, "UTF-8");
             LOG.debug("Last.fm URI is \"" + uri + "\".");
             GetMethod getMethod = new GetMethod(uri);
             try {
