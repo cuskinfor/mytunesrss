@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 /**
  * de.codewave.mytunesrss.settings.Streaming
  */
-public class Streaming implements MyTunesRssEventListener {
+public class Streaming implements MyTunesRssEventListener, SettingsForm {
     private JPanel myRootPanel;
     private JTextField myLameBinaryInput;
     private JButton myLameBinaryLookupButton;
@@ -127,6 +127,10 @@ public class Streaming implements MyTunesRssEventListener {
         return null;
     }
 
+    public JPanel getRootPanel() {
+        return myRootPanel;
+    }
+
     public void setGuiMode(GuiMode mode) {
         boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
         SwingUtils.enableElementAndLabel(myLameBinaryInput, !serverActive);
@@ -140,6 +144,11 @@ public class Streaming implements MyTunesRssEventListener {
         myLimitBandwidthCheckBox.setEnabled(!serverActive);
         myBandwidthLimitInput.setEnabled(myLimitBandwidthCheckBox.isSelected() && !serverActive);
         myBandwidthLimitLabel.setEnabled(!serverActive);
+    }
+
+    // todo: get name from i18n properties
+    public String toString() {
+        return "Streaming settings";
     }
 
     public class SelectBinaryActionListener implements ActionListener {

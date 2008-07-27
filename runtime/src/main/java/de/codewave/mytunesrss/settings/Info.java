@@ -18,7 +18,7 @@ import java.io.File;
 /**
  * de.codewave.mytunesrss.settings.Info
  */
-public class Info implements MyTunesRssEventListener {
+public class Info implements MyTunesRssEventListener, SettingsForm {
     private static final Logger LOG = LoggerFactory.getLogger(Info.class);
 
     private JPanel myRootPanel;
@@ -45,12 +45,15 @@ public class Info implements MyTunesRssEventListener {
             }
         });
         myLogLevelInput.addItem("OFF");
-        myLogLevelInput.addItem("FATAL");
         myLogLevelInput.addItem("ERROR");
         myLogLevelInput.addItem("WARN");
         myLogLevelInput.addItem("INFO");
         myLogLevelInput.addItem("DEBUG");
         initValues();
+    }
+
+    public void setGuiMode(GuiMode mode) {
+        // intentionally left blank
     }
 
     public void forceRegistration() {
@@ -87,6 +90,15 @@ public class Info implements MyTunesRssEventListener {
         MyTunesRss.CONFIG.setCodewaveLogLevel(Level.toLevel(myLogLevelInput.getSelectedItem().toString()));
         MyTunesRss.CONFIG.setSendAnonyStat(mySendAnonyStats.isSelected());
         return null;
+    }
+
+    public JPanel getRootPanel() {
+        return myRootPanel;
+    }
+
+    // todo: get name from i18n properties
+    public String toString() {
+        return "Info and registration";
     }
 
     public class LicenseLookupButtonListener implements ActionListener {

@@ -20,7 +20,7 @@ import java.io.IOException;
 /**
  * de.codewave.mytunesrss.settings.Options
  */
-public class Directories implements MyTunesRssEventListener {
+public class Directories implements MyTunesRssEventListener, SettingsForm {
     public enum FolderStructureRole {
         Artist, Album, None;
 
@@ -165,6 +165,10 @@ public class Directories implements MyTunesRssEventListener {
         return null;
     }
 
+    public JPanel getRootPanel() {
+        return myRootPanel;
+    }
+
     public void setGuiMode(GuiMode mode) {
         boolean databaseOrServerActive = DatabaseBuilderTask.isRunning() || MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.DatabaseUpdating || mode == GuiMode.ServerRunning;
         myBaseDirsList.setEnabled(!databaseOrServerActive);
@@ -179,6 +183,11 @@ public class Directories implements MyTunesRssEventListener {
         mySeparatorLabel1.setEnabled(!databaseOrServerActive);
         mySeparatorLabel2.setEnabled(!databaseOrServerActive);
         myTrackLabel.setEnabled(!databaseOrServerActive);
+    }
+
+    // todo: get name from i18n properties
+    public String toString() {
+        return "Data sources";
     }
 
     public class AddWatchFolderButtonListener implements ActionListener {

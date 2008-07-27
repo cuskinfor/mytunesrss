@@ -52,7 +52,7 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        final DatabaseBuilderTask databaseBuilderTask = MyTunesRss.createDatabaseBuilderTask();
+                        final DatabaseBuilderTask databaseBuilderTask = new DatabaseBuilderTask();
                         databaseBuilderTask.execute();
                     } catch (Exception e) {
                         if (LOG.isErrorEnabled()) {

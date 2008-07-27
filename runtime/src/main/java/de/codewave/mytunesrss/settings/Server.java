@@ -22,13 +22,11 @@ import java.awt.event.ActionListener;
 /**
  * Server settings panel
  */
-public class Server implements MyTunesRssEventListener {
+public class Server implements MyTunesRssEventListener, SettingsForm {
     private static final Logger LOG = LoggerFactory.getLogger(Server.class);
 
     private JPanel myRootPanel;
     private JTextField myPortInput;
-    private JLabel myServerStatusLabel;
-    private JButton myServerInfoButton;
     private JCheckBox myAutoStartServerInput;
     private JTextField myServerNameInput;
     private JCheckBox myAvailableOnLocalNetInput;
@@ -39,7 +37,6 @@ public class Server implements MyTunesRssEventListener {
         initValues();
         MyTunesRssEventManager.getInstance().addListener(this);
         myAutoStartServerInput.addActionListener(new AutoStartServerInputListener());
-        myServerInfoButton.addActionListener(new ServerInfoButtonListener());
         myAvailableOnLocalNetInput.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 if (MyTunesRss.WEBSERVER.isRunning()) {
@@ -77,12 +74,9 @@ public class Server implements MyTunesRssEventListener {
                         setGuiMode(GuiMode.DatabaseIdle);
                         break;
                     case SERVER_STARTED:
-                        setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.running"), null);
-                        myRootPanel.validate();
                         setGuiMode(GuiMode.ServerRunning);
                         break;
                     case SERVER_STOPPED:
-                        setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
                         setGuiMode(GuiMode.ServerIdle);
                         break;
                 }
@@ -96,7 +90,6 @@ public class Server implements MyTunesRssEventListener {
         myServerNameInput.setText(MyTunesRss.CONFIG.getServerName());
         myAvailableOnLocalNetInput.setSelected(MyTunesRss.CONFIG.isAvailableOnLocalNet());
         SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected());
-        setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
         myTempZipArchivesInput.setSelected(MyTunesRss.CONFIG.isLocalTempArchive());
     }
 
@@ -114,6 +107,10 @@ public class Server implements MyTunesRssEventListener {
         return null;
     }
 
+    public JPanel getRootPanel() {
+        return myRootPanel;
+    }
+
     public void setGuiMode(GuiMode mode) {
         boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
         SwingUtils.enableElementAndLabel(myPortInput, !serverActive);
@@ -122,13 +119,9 @@ public class Server implements MyTunesRssEventListener {
         SwingUtils.enableElementAndLabel(myServerNameInput, !serverActive && myAvailableOnLocalNetInput.isSelected());
     }
 
-    public void setServerStatus(String text, String tooltipText) {
-        if (text != null) {
-            myServerStatusLabel.setText(text);
-        }
-        if (tooltipText != null) {
-            myServerStatusLabel.setToolTipText(tooltipText);
-        }
+    // todo: get name from i18n properties
+    public String toString() {
+        return "Server settings";
     }
 
     public class AutoStartServerInputListener implements ActionListener {
@@ -139,12 +132,6 @@ public class Server implements MyTunesRssEventListener {
                 MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DISABLE_AUTO_START_SERVER);
             }
             myRootPanel.validate();
-        }
-    }
-
-    public class ServerInfoButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent actionEvent) {
-            new ServerInfo().display(MyTunesRss.ROOT_FRAME, myPortInput.getText());
         }
     }
 }

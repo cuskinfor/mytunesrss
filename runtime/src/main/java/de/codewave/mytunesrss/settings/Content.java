@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * de.codewave.mytunesrss.settings.Content
  */
-public class Content implements MyTunesRssEventListener {
+public class Content implements MyTunesRssEventListener, SettingsForm {
     private static final Logger LOG = LoggerFactory.getLogger(Content.class);
 
     private JPanel myRootPanel;
@@ -37,6 +37,19 @@ public class Content implements MyTunesRssEventListener {
         myScrollPane.getViewport().setOpaque(false);
         MyTunesRssEventManager.getInstance().addListener(this);
         initValues();
+    }
+
+    public void setGuiMode(GuiMode mode) {
+        // intentionally left blank
+    }
+
+    public String updateConfigFromGui() {
+        // intentionally left blank
+        return null;
+    }
+
+    public JPanel getRootPanel() {
+        return myRootPanel;
     }
 
     private void initValues() {
@@ -157,5 +170,10 @@ public class Content implements MyTunesRssEventListener {
 
     private void addPanelComponent(JComponent component, GridConstraints gridConstraints) {
         myPlaylistsPanel.add(component, gridConstraints);
+    }
+
+    // todo: get name from i18n properties
+    public String toString() {
+        return "Content settings";
     }
 }

@@ -9,6 +9,14 @@
 
         <release version="3.6-EAP-1" date="2008-xx-xx" description="EAP-1">
             <action dev="mdescher" type="update">
+                Configuration GUI redesign. Main dialog has no configuration tabs and shows some status information only together
+                with the most important functions (database update/reset, server start/stop and quit). The configuration dialogs
+                are separate modal dialog windows now. This makes it easier to add options to individual settings pages without
+                affection overall layout. Also adding new pages is easier and does not make the number of tabs even bigger. The
+                individual dialogs are resizable and the positions and sizes are saved in the settings which makes the dialogs
+                configuration much better.
+            </action>
+            <action dev="mdescher" type="update">
                 Moved xercesImpl into boot class path to prevent rare (OS X specific?) problems when loading the parser implementation classes.
             </action>
             <action dev="mdescher" type="update">

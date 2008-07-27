@@ -14,7 +14,7 @@ import java.io.File;
 /**
  * de.codewave.mytunesrss.settings.Addons
  */
-public class Addons implements MyTunesRssEventListener {
+public class Addons implements MyTunesRssEventListener, SettingsForm {
     private JPanel myRootPanel;
     private JButton myAddThemeButton;
     private JButton myDeleteThemeButton;
@@ -136,6 +136,15 @@ public class Addons implements MyTunesRssEventListener {
     public String updateConfigFromGui() {
         MyTunesRss.CONFIG.setWebWelcomeMessage(myWelcomeMessageInput.getText());
         return null;
+    }
+
+    public JPanel getRootPanel() {
+        return myRootPanel;
+    }
+
+    // todo: get name from i18n properties
+    public String toString() {
+        return "Configure addons";
     }
 
     public abstract class AddButtonListener implements ActionListener {

@@ -18,7 +18,7 @@ import java.awt.event.ActionListener;
 /**
  * de.codewave.mytunesrss.settings.Misc
  */
-public class Misc implements MyTunesRssEventListener {
+public class Misc implements MyTunesRssEventListener, SettingsForm {
     private JPanel myRootPanel;
     private JTextField myUsernameInput;
     private PasswordHashField myPasswordInput;
@@ -101,6 +101,10 @@ public class Misc implements MyTunesRssEventListener {
         return null;
     }
 
+    public JPanel getRootPanel() {
+        return myRootPanel;
+    }
+
     public void handleEvent(final MyTunesRssEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -138,6 +142,11 @@ public class Misc implements MyTunesRssEventListener {
                 }
             }
         });
+    }
+
+    // todo: get name from i18n properties
+    public String toString() {
+        return "Miscellaneous settings";
     }
 
     public class UseProxyActionListener implements ActionListener {

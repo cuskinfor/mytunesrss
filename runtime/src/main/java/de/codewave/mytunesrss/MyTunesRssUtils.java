@@ -254,7 +254,7 @@ public class MyTunesRssUtils {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        DatabaseBuilderTask task = MyTunesRss.createDatabaseBuilderTask();
+                        DatabaseBuilderTask task = new DatabaseBuilderTask();
                         task.execute();
                         if (!task.isExecuted()) {
                             MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateNotRun"));

@@ -33,14 +33,9 @@ import java.util.List;
 /**
  * de.codewave.mytunesrss.settings.Database
  */
-public class Database implements MyTunesRssEventListener {
-    private static final Logger LOG = LoggerFactory.getLogger(Database.class);
-
+public class Database implements MyTunesRssEventListener, SettingsForm {
     private JPanel myRootPanel;
-    private JLabel myLastUpdatedLabel;
     private JCheckBox myIgnoreTimestampsInput;
-    private JButton myDeleteDatabaseButton;
-    private JButton myUpdateDatabaseButton;
     private JTextField myArtistDropWords;
     private JTextField myFileTypes;
     private JCheckBox myUpdateDatabaseOnServerStart;
@@ -53,9 +48,6 @@ public class Database implements MyTunesRssEventListener {
     public void init() {
         myScrollPane.getViewport().setOpaque(false);
         refreshTriggers();
-        refreshLastUpdate();
-        myDeleteDatabaseButton.addActionListener(new DeleteDatabaseButtonListener());
-        myUpdateDatabaseButton.addActionListener(new UpdateDatabaseButtonListener());
         initValues();
         MyTunesRssEventManager.getInstance().addListener(this);
     }
@@ -150,11 +142,8 @@ public class Database implements MyTunesRssEventListener {
                         initValues();
                         break;
                     case DATABASE_UPDATE_STATE_CHANGED:
-                        myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString(event.getMessageKey(), event.getMessageParams()));
                         setGuiMode(GuiMode.DatabaseUpdating);
                         break;
-                    case DATABASE_UPDATE_FINISHED:
-                        refreshLastUpdate();
                     case DATABASE_UPDATE_FINISHED_NOT_RUN:
                         setGuiMode(GuiMode.DatabaseIdle);
                         break;
@@ -178,32 +167,6 @@ public class Database implements MyTunesRssEventListener {
         myIgnoreArtworkInput.setSelected(MyTunesRss.CONFIG.isIgnoreArtwork());
     }
 
-    public void refreshLastUpdate() {
-        DataStoreSession session = MyTunesRss.STORE.getTransaction();
-        try {
-            final SystemInformation systemInformation = session.executeQuery(new GetSystemInformationQuery());
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    if (systemInformation.getLastUpdate() > 0) {
-                        Date date = new Date(systemInformation.getLastUpdate());
-                        myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString("settings.lastDatabaseUpdate") + " " + new SimpleDateFormat(
-                                MyTunesRssUtils.getBundleString("settings.lastDatabaseUpdateDateFormat")).format(date));
-                    } else {
-                        myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString("settings.databaseNotYetCreated"));
-                    }
-                    myRootPanel.validate();
-                }
-            });
-        } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not get last update time from database.", e);
-            }
-
-        } finally {
-            session.commit();
-        }
-    }
-
     public String updateConfigFromGui() {
         String messages = JTextFieldValidation.getAllValidationFailureMessage(myRootPanel);
         if (messages != null) {
@@ -219,39 +182,24 @@ public class Database implements MyTunesRssEventListener {
         return null;
     }
 
+    public JPanel getRootPanel() {
+        return myRootPanel;
+    }
+
     public void setGuiMode(GuiMode mode) {
         boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
         boolean databaseActive = DatabaseBuilderTask.isRunning() || mode == GuiMode.DatabaseUpdating;
         myUpdateDatabaseOnServerStart.setEnabled(!serverActive);
         myIgnoreTimestampsInput.setEnabled(!databaseActive);
-        myUpdateDatabaseButton.setEnabled(!databaseActive);
-        myDeleteDatabaseButton.setEnabled(!databaseActive);
         myDeleteMissingFiles.setEnabled(!databaseActive);
         SwingUtils.enableElementAndLabel(myFileTypes, !databaseActive);
         SwingUtils.enableElementAndLabel(myArtistDropWords, !databaseActive);
         myIgnoreArtworkInput.setEnabled(!databaseActive);
     }
 
-    public class DeleteDatabaseButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent actionEvent) {
-            String optionOk = MyTunesRssUtils.getBundleString("ok");
-            String optionCancel = MyTunesRssUtils.getBundleString("cancel");
-            Object option = SwingUtils.showOptionsMessage(MyTunesRss.ROOT_FRAME, JOptionPane.QUESTION_MESSAGE, null, MyTunesRssUtils.getBundleString(
-                    "question.deleteDatabase"), MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH, new Object[] {optionCancel, optionOk});
-            if (optionOk.equals(option)) {
-                MyTunesRssUtils.executeTask(null,
-                                            MyTunesRssUtils.getBundleString("pleaseWait.recreatingDatabase"),
-                                            null,
-                                            false,
-                                            new RecreateDatabaseTask());
-            }
-        }
-    }
-
-    public class UpdateDatabaseButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            MyTunesRssUtils.executeDatabaseUpdate();
-        }
+    // todo: get name from i18n properties
+    public String toString() {
+        return "Database settings";
     }
 
     public class ChangeTriggerActionListener implements ItemListener {

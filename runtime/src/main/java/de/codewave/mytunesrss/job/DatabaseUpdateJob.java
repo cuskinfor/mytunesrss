@@ -27,7 +27,7 @@ public class DatabaseUpdateJob implements Job {
      */
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
-            DatabaseBuilderTask task = MyTunesRss.createDatabaseBuilderTask();
+            DatabaseBuilderTask task = new DatabaseBuilderTask();
             if (task.needsUpdate()) {
                 task.execute();
             }

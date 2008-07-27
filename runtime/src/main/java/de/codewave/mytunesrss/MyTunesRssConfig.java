@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.settings.DialogLayout;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.xml.DOMUtils;
@@ -11,9 +12,9 @@ import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.log4j.Level;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -99,6 +100,7 @@ public class MyTunesRssConfig {
     private int myTomcatProxyPort;
     private String myTomcatSslProxyHost;
     private int myTomcatSslProxyPort;
+    private Map<String, DialogLayout> myDialogLayouts;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -689,6 +691,16 @@ public class MyTunesRssConfig {
         myAdditionalContexts = additionalContexts;
     }
 
+    public DialogLayout getDialogLayout(Class clazz) {
+        return myDialogLayouts != null ? myDialogLayouts.get(clazz.getSimpleName()) : null;
+    }
+
+    public DialogLayout createDialogLayout(Class clazz) {
+        DialogLayout layout = new DialogLayout();
+        myDialogLayouts.put(clazz.getSimpleName(), layout);
+        return layout;
+    }
+
     public void load() {
         LOG.info("Loading configuration.");
         try {
@@ -708,7 +720,6 @@ public class MyTunesRssConfig {
             setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
             List<String> dataSources = new ArrayList<String>();
             Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
-            int count = 0;
             while (contextIterator.hasNext()) {
                 dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
             }
@@ -784,6 +795,17 @@ public class MyTunesRssConfig {
                         additionalContext,
                         "docbase",
                         "").trim());
+            }
+            myDialogLayouts = new HashMap<String, DialogLayout>();
+            Iterator<JXPathContext> dialogLayoutsIterator = JXPathUtils.getContextIterator(settings, "dialogs/layout");
+            while (dialogLayoutsIterator.hasNext()) {
+                JXPathContext dialogLayout = dialogLayoutsIterator.next();
+                DialogLayout layout = new DialogLayout();
+                layout.setX(JXPathUtils.getIntValue(dialogLayout, "x", -1));
+                layout.setY(JXPathUtils.getIntValue(dialogLayout, "y", -1));
+                layout.setWidth(JXPathUtils.getIntValue(dialogLayout, "width", -1));
+                layout.setHeight(JXPathUtils.getIntValue(dialogLayout, "height", -1));
+                myDialogLayouts.put(JXPathUtils.getStringValue(dialogLayout, "class", "").trim(), layout);
             }
         } catch (IOException e) {
             LOG.error("Could not read configuration file.", e);
@@ -932,6 +954,19 @@ public class MyTunesRssConfig {
                     additionalContexts.appendChild(context);
                     context.appendChild(DOMUtils.createTextElement(settings, "name", contextInfo.split(":", 2)[0]));
                     context.appendChild(DOMUtils.createTextElement(settings, "docbase", contextInfo.split(":", 2)[1]));
+                }
+            }
+            if (myDialogLayouts != null && !myDialogLayouts.isEmpty()) {
+                Element dialogLayouts = settings.createElement("dialogs");
+                root.appendChild(dialogLayouts);
+                for (Map.Entry<String, DialogLayout> layout : myDialogLayouts.entrySet()) {
+                    Element dialogLayout = settings.createElement("layout");
+                    dialogLayouts.appendChild(dialogLayout);
+                    dialogLayout.appendChild(DOMUtils.createTextElement(settings, "class", layout.getKey()));
+                    dialogLayout.appendChild(DOMUtils.createIntElement(settings, "x", layout.getValue().getX()));
+                    dialogLayout.appendChild(DOMUtils.createIntElement(settings, "y", layout.getValue().getY()));
+                    dialogLayout.appendChild(DOMUtils.createIntElement(settings, "width", layout.getValue().getWidth()));
+                    dialogLayout.appendChild(DOMUtils.createIntElement(settings, "height", layout.getValue().getWidth()));
                 }
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "anonymous-statistics", isSendAnonyStat()));

@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * de.codewave.mytunesrss.settings.UserManagement
  */
-public class UserManagement implements MyTunesRssEventListener {
+public class UserManagement implements MyTunesRssEventListener, SettingsForm {
     private JPanel myRootPanel;
     private JButton myCreateButton;
     private JPanel myUserPanel;
@@ -34,6 +34,19 @@ public class UserManagement implements MyTunesRssEventListener {
         myCreateButton.addActionListener(new CreateUserActionListener());
         refreshUserList();
         MyTunesRssEventManager.getInstance().addListener(this);
+    }
+
+    public void setGuiMode(GuiMode mode) {
+        // intentionally left blank
+    }
+
+    public String updateConfigFromGui() {
+        // intentionally left blank
+        return null;
+    }
+
+    public JPanel getRootPanel() {
+        return myRootPanel;
     }
 
     public void handleEvent(final MyTunesRssEvent event) {
@@ -148,6 +161,11 @@ public class UserManagement implements MyTunesRssEventListener {
 
     private void addPanelComponent(JComponent component, GridConstraints gridConstraints) {
         myUserPanel.add(component, gridConstraints);
+    }
+
+    // todo: get name from i18n properties
+    public String toString() {
+        return "User management";
     }
 
     public class CreateUserActionListener implements ActionListener {

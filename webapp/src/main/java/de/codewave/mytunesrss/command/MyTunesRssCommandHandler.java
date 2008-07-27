@@ -48,7 +48,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected void runDatabaseUpdate() {
         SCHEDULE_DATABASE_UPDATE = false;
-        TaskExecutor.execute(MyTunesRss.createDatabaseBuilderTask(), new TaskFinishedListener() {
+        TaskExecutor.execute(new DatabaseBuilderTask(), new TaskFinishedListener() {
             public void taskFinished(Task task) {
                 if (!((DatabaseBuilderTask)task).isExecuted()) {
                     SCHEDULE_DATABASE_UPDATE = true;

@@ -11,8 +11,6 @@ import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.mytunesrss.server.WebServer;
-import de.codewave.mytunesrss.settings.Database;
-import de.codewave.mytunesrss.settings.GuiDatabaseBuilderTask;
 import de.codewave.mytunesrss.settings.GuiMode;
 import de.codewave.mytunesrss.settings.Settings;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
@@ -140,7 +138,6 @@ public class MyTunesRss {
     public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
     public static int OPTION_PANE_MAX_MESSAGE_LENGTH = 100;
     public static boolean HEADLESS;
-    private static Database DATABASE_FORM;
     private static Settings SETTINGS;
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
     public static final ErrorQueue ERROR_QUEUE = new ErrorQueue();
@@ -313,13 +310,7 @@ public class MyTunesRss {
     }
 
     public static DatabaseBuilderTask createDatabaseBuilderTask() {
-        DatabaseBuilderTask task;
-        if (DATABASE_FORM == null) {
-            task = new DatabaseBuilderTask();
-        } else {
-            task = new GuiDatabaseBuilderTask(SETTINGS);
-        }
-        return task;
+        return new DatabaseBuilderTask();
     }
 
     private static boolean isOtherInstanceRunning(long timeoutMillis) {
@@ -356,7 +347,7 @@ public class MyTunesRss {
             ClassNotFoundException, IOException, InterruptedException {
         showNewVersionInfo();
         SETTINGS = new Settings();
-        DATABASE_FORM = SETTINGS.getDatabaseForm();
+        //DATABASE_FORM = SETTINGS.getDatabaseForm();
         MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(SETTINGS);
         executeApple(SETTINGS);
         executeWindows(SETTINGS);
@@ -364,7 +355,7 @@ public class MyTunesRss {
         ROOT_FRAME.addWindowListener(mainWindowListener);
         ROOT_FRAME.getContentPane().add(SETTINGS.getRootPanel());
         ROOT_FRAME.setResizable(false);
-        SETTINGS.setGuiMode(GuiMode.ServerIdle);
+        //SETTINGS.setGuiMode(GuiMode.ServerIdle);
         SwingUtils.removeEmptyTooltips(ROOT_FRAME.getRootPane());
         int x = CONFIG.getWindowX();
         int y = CONFIG.getWindowY();
@@ -390,7 +381,7 @@ public class MyTunesRss {
         }
         if (REGISTRATION.isExpired()) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
-            SETTINGS.getInfoForm().forceRegistration();
+            SETTINGS.forceRegistration();
             MyTunesRssUtils.shutdown();
         }
         if (CONFIG.isAutoStartServer()) {
