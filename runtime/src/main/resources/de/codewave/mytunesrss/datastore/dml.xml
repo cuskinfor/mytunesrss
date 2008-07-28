@@ -499,13 +499,13 @@
     </statement>
 
     <statement name="insertPlaylist">
-        <sql>INSERT INTO playlist (id, name, type, track_count, hidden, user_private, user_owner, ts_create) VALUES (:id, :name, :type, 0, FALSE, :user_private, :user_name, :ts)</sql>
+        <sql>INSERT INTO playlist (id, name, type, track_count, hidden, user_private, user_owner, ts_create, container_id) VALUES (:id, :name, :type, 0, FALSE, :user_private, :user_name, :ts, :container_id)</sql>
         <sql loop="track_id" loopcommit="500">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>
     </statement>
 
     <statement name="updatePlaylist">
-        <sql>UPDATE playlist SET name = :name, user_private = :user_private WHERE id = :id</sql>
+        <sql>UPDATE playlist SET name = :name, user_private = :user_private, container_id = :container_id WHERE id = :id</sql>
         <sql>DELETE FROM link_track_playlist WHERE playlist_id = :id</sql>
         <sql loop="track_id" loopcommit="500">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>

@@ -40,6 +40,7 @@
                 user_private BOOLEAN,
                 user_owner VARCHAR(256),
                 ts_create NUMERIC(19),
+                container_id VARCHAR(100),
                 UNIQUE (id)
             )
         </sql>

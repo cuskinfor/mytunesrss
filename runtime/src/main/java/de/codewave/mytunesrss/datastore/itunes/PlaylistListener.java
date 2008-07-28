@@ -47,12 +47,14 @@ public class PlaylistListener implements PListHandlerListener {
         boolean purchased = playlist.get("Purchased Music") != null && ((Boolean)playlist.get("Purchased Music")).booleanValue();
         boolean partyShuffle = playlist.get("Party Shuffle") != null && ((Boolean)playlist.get("Party Shuffle")).booleanValue();
         boolean podcasts = playlist.get("Podcasts") != null && ((Boolean)playlist.get("Podcasts")).booleanValue();
+        boolean folder = playlist.get("Folder") != null && ((Boolean)playlist.get("Folder")).booleanValue();
 
         if (!master && !purchased && !partyShuffle && !podcasts) {
             String playlistId = playlist.get("Playlist Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get(
                     "Playlist Persistent ID").toString() :
                     myLibraryListener.getLibraryId() + "_" + "PlaylistID" + playlist.get("Playlist ID").toString();
             String name = (String)playlist.get("Name");
+            String containerId = playlist.get("Parent Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get("Parent Persistent ID") : null;
             List<Map> items = (List<Map>)playlist.get("Playlist Items");
             List<String> tracks = new ArrayList<String>();
             if (items != null && !items.isEmpty()) {
@@ -65,10 +67,11 @@ public class PlaylistListener implements PListHandlerListener {
                 }
             }
             if (!tracks.isEmpty()) {
-                SavePlaylistStatement statement = new SaveITunesPlaylistStatement();
+                SavePlaylistStatement statement = new SaveITunesPlaylistStatement(folder);
                 statement.setId(playlistId);
                 statement.setName(name);
                 statement.setTrackIds(tracks);
+                statement.setContainerId(containerId);
                 try {
                     if (myDataStoreSession.executeQuery(new FindPlaylistQuery(PlaylistType.ITunes, playlistId, true)).getResultSize() > 0) {
                         statement.setUpdate(true);

@@ -91,4 +91,8 @@
         <sql>ALTER TABLE track ADD COLUMN original_artist VARCHAR(255)</sql>
     </statement>
 
+    <statement name="migrate_3.6_eap_1">
+        <sql>ALTER TABLE playlist ADD COLUMN container_id VARCHAR(100)</sql>
+    </statement>
+
 </statements>

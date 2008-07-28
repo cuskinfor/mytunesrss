@@ -28,6 +28,7 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
     private boolean myUpdate;
     private String myUserName;
     private boolean myUserPrivate;
+    private String myContainerId;
 
     protected SavePlaylistStatement() {
         // intentionally left blank
@@ -61,6 +62,14 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
         myUserPrivate = userPrivate;
     }
 
+    public String getContainerId() {
+        return myContainerId;
+    }
+
+    public void setContainerId(String containerId) {
+        myContainerId = containerId;
+    }
+
     public void execute(Connection connection) throws SQLException {
         if (myUpdate) {
             executeUpdate(connection);
@@ -77,6 +86,7 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
         statement.setObject("track_id", myTrackIds);
         statement.setBoolean("user_private", myUserPrivate);
         statement.setString("user_name", myUserName);
+        statement.setString("container_id", myContainerId);
         statement.setLong("ts", System.currentTimeMillis());
         statement.execute(new ExceptionHandler());
     }
@@ -88,6 +98,7 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
         statement.setObject("track_id", myTrackIds);
         statement.setBoolean("user_private", myUserPrivate);
         statement.setString("user_name", myUserName);
+        statement.setString("container_id", myContainerId);
         statement.execute(new ExceptionHandler());
     }
 

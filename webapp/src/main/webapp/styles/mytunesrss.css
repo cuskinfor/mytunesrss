@@ -454,6 +454,20 @@ tr.odd td.itunes {
     background-repeat: no-repeat;
 }
 
+td.itunesfolder {
+    padding-left: 32px;
+    background-image: url( "../images/folder_it.gif" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+tr.odd td.itunesfolder {
+    padding-left: 32px;
+    background-image: url( "../images/folder_it_odd.gif" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
 div.playlist {
     padding: 9px 10px 8px 32px;
     background: #ffe url( "../images/playlist_include.gif" ) 0 0 no-repeat;
