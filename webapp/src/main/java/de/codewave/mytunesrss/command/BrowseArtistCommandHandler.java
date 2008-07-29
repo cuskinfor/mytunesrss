@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * de.codewave.mytunesrss.command.BrowseArtistCommandHandler
@@ -49,7 +50,7 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
             }
             getRequest().setAttribute("artists", artists);
             DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
-                                                                                                                            PlaylistType.MyTunes,
+                                                                                                                            Collections.singletonList(PlaylistType.MyTunes),
                                                                                                                             null, null,
                                                                                                                             false,
                                                                                                                             true));

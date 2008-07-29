@@ -89,7 +89,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                 }
             } else {
                 DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
-                                                                                                                                PlaylistType.MyTunes,
+                                                                                                                                Collections.singletonList(PlaylistType.MyTunes),
                                                                                                                                 null, null,
                                                                                                                                 false,
                                                                                                                                 true));

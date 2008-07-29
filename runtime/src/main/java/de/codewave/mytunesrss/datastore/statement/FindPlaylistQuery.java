@@ -14,6 +14,8 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery
@@ -21,21 +23,21 @@ import java.sql.SQLException;
 public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Playlist>> {
     private String myId;
     private String myContainerId;
-    private PlaylistType myType;
+    private List<PlaylistType> myTypes;
     private String myRestrictionPlaylistId;
     private String myUserName;
     private boolean myIncludeHidden;
     private boolean myMatchingOwnerOnly;
 
-    public FindPlaylistQuery(PlaylistType type, String id, String containerId, boolean includeHidden) {
-        myType = type;
+    public FindPlaylistQuery(List<PlaylistType> types, String id, String containerId, boolean includeHidden) {
+        myTypes = types;
         myId = id;
         myContainerId = containerId;
         myIncludeHidden = includeHidden;
     }
 
-    public FindPlaylistQuery(User user, PlaylistType type, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly) {
-        this(type, id, containerId, includeHidden);
+    public FindPlaylistQuery(User user, List<PlaylistType> types, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly) {
+        this(types, id, containerId, includeHidden);
         myRestrictionPlaylistId = user.getPlaylistId();
         myUserName = user.getName();
         myMatchingOwnerOnly = matchingOwnerOnly;
@@ -44,7 +46,15 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
     public QueryResult<Playlist> execute(Connection connection) throws SQLException {
         String name = myMatchingOwnerOnly ? "findUserPlaylists" : (StringUtils.isEmpty(myRestrictionPlaylistId) ? "findPlaylists" : "findPlaylistsRestricted");
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, name);
-        statement.setString("type", myType != null ? myType.name() : null);
+        if (myTypes != null) {
+            List<String> typeNames = new ArrayList<String>(myTypes.size());
+            for (PlaylistType type : myTypes) {
+                typeNames.add(type.name());
+            }
+            statement.setItems("types", typeNames);
+        } else {
+            statement.setObject("types", null);
+        }
         statement.setString("id", myId);
         statement.setString("containerId", myContainerId);
         statement.setString("restrictionPlaylistId", myRestrictionPlaylistId);

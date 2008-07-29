@@ -54,7 +54,8 @@ public class PlaylistListener implements PListHandlerListener {
                     "Playlist Persistent ID").toString() :
                     myLibraryListener.getLibraryId() + "_" + "PlaylistID" + playlist.get("Playlist ID").toString();
             String name = (String)playlist.get("Name");
-            String containerId = playlist.get("Parent Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get("Parent Persistent ID") : null;
+            String containerId = playlist.get("Parent Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get(
+                    "Parent Persistent ID") : null;
             List<Map> items = (List<Map>)playlist.get("Playlist Items");
             List<String> tracks = new ArrayList<String>();
             if (items != null && !items.isEmpty()) {
@@ -73,7 +74,10 @@ public class PlaylistListener implements PListHandlerListener {
                 statement.setTrackIds(tracks);
                 statement.setContainerId(containerId);
                 try {
-                    if (myDataStoreSession.executeQuery(new FindPlaylistQuery(PlaylistType.ITunes, playlistId, null, true)).getResultSize() > 0) {
+                    if (myDataStoreSession.executeQuery(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder),
+                                                                              playlistId,
+                                                                              null,
+                                                                              true)).getResultSize() > 0) {
                         statement.setUpdate(true);
                     }
                     myDataStoreSession.executeStatement(statement);

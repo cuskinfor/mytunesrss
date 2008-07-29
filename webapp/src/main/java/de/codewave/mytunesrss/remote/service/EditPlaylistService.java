@@ -40,7 +40,7 @@ public class EditPlaylistService {
             Playlist playlist = new Playlist();
             Collection<Track> tracks = new ArrayList<Track>();
             if (StringUtils.isNotEmpty(playlistId)) {
-                FindPlaylistQuery query = new FindPlaylistQuery(user, PlaylistType.MyTunes, playlistId, null, true, true);
+                FindPlaylistQuery query = new FindPlaylistQuery(user, Collections.singletonList(PlaylistType.MyTunes), playlistId, null, true, true);
                 List<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(query).getResults();
                 if (queryResult != null && queryResult.size() == 1) {
                     playlist = queryResult.get(0);

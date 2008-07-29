@@ -19,6 +19,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * de.codewave.mytunesrss.command.BrowseAlbumCommandHandler
@@ -91,7 +92,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                 }
             }
             DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
-                                                                                                                            PlaylistType.MyTunes,
+                                                                                                                            Collections.singletonList(PlaylistType.MyTunes),
                                                                                                                             null, null,
                                                                                                                             false,
                                                                                                                             true));

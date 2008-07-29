@@ -83,7 +83,7 @@ public class Content implements MyTunesRssEventListener, SettingsForm {
                     myPlaylistsPanel.setLayout(new GridLayoutManager(playlists.size() + 1, 2));
                     int row = 0;
                     for (Playlist playlist : playlists) {
-                        if (playlist.getType() == PlaylistType.ITunes || playlist.getType() == PlaylistType.M3uFile) {
+                        if (playlist.getType() == PlaylistType.ITunes || playlist.getType() == PlaylistType.ITunesFolder || playlist.getType() == PlaylistType.M3uFile) {
                             addPlaylist(playlist, row++);
                         }
                     }
