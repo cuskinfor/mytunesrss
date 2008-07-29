@@ -10,7 +10,7 @@
         <release version="3.6-EAP-1" date="2008-xx-xx" description="EAP-1">
             <action dev="mdescher" type="add">
                 Folder from iTunes marked with special icons in the web interface and each playlist knows its
-                container if any.
+                container if any. Navigation for iTunes folders.
             </action>
             <action dev="mdescher" type="update">
                 Configuration GUI redesign. Main dialog has no configuration tabs and shows some status information only together

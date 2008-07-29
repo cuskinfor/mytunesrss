@@ -25,8 +25,9 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
 
     public void executeAuthorized() throws SQLException, IOException, ServletException {
         if (isSessionAuthorized()) {
+            String containerId = getRequestParameter("cid", null);
             List<Playlist> playlists = new ArrayList<Playlist>();
-            if (getAuthUser().isSpecialPlaylists()) {
+            if (StringUtils.isEmpty(containerId) && getAuthUser().isSpecialPlaylists()) {
                 playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, PlaylistType.MyTunes, getBundleString(
                         "playlist.specialAllByAlbum"), -1));
                 playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ARTIST, PlaylistType.MyTunes, getBundleString(
@@ -47,18 +48,20 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                 }
                 int randomPlaylistSize = getWebConfig().getRandomPlaylistSize();
                 if (randomPlaylistSize > 0) {
-                    DataStoreQuery.QueryResult<Playlist> randomPlaylistSources = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null,
-                                                                                                                   getWebConfig().getRandomSource(), false, false));
+                    DataStoreQuery.QueryResult<Playlist> randomPlaylistSources = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
+                                                                                                                                     null,
+                                                                                                                                     null,
+                                                                                                                                     getWebConfig().getRandomSource(),
+                                                                                                                                     false,
+                                                                                                                                     false));
                     if (randomPlaylistSources.getResultSize() != 1 || randomPlaylistSources.nextResult().getTrackCount() > randomPlaylistSize) {
                         if (randomPlaylistSources.getResultSize() == 1) {
                             Playlist firstResult = randomPlaylistSources.getResult(0);
-                            playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize + "_" +
-                                    firstResult.getId(),
-                                                       PlaylistType.MyTunes,
-                                                       MessageFormat.format(getBundleString("playlist.specialRandom"),
-                                                                            randomPlaylistSize,
-                                                                            firstResult.getName()),
-                                                       randomPlaylistSize));
+                            playlists.add(new Playlist(
+                                    FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize + "_" + firstResult.getId(),
+                                    PlaylistType.MyTunes,
+                                    MessageFormat.format(getBundleString("playlist.specialRandom"), randomPlaylistSize, firstResult.getName()),
+                                    randomPlaylistSize));
                         } else {
                             playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize,
                                                        PlaylistType.MyTunes,
@@ -69,11 +72,18 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
             }
+            if (StringUtils.isNotEmpty(containerId)) {
+                Playlist container = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, containerId, null, false, false))
+                        .nextResult();
+                getRequest().setAttribute("container", container);
+            }
+            containerId = getRequestParameter("cid", "ROOT");
             DataStoreQuery.QueryResult<Playlist> queryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
-                                                                                                                 null,
-                                                                                                                 null,
-                                                                                                                 false,
-                                                                                                                 false));
+                                                                                                                   null,
+                                                                                                                   null,
+                                                                                                                   containerId,
+                                                                                                                   false,
+                                                                                                                   false));
             for (Playlist playlist = queryResult.nextResult(); playlist != null; playlist = queryResult.nextResult()) {
                 playlists.add(playlist);
                 playlists.addAll(createSplittedPlaylists(playlist));

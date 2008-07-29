@@ -9,6 +9,7 @@ package de.codewave.mytunesrss.datastore.statement;
  */
 public class Playlist {
     private String myId;
+    private String myContainerId;
     private String myName;
     private PlaylistType myType;
     private int myTrackCount;
@@ -81,6 +82,14 @@ public class Playlist {
 
     public void setHidden(boolean hidden) {
         myHidden = hidden;
+    }
+
+    public String getContainerId() {
+        return myContainerId;
+    }
+
+    public void setContainerId(String containerId) {
+        myContainerId = containerId;
     }
 
     @Override

@@ -36,7 +36,7 @@ public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean
     private String changePlaylistAttribute(String playlistId, boolean hidden) {
         try {
             DataStoreSession session = MyTunesRss.STORE.getTransaction();
-            DataStoreQuery.QueryResult<Playlist> queryResult = session.executeQuery(new FindPlaylistQuery(null, playlistId, true));
+            DataStoreQuery.QueryResult<Playlist> queryResult = session.executeQuery(new FindPlaylistQuery(null, playlistId, null, true));
             if (queryResult.getResultSize() == 1) {
                 Playlist playlist = queryResult.nextResult();
                 SavePlaylistAttributesStatement statement = new SavePlaylistAttributesStatement();
@@ -83,7 +83,7 @@ public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean
     public String[] getPlaylists() {
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            DataStoreQuery.QueryResult<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(null, null, true));
+            DataStoreQuery.QueryResult<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(null, null, null, true));
             List<String> displayItems = new ArrayList<String>();
             for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
                 if (playlist.getType() == PlaylistType.ITunes || playlist.getType() == PlaylistType.M3uFile) {

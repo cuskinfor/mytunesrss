@@ -40,7 +40,7 @@ public class EditPlaylistService {
             Playlist playlist = new Playlist();
             Collection<Track> tracks = new ArrayList<Track>();
             if (StringUtils.isNotEmpty(playlistId)) {
-                FindPlaylistQuery query = new FindPlaylistQuery(user, PlaylistType.MyTunes, playlistId, true, true);
+                FindPlaylistQuery query = new FindPlaylistQuery(user, PlaylistType.MyTunes, playlistId, null, true, true);
                 List<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(query).getResults();
                 if (queryResult != null && queryResult.size() == 1) {
                     playlist = queryResult.get(0);
@@ -387,7 +387,7 @@ public class EditPlaylistService {
         if (user != null) {
             int count = 0;
             List<String> playlistIdList = Arrays.asList(playlistIds);
-            FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, false, true);
+            FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, null, false, true);
             for (Playlist ownPlaylist : TransactionFilter.getTransaction().executeQuery(query).getResults()) {
                 if (playlistIdList.contains(ownPlaylist.getId())) {
                     DeletePlaylistStatement statement = new DeletePlaylistStatement();

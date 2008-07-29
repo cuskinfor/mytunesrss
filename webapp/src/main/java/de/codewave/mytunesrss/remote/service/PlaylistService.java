@@ -28,7 +28,7 @@ public class PlaylistService {
     public Object getPlaylists() throws SQLException, IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-            FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, false, false);
+            FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, null, false, false);
             return RenderMachine.getInstance().render(TransactionFilter.getTransaction().executeQuery(query));
         }
         throw new IllegalAccessException("Unauthorized");
@@ -44,7 +44,7 @@ public class PlaylistService {
     public Object getOwnPlaylists() throws SQLException, IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-            FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, false, true);
+            FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, null, false, true);
             return RenderMachine.getInstance().render(TransactionFilter.getTransaction().executeQuery(query));
         }
         throw new IllegalAccessException("Unauthorized");

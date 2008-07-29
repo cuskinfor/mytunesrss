@@ -221,7 +221,7 @@ public class EditUser implements MyTunesRssEventListener {
         DataStoreQuery.QueryResult<Playlist> playlists = null;
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            playlists = session.executeQuery(new FindPlaylistQuery(null, null, true));
+            playlists = session.executeQuery(new FindPlaylistQuery(null, null, null, true));
             myRestrictionPlaylistInput.removeAllItems();
             myRestrictionPlaylistInput.addItem(new Playlist() {
                 @Override

@@ -20,20 +20,22 @@ import java.sql.SQLException;
  */
 public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Playlist>> {
     private String myId;
+    private String myContainerId;
     private PlaylistType myType;
     private String myRestrictionPlaylistId;
     private String myUserName;
     private boolean myIncludeHidden;
     private boolean myMatchingOwnerOnly;
 
-    public FindPlaylistQuery(PlaylistType type, String id, boolean includeHidden) {
+    public FindPlaylistQuery(PlaylistType type, String id, String containerId, boolean includeHidden) {
         myType = type;
         myId = id;
+        myContainerId = containerId;
         myIncludeHidden = includeHidden;
     }
 
-    public FindPlaylistQuery(User user, PlaylistType type, String id, boolean includeHidden, boolean matchingOwnerOnly) {
-        this(type, id, includeHidden);
+    public FindPlaylistQuery(User user, PlaylistType type, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly) {
+        this(type, id, containerId, includeHidden);
         myRestrictionPlaylistId = user.getPlaylistId();
         myUserName = user.getName();
         myMatchingOwnerOnly = matchingOwnerOnly;
@@ -44,6 +46,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, name);
         statement.setString("type", myType != null ? myType.name() : null);
         statement.setString("id", myId);
+        statement.setString("containerId", myContainerId);
         statement.setString("restrictionPlaylistId", myRestrictionPlaylistId);
         statement.setString("username", myUserName);
         statement.setBoolean("includeHidden", myIncludeHidden);
@@ -64,6 +67,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
             playlist.setUserPrivate(resultSet.getBoolean("USER_PRIVATE"));
             playlist.setHidden(resultSet.getBoolean("HIDDEN"));
             playlist.setUserOwner(resultSet.getString("USER_OWNER"));
+            playlist.setContainerId(resultSet.getString("CONTAINER_ID"));
             return playlist;
         }
     }

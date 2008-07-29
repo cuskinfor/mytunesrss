@@ -74,7 +74,7 @@ public class Content implements MyTunesRssEventListener, SettingsForm {
                 myPlaylistsPanel.removeAll();
                 DataStoreSession session = MyTunesRss.STORE.getTransaction();
                 try {
-                    List<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(null, null, true)).getResults();
+                    List<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(null, null, null, true)).getResults();
                     Collections.sort(playlists, new Comparator<Playlist>() {
                         public int compare(Playlist o1, Playlist o2) {
                             return o1.getName().compareTo(o2.getName());

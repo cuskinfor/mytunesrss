@@ -20,7 +20,7 @@ public abstract class LoadPlaylistCommandHandler extends MyTunesRssCommandHandle
     protected void loadPlaylist() throws SQLException {
         String playlistId = getRequestParameter("playlist", null);
         if (StringUtils.isNotEmpty(playlistId)) {
-            Playlist playlist = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, playlistId, false, false)).nextResult();
+            Playlist playlist = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, playlistId, null, false, false)).nextResult();
             LinkedHashSet<Track> tracks = new LinkedHashSet<Track>(getTransaction().executeQuery(new FindPlaylistTracksQuery(getAuthUser(), playlistId, null)).getResults());
             getSession().setAttribute("playlist", playlist);
             getSession().setAttribute("playlistContent", tracks);

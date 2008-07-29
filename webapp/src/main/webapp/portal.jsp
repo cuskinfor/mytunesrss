@@ -116,7 +116,7 @@
         </tr>
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-                <td class="${fn:toLowerCase(playlist.type)}">
+                <td class="${fn:toLowerCase(playlist.type)}" <c:if test="${playlist.type == 'ITunesFolder'}">style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${playlist.id}</mt:encrypt>'</c:if>">
                     <c:out value="${playlist.name}" />
                 </td>
                 <td class="tracks">
@@ -180,6 +180,11 @@
     </c:if>
 
 </div>
+
+<c:if test="${!empty container}">
+    <a href="${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${container.containerId}</mt:encrypt>">@@@ one level back</a><br/>
+    <a href="${servletUrl}/showPortal/${auth}">@@@ back to root</a>
+</c:if>
 
 </body>
 

@@ -257,7 +257,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         String[] names = null;
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            DataStoreQuery.QueryResult<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(null, null, true));
+            DataStoreQuery.QueryResult<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(null, null, null, true));
             names = new String[playlists.getResultSize()];
             int i = 0;
             for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
@@ -279,7 +279,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
             DataStoreQuery.QueryResult<Playlist> playlists = null;
             DataStoreSession session = MyTunesRss.STORE.getTransaction();
             try {
-                playlists = session.executeQuery(new FindPlaylistQuery(null, playlistId, true));
+                playlists = session.executeQuery(new FindPlaylistQuery(null, playlistId, null, true));
                 return playlists.getResultSize() != 0 ? playlists.nextResult().getName() : MyTunesRssUtils.getBundleString("editUser.noPlaylist");
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
@@ -296,7 +296,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         DataStoreQuery.QueryResult<Playlist> playlists = null;
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            playlists = session.executeQuery(new FindPlaylistQuery(null, null, true));
+            playlists = session.executeQuery(new FindPlaylistQuery(null, null, null, true));
             if (playlists.getResultSize() > 0) {
                 User user = MyTunesRss.CONFIG.getUser(myUsername);
                 user.setPlaylistId(null);

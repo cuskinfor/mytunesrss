@@ -121,7 +121,7 @@
     <statement name="findPlaylists">
         <sql>
             <![CDATA[
-            SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner
+            SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
             FROM playlist
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
             AND (type != 'TEMP')
@@ -130,6 +130,7 @@
             OR (:type IS NOT NULL AND :id IS NULL AND track_count > 0 AND type = :type)
             OR (:type IS NULL AND :id IS NOT NULL AND track_count > 0 AND id = :id)
             OR (:type IS NOT NULL AND :id IS NOT NULL AND track_count > 0 AND type = :type AND id = :id))
+            AND (:containerId IS NULL OR (:containerId ='ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
             ORDER BY name
             ]]>
         </sql>
@@ -138,7 +139,7 @@
     <statement name="findUserPlaylists">
         <sql>
             <![CDATA[
-            SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner
+            SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
             FROM playlist
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
             AND (type != 'TEMP')
@@ -147,6 +148,7 @@
             OR (:type IS NOT NULL AND :id IS NULL AND track_count > 0 AND type = :type)
             OR (:type IS NULL AND :id IS NOT NULL AND track_count > 0 AND id = :id)
             OR (:type IS NOT NULL AND :id IS NOT NULL AND track_count > 0 AND type = :type AND id = :id))
+            AND (:containerId IS NULL OR (:containerId ='ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
             ORDER BY name
             ]]>
         </sql>
@@ -155,7 +157,7 @@
     <statement name="findPlaylistsRestricted">
         <sql>
             <![CDATA[
-            SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner
+            SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
             FROM playlist p, link_track_playlist rltp, link_track_playlist ltp
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
             AND (user_private IS NULL OR user_private = FALSE OR :username IS NULL OR user_owner = :username)
@@ -167,6 +169,7 @@
             OR (:type IS NOT NULL AND :id IS NULL AND p.track_count > 0 AND p.type = :type)
             OR (:type IS NULL AND :id IS NOT NULL AND p.track_count > 0 AND p.id = :id)
             OR (:type IS NOT NULL AND :id IS NOT NULL AND p.track_count > 0 AND p.type = :type AND p.id = :id))
+            AND (:containerId IS NULL OR (:containerId ='ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
             GROUP BY id, name, type, track_count, user_private, hidden, user_owner
             ORDER BY name
             ]]>

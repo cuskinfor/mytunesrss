@@ -50,7 +50,7 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
             getRequest().setAttribute("artists", artists);
             DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
                                                                                                                             PlaylistType.MyTunes,
-                                                                                                                            null,
+                                                                                                                            null, null,
                                                                                                                             false,
                                                                                                                             true));
             getRequest().setAttribute("editablePlaylists", playlistsQueryResult.getResults());
