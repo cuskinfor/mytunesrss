@@ -144,9 +144,8 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         });
     }
 
-    // todo: get name from i18n properties
-    public String toString() {
-        return "Miscellaneous settings";
+    public String getDialogTitle() {
+        return MyTunesRssUtils.getBundleString("dialog.misc.title");
     }
 
     public class UseProxyActionListener implements ActionListener {

@@ -1,24 +1,23 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
+import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.task.RecreateDatabaseTask;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
-import de.codewave.utils.swing.SwingUtils;
 import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.swing.SwingUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Date;
-import java.text.SimpleDateFormat;
 import java.sql.SQLException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * de.codewave.mytunesrss.settings.Settings
@@ -63,7 +62,7 @@ public class Settings implements MyTunesRssEventListener {
         myDeleteDatabaseButton.addActionListener(new DeleteDatabaseButtonListener());
         myUpdateDatabaseButton.addActionListener(new UpdateDatabaseButtonListener());
 
-        mySettingsInput.addItem("Configuration settings"); // todo i18n
+        mySettingsInput.addItem(MyTunesRssUtils.getBundleString("settings.configSelectionTitle"));
         addSettingsItem(new Server());
         addSettingsItem(new Database());
         addSettingsItem(new Directories());
@@ -87,6 +86,16 @@ public class Settings implements MyTunesRssEventListener {
 
     private void addSettingsItem(SettingsForm settingsForm) {
         settingsForm.init();
+        mySettingsInput.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof SettingsForm) {
+                    label.setText(((SettingsForm)value).getDialogTitle());
+                }
+                return label;
+            }
+        });
         mySettingsInput.addItem(settingsForm);
     }
 
@@ -198,33 +207,41 @@ public class Settings implements MyTunesRssEventListener {
 
     public class SelectSettingsListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            final SettingsForm form = (SettingsForm)mySettingsInput.getSelectedItem();
-            final JDialog dialog = new JDialog(MyTunesRss.ROOT_FRAME, form.toString(), true); // todo correct dialog title, maybe common layout framing the form
-            DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
-            if (layout != null) {
-                dialog.setLocation(layout.getX(), layout.getY());
-                dialog.setSize(layout.getWidth(), layout.getHeight());
-            }
-            dialog.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent windowEvent) {
-                    DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
-                    if (layout == null) {
-                        layout = MyTunesRss.CONFIG.createDialogLayout(form.getClass());
-                    }
-                    layout.setX((int)dialog.getLocation().getX());
-                    layout.setY((int)dialog.getLocation().getY());
-                    layout.setWidth((int)dialog.getSize().getWidth());
-                    layout.setHeight((int)dialog.getSize().getHeight());
-                    form.updateConfigFromGui();
+            if (mySettingsInput.getSelectedItem() instanceof SettingsForm) {
+                final SettingsForm form = (SettingsForm)mySettingsInput.getSelectedItem();
+                String dialogTitle = MyTunesRssUtils.getBundleString("dialog.settings.commonTitle", form.getDialogTitle());
+                final JDialog dialog = new JDialog(MyTunesRss.ROOT_FRAME, dialogTitle, true);// todo maybe common layout framing the form
+                DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
+                if (layout != null) {
+                    dialog.setLocation(layout.getX(), layout.getY());
+                    dialog.setSize(layout.getWidth(), layout.getHeight());
                 }
-            });
-            dialog.add(form.getRootPanel());
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            if (layout != null && layout.isValid()) {
-                dialog.setVisible(true);
-            } else {
-                SwingUtils.packAndShowRelativeTo(dialog, MyTunesRss.ROOT_FRAME);
+                dialog.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosing(WindowEvent windowEvent) {
+                        DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
+                        if (layout == null) {
+                            layout = MyTunesRss.CONFIG.createDialogLayout(form.getClass());
+                        }
+                        layout.setX((int)dialog.getLocation().getX());
+                        layout.setY((int)dialog.getLocation().getY());
+                        layout.setWidth((int)dialog.getSize().getWidth());
+                        layout.setHeight((int)dialog.getSize().getHeight());
+                        String messages = form.updateConfigFromGui();
+                        if (messages != null) {
+                            MyTunesRssUtils.showErrorMessage(messages);
+                        } else {
+                            dialog.dispose();
+                        }
+                    }
+                });
+                dialog.add(form.getRootPanel());
+                dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+                if (layout != null && layout.isValid()) {
+                    dialog.setVisible(true);
+                } else {
+                    SwingUtils.packAndShowRelativeTo(dialog, MyTunesRss.ROOT_FRAME);
+                }
             }
             mySettingsInput.setSelectedIndex(0);
         }

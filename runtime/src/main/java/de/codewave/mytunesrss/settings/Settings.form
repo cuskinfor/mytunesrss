@@ -63,7 +63,7 @@
             <properties>
               <opaque value="false"/>
             </properties>
-            <border type="etched" title="@@@Server status"/>
+            <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.serverStatus"/>
             <children>
               <grid id="8ddbf" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints>
@@ -143,7 +143,7 @@
             <properties>
               <opaque value="false"/>
             </properties>
-            <border type="etched" title="@@@Database status"/>
+            <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.databaseStatus"/>
             <children>
               <grid id="2b8f6" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints>

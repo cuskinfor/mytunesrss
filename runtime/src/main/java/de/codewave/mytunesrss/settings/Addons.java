@@ -142,9 +142,8 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
         return myRootPanel;
     }
 
-    // todo: get name from i18n properties
-    public String toString() {
-        return "Configure addons";
+    public String getDialogTitle() {
+        return MyTunesRssUtils.getBundleString("dialog.addons.title");
     }
 
     public abstract class AddButtonListener implements ActionListener {

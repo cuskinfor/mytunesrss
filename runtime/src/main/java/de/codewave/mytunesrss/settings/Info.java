@@ -96,9 +96,8 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
         return myRootPanel;
     }
 
-    // todo: get name from i18n properties
-    public String toString() {
-        return "Info and registration";
+    public String getDialogTitle() {
+        return MyTunesRssUtils.getBundleString("dialog.info.title");
     }
 
     public class LicenseLookupButtonListener implements ActionListener {

@@ -2,10 +2,7 @@ package de.codewave.mytunesrss.settings;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssEvent;
-import de.codewave.mytunesrss.MyTunesRssEventListener;
-import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
@@ -172,8 +169,7 @@ public class Content implements MyTunesRssEventListener, SettingsForm {
         myPlaylistsPanel.add(component, gridConstraints);
     }
 
-    // todo: get name from i18n properties
-    public String toString() {
-        return "Content settings";
+    public String getDialogTitle() {
+        return MyTunesRssUtils.getBundleString("dialog.content.title");
     }
 }

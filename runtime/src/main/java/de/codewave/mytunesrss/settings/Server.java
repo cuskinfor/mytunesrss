@@ -32,6 +32,21 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
     private JCheckBox myAvailableOnLocalNetInput;
     private JCheckBox myTempZipArchivesInput;
     private JLabel myServerNameLabel;
+    private JTextField myHttpProxyHostInput;
+    private JTextField myHttpProxyPortInput;
+    private JTextField myHttpsPortInput;
+    private JTextField myHttpsProxyHostInput;
+    private JTextField myHttpsProxyPortInput;
+    private JTextField myKeystoreInput;
+    private JPasswordField myKeystorePasswordInput;
+    private JTextField myKeystoreAliasInput;
+    private JButton mySelectKeystoreButton;
+    private JTextField myMaxThreadsInput;
+    private JTextField myAjpPortInput;
+    private JList myAdditionalContextsInput;
+    private JButton myAddContextButton;
+    private JButton myRemoveContextButton;
+    private JScrollPane myAdditionContextsScrollpane;
 
     public void init() {
         initValues();
@@ -57,6 +72,9 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
                 "error.illegalServerPort")));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myServerNameInput, MyTunesRssUtils.getBundleString("error.emptyServerName")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpsPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalHttpsPort")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpProxyPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalHttpProxyPort")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpsProxyPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalHttpsProxyPort")));
     }
 
     public void handleEvent(final MyTunesRssEvent event) {
@@ -91,6 +109,21 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         myAvailableOnLocalNetInput.setSelected(MyTunesRss.CONFIG.isAvailableOnLocalNet());
         SwingUtils.enableElementAndLabel(myServerNameInput, myAvailableOnLocalNetInput.isSelected());
         myTempZipArchivesInput.setSelected(MyTunesRss.CONFIG.isLocalTempArchive());
+        myHttpProxyHostInput.setText(MyTunesRss.CONFIG.getTomcatProxyHost());
+        myHttpProxyPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getTomcatProxyPort(), 1, 65535, null));
+        myHttpsPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getSslPort(), 1, 65535, null));
+        myHttpsProxyHostInput.setText(MyTunesRss.CONFIG.getTomcatSslProxyHost());
+        myHttpsProxyPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getTomcatSslProxyPort(), 1, 65535, null));
+        myKeystoreInput.setText(MyTunesRss.CONFIG.getSslKeystoreFile());
+        myKeystorePasswordInput.setText(MyTunesRss.CONFIG.getSslKeystorePass());
+        myKeystoreAliasInput.setText(MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
+        myMaxThreadsInput.setText(MyTunesRss.CONFIG.getTomcatMaxThreads());
+        myAjpPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getTomcatAjpPort(), 1, 65535, null));
+        DefaultListModel model = new DefaultListModel();
+        myAdditionalContextsInput.setModel(model);
+        for (String additionalContext : MyTunesRss.CONFIG.getAdditionalContexts()) {
+            model.addElement(additionalContext);
+        }
     }
 
     public String updateConfigFromGui() {
@@ -119,9 +152,8 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         SwingUtils.enableElementAndLabel(myServerNameInput, !serverActive && myAvailableOnLocalNetInput.isSelected());
     }
 
-    // todo: get name from i18n properties
-    public String toString() {
-        return "Server settings";
+    public String getDialogTitle() {
+        return MyTunesRssUtils.getBundleString("dialog.server.title");
     }
 
     public class AutoStartServerInputListener implements ActionListener {

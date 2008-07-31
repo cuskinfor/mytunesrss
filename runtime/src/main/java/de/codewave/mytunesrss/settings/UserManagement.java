@@ -49,6 +49,10 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm {
         return myRootPanel;
     }
 
+    public String getDialogTitle() {
+        return MyTunesRssUtils.getBundleString("dialog.userManagement.title");
+    }
+
     public void handleEvent(final MyTunesRssEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -161,11 +165,6 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm {
 
     private void addPanelComponent(JComponent component, GridConstraints gridConstraints) {
         myUserPanel.add(component, gridConstraints);
-    }
-
-    // todo: get name from i18n properties
-    public String toString() {
-        return "User management";
     }
 
     public class CreateUserActionListener implements ActionListener {

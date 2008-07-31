@@ -185,9 +185,8 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
         myTrackLabel.setEnabled(!databaseOrServerActive);
     }
 
-    // todo: get name from i18n properties
-    public String toString() {
-        return "Data sources";
+    public String getDialogTitle() {
+        return MyTunesRssUtils.getBundleString("dialog.directories.title");
     }
 
     public class AddWatchFolderButtonListener implements ActionListener {

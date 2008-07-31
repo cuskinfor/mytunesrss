@@ -7,7 +7,7 @@ import javax.swing.*;
  */
 public interface SettingsForm {
     void init();
-    //void setGuiMode(GuiMode mode);
     String updateConfigFromGui();
     JPanel getRootPanel();
+    String getDialogTitle();
 }

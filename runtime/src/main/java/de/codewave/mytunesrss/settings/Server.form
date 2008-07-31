@@ -1,30 +1,158 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.codewave.mytunesrss.settings.Server">
-  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
-    <margin top="5" left="5" bottom="5" right="5"/>
+  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+    <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="20" y="20" width="584" height="429"/>
+      <xy x="20" y="20" width="925" height="732"/>
     </constraints>
     <properties>
       <opaque value="false"/>
     </properties>
     <border type="none"/>
     <children>
-      <vspacer id="183d9">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </vspacer>
-      <grid id="d417a" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="d417a" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <opaque value="false"/>
         </properties>
-        <border type="etched"/>
+        <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.server.general"/>
         <children>
+          <component id="2c56e" class="javax.swing.JCheckBox" binding="myAutoStartServerInput">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font swing-font="CheckBox.font"/>
+              <opaque value="false"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.autoStartServer"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.autoStartServerTooltip"/>
+            </properties>
+          </component>
+          <component id="da85b" class="javax.swing.JCheckBox" binding="myAvailableOnLocalNetInput">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <opaque value="false"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.availableOnLocalNet"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.availableOnLocalNetTooltip"/>
+            </properties>
+          </component>
+          <component id="b33c9" class="javax.swing.JLabel" binding="myServerNameLabel">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <labelFor value="73e95"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverName"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverNameTooltip"/>
+            </properties>
+          </component>
+          <component id="73e95" class="javax.swing.JTextField" binding="myServerNameInput">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverNameTooltip"/>
+            </properties>
+          </component>
+          <component id="7aa10" class="javax.swing.JCheckBox" binding="myTempZipArchivesInput">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <opaque value="false"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.tempZipArchives"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.tempZipArchivesTooltip"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="2f5a2" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="5" left="5" bottom="5" right="5"/>
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="4" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <opaque value="false"/>
+        </properties>
+        <border type="none" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.server.additionalContexts"/>
+        <children>
+          <scrollpane id="71c02" binding="myAdditionContextsScrollpane">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="fd6ff" class="javax.swing.JList" binding="myAdditionalContextsInput">
+                <constraints/>
+                <properties>
+                  <preferredSize width="0" height="0"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
+          <grid id="a23d" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <opaque value="false"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="1443e" class="javax.swing.JButton" binding="myAddContextButton">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="+"/>
+                </properties>
+              </component>
+              <vspacer id="850fb">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </vspacer>
+              <component id="95da0" class="javax.swing.JButton" binding="myRemoveContextButton">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="-"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <grid id="c5768" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="5" left="5" bottom="5" right="5"/>
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <opaque value="false"/>
+        </properties>
+        <border type="none" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.server.http"/>
+        <children>
+          <component id="fbf36" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font swing-font="Label.font"/>
+              <labelFor value="fe0bc"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverPort"/>
+            </properties>
+          </component>
           <component id="fe0bc" class="javax.swing.JTextField" binding="myPortInput">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -36,7 +164,113 @@
               <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverPortTooltip"/>
             </properties>
           </component>
-          <component id="fbf36" class="javax.swing.JLabel">
+          <component id="d4c6f" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <labelFor value="1eb21"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.proxyHost"/>
+            </properties>
+          </component>
+          <component id="1eb21" class="javax.swing.JTextField" binding="myHttpProxyHostInput">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.proxyHostTooltip"/>
+            </properties>
+          </component>
+          <component id="c833e" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <labelFor value="535c7"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.proxyPort"/>
+            </properties>
+          </component>
+          <component id="535c7" class="javax.swing.JTextField" binding="myHttpProxyPortInput">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.proxyPortTooltip"/>
+            </properties>
+          </component>
+          <vspacer id="16444">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+        </children>
+      </grid>
+      <grid id="f2b07" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="5" left="5" bottom="5" right="5"/>
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <opaque value="false"/>
+        </properties>
+        <border type="none" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.server.advanced"/>
+        <children>
+          <component id="ca5d7" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.maxThreads"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.maxThreadsTooltip"/>
+            </properties>
+          </component>
+          <component id="1d8f6" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.ajpPort"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.ajpPortTooltip"/>
+            </properties>
+          </component>
+          <component id="fc610" class="javax.swing.JTextField" binding="myMaxThreadsInput">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="8f008" class="javax.swing.JTextField" binding="myAjpPortInput">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <vspacer id="6a98">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+        </children>
+      </grid>
+      <grid id="f93f6" layout-manager="GridLayoutManager" row-count="6" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="5" left="5" bottom="5" right="5"/>
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <opaque value="false"/>
+        </properties>
+        <border type="none" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.server.https"/>
+        <children>
+          <component id="91170" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -46,55 +280,109 @@
               <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverPort"/>
             </properties>
           </component>
-          <component id="2c56e" class="javax.swing.JCheckBox" binding="myAutoStartServerInput">
+          <component id="41a41" class="javax.swing.JTextField" binding="myHttpsPortInput">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="4" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="100" height="-1"/>
+              </grid>
             </constraints>
             <properties>
-              <font swing-font="CheckBox.font"/>
-              <opaque value="false"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.autoStartServer"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.autoStartServerTooltip"/>
+              <font swing-font="TextField.font"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverPortTooltip"/>
             </properties>
           </component>
-          <component id="da85b" class="javax.swing.JCheckBox" binding="myAvailableOnLocalNetInput">
+          <component id="2741d" class="javax.swing.JLabel">
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <opaque value="false"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.availableOnLocalNet"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.availableOnLocalNetTooltip"/>
+              <labelFor value="1eb21"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.proxyHost"/>
             </properties>
           </component>
-          <component id="b33c9" class="javax.swing.JLabel" binding="myServerNameLabel">
+          <component id="341ec" class="javax.swing.JTextField" binding="myHttpsProxyHostInput">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="73e95"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverName"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverNameTooltip"/>
-            </properties>
-          </component>
-          <component id="73e95" class="javax.swing.JTextField" binding="myServerNameInput">
-            <constraints>
-              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
             <properties>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.serverNameTooltip"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.proxyHostTooltip"/>
             </properties>
           </component>
-          <component id="7aa10" class="javax.swing.JCheckBox" binding="myTempZipArchivesInput">
+          <component id="a5bad" class="javax.swing.JLabel">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <opaque value="false"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.tempZipArchives"/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.tempZipArchivesTooltip"/>
+              <labelFor value="535c7"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.proxyPort"/>
+            </properties>
+          </component>
+          <component id="f6fd6" class="javax.swing.JTextField" binding="myHttpsProxyPortInput">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.proxyPortTooltip"/>
+            </properties>
+          </component>
+          <component id="f73cc" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.sslKeystoreFile"/>
+            </properties>
+          </component>
+          <component id="79791" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.keystorePassword"/>
+            </properties>
+          </component>
+          <component id="ebb75" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.server.keystoreAlias"/>
+            </properties>
+          </component>
+          <component id="6d495" class="javax.swing.JTextField" binding="myKeystoreInput">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="b27ce" class="javax.swing.JPasswordField" binding="myKeystorePasswordInput">
+            <constraints>
+              <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="578db" class="javax.swing.JTextField" binding="myKeystoreAliasInput">
+            <constraints>
+              <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="f13f2" class="javax.swing.JButton" binding="mySelectKeystoreButton" default-binding="true">
+            <constraints>
+              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="..."/>
             </properties>
           </component>
         </children>

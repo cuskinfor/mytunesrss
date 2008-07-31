@@ -197,9 +197,8 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
         myIgnoreArtworkInput.setEnabled(!databaseActive);
     }
 
-    // todo: get name from i18n properties
-    public String toString() {
-        return "Database settings";
+    public String getDialogTitle() {
+        return MyTunesRssUtils.getBundleString("dialog.database.title");
     }
 
     public class ChangeTriggerActionListener implements ItemListener {

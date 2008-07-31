@@ -289,4 +289,26 @@ public class MyTunesRssUtils {
     public static String normalize(String text) {
         return StringUtils.isBlank(text) ? text : Normalizer.compose(text, false);
     }
+
+    public static String getValueString(Integer number, Integer minimum, Integer maximum, String defaultText) {
+        if (number != null) {
+            if (minimum == null || minimum <= number) {
+                if (maximum == null || maximum >= number) {
+                    return number.toString();
+                }
+            }
+        }
+        return StringUtils.trimToEmpty(defaultText);
+    }
+
+    public static String getValueString(Long number, Long minimum, Long maximum, String defaultText) {
+        if (number != null) {
+            if (minimum == null || minimum <= number) {
+                if (maximum == null || maximum >= number) {
+                    return number.toString();
+                }
+            }
+        }
+        return StringUtils.trimToEmpty(defaultText);
+    }
 }

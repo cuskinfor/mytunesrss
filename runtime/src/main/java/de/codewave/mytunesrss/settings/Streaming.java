@@ -146,9 +146,8 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
         myBandwidthLimitLabel.setEnabled(!serverActive);
     }
 
-    // todo: get name from i18n properties
-    public String toString() {
-        return "Streaming settings";
+    public String getDialogTitle() {
+        return MyTunesRssUtils.getBundleString("dialog.streaming.title");
     }
 
     public class SelectBinaryActionListener implements ActionListener {
