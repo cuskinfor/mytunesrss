@@ -290,6 +290,13 @@ public class MyTunesRssUtils {
         return StringUtils.isBlank(text) ? text : Normalizer.compose(text, false);
     }
 
+    public static Integer getStringInteger(String text, Integer defaultValue) {
+        if (StringUtils.isNotEmpty(text)) {
+            return Integer.parseInt(text);
+        }
+        return defaultValue;
+    }
+
     public static String getValueString(Integer number, Integer minimum, Integer maximum, String defaultText) {
         if (number != null) {
             if (minimum == null || minimum <= number) {

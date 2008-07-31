@@ -56,11 +56,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         SwingUtils.enableElementAndLabel(myProxyPortInput, myUseProxyInput.isSelected());
         myProxyHostInput.setText(MyTunesRss.CONFIG.getProxyHost());
         int port = MyTunesRss.CONFIG.getProxyPort();
-        if (port > 0 && port < 65536) {
-            myProxyPortInput.setText(Integer.toString(port));
-        } else {
-            myProxyPortInput.setText("");
-        }
+        myProxyPortInput.setText(MyTunesRssUtils.getValueString(port, 1, 65535, null));
         myQuitConfirmationInput.setSelected(MyTunesRss.CONFIG.isQuitConfirmation());
         myUpdateOnStartInput.setSelected(MyTunesRss.CONFIG.isCheckUpdateOnStart());
         myUpdateOnStartInputCache = myUpdateOnStartInput.isSelected();

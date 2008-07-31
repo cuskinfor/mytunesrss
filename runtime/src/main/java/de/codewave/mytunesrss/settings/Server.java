@@ -136,6 +136,17 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setServerName(myServerNameInput.getText());
             MyTunesRss.CONFIG.setAvailableOnLocalNet(myAvailableOnLocalNetInput.isSelected());
             MyTunesRss.CONFIG.setLocalTempArchive(myTempZipArchivesInput.isSelected());
+            MyTunesRss.CONFIG.setTomcatProxyHost(myHttpProxyHostInput.getText());
+            MyTunesRss.CONFIG.setTomcatProxyPort(MyTunesRssUtils.getStringInteger(myHttpProxyPortInput.getText(), 0));
+            MyTunesRss.CONFIG.setSslPort(MyTunesRssUtils.getStringInteger(myHttpsPortInput.getText(), 0));
+            MyTunesRss.CONFIG.setTomcatSslProxyHost(myHttpsProxyHostInput.getText());
+            MyTunesRss.CONFIG.setTomcatSslProxyPort(MyTunesRssUtils.getStringInteger(myHttpsProxyPortInput.getText(), 0));
+            MyTunesRss.CONFIG.setSslKeystoreFile(myKeystoreInput.getText());
+            MyTunesRss.CONFIG.setSslKeystorePass(new String(myKeystorePasswordInput.getPassword()));
+            MyTunesRss.CONFIG.setSslKeystoreKeyAlias(myKeystoreAliasInput.getText());
+            MyTunesRss.CONFIG.setTomcatAjpPort(MyTunesRssUtils.getStringInteger(myAjpPortInput.getText(), 0));
+            MyTunesRss.CONFIG.setTomcatMaxThreads(myMaxThreadsInput.getText());
+            // todo: additional contexts
         }
         return null;
     }
