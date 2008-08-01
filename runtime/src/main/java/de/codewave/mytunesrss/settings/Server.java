@@ -14,10 +14,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Server settings panel
@@ -31,7 +34,6 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
     private JTextField myServerNameInput;
     private JCheckBox myAvailableOnLocalNetInput;
     private JCheckBox myTempZipArchivesInput;
-    private JLabel myServerNameLabel;
     private JTextField myHttpProxyHostInput;
     private JTextField myHttpProxyPortInput;
     private JTextField myHttpsPortInput;
@@ -43,10 +45,10 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
     private JButton mySelectKeystoreButton;
     private JTextField myMaxThreadsInput;
     private JTextField myAjpPortInput;
-    private JList myAdditionalContextsInput;
     private JButton myAddContextButton;
     private JButton myRemoveContextButton;
     private JScrollPane myAdditionContextsScrollpane;
+    private JTable myAdditionalContextsTable;
 
     public void init() {
         initValues();
@@ -69,12 +71,31 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         } else {
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DISABLE_AUTO_START_SERVER);
         }
+        myAdditionContextsScrollpane.getViewport().setOpaque(false);
+        myAdditionalContextsTable.setModel(new AdditionalContextsTableModel());
+        myRemoveContextButton.addActionListener(new DeleteAddCtxActionListener());
+        myAddContextButton.addActionListener(new AddAddCtxActionListener());
+        myAdditionalContextsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                myRemoveContextButton.setEnabled(myAdditionalContextsTable.getSelectedRow() > -1);
+            }
+        });
+        myAdditionalContextsTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2 && myAdditionalContextsTable.getSelectedRow() > -1) {
+                    new EditAdditionalContext().display(MyTunesRss.ROOT_FRAME, myAdditionalContextsTable.getSelectedRow());
+                    ((AbstractTableModel)myAdditionalContextsTable.getModel()).fireTableDataChanged();
+                }
+            }
+        });
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
                 "error.illegalServerPort")));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myServerNameInput, MyTunesRssUtils.getBundleString("error.emptyServerName")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpsPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalHttpsPort")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpProxyPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalHttpProxyPort")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpsProxyPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalHttpsProxyPort")));
+        JTextFieldValidation.validateAll(myRootPanel);
     }
 
     public void handleEvent(final MyTunesRssEvent event) {
@@ -119,11 +140,6 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         myKeystoreAliasInput.setText(MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
         myMaxThreadsInput.setText(MyTunesRss.CONFIG.getTomcatMaxThreads());
         myAjpPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getTomcatAjpPort(), 1, 65535, null));
-        DefaultListModel model = new DefaultListModel();
-        myAdditionalContextsInput.setModel(model);
-        for (String additionalContext : MyTunesRss.CONFIG.getAdditionalContexts()) {
-            model.addElement(additionalContext);
-        }
     }
 
     public String updateConfigFromGui() {
@@ -146,7 +162,6 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setSslKeystoreKeyAlias(myKeystoreAliasInput.getText());
             MyTunesRss.CONFIG.setTomcatAjpPort(MyTunesRssUtils.getStringInteger(myAjpPortInput.getText(), 0));
             MyTunesRss.CONFIG.setTomcatMaxThreads(myMaxThreadsInput.getText());
-            // todo: additional contexts
         }
         return null;
     }
@@ -175,6 +190,54 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
                 MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DISABLE_AUTO_START_SERVER);
             }
             myRootPanel.validate();
+        }
+    }
+
+    public class AdditionalContextsTableModel extends AbstractTableModel {
+        public int getRowCount() {
+            return MyTunesRss.CONFIG.getAdditionalContexts().size();
+        }
+
+        public int getColumnCount() {
+            return 2;
+        }
+
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            return MyTunesRss.CONFIG.getAdditionalContexts().get(rowIndex).split(":")[columnIndex];
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return false;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            return MyTunesRssUtils.getBundleString("settings.server.addCtxHeader." + column);
+        }
+    }
+
+    public class DeleteAddCtxActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int row = myAdditionalContextsTable.getSelectedRow();
+            if (row > -1) {
+                String context = MyTunesRss.CONFIG.getAdditionalContexts().get(row);
+                int result = JOptionPane.showConfirmDialog(myRootPanel,
+                                                           MyTunesRssUtils.getBundleString("confirmation.deleteAddCtx", context.split(":")[0]),
+                                                           MyTunesRssUtils.getBundleString("confirmation.titleDeleteAddCtx"),
+                                                           JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    MyTunesRss.CONFIG.getAdditionalContexts().remove(row);
+                    ((AbstractTableModel)myAdditionalContextsTable.getModel()).fireTableDataChanged();
+                }
+            }
+        }
+    }
+
+    public class AddAddCtxActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            new EditAdditionalContext().display(MyTunesRss.ROOT_FRAME, -1);
+            ((AbstractTableModel)myAdditionalContextsTable.getModel()).fireTableDataChanged();
         }
     }
 }
