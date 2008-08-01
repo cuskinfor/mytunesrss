@@ -5,7 +5,7 @@
     </properties>
     <body>
 
-        <release version="3.5-RC-4" date="2008-xx-xx" description="RC4">
+        <release version="3.5" date="2008-08-01" description="3.5">
             <action dev="mdescher" type="fix">
                 Username and token were not URL encoded in last.fm GET request. 
             </action>
