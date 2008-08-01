@@ -468,6 +468,34 @@ tr.odd td.itunesfolder {
     background-repeat: no-repeat;
 }
 
+td.homefolder {
+    padding-left: 32px;
+    background-image: url( "../images/home_folder.gif" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+tr.odd td.homefolder {
+    padding-left: 32px;
+    background-image: url( "../images/home_folder.gif" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+td.parentfolder {
+    padding-left: 32px;
+    background-image: url( "../images/parent_folder.gif" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+tr.odd td.parentfolder {
+    padding-left: 32px;
+    background-image: url( "../images/parent_folder.gif" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
 div.playlist {
     padding: 9px 10px 8px 32px;
     background: #ffe url( "../images/playlist_include.gif" ) 0 0 no-repeat;
@@ -660,7 +688,7 @@ h1.upload {
 }
 
 h1.upload span {
-	visibility: hidden;
+    visibility: hidden;
 }
 
 /* Browse Servers Page `*/
@@ -673,7 +701,7 @@ h1.serverbrowser {
 }
 
 h1.serverbrowser span {
-	visibility: hidden;
+    visibility: hidden;
 }
 
 /* Progress Bar */
@@ -684,7 +712,7 @@ h1.serverbrowser span {
 }
 
 #progressBackground {
- 	background: url("../images/progress_background.gif") repeat-x;
+    background: url("../images/progress_background.gif") repeat-x;
     border: 1px solid #666;
 }
 

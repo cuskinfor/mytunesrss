@@ -114,6 +114,20 @@
                 </th>
             </c:if>
         </tr>
+
+        <c:if test="${!empty container}">
+            <tr class="even">
+                <td class="homefolder" colspan="${2 + mtfn:buttonColumns(authUser, config)}" style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}'">
+                    [ / ]
+                </td>
+            </tr>
+            <tr class="odd">
+                <td class="parentfolder" colspan="${2 + mtfn:buttonColumns(authUser, config)}" style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${container.containerId}</mt:encrypt>'">
+                    [ .. ]
+                </td>
+            </tr>
+        </c:if>
+
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                 <td class="${fn:toLowerCase(playlist.type)}" <c:if test="${playlist.type == 'ITunesFolder'}">style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${playlist.id}</mt:encrypt>'</c:if>">
@@ -180,11 +194,6 @@
     </c:if>
 
 </div>
-
-<c:if test="${!empty container}">
-    <a href="${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${container.containerId}</mt:encrypt>">@@@ one level back</a><br/>
-    <a href="${servletUrl}/showPortal/${auth}">@@@ back to root</a>
-</c:if>
 
 </body>
 
