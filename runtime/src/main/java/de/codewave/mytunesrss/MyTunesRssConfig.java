@@ -966,7 +966,7 @@ public class MyTunesRssConfig {
                     dialogLayout.appendChild(DOMUtils.createIntElement(settings, "x", layout.getValue().getX()));
                     dialogLayout.appendChild(DOMUtils.createIntElement(settings, "y", layout.getValue().getY()));
                     dialogLayout.appendChild(DOMUtils.createIntElement(settings, "width", layout.getValue().getWidth()));
-                    dialogLayout.appendChild(DOMUtils.createIntElement(settings, "height", layout.getValue().getWidth()));
+                    dialogLayout.appendChild(DOMUtils.createIntElement(settings, "height", layout.getValue().getHeight()));
                 }
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "anonymous-statistics", isSendAnonyStat()));

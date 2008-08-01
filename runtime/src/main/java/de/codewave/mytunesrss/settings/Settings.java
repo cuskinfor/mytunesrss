@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -210,12 +207,7 @@ public class Settings implements MyTunesRssEventListener {
             if (mySettingsInput.getSelectedItem() instanceof SettingsForm) {
                 final SettingsForm form = (SettingsForm)mySettingsInput.getSelectedItem();
                 String dialogTitle = MyTunesRssUtils.getBundleString("dialog.settings.commonTitle", form.getDialogTitle());
-                final JDialog dialog = new JDialog(MyTunesRss.ROOT_FRAME, dialogTitle, true);// todo maybe common layout framing the form
-                DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
-                if (layout != null) {
-                    dialog.setLocation(layout.getX(), layout.getY());
-                    dialog.setSize(layout.getWidth(), layout.getHeight());
-                }
+                final JDialog dialog = new JDialog(MyTunesRss.ROOT_FRAME, dialogTitle, true);
                 dialog.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosing(WindowEvent windowEvent) {
@@ -237,7 +229,31 @@ public class Settings implements MyTunesRssEventListener {
                 });
                 dialog.add(form.getRootPanel());
                 dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+                DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
+                dialog.pack();
+                final Dimension minimalDimension = dialog.getSize();
+                dialog.setMinimumSize(minimalDimension);
+                dialog.addComponentListener(new ComponentAdapter() {
+                    @Override
+                    public void componentResized(final ComponentEvent e) {
+                        Dimension d = e.getComponent().getSize();
+                        boolean changed = false;
+                        if (d.width < minimalDimension.width) {
+                            d.width = minimalDimension.width;
+                            changed = true;
+                        }
+                        if (d.height < minimalDimension.height) {
+                            d.height = minimalDimension.height;
+                            changed = true;
+                        }
+                        if (changed) {
+                            e.getComponent().setSize(d);
+                        }
+                    }
+                });
                 if (layout != null && layout.isValid()) {
+                    dialog.setLocation(layout.getX(), layout.getY());
+                    dialog.setSize(layout.getWidth(), layout.getHeight());
                     dialog.setVisible(true);
                 } else {
                     SwingUtils.packAndShowRelativeTo(dialog, MyTunesRss.ROOT_FRAME);
