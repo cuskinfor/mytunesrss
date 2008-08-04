@@ -144,9 +144,7 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
 
     public String updateConfigFromGui() {
         String messages = JTextFieldValidation.getAllValidationFailureMessage(myRootPanel);
-        if (messages != null) {
-            return messages;
-        } else {
+        if (messages == null) {
             MyTunesRss.CONFIG.setPort(MyTunesRssUtils.getTextFieldInteger(myPortInput, -1));
             MyTunesRss.CONFIG.setAutoStartServer(myAutoStartServerInput.isSelected());
             MyTunesRss.CONFIG.setServerName(myServerNameInput.getText());

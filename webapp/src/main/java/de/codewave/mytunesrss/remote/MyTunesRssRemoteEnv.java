@@ -34,7 +34,8 @@ public class MyTunesRssRemoteEnv {
                     for (Iterator<Map.Entry<String, Session>> iter = SESSIONS.entrySet().iterator(); iter.hasNext();) {
                         Map.Entry<String, Session> entry = iter.next();
                         if (entry.getValue().isExpired()) {
-                            LOG.debug("Removing expired session \"" + entry.getValue().getId() + "\" of user \"" + entry.getValue().getUser().getName() + "\".");
+                            LOG.debug("Removing expired session \"" + entry.getValue().getId() + "\" of user \"" +
+                                    entry.getValue().getUser().getName() + "\".");
                             iter.remove();
                         }
                     }
@@ -49,9 +50,14 @@ public class MyTunesRssRemoteEnv {
 
     public static void setRequest(HttpServletRequest request) {
         THREAD_REQUESTS.set(request);
-        String sid = getRequest().getPathInfo();
+        String sid = getRequest().getHeader("X-MyTunesRSS-ID");
+        if (StringUtils.isEmpty(sid)) {
+            sid = getRequest().getPathInfo();
+        }
         if (StringUtils.isNotEmpty(sid) && sid.length() > 1) {
-            sid = sid.substring(1);
+            if (sid.startsWith("/")) {
+                sid = sid.substring(1);
+            }
             synchronized (SESSIONS) {
                 if (SESSIONS.containsKey(sid)) {
                     SESSIONS.get(sid).touch();

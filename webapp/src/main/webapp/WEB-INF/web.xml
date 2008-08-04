@@ -53,21 +53,29 @@
         <filter-name>TransactionFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.servlet.TransactionFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>JsonpFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.remote.JsonpFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>JsonpFilter</filter-name>
+        <servlet-name>JsonRpcServlet</servlet-name>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/mytunesrss/*</url-pattern>
+        <servlet-name>CommandServlet</servlet-name>
     </filter-mapping>
     <filter-mapping>
         <filter-name>PathInfoDecryptionFilter</filter-name>
-        <url-pattern>/mytunesrss/*</url-pattern>
+        <servlet-name>CommandServlet</servlet-name>
     </filter-mapping>
     <filter-mapping>
         <filter-name>PathInfoRequestParameterFilter</filter-name>
-        <url-pattern>/mytunesrss/*</url-pattern>
+        <servlet-name>CommandServlet</servlet-name>
     </filter-mapping>
     <filter-mapping>
         <filter-name>ServletRequestParameterTrimmer</filter-name>
-        <url-pattern>/mytunesrss/*</url-pattern>
+        <servlet-name>CommandServlet</servlet-name>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SessionManagerFilter</filter-name>
@@ -75,23 +83,15 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
-        <url-pattern>/mytunesrss/*</url-pattern>
+        <servlet-name>CommandServlet</servlet-name>
     </filter-mapping>
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
-        <url-pattern>/xmlrpc</url-pattern>
+        <servlet-name>JsonRpcServlet</servlet-name>
     </filter-mapping>
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
-        <url-pattern>/jsonrpc</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>TransactionFilter</filter-name>
-        <url-pattern>/xmlrpc/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>TransactionFilter</filter-name>
-        <url-pattern>/jsonrpc/*</url-pattern>
+        <servlet-name>XmlRpcServlet</servlet-name>
     </filter-mapping>
     <context-param>
         <description>Session info class</description>
@@ -155,10 +155,6 @@
     <servlet-mapping>
         <servlet-name>JsonRpcServlet</servlet-name>
         <url-pattern>/jsonrpc/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>JsonRpcServlet</servlet-name>
-        <url-pattern>/crossdo</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
