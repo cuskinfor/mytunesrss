@@ -19,6 +19,19 @@
         <artifactId>codewave-maven2-base</artifactId>
         <version>1.4</version>
     </parent>
+      <repositories>
+        <repository>
+          <id>codewave-nexus</id>
+          <name>Codewave Maven Repository</name>
+          <url>http://codewave.dyn-o-saur.com:20111/nexus/content/groups/public</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
     <modules>
         <module>runtime</module>
         <module>webapp</module>
