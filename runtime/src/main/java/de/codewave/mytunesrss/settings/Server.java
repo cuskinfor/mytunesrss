@@ -6,15 +6,12 @@ package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.network.MulticastService;
-import de.codewave.utils.swing.JTextFieldValidation;
-import de.codewave.utils.swing.MinMaxValueTextFieldValidation;
-import de.codewave.utils.swing.NotEmptyTextFieldValidation;
-import de.codewave.utils.swing.SwingUtils;
+import de.codewave.utils.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.event.*;
 import java.awt.event.ActionEvent;
@@ -49,6 +46,7 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
     private JButton myRemoveContextButton;
     private JScrollPane myAdditionContextsScrollpane;
     private JTable myAdditionalContextsTable;
+    private JTextField myContextInput;
 
     public void init() {
         initValues();
@@ -95,6 +93,7 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpsPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalHttpsPort")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpProxyPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalHttpProxyPort")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpsProxyPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalHttpsProxyPort")));
+        JTextFieldValidation.setValidation(new CompositeTextFieldValidation(myContextInput, new WebAppContextValidValidation(), new DuplicateWebAppContextValidation()));
         JTextFieldValidation.validateAll(myRootPanel);
     }
 
@@ -140,6 +139,7 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         myKeystoreAliasInput.setText(MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
         myMaxThreadsInput.setText(MyTunesRss.CONFIG.getTomcatMaxThreads());
         myAjpPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getTomcatAjpPort(), 1, 65535, null));
+        myContextInput.setText(MyTunesRss.CONFIG.getWebappContext());
     }
 
     public String updateConfigFromGui() {
@@ -160,8 +160,9 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setSslKeystoreKeyAlias(myKeystoreAliasInput.getText());
             MyTunesRss.CONFIG.setTomcatAjpPort(MyTunesRssUtils.getStringInteger(myAjpPortInput.getText(), 0));
             MyTunesRss.CONFIG.setTomcatMaxThreads(myMaxThreadsInput.getText());
+            MyTunesRss.CONFIG.setWebappContext(myContextInput.getText());
         }
-        return null;
+        return messages;
     }
 
     public JPanel getRootPanel() {
@@ -236,6 +237,42 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         public void actionPerformed(ActionEvent e) {
             new EditAdditionalContext().display(MyTunesRss.ROOT_FRAME, -1);
             ((AbstractTableModel)myAdditionalContextsTable.getModel()).fireTableDataChanged();
+        }
+    }
+
+    public class WebAppContextValidValidation extends JTextFieldValidation {
+        protected WebAppContextValidValidation() {
+            super(myContextInput, MyTunesRssUtils.getBundleString("error.invalidAddCtx"));
+        }
+
+        protected boolean isValid(String text) {
+            if (StringUtils.isNotEmpty(text)) {
+                return text.startsWith("/") && text.length() > 1;
+            }
+            return true;
+        }
+    }
+
+    public class DuplicateWebAppContextValidation extends JTextFieldValidation {
+        protected DuplicateWebAppContextValidation() {
+            super(myContextInput, MyTunesRssUtils.getBundleString("error.duplicateAddCtx"));
+        }
+
+        protected boolean isValid(String text) {
+            if (StringUtils.isNotEmpty(text)) {
+                for (String ctx : MyTunesRss.CONFIG.getAdditionalContexts()) {
+                    if (ctx.split(":")[0].equals(text)) {
+                        return false;
+                    }
+                }
+            } else {
+                for (String ctx : MyTunesRss.CONFIG.getAdditionalContexts()) {
+                    if ("/".equals(ctx.split(":")[0])) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }

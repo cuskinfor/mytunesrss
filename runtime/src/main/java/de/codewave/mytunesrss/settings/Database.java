@@ -43,11 +43,26 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
     private JCheckBox myIgnoreArtworkInput;
     private JScrollPane myScrollPane;
     private JPanel mySchedulePanel;
+    private JComboBox myDbTypeInput;
+    private JTextField myDbDriverInput;
+    private JTextField myDbConnectInput;
+    private JTextField myDbUserInput;
+    private JPasswordField myDbPassInput;
+    private JPanel myDbExtraPanel;
     private DeleteTriggerActionListener myDeleteTriggerActionListener = new DeleteTriggerActionListener();
 
     public void init() {
         myScrollPane.getViewport().setOpaque(false);
         refreshTriggers();
+        myDbExtraPanel.setVisible(!DatabaseType.h2.name().equals(MyTunesRss.CONFIG.getDatabaseType()));
+        myDbTypeInput.addItem(DatabaseType.h2);
+        myDbTypeInput.addItem(DatabaseType.postgres);
+        myDbTypeInput.addItem(DatabaseType.mysql);
+        myDbTypeInput.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                myDbExtraPanel.setVisible(myDbTypeInput.getSelectedItem() != DatabaseType.h2);
+            }
+        });
         initValues();
         MyTunesRssEventManager.getInstance().addListener(this);
     }
@@ -165,6 +180,11 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
         myFileTypes.setText(MyTunesRss.CONFIG.getFileTypes());
         myArtistDropWords.setText(MyTunesRss.CONFIG.getArtistDropWords());
         myIgnoreArtworkInput.setSelected(MyTunesRss.CONFIG.isIgnoreArtwork());
+        myDbTypeInput.setSelectedItem(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
+        myDbDriverInput.setText(MyTunesRss.CONFIG.getDatabaseDriver());
+        myDbConnectInput.setText(MyTunesRss.CONFIG.getDatabaseConnection());
+        myDbUserInput.setText(MyTunesRss.CONFIG.getDatabaseUser());
+        myDbPassInput.setText(MyTunesRss.CONFIG.getDatabasePassword());
     }
 
     public String updateConfigFromGui() {
@@ -178,8 +198,40 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setFileTypes(myFileTypes.getText());
             MyTunesRss.CONFIG.setArtistDropWords(myArtistDropWords.getText());
             MyTunesRss.CONFIG.setIgnoreArtwork(myIgnoreArtworkInput.isSelected());
+            if (databaseChanged()) {
+                MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("settings.databaseChangedWarning"));
+            }
+            MyTunesRss.CONFIG.setDatabaseType(((DatabaseType)myDbTypeInput.getSelectedItem()).name());
+            MyTunesRss.CONFIG.setDatabaseDriver(myDbDriverInput.getText());
+            MyTunesRss.CONFIG.setDatabaseConnection(myDbConnectInput.getText());
+            MyTunesRss.CONFIG.setDatabaseUser(myDbUserInput.getText());
+            MyTunesRss.CONFIG.setDatabasePassword(new String(myDbPassInput.getPassword()));
         }
         return null;
+    }
+
+    private boolean databaseChanged() {
+        String newType = StringUtils.trimToEmpty(((DatabaseType)myDbTypeInput.getSelectedItem()).name());
+        String newDriver = StringUtils.trimToEmpty(myDbDriverInput.getText());
+        String newConnect = StringUtils.trimToEmpty(myDbConnectInput.getText());
+        String newUser = StringUtils.trimToEmpty(myDbUserInput.getText());
+        String newPass = StringUtils.trimToEmpty(new String(myDbPassInput.getPassword()));
+        if (!newType.equals(MyTunesRss.CONFIG.getDatabaseType())) {
+            return true;
+        }
+        if (!newDriver.equals(MyTunesRss.CONFIG.getDatabaseDriver())) {
+            return true;
+        }
+        if (!newConnect.equals(MyTunesRss.CONFIG.getDatabaseConnection())) {
+            return true;
+        }
+        if (!newUser.equals(MyTunesRss.CONFIG.getDatabaseUser())) {
+            return true;
+        }
+        if (!newPass.equals(MyTunesRss.CONFIG.getDatabasePassword())) {
+            return true;
+        }
+        return false;
     }
 
     public JPanel getRootPanel() {
@@ -232,6 +284,16 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
             }
             MyTunesRssJobUtils.scheduleDatabaseJob();
             refreshTriggers();
+        }
+    }
+
+    public enum DatabaseType {
+        h2(), postgres(), mysql();
+
+
+        @Override
+        public String toString() {
+            return MyTunesRssUtils.getBundleString("settings.database.type." + name());
         }
     }
 }
