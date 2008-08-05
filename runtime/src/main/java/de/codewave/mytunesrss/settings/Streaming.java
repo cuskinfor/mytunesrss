@@ -27,19 +27,23 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
     private JLabel myBandwidthLimitLabel;
     private JTextField myAlacBinaryInput;
     private JButton myAlacBinaryLookupButton;
+    private JTextField myLameOnlyOptions;
+    private JTextField myLameTargetOptions;
+    private JTextField myFaad2SourceOptions;
+    private JTextField myAlacSourceOptions;
 
     public void init() {
         initValues();
         myLameBinaryLookupButton.addActionListener(new SelectBinaryActionListener(myLameBinaryInput, MyTunesRssUtils.getBundleString(
-                "dialog.lookupLameBinary")));
+                "dialog.lookupMp3Binary")));
         myFaad2BinaryLookupButton.addActionListener(new SelectBinaryActionListener(myFaad2BinaryInput, MyTunesRssUtils.getBundleString(
-                "dialog.lookupFaad2Binary")));
+                "dialog.lookupAacBinary")));
         myAlacBinaryLookupButton.addActionListener(new SelectBinaryActionListener(myAlacBinaryInput, MyTunesRssUtils.getBundleString(
                 "dialog.lookupAlacBinary")));
         JTextFieldValidation.setValidation(new FileExistsTextFieldValidation(myLameBinaryInput, true, false, MyTunesRssUtils.getBundleString(
-                "error.lameBinaryFileMissing")));
+                "error.mp3BinaryFileMissing")));
         JTextFieldValidation.setValidation(new FileExistsTextFieldValidation(myFaad2BinaryInput, true, false, MyTunesRssUtils.getBundleString(
-                "error.faad2BinaryFileMissing")));
+                "error.aacBinaryFileMissing")));
         JTextFieldValidation.setValidation(new FileExistsTextFieldValidation(myAlacBinaryInput, true, false, MyTunesRssUtils.getBundleString(
                 "error.alacBinaryFileMissing")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myCacheTimeout, 0, 1440, true, MyTunesRssUtils.getBundleString(
@@ -85,8 +89,8 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
     }
 
     private void initValues() {
-        myLameBinaryInput.setText(MyTunesRss.CONFIG.getLameBinary());
-        myFaad2BinaryInput.setText(MyTunesRss.CONFIG.getFaad2Binary());
+        myLameBinaryInput.setText(MyTunesRss.CONFIG.getMp3Binary());
+        myFaad2BinaryInput.setText(MyTunesRss.CONFIG.getAacBinary());
         myAlacBinaryInput.setText(MyTunesRss.CONFIG.getAlacBinary());
         myCacheTimeout.setText(Integer.toString(MyTunesRss.CONFIG.getStreamingCacheTimeout()));
         myCacheLimit.setText(Integer.toString(MyTunesRss.CONFIG.getStreamingCacheMaxFiles()));
@@ -97,6 +101,10 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
         }
         myLimitBandwidthCheckBox.setSelected(MyTunesRss.CONFIG.isBandwidthLimit());
         myBandwidthLimitInput.setEnabled(myLimitBandwidthCheckBox.isSelected());
+        myLameOnlyOptions.setText(MyTunesRss.CONFIG.getMp3OnlyOptions());
+        myLameTargetOptions.setText(MyTunesRss.CONFIG.getMp3TargetOptions());
+        myFaad2SourceOptions.setText(MyTunesRss.CONFIG.getAacSourceOptions());
+        myAlacSourceOptions.setText(MyTunesRss.CONFIG.getAlacSourceOptions());
     }
 
     public String updateConfigFromGui() {
@@ -104,8 +112,8 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
         if (messages != null) {
             return messages;
         } else {
-            MyTunesRss.CONFIG.setLameBinary(myLameBinaryInput.getText());
-            MyTunesRss.CONFIG.setFaad2Binary(myFaad2BinaryInput.getText());
+            MyTunesRss.CONFIG.setMp3Binary(myLameBinaryInput.getText());
+            MyTunesRss.CONFIG.setAacBinary(myFaad2BinaryInput.getText());
             MyTunesRss.CONFIG.setAlacBinary(myAlacBinaryInput.getText());
             if (StringUtils.isNotEmpty(myCacheTimeout.getText())) {
                 MyTunesRss.CONFIG.setStreamingCacheTimeout(Integer.parseInt(myCacheTimeout.getText()));
@@ -123,6 +131,10 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
             } else {
                 MyTunesRss.CONFIG.setBandwidthLimitFactor(BigDecimal.ZERO);
             }
+            MyTunesRss.CONFIG.setMp3OnlyOptions(myLameOnlyOptions.getText());
+            MyTunesRss.CONFIG.setMp3TargetOptions(myLameTargetOptions.getText());
+            MyTunesRss.CONFIG.setAacSourceOptions(myFaad2SourceOptions.getText());
+            MyTunesRss.CONFIG.setAlacSourceOptions(myAlacSourceOptions.getText());
         }
         return null;
     }

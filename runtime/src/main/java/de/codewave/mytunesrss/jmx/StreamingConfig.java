@@ -18,7 +18,7 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
     }
 
     public String getFaad2Binary() {
-        return MyTunesRss.CONFIG.getFaad2Binary();
+        return MyTunesRss.CONFIG.getAacBinary();
     }
 
     public String getAlacBinary() {
@@ -34,11 +34,11 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
     }
 
     public String getLameBinary() {
-        return MyTunesRss.CONFIG.getLameBinary();
+        return MyTunesRss.CONFIG.getMp3Binary();
     }
 
     public void setFaad2Binary(String faad2Binary) {
-        MyTunesRss.CONFIG.setFaad2Binary(faad2Binary);
+        MyTunesRss.CONFIG.setAacBinary(faad2Binary);
         onChange();
     }
 
@@ -58,7 +58,7 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
     }
 
     public void setLameBinary(String lameBinary) {
-        MyTunesRss.CONFIG.setLameBinary(lameBinary);
+        MyTunesRss.CONFIG.setMp3Binary(lameBinary);
         onChange();
     }
 
@@ -78,5 +78,33 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
     public void setBandwidthLimitFactor(BigDecimal factor) {
         MyTunesRss.CONFIG.setBandwidthLimitFactor(factor);
         onChange();
+    }
+
+    public String getMp3OnlyOptions() {
+        return null;
+    }
+
+    public void setMp3OnlyOptions(String options) {
+    }
+
+    public String getMp3TargetOptions() {
+        return null;
+    }
+
+    public void setMp3TargetOptions(String options) {
+    }
+
+    public String getAacSourceOptions() {
+        return null;
+    }
+
+    public void setAacSourceOptions(String options) {
+    }
+
+    public String getAlacSourceOptions() {
+        return null;
+    }
+
+    public void setAlacSourceOptions() {
     }
 }

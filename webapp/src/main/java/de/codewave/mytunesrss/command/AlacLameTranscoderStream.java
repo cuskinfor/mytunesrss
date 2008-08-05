@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.utils.PrefsUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +10,7 @@ import java.io.IOException;
  */
 public class AlacLameTranscoderStream extends AbstractTranscoderStream {
     public AlacLameTranscoderStream(File file, int outputBitRate, int outputSampleRate) throws IOException {
-        super(file, MyTunesRss.CONFIG.getLameBinary(), MyTunesRss.CONFIG.getAlacBinary(), outputBitRate, outputSampleRate);
+        super(file, MyTunesRss.CONFIG.getMp3Binary(), MyTunesRss.CONFIG.getAlacBinary(), outputBitRate, outputSampleRate);
     }
 
     protected String getSourceName() {
@@ -20,5 +19,13 @@ public class AlacLameTranscoderStream extends AbstractTranscoderStream {
 
     protected String getTargetName() {
         return "lame";
+    }
+
+    protected String getSourceArguments() {
+        return MyTunesRss.CONFIG.getAlacSourceOptions();
+    }
+
+    protected String getTargetArguments() {
+        return MyTunesRss.CONFIG.getMp3TargetOptions();
     }
 }

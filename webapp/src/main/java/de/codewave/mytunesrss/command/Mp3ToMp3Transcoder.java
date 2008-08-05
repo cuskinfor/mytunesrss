@@ -28,7 +28,7 @@ public class Mp3ToMp3Transcoder extends Transcoder {
     }
 
     public InputStream getStream() throws IOException {
-        return new LameTranscoderStream(getFile(), MyTunesRss.CONFIG.getLameBinary(), getTargetBitrate(), getTargetSampleRate());
+        return new LameTranscoderStream(getFile(), MyTunesRss.CONFIG.getMp3Binary(), getTargetBitrate(), getTargetSampleRate());
     }
 
     protected String getTranscoderId() {

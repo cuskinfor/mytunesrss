@@ -33,4 +33,20 @@ public interface StreamingConfigMBean {
     BigDecimal getBandwidthLimitFactor();
 
     void setBandwidthLimitFactor(BigDecimal factor);
+
+    String getMp3OnlyOptions();
+
+    void setMp3OnlyOptions(String options);
+
+    String getMp3TargetOptions();
+
+    void setMp3TargetOptions(String options);
+
+    String getAacSourceOptions();
+
+    void setAacSourceOptions(String options);
+
+    String getAlacSourceOptions();
+
+    void setAlacSourceOptions();
 }

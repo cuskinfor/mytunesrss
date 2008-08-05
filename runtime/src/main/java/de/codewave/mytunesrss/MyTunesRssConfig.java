@@ -62,8 +62,8 @@ public class MyTunesRssConfig {
     private boolean myQuitConfirmation;
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
-    private String myLameBinary = "";
-    private String myFaad2Binary = "";
+    private String myMp3Binary = "";
+    private String myAacBinary = "";
     private String myAlacBinary = "";
     private int myStreamingCacheTimeout = 20;
     private int myStreamingCacheMaxFiles = 300;
@@ -101,6 +101,10 @@ public class MyTunesRssConfig {
     private String myTomcatSslProxyHost;
     private int myTomcatSslProxyPort;
     private Map<String, DialogLayout> myDialogLayouts;
+    private String myMp3OnlyOptions = "--quiet -b {bitrate} --resample {samplerate} {infile} -";
+    private String myMp3TargetOptions = "--quiet -r -b {bitrate} --resample {samplerate} - -";
+    private String myAlacSourceOptions = "{infile}";
+    private String myAacSourceOptions = "-f 2 -g -w {infile}";
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -280,28 +284,28 @@ public class MyTunesRssConfig {
         return myPathInfoKey;
     }
 
-    public String getLameBinary() {
-        return myLameBinary;
+    public String getMp3Binary() {
+        return myMp3Binary;
     }
 
     public boolean isValidLameBinary() {
-        return StringUtils.isNotEmpty(myLameBinary) && new File(myLameBinary).isFile();
+        return StringUtils.isNotEmpty(myMp3Binary) && new File(myMp3Binary).isFile();
     }
 
-    public void setLameBinary(String lameBinary) {
-        myLameBinary = lameBinary;
+    public void setMp3Binary(String mp3Binary) {
+        myMp3Binary = mp3Binary;
     }
 
-    public String getFaad2Binary() {
-        return myFaad2Binary;
+    public String getAacBinary() {
+        return myAacBinary;
     }
 
     public boolean isValidFaad2Binary() {
-        return StringUtils.isNotEmpty(myFaad2Binary) && new File(myFaad2Binary).isFile();
+        return StringUtils.isNotEmpty(myAacBinary) && new File(myAacBinary).isFile();
     }
 
-    public void setFaad2Binary(String faad2Binary) {
-        myFaad2Binary = faad2Binary;
+    public void setAacBinary(String aacBinary) {
+        myAacBinary = aacBinary;
     }
 
     public String getAlacBinary() {
@@ -701,6 +705,38 @@ public class MyTunesRssConfig {
         return layout;
     }
 
+    public String getAlacSourceOptions() {
+        return myAlacSourceOptions;
+    }
+
+    public void setAlacSourceOptions(String alacSourceOptions) {
+        myAlacSourceOptions = alacSourceOptions;
+    }
+
+    public String getAacSourceOptions() {
+        return myAacSourceOptions;
+    }
+
+    public void setAacSourceOptions(String aacSourceOptions) {
+        myAacSourceOptions = aacSourceOptions;
+    }
+
+    public String getMp3OnlyOptions() {
+        return myMp3OnlyOptions;
+    }
+
+    public void setMp3OnlyOptions(String mp3OnlyOptions) {
+        myMp3OnlyOptions = mp3OnlyOptions;
+    }
+
+    public String getMp3TargetOptions() {
+        return myMp3TargetOptions;
+    }
+
+    public void setMp3TargetOptions(String mp3TargetOptions) {
+        myMp3TargetOptions = mp3TargetOptions;
+    }
+
     public void load() {
         LOG.info("Loading configuration.");
         try {
@@ -749,9 +785,13 @@ public class MyTunesRssConfig {
             setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
             setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
             readPathInfoEncryptionKey(settings);
-            setLameBinary(JXPathUtils.getStringValue(settings, "lameBinary", getLameBinary()));
-            setFaad2Binary(JXPathUtils.getStringValue(settings, "faad2Binary", getFaad2Binary()));
+            setMp3Binary(JXPathUtils.getStringValue(settings, "mp3Binary", getMp3Binary()));
+            setAacBinary(JXPathUtils.getStringValue(settings, "aacBinary", getAacBinary()));
             setAlacBinary(JXPathUtils.getStringValue(settings, "alacBinary", getAlacBinary()));
+            setMp3OnlyOptions(JXPathUtils.getStringValue(settings, "mp3OnlyOptions", getMp3OnlyOptions()));
+            setMp3TargetOptions(JXPathUtils.getStringValue(settings, "mp3TargetOptions", getMp3TargetOptions()));
+            setAlacSourceOptions(JXPathUtils.getStringValue(settings, "alacSourceOptions", getAlacSourceOptions()));
+            setAacSourceOptions(JXPathUtils.getStringValue(settings, "aacSourceOptions", getAacSourceOptions()));
             setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
             setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
             setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
@@ -896,9 +936,13 @@ public class MyTunesRssConfig {
             if (myPathInfoKey != null) {
                 root.appendChild(DOMUtils.createByteArrayElement(settings, "pathInfoKey", myPathInfoKey.getEncoded()));
             }
-            root.appendChild(DOMUtils.createTextElement(settings, "lameBinary", myLameBinary));
-            root.appendChild(DOMUtils.createTextElement(settings, "faad2Binary", myFaad2Binary));
+            root.appendChild(DOMUtils.createTextElement(settings, "mp3Binary", myMp3Binary));
+            root.appendChild(DOMUtils.createTextElement(settings, "aacBinary", myAacBinary));
             root.appendChild(DOMUtils.createTextElement(settings, "alacBinary", myAlacBinary));
+            root.appendChild(DOMUtils.createTextElement(settings, "mp3OnlyOptions", myMp3OnlyOptions));
+            root.appendChild(DOMUtils.createTextElement(settings, "mp3TargetOptions", myMp3TargetOptions));
+            root.appendChild(DOMUtils.createTextElement(settings, "alacSourceOptions", myAlacSourceOptions));
+            root.appendChild(DOMUtils.createTextElement(settings, "aacSourceOptions", myAacSourceOptions));
             root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheTimeout", myStreamingCacheTimeout));
             root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheMaxFiles", myStreamingCacheMaxFiles));
             root.appendChild(DOMUtils.createBooleanElement(settings, "bandwidthLimit", myBandwidthLimit));

@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import de.codewave.mytunesrss.MyTunesRss;
+
 /**
  * de.codewave.mytunesrss.command.LameTranscoderStream
  */
@@ -19,7 +21,7 @@ public class LameTranscoderStream extends InputStream {
     private Process myProcess;
 
     public LameTranscoderStream(File file, String lameBinary, int outputBitRate, int outputSampleRate) throws IOException {
-        String[] command = (lameBinary + " " + AbstractTranscoderStream.getPropertyValue("lame.lame")).split(" ");
+        String[] command = (lameBinary + " " + MyTunesRss.CONFIG.getMp3OnlyOptions()).split(" ");
         for (int i = 0; i < command.length; i++) {
             if ("{bitrate}".equals(command[i])) {
                 command[i] = Integer.toString(outputBitRate);

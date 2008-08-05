@@ -17,28 +17,6 @@ import java.util.Properties;
  */
 public abstract class AbstractTranscoderStream extends InputStream {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTranscoderStream.class);
-    private static final Properties INTERNAL_PROPERTIES = new Properties();
-    private static final Properties USER_PROPERTIES = new Properties();
-
-    static {
-        try {
-            INTERNAL_PROPERTIES.load(FileSuffixInfo.class.getResourceAsStream("transcoder.properties"));
-        } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not load internal transcoder properties.", e);
-            }
-        }
-        try {
-            File file = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder.properties");
-            if (file.isFile()) {
-                USER_PROPERTIES.load(new FileInputStream(file));
-            }
-        } catch (IOException e) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Could not load user transcoder properties: " + e.getMessage());
-            }
-        }
-    }
 
     private Process myTargetProcess;
     private Process mySourceProcess;
@@ -96,15 +74,7 @@ public abstract class AbstractTranscoderStream extends InputStream {
 
     protected abstract String getTargetName();
 
-    private String getSourceArguments() {
-        return getPropertyValue(getSourceName() + "." + getTargetName() + ".source");
-    }
+    protected abstract String getSourceArguments();
 
-    static String getPropertyValue(String key) {
-        return USER_PROPERTIES.getProperty(key, INTERNAL_PROPERTIES.getProperty(key, ""));
-    }
-
-    private String getTargetArguments() {
-        return getPropertyValue(getSourceName() + "." + getTargetName() + ".target");
-    }
+    protected abstract String getTargetArguments();
 }
