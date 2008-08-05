@@ -94,7 +94,7 @@ public class MyTunesFunctions {
                 user.isTranscoder()) {
             if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
                 return "mp3";
-            } else if ("mp4a".equals(track.getMp4Codec()) && config.isFaad2() && MyTunesRss.CONFIG.isValidFaad2Binary()) {
+            } else if ("mp4a".equals(track.getMp4Codec()) && config.isFaad() && MyTunesRss.CONFIG.isValidFaadBinary()) {
                 return "mp3";
             }
         }
@@ -110,8 +110,8 @@ public class MyTunesFunctions {
             if (FileSupportUtils.isMp4(track.getFile()) && "alac".equals(track.getMp4Codec()) && config.isAlac() &&
                     MyTunesRss.CONFIG.isValidAlacBinary()) {
                 return true;
-            } else if (FileSupportUtils.isMp4(track.getFile()) && "mp4a".equals(track.getMp4Codec()) && config.isFaad2() &&
-                    MyTunesRss.CONFIG.isValidFaad2Binary()) {
+            } else if (FileSupportUtils.isMp4(track.getFile()) && "mp4a".equals(track.getMp4Codec()) && config.isFaad() &&
+                    MyTunesRss.CONFIG.isValidFaadBinary()) {
                 return true;
             } else if (FileSupportUtils.isMp3(track.getFile()) && config.isLame() && MyTunesRss.CONFIG.isValidLameBinary()) {
                 return true;
@@ -126,7 +126,7 @@ public class MyTunesFunctions {
             if (FileSupportUtils.isMp4(track.getFile())) {
                 if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
                     return config.getLameTargetBitrate() + "," + config.getLameTargetSampleRate() + "," + config.isTranscodeOnTheFlyIfPossible();
-                } else if ("mp4a".equals(track.getMp4Codec()) && config.isFaad2() && MyTunesRss.CONFIG.isValidFaad2Binary()) {
+                } else if ("mp4a".equals(track.getMp4Codec()) && config.isFaad() && MyTunesRss.CONFIG.isValidFaadBinary()) {
                     return config.getLameTargetBitrate() + "," + config.getLameTargetSampleRate() + "," + config.isTranscodeOnTheFlyIfPossible();
                 }
             } else if (FileSupportUtils.isMp3(track.getFile()) && config.isLame()) {

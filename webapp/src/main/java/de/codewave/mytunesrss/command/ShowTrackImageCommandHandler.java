@@ -9,6 +9,8 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.FindTrackImageQuery;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
+import de.codewave.mytunesrss.meta.MyTunesRssMp4Utils;
+import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -29,13 +31,17 @@ public class ShowTrackImageCommandHandler extends ShowImageCommandHandler {
             }
         } else {
             String trackId = getRequest().getParameter("track");
-            int size = getIntegerRequestParameter("size", 0);
+            int size = getIntegerRequestParameter("size", 256);
             if (StringUtils.isNotEmpty(trackId)) {
                 if (size == 0) {
                     DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
                     if (tracks.getResultSize() > 0) {
                         Track track = tracks.nextResult();
-                        image = MyTunesRssMp3Utils.getImage(track);
+                        if (FileSupportUtils.isMp3(track.getFile())) {
+                            image = MyTunesRssMp3Utils.getImage(track);
+                        } else if (FileSupportUtils.isMp4(track.getFile())) {
+                            image = MyTunesRssMp4Utils.getImage(track);
+                        }
                     }
                 } else {
                     byte[] data = getTransaction().executeQuery(new FindTrackImageQuery(trackId, size));

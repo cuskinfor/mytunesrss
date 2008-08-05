@@ -17,8 +17,8 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
         super(StreamingConfigMBean.class);
     }
 
-    public String getFaad2Binary() {
-        return MyTunesRss.CONFIG.getAacBinary();
+    public String getFaadBinary() {
+        return MyTunesRss.CONFIG.getFaadBinary();
     }
 
     public String getAlacBinary() {
@@ -34,11 +34,11 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
     }
 
     public String getLameBinary() {
-        return MyTunesRss.CONFIG.getMp3Binary();
+        return MyTunesRss.CONFIG.getLameBinary();
     }
 
-    public void setFaad2Binary(String faad2Binary) {
-        MyTunesRss.CONFIG.setAacBinary(faad2Binary);
+    public void setFaadBinary(String faadBinary) {
+        MyTunesRss.CONFIG.setFaadBinary(faadBinary);
         onChange();
     }
 
@@ -58,7 +58,7 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
     }
 
     public void setLameBinary(String lameBinary) {
-        MyTunesRss.CONFIG.setMp3Binary(lameBinary);
+        MyTunesRss.CONFIG.setLameBinary(lameBinary);
         onChange();
     }
 
@@ -80,31 +80,39 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
         onChange();
     }
 
-    public String getMp3OnlyOptions() {
-        return null;
+    public String getLameOnlyOptions() {
+        return MyTunesRss.CONFIG.getLameOnlyOptions();
     }
 
-    public void setMp3OnlyOptions(String options) {
+    public void setLameOnlyOptions(String options) {
+        MyTunesRss.CONFIG.setLameOnlyOptions(options);
+        onChange();
     }
 
-    public String getMp3TargetOptions() {
-        return null;
+    public String getLameTargetOptions() {
+        return MyTunesRss.CONFIG.getLameTargetOptions();
     }
 
-    public void setMp3TargetOptions(String options) {
+    public void setLameTargetOptions(String options) {
+        MyTunesRss.CONFIG.setLameTargetOptions(options);
+        onChange();
     }
 
-    public String getAacSourceOptions() {
-        return null;
+    public String getFaadSourceOptions() {
+        return MyTunesRss.CONFIG.getFaadSourceOptions();
     }
 
-    public void setAacSourceOptions(String options) {
+    public void setFaadSourceOptions(String options) {
+        MyTunesRss.CONFIG.setFaadSourceOptions(options);
+        onChange();
     }
 
     public String getAlacSourceOptions() {
-        return null;
+        return MyTunesRss.CONFIG.getAlacSourceOptions();
     }
 
-    public void setAlacSourceOptions() {
+    public void setAlacSourceOptions(String options) {
+        MyTunesRss.CONFIG.setAlacSourceOptions(options);
+        onChange();
     }
 }

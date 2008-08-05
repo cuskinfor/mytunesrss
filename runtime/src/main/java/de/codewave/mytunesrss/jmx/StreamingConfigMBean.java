@@ -10,9 +10,9 @@ public interface StreamingConfigMBean {
 
     void setLameBinary(String lameBinary);
 
-    String getFaad2Binary();
+    String getFaadBinary();
 
-    void setFaad2Binary(String faad2Binary);
+    void setFaadBinary(String faadBinary);
 
     String getAlacBinary();
 
@@ -34,19 +34,19 @@ public interface StreamingConfigMBean {
 
     void setBandwidthLimitFactor(BigDecimal factor);
 
-    String getMp3OnlyOptions();
+    String getLameOnlyOptions();
 
-    void setMp3OnlyOptions(String options);
+    void setLameOnlyOptions(String options);
 
-    String getMp3TargetOptions();
+    String getLameTargetOptions();
 
-    void setMp3TargetOptions(String options);
+    void setLameTargetOptions(String options);
 
-    String getAacSourceOptions();
+    String getFaadSourceOptions();
 
-    void setAacSourceOptions(String options);
+    void setFaadSourceOptions(String options);
 
     String getAlacSourceOptions();
 
-    void setAlacSourceOptions();
+    void setAlacSourceOptions(String options);
 }

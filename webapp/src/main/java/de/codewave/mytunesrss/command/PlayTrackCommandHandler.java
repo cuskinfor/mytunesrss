@@ -10,6 +10,7 @@ import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.camel.mp3.exception.IllegalHeaderException;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -18,8 +19,6 @@ import de.codewave.utils.servlet.*;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.servlet.http.HttpServletRequest;

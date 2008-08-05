@@ -55,7 +55,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setLame(getBooleanRequestParameter("useLame", false));
         webConfig.setLameTargetBitrate(getIntegerRequestParameter("lameTargetBitrate", 96));
         webConfig.setLameTargetSampleRate(getIntegerRequestParameter("lameTargetSampleRate", 22050));
-        webConfig.setFaad2(getBooleanRequestParameter("useFaad2", false));
+        webConfig.setFaad(getBooleanRequestParameter("useFaad", false));
         webConfig.setAlac(getBooleanRequestParameter("useAlac", false));
         webConfig.setTranscodeOnTheFlyIfPossible(getBooleanRequestParameter("transcodeOnTheFlyIfPossible", false));
         webConfig.setRandomSource(getRequestParameter("randomSource", ""));

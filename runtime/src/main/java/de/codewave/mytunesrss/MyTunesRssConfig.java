@@ -62,8 +62,8 @@ public class MyTunesRssConfig {
     private boolean myQuitConfirmation;
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
-    private String myMp3Binary = "";
-    private String myAacBinary = "";
+    private String myLameBinary = "";
+    private String myFaadBinary = "";
     private String myAlacBinary = "";
     private int myStreamingCacheTimeout = 20;
     private int myStreamingCacheMaxFiles = 300;
@@ -101,10 +101,10 @@ public class MyTunesRssConfig {
     private String myTomcatSslProxyHost;
     private int myTomcatSslProxyPort;
     private Map<String, DialogLayout> myDialogLayouts;
-    private String myMp3OnlyOptions = "--quiet -b {bitrate} --resample {samplerate} {infile} -";
-    private String myMp3TargetOptions = "--quiet -r -b {bitrate} --resample {samplerate} - -";
+    private String myLameOnlyOptions = "--quiet -b {bitrate} --resample {samplerate} {infile} -";
+    private String myLameTargetOptions = "--quiet -r -b {bitrate} --resample {samplerate} - -";
     private String myAlacSourceOptions = "{infile}";
-    private String myAacSourceOptions = "-f 2 -g -w {infile}";
+    private String myFaadSourceOptions = "-f 2 -g -w {infile}";
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -284,28 +284,28 @@ public class MyTunesRssConfig {
         return myPathInfoKey;
     }
 
-    public String getMp3Binary() {
-        return myMp3Binary;
+    public String getLameBinary() {
+        return myLameBinary;
     }
 
     public boolean isValidLameBinary() {
-        return StringUtils.isNotEmpty(myMp3Binary) && new File(myMp3Binary).isFile();
+        return StringUtils.isNotEmpty(myLameBinary) && new File(myLameBinary).isFile();
     }
 
-    public void setMp3Binary(String mp3Binary) {
-        myMp3Binary = mp3Binary;
+    public void setLameBinary(String lameBinary) {
+        myLameBinary = lameBinary;
     }
 
-    public String getAacBinary() {
-        return myAacBinary;
+    public String getFaadBinary() {
+        return myFaadBinary;
     }
 
-    public boolean isValidFaad2Binary() {
-        return StringUtils.isNotEmpty(myAacBinary) && new File(myAacBinary).isFile();
+    public boolean isValidFaadBinary() {
+        return StringUtils.isNotEmpty(myFaadBinary) && new File(myFaadBinary).isFile();
     }
 
-    public void setAacBinary(String aacBinary) {
-        myAacBinary = aacBinary;
+    public void setFaadBinary(String faadBinary) {
+        myFaadBinary = faadBinary;
     }
 
     public String getAlacBinary() {
@@ -713,28 +713,28 @@ public class MyTunesRssConfig {
         myAlacSourceOptions = alacSourceOptions;
     }
 
-    public String getAacSourceOptions() {
-        return myAacSourceOptions;
+    public String getFaadSourceOptions() {
+        return myFaadSourceOptions;
     }
 
-    public void setAacSourceOptions(String aacSourceOptions) {
-        myAacSourceOptions = aacSourceOptions;
+    public void setFaadSourceOptions(String faadSourceOptions) {
+        myFaadSourceOptions = faadSourceOptions;
     }
 
-    public String getMp3OnlyOptions() {
-        return myMp3OnlyOptions;
+    public String getLameOnlyOptions() {
+        return myLameOnlyOptions;
     }
 
-    public void setMp3OnlyOptions(String mp3OnlyOptions) {
-        myMp3OnlyOptions = mp3OnlyOptions;
+    public void setLameOnlyOptions(String lameOnlyOptions) {
+        myLameOnlyOptions = lameOnlyOptions;
     }
 
-    public String getMp3TargetOptions() {
-        return myMp3TargetOptions;
+    public String getLameTargetOptions() {
+        return myLameTargetOptions;
     }
 
-    public void setMp3TargetOptions(String mp3TargetOptions) {
-        myMp3TargetOptions = mp3TargetOptions;
+    public void setLameTargetOptions(String lameTargetOptions) {
+        myLameTargetOptions = lameTargetOptions;
     }
 
     public void load() {
@@ -785,13 +785,13 @@ public class MyTunesRssConfig {
             setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
             setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
             readPathInfoEncryptionKey(settings);
-            setMp3Binary(JXPathUtils.getStringValue(settings, "mp3Binary", getMp3Binary()));
-            setAacBinary(JXPathUtils.getStringValue(settings, "aacBinary", getAacBinary()));
+            setLameBinary(JXPathUtils.getStringValue(settings, "lameBinary", getLameBinary()));
+            setFaadBinary(JXPathUtils.getStringValue(settings, "faadBinary", getFaadBinary()));
             setAlacBinary(JXPathUtils.getStringValue(settings, "alacBinary", getAlacBinary()));
-            setMp3OnlyOptions(JXPathUtils.getStringValue(settings, "mp3OnlyOptions", getMp3OnlyOptions()));
-            setMp3TargetOptions(JXPathUtils.getStringValue(settings, "mp3TargetOptions", getMp3TargetOptions()));
+            setLameOnlyOptions(JXPathUtils.getStringValue(settings, "lameOnlyOptions", getLameOnlyOptions()));
+            setLameTargetOptions(JXPathUtils.getStringValue(settings, "lameTargetOptions", getLameTargetOptions()));
             setAlacSourceOptions(JXPathUtils.getStringValue(settings, "alacSourceOptions", getAlacSourceOptions()));
-            setAacSourceOptions(JXPathUtils.getStringValue(settings, "aacSourceOptions", getAacSourceOptions()));
+            setFaadSourceOptions(JXPathUtils.getStringValue(settings, "faadSourceOptions", getFaadSourceOptions()));
             setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
             setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
             setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
@@ -936,13 +936,13 @@ public class MyTunesRssConfig {
             if (myPathInfoKey != null) {
                 root.appendChild(DOMUtils.createByteArrayElement(settings, "pathInfoKey", myPathInfoKey.getEncoded()));
             }
-            root.appendChild(DOMUtils.createTextElement(settings, "mp3Binary", myMp3Binary));
-            root.appendChild(DOMUtils.createTextElement(settings, "aacBinary", myAacBinary));
+            root.appendChild(DOMUtils.createTextElement(settings, "lameBinary", myLameBinary));
+            root.appendChild(DOMUtils.createTextElement(settings, "faadBinary", myFaadBinary));
             root.appendChild(DOMUtils.createTextElement(settings, "alacBinary", myAlacBinary));
-            root.appendChild(DOMUtils.createTextElement(settings, "mp3OnlyOptions", myMp3OnlyOptions));
-            root.appendChild(DOMUtils.createTextElement(settings, "mp3TargetOptions", myMp3TargetOptions));
+            root.appendChild(DOMUtils.createTextElement(settings, "lameOnlyOptions", myLameOnlyOptions));
+            root.appendChild(DOMUtils.createTextElement(settings, "lameTargetOptions", myLameTargetOptions));
             root.appendChild(DOMUtils.createTextElement(settings, "alacSourceOptions", myAlacSourceOptions));
-            root.appendChild(DOMUtils.createTextElement(settings, "aacSourceOptions", myAacSourceOptions));
+            root.appendChild(DOMUtils.createTextElement(settings, "faadSourceOptions", myFaadSourceOptions));
             root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheTimeout", myStreamingCacheTimeout));
             root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheMaxFiles", myStreamingCacheMaxFiles));
             root.appendChild(DOMUtils.createBooleanElement(settings, "bandwidthLimit", myBandwidthLimit));

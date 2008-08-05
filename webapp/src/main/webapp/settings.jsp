@@ -274,11 +274,11 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${authUser.transcoder && globalConfig.validLameBinary && globalConfig.validFaad2Binary}">
+            <c:if test="${authUser.transcoder && globalConfig.validLameBinary && globalConfig.validFaadBinary}">
                 <tr <mt:flipFlop/>>
-                    <td><fmt:message key="settings.useFaad2" /></td>
+                    <td><fmt:message key="settings.useFaad" /></td>
                     <td>
-                        <input type="checkbox" name="useFaad2" value="true" <c:if test="${config.faad2}">checked="checked"</c:if> />
+                        <input type="checkbox" name="useFaad" value="true" <c:if test="${config.faad}">checked="checked"</c:if> />
                     </td>
                 </tr>
             </c:if>
@@ -290,7 +290,7 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaad2Binary)}">
+            <c:if test="${authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaadBinary)}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.transcodeOnTheFlyIfPossible" /></td>
                     <td>
@@ -298,7 +298,7 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaad2Binary)}">
+            <c:if test="${authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaadBinary)}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.lameTargetBitrate" /></td>
                     <td>

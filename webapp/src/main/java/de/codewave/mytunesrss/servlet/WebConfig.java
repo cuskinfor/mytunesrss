@@ -44,7 +44,7 @@ public class WebConfig {
     private static final String CFG_USE_LAME = "lame";
     private static final String CFG_LAME_TARGET_BITRATE = "lameBitrate";
     private static final String CFG_LAME_TARGET_SAMPLE_RATE = "lameSampleRate";
-    private static final String CFG_USE_FAAD2 = "faad2";
+    private static final String CFG_USE_FAAD = "faad";
     private static final String CFG_USE_ALAC = "alac";
     private static final String CFG_THEME = "theme";
     private static final String CFG_TRANSCODE_OTF_IF_POSSIBLE = "transcodeOnTheFlyIfPossible";
@@ -118,7 +118,7 @@ public class WebConfig {
         myConfigValues.put(CFG_USE_LAME, "false");
         myConfigValues.put(CFG_LAME_TARGET_BITRATE, "96");
         myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, "22050");
-        myConfigValues.put(CFG_USE_FAAD2, "false");
+        myConfigValues.put(CFG_USE_FAAD, "false");
         myConfigValues.put(CFG_USE_ALAC, "false");
         myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, "false");
         myConfigValues.put(CFG_RANDOM_SOURCE, "");
@@ -406,12 +406,12 @@ public class WebConfig {
         myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, Boolean.toString(transcodeOnTheFlyIfPossible));
     }
 
-    public boolean isFaad2() {
-        return Boolean.parseBoolean(myConfigValues.get(CFG_USE_FAAD2));
+    public boolean isFaad() {
+        return Boolean.parseBoolean(myConfigValues.get(CFG_USE_FAAD));
     }
 
-    public void setFaad2(boolean faad2) {
-        myConfigValues.put(CFG_USE_FAAD2, Boolean.toString(faad2));
+    public void setFaad(boolean faad) {
+        myConfigValues.put(CFG_USE_FAAD, Boolean.toString(faad));
     }
 
     public boolean isAlac() {
@@ -423,7 +423,7 @@ public class WebConfig {
     }
 
     private boolean isAnyTranscoder() {
-        return isLame() || isFaad2() || isAlac();
+        return isLame() || isFaad() || isAlac();
     }
 
     public boolean isValidTranscoder() {

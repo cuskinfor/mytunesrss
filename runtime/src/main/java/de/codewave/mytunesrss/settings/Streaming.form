@@ -26,7 +26,7 @@
             </constraints>
             <properties>
               <labelFor value="b92b1"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.mp3Binary"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.lameBinary"/>
             </properties>
           </component>
           <component id="b92b1" class="javax.swing.JTextField" binding="myLameBinaryInput">
@@ -36,7 +36,7 @@
               </grid>
             </constraints>
             <properties>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.mp3BinaryTooltip"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.lameBinaryTooltip"/>
             </properties>
           </component>
           <component id="bf914" class="javax.swing.JButton" binding="myLameBinaryLookupButton">
@@ -46,7 +46,7 @@
             <properties>
               <opaque value="false"/>
               <text value="..."/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.mp3BinaryLookupTooltip"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.lameBinaryLookupTooltip"/>
             </properties>
           </component>
           <component id="8238b" class="javax.swing.JLabel">
@@ -55,27 +55,27 @@
             </constraints>
             <properties>
               <labelFor value="41a4a"/>
-              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.aacBinary"/>
+              <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.faadBinary"/>
             </properties>
           </component>
-          <component id="41a4a" class="javax.swing.JTextField" binding="myFaad2BinaryInput">
+          <component id="41a4a" class="javax.swing.JTextField" binding="myFaadBinaryInput">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
             <properties>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.aacBinaryTooltip"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.faadBinaryTooltip"/>
             </properties>
           </component>
-          <component id="264a1" class="javax.swing.JButton" binding="myFaad2BinaryLookupButton">
+          <component id="264a1" class="javax.swing.JButton" binding="myFaadBinaryLookupButton">
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <opaque value="false"/>
               <text value="..."/>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.aacBinaryLookupTooltip"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.faadBinaryLookupTooltip"/>
             </properties>
           </component>
           <component id="7b940" class="javax.swing.JLabel">
@@ -227,7 +227,7 @@
               </grid>
             </constraints>
             <properties>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.streaming.mp3OnlyTooltip"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.streaming.lameOnlyTooltip"/>
             </properties>
           </component>
           <component id="e61dd" class="javax.swing.JLabel">
@@ -245,7 +245,7 @@
             </constraints>
             <properties>
               <labelFor value="adf00"/>
-              <text value="FAAD2 (aac-&gt;...)"/>
+              <text value="FAAD (aac-&gt;...)"/>
             </properties>
           </component>
           <component id="44b9d" class="javax.swing.JLabel">
@@ -264,17 +264,17 @@
               </grid>
             </constraints>
             <properties>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.streaming.mp3TargetTooltip"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.streaming.lameTargetTooltip"/>
             </properties>
           </component>
-          <component id="adf00" class="javax.swing.JTextField" binding="myFaad2SourceOptions">
+          <component id="adf00" class="javax.swing.JTextField" binding="myFaadSourceOptions">
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
             <properties>
-              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.streaming.aacSourceOptions"/>
+              <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.streaming.faadSourceOptions"/>
             </properties>
           </component>
           <component id="ab949" class="javax.swing.JTextField" binding="myAlacSourceOptions">
