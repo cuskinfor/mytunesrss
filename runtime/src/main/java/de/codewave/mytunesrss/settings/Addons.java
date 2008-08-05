@@ -24,7 +24,6 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
     private JButton myDeleteLanguageButton;
     private JScrollPane myLanguagesScrollPane;
     private JList myLanguagesList;
-    private JTextField myWelcomeMessageInput;
     private DefaultListModel myThemesListModel = new DefaultListModel();
     private DefaultListModel myLanguagesListModel = new DefaultListModel();
 
@@ -113,7 +112,6 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
 
     private void initValues() {
         initListModels();
-        myWelcomeMessageInput.setText(MyTunesRss.CONFIG.getWebWelcomeMessage());
     }
 
     private void initListModels() {
@@ -134,7 +132,7 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
     }
 
     public String updateConfigFromGui() {
-        MyTunesRss.CONFIG.setWebWelcomeMessage(myWelcomeMessageInput.getText());
+        // intentionally left blank
         return null;
     }
 

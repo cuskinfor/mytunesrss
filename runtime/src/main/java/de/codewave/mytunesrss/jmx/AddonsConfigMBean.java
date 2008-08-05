@@ -9,11 +9,14 @@ package de.codewave.mytunesrss.jmx;
  */
 public interface AddonsConfigMBean {
     String[] getThemes();
+
     String[] getLanguages();
+
     String addTheme(String themePath);
+
     String addLanguage(String languagePath);
+
     String removeTheme(String themeName);
+
     String removeLanguage(String languageCode);
-    String getWebWelcomeMessage();
-    void setWebWelcomeMessage(String message);
 }

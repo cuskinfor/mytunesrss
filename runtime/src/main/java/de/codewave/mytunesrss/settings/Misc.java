@@ -31,6 +31,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
     private JButton myProgramUpdateButton;
     private JPanel myMyTunesRssComPanel;
     private JLabel myMyTunesRssComStatus;
+    private JTextField myWelcomeMessageInput;
     private boolean myUpdateOnStartInputCache;
     private boolean myAutoStartServer;
 
@@ -61,6 +62,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         myUpdateOnStartInput.setSelected(MyTunesRss.CONFIG.isCheckUpdateOnStart());
         myUpdateOnStartInputCache = myUpdateOnStartInput.isSelected();
         myMyTunesRssComStatus.setText(MyTunesRssUtils.getBundleString("mytunesrsscom.stateUnknown"));
+        myWelcomeMessageInput.setText(MyTunesRss.CONFIG.getWebWelcomeMessage());
     }
 
     private void createUIComponents() {
@@ -93,6 +95,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setProxyPort(MyTunesRssUtils.getTextFieldInteger(myProxyPortInput, -1));
             MyTunesRss.CONFIG.setQuitConfirmation(myQuitConfirmationInput.isSelected());
             MyTunesRss.CONFIG.setCheckUpdateOnStart(myUpdateOnStartInput.isSelected());
+            MyTunesRss.CONFIG.setWebWelcomeMessage(myWelcomeMessageInput.getText());
         }
         return null;
     }
