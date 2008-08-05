@@ -8,6 +8,10 @@
     <body>
 
         <release version="3.6-EAP-1" date="2008-xx-xx" description="EAP-1">
+            <action dev="mdescher" type="update">
+                Removed transcoder.properties (default and user) file and added command line options
+                to configuration GUI and JMX interface.
+            </action>
             <action dev="mdescher" type="add">
                 Remote API authentication via HTTP header "X-MyTunesRSS-ID" as well (preferred over path info).
             </action>
