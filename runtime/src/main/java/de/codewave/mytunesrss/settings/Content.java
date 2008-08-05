@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.settings;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
@@ -29,6 +30,10 @@ public class Content implements MyTunesRssEventListener, SettingsForm {
     private JPanel myRootPanel;
     private JScrollPane myScrollPane;
     private JPanel myPlaylistsPanel;
+    private JCheckBox myIgnoreArtworkInput;
+    private JTextField myFileTypes;
+    private JTextField myArtistDropWords;
+    private JTextField myId3v2CommentInput;
 
     public void init() {
         myScrollPane.getViewport().setOpaque(false);
@@ -37,11 +42,18 @@ public class Content implements MyTunesRssEventListener, SettingsForm {
     }
 
     public void setGuiMode(GuiMode mode) {
-        // intentionally left blank
+        boolean databaseActive = DatabaseBuilderTask.isRunning() || mode == GuiMode.DatabaseUpdating;
+        SwingUtils.enableElementAndLabel(myFileTypes, !databaseActive);
+        SwingUtils.enableElementAndLabel(myArtistDropWords, !databaseActive);
+        SwingUtils.enableElementAndLabel(myId3v2CommentInput, !databaseActive);
+        myIgnoreArtworkInput.setEnabled(!databaseActive);
     }
 
     public String updateConfigFromGui() {
-        // intentionally left blank
+        MyTunesRss.CONFIG.setFileTypes(myFileTypes.getText());
+        MyTunesRss.CONFIG.setArtistDropWords(myArtistDropWords.getText());
+        MyTunesRss.CONFIG.setIgnoreArtwork(myIgnoreArtworkInput.isSelected());
+        MyTunesRss.CONFIG.setId3v2TrackComment(myId3v2CommentInput.getText());
         return null;
     }
 
@@ -50,6 +62,10 @@ public class Content implements MyTunesRssEventListener, SettingsForm {
     }
 
     private void initValues() {
+        myFileTypes.setText(MyTunesRss.CONFIG.getFileTypes());
+        myArtistDropWords.setText(MyTunesRss.CONFIG.getArtistDropWords());
+        myIgnoreArtworkInput.setSelected(MyTunesRss.CONFIG.isIgnoreArtwork());
+        myId3v2CommentInput.setText(MyTunesRss.CONFIG.getId3v2TrackComment());
         refreshPlaylistList();
     }
 
