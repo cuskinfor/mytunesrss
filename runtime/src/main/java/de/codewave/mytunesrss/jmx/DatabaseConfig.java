@@ -107,15 +107,6 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
         onChange();
     }
 
-    public String getFileTypes() {
-        return MyTunesRss.CONFIG.getFileTypes();
-    }
-
-    public void setFileTypes(String fileTypes) {
-        MyTunesRss.CONFIG.setFileTypes(fileTypes);
-        onChange();
-    }
-
     public boolean isRemoveMissingItunesTracks() {
         return MyTunesRss.CONFIG.isItunesDeleteMissingFiles();
     }

@@ -22,10 +22,6 @@ public interface DatabaseConfigMBean {
 
     void setUpdateOnServerStart(boolean updateOnServerStart);
 
-    String getFileTypes();
-
-    void setFileTypes(String fileTypes);
-
     String getArtistDropWords();
 
     void setArtistDropWords(String artistDropWords);

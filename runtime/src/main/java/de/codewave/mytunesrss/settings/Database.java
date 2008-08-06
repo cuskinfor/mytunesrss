@@ -35,7 +35,6 @@ import java.util.List;
  */
 public class Database implements MyTunesRssEventListener, SettingsForm {
     private JPanel myRootPanel;
-    private JCheckBox myIgnoreTimestampsInput;
     private JCheckBox myUpdateDatabaseOnServerStart;
     private JCheckBox myDeleteMissingFiles;
     private JScrollPane myScrollPane;
@@ -172,7 +171,6 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
 
     private void initValues() {
         myUpdateDatabaseOnServerStart.setSelected(MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart());
-        myIgnoreTimestampsInput.setSelected(MyTunesRss.CONFIG.isIgnoreTimestamps());
         myDeleteMissingFiles.setSelected(MyTunesRss.CONFIG.isItunesDeleteMissingFiles());
         myDbTypeInput.setSelectedItem(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
         myDbDriverInput.setText(MyTunesRss.CONFIG.getDatabaseDriver());
@@ -187,7 +185,6 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
             return messages;
         } else {
             MyTunesRss.CONFIG.setUpdateDatabaseOnServerStart(myUpdateDatabaseOnServerStart.isSelected());
-            MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestampsInput.isSelected());
             MyTunesRss.CONFIG.setItunesDeleteMissingFiles(myDeleteMissingFiles.isSelected());
             if (databaseChanged()) {
                 MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("settings.databaseChangedWarning"));
@@ -233,7 +230,6 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
         boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
         boolean databaseActive = DatabaseBuilderTask.isRunning() || mode == GuiMode.DatabaseUpdating;
         myUpdateDatabaseOnServerStart.setEnabled(!serverActive);
-        myIgnoreTimestampsInput.setEnabled(!databaseActive);
         myDeleteMissingFiles.setEnabled(!databaseActive);
     }
 

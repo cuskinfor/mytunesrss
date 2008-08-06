@@ -56,7 +56,6 @@ public class MyTunesRssConfig {
     private String myMyTunesRssComUser = "";
     private byte[] myMyTunesRssComPasswordHash = null;
     private boolean myUpdateDatabaseOnServerStart = true;
-    private String myFileTypes = "";
     private String myArtistDropWords = "";
     private boolean myLocalTempArchive;
     private boolean myQuitConfirmation;
@@ -105,6 +104,7 @@ public class MyTunesRssConfig {
     private String myLameTargetOptions = "--quiet -r -b {bitrate} --resample {samplerate} - -";
     private String myAlacSourceOptions = "{infile}";
     private String myFaadSourceOptions = "-f 2 -g -w {infile}";
+    private List<FileType> myFileTypes = new ArrayList<FileType>();
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -248,12 +248,8 @@ public class MyTunesRssConfig {
         myUploadDir = uploadDir;
     }
 
-    public String getFileTypes() {
+    public List<FileType> getFileTypes() {
         return myFileTypes;
-    }
-
-    public void setFileTypes(String fileTypes) {
-        myFileTypes = fileTypes;
     }
 
     public String getArtistDropWords() {
@@ -737,6 +733,15 @@ public class MyTunesRssConfig {
         myLameTargetOptions = lameTargetOptions;
     }
 
+    public FileType getFileType(String suffix) {
+        for (FileType type : myFileTypes) {
+            if (suffix.equalsIgnoreCase(type.getSuffix())) {
+                return type;
+            }
+        }
+        return null;
+    }
+
     public void load() {
         LOG.info("Loading configuration.");
         try {
@@ -780,7 +785,18 @@ public class MyTunesRssConfig {
             setProxyPort(JXPathUtils.getIntValue(settings, "proxyPort", getProxyPort()));
             setMyTunesRssComUser(JXPathUtils.getStringValue(settings, "myTunesRssComUser", getMyTunesRssComUser()));
             setMyTunesRssComPasswordHash(JXPathUtils.getByteArray(settings, "myTunesRssComPassword", getMyTunesRssComPasswordHash()));
-            setFileTypes(JXPathUtils.getStringValue(settings, "fileTypes", getFileTypes()));
+            myFileTypes = new ArrayList<FileType>();
+            Iterator<JXPathContext> fileTypes = JXPathUtils.getContextIterator(settings, "file-types/type");
+            while (fileTypes != null && fileTypes.hasNext()) {
+                JXPathContext fileTypeContext = fileTypes.next();
+                FileType fileType = new FileType();
+                fileType.setMimeType(JXPathUtils.getStringValue(fileTypeContext, "mime-type", "audio/mp3"));
+                fileType.setSuffix(JXPathUtils.getStringValue(fileTypeContext, "suffix", "mp3"));
+                fileType.setVideo(JXPathUtils.getBooleanValue(fileTypeContext, "video", false));
+                fileType.setProtected(JXPathUtils.getBooleanValue(fileTypeContext, "protected", false));
+                fileType.setActive(JXPathUtils.getBooleanValue(fileTypeContext, "active", true));
+                myFileTypes.add(fileType);
+            }
             setArtistDropWords(JXPathUtils.getStringValue(settings, "artistDropWords", getArtistDropWords()));
             setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
             setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
@@ -846,6 +862,9 @@ public class MyTunesRssConfig {
                 layout.setWidth(JXPathUtils.getIntValue(dialogLayout, "width", -1));
                 layout.setHeight(JXPathUtils.getIntValue(dialogLayout, "height", -1));
                 myDialogLayouts.put(JXPathUtils.getStringValue(dialogLayout, "class", "").trim(), layout);
+            }
+            if (myFileTypes.isEmpty()) {
+                myFileTypes = FileType.getDefaults();
             }
         } catch (IOException e) {
             LOG.error("Could not read configuration file.", e);
@@ -929,7 +948,17 @@ public class MyTunesRssConfig {
             if (myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0) {
                 root.appendChild(DOMUtils.createByteArrayElement(settings, "myTunesRssComPassword", myMyTunesRssComPasswordHash));
             }
-            root.appendChild(DOMUtils.createTextElement(settings, "fileTypes", myFileTypes));
+            Element fileTypes = settings.createElement("file-types");
+            root.appendChild(fileTypes);
+            for (FileType fileType : myFileTypes) {
+                Element fileTypeElement = settings.createElement("type");
+                fileTypes.appendChild(fileTypeElement);
+                fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "mime-type", fileType.getMimeType()));
+                fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "suffix", fileType.getSuffix()));
+                fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "video", fileType.isVideo()));
+                fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "protected", fileType.isProtected()));
+                fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "active", fileType.isActive()));
+            }
             root.appendChild(DOMUtils.createTextElement(settings, "artistDropWords", myArtistDropWords));
             root.appendChild(DOMUtils.createBooleanElement(settings, "quitConfirmation", myQuitConfirmation));
             root.appendChild(DOMUtils.createTextElement(settings, "webWelcomeMessage", myWebWelcomeMessage));
@@ -1048,5 +1077,13 @@ public class MyTunesRssConfig {
 
     public boolean isDefaultDatabase() {
         return StringUtils.isEmpty(myDatabaseType) || "h2".equalsIgnoreCase(myDatabaseType);
+    }
+
+    public List<FileType> getDeepFileTypesClone() {
+        List<FileType> clone = new ArrayList<FileType>(getFileTypes().size());
+        for (FileType type : getFileTypes()) {
+            clone.add(new FileType(type));
+        }
+        return clone;
     }
 }

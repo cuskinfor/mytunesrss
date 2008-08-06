@@ -106,9 +106,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         } else {
                             setSimpleInfo(statement, file);
                         }
-                        FileSuffixInfo fileSuffixInfo = FileSupportUtils.getFileSuffixInfo(file.getName());
-                        statement.setProtected(fileSuffixInfo.isProtected());
-                        statement.setVideo(fileSuffixInfo.isVideo());
+                        FileType type = MyTunesRss.CONFIG.getFileType(FileSupportUtils.getFileSuffix(file.getName()));
+                        statement.setProtected(type.isProtected());
+                        statement.setVideo(type.isVideo());
                         statement.setFileName(canonicalFilePath);
                         try {
                             myStoreSession.executeStatement(statement);

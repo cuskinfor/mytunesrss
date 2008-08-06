@@ -9,6 +9,9 @@
 
         <release version="3.6-EAP-1" date="2008-xx-xx" description="EAP-1">
             <action dev="mdescher" type="update">
+                Removed file-suffixes.properties and added a configuration GUI.
+            </action>
+            <action dev="mdescher" type="update">
                 Removed transcoder.properties (default and user) file and added command line options
                 to configuration GUI and JMX interface.
             </action>

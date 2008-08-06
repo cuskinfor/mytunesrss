@@ -19,24 +19,8 @@ public class FileSupportUtils {
     }
 
     private static boolean isSuffixSupported(String suffix) {
-        if (FileSuffixInfo.getSuffixes().contains(suffix)) {
-            if (StringUtils.isEmpty(MyTunesRss.CONFIG.getFileTypes())) {
-                return true;
-            }
-            for (StringTokenizer tokenizer = new StringTokenizer(MyTunesRss.CONFIG.getFileTypes().toLowerCase(), ","); tokenizer.hasMoreTokens();) {
-                if (suffix.equalsIgnoreCase(tokenizer.nextToken())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public static FileSuffixInfo getFileSuffixInfo(String filename) {
-        if (isSupported(filename)) {
-            return FileSuffixInfo.getForSuffix(getFileSuffix(filename));
-        }
-        return null;
+        FileType type = MyTunesRss.CONFIG.getFileType(suffix);
+        return type != null && type.isActive();
     }
 
     public static String getFileSuffix(String filename) {
@@ -47,22 +31,25 @@ public class FileSupportUtils {
         return null;
     }
 
-    public static String getContentType(String filename, boolean video) {
-        FileSuffixInfo fileSuffixInfo = getFileSuffixInfo(filename);
-        if (fileSuffixInfo != null) {
-            return fileSuffixInfo.getMimeType(video);
+    public static String getContentType(String filename, boolean forceVideo) {
+        FileType type = MyTunesRss.CONFIG.getFileType(getFileSuffix(filename));
+        if (type != null) {
+            if (forceVideo) {
+                return type.getMimeType().replace("audio/", "video/");
+            }
+            return type.getMimeType();
         }
         return "application/octet-stream";
     }
 
     public static boolean isProtected(String filename) {
-        FileSuffixInfo fileSuffixInfo = getFileSuffixInfo(filename);
-        return fileSuffixInfo != null && fileSuffixInfo.isProtected();
+        FileType type = MyTunesRss.CONFIG.getFileType(getFileSuffix(filename));
+        return type != null && type.isProtected();
     }
 
     public static boolean isVideo(String filename) {
-        FileSuffixInfo fileSuffixInfo = getFileSuffixInfo(filename);
-        return fileSuffixInfo != null && fileSuffixInfo.isVideo();
+        FileType type = MyTunesRss.CONFIG.getFileType(getFileSuffix(filename));
+        return type != null && type.isVideo();
     }
 
     public static boolean isMp3(File file) {
