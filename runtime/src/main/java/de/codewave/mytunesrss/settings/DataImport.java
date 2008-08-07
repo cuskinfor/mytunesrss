@@ -5,13 +5,14 @@ import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.swing.SwingUtils;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.settings.DataImport
@@ -26,21 +27,13 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
     private JButton myAddFileTypeButton;
     private JButton myRemoveFileTypeButton;
     private JButton myResetFileTypesButton;
-    private JComboBox myVideoCombo;
-    private JComboBox myProtectedCombo;
     private FileTypesTableModel myFileTypesTableModel;
 
     public void init() {
-        myProtectedCombo = new JComboBox(new String[] {MyTunesRssUtils.getBundleString("settings.filetypes.protected.false"),
-                                                       MyTunesRssUtils.getBundleString("settings.filetypes.protected.true")});
-        myProtectedCombo.setOpaque(true);
-        myVideoCombo = new JComboBox(new String[] {MyTunesRssUtils.getBundleString("settings.filetypes.video.false"), MyTunesRssUtils.getBundleString(
-                "settings.filetypes.video.true")});
-        myVideoCombo.setOpaque(true);
         myAddFileTypeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 myFileTypesTableModel.getFileTypes().add(new FileType(false, "", "", false, false));
-                myFileTypesTableModel.fireTableStructureChanged();
+                myFileTypesTableModel.fireTableDataChanged();
             }
         });
         myRemoveFileTypeButton.addActionListener(new ActionListener() {
@@ -51,13 +44,12 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
                         myFileTypesTableModel.getFileTypes().remove(rows[i]);
                     }
                 }
-                myFileTypesTableModel.fireTableStructureChanged();
+                myFileTypesTableModel.fireTableDataChanged();
             }
         });
         myResetFileTypesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 myFileTypesTableModel.setFileTypes(FileType.getDefaults());
-                myFileTypesTableModel.fireTableStructureChanged();
             }
         });
         myFileTypesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -67,8 +59,12 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
         });
         myFileTypesTableModel = new FileTypesTableModel();
         myFileTypesTable.setModel(myFileTypesTableModel);
-        myFileTypesTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(myVideoCombo));
-        myFileTypesTable.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(myProtectedCombo));
+        JComboBox videoCombo = new I18nComboBox("settings.filetypes.video.false", "settings.filetypes.video.true");
+        videoCombo.setOpaque(true);
+        myFileTypesTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(videoCombo));
+        JComboBox protectedCombo = new I18nComboBox("settings.filetypes.protected.false", "settings.filetypes.protected.true");
+        protectedCombo.setOpaque(true);
+        myFileTypesTable.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(protectedCombo));
         initValues();
     }
 
@@ -125,7 +121,7 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
 
         public void setFileTypes(List<FileType> fileTypes) {
             myFileTypes = fileTypes;
-            fireTableStructureChanged();
+            fireTableDataChanged();
         }
 
         public int getRowCount() {
@@ -202,6 +198,22 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
                 default:
                     throw new IllegalArgumentException("No such column: " + columnIndex + ".");
             }
+        }
+    }
+
+    public class I18nComboBox extends JComboBox {
+        public I18nComboBox(final String... keys) {
+            super(keys);
+            setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    return super.getListCellRendererComponent(list,
+                                                              MyTunesRssUtils.getBundleString(value.toString()),
+                                                              index,
+                                                              isSelected,
+                                                              cellHasFocus);
+                }
+            });
         }
     }
 }
