@@ -29,4 +29,24 @@ public interface DatabaseConfigMBean {
     boolean isRemoveMissingItunesTracks();
 
     void setRemoveMissingItunesTracks(boolean removeMissingTracks);
+
+    String getDatabaseConnection();
+
+    void setDatabaseConnection(String databaseConnection);
+
+    String getDatabaseDriver();
+
+    void setDatabaseDriver(String databaseDriver);
+
+    String getDatabasePassword();
+
+    void setDatabasePassword(String databasePassword);
+
+    String getDatabaseType();
+
+    void setDatabaseType(String databaseType);
+
+    String getDatabaseUser();
+
+    void setDatabaseUser(String databaseUsername);
 }

@@ -11,10 +11,10 @@ import de.codewave.utils.sql.SmartStatementFactory;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,19 +33,18 @@ public class MyTunesRssDataStore extends DataStore {
 
     @Override
     public void init() throws IOException {
-        initSmartStatementFactory();
-        LOG.info("Creating database connection pool for connect string \"" + MyTunesRss.CONFIG.getDatabaseConnection() + "\".");
+        final String databaseConnection = MyTunesRss.CONFIG.getDatabaseConnection();
+        final String databaseUser = MyTunesRss.CONFIG.getDatabaseUser();
+        final String databasePassword = MyTunesRss.CONFIG.getDatabasePassword();
+        initSmartStatementFactory(MyTunesRss.CONFIG.getDatabaseType());
+        LOG.info("Creating database connection pool for connect string \"" + databaseConnection + "\".");
         setConnectionPool(new GenericObjectPool(new BasePoolableObjectFactory() {
             @Override
             public Object makeObject() throws Exception {
                 long endTime = System.currentTimeMillis() + 10000;
                 do {
                     try {
-                        return DriverManager
-                                .getConnection(MyTunesRss.CONFIG
-                                        .getDatabaseConnection(), MyTunesRss.CONFIG
-                                        .getDatabaseUser(), MyTunesRss.CONFIG
-                                        .getDatabasePassword());
+                        return DriverManager.getConnection(databaseConnection, databaseUser, databasePassword);
                     } catch (SQLException e) {
                         if (LOG.isWarnEnabled()) {
                             LOG
@@ -59,9 +58,7 @@ public class MyTunesRssDataStore extends DataStore {
                     }
                 } while (System.currentTimeMillis() < endTime);
                 try {
-                    return DriverManager.getConnection(MyTunesRss.CONFIG.getDatabaseConnection(),
-                                                       MyTunesRss.CONFIG.getDatabaseUser(),
-                                                       MyTunesRss.CONFIG.getDatabasePassword());
+                    return DriverManager.getConnection(databaseConnection, databaseUser, databasePassword);
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not get a database connection.", e);
@@ -89,8 +86,7 @@ public class MyTunesRssDataStore extends DataStore {
         }
     }
 
-    private void initSmartStatementFactory() {
-        String databaseType = MyTunesRss.CONFIG.getDatabaseType();
+    private void initSmartStatementFactory(String databaseType) {
         LOG.info("Using DML/DDL for database type \"" + databaseType + "\".");
         JXPathContext[] contexts =
                 new JXPathContext[] {JXPathUtils.getContext(getClass().getResource("ddl.xml")), JXPathUtils.getContext(getClass().getResource(

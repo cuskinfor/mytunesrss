@@ -188,4 +188,57 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
             session.commit();
         }
     }
+
+    public String getCurrentUpdateAction() {
+        return myCurrentUpdateAction;
+    }
+
+    public void setCurrentUpdateAction(String currentUpdateAction) {
+        myCurrentUpdateAction = currentUpdateAction;
+    }
+
+    public String getDatabaseConnection() {
+        return MyTunesRss.CONFIG.getDatabaseConnection();
+    }
+
+    public void setDatabaseConnection(String databaseConnection) {
+        MyTunesRss.CONFIG.setDatabaseConnection(databaseConnection);
+        onChange();
+    }
+
+    public String getDatabaseDriver() {
+        return MyTunesRss.CONFIG.getDatabaseDriver();
+    }
+
+    public void setDatabaseDriver(String databaseDriver) {
+        MyTunesRss.CONFIG.setDatabaseDriver(databaseDriver);
+        onChange();
+    }
+
+    public String getDatabasePassword() {
+        return MyTunesRss.CONFIG.getDatabasePassword();
+    }
+
+    public void setDatabasePassword(String databasePassword) {
+        MyTunesRss.CONFIG.setDatabasePassword(databasePassword);
+        onChange();
+    }
+
+    public String getDatabaseType() {
+        return MyTunesRss.CONFIG.getDatabaseType();
+    }
+
+    public void setDatabaseType(String databaseType) {
+        MyTunesRss.CONFIG.setDatabaseType(databaseType);
+        onChange();
+    }
+
+    public String getDatabaseUser() {
+        return MyTunesRss.CONFIG.getDatabaseUser();
+    }
+
+    public void setDatabaseUser(String user) {
+        MyTunesRss.CONFIG.setDatabaseUser(user);
+        onChange();
+    }
 }
