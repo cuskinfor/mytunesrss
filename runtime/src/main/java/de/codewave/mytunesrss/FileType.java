@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,35 @@ public class FileType {
     private boolean myProtected;
     private boolean myActive;
     private String mySuffix;
+
+    public static List<FileType> getDefaults() {
+        List<FileType> types = new ArrayList<FileType>();
+        types.add(new FileType(true, "m4a", "audio/x-m4a", false, false));
+        types.add(new FileType(true, "m4p", "audio/x-m4p", false, true));
+        types.add(new FileType(true, "wav", "audio/wav", false, false));
+        types.add(new FileType(true, "mp4", "audio/x-mp4", false, false));
+        types.add(new FileType(true, "avi", "video/x-msvideo", true, false));
+        types.add(new FileType(true, "mov", "video/quicktime", true, false));
+        types.add(new FileType(true, "wmv", "video/x-ms-wmv", true, false));
+        types.add(new FileType(true, "wma", "audio/x-ms-wma", false, false));
+        types.add(new FileType(true, "mpg", "audio/mpeg", false, false));
+        types.add(new FileType(true, "mpeg", "audio/mpeg", false, false));
+        types.add(new FileType(true, "flac", "application/flac", false, false));
+        types.add(new FileType(true, "ogg", "application/ogg", false, false));
+        types.add(new FileType(true, "m4v", "video/x-m4v", true, false));
+        types.add(new FileType(true, "m4b", "audio/x-m4b", false, false));
+        return types;
+    }
+
+    public static boolean isValid(FileType fileType) {
+        if (StringUtils.isBlank(fileType.getSuffix())) {
+            return false;
+        }
+        if (StringUtils.isBlank(fileType.getMimeType())) {
+            return false;
+        }
+        return true;
+    }
 
     public FileType() {
         // intentionally left blank
@@ -76,22 +107,22 @@ public class FileType {
         mySuffix = suffix;
     }
 
-    public static List<FileType> getDefaults() {
-        List<FileType> types = new ArrayList<FileType>();
-        types.add(new FileType(true, "m4a", "audio/x-m4a", false, false));
-        types.add(new FileType(true, "m4p", "audio/x-m4p", false, true));
-        types.add(new FileType(true, "wav", "audio/wav", false, false));
-        types.add(new FileType(true, "mp4", "audio/x-mp4", false, false));
-        types.add(new FileType(true, "avi", "video/x-msvideo", true, false));
-        types.add(new FileType(true, "mov", "video/quicktime", true, false));
-        types.add(new FileType(true, "wmv", "video/x-ms-wmv", true, false));
-        types.add(new FileType(true, "wma", "audio/x-ms-wma", false, false));
-        types.add(new FileType(true, "mpg", "audio/mpeg", false, false));
-        types.add(new FileType(true, "mpeg", "audio/mpeg", false, false));
-        types.add(new FileType(true, "flac", "application/flac", false, false));
-        types.add(new FileType(true, "ogg", "application/ogg", false, false));
-        types.add(new FileType(true, "m4v", "video/x-m4v", true, false));
-        types.add(new FileType(true, "m4b", "audio/x-m4b", false, false));
-        return types;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof FileType) {
+            return StringUtils.equals(((FileType)obj).getSuffix(), getSuffix());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return getSuffix() != null ? getSuffix().hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return getSuffix() + ": \"" + getMimeType() + "\", active=" + isActive() + ", type=" + (isVideo() ? "video" : "audio") + ", " +
+                (isProtected() ? "protected" : "unprotected");
     }
 }

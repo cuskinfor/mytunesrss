@@ -32,15 +32,6 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
         MyTunesRssEventManager.getInstance().addListener(this);
     }
 
-    public boolean isIgnoreTimestampsOnUpdate() {
-        return MyTunesRss.CONFIG.isIgnoreTimestamps();
-    }
-
-    public void setIgnoreTimestampsOnUpdate(boolean ignoreTimestamps) {
-        MyTunesRss.CONFIG.setIgnoreTimestamps(ignoreTimestamps);
-        onChange();
-    }
-
     public String resetDatabase() {
         MyTunesRssUtils.executeTask(null, null, null, false, new RecreateDatabaseTask());
         onChange();
@@ -98,15 +89,6 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
         onChange();
     }
 
-    public String getArtistDropWords() {
-        return MyTunesRss.CONFIG.getArtistDropWords();
-    }
-
-    public void setArtistDropWords(String artistDropWords) {
-        MyTunesRss.CONFIG.setArtistDropWords(artistDropWords);
-        onChange();
-    }
-
     public boolean isRemoveMissingItunesTracks() {
         return MyTunesRss.CONFIG.isItunesDeleteMissingFiles();
     }
@@ -122,15 +104,6 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
         } else if (event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED || event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN) {
             myCurrentUpdateAction = null;
         }
-    }
-
-    public boolean isIgnoreCoverArtworkFromFiles() {
-        return MyTunesRss.CONFIG.isIgnoreArtwork();
-    }
-
-    public void setIgnoreCoverArtworkFromFiles(boolean ignoreCoverArtwork) {
-        MyTunesRss.CONFIG.setIgnoreArtwork(ignoreCoverArtwork);
-        onChange();
     }
 
     public String addSchedule(String schedule) {

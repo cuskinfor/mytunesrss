@@ -24,6 +24,7 @@ public class MyTunesRssJmxUtils {
     private static ObjectName SERVER_CONFIG_NAME;
     private static ObjectName APPLICATION_NAME;
     private static ObjectName DATABASE_CONFIG_NAME;
+    private static ObjectName DATAIMPORT_CONFIG_NAME;
     private static ObjectName DIRECTORIES_CONFIG_NAME;
     private static ObjectName USER_CONFIG_NAME;
     private static ObjectName MISC_CONFIG_NAME;
@@ -38,6 +39,7 @@ public class MyTunesRssJmxUtils {
             SERVER_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Server");
             APPLICATION_NAME = new ObjectName("MyTunesRSS:type=config,name=Application");
             DATABASE_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Database");
+            DATAIMPORT_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=DataImport");
             DIRECTORIES_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Directories");
             USER_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Users");
             MISC_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Miscellaneous");
@@ -60,6 +62,7 @@ public class MyTunesRssJmxUtils {
                 server.registerMBean(new ServerConfig(), SERVER_CONFIG_NAME);
                 server.registerMBean(new DatabaseConfig(), DATABASE_CONFIG_NAME);
                 server.registerMBean(new DirectoriesConfig(), DIRECTORIES_CONFIG_NAME);
+                server.registerMBean(new DataImportConfig(), DATAIMPORT_CONFIG_NAME);
                 server.registerMBean(new UserConfig(), USER_CONFIG_NAME);
                 server.registerMBean(new MiscConfig(), MISC_CONFIG_NAME);
                 server.registerMBean(new AddonsConfig(), ADDONS_CONFIG_NAME);
@@ -108,6 +111,7 @@ public class MyTunesRssJmxUtils {
                 server.unregisterMBean(APPLICATION_NAME);
                 server.unregisterMBean(DATABASE_CONFIG_NAME);
                 server.unregisterMBean(DIRECTORIES_CONFIG_NAME);
+                server.unregisterMBean(DATAIMPORT_CONFIG_NAME);
                 server.unregisterMBean(USER_CONFIG_NAME);
                 server.unregisterMBean(MISC_CONFIG_NAME);
                 server.unregisterMBean(ADDONS_CONFIG_NAME);
