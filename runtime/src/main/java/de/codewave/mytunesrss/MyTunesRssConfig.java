@@ -105,6 +105,10 @@ public class MyTunesRssConfig {
     private String myAlacSourceOptions = "{infile}";
     private String myFaadSourceOptions = "-f 2 -g -w {infile}";
     private List<FileType> myFileTypes = new ArrayList<FileType>();
+    private String myMailHost;
+    private int myMailPort;
+    private String myMailLogin;
+    private String myMailPassword;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -742,6 +746,38 @@ public class MyTunesRssConfig {
         return null;
     }
 
+    public String getMailHost() {
+        return myMailHost;
+    }
+
+    public void setMailHost(String mailHost) {
+        myMailHost = mailHost;
+    }
+
+    public String getMailLogin() {
+        return myMailLogin;
+    }
+
+    public void setMailLogin(String mailLogin) {
+        myMailLogin = mailLogin;
+    }
+
+    public String getMailPassword() {
+        return myMailPassword;
+    }
+
+    public void setMailPassword(String mailPassword) {
+        myMailPassword = mailPassword;
+    }
+
+    public int getMailPort() {
+        return myMailPort;
+    }
+
+    public void setMailPort(int mailPort) {
+        myMailPort = mailPort;
+    }
+
     public void load() {
         LOG.info("Loading configuration.");
         try {
@@ -863,6 +899,10 @@ public class MyTunesRssConfig {
                 layout.setHeight(JXPathUtils.getIntValue(dialogLayout, "height", -1));
                 myDialogLayouts.put(JXPathUtils.getStringValue(dialogLayout, "class", "").trim(), layout);
             }
+            setMailHost(JXPathUtils.getStringValue(settings, "mail-host", null));
+            setMailPort(JXPathUtils.getIntValue(settings, "mail-port", -1));
+            setMailLogin(JXPathUtils.getStringValue(settings, "mail-login", null));
+            setMailPassword(JXPathUtils.getStringValue(settings, "mail-password", null));
             if (myFileTypes.isEmpty()) {
                 myFileTypes = FileType.getDefaults();
             }
@@ -1057,6 +1097,10 @@ public class MyTunesRssConfig {
             keystore.appendChild(DOMUtils.createTextElement(settings, "file", getSslKeystoreFile()));
             keystore.appendChild(DOMUtils.createTextElement(settings, "pass", getSslKeystorePass()));
             keystore.appendChild(DOMUtils.createTextElement(settings, "keyalias", getSslKeystoreKeyAlias()));
+            root.appendChild(DOMUtils.createTextElement(settings, "mail-host", getMailHost()));
+            root.appendChild(DOMUtils.createIntElement(settings, "mail-port", getMailPort()));
+            root.appendChild(DOMUtils.createTextElement(settings, "mail-login", getMailLogin()));
+            root.appendChild(DOMUtils.createTextElement(settings, "mail-password", getMailPassword()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

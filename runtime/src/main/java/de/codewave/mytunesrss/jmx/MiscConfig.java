@@ -67,6 +67,38 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
         MyTunesRss.CONFIG.setWebWelcomeMessage(message);
         onChange();
     }
+
+    public String getMailHost() {
+        return MyTunesRss.CONFIG.getMailHost();
+    }
+
+    public void setMailHost(String mailHost) {
+        MyTunesRss.CONFIG.setMailHost(mailHost);
+        onChange();
+    }
+
+    public String getMailLogin() {
+        return MyTunesRss.CONFIG.getMailLogin();
+    }
+
+    public void setMailLogin(String mailLogin) {
+        MyTunesRss.CONFIG.setMailLogin(mailLogin);
+        onChange();
+    }
+
+    public void setMailPassword(String mailPassword) {
+        MyTunesRss.CONFIG.setMailPassword(mailPassword);
+        onChange();
+    }
+
+    public int getMailPort() {
+        return MyTunesRss.CONFIG.getMailPort();
+    }
+
+    public void setMailPort(int mailPort) {
+        MyTunesRss.CONFIG.setMailPort(mailPort);
+        onChange();
+    }
 }
 
 

@@ -58,9 +58,7 @@ public class EditUser implements MyTunesRssEventListener {
     private JTextField myFileTypesInput;
     private JTextField mySessionTimeoutInput;
     private JCheckBox myPermPlayerInput;
-    private JPanel myOptionsPanel;
     private JCheckBox myPermSpecialPlaylists;
-    private JPanel myPermissionsPanel;
     private JScrollPane myScrollPane;
     private JCheckBox myPermTranscoderInput;
     private JTextField myBandwidthLimit;
@@ -72,9 +70,8 @@ public class EditUser implements MyTunesRssEventListener {
     private JTextField myLastFmUsernameInput;
     private PasswordHashField myLastFmPasswordInput;
     private JCheckBox myPermEditLastFMAccountInput;
-    private JLabel myLastFmUsernameLabel;
-    private JLabel myLastFmPasswordLabel;
     private JCheckBox myUrlEncryptionInput;
+    private JTextField myEmailInput;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -199,6 +196,7 @@ public class EditUser implements MyTunesRssEventListener {
             myLastFmPasswordInput.setPasswordHash(myUser.getLastFmPasswordHash());
             myPermEditLastFMAccountInput.setSelected(myUser.isEditLastFmAccount());
             myUrlEncryptionInput.setSelected(myUser.isUrlEncryption());
+            myEmailInput.setText(myUser.getEmail());
         } else {
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
             myPermRssInput.setSelected(true);
@@ -325,6 +323,7 @@ public class EditUser implements MyTunesRssEventListener {
                     myUser.setSessionTimeout(MyTunesRssUtils.getTextFieldInteger(mySessionTimeoutInput, 10));
                     myUser.setTranscoder(myPermTranscoderInput.isSelected());
                     myUser.setBandwidthLimit(MyTunesRssUtils.getTextFieldInteger(myBandwidthLimit, 0));
+                    myUser.setEmail(myEmailInput.getText());
                     if (myRestrictionPlaylistInput.getSelectedItem() != null) {
                         myUser.setPlaylistId(((Playlist)myRestrictionPlaylistInput.getSelectedItem()).getId());
                     } else {

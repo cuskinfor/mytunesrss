@@ -29,9 +29,12 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
     private JCheckBox myQuitConfirmationInput;
     private JCheckBox myUpdateOnStartInput;
     private JButton myProgramUpdateButton;
-    private JPanel myMyTunesRssComPanel;
     private JLabel myMyTunesRssComStatus;
     private JTextField myWelcomeMessageInput;
+    private JTextField myMailHostInput;
+    private JTextField myMailPortInput;
+    private JTextField myMailLoginInput;
+    private JPasswordField myMailPasswordInput;
     private boolean myUpdateOnStartInputCache;
     private boolean myAutoStartServer;
 
@@ -63,6 +66,10 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         myUpdateOnStartInputCache = myUpdateOnStartInput.isSelected();
         myMyTunesRssComStatus.setText(MyTunesRssUtils.getBundleString("mytunesrsscom.stateUnknown"));
         myWelcomeMessageInput.setText(MyTunesRss.CONFIG.getWebWelcomeMessage());
+        myMailHostInput.setText(MyTunesRss.CONFIG.getMailHost());
+        myMailPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getMailPort(), 1, 65535, ""));
+        myMailLoginInput.setText(MyTunesRss.CONFIG.getMailLogin());
+        myMailPasswordInput.setText(MyTunesRss.CONFIG.getMailPassword());
     }
 
     private void createUIComponents() {
@@ -96,6 +103,10 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setQuitConfirmation(myQuitConfirmationInput.isSelected());
             MyTunesRss.CONFIG.setCheckUpdateOnStart(myUpdateOnStartInput.isSelected());
             MyTunesRss.CONFIG.setWebWelcomeMessage(myWelcomeMessageInput.getText());
+            MyTunesRss.CONFIG.setMailHost(myMailHostInput.getText());
+            MyTunesRss.CONFIG.setMailPort(MyTunesRssUtils.getTextFieldInteger(myMailPortInput, -1));
+            MyTunesRss.CONFIG.setMailLogin(myMailLoginInput.getText());
+            MyTunesRss.CONFIG.setMailPassword(new String(myMailPasswordInput.getPassword()));
         }
         return null;
     }

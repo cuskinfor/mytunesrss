@@ -115,4 +115,8 @@ public interface EditUserConfigMBean {
     boolean isUrlEncryption();
 
     void setUrlEncryption(boolean urlEncryption);
+
+    String getEmail();
+
+    void setEmail(String email);
 }

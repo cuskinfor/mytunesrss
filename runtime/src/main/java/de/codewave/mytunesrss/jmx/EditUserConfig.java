@@ -355,4 +355,13 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         MyTunesRss.CONFIG.getUser(myUsername).setUrlEncryption(urlEncryption);
         onChange();
     }
+
+    public String getEmail() {
+        return MyTunesRss.CONFIG.getUser(myUsername).getEmail();
+    }
+
+    public void setEmail(String email) {
+        MyTunesRss.CONFIG.getUser(myUsername).setEmail(email);
+        onChange();
+    }
 }

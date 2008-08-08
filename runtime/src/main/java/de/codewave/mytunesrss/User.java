@@ -77,6 +77,7 @@ public class User implements MyTunesRssEventListener {
     private long myLastFmHandshakeTime;
     private long myLastFmHandshakeWaitTime;
     private boolean myUrlEncryption;
+    private String myEmail;
 
     public User(String name) {
         myName = name;
@@ -325,6 +326,14 @@ public class User implements MyTunesRssEventListener {
         myUrlEncryption = urlEncryption;
     }
 
+    public String getEmail() {
+        return myEmail;
+    }
+
+    public void setEmail(String email) {
+        myEmail = email;
+    }
+
     @Override
     public boolean equals(Object object) {
         return object != null && object instanceof User && getName().equals(((User)object).getName());
@@ -434,6 +443,7 @@ public class User implements MyTunesRssEventListener {
         setLastFmUsername(JXPathUtils.getStringValue(settings, "lastFmUser", null));
         setLastFmPasswordHash(JXPathUtils.getByteArray(settings, "lastFmPassword", null));
         setUrlEncryption(JXPathUtils.getBooleanValue(settings, "urlEncryption", true));
+        setEmail(JXPathUtils.getStringValue(settings, "email", null));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -468,6 +478,7 @@ public class User implements MyTunesRssEventListener {
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureTranscoder", isTranscoder()));
         users.appendChild(DOMUtils.createIntElement(settings, "sessionTimeout", getSessionTimeout()));
         users.appendChild(DOMUtils.createIntElement(settings, "bandwidthLimit", getBandwidthLimit()));
+        users.appendChild(DOMUtils.createTextElement(settings, "email", getEmail()));
         if (StringUtils.isNotEmpty(getPlaylistId())) {
             users.appendChild(DOMUtils.createTextElement(settings, "playlistId", getPlaylistId()));
         }
