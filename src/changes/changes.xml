@@ -9,6 +9,9 @@
 
         <release version="3.6-EAP-1" date="2008-xx-xx" description="EAP-1">
             <action dev="mdescher" type="update">
+                Support for more tokens in the transcoding binary command lines.
+            </action>
+            <action dev="mdescher" type="update">
                 Removed file-suffixes.properties and added a configuration GUI.
             </action>
             <action dev="mdescher" type="update">
