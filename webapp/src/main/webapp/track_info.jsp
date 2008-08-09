@@ -202,7 +202,7 @@
                 </td>
             </tr>
         </c:if>
-        <c:if test="${track.imageCount > 0 || track.video}">
+        <c:if test="${track.imageCount > 0 || (track.video && userAgent != 'Psp')}">
             <tr>
                 <th colspan="2" class="active">
                     <c:choose>
@@ -219,7 +219,7 @@
               <td colspan="2" align="center">
                 <c:choose>
                     <c:when test="${track.video}">
-                        <embed src="${appUrl}/images/movie_poster.png" href="${mtfn:makeHttp(servletUrl)}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>" type="${mtfn:contentType(config, authUser, track)}" kioskmode="true" controller="false" scale="1"/>
+                        <embed src="${appUrl}/images/movie_poster.png" href="${mtfn:makeHttp(servletUrl)}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>" type="${mtfn:contentType(config, authUser, track)}" <c:if test="${userAgent == 'Iphone'}">target="myself"</c:if> scale="1"/>
                     </c:when>
                     <c:otherwise>
                         <img alt="${track.name} Album Art"
