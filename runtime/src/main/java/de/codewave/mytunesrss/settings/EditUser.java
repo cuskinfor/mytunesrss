@@ -72,6 +72,7 @@ public class EditUser implements MyTunesRssEventListener {
     private JCheckBox myPermEditLastFMAccountInput;
     private JCheckBox myUrlEncryptionInput;
     private JTextField myEmailInput;
+    private JCheckBox myPermChangeEmail;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 

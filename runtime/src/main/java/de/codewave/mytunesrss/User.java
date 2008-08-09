@@ -78,6 +78,7 @@ public class User implements MyTunesRssEventListener {
     private long myLastFmHandshakeWaitTime;
     private boolean myUrlEncryption;
     private String myEmail;
+    private boolean myChangeEmail;
 
     public User(String name) {
         myName = name;
@@ -332,6 +333,14 @@ public class User implements MyTunesRssEventListener {
 
     public void setEmail(String email) {
         myEmail = email;
+    }
+
+    public boolean isChangeEmail() {
+        return myChangeEmail;
+    }
+
+    public void setChangeEmail(boolean changeEmail) {
+        myChangeEmail = changeEmail;
     }
 
     @Override

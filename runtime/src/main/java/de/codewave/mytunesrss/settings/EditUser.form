@@ -30,7 +30,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="840d2" layout-manager="GridLayoutManager" row-count="11" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+              <grid id="840d2" layout-manager="GridLayoutManager" row-count="12" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
                 <margin top="5" left="5" bottom="5" right="5"/>
                 <constraints/>
                 <properties/>
@@ -111,7 +111,7 @@
                   </component>
                   <component id="e680b" class="javax.swing.JCheckBox" binding="myPermEditSettings">
                     <constraints>
-                      <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permEditSettings"/>
@@ -120,7 +120,7 @@
                   </component>
                   <component id="43aff" class="javax.swing.JCheckBox" binding="myPermCreatePlaylists">
                     <constraints>
-                      <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permCreatePlaylists"/>
@@ -129,11 +129,20 @@
                   </component>
                   <component id="59d4f" class="javax.swing.JCheckBox" binding="myPermEditLastFMAccountInput">
                     <constraints>
-                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permLastFmAccount"/>
                       <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permLastFmAccountTooltip"/>
+                    </properties>
+                  </component>
+                  <component id="5879e" class="javax.swing.JCheckBox" binding="myPermChangeEmail">
+                    <constraints>
+                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permChangeEmail"/>
+                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permChangeEmailTooltip"/>
                     </properties>
                   </component>
                 </children>

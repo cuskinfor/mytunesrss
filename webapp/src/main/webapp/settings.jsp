@@ -90,6 +90,18 @@
                     </td>
                 </tr>
             </c:if>
+            <c:if test="${authUser.changeEmail}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.email" /></td>
+                    <td>
+                        <input type="text"
+                               name="email"
+                               maxlength="30"
+                               value="<c:out value="${authUser.email}"/>"
+                               style="width: 170px;" />
+                    </td>
+                </tr>
+            </c:if>
             <c:if test="${authUser.editLastFmAccount}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.lastFmUsername" /></td>
