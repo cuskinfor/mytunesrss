@@ -219,8 +219,7 @@
               <td colspan="2" align="center">
                 <c:choose>
                     <c:when test="${track.video}">
-                        <!--embed src="${mtfn:makeHttp(servletUrl)}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=256</mt:encrypt>" href="${mtfn:makeHttp(servletUrl)}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(null, null, track)}" type="${mtfn:contentType(config, authUser, track)}" target="myself" kioskmode="true"/-->
-                        <embed src="${mtfn:makeHttp(servletUrl)}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>" type="${mtfn:contentType(config, authUser, track)}" kioskmode="false" controller="false" scale="aspect" width="100%" autoplay="false"/>
+                        <embed src="${appUrl}/images/movie_poster.png" href="${mtfn:makeHttp(servletUrl)}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>" type="${mtfn:contentType(config, authUser, track)}" kioskmode="true" controller="false" scale="1"/>
                     </c:when>
                     <c:otherwise>
                         <img alt="${track.name} Album Art"
