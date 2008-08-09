@@ -31,7 +31,6 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
             getRequest().setAttribute("channel", MiscUtils.decodeUrl(channel.replace('_', ' ')));
             getRequest().setAttribute("pubDate", PUBLISH_DATE_FORMAT.format(new Date()));
             getRequest().setAttribute("feedUrl", feedUrl);
-            getRequest().setAttribute("userAgentPsp", MyTunesRssWebUtils.isUserAgentPsp(getRequest()));
             Collection<Track> tracks = getTracks().getResults();
             if (tracks != null && !tracks.isEmpty()) {
                 for (Track track : tracks) {

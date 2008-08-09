@@ -76,9 +76,23 @@ public class MyTunesRssWebUtils {
         errors.add(error);
     }
 
-    public static boolean isUserAgentPsp(HttpServletRequest request) {
+    private static boolean isUserAgentPsp(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
         return StringUtils.isNotEmpty(userAgent) && userAgent.contains("PSP");
+    }
+
+    private static boolean isUserAgentIphone(HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        return StringUtils.isNotEmpty(userAgent) && userAgent.contains("iPhone");
+    }
+
+    public static UserAgent getUserAgent(HttpServletRequest request) {
+        if (isUserAgentPsp(request)) {
+            return UserAgent.Psp;
+        } else if (isUserAgentIphone(request)) {
+            return UserAgent.Iphone;
+        }
+        return UserAgent.Unknown;
     }
 }
 

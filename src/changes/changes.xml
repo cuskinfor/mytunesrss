@@ -9,6 +9,10 @@
 
         <release version="3.6-EAP-1" date="2008-xx-xx" description="EAP-1">
             <action dev="mdescher" type="add">
+                Embedded quicktime video playback in track info for movie files. No Last.FM scrobbling
+                for movie files.
+            </action>
+            <action dev="mdescher" type="add">
                 User email addresses. Mail server configuration. User permission for changing email address.
             </action>
             <action dev="mdescher" type="update">

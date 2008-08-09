@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * de.codewave.mytunesrss.FileType
@@ -31,6 +33,12 @@ public class FileType {
         types.add(new FileType(true, "ogg", "application/ogg", false, false));
         types.add(new FileType(true, "m4v", "video/x-m4v", true, false));
         types.add(new FileType(true, "m4b", "audio/x-m4b", false, false));
+        types.add(new FileType(true, "mp3", "audio/mp3", false, false));
+        Collections.sort(types, new Comparator<FileType>() {
+            public int compare(FileType o1, FileType o2) {
+                return o1.getSuffix().compareTo(o2.getSuffix());
+            }
+        });
         return types;
     }
 

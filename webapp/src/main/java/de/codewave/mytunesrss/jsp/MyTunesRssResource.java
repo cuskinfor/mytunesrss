@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.UserAgent;
 import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,10 +60,10 @@ public enum MyTunesRssResource {
             handleWelcomeMessage(request);
         }
         if (this == PlaylistManager) {
-            request.setAttribute("deleteConfirmation", !MyTunesRssWebUtils.isUserAgentPsp(request));
+            request.setAttribute("deleteConfirmation", MyTunesRssWebUtils.getUserAgent(request) != UserAgent.Psp);
         }
         if (this == BrowseAlbum || this == BrowseArtist || this == BrowseGenre || this == BrowseTrack) {
-            request.setAttribute("simpleNewPlaylist", MyTunesRssWebUtils.isUserAgentPsp(request));
+            request.setAttribute("simpleNewPlaylist", MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Psp);
         }
     }
 
