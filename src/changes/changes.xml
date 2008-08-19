@@ -11,6 +11,7 @@
             <action dev="mdescher" type="fix">
                 URL encode file names on jukebox.jsp to prevent problems with non-web-safe characters.
                 Bugfix for portal page.
+                Version 1.1 of codewave-zis for JDK 1.6 encoding bugfix if entry is not UTF-8 encoded.
             </action>
             <action dev="mdescher" type="update">
                 Use temporary file for transcoder input to prevent problems with non-ASCII characters in
