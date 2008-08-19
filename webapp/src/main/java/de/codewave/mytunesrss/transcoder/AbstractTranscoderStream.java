@@ -9,6 +9,8 @@ import de.codewave.utils.io.StreamCopyThread;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,13 +44,22 @@ public abstract class AbstractTranscoderStream extends InputStream {
         for (String part : getSourceArguments().split(" ")) {
             sourceCommand[i++] = part;
         }
+        final File tempFile = File.createTempFile("mytunesrss-", "." + FilenameUtils.getExtension(track.getFile().getName()));
+        tempFile.deleteOnExit();
+        FileUtils.copyFile(track.getFile(), tempFile);
+        track.setFile(tempFile);
         replaceTokens(sourceCommand, track, outputBitRate, outputSampleRate);
         if (LOG.isDebugEnabled()) {
             LOG.debug("executing " + getSourceName() + " command \"" + StringUtils.join(sourceCommand, " ") + "\".");
         }
         mySourceProcess = Runtime.getRuntime().exec(sourceCommand);
         myTargetProcess = Runtime.getRuntime().exec(targetCommand);
-        new StreamCopyThread(mySourceProcess.getInputStream(), false, myTargetProcess.getOutputStream(), true).start();
+        new StreamCopyThread(mySourceProcess.getInputStream(), false, myTargetProcess.getOutputStream(), true) {
+            @Override
+            protected void afterExecution(Exception e) {
+                tempFile.delete();
+            }
+        }.start();
         new LogStreamCopyThread(mySourceProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug)
                 .start();
         new LogStreamCopyThread(myTargetProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug)
@@ -104,6 +115,7 @@ public abstract class AbstractTranscoderStream extends InputStream {
                 try {
                     command[i] = track.getFile().getCanonicalPath();
                 } catch (IOException e) {
+                    LOG.warn("Could not get canonical path for track file \"" + track.getFile().getName() + "\", trying absolute path instead.");
                     command[i] = track.getFile().getAbsolutePath();
                 }
             }

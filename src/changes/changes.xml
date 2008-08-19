@@ -8,6 +8,14 @@
     <body>
 
         <release version="3.6-EAP-1" date="2008-xx-xx" description="EAP-1">
+            <action dev="mdescher" type="fix">
+                URL encode file names on jukebox.jsp to prevent problems with non-web-safe characters.
+                Bugfix for portal page.
+            </action>
+            <action dev="mdescher" type="update">
+                Use temporary file for transcoder input to prevent problems with non-ASCII characters in
+                files names (which do cause problems with faad on Windows for example).
+            </action>
             <action dev="mdescher" type="add">
                 Embedded quicktime video playback in track info for movie files. No Last.FM scrobbling
                 for movie files.
