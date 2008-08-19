@@ -5,9 +5,17 @@
     </properties>
     <body>
 
+        <release version="3.5.1" date="2008-??-??" description="3.5.1">
+            <action dev="mdescher" type="fix">
+                Use temporary file with only ascii characters for transcoder input.
+                URL encode filenames on jukebox page.
+                Use codewave-zis 1.1 to fix a JDK 1.6 problem if ZIP entry is not UTF-8 encoded.
+            </action>
+        </release>
+
         <release version="3.5" date="2008-08-01" description="3.5">
             <action dev="mdescher" type="fix">
-                Username and token were not URL encoded in last.fm GET request. 
+                Username and token were not URL encoded in last.fm GET request.
             </action>
         </release>
 
