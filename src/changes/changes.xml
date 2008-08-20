@@ -10,6 +10,7 @@
                 Use temporary file with only ascii characters for transcoder input.
                 URL encode filenames on jukebox page.
                 Use codewave-zis 1.1 to fix a JDK 1.6 problem if ZIP entry is not UTF-8 encoded.
+                Do not create folder or file names with leading or trailing dots in ZIP archives.
             </action>
         </release>
 
