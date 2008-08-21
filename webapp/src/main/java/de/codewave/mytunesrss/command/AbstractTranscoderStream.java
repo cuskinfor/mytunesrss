@@ -8,6 +8,8 @@ import de.codewave.utils.io.LogStreamCopyThread;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.util.Properties;
@@ -66,9 +68,16 @@ public abstract class AbstractTranscoderStream extends InputStream {
         for (String part : getSourceArguments().split(" ")) {
             sourceCommand[i++] = part;
         }
+        final File tempFile = File.createTempFile("mytunesrss-", "." + FilenameUtils.getExtension(file.getName()));
+        tempFile.deleteOnExit();
+        FileUtils.copyFile(file, tempFile);
         for (i = 0; i < sourceCommand.length; i++) {
             if ("{infile}".equals(sourceCommand[i])) {
-                sourceCommand[i] = file.getAbsolutePath();
+                try {
+                    sourceCommand[i] = tempFile.getCanonicalPath();
+                } catch (IOException e) {
+                    sourceCommand[i] = tempFile.getAbsolutePath();
+                }
             }
         }
         if (LOG.isDebugEnabled()) {
@@ -76,7 +85,13 @@ public abstract class AbstractTranscoderStream extends InputStream {
         }
         mySourceProcess = Runtime.getRuntime().exec(sourceCommand);
         myTargetProcess = Runtime.getRuntime().exec(targetCommand);
-        new StreamCopyThread(mySourceProcess.getInputStream(), false, myTargetProcess.getOutputStream(), true).start();
+        new StreamCopyThread(mySourceProcess.getInputStream(), false, myTargetProcess.getOutputStream(), true) {
+            @Override
+            public void run() {
+                super.run();
+                tempFile.delete();
+            }
+        }.start();
         new LogStreamCopyThread(mySourceProcess.getErrorStream(), false, LogFactory.getLog(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
         new LogStreamCopyThread(myTargetProcess.getErrorStream(), false, LogFactory.getLog(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
     }

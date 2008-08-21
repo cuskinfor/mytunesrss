@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>mytunesrss</artifactId>
     <packaging>pom</packaging>
-    <version>3.5.1-SNAPSHOT</version>
+    <version>3.5.1</version>
     <name>mytunesrss</name>
     <distributionManagement>
         <site>
@@ -12,7 +12,7 @@
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>
     <scm>
-        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/trunk</developerConnection>
+        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/tags/mytunesrss-3.5.1</developerConnection>
     </scm>
     <parent>
         <groupId>de.codewave</groupId>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>codewave-zis</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
