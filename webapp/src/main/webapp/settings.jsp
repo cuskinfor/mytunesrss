@@ -212,7 +212,7 @@
                 <td>
                     <input type="checkbox"
                            name="myTunesRssComAddress"
-                           value="true" />
+                           value="true" <c:if test="${config.myTunesRssComAddress}">checked="checked"</c:if>/>
                 </td>
             </tr>
             <tr <mt:flipFlop/>>
