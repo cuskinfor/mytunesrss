@@ -5,6 +5,13 @@
     </properties>
     <body>
 
+        <release version="3.5.2" date="2008-??-??" description="3.5.2">
+            <action dev="mdescher" type="add">
+                Option to use the mytunesrss.com address (default is TRUE) in playlists
+                and for RSS feeds.
+            </action>
+        </release>
+
         <release version="3.5.1" date="2008-08-21" description="3.5.1">
             <action dev="mdescher" type="fix">
                 Use temporary file with only ascii characters for transcoder input.
