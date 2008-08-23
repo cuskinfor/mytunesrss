@@ -52,6 +52,7 @@ public class WebConfig {
     private static final String CFG_FLASH_PLAYER_TYPE = "flashplayerType";
     private static final String CFG_YAHOO_MEDIAPLAYER = "yahooMediaPlayer";
     private static final String CFG_BROWSER_START_INDEX = "browserStartIndex";
+    private static final String CFG_MYTUNESRSSCOM_ADDRESS = "myTunesRssComAddress";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -125,6 +126,7 @@ public class WebConfig {
         myConfigValues.put(CFG_FLASH_PLAYER_TYPE, "jw");
         myConfigValues.put(CFG_YAHOO_MEDIAPLAYER, "false");
         myConfigValues.put(CFG_BROWSER_START_INDEX, "1");
+        myConfigValues.put(CFG_MYTUNESRSSCOM_ADDRESS, "true");
     }
 
     public void load(User user) {
@@ -460,5 +462,13 @@ public class WebConfig {
 
     public void setBrowserStartIndex(String browserStartIndex) {
         myConfigValues.put(CFG_BROWSER_START_INDEX, browserStartIndex);
+    }
+
+    public boolean isMyTunesRssComAddress() {
+        return Boolean.parseBoolean(myConfigValues.get(CFG_MYTUNESRSSCOM_ADDRESS));
+    }
+
+    public void setMyTunesRssComAddress(boolean myTunesRssComAddress) {
+        myConfigValues.put(CFG_MYTUNESRSSCOM_ADDRESS, Boolean.toString(myTunesRssComAddress));
     }
 }

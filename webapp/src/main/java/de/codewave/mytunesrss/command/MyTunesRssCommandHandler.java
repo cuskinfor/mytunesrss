@@ -146,7 +146,8 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         String myTunesRssComUsername = (String)getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER);
         String servletUrl = MyTunesRssWebUtils.getServletUrl(getRequest());
         getRequest().setAttribute("servletUrl", servletUrl);
-        if (StringUtils.isEmpty(myTunesRssComUsername)) {
+        WebConfig webConfig = getWebConfig();
+        if (StringUtils.isEmpty(myTunesRssComUsername) || !webConfig.isMyTunesRssComAddress()) {
             getRequest().setAttribute("permServletUrl", servletUrl);
         } else {
             String appUrl = ServletUtils.getApplicationUrl(getRequest());
@@ -157,7 +158,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
         getRequest().setAttribute("mytunesrssVersion", MyTunesRss.VERSION);
         getRequest().setAttribute("sessionCreationTime", getSession().getCreationTime());
-        WebConfig webConfig = getWebConfig();
         if (getAuthUser() != null && getAuthUser().isQuotaExceeded()) {
             addError(new BundleError("error.quotaExceeded." + getAuthUser().getQuotaType().name()));
         }

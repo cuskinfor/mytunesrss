@@ -208,6 +208,14 @@
                 </td>
             </tr>
             <tr <mt:flipFlop/>>
+                <td><fmt:message key="settings.myTunesRssComAddress" /></td>
+                <td>
+                    <input type="checkbox"
+                           name="myTunesRssComAddress"
+                           value="true" />
+                </td>
+            </tr>
+            <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.browserStartIndex" /></td>
                 <td>
                     <select name="browserStartIndex">

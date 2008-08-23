@@ -63,6 +63,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setYahooMediaPlayer(getBooleanRequestParameter("showYahooMediaPlayer", false));
         webConfig.setBrowserStartIndex(getRequest().getParameter("browserStartIndex"));
         getAuthUser().setEmail(getRequest().getParameter("email"));
+        webConfig.setMyTunesRssComAddress(getBooleanRequestParameter("myTunesRssComAddress", false));
         boolean error = false;
         error |= transferAndValidatePageSize(webConfig);
         error |= transferAndValidateRssFeedLimit(webConfig);
