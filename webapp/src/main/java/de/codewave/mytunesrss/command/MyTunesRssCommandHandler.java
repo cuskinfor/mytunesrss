@@ -76,6 +76,11 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(getRequest(),
                     "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
         }
+        if (getAuthUser() != null && StringUtils.isNotEmpty(getAuthUser().getWebSettings())) {
+            getWebConfig().clearWithDefaults();
+            getWebConfig().load(getAuthUser());
+            getWebConfig().load(getRequest());
+        }
         ((MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest())).setUser(user);
         getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);
     }
