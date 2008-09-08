@@ -51,6 +51,19 @@
             <input class="button" type="submit" value="<fmt:message key="doLogin"/>"/>
           </td>
         </tr>
+        <c:if test="${globalConfig.validMailConfig}">
+            <tr>
+              <td>
+                &nbsp;
+              </td>
+              <td class="forgottenpassword">
+                <a href="${servletUrl}/showSendPassword"><fmt:message key="forgottenPasswordLink"/></a>
+              </td>
+              <td>
+                &nbsp;
+              </td>
+            </tr>
+        </c:if>
         <tr>
           <td>&nbsp;</td>
           <td>

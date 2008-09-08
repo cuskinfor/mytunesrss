@@ -746,6 +746,11 @@ public class MyTunesRssConfig {
         return null;
     }
 
+    public boolean isValidMailConfig() {
+        return StringUtils.isNotEmpty(getMailHost()) && StringUtils.isNotEmpty(getMailLogin()) && StringUtils.isNotEmpty(getMailPassword()) &&
+                getMailPort() > 0 && getMailPort() < 65536;
+    }
+
     public String getMailHost() {
         return myMailHost;
     }

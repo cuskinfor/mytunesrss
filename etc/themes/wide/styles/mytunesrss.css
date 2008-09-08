@@ -633,6 +633,13 @@ table.login td {
     border: none;
 }
 
+table.login td.forgottenpassword {
+    padding-top: 0;
+    border-top: 0;
+    vertical-align: top;
+    font-size: smaller;
+}
+
 table.portal td.playlistManager {
     background: #E7EDF6 url( "../images/feeds.gif" ) 10px 50% no-repeat;
     padding: 15px 10px 15px 48px;
