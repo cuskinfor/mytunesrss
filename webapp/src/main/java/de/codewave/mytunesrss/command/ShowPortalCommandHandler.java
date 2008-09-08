@@ -50,25 +50,31 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                 if (randomPlaylistSize > 0) {
                     DataStoreQuery.QueryResult<Playlist> randomPlaylistSources = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
                                                                                                                                      null,
-                                                                                                                                     null,
                                                                                                                                      getWebConfig().getRandomSource(),
+                                                                                                                                     null,
                                                                                                                                      false,
                                                                                                                                      false));
-                    if (randomPlaylistSources.getResultSize() != 1 || randomPlaylistSources.nextResult().getTrackCount() > randomPlaylistSize) {
-                        if (randomPlaylistSources.getResultSize() == 1) {
-                            Playlist firstResult = randomPlaylistSources.getResult(0);
-                            playlists.add(new Playlist(
-                                    FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize + "_" + firstResult.getId(),
-                                    PlaylistType.MyTunes,
-                                    MessageFormat.format(getBundleString("playlist.specialRandom"), randomPlaylistSize, firstResult.getName()),
-                                    randomPlaylistSize));
-                        } else {
-                            playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomPlaylistSize,
-                                                       PlaylistType.MyTunes,
-                                                       MessageFormat.format(getBundleString("playlist.specialRandomWholeLibrary"),
-                                                                            randomPlaylistSize),
-                                                       randomPlaylistSize));
-                        }
+                    StringBuilder randomType = new StringBuilder();
+                    if (getWebConfig().isRandomAudio()) {
+                        randomType.append('a');
+                    }
+                    if (getWebConfig().isRandomVideo()) {
+                        randomType.append('v');
+                    }
+                    if (getWebConfig().isRandomProtected()) {
+                        randomType.append('p');
+                    }
+                    if (randomPlaylistSources.getResultSize() == 1) {
+                        Playlist firstResult = randomPlaylistSources.getResult(0);
+                        playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomType.toString() + "_" + randomPlaylistSize +
+                                "_" + firstResult.getId(), PlaylistType.MyTunes, MessageFormat.format(getBundleString("playlist.specialRandom"),
+                                                                                                      randomPlaylistSize,
+                                                                                                      firstResult.getName()), randomPlaylistSize));
+                    } else {
+                        playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomType.toString() + "_" + randomPlaylistSize,
+                                                   PlaylistType.MyTunes,
+                                                   MessageFormat.format(getBundleString("playlist.specialRandomWholeLibrary"), randomPlaylistSize),
+                                                   randomPlaylistSize));
                     }
                 }
             }

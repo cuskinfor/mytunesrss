@@ -4,13 +4,15 @@
 
     <statement name="findRandomTracks">
         <sql>
-            SELECT LIMIT 0 :maxCount RAND() AS rnd, {trackColumns}, COUNT(i.hash) AS imagecount
+            SELECT LIMIT 0 :maxCount {trackColumns}, COUNT(i.hash) AS imagecount
             FROM track t
             LEFT OUTER JOIN image i ON i.hash = t.image_hash
-            WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM
-                link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId)
-            GROUP BY RAND(), {groupByTrackColumns}
-            ORDER BY rnd
+            WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM
+                link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
+            AND (t.video = :video OR NOT t.video = :audio)
+            AND (NOT t.protected OR t.protected = :protected)
+            GROUP BY {groupByTrackColumns}
+            ORDER BY RAND()
         </sql>
     </statement>
 
@@ -40,14 +42,16 @@
 
     <statement name="findRandomTracksRestricted">
         <sql>
-            SELECT LIMIT 0 :maxCount RAND() AS rnd, {trackColumns}, COUNT(i.hash) AS imagecount
+            SELECT LIMIT 0 :maxCount {trackColumns}, COUNT(i.hash) AS imagecount
             FROM link_track_playlist rltp, track t
             LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM
                 link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
             AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
-            GROUP BY RAND(), {groupByTrackColumns}
-            ORDER BY rnd
+            AND (t.video = :video OR NOT t.video = :audio)
+            AND (NOT t.protected OR t.protected = :protected)
+            GROUP BY {groupByTrackColumns}
+            ORDER BY RAND()
         </sql>
     </statement>
     <statement name="findLastUpdatedTracksRestricted">

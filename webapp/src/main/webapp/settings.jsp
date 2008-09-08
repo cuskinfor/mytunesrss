@@ -188,6 +188,24 @@
                 </td>
             </tr>
             <tr <mt:flipFlop/>>
+                <td><fmt:message key="settings.randomType" /></td>
+                <td>
+                    <select name="randomType">
+                        <option value="a" <c:if test="${config.randomAudio && !config.randomVideo}">selected="selected"</c:if>><fmt:message key="settings.randomTypeAudio"/></option>
+                        <option value="v" <c:if test="${!config.randomAudio && config.randomVideo}">selected="selected"</c:if>><fmt:message key="settings.randomTypeVideo"/></option>
+                        <option value="av" <c:if test="${config.randomAudio && config.randomVideo}">selected="selected"</c:if>><fmt:message key="settings.randomTypeBoth"/></option>
+                    </select>
+                </td>
+            </tr>
+            <tr <mt:flipFlop/>>
+                <td><fmt:message key="settings.randomProtected" /></td>
+                <td>
+                    <input type="checkbox"
+                           name="randomProtected"
+                           value="true" <c:if test="${config.randomProtected}">checked="checked"</c:if>/>
+                </td>
+            </tr>
+            <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.lastUpdatedPlaylistSize" /></td>
                 <td>
                     <input type="text"

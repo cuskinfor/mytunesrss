@@ -67,7 +67,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         boolean error = false;
         error |= transferAndValidatePageSize(webConfig);
         error |= transferAndValidateRssFeedLimit(webConfig);
-        error |= transferAndValidateRandomTrackCount(webConfig);
+        error |= transferAndValidateRandomValues(webConfig);
         error |= transferAndValidateLastUpdatedTrackCount(webConfig);
         error |= transferAndValidateMostPlayedTrackCount(webConfig);
         error |= transferAndValidatePassword();
@@ -117,7 +117,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         return false;
     }
 
-    private boolean transferAndValidateRandomTrackCount(WebConfig webConfig) {
+    private boolean transferAndValidateRandomValues(WebConfig webConfig) {
         try {
             webConfig.setRandomPlaylistSize(getIntegerRequestParameter("randomPlaylistSize", 0));
             if (webConfig.getRandomPlaylistSize() < 0 || webConfig.getRandomPlaylistSize() > 999) {
@@ -128,6 +128,10 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
             addError(new BundleError("error.settingsRandomPlaylistSizeRange"));
             return true;
         }
+        String randomType = getRequestParameter("randomType", "av");
+        webConfig.setRandomAudio(randomType.contains("a"));
+        webConfig.setRandomVideo(randomType.contains("v"));
+        webConfig.setRandomProtected(getBooleanRequestParameter("randomProtected", false));
         return false;
     }
 

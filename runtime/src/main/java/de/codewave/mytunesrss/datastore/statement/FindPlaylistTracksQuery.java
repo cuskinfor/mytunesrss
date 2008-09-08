@@ -65,10 +65,13 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
             myId = null;
         } else if (myId.startsWith(PSEUDO_ID_RANDOM)) {
             statement = MyTunesRssUtils.createStatement(connection, "findRandomTracks" + suffix);
-            String[] splitted = myId.split("_", 3);
-            statement.setInt("maxCount", Integer.parseInt(splitted[1]));
-            if (splitted.length > 2) {
-                String sourceId = splitted[2];
+            String[] splitted = myId.split("_", 4);
+            statement.setBoolean("audio", splitted[1].contains("a"));
+            statement.setBoolean("video", splitted[1].contains("v"));
+            statement.setBoolean("protected", splitted[1].contains("p"));
+            statement.setInt("maxCount", Integer.parseInt(splitted[2]));
+            if (splitted.length > 3) {
+                String sourceId = splitted[3];
                 QueryResult<Playlist> playlists = new FindPlaylistQuery(null, sourceId, null, false).execute(connection);
                 if (playlists.getResultSize() == 1) {
                     Playlist playlist = playlists.nextResult();

@@ -8,7 +8,10 @@
             FROM track t
             LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
-            ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId)) GROUP BY {groupByTrackColumns}
+            ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
+            AND (t.video = :video OR NOT t.video = :audio)
+            AND (NOT t.protected OR t.protected = :protected)
+            GROUP BY {groupByTrackColumns}
             ORDER BY RAND() LIMIT :maxCount
         </sql>
     </statement>
@@ -43,6 +46,8 @@
             WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
                 ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
             AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
+            AND (t.video = :video OR NOT t.video = :audio)
+            AND (NOT t.protected OR t.protected = :protected)
             GROUP BY {groupByTrackColumns}
             ORDER BY RAND() LIMIT :maxCount
         </sql>
