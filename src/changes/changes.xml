@@ -6,6 +6,9 @@
     <body>
 
         <release version="3.5.2" date="2008-??-??" description="3.5.2">
+            <action dev="mdescher" type="update">
+                iPhone playlist type modified to really work in iPhone.
+            </action>
             <action dev="mdescher" type="add">
                 Option to use the mytunesrss.com address (default is TRUE) in playlists
                 and for RSS feeds.
