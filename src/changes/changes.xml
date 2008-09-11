@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.6-EAP-1" date="2008-xx-xx" description="EAP-1">
+            <action dev="mdescher" type="update">
+                iPhone playlist type modified to really work in iPhone.
+            </action>
             <action dev="mdescher" type="add">
                 More options and sql improvements for random playlist.
             </action>
