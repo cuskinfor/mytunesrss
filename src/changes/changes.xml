@@ -5,9 +5,28 @@
     </properties>
     <body>
 
+        <release version="3.5.2" date="2008-09-12" description="3.5.2">
+            <action dev="mdescher" type="update">
+                iPhone playlist type modified to really work in iPhone.
+            </action>
+            <action dev="mdescher" type="add">
+                Option to use the mytunesrss.com address (default is TRUE) in playlists
+                and for RSS feeds.
+            </action>
+        </release>
+
+        <release version="3.5.1" date="2008-08-21" description="3.5.1">
+            <action dev="mdescher" type="fix">
+                Use temporary file with only ascii characters for transcoder input.
+                URL encode filenames on jukebox page.
+                Use codewave-zis 1.1 to fix a JDK 1.6 problem if ZIP entry is not UTF-8 encoded.
+                Do not create folder or file names with leading or trailing dots in ZIP archives.
+            </action>
+        </release>
+
         <release version="3.5" date="2008-08-01" description="3.5">
             <action dev="mdescher" type="fix">
-                Username and token were not URL encoded in last.fm GET request. 
+                Username and token were not URL encoded in last.fm GET request.
             </action>
         </release>
 
