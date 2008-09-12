@@ -99,6 +99,15 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
         MyTunesRss.CONFIG.setMailPort(mailPort);
         onChange();
     }
+
+    public String getMailSender() {
+        return MyTunesRss.CONFIG.getMailSender();
+    }
+
+    public void setMailSender(String mailSender) {
+        MyTunesRss.CONFIG.setMailSender(mailSender);
+        onChange();
+    }
 }
 
 

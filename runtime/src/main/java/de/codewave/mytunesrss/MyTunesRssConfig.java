@@ -109,6 +109,7 @@ public class MyTunesRssConfig {
     private int myMailPort;
     private String myMailLogin;
     private String myMailPassword;
+    private String myMailSender;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -747,8 +748,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isValidMailConfig() {
-        return StringUtils.isNotEmpty(getMailHost()) && StringUtils.isNotEmpty(getMailLogin()) && StringUtils.isNotEmpty(getMailPassword()) &&
-                getMailPort() > 0 && getMailPort() < 65536;
+        return StringUtils.isNotEmpty(getMailHost()) && StringUtils.isNotEmpty(getMailSender());
     }
 
     public String getMailHost() {
@@ -781,6 +781,14 @@ public class MyTunesRssConfig {
 
     public void setMailPort(int mailPort) {
         myMailPort = mailPort;
+    }
+
+    public String getMailSender() {
+        return myMailSender;
+    }
+
+    public void setMailSender(String mailSender) {
+        myMailSender = mailSender;
     }
 
     public void load() {
@@ -908,6 +916,7 @@ public class MyTunesRssConfig {
             setMailPort(JXPathUtils.getIntValue(settings, "mail-port", -1));
             setMailLogin(JXPathUtils.getStringValue(settings, "mail-login", null));
             setMailPassword(JXPathUtils.getStringValue(settings, "mail-password", null));
+            setMailSender(JXPathUtils.getStringValue(settings, "mail-sender", null));
             if (myFileTypes.isEmpty()) {
                 myFileTypes = FileType.getDefaults();
             }
@@ -1106,6 +1115,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createIntElement(settings, "mail-port", getMailPort()));
             root.appendChild(DOMUtils.createTextElement(settings, "mail-login", getMailLogin()));
             root.appendChild(DOMUtils.createTextElement(settings, "mail-password", getMailPassword()));
+            root.appendChild(DOMUtils.createTextElement(settings, "mail-sender", getMailSender()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

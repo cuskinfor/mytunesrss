@@ -45,6 +45,10 @@ public interface MiscConfigMBean {
     int getMailPort();
 
     void setMailPort(int mailPort);
+
+    String getMailSender();
+
+    void setMailSender(String mailSender);
 }
 
 

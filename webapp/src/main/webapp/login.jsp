@@ -57,7 +57,7 @@
                 &nbsp;
               </td>
               <td class="forgottenpassword">
-                <a href="${servletUrl}/sendForgottenPassword"><fmt:message key="forgottenPasswordLink"/></a>
+                <a href="#" onclick="self.document.forms[0].action='${servletUrl}/sendForgottenPassword';self.document.forms[0].submit()"><fmt:message key="forgottenPasswordLink"/></a>
               </td>
               <td>
                 &nbsp;

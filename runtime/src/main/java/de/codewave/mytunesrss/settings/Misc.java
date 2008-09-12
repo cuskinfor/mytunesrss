@@ -35,6 +35,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
     private JTextField myMailPortInput;
     private JTextField myMailLoginInput;
     private JPasswordField myMailPasswordInput;
+    private JTextField myMailSenderInput;
     private boolean myUpdateOnStartInputCache;
     private boolean myAutoStartServer;
 
@@ -70,6 +71,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         myMailPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getMailPort(), 1, 65535, ""));
         myMailLoginInput.setText(MyTunesRss.CONFIG.getMailLogin());
         myMailPasswordInput.setText(MyTunesRss.CONFIG.getMailPassword());
+        myMailSenderInput.setText(MyTunesRss.CONFIG.getMailSender());
     }
 
     private void createUIComponents() {
@@ -107,6 +109,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setMailPort(MyTunesRssUtils.getTextFieldInteger(myMailPortInput, -1));
             MyTunesRss.CONFIG.setMailLogin(myMailLoginInput.getText());
             MyTunesRss.CONFIG.setMailPassword(new String(myMailPasswordInput.getPassword()));
+            MyTunesRss.CONFIG.setMailSender(new String(myMailSenderInput.getText()));
         }
         return null;
     }

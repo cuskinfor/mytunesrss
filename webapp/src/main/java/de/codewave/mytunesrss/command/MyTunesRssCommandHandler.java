@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
+import java.text.MessageFormat;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
@@ -363,6 +364,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb",
                                                                                                          getRequest().getLocale());
         return bundle.getString(key);
+    }
+
+    protected String getBundleString(String key, Object... params) {
+        return MessageFormat.format(getBundleString(key), params);
     }
 
     protected void restartMyTunesRssCom() throws IOException {
