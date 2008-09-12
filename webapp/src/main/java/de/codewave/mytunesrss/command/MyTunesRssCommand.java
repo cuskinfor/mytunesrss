@@ -43,6 +43,7 @@ public enum MyTunesRssCommand implements Command {
     ShowAlbumImage("showAlbumImage", ShowAlbumImageCommandHandler.class),
     ShowJukebox("showJukebox", ShowJukeboxCommandHandler.class),
     ContinueExistingPlaylist("continueExistingPlaylist", ContinueExistingPlaylistCommandHandler.class),
+    SendForgottenPassword("sendForgottenPassword", SendForgottenPasswordCommandHandler.class),
     Upload("upload", UploadCommandHandler.class);
 
     private String myName;

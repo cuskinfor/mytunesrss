@@ -57,7 +57,7 @@
                 &nbsp;
               </td>
               <td class="forgottenpassword">
-                <a href="${servletUrl}/showSendPassword"><fmt:message key="forgottenPasswordLink"/></a>
+                <a href="${servletUrl}/sendForgottenPassword"><fmt:message key="forgottenPasswordLink"/></a>
               </td>
               <td>
                 &nbsp;
