@@ -2,20 +2,16 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.User;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.MailException;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Random;
-import java.util.Properties;
 
 /**
  * Command handler for sending a new password if the user forgot his current one.
@@ -61,32 +57,22 @@ public class SendForgottenPasswordCommandHandler extends MyTunesRssCommandHandle
         forward(MyTunesRssResource.Login);
     }
 
+    /**
+     * Send a mail with the new password to the specified user.
+     *
+     * @param user     The user.
+     * @param password The new password.
+     *
+     * @return Either <code>null</code> or an error object.
+     */
     private de.codewave.mytunesrss.jsp.Error sendPasswordToUser(User user, StringBuilder password) {
         de.codewave.mytunesrss.jsp.Error error = null;
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setSubject(getBundleString("mail.forgottenPassword.subject"));
-        message.setFrom(MyTunesRss.CONFIG.getMailSender());
-        message.setTo(user.getEmail());
-        message
-                .setText(getBundleString("mail.forgottenPassword.body", password));
         try {
-            JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-            Properties mailProperties = new Properties();
-            mailSender.setHost(getMyTunesRssConfig().getMailHost());
-            if (getMyTunesRssConfig().getMailPort() > 0) {
-                mailSender.setPort(getMyTunesRssConfig().getMailPort());
-            }
-            mailProperties.setProperty("mail.debug", "true");
-            mailProperties.setProperty("mail.smtp.localhost", "localhost");
-            if (StringUtils.isNotEmpty(getMyTunesRssConfig().getMailLogin()) && StringUtils.isNotEmpty(getMyTunesRssConfig().getMailPassword())) {
-                mailProperties.setProperty("mail.smtp.auth", "true");
-                mailSender.setUsername(getMyTunesRssConfig().getMailLogin());
-                mailSender.setPassword(getMyTunesRssConfig().getMailPassword());
-            }
-            mailSender.setJavaMailProperties(mailProperties);
-            mailSender.send(message);
-        } catch (MailException ex) {
-            LOGGER.error("Could not send email.", ex);
+            MyTunesRss.MAILER.sendMail(user, getBundleString("mail.forgottenPassword.subject"), getBundleString(
+                    "mail.forgottenPassword.body",
+                    password));
+        } catch (MailException e) {
+            LOGGER.error("Could not send email.", e);
             error = new BundleError("error.sendPasswordMailException");
         }
         return error;
