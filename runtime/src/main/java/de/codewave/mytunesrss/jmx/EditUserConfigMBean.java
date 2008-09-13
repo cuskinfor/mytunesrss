@@ -119,4 +119,8 @@ public interface EditUserConfigMBean {
     String getEmail();
 
     void setEmail(String email);
+
+    boolean isPermissionChangeEmail();
+
+    void setPermissionChangeEmail(boolean permissionChangeEmail);
 }

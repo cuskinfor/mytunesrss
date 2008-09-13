@@ -198,6 +198,7 @@ public class EditUser implements MyTunesRssEventListener {
             myPermEditLastFMAccountInput.setSelected(myUser.isEditLastFmAccount());
             myUrlEncryptionInput.setSelected(myUser.isUrlEncryption());
             myEmailInput.setText(myUser.getEmail());
+            myPermChangeEmail.setSelected(myUser.isChangeEmail());
         } else {
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
             myPermRssInput.setSelected(true);
@@ -325,6 +326,7 @@ public class EditUser implements MyTunesRssEventListener {
                     myUser.setTranscoder(myPermTranscoderInput.isSelected());
                     myUser.setBandwidthLimit(MyTunesRssUtils.getTextFieldInteger(myBandwidthLimit, 0));
                     myUser.setEmail(myEmailInput.getText());
+                    myUser.setChangeEmail(myPermChangeEmail.isSelected());
                     if (myRestrictionPlaylistInput.getSelectedItem() != null) {
                         myUser.setPlaylistId(((Playlist)myRestrictionPlaylistInput.getSelectedItem()).getId());
                     } else {

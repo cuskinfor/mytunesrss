@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Random;
+import java.util.Properties;
 
 /**
  * Command handler for sending a new password if the user forgot his current one.
@@ -70,12 +71,19 @@ public class SendForgottenPasswordCommandHandler extends MyTunesRssCommandHandle
                 .setText(getBundleString("mail.forgottenPassword.body", password));
         try {
             JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+            Properties mailProperties = new Properties();
             mailSender.setHost(getMyTunesRssConfig().getMailHost());
             if (getMyTunesRssConfig().getMailPort() > 0) {
                 mailSender.setPort(getMyTunesRssConfig().getMailPort());
             }
-            mailSender.setUsername(getMyTunesRssConfig().getMailLogin());
-            mailSender.setPassword(getMyTunesRssConfig().getMailPassword());
+            mailProperties.setProperty("mail.debug", "true");
+            mailProperties.setProperty("mail.smtp.localhost", "localhost");
+            if (StringUtils.isNotEmpty(getMyTunesRssConfig().getMailLogin()) && StringUtils.isNotEmpty(getMyTunesRssConfig().getMailPassword())) {
+                mailProperties.setProperty("mail.smtp.auth", "true");
+                mailSender.setUsername(getMyTunesRssConfig().getMailLogin());
+                mailSender.setPassword(getMyTunesRssConfig().getMailPassword());
+            }
+            mailSender.setJavaMailProperties(mailProperties);
             mailSender.send(message);
         } catch (MailException ex) {
             LOGGER.error("Could not send email.", ex);

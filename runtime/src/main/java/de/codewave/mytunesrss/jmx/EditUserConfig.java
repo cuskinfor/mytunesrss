@@ -364,4 +364,13 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         MyTunesRss.CONFIG.getUser(myUsername).setEmail(email);
         onChange();
     }
+
+    public boolean isPermissionChangeEmail() {
+        return MyTunesRss.CONFIG.getUser(myUsername).isChangeEmail();
+    }
+
+    public void setPermissionChangeEmail(boolean permissionChangeEmail) {
+        MyTunesRss.CONFIG.getUser(myUsername).setChangeEmail(permissionChangeEmail);
+        onChange();
+    }
 }
