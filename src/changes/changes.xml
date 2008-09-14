@@ -6,6 +6,13 @@
     <body>
 
         <release version="3.5.2" date="2008-09-12" description="3.5.2">
+            <action dev="mdescher" type="fix">
+                Removed synchronized for "isRunning" method in WebServer to prevent deadlock when
+                starting the server with no users and database update on server start enabled.
+            </action>
+        </release>
+
+        <release version="3.5.2" date="2008-09-12" description="3.5.2">
             <action dev="mdescher" type="update">
                 iPhone playlist type modified to really work in iPhone.
             </action>

@@ -31,6 +31,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * de.codewave.mytunesrss.server.WebServer
@@ -41,10 +42,11 @@ public class WebServer {
     private static final int MAX_PORT = 65535;
 
     private Embedded myEmbeddedTomcat;
+    private AtomicBoolean myRunning = new AtomicBoolean(false);
     private Context myContext;
 
     public synchronized boolean start() {
-        if (myEmbeddedTomcat == null) {
+        if (!myRunning.get()) {
             if (MyTunesRss.CONFIG.getPort() < MIN_PORT || MyTunesRss.CONFIG.getPort() > MAX_PORT) {
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.illegalServerPort"));
             } else if (MyTunesRss.CONFIG.getUsers() == null || MyTunesRss.CONFIG.getUsers().isEmpty()) {
@@ -80,6 +82,7 @@ public class WebServer {
                             return false;
                         }
                         MyTunesRss.CONFIG.save();// save on successful server start
+                        myRunning.set(true);
                         return true;
                     } else {
                         MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverStart"));
@@ -309,7 +312,7 @@ public class WebServer {
     }
 
     public synchronized boolean stop() {
-        if (myEmbeddedTomcat != null) {
+        if (myRunning.get()) {
             try {
                 myEmbeddedTomcat.stop();
                 myEmbeddedTomcat = null;
@@ -323,11 +326,12 @@ public class WebServer {
             }
         }
         MyTunesRss.CONFIG.save();// save on successful server stop
+        myRunning.set(false);
         return true;
     }
 
-    public synchronized boolean isRunning() {
-        return myEmbeddedTomcat != null;
+    public boolean isRunning() {
+        return myRunning.get();
     }
 
     public List<MyTunesRssSessionInfo> getSessionInfos() {
