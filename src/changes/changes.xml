@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.6-EAP-1" date="2008-xx-xx" description="EAP-1">
+        <release version="3.6-EAP-1" date="2008-09-14" description="EAP-1">
             <action dev="mdescher" type="add">
                 Link on the login page to retrieve a forgotten password.
             </action>
