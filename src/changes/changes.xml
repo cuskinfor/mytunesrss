@@ -8,6 +8,10 @@
     <body>
 
         <release version="3.6-EAP-1" date="2008-09-14" description="EAP-1">
+            <action dev="mdescher" type="fix">
+                Removed synchronized for "isRunning" method in WebServer to prevent deadlock when starting the server with no users and database
+                update on server start enabled.
+            </action>
             <action dev="mdescher" type="add">
                 Link on the login page to retrieve a forgotten password.
             </action>
