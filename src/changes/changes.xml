@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.6-EAP-2" date="2008-xx-xx" description="EAP-2">
+            <action dev="mdescher" type="add">
+                Admin email and notifications.
+            </action>
+        </release>
+
         <release version="3.6-EAP-1" date="2008-09-14" description="EAP-1">
             <action dev="mdescher" type="fix">
                 Removed synchronized for "isRunning" method in WebServer to prevent deadlock when starting the server with no users and database
