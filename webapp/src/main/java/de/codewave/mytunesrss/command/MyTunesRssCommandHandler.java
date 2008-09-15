@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.Error;
@@ -34,6 +35,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.text.MessageFormat;
 
 /**
@@ -42,6 +44,7 @@ import java.text.MessageFormat;
 public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssCommandHandler.class);
     private static boolean SCHEDULE_DATABASE_UPDATE;
+    private static AtomicLong PAGE_IMPRESSIONS = new AtomicLong(0);
 
     protected MyTunesRssConfig getMyTunesRssConfig() {
         return (MyTunesRssConfig)getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
@@ -137,6 +140,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
+        if (MyTunesRss.CONFIG.isSendAnonyStat() && PAGE_IMPRESSIONS.incrementAndGet() > 25) {
+            AnonyStatUtils.sendPageImpressions(PAGE_IMPRESSIONS.getAndSet(0));
+        }
         prepareRequestForResource();
         resource.beforeForward(getRequest(), getResponse());
         if (MyTunesRssWebUtils.getUserAgent(getRequest()) == UserAgent.Psp) {

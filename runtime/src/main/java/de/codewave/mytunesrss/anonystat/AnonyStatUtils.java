@@ -16,24 +16,34 @@ import java.util.concurrent.atomic.AtomicInteger;
  * de.codewave.mytunesrss.anonystat.AnonyStatUtils
  */
 public class AnonyStatUtils {
-    private static final Logger LOG = LoggerFactory.getLogger(AnonyStatUtils.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(AnonyStatUtils.class);
     private static final String URL = "http://mytunesrss.com/tools/anonystat.php";
     private static final AtomicInteger failureCount = new AtomicInteger(0);
     private static final int MAXIMUM_FAILURES_IN_A_ROW = 3;
     private static AtomicBoolean disabled = new AtomicBoolean(false);
 
     public static void sendApplicationStarted() {
-        sendAsync("applicationStarted",
-                  "v=" + MyTunesRss.VERSION + ",dbtype=" + MyTunesRss.CONFIG.getDatabaseType());
+        sendAsync("applicationStarted", "v=" + MyTunesRss.VERSION + ",dbtype="
+                + MyTunesRss.CONFIG.getDatabaseType());
     }
 
     public static void sendPlayTrack(String transcoderId, String type) {
         sendAsync("playTrack", "tc=" + transcoderId + ",type=" + type);
     }
 
-    public static void sendDatabaseUpdated(long time, SystemInformation systemInformation) {
-        sendAsync("databaseUpdated",
-                  "type=" + MyTunesRss.CONFIG.getDatabaseType() + ",time=" + (time / 1000L) + ",tracks=" + systemInformation.getTrackCount());
+    public static void sendDatabaseUpdated(long time,
+            SystemInformation systemInformation) {
+        sendAsync("databaseUpdated", "type="
+                + MyTunesRss.CONFIG.getDatabaseType() + ",time="
+                + (time / 1000L) + ",tracks="
+                + systemInformation.getTrackCount());
+    }
+
+    public static void sendPageImpressions(long count) {
+        if (count > 0) {
+            sendAsync("pageImpressions", "count=" + count + ",v=" + MyTunesRss.VERSION);
+        }
     }
 
     private static void sendAsync(final String command, final String data) {
