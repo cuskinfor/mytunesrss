@@ -111,6 +111,14 @@ public class MyTunesRssConfig {
     private String myMailPassword;
     private String myMailSender;
     private String myAdminEmail;
+    private boolean myNotifyOnPasswordChange;
+    private boolean myNotifyOnEmailChange;
+    private boolean myNotifyOnQuotaExceeded;
+    private boolean myNotifyOnLoginFailure;
+    private boolean myNotifyOnWebUpload;
+    private boolean myNotifyOnTranscodingFailure;
+    private boolean myNotifyOnInternalError;
+    private boolean myNotifyOnDatabaseUpdate;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -800,6 +808,70 @@ public class MyTunesRssConfig {
         myAdminEmail = adminEmail;
     }
     
+    public boolean isNotifyOnPasswordChange() {
+        return myNotifyOnPasswordChange;
+    }
+
+    public void setNotifyOnPasswordChange(boolean notifyOnPasswordChange) {
+        myNotifyOnPasswordChange = notifyOnPasswordChange;
+    }
+
+    public boolean isNotifyOnEmailChange() {
+        return myNotifyOnEmailChange;
+    }
+
+    public void setNotifyOnEmailChange(boolean notifyOnEmailChange) {
+        myNotifyOnEmailChange = notifyOnEmailChange;
+    }
+
+    public boolean isNotifyOnQuotaExceeded() {
+        return myNotifyOnQuotaExceeded;
+    }
+
+    public void setNotifyOnQuotaExceeded(boolean notifyOnQuotaExceeded) {
+        myNotifyOnQuotaExceeded = notifyOnQuotaExceeded;
+    }
+
+    public boolean isNotifyOnLoginFailure() {
+        return myNotifyOnLoginFailure;
+    }
+
+    public void setNotifyOnLoginFailure(boolean notifyOnLoginFailure) {
+        myNotifyOnLoginFailure = notifyOnLoginFailure;
+    }
+
+    public boolean isNotifyOnWebUpload() {
+        return myNotifyOnWebUpload;
+    }
+
+    public void setNotifyOnWebUpload(boolean notifyOnWebUpload) {
+        myNotifyOnWebUpload = notifyOnWebUpload;
+    }
+
+    public boolean isNotifyOnTranscodingFailure() {
+        return myNotifyOnTranscodingFailure;
+    }
+
+    public void setNotifyOnTranscodingFailure(boolean notifyOnTranscodingFailure) {
+        myNotifyOnTranscodingFailure = notifyOnTranscodingFailure;
+    }
+
+    public boolean isNotifyOnInternalError() {
+        return myNotifyOnInternalError;
+    }
+
+    public void setNotifyOnInternalError(boolean notifyOnInternalError) {
+        myNotifyOnInternalError = notifyOnInternalError;
+    }
+
+    public boolean isNotifyOnDatabaseUpdate() {
+        return myNotifyOnDatabaseUpdate;
+    }
+
+    public void setNotifyOnDatabaseUpdate(boolean notifyOnDatabaseUpdate) {
+        myNotifyOnDatabaseUpdate = notifyOnDatabaseUpdate;
+    }
+
     public void load() {
         LOG.info("Loading configuration.");
         try {
@@ -927,6 +999,14 @@ public class MyTunesRssConfig {
             setMailPassword(JXPathUtils.getStringValue(settings, "mail-password", null));
             setMailSender(JXPathUtils.getStringValue(settings, "mail-sender", null));
             setAdminEmail(JXPathUtils.getStringValue(settings, "admin-email", null));
+            setNotifyOnDatabaseUpdate(JXPathUtils.getBooleanValue(settings, "admin-notify/database-update", false));
+            setNotifyOnEmailChange(JXPathUtils.getBooleanValue(settings, "admin-notify/email-change", false));
+            setNotifyOnInternalError(JXPathUtils.getBooleanValue(settings, "admin-notify/internal-error", false));
+            setNotifyOnLoginFailure(JXPathUtils.getBooleanValue(settings, "admin-notify/login-failure", false));
+            setNotifyOnPasswordChange(JXPathUtils.getBooleanValue(settings, "admin-notify/password-change", false));
+            setNotifyOnQuotaExceeded(JXPathUtils.getBooleanValue(settings, "admin-notify/quota-exceeded", false));
+            setNotifyOnTranscodingFailure(JXPathUtils.getBooleanValue(settings, "admin-notify/transcoding-failure", false));
+            setNotifyOnWebUpload(JXPathUtils.getBooleanValue(settings, "admin-notify/web-upload", false));
             if (myFileTypes.isEmpty()) {
                 myFileTypes = FileType.getDefaults();
             }
@@ -1127,6 +1207,16 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "mail-password", getMailPassword()));
             root.appendChild(DOMUtils.createTextElement(settings, "mail-sender", getMailSender()));
             root.appendChild(DOMUtils.createTextElement(settings, "admin-email", getAdminEmail()));
+            Element notify = settings.createElement("admin-notify");
+            root.appendChild(notify);
+            notify.appendChild(DOMUtils.createBooleanElement(settings, "database-update", isNotifyOnDatabaseUpdate()));
+            notify.appendChild(DOMUtils.createBooleanElement(settings, "email-change", isNotifyOnEmailChange()));
+            notify.appendChild(DOMUtils.createBooleanElement(settings, "internal-error", isNotifyOnInternalError()));
+            notify.appendChild(DOMUtils.createBooleanElement(settings, "login-failure", isNotifyOnLoginFailure()));
+            notify.appendChild(DOMUtils.createBooleanElement(settings, "password-change", isNotifyOnPasswordChange()));
+            notify.appendChild(DOMUtils.createBooleanElement(settings, "quota-exceeded", isNotifyOnQuotaExceeded()));
+            notify.appendChild(DOMUtils.createBooleanElement(settings, "transcoding-failure", isNotifyOnTranscodingFailure()));
+            notify.appendChild(DOMUtils.createBooleanElement(settings, "web-upload", isNotifyOnWebUpload()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
