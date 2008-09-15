@@ -31,6 +31,7 @@ public class MyTunesRssJmxUtils {
     private static ObjectName ADDONS_CONFIG_NAME;
     private static ObjectName STREAMING_CONFIG_NAME;
     private static ObjectName CONTENT_CONFIG_NAME;
+    private static ObjectName ADMIN_NOTIFY_CONFIG_NAME;
     private static boolean INITIALIZED;
 
     static {
@@ -46,6 +47,7 @@ public class MyTunesRssJmxUtils {
             ADDONS_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Addons");
             STREAMING_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Streaming");
             CONTENT_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Content");
+            ADMIN_NOTIFY_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=AdminNotification");
             INITIALIZED = true;
         } catch (MalformedObjectNameException e) {
             if (LOG.isErrorEnabled()) {
@@ -68,6 +70,7 @@ public class MyTunesRssJmxUtils {
                 server.registerMBean(new AddonsConfig(), ADDONS_CONFIG_NAME);
                 server.registerMBean(new StreamingConfig(), STREAMING_CONFIG_NAME);
                 server.registerMBean(new ContentConfig(), CONTENT_CONFIG_NAME);
+                server.registerMBean(new AdminNotifyConfig(), ADMIN_NOTIFY_CONFIG_NAME);
                 registerUsers();
                 HttpAdaptor adaptor = new HttpAdaptor();
                 ObjectName name = HTTP_ADAPTOR_NAME;
@@ -116,6 +119,7 @@ public class MyTunesRssJmxUtils {
                 server.unregisterMBean(MISC_CONFIG_NAME);
                 server.unregisterMBean(ADDONS_CONFIG_NAME);
                 server.unregisterMBean(CONTENT_CONFIG_NAME);
+                server.unregisterMBean(ADMIN_NOTIFY_CONFIG_NAME);
                 unregisterUsers();
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {

@@ -110,6 +110,7 @@ public class MyTunesRssConfig {
     private String myMailLogin;
     private String myMailPassword;
     private String myMailSender;
+    private String myAdminEmail;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -791,6 +792,14 @@ public class MyTunesRssConfig {
         myMailSender = mailSender;
     }
 
+    public String getAdminEmail() {
+        return myAdminEmail;
+    }
+    
+    public void setAdminEmail(String adminEmail) {
+        myAdminEmail = adminEmail;
+    }
+    
     public void load() {
         LOG.info("Loading configuration.");
         try {
@@ -917,6 +926,7 @@ public class MyTunesRssConfig {
             setMailLogin(JXPathUtils.getStringValue(settings, "mail-login", null));
             setMailPassword(JXPathUtils.getStringValue(settings, "mail-password", null));
             setMailSender(JXPathUtils.getStringValue(settings, "mail-sender", null));
+            setAdminEmail(JXPathUtils.getStringValue(settings, "admin-email", null));
             if (myFileTypes.isEmpty()) {
                 myFileTypes = FileType.getDefaults();
             }
@@ -1116,6 +1126,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "mail-login", getMailLogin()));
             root.appendChild(DOMUtils.createTextElement(settings, "mail-password", getMailPassword()));
             root.appendChild(DOMUtils.createTextElement(settings, "mail-sender", getMailSender()));
+            root.appendChild(DOMUtils.createTextElement(settings, "admin-email", getAdminEmail()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
