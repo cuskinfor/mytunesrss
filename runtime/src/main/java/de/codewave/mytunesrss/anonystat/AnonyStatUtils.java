@@ -46,6 +46,10 @@ public class AnonyStatUtils {
         }
     }
 
+    public static void sendMail() {
+        sendAsync("sendMail", "");
+    }
+
     private static void sendAsync(final String command, final String data) {
         if (MyTunesRss.CONFIG.isSendAnonyStat() && !disabled.get()) {
             new Thread(new Runnable() {

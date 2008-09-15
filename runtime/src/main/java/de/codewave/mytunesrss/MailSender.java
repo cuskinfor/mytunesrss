@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
+
 import java.util.Properties;
 
 /**
@@ -52,5 +54,6 @@ public class MailSender {
         }
         mailSender.setJavaMailProperties(mailProperties);
         mailSender.send(message);
+        AnonyStatUtils.sendMail();
     }
 }
