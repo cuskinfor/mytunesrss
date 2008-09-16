@@ -2,11 +2,21 @@ package de.codewave.mytunesrss;
 
 import org.apache.commons.lang.StringUtils;
 
+import de.codewave.mytunesrss.datastore.statement.SystemInformation;
+
 public class AdminNotifier {
-    public void notifyDatabaseUpdate() {
+    public void notifyDatabaseUpdate(long time,
+            SystemInformation systemInformation) {
         if (MyTunesRss.CONFIG.isNotifyOnDatabaseUpdate()
                 && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
-            // todo
+            String subject = "Database has been updated";
+            String body = "The database has been updated. Update took "
+                    + (time / 1000L) + " seconds.\n\n" + "Tracks: "
+                    + systemInformation.getTrackCount() + "\n" + "Albums: "
+                    + systemInformation.getAlbumCount() + "\n" + "Artists: "
+                    + systemInformation.getArtistCount() + "\n" + "Genres:"
+                    + systemInformation.getGenreCount();
+            sendAdminMail(subject, body);
         }
     }
 
@@ -28,10 +38,16 @@ public class AdminNotifier {
         }
     }
 
-    public void notifyLoginFailure() {
+    public void notifyLoginFailure(String username, String remoteAddress) {
         if (MyTunesRss.CONFIG.isNotifyOnLoginFailure()
                 && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
-            // todo
+            String subject = "Login failure";
+            String body = "There was an unsuccessful login attempt for user name \""
+                    + username
+                    + "\" from remote address \""
+                    + remoteAddress
+                    + "\".";
+            sendAdminMail(subject, body);
         }
     }
 

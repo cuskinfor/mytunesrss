@@ -206,6 +206,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 LOG.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
             }
             AnonyStatUtils.sendDatabaseUpdated((System.currentTimeMillis() - timeUpdateStart), storeSession.executeQuery(new GetSystemInformationQuery()));
+            MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart), storeSession.executeQuery(new GetSystemInformationQuery()));
             storeSession.commit();
         } catch (Exception e) {
             storeSession.rollback();

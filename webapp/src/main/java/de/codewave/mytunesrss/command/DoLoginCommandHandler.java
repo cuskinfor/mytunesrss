@@ -37,6 +37,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                 }
             } else {
                 addError(new BundleError("error.loginDenied"));
+                MyTunesRss.ADMIN_NOTIFY.notifyLoginFailure(userName, getRequest().getRemoteHost());
                 forward(MyTunesRssResource.Login);
             }
         } else if (!isSessionAuthorized()) {
