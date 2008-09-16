@@ -4,17 +4,19 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssEventManager;
-import de.codewave.mytunesrss.MyTunesRssEvent;
-import de.codewave.mytunesrss.jsp.BundleError;
-import de.codewave.mytunesrss.jsp.MyTunesRssResource;
-import de.codewave.mytunesrss.servlet.WebConfig;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssEvent;
+import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.jsp.BundleError;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
+import de.codewave.mytunesrss.servlet.WebConfig;
 
 /**
  * de.codewave.mytunesrss.command.SaveSettingsCommandHandler
@@ -62,8 +64,10 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setFlashplayerType(getRequestParameter("flashplayerType", "jw"));
         webConfig.setYahooMediaPlayer(getBooleanRequestParameter("showYahooMediaPlayer", false));
         webConfig.setBrowserStartIndex(getRequest().getParameter("browserStartIndex"));
-        if (getAuthUser().isChangeEmail()) {
+        if (getAuthUser().isChangeEmail() && !StringUtils.equals(getAuthUser().getEmail(), getRequest().getParameter("email"))) {
+            String oldEmail = getAuthUser().getEmail();
             getAuthUser().setEmail(getRequest().getParameter("email"));
+            MyTunesRss.ADMIN_NOTIFY.notifyEmailChange(getAuthUser(), oldEmail);
         }
         webConfig.setMyTunesRssComAddress(getBooleanRequestParameter("myTunesRssComAddress", false));
         boolean error = false;
@@ -105,7 +109,11 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
             if (StringUtils.equals(password1, password2)) {
                 try {
-                    getAuthUser().setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(password1.getBytes("UTF-8")));
+                    byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(password1.getBytes("UTF-8"));
+                    if (!Arrays.equals(passwordHash, getAuthUser().getPasswordHash())) {
+                        getAuthUser().setPasswordHash(passwordHash);
+                        MyTunesRss.ADMIN_NOTIFY.notifyPasswordChange(getAuthUser());
+                    }
                 } catch (UnsupportedEncodingException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not get bytes from password string.", e);

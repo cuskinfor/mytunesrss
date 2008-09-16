@@ -146,6 +146,7 @@ public class MyTunesRss {
     public static FileCache STREAMING_CACHE;
     public static Scheduler QUARTZ_SCHEDULER;
     public static MailSender MAILER = new MailSender();
+    public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
 
     public static void main(final String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException,
             InstantiationException, ClassNotFoundException, IOException, SQLException, SchedulerException {
