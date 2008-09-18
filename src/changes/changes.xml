@@ -7,6 +7,9 @@
 
         <release version="3.5.3" date="2008-xx-xx" description="3.5.3">
             <action dev="mdescher" type="add">
+                Reasonable web config defaults for IPhone and PSP.
+            </action>
+            <action dev="mdescher" type="add">
                 Debug logging for apple extensions.
             </action>
             <action dev="mdescher" type="fix">

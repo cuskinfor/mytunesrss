@@ -103,19 +103,81 @@ public class WebConfig {
         }
     }
 
-    public void initWithDefaults() {
+    public void initWithDefaults(HttpServletRequest request) {
+        if (MyTunesRssWebUtils.isUserAgentPsp(request)) {
+            initWithPspDefaults();
+        } else if (MyTunesRssWebUtils.isUserAgentIphone(request)) {
+            initWithIphoneDefaults();
+        } else {
+            initWithDefaults();
+        }
+    }
+
+    private void initWithIphoneDefaults() {
+        myConfigValues.put(CFG_FEED_TYPE_RSS, "false");
+        myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "true");
+        myConfigValues.put(CFG_RSS_LIMIT, "0");
+        myConfigValues.put(CFG_LOGIN_STORED, "false");
+        myConfigValues.put(CFG_PASSWORD_HASH, "");
+        myConfigValues.put(CFG_PAGE_SIZE, "30");
+        myConfigValues.put(CFG_SHOW_DOWNLOAD, "false");
+        myConfigValues.put(CFG_SHOW_PLAYER, "false");
+        myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
+        myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, "25");
+        myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
+        myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.QtPlugin.name());
+        myConfigValues.put(CFG_USE_LAME, "false");
+        myConfigValues.put(CFG_LAME_TARGET_BITRATE, "96");
+        myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, "22050");
+        myConfigValues.put(CFG_USE_FAAD2, "false");
+        myConfigValues.put(CFG_USE_ALAC, "false");
+        myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, "false");
+        myConfigValues.put(CFG_RANDOM_SOURCE, "");
+        myConfigValues.put(CFG_FLASH_PLAYER_TYPE, "jw");
+        myConfigValues.put(CFG_YAHOO_MEDIAPLAYER, "false");
+        myConfigValues.put(CFG_BROWSER_START_INDEX, "1");
+        myConfigValues.put(CFG_MYTUNESRSSCOM_ADDRESS, "true");
+    }
+
+    private void initWithPspDefaults() {
+        myConfigValues.put(CFG_FEED_TYPE_RSS, "true");
+        myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "false");
+        myConfigValues.put(CFG_RSS_LIMIT, "100");
+        myConfigValues.put(CFG_LOGIN_STORED, "false");
+        myConfigValues.put(CFG_PASSWORD_HASH, "");
+        myConfigValues.put(CFG_PAGE_SIZE, "30");
+        myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
+        myConfigValues.put(CFG_SHOW_PLAYER, "false");
+        myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
+        myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, "25");
+        myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
+        myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.M3u.name());
+        myConfigValues.put(CFG_USE_LAME, "false");
+        myConfigValues.put(CFG_LAME_TARGET_BITRATE, "96");
+        myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, "22050");
+        myConfigValues.put(CFG_USE_FAAD2, "false");
+        myConfigValues.put(CFG_USE_ALAC, "false");
+        myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, "false");
+        myConfigValues.put(CFG_RANDOM_SOURCE, "");
+        myConfigValues.put(CFG_FLASH_PLAYER_TYPE, "jw");
+        myConfigValues.put(CFG_YAHOO_MEDIAPLAYER, "false");
+        myConfigValues.put(CFG_BROWSER_START_INDEX, "1");
+        myConfigValues.put(CFG_MYTUNESRSSCOM_ADDRESS, "true");
+    }
+
+    private void initWithDefaults() {
         myConfigValues.put(CFG_FEED_TYPE_RSS, "true");
         myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "true");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
         myConfigValues.put(CFG_LOGIN_STORED, "false");
         myConfigValues.put(CFG_PASSWORD_HASH, "");
-        myConfigValues.put(CFG_PAGE_SIZE, "0");
+        myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
-        myConfigValues.put(CFG_PLAYLIST_TYPE, "M3u");
+        myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.M3u.name());
         myConfigValues.put(CFG_USE_LAME, "false");
         myConfigValues.put(CFG_LAME_TARGET_BITRATE, "96");
         myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, "22050");
@@ -135,9 +197,9 @@ public class WebConfig {
         }
     }
 
-    public void clearWithDefaults() {
+    public void clearWithDefaults(HttpServletRequest request) {
         clear();
-        initWithDefaults();
+        initWithDefaults(request);
     }
 
     public void load(HttpServletRequest request) {

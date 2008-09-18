@@ -25,7 +25,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
             if (isAuthorized(userName, passwordHash)) {
                 authorize(WebAppScope.Session, userName);
                 if (getAuthUser() != null && StringUtils.isNotEmpty(getAuthUser().getWebSettings())) {
-                    getWebConfig().clearWithDefaults();
+                    getWebConfig().clearWithDefaults(getRequest());
                     getWebConfig().load(getAuthUser());
                     getWebConfig().load(getRequest());
                 }

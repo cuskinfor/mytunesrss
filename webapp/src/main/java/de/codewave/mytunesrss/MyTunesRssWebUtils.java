@@ -55,7 +55,7 @@ public class MyTunesRssWebUtils {
         WebConfig webConfig = (WebConfig)httpServletRequest.getSession().getAttribute("config");
         if (webConfig == null) {
             webConfig = new WebConfig();
-            webConfig.clearWithDefaults();
+            webConfig.clearWithDefaults(httpServletRequest);
             webConfig.load(httpServletRequest);
             httpServletRequest.getSession().setAttribute("config", webConfig);
         }
@@ -79,6 +79,11 @@ public class MyTunesRssWebUtils {
     public static boolean isUserAgentPsp(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
         return StringUtils.isNotEmpty(userAgent) && userAgent.contains("PSP");
+    }
+
+    public static boolean isUserAgentIphone(HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        return StringUtils.isNotEmpty(userAgent) && userAgent.contains("iPhone");
     }
 }
 
