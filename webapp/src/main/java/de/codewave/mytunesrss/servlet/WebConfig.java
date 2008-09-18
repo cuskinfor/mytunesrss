@@ -4,10 +4,7 @@
 
 package de.codewave.mytunesrss.servlet;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -106,7 +103,16 @@ public class WebConfig {
         }
     }
 
-    public void initWithDefaults() {
+    public void initWithDefaults(HttpServletRequest request) {
+        initWithDefaults();
+        if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Psp) {
+            initWithPspDefaults();
+        } else if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Iphone) {
+            initWithIphoneDefaults();
+        }
+    }
+
+    private void initWithDefaults() {
         myConfigValues.put(CFG_FEED_TYPE_RSS, "true");
         myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "true");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
@@ -118,7 +124,7 @@ public class WebConfig {
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
-        myConfigValues.put(CFG_PLAYLIST_TYPE, "M3u");
+        myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.M3u.name());
         myConfigValues.put(CFG_USE_LAME, "false");
         myConfigValues.put(CFG_LAME_TARGET_BITRATE, "96");
         myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, "22050");
@@ -135,15 +141,30 @@ public class WebConfig {
         myConfigValues.put(CFG_RANDOM_PROTECTED, "true");
     }
 
+    private void initWithIphoneDefaults() {
+        myConfigValues.put(CFG_FEED_TYPE_RSS, "false");
+        myConfigValues.put(CFG_PAGE_SIZE, "30");
+        myConfigValues.put(CFG_SHOW_DOWNLOAD, "false");
+        myConfigValues.put(CFG_SHOW_PLAYER, "false");
+        myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.QtPlugin.name());
+    }
+
+    private void initWithPspDefaults() {
+        myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "false");
+        myConfigValues.put(CFG_RSS_LIMIT, "100");
+        myConfigValues.put(CFG_PAGE_SIZE, "30");
+        myConfigValues.put(CFG_SHOW_PLAYER, "false");
+    }
+
     public void load(User user) {
         if (user != null && StringUtils.isNotEmpty(user.getWebSettings())) {
             initFromString(MyTunesRssBase64Utils.decodeToString(user.getWebSettings()));
         }
     }
 
-    public void clearWithDefaults() {
+    public void clearWithDefaults(HttpServletRequest request) {
         clear();
-        initWithDefaults();
+        initWithDefaults(request);
     }
 
     public void load(HttpServletRequest request) {

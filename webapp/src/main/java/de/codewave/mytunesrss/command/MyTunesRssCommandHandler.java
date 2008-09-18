@@ -81,7 +81,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                     "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
         }
         if (getAuthUser() != null && StringUtils.isNotEmpty(getAuthUser().getWebSettings())) {
-            getWebConfig().clearWithDefaults();
+            getWebConfig().clearWithDefaults(getRequest());
             getWebConfig().load(getAuthUser());
             getWebConfig().load(getRequest());
         }

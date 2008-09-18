@@ -55,7 +55,7 @@ public class MyTunesRssWebUtils {
         WebConfig webConfig = (WebConfig)httpServletRequest.getSession().getAttribute("config");
         if (webConfig == null) {
             webConfig = new WebConfig();
-            webConfig.clearWithDefaults();
+            webConfig.clearWithDefaults(httpServletRequest);
             webConfig.load(httpServletRequest);
             httpServletRequest.getSession().setAttribute("config", webConfig);
         }
