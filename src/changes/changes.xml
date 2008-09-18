@@ -6,6 +6,9 @@
     <body>
 
         <release version="3.5.3" date="2008-xx-xx" description="3.5.3">
+            <action dev="mdescher" type="add">
+                Debug logging for apple extensions.
+            </action>
             <action dev="mdescher" type="fix">
                 Removed synchronized for "isRunning" method in WebServer to prevent deadlock when
                 starting the server with no users and database update on server start enabled.
