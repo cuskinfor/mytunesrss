@@ -9,6 +9,9 @@
 
         <release version="3.6-EAP-2" date="2008-xx-xx" description="EAP-2">
             <action dev="mdescher" type="add">
+                Album cover image size configurable (64, 128 and 256).
+            </action>
+            <action dev="mdescher" type="add">
                 Reasonable web config defaults for IPhone and PSP.
             </action>
             <action dev="mdescher" type="add">

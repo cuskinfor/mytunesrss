@@ -243,6 +243,16 @@
                     </select>
                 </td>
             </tr>
+            <tr <mt:flipFlop/>>
+                <td><fmt:message key="settings.albumImageSize" /></td>
+                <td>
+                    <select name="albImgSize">
+                        <option value="64" <c:if test="${config.albumImageSize == 64}">selected="selected"</c:if>>64</option>
+                        <option value="128" <c:if test="${config.albumImageSize == 128}">selected="selected"</c:if>>128</option>
+                        <option value="256" <c:if test="${config.albumImageSize == 256}">selected="selected"</c:if>>256</option>
+                    </select>
+                </td>
+            </tr>
             <c:if test="${authUser.rss}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.playlistTypes.rss" /></td>

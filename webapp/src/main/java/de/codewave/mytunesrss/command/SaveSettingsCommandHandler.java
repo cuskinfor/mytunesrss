@@ -70,6 +70,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
             MyTunesRss.ADMIN_NOTIFY.notifyEmailChange(getAuthUser(), oldEmail);
         }
         webConfig.setMyTunesRssComAddress(getBooleanRequestParameter("myTunesRssComAddress", false));
+        webConfig.setAlbumImageSize(getIntegerRequestParameter("albImgSize", 128));
         boolean error = false;
         error |= transferAndValidatePageSize(webConfig);
         error |= transferAndValidateRssFeedLimit(webConfig);

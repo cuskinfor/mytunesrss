@@ -53,6 +53,7 @@ public class WebConfig {
     private static final String CFG_RANDOM_AUDIO = "rndAudio";
     private static final String CFG_RANDOM_VIDEO = "rndVideo";
     private static final String CFG_RANDOM_PROTECTED = "rndProt";
+    private static final String CFG_ALBUM_IMAGE_SIZE = "albImgSize";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -139,6 +140,7 @@ public class WebConfig {
         myConfigValues.put(CFG_RANDOM_AUDIO, "true");
         myConfigValues.put(CFG_RANDOM_VIDEO, "true");
         myConfigValues.put(CFG_RANDOM_PROTECTED, "true");
+        myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "128");
     }
 
     private void initWithIphoneDefaults() {
@@ -147,6 +149,7 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "false");
         myConfigValues.put(CFG_SHOW_PLAYER, "false");
         myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.QtPlugin.name());
+        myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "256");
     }
 
     private void initWithPspDefaults() {
@@ -521,5 +524,13 @@ public class WebConfig {
 
     public void setRandomProtected(boolean rndProtected) {
         myConfigValues.put(CFG_RANDOM_PROTECTED, Boolean.toString(rndProtected));
+    }
+
+    public int getAlbumImageSize() {
+        return Integer.parseInt(myConfigValues.get(CFG_ALBUM_IMAGE_SIZE));
+    }
+
+    public void setAlbumImageSize(int imageSize) {
+        myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, Integer.toString(imageSize));
     }
 }
