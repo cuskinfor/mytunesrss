@@ -62,9 +62,16 @@ public class AdminNotifier {
         }
     }
 
-    public void notifyTranscodingFailure() {
+    public void notifyTranscodingFailure(String[] sourceCommand, String[] targetCommand, Exception e) {
         if (MyTunesRss.CONFIG.isNotifyOnTranscodingFailure() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
-            // todo
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String subject = "Transcoding failure";
+            String body = "Transcoding failed.\n\n" + "Source command was \"" + StringUtils.join(sourceCommand, ' ') + "\"\n\n" +
+                    "Target command was \"" + StringUtils.join(targetCommand, ' ') + "\"\n\n" + sw.toString();
+            sendAdminMail(subject, body);
+
         }
     }
 

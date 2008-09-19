@@ -28,7 +28,7 @@ public abstract class AbstractTranscoderStream extends InputStream {
 
     public AbstractTranscoderStream(Track track, String targetBinary, String sourceBinary, int outputBitRate, int outputSampleRate)
             throws IOException {
-        String[] targetCommand = new String[getTargetArguments().split(" ").length + 1];
+        final String[] targetCommand = new String[getTargetArguments().split(" ").length + 1];
         targetCommand[0] = targetBinary;
         int i = 1;
         for (String part : getTargetArguments().split(" ")) {
@@ -38,7 +38,7 @@ public abstract class AbstractTranscoderStream extends InputStream {
         if (LOG.isDebugEnabled()) {
             LOG.debug("executing " + getTargetName() + " command \"" + StringUtils.join(targetCommand, " ") + "\".");
         }
-        String[] sourceCommand = new String[getSourceArguments().split(" ").length + 1];
+        final String[] sourceCommand = new String[getSourceArguments().split(" ").length + 1];
         sourceCommand[0] = sourceBinary;
         i = 1;
         for (String part : getSourceArguments().split(" ")) {
@@ -58,6 +58,9 @@ public abstract class AbstractTranscoderStream extends InputStream {
             @Override
             protected void afterExecution(Exception e) {
                 tempFile.delete();
+                if (e != null) {
+                    MyTunesRss.ADMIN_NOTIFY.notifyTranscodingFailure(sourceCommand, targetCommand, e);
+                }
             }
         }.start();
         new LogStreamCopyThread(mySourceProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug)
