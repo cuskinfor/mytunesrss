@@ -43,7 +43,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
             StringBuilder info = new StringBuilder();
             for (FileItem item : items) {
                 processItem(item);
-                info.append(item.getName()).append("/n");
+                info.append(item.getName()).append("\n");
             }
             runDatabaseUpdate();
             MyTunesRss.ADMIN_NOTIFY.notifyWebUpload(getAuthUser(), info.toString());
