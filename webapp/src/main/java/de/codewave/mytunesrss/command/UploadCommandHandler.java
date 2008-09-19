@@ -40,10 +40,13 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
             FileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
             List<FileItem> items = upload.parseRequest(new ProgressRequestWrapper(getRequest()));
+            StringBuilder info = new StringBuilder();
             for (FileItem item : items) {
                 processItem(item);
+                info.append(item.getName()).append("/n");
             }
             runDatabaseUpdate();
+            MyTunesRss.ADMIN_NOTIFY.notifyWebUpload(getAuthUser(), info.toString());
             forward(MyTunesRssResource.UploadFinished);
         } else {
             forward(MyTunesRssResource.Login);

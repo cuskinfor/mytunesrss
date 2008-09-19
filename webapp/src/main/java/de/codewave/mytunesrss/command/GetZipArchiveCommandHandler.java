@@ -63,6 +63,9 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 getSession().setMaxInactiveInterval(getAuthUser().getSessionTimeout() * 60); // reset correct session timeout
             }
         } else {
+            if (getAuthUser().isQuotaExceeded()) {
+                MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(getAuthUser());
+            }
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
     }
@@ -120,6 +123,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 }
             } else if (getAuthUser().isQuotaExceeded()) {
                 quotaExceeded = true;
+                MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(getAuthUser());
             }
         }
         if (trackCount > 0) {

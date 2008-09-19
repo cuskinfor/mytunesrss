@@ -76,6 +76,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                     if (LOG.isWarnEnabled()) {
                         LOG.warn("User limit exceeded, sending response code SC_NO_CONTENT instead.");
                     }
+                    MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(getAuthUser());
                     streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                 }
             } else {

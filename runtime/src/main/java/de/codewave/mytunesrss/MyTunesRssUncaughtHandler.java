@@ -25,6 +25,7 @@ public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandle
         if (LOG.isErrorEnabled()) {
             LOG.error("Handling uncaught exception.", e);
         }
+        MyTunesRss.ADMIN_NOTIFY.notifyInternalError(e);
         SwingUtils.invokeAndWait(new Runnable() {
             public void run() {
                 new SupportContact().display(myParent, MyTunesRssUtils.getBundleString("dialog.bugReport"), MyTunesRssUtils.getBundleString(
