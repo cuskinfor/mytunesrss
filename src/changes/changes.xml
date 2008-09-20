@@ -16,7 +16,7 @@
                 Remote API session manager fix (was static, multiple executors were started), now using a servlet context listener.
             </action>
             <action dev="mdescher" type="update">
-                Remote API improvements, playlist creation with transcoding parameters.
+                Remote API improvements, playlist/rss feed creation with transcoding parameters.
             </action>
             <action dev="mdescher" type="add">
                 Album cover image size configurable (64, 128 and 256).
