@@ -49,16 +49,6 @@ public abstract class Transcoder {
                 !myPlayerRequest;
         myTargetBitrate = webConfig.getLameTargetBitrate();
         myTargetSampleRate = webConfig.getLameTargetSampleRate();
-        if (StringUtils.isNotEmpty(request.getParameter("tc"))) {
-            String[] splitted = request.getParameter("tc").split(",");
-            if (splitted.length == 3) {
-                myActive = true;
-                myTargetBitrate = Integer.parseInt(splitted[0]);
-                myTargetSampleRate = Integer.parseInt(splitted[1]);
-                setTempFileRequested(
-                        ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request) || !Boolean.parseBoolean(splitted[2]));
-            }
-        }
     }
 
     protected void setTempFileRequested(boolean tempFile) {

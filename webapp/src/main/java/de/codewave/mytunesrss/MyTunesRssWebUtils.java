@@ -3,9 +3,9 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.servlet.ServletUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.lang.StringUtils;
 
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
@@ -52,12 +52,19 @@ public class MyTunesRssWebUtils {
     }
 
     public static WebConfig getWebConfig(HttpServletRequest httpServletRequest) {
-        WebConfig webConfig = (WebConfig)httpServletRequest.getSession().getAttribute("config");
+        WebConfig webConfig = (WebConfig)httpServletRequest.getAttribute("config");
         if (webConfig == null) {
-            webConfig = new WebConfig();
-            webConfig.clearWithDefaults(httpServletRequest);
-            webConfig.load(httpServletRequest);
-            httpServletRequest.getSession().setAttribute("config", webConfig);
+            webConfig = (WebConfig)httpServletRequest.getSession().getAttribute("config");
+            if (webConfig == null) {
+                webConfig = new WebConfig();
+                webConfig.clearWithDefaults(httpServletRequest);
+                webConfig.load(httpServletRequest);
+                httpServletRequest.getSession().setAttribute("config", webConfig);
+                LOG.debug("Created session configuration: " + webConfig.getMap().toString());
+            }
+            MyTunesRssWebUtils.setTranscodingFromRequest(webConfig, httpServletRequest);
+            httpServletRequest.setAttribute("config", webConfig);
+            LOG.debug("Created request configuration: " + webConfig.getMap().toString());
         }
         return webConfig;
     }
@@ -93,6 +100,57 @@ public class MyTunesRssWebUtils {
             return UserAgent.Iphone;
         }
         return UserAgent.Unknown;
+    }
+
+    public static String createTranscodingPathInfo(WebConfig config) {
+        return createTranscodingParamValue(config.isAlac(),
+                                           config.isFaad(),
+                                           config.isLame(),
+                                           config.getLameTargetBitrate(),
+                                           config.getLameTargetSampleRate(),
+                                           config.isTranscodeOnTheFlyIfPossible());
+    }
+
+    public static String createTranscodingParamValue(boolean alacTranscoding, boolean faadTranscoding, boolean lameTranscoding,
+            int transcodingBitrate, int transcodingSamplerate, boolean transcodeOnTheFlyIfPossible) {
+        StringBuilder tc = new StringBuilder();
+        if (alacTranscoding || faadTranscoding || lameTranscoding) {
+            tc.append("A").append(alacTranscoding ? "1" : "0").append("_");
+            tc.append("F").append(alacTranscoding ? "1" : "0").append("_");
+            tc.append("L").append(alacTranscoding ? "1" : "0").append("_");
+            tc.append("B").append(transcodingBitrate).append("_S").append(transcodingSamplerate).append("_O")
+                    .append(transcodeOnTheFlyIfPossible ? "1" : "0");
+        }
+        return tc.toString();
+    }
+
+    public static void setTranscodingFromRequest(WebConfig config, HttpServletRequest request) {
+        for (String tc : StringUtils.stripToEmpty(request.getParameter("tc")).split("_")) {
+            char key = tc.charAt(0);
+            String value = tc.substring(1);
+            switch (key) {
+                case 'A':
+                    config.setAlac("1".equals(value));
+                    break;
+                case 'F':
+                    config.setFaad("1".equals(value));
+                    break;
+                case 'L':
+                    config.setLame("1".equals(value));
+                    break;
+                case 'B':
+                    config.setLameTargetBitrate(Integer.valueOf(value));
+                    break;
+                case 'S':
+                    config.setLameTargetSampleRate(Integer.valueOf(value));
+                    break;
+                case 'O':
+                    config.setTranscodeOnTheFlyIfPossible("1".equals(value));
+                    break;
+                default:
+                    LOG.warn("Illegal transcodig parameter \"" + tc + "\" ignored.");
+            }
+        }
     }
 }
 

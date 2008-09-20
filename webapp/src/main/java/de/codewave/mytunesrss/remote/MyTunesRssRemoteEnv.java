@@ -9,11 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class MyTunesRssRemoteEnv {
     private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssRemoteEnv.class);
@@ -22,27 +17,7 @@ public class MyTunesRssRemoteEnv {
 
     private static final ThreadLocal<Session> THREAD_SESSIONS = new ThreadLocal<Session>();
 
-    private static final Map<String, Session> SESSIONS = new HashMap<String, Session>();
-
     private static final Session DUMMY_SESSION = new Session(null, null, 0);
-
-    static {
-        Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(new Runnable() {
-            public void run() {
-                LOG.debug("Purging remote API sessions.");
-                synchronized (SESSIONS) {
-                    for (Iterator<Map.Entry<String, Session>> iter = SESSIONS.entrySet().iterator(); iter.hasNext();) {
-                        Map.Entry<String, Session> entry = iter.next();
-                        if (entry.getValue().isExpired()) {
-                            LOG.debug("Removing expired session \"" + entry.getValue().getId() + "\" of user \"" +
-                                    entry.getValue().getUser().getName() + "\".");
-                            iter.remove();
-                        }
-                    }
-                }
-            }
-        }, 0, 60, TimeUnit.SECONDS);
-    }
 
     public static HttpServletRequest getRequest() {
         return THREAD_REQUESTS.get();
@@ -58,15 +33,8 @@ public class MyTunesRssRemoteEnv {
             if (sid.startsWith("/")) {
                 sid = sid.substring(1);
             }
-            synchronized (SESSIONS) {
-                if (SESSIONS.containsKey(sid)) {
-                    SESSIONS.get(sid).touch();
-                    if (SESSIONS.containsKey(sid)) {
-                        LOG.debug("Received remote API call for session \"" + sid.substring(1) + "\".");
-                        THREAD_SESSIONS.set(SESSIONS.get(sid));
-                    }
-                }
-            }
+            THREAD_SESSIONS.set(RemoteApiSessionManager.getInstance(request).getSession(sid));
+            LOG.debug("Received remote API call for session \"" + sid + "\".");
         }
     }
 
@@ -94,9 +62,7 @@ public class MyTunesRssRemoteEnv {
     }
 
     public static void addSession(Session session) {
-        synchronized (SESSIONS) {
-            LOG.debug("Adding remote API session with user \"" + session.getUser().getName() + "\" and \"" + session.getId() + "\".");
-            SESSIONS.put(session.getId(), session);
-        }
+        LOG.debug("Adding remote API session with user \"" + session.getUser().getName() + "\" and \"" + session.getId() + "\".");
+        RemoteApiSessionManager.getInstance(getRequest()).addSession(session.getId(), session);
     }
 }

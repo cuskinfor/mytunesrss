@@ -125,7 +125,7 @@
         </description>
         <name>transcoding</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>boolean transcoding(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.User,de.codewave.mytunesrss.datastore.statement.Track)</function-signature>
+        <function-signature>boolean transcoding(javax.servlet.jsp.PageContext,de.codewave.mytunesrss.User,de.codewave.mytunesrss.datastore.statement.Track)</function-signature>
         <example>
             &lt;c:out value="${mtfn:transcoding(config, user, track)}"/&gt;
         </example>
@@ -252,9 +252,9 @@
         </description>
         <name>tcParamValue</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String tcParamValue(de.codewave.mytunesrss.servlet.WebConfig, de.codewave.mytunesrss.User, de.codewave.mytunesrss.datastore.statement.Track)</function-signature>
+        <function-signature>java.lang.String tcParamValue(javax.servlet.jsp.PageContext, de.codewave.mytunesrss.User, de.codewave.mytunesrss.datastore.statement.Track)</function-signature>
         <example>
-            &lt;c:out value="${mtfn:tcParamValue(config, user, track)}"/&gt;
+            &lt;c:out value="${mtfn:tcParamValue(pageContext, config, user, track)}"/&gt;
         </example>
     </function>
 

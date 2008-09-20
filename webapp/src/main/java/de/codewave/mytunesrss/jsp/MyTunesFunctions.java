@@ -4,10 +4,7 @@
 
 package de.codewave.mytunesrss.jsp;
 
-import de.codewave.mytunesrss.FileSupportUtils;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.MiscUtils;
@@ -17,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import java.text.SimpleDateFormat;
@@ -90,8 +88,7 @@ public class MyTunesFunctions {
     }
 
     public static String suffix(WebConfig config, User user, Track track) {
-        if (config != null && user != null && FileSupportUtils.isMp4(track.getFile()) &&
-                user.isTranscoder()) {
+        if (config != null && user != null && FileSupportUtils.isMp4(track.getFile()) && user.isTranscoder()) {
             if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
                 return "mp3";
             } else if ("mp4a".equals(track.getMp4Codec()) && config.isFaad() && MyTunesRss.CONFIG.isValidFaadBinary()) {
@@ -105,8 +102,10 @@ public class MyTunesFunctions {
         return FileSupportUtils.getContentType("dummy." + suffix(config, user, track), track.isVideo());
     }
 
-    public static boolean transcoding(WebConfig config, User user, Track track) {
-        if (config != null && user != null && user.isTranscoder()) {
+    public static boolean transcoding(PageContext pageContext, User user, Track track) {
+        if (user != null && user.isTranscoder()) {
+            HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
+            WebConfig config = MyTunesRssWebUtils.getWebConfig(request);
             if (FileSupportUtils.isMp4(track.getFile()) && "alac".equals(track.getMp4Codec()) && config.isAlac() &&
                     MyTunesRss.CONFIG.isValidAlacBinary()) {
                 return true;
@@ -120,19 +119,21 @@ public class MyTunesFunctions {
         return false;
     }
 
-    public static String tcParamValue(WebConfig config, User user, Track track) {
-        if (config != null && user != null && user.isTranscoder() &&
-                MyTunesRss.CONFIG.isValidLameBinary()) {
+    public static String tcParamValue(PageContext pageContext, User user, Track track) {
+        if (user != null && user.isTranscoder() && MyTunesRss.CONFIG.isValidLameBinary()) {
+            HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
+            WebConfig config = MyTunesRssWebUtils.getWebConfig(request);
             if (FileSupportUtils.isMp4(track.getFile())) {
                 if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
-                    return config.getLameTargetBitrate() + "," + config.getLameTargetSampleRate() + "," + config.isTranscodeOnTheFlyIfPossible();
+                    return MyTunesRssWebUtils.createTranscodingPathInfo(config);
                 } else if ("mp4a".equals(track.getMp4Codec()) && config.isFaad() && MyTunesRss.CONFIG.isValidFaadBinary()) {
-                    return config.getLameTargetBitrate() + "," + config.getLameTargetSampleRate() + "," + config.isTranscodeOnTheFlyIfPossible();
+                    return MyTunesRssWebUtils.createTranscodingPathInfo(config);
                 }
             } else if (FileSupportUtils.isMp3(track.getFile()) && config.isLame()) {
-                return config.getLameTargetBitrate() + "," + config.getLameTargetSampleRate() + "," + config.isTranscodeOnTheFlyIfPossible();
+                return MyTunesRssWebUtils.createTranscodingPathInfo(config);
             }
         }
+
         return "";
     }
 
@@ -227,7 +228,7 @@ public class MyTunesFunctions {
             }
             int portSeparator = url.indexOf(':', schemePrefix.length());
             String oldHost = portSeparator != -1 ? url.substring(schemePrefix.length(), portSeparator) : url.substring(schemePrefix.length(),
-                                                                                                                     serverSeparator);
+                                                                                                                       serverSeparator);
             String httpHost = StringUtils.isNotEmpty(MyTunesRss.CONFIG.getTomcatProxyHost()) ? MyTunesRss.CONFIG.getTomcatProxyHost() : oldHost;
             return "http://" + httpHost + ":" + httpPort + (serverSeparator < url.length() ? url.substring(serverSeparator) : "");
         }

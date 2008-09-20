@@ -283,6 +283,7 @@ public class WebServer {
             for (Map.Entry<String, Object> contextEntry : contextEntries.entrySet()) {
                 myContext.getServletContext().setAttribute(contextEntry.getKey(), contextEntry.getValue());
             }
+            myContext.addApplicationListener("de.codewave.mytunesrss.remote.RemoteApiSessionManager");
             return server;
         }
         return null;
