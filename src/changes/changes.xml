@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.6-EAP-2" date="2008-09-20" description="EAP-2">
+        <release version="3.6-EAP-2" date="2008-xx-xx" description="EAP-2">
             <action dev="mdescher" type="add">
                 JMX server settings in configuration GUI.
             </action>
