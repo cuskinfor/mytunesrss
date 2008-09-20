@@ -8,6 +8,12 @@
     <body>
 
         <release version="3.6-EAP-2" date="2008-xx-xx" description="EAP-2">
+            <action dev="mdescher" type="fix">
+                Remote API session manager fix (was static, multiple executors were started), now using a servlet context listener.
+            </action>
+            <action dev="mdescher" type="update">
+                Remote API improvements, playlist creation with transcoding parameters.
+            </action>
             <action dev="mdescher" type="add">
                 Album cover image size configurable (64, 128 and 256).
             </action>
