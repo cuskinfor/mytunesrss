@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.utils.swing.JTextFieldValidation;
 import de.codewave.utils.swing.MinMaxValueTextFieldValidation;
 import de.codewave.utils.swing.NotEmptyTextFieldValidation;
@@ -15,10 +16,16 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * de.codewave.mytunesrss.settings.Misc
  */
 public class Misc implements MyTunesRssEventListener, SettingsForm {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Misc.class);
+    
     private JPanel myRootPanel;
     private JTextField myUsernameInput;
     private PasswordHashField myPasswordInput;
@@ -36,6 +43,10 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
     private JTextField myMailLoginInput;
     private JPasswordField myMailPasswordInput;
     private JTextField myMailSenderInput;
+    private JTextField myJmxHostInput;
+    private JTextField myJmxPortInput;
+    private JTextField myJmxUserNameInput;
+    private JPasswordField myJmxPasswordInput;
     private boolean myUpdateOnStartInputCache;
     private boolean myAutoStartServer;
 
@@ -51,6 +62,8 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
                                                                            MyTunesRssUtils.getBundleString("error.emptyProxyHost")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myProxyPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
                 "error.illegalProxyPort")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myJmxPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
+                "error.illegalJmxPort")));
     }
 
     private void initValues() {
@@ -72,6 +85,10 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         myMailLoginInput.setText(MyTunesRss.CONFIG.getMailLogin());
         myMailPasswordInput.setText(MyTunesRss.CONFIG.getMailPassword());
         myMailSenderInput.setText(MyTunesRss.CONFIG.getMailSender());
+        myJmxHostInput.setText(MyTunesRss.CONFIG.getJmxHost());
+        myJmxPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getJmxPort(), 1, 65535, null));
+        myJmxUserNameInput.setText(MyTunesRss.CONFIG.getJmxUser());
+        myJmxPasswordInput.setText(MyTunesRss.CONFIG.getJmxPassword());
     }
 
     private void createUIComponents() {
@@ -110,6 +127,23 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setMailLogin(myMailLoginInput.getText());
             MyTunesRss.CONFIG.setMailPassword(new String(myMailPasswordInput.getPassword()));
             MyTunesRss.CONFIG.setMailSender(new String(myMailSenderInput.getText()));
+            String newJmxHost = MyTunesRssUtils.getTextFieldString(myJmxHostInput, "0.0.0.0", true);
+            int newJmxPort = MyTunesRssUtils.getTextFieldInteger(myJmxPortInput, -1);
+            String newJmxUser = myJmxUserNameInput.getText();
+            String newJmxPassword = new String(myJmxPasswordInput.getPassword());
+            boolean jmxChanges = !StringUtils.equalsIgnoreCase(newJmxHost, MyTunesRss.CONFIG.getJmxHost());
+            jmxChanges |= !StringUtils.equals(newJmxUser, MyTunesRss.CONFIG.getJmxUser());
+            jmxChanges |= !StringUtils.equals(newJmxPassword, MyTunesRss.CONFIG.getJmxPassword());
+            jmxChanges |= newJmxPort != MyTunesRss.CONFIG.getJmxPort();
+            MyTunesRss.CONFIG.setJmxHost(newJmxHost);
+            MyTunesRss.CONFIG.setJmxPort(newJmxPort);
+            MyTunesRss.CONFIG.setJmxUser(newJmxUser);
+            MyTunesRss.CONFIG.setJmxPassword(newJmxPassword);
+            if (jmxChanges) {
+                LOGGER.debug("Restarting JMX server because settings have changed.");
+                MyTunesRssJmxUtils.stopJmxServer();
+                MyTunesRssJmxUtils.startJmxServer();
+            }
         }
         return null;
     }

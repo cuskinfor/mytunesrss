@@ -231,6 +231,13 @@ public class MyTunesRssUtils {
         }
     }
 
+    public static String getTextFieldString(JTextField textField, String defaultValue, boolean trim) {
+        if (StringUtils.isBlank(textField.getText())) {
+            return defaultValue;
+        }
+        return trim ? textField.getText().trim() : textField.getText();
+    }
+
     public static boolean deleteRecursivly(File file) {
         if (file.isDirectory()) {
             for (File subFile : file.listFiles()) {
