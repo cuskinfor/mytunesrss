@@ -79,14 +79,28 @@ public class PlaylistService {
     /**
      * Get an URL for retrieving an RSS feed for the playlist with the specified ID.
      *
-     * @param playlistId ID of the playlist.
+     * @param playlistId                  The playlist ID.
+     * @param alacTranscoding             <code>true</code> for ALAC transcoding or <code>false</code> for no ALAC transcoding.
+     * @param faadTranscoding             <code>true</code> for AAC transcoding or <code>false</code> for no AAC transcoding.
+     * @param lameTranscoding             <code>true</code> for MP3 transcoding or <code>false</code> for no MP3 transcoding.
+     * @param transcodingBitrate          The target transcoding bit rate.
+     * @param transcodingSamplerate       The target transcoding sample rate.
+     * @param transcodeOnTheFlyIfPossible <code>true</code> to use transcoding on the fly if possible or <code>false</code> otherwise.
      *
      * @return The URL for the RSS feed.
      */
-    public String getRssUrl(String playlistId) throws IllegalAccessException {
+    public String getRssUrl(String playlistId, boolean alacTranscoding, boolean faadTranscoding, boolean lameTranscoding, int transcodingBitrate,
+            int transcodingSamplerate, boolean transcodeOnTheFlyIfPossible) throws IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-            return MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreateRss, "playlist=" + playlistId);
+            return MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreateRss,
+                                                     "playlist=" + playlistId + "/tc=" + MyTunesRssWebUtils.createTranscodingParamValue(
+                                                             alacTranscoding,
+                                                             faadTranscoding,
+                                                             lameTranscoding,
+                                                             transcodingBitrate,
+                                                             transcodingSamplerate,
+                                                             transcodeOnTheFlyIfPossible));
         }
         throw new IllegalAccessException("Unauthorized");
     }

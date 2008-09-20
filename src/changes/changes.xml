@@ -8,6 +8,10 @@
     <body>
 
         <release version="3.6-EAP-2" date="2008-xx-xx" description="EAP-2">
+            <action dev="mdescher" type="update">
+                Refactoring for TC parameter. More flexible now and handling centralized. Building request scoped web config from
+                session scoped one using the request parameters if available.
+            </action>
             <action dev="mdescher" type="fix">
                 Remote API session manager fix (was static, multiple executors were started), now using a servlet context listener.
             </action>
