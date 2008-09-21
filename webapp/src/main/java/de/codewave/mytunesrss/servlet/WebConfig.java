@@ -52,6 +52,7 @@ public class WebConfig {
     private static final String CFG_FLASH_PLAYER_TYPE = "flashplayerType";
     private static final String CFG_YAHOO_MEDIAPLAYER = "yahooMediaPlayer";
     private static final String CFG_BROWSER_START_INDEX = "browserStartIndex";
+    private static final String CFG_MYTUNESRSSCOM_ADDRESS = "myTunesRssComAddress";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -102,7 +103,16 @@ public class WebConfig {
         }
     }
 
-    public void initWithDefaults() {
+    public void initWithDefaults(HttpServletRequest request) {
+        initWithDefaults();
+        if (MyTunesRssWebUtils.isUserAgentPsp(request)) {
+            initWithPspDefaults();
+        } else if (MyTunesRssWebUtils.isUserAgentIphone(request)) {
+            initWithIphoneDefaults();
+        }
+    }
+
+    private void initWithDefaults() {
         myConfigValues.put(CFG_FEED_TYPE_RSS, "true");
         myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "true");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
@@ -114,7 +124,7 @@ public class WebConfig {
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
-        myConfigValues.put(CFG_PLAYLIST_TYPE, "M3u");
+        myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.M3u.name());
         myConfigValues.put(CFG_USE_LAME, "false");
         myConfigValues.put(CFG_LAME_TARGET_BITRATE, "96");
         myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, "22050");
@@ -125,6 +135,22 @@ public class WebConfig {
         myConfigValues.put(CFG_FLASH_PLAYER_TYPE, "jw");
         myConfigValues.put(CFG_YAHOO_MEDIAPLAYER, "false");
         myConfigValues.put(CFG_BROWSER_START_INDEX, "1");
+        myConfigValues.put(CFG_MYTUNESRSSCOM_ADDRESS, "true");
+    }
+
+    private void initWithIphoneDefaults() {
+        myConfigValues.put(CFG_FEED_TYPE_RSS, "false");
+        myConfigValues.put(CFG_PAGE_SIZE, "30");
+        myConfigValues.put(CFG_SHOW_DOWNLOAD, "false");
+        myConfigValues.put(CFG_SHOW_PLAYER, "false");
+        myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.QtPlugin.name());
+    }
+
+    private void initWithPspDefaults() {
+        myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "false");
+        myConfigValues.put(CFG_RSS_LIMIT, "100");
+        myConfigValues.put(CFG_PAGE_SIZE, "30");
+        myConfigValues.put(CFG_SHOW_PLAYER, "false");
     }
 
     public void load(User user) {
@@ -133,9 +159,9 @@ public class WebConfig {
         }
     }
 
-    public void clearWithDefaults() {
+    public void clearWithDefaults(HttpServletRequest request) {
         clear();
-        initWithDefaults();
+        initWithDefaults(request);
     }
 
     public void load(HttpServletRequest request) {
@@ -460,5 +486,13 @@ public class WebConfig {
 
     public void setBrowserStartIndex(String browserStartIndex) {
         myConfigValues.put(CFG_BROWSER_START_INDEX, browserStartIndex);
+    }
+
+    public boolean isMyTunesRssComAddress() {
+        return Boolean.parseBoolean(myConfigValues.get(CFG_MYTUNESRSSCOM_ADDRESS));
+    }
+
+    public void setMyTunesRssComAddress(boolean myTunesRssComAddress) {
+        myConfigValues.put(CFG_MYTUNESRSSCOM_ADDRESS, Boolean.toString(myTunesRssComAddress));
     }
 }

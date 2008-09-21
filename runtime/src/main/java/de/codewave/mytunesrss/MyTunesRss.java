@@ -531,8 +531,10 @@ public class MyTunesRss {
     }
 
     private static void executeApple(Settings settings) {
+        LOG.debug("Trying to execute apple specific code.");
         if (SystemUtils.IS_OS_MAC_OSX) {
             try {
+                LOG.debug("Executing apple specific code.");
                 Class appleExtensionsClass = Class.forName("de.codewave.apple.AppleExtensions");
                 Method activateMethod = appleExtensionsClass.getMethod("activate", EventListener.class);
                 activateMethod.invoke(null, new AppleExtensionsEventListener(settings));
@@ -603,12 +605,17 @@ public class MyTunesRss {
         }
 
         public void handleQuit() {
+            LOG.debug("Apple extension: handleQuit.");
             mySettings.doQuitApplication();
         }
 
         public void handleReOpenApplication() {
+            LOG.debug("Apple extension: handleReOpenApplication.");
             if (!ROOT_FRAME.isVisible()) {
+                LOG.debug("Root frame not visible, setting to visible.");
                 ROOT_FRAME.setVisible(true);
+            } else {
+                LOG.debug("Root frame already visible, nothing to do here.");
             }
         }
     }

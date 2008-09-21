@@ -15,7 +15,7 @@
             </fileset>
         </copy>
         <artifact:dependencies filesetid="zislib">
-            <artifact:dependency groupid="de.codewave" artifactid="codewave-zis" version="1.0"/>
+            <artifact:dependency groupid="de.codewave" artifactid="codewave-zis" version="1.1"/>
         </artifact:dependencies>
         <copy todir="target/idea/lib" flatten="true">
             <fileset refid="zislib"/>

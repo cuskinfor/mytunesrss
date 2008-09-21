@@ -90,11 +90,11 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 }
                 int number = 1;
                 String entryNameWithoutSuffix =
-                        MyTunesFunctions.getLegalFileName(trackArtist) + "/" + MyTunesFunctions.getLegalFileName(trackAlbum) + "/";
+                        StringUtils.strip(MyTunesFunctions.getLegalFileName(trackArtist), ".") + "/" + StringUtils.strip(MyTunesFunctions.getLegalFileName(trackAlbum), ".") + "/";
                 if (track.getTrackNumber() > 0) {
                     entryNameWithoutSuffix += StringUtils.leftPad(Integer.toString(track.getTrackNumber()), 2, "0") + " ";
                 }
-                entryNameWithoutSuffix += MyTunesFunctions.getLegalFileName(track.getName());
+                entryNameWithoutSuffix += StringUtils.strip(MyTunesFunctions.getLegalFileName(track.getName()), ".");
                 String entryName = entryNameWithoutSuffix + "." + FilenameUtils.getExtension(track.getFile().getName());
                 while (entryNames.contains(entryName)) {
                     entryName = entryNameWithoutSuffix + " " + number + "." + FilenameUtils.getExtension(track.getFile().getName());
