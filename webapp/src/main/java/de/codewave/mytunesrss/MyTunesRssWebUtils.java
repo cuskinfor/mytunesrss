@@ -125,30 +125,33 @@ public class MyTunesRssWebUtils {
     }
 
     public static void setTranscodingFromRequest(WebConfig config, HttpServletRequest request) {
-        for (String tc : StringUtils.stripToEmpty(request.getParameter("tc")).split("_")) {
-            char key = tc.charAt(0);
-            String value = tc.substring(1);
-            switch (key) {
-                case 'A':
-                    config.setAlac("1".equals(value));
-                    break;
-                case 'F':
-                    config.setFaad("1".equals(value));
-                    break;
-                case 'L':
-                    config.setLame("1".equals(value));
-                    break;
-                case 'B':
-                    config.setLameTargetBitrate(Integer.valueOf(value));
-                    break;
-                case 'S':
-                    config.setLameTargetSampleRate(Integer.valueOf(value));
-                    break;
-                case 'O':
-                    config.setTranscodeOnTheFlyIfPossible("1".equals(value));
-                    break;
-                default:
-                    LOG.warn("Illegal transcodig parameter \"" + tc + "\" ignored.");
+        String tcValue = request.getParameter("tc");
+        if (StringUtils.isNotBlank(tcValue)) {
+            for (String tc : tcValue.trim().split("_")) {
+                char key = tc.charAt(0);
+                String value = tc.substring(1);
+                switch (key) {
+                    case 'A':
+                        config.setAlac("1".equals(value));
+                        break;
+                    case 'F':
+                        config.setFaad("1".equals(value));
+                        break;
+                    case 'L':
+                        config.setLame("1".equals(value));
+                        break;
+                    case 'B':
+                        config.setLameTargetBitrate(Integer.valueOf(value));
+                        break;
+                    case 'S':
+                        config.setLameTargetSampleRate(Integer.valueOf(value));
+                        break;
+                    case 'O':
+                        config.setTranscodeOnTheFlyIfPossible("1".equals(value));
+                        break;
+                    default:
+                        LOG.warn("Illegal transcodig parameter \"" + tc + "\" ignored.");
+                }
             }
         }
     }

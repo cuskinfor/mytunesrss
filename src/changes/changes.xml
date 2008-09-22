@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.6-EAP-3" date="2008-09-22" description="EAP-3">
+            <action dev="mdescher" type="fix">
+                Fixed array index out of bounds exception in tc param value evaluation.
+            </action>
+        </release>
+
         <release version="3.6-EAP-2" date="2008-09-21" description="EAP-2">
             <action dev="mdescher" type="add">
                 JMX server settings in configuration GUI.
