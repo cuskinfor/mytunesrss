@@ -103,36 +103,44 @@ public class MyTunesRssJmxUtils {
 
     public static void stopJmxServer() {
         if (INITIALIZED) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Stopping JMX server.");
+            }
+            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
             try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Stopping JMX server.");
-                }
-                MBeanServer server = ManagementFactory.getPlatformMBeanServer();
                 server.invoke(HTTP_ADAPTOR_NAME, "stop", null, null);
-                server.unregisterMBean(HTTP_ADAPTOR_NAME);
-                server.unregisterMBean(SERVER_CONFIG_NAME);
-                server.unregisterMBean(APPLICATION_NAME);
-                server.unregisterMBean(DATABASE_CONFIG_NAME);
-                server.unregisterMBean(DIRECTORIES_CONFIG_NAME);
-                server.unregisterMBean(DATAIMPORT_CONFIG_NAME);
-                server.unregisterMBean(USER_CONFIG_NAME);
-                server.unregisterMBean(MISC_CONFIG_NAME);
-                server.unregisterMBean(ADDONS_CONFIG_NAME);
-                server.unregisterMBean(CONTENT_CONFIG_NAME);
-                server.unregisterMBean(ADMIN_NOTIFY_CONFIG_NAME);
-                unregisterUsers();
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not stop JMX server.", e);
                 }
             }
+            for (ObjectName name : new ObjectName[] {HTTP_ADAPTOR_NAME, SERVER_CONFIG_NAME, APPLICATION_NAME, DATABASE_CONFIG_NAME,
+                                                     DIRECTORIES_CONFIG_NAME, DATAIMPORT_CONFIG_NAME, USER_CONFIG_NAME, MISC_CONFIG_NAME,
+                                                     ADDONS_CONFIG_NAME, CONTENT_CONFIG_NAME, ADMIN_NOTIFY_CONFIG_NAME, STREAMING_CONFIG_NAME}) {
+                try {
+                    server.unregisterMBean(name);
+                } catch (Exception e) {
+                    LOG.error("Could not unregister mbean \"" + name.getCanonicalName() + "\".", e);
+                }
+            }
+            unregisterUsers();
         }
     }
 
-    static void unregisterUsers() throws InstanceNotFoundException, MBeanRegistrationException, MalformedObjectNameException {
+    static void unregisterUsers() {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         for (User user : MyTunesRss.CONFIG.getUsers()) {
-            server.unregisterMBean(new ObjectName("MyTunesRSS:type=user,name=" + ObjectName.quote(user.getName())));
+            ObjectName name = null;
+            try {
+                name = new ObjectName("MyTunesRSS:type=user,name=" + ObjectName.quote(user.getName()));
+                server.unregisterMBean(name);
+            } catch (Exception e) {
+                if (name != null) {
+                    LOG.error("Could not unregister mbean \"" + name.getCanonicalName() + "\".", e);
+                } else {
+                    LOG.error("Could not create user mbean object name for \"" + user.getName() + "\".", e);
+                }
+            }
         }
     }
 }
