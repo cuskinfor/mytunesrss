@@ -7,6 +7,13 @@
 
     <body>
 
+        <release version="3.6-EAP-5" date="2008-xx-xx" description="EAP-5">
+            <action dev="mdescher" type="add">
+                Support for GET requests with BODY parameter in JSON-RPC API calls. Without
+                this we cannot make any use of the JSONP parameter for cross-site-access.
+            </action>
+        </release>
+
         <release version="3.6-EAP-4" date="2008-09-26" description="EAP-4">
             <action dev="mdescher" type="fix">
                 Fixed NullPointerException when getting file type for suffix.

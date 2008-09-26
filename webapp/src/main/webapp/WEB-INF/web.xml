@@ -57,10 +57,10 @@
         <filter-name>JsonpFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.remote.JsonpFilter</filter-class>
     </filter>
-    <filter-mapping>
-        <filter-name>JsonpFilter</filter-name>
-        <servlet-name>JsonRpcServlet</servlet-name>
-    </filter-mapping>
+    <filter>
+        <filter-name>PostViaGetFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.remote.PostViaGetFilter</filter-class>
+    </filter>
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
         <servlet-name>CommandServlet</servlet-name>
@@ -84,6 +84,14 @@
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
         <servlet-name>CommandServlet</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>PostViaGetFilter</filter-name>
+        <servlet-name>JsonRpcServlet</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>JsonpFilter</filter-name>
+        <servlet-name>JsonRpcServlet</servlet-name>
     </filter-mapping>
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>

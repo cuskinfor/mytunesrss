@@ -25,7 +25,9 @@ public class EncodingFilter implements Filter {
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
-        servletRequest.setCharacterEncoding(myEncoding);
+        if (StringUtils.isBlank(servletRequest.getCharacterEncoding())) {
+            servletRequest.setCharacterEncoding(myEncoding);
+        }
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
