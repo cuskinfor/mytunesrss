@@ -748,9 +748,11 @@ public class MyTunesRssConfig {
     }
 
     public FileType getFileType(String suffix) {
-        for (FileType type : myFileTypes) {
-            if (suffix.equalsIgnoreCase(type.getSuffix())) {
-                return type;
+        if (suffix != null) {
+            for (FileType type : myFileTypes) {
+                if (suffix.equalsIgnoreCase(type.getSuffix())) {
+                    return type;
+                }
             }
         }
         return null;
@@ -803,11 +805,11 @@ public class MyTunesRssConfig {
     public String getAdminEmail() {
         return myAdminEmail;
     }
-    
+
     public void setAdminEmail(String adminEmail) {
         myAdminEmail = adminEmail;
     }
-    
+
     public boolean isNotifyOnPasswordChange() {
         return myNotifyOnPasswordChange;
     }

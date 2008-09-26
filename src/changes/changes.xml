@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.6-EAP-4" date="2008-09-26" description="EAP-4">
+            <action dev="mdescher" type="fix">
+                Fixed NullPointerException when getting file type for suffix.
+            </action>
+        </release>
+
         <release version="3.6-EAP-3" date="2008-09-22" description="EAP-3">
             <action dev="mdescher" type="fix">
                 Some JMX related fixes.
