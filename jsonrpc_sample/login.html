@@ -3,7 +3,7 @@
 <script type="text/javascript">
     function login(json) {
         if (json.result && !json.error) {
-            top.sid = "/" + json.result;
+            top.setSessionId(json.result);
             top.loadContent("albums.html");
         } else {
             alert("Login failed");
