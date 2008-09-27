@@ -1,6 +1,8 @@
 package de.codewave.mytunesrss.remote;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +14,8 @@ import java.io.IOException;
  * POST and returns the value of the "body" parameter in the body of the request.
  */
 public class PostViaGetFilter implements Filter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PostViaGetFilter.class);
+
     public void init(FilterConfig filterConfig) throws ServletException {
         // intentionally left blank
     }
@@ -19,6 +23,7 @@ public class PostViaGetFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (request instanceof HttpServletRequest && StringUtils.isNotBlank(request.getParameter("body")) &&
                 "GET".equals(((HttpServletRequest)request).getMethod())) {
+            LOGGER.debug("POST via GET servlet filter.");
             HttpServletRequestWrapper wrapper = new PostViaGetRequestWrapper((HttpServletRequest)request, request.getParameter("body"));
             chain.doFilter(wrapper, response);
         } else {

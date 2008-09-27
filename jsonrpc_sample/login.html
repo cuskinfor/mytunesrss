@@ -1,0 +1,23 @@
+<html>
+<head>
+<script type="text/javascript">
+    function login(json) {
+        if (json.result && !json.error) {
+            top.sid = "/" + json.result;
+            top.loadContent("albums.html");
+        } else {
+            alert("Login failed");
+        }
+    }
+
+    function clickLogin() {
+        top.mytunesrss("LoginService.login", [document.getElementById("username").value, document.getElementById("password").value, 10], "login");
+    }
+</script>
+</head>
+<body>
+Username:<input id="username" type="text" /><br />
+Password:<input id="password" type="password" /><br />
+<a href="#" onclick="clickLogin()">login</a>
+</body>
+</html>

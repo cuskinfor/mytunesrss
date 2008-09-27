@@ -1,6 +1,8 @@
 package de.codewave.mytunesrss.remote;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
@@ -11,6 +13,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 public class JsonpFilter implements Filter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonpFilter.class);
 
     public void destroy() {
         // intentionally left blank
@@ -20,13 +23,14 @@ public class JsonpFilter implements Filter {
         if (response instanceof HttpServletResponse) {
             String jsonp = request.getParameter("jsonp");
             if (StringUtils.isNotEmpty(jsonp)) {
+                String encoding = response.getCharacterEncoding() != null ? response.getCharacterEncoding() : "UTF-8";
                 final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
                 final ServletOutputStream servletOutputStream = new ServletOutputStream() {
                     public void write(int b) throws IOException {
                         buffer.write(b);
                     }
                 };
-                final PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(buffer));
+                final PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(buffer, encoding));
                 HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper((HttpServletResponse)response) {
                     public ServletOutputStream getOutputStream() {
                         return servletOutputStream;
@@ -37,11 +41,13 @@ public class JsonpFilter implements Filter {
                     }
                 };
                 chain.doFilter(request, responseWrapper);
-                response.setContentLength(buffer.toByteArray().length + 2 + jsonp.getBytes("UTF-8").length);
-                response.getOutputStream().write(jsonp.getBytes("UTF-8"));
-                response.getOutputStream().write("(".getBytes("UTF-8"));
+                LOGGER.debug("JSONP: Original response has " + buffer.size() + "bytes. Adding " + (jsonp.getBytes(encoding).length + 2) +
+                        " bytes for \"" + jsonp + "\". Using encoding \"" + encoding + "\".");
+                response.setContentLength(buffer.size() + 2 + jsonp.getBytes(encoding).length);
+                response.getOutputStream().write(jsonp.getBytes(encoding));
+                response.getOutputStream().write("(".getBytes(encoding));
                 response.getOutputStream().write(buffer.toByteArray());
-                response.getOutputStream().write(")".getBytes("UTF-8"));
+                response.getOutputStream().write(")".getBytes(encoding));
             } else {
                 chain.doFilter(request, response);
             }

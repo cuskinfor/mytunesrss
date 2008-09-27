@@ -21,6 +21,7 @@ public class PostViaGetRequestWrapper extends HttpServletRequestWrapper {
     public PostViaGetRequestWrapper(HttpServletRequest request, String body) {
         super(request);
         myBody = body;
+        LOGGER.debug("Using body \"" + body + "\" for post-via-get request wrapper.");
         try {
             final InputStream stream = new ByteArrayInputStream(myBody.getBytes("UTF-8"));
             myStream = new ServletInputStream() {

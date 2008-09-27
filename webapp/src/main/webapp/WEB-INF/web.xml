@@ -135,6 +135,10 @@
     <servlet>
         <servlet-name>JsonRpcServlet</servlet-name>
         <servlet-class>de.codewave.mytunesrss.remote.MyTunesRssJsonRpcServlet</servlet-class>
+        <init-param>
+            <param-name>gzip_threshold</param-name>
+            <param-value>-1</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
