@@ -16,8 +16,6 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.*;
 
-import com.ibm.icu.text.Normalizer;
-
 /**
  * de.codewave.mytunesrss.datastore.itunes.TrackListenerr
  */
@@ -33,6 +31,7 @@ public class TrackListener implements PListHandlerListener {
     private long myScannedCount;
     private long myLastEventTime;
     private long myStartTime;
+    private long myMissingFiles;
 
     public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
             Collection<String> trackIds) throws SQLException {
@@ -44,6 +43,10 @@ public class TrackListener implements PListHandlerListener {
 
     public int getUpdatedCount() {
         return myUpdatedCount;
+    }
+
+    public long getMissingFiles() {
+        return myMissingFiles;
     }
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
@@ -86,6 +89,9 @@ public class TrackListener implements PListHandlerListener {
         if (trackType == null || "File".equals(trackType)) {
             String filename = ItunesLoader.getFileNameForLocation((String)track.get("Location"));
             if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && FileSupportUtils.isSupported(filename)) {
+                if (!new File(filename).isFile()) {
+                    myMissingFiles++;
+                }
                 if (!MyTunesRss.CONFIG.isItunesDeleteMissingFiles() || new File(filename).isFile()) {
                     Date dateModified = ((Date)track.get("Date Modified"));
                     long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;

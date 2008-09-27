@@ -9,8 +9,11 @@
 
         <release version="3.6-EAP-5" date="2008-xx-xx" description="EAP-5">
             <action dev="mdescher" type="add">
-                Support for GET requests with BODY parameter in JSON-RPC API calls. Without
-                this we cannot make any use of the JSONP parameter for cross-site-access.
+                Support for GET requests with BODY parameter in JSON-RPC API calls. Without this we cannot make any use of the JSONP parameter for
+                cross-site-access.
+            </action>
+            <action dev="mdescher" type="add">
+                Number of missing iTunes files in the database update admin notification.
             </action>
         </release>
 
@@ -34,8 +37,8 @@
                 JMX server settings in configuration GUI.
             </action>
             <action dev="mdescher" type="update">
-                Refactoring for TC parameter. More flexible now and handling centralized. Building request scoped web config from
-                session scoped one using the request parameters if available.
+                Refactoring for TC parameter. More flexible now and handling centralized. Building request scoped web config from session scoped one
+                using the request parameters if available.
             </action>
             <action dev="mdescher" type="fix">
                 Remote API session manager fix (was static, multiple executors were started), now using a servlet context listener.
@@ -75,18 +78,16 @@
                 Option to use the mytunesrss.com address (default is TRUE) in playlists and for RSS feeds.
             </action>
             <action dev="mdescher" type="fix">
-                URL encode file names on jukebox.jsp to prevent problems with non-web-safe characters.
-                Bugfix for portal page.
-                Version 1.1 of codewave-zis for JDK 1.6 encoding bugfix if entry is not UTF-8 encoded.
-                Do not create folder or file names with leading or trailing dots in ZIP archives.
+                URL encode file names on jukebox.jsp to prevent problems with non-web-safe characters. Bugfix for portal page. Version 1.1 of
+                codewave-zis for JDK 1.6 encoding bugfix if entry is not UTF-8 encoded. Do not create folder or file names with leading or trailing
+                dots in ZIP archives.
             </action>
             <action dev="mdescher" type="update">
-                Use temporary file for transcoder input to prevent problems with non-ASCII characters in
-                files names (which do cause problems with faad on Windows for example).
+                Use temporary file for transcoder input to prevent problems with non-ASCII characters in files names (which do cause problems with
+                faad on Windows for example).
             </action>
             <action dev="mdescher" type="add">
-                Embedded quicktime video playback in track info for movie files. No Last.FM scrobbling
-                for movie files.
+                Embedded quicktime video playback in track info for movie files. No Last.FM scrobbling for movie files.
             </action>
             <action dev="mdescher" type="add">
                 User email addresses. Mail server configuration. User permission for changing email address.
@@ -98,8 +99,7 @@
                 Removed file-suffixes.properties and added a configuration GUI.
             </action>
             <action dev="mdescher" type="update">
-                Removed transcoder.properties (default and user) file and added command line options
-                to configuration GUI and JMX interface.
+                Removed transcoder.properties (default and user) file and added command line options to configuration GUI and JMX interface.
             </action>
             <action dev="mdescher" type="add">
                 Remote API authentication via HTTP header "X-MyTunesRSS-ID" as well (preferred over path info).
@@ -108,16 +108,15 @@
                 Support for optional JSONP parameter.
             </action>
             <action dev="mdescher" type="add">
-                Folder from iTunes marked with special icons in the web interface and each playlist knows its
-                container if any. Navigation for iTunes folders.
+                Folder from iTunes marked with special icons in the web interface and each playlist knows its container if any. Navigation for iTunes
+                folders.
             </action>
             <action dev="mdescher" type="update">
-                Configuration GUI redesign. Main dialog has no configuration tabs and shows some status information only together
-                with the most important functions (database update/reset, server start/stop and quit). The configuration dialogs
-                are separate modal dialog windows now. This makes it easier to add options to individual settings pages without
-                affection overall layout. Also adding new pages is easier and does not make the number of tabs even bigger. The
-                individual dialogs are resizable and the positions and sizes are saved in the settings which makes the dialogs
-                configuration much better.
+                Configuration GUI redesign. Main dialog has no configuration tabs and shows some status information only together with the most
+                important functions (database update/reset, server start/stop and quit). The configuration dialogs are separate modal dialog windows
+                now. This makes it easier to add options to individual settings pages without affection overall layout. Also adding new pages is
+                easier and does not make the number of tabs even bigger. The individual dialogs are resizable and the positions and sizes are saved in
+                the settings which makes the dialogs configuration much better.
             </action>
             <action dev="mdescher" type="update">
                 Moved xercesImpl into boot class path to prevent rare (OS X specific?) problems when loading the parser implementation classes.

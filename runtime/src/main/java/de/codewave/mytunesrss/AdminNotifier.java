@@ -7,12 +7,13 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class AdminNotifier {
-    public void notifyDatabaseUpdate(long time, SystemInformation systemInformation) {
+    public void notifyDatabaseUpdate(long time, long missingItunesFiles, SystemInformation systemInformation) {
         if (MyTunesRss.CONFIG.isNotifyOnDatabaseUpdate() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
             String subject = "Database has been updated";
-            String body = "The database has been updated. Update took " + (time / 1000L) + " seconds.\n\n" + "Tracks: " +
-                    systemInformation.getTrackCount() + "\n" + "Albums: " + systemInformation.getAlbumCount() + "\n" + "Artists: " +
-                    systemInformation.getArtistCount() + "\n" + "Genres:" + systemInformation.getGenreCount();
+            String body = "The database has been updated. Update took " + (time / 1000L) + " seconds.\n\nTracks: " +
+                    systemInformation.getTrackCount() + "\nAlbums: " + systemInformation.getAlbumCount() + "\nArtists: " +
+                    systemInformation.getArtistCount() + "\nGenres:" + systemInformation.getGenreCount() +
+                    "\n\nMissing files from iTunes libraries: " + missingItunesFiles;
             sendAdminMail(subject, body);
         }
     }

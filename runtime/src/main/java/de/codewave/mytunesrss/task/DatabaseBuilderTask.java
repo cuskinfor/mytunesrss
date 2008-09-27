@@ -180,7 +180,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             }
             final long timeUpdateStart = System.currentTimeMillis();
             SystemInformation systemInformation = storeSession.executeQuery(new GetSystemInformationQuery());
-            runUpdate(systemInformation, storeSession);
+            long missingItunesFiles = runUpdate(systemInformation, storeSession);
             storeSession.executeStatement(new UpdateStatisticsStatement());
             storeSession.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
@@ -206,7 +206,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 LOG.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
             }
             AnonyStatUtils.sendDatabaseUpdated((System.currentTimeMillis() - timeUpdateStart), storeSession.executeQuery(new GetSystemInformationQuery()));
-            MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart), storeSession.executeQuery(new GetSystemInformationQuery()));
+            MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart), missingItunesFiles, storeSession.executeQuery(new GetSystemInformationQuery()));
             storeSession.commit();
         } catch (Exception e) {
             storeSession.rollback();
@@ -279,7 +279,17 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         }
     }
 
-    private void runUpdate(SystemInformation systemInformation, DataStoreSession storeSession) throws SQLException, IOException {
+
+    /**
+     *
+     * @param systemInformation
+     * @param storeSession
+     * @return Number of mising iTunes files.
+     * @throws SQLException
+     * @throws IOException
+     */
+    private long runUpdate(SystemInformation systemInformation, DataStoreSession storeSession) throws SQLException, IOException {
+        long missingItunesFiles = 0;
         long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
         Collection<String> itunesPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunes.name()));
         Collection<String> m3uPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.M3uFile.name()));
@@ -302,7 +312,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
                     event.setMessageKey("settings.databaseUpdateRunningItunes");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
-                    ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, trackIds, itunesPlaylistIds);
+                    missingItunesFiles += ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, trackIds, itunesPlaylistIds);
                 } else if (datasource.isDirectory()) {
                     myState = State.UpdatingTracksFromFolder;
                     MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
@@ -334,6 +344,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         if (LOG.isInfoEnabled()) {
             LOG.info("Obsolete tracks and playlists removed from database.");
         }
+        return missingItunesFiles;
     }
 
     private void removeObsoletePlaylists(DataStoreSession storeSession, Collection<String> databaseIds) throws SQLException {
