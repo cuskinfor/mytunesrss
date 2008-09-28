@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.PrintWriter;
@@ -86,6 +87,14 @@ public class AdminNotifier {
         if (MyTunesRss.CONFIG.isNotifyOnWebUpload() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
             String subject = "Web interface file upload";
             String body = "User " + user.getName() + " has uploaded the following files to your server:\n\n" + fileInfos;
+            sendAdminMail(subject, body);
+        }
+    }
+
+    public void notifyMissingFile(Track track) {
+        if (MyTunesRss.CONFIG.isNotifyOnMissingFile() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
+            String subject = "Missing track file";
+            String body = "The file \"" + track.getFile() + "\" was requested but is missing.";
             sendAdminMail(subject, body);
         }
     }

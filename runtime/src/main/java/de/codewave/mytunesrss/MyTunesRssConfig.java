@@ -119,6 +119,7 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnTranscodingFailure;
     private boolean myNotifyOnInternalError;
     private boolean myNotifyOnDatabaseUpdate;
+    private boolean myNotifyOnMissingFile;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -874,6 +875,14 @@ public class MyTunesRssConfig {
         myNotifyOnDatabaseUpdate = notifyOnDatabaseUpdate;
     }
 
+    public boolean isNotifyOnMissingFile() {
+        return myNotifyOnMissingFile;
+    }
+
+    public void setNotifyOnMissingFile(boolean notifyOnMissingFile) {
+        myNotifyOnMissingFile = notifyOnMissingFile;
+    }
+
     public void load() {
         LOG.info("Loading configuration.");
         try {
@@ -1009,6 +1018,7 @@ public class MyTunesRssConfig {
             setNotifyOnQuotaExceeded(JXPathUtils.getBooleanValue(settings, "admin-notify/quota-exceeded", false));
             setNotifyOnTranscodingFailure(JXPathUtils.getBooleanValue(settings, "admin-notify/transcoding-failure", false));
             setNotifyOnWebUpload(JXPathUtils.getBooleanValue(settings, "admin-notify/web-upload", false));
+            setNotifyOnMissingFile(JXPathUtils.getBooleanValue(settings, "admin-notify/missing-file", false));
             if (myFileTypes.isEmpty()) {
                 myFileTypes = FileType.getDefaults();
             }
@@ -1219,6 +1229,7 @@ public class MyTunesRssConfig {
             notify.appendChild(DOMUtils.createBooleanElement(settings, "quota-exceeded", isNotifyOnQuotaExceeded()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "transcoding-failure", isNotifyOnTranscodingFailure()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "web-upload", isNotifyOnWebUpload()));
+            notify.appendChild(DOMUtils.createBooleanElement(settings, "missing-file", isNotifyOnMissingFile()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

@@ -90,4 +90,13 @@ public class AdminNotifyConfig extends MyTunesRssMBean implements
         MyTunesRss.CONFIG.setNotifyOnWebUpload(notify);
         onChange();
     }
+
+    public boolean isNotifyOnMissingFile() {
+        return MyTunesRss.CONFIG.isNotifyOnMissingFile();
+    }
+
+    public void setNotifyOnMissingFile(boolean notify) {
+        MyTunesRss.CONFIG.setNotifyOnMissingFile(notify);
+        onChange();
+    }
 }

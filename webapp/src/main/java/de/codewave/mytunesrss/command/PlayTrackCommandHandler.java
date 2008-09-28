@@ -56,6 +56,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         if (LOG.isWarnEnabled()) {
                             LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");
                         }
+                        MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                     } else {
                         Transcoder transcoder = "false".equals(getRequestParameter("notranscode", "false")) ? Transcoder.createTranscoder(track,
@@ -91,11 +92,9 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             streamSender.sendHeadResponse(getRequest(), getResponse());
         } else {
             int bitrate = 0;
-            int fileSize = 0;
             int dataOffset = 0;
-            if (track != null && FileSupportUtils.isMp3(track.getFile())) {
+            if (track != null && track.getFile().exists() && FileSupportUtils.isMp3(track.getFile())) {
                 bitrate = Mp3Utils.getMp3Info(new FileInputStream(track.getFile())).getAvgBitrate();
-                fileSize = (int)track.getFile().length();
                 Id3Tag tag = null;
                 try {
                     tag = Mp3Utils.readId3Tag(track.getFile());

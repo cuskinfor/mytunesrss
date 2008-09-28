@@ -36,4 +36,8 @@ public interface AdminNotifyConfigMBean {
     boolean isNotifyOnDatabaseUpdate();
 
     void setNotifyOnDatabaseUpdate(boolean notify);
+
+    boolean isNotifyOnMissingFile();
+
+    void setNotifyOnMissingFile(boolean notify);
 }

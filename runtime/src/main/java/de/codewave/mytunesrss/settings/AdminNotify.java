@@ -19,6 +19,7 @@ public class AdminNotify implements SettingsForm {
     private JCheckBox myNotifyQuotaInput;
     private JCheckBox myNotifyTranscodingFailureInput;
     private JCheckBox myNotifyWebUploadInput;
+    private JCheckBox myNotifyMissingFileInput;
 
 
     public void init() {
@@ -35,6 +36,7 @@ public class AdminNotify implements SettingsForm {
         myNotifyQuotaInput.setSelected(MyTunesRss.CONFIG.isNotifyOnQuotaExceeded());
         myNotifyTranscodingFailureInput.setSelected(MyTunesRss.CONFIG.isNotifyOnTranscodingFailure());
         myNotifyWebUploadInput.setSelected(MyTunesRss.CONFIG.isNotifyOnWebUpload());
+        myNotifyMissingFileInput.setSelected(MyTunesRss.CONFIG.isNotifyOnMissingFile());
     }
 
     public String updateConfigFromGui() {
@@ -47,6 +49,7 @@ public class AdminNotify implements SettingsForm {
         MyTunesRss.CONFIG.setNotifyOnQuotaExceeded(myNotifyQuotaInput.isSelected());
         MyTunesRss.CONFIG.setNotifyOnTranscodingFailure(myNotifyTranscodingFailureInput.isSelected());
         MyTunesRss.CONFIG.setNotifyOnWebUpload(myNotifyWebUploadInput.isSelected());
+        MyTunesRss.CONFIG.setNotifyOnMissingFile(myNotifyMissingFileInput.isSelected());
         return null;
     }
 
