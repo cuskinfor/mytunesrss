@@ -13,7 +13,8 @@
             </action>
             <action dev="mdescher" type="add">
                 Support for GET requests with BODY parameter in JSON-RPC API calls. Without this we cannot make any use of the JSONP parameter for
-                cross-site-access.
+                cross-site-access. The sample application has been changed to use the JSONP parameter and can be started locally by simply opening
+                the "index.html" in a browser.
             </action>
             <action dev="mdescher" type="add">
                 Number of missing iTunes files in the database update admin notification.
