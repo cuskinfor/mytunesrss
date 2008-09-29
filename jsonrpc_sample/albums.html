@@ -6,6 +6,12 @@ var page;
 function loadAlbums() {
     top.mytunesrss("AlbumService.getAlbums", [null,null,null,page,firstItem,10], "showJson");
 }
+function albumPlaylist(name) {
+    top.mytunesrss("AlbumService.getTracks", [top.$A([name])], "createPlaylist")
+}
+function createPlaylist(json) {
+    top.createIphonePlaylist(document, json.result.map.results.list);
+}
 function showJson(json) {
     var html = "<table border=1>";
     var list = json.result.map.results.list;
@@ -17,7 +23,7 @@ function showJson(json) {
         } else {
             html += "&nbsp;";
         }
-        html += "</td><td valign=top>" + map.name + "</td><td valign=top>" + map.artist + "</td><td valign=top>" + map.trackCount + " tracks</td></tr>";
+        html += "</td><td valign=top onclick=\"albumPlaylist('" + map.name + "')\" style='cursor:pointer'>" + map.name + "</td><td valign=top>" + map.artist + "</td><td valign=top>" + map.trackCount + " tracks</td></tr>";
     }
     html += "</table>";
     document.all.albums.innerHTML = html;

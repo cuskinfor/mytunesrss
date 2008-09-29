@@ -7,13 +7,17 @@ import org.jabsorb.JSONRPCServlet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.remote.MyTunesRssJsonRpcServlet
  */
 public class MyTunesRssJsonRpcServlet extends JSONRPCServlet {
-    static {
+    @Override
+    public void init(ServletConfig servletConfig) throws ServletException {
+        super.init(servletConfig);
         JSONRPCBridge.getGlobalBridge().registerObject("AlbumService", new AlbumService());
         JSONRPCBridge.getGlobalBridge().registerObject("ArtistService", new ArtistService());
         JSONRPCBridge.getGlobalBridge().registerObject("LoginService", new LoginService());
@@ -22,6 +26,7 @@ public class MyTunesRssJsonRpcServlet extends JSONRPCServlet {
         JSONRPCBridge.getGlobalBridge().registerObject("TrackService", new TrackService());
         JSONRPCBridge.getGlobalBridge().registerObject("ServerService", new ServerService());
         JSONRPCBridge.getGlobalBridge().registerObject("GenreService", new GenreService());
+        JSONRPCBridge.getSerializer().setMarshallClassHints(false);
     }
 
     @Override

@@ -8,7 +8,7 @@
         function mytunesrss(func, parameterArray, callback) {
             var jsonString = $H({version : "1.1", method : func, id : "" + reqId, params : $A(parameterArray)}).toJSON();
             reqId++;
-            var srcString = "http://localhost:8080/jsonrpc" + sid + "?body=" + encodeURIComponent(jsonString) + "&jsonp=" +
+            var srcString = "http://codewave-test.dyn-o-saur.com:8080/jsonrpc" + sid + "?body=" + encodeURIComponent(jsonString) + "&jsonp=" +
                             encodeURIComponent("document.getElementById('content').contentWindow." + callback);
             var dyna = document.getElementById("dynascript");
             var scpt = document.createElement("script");
@@ -31,6 +31,29 @@
         function loadContent(page) {
             document.getElementById("content").setAttribute("src", page);
         }
+
+        function createIphonePlaylist(targetElement, tracks) {
+            var embedElement = document.createElement("embed");
+            embedElement.setAttribute("src", "movie_poster.png");
+            embedElement.setAttribute("href", tracks[0].map.playbackUrl);
+            embedElement.setAttribute("type", tracks[0].map.contentType);
+            embedElement.setAttribute("target", "myself");
+            for (var i = 1; i < tracks.length; i++) {
+                embedElement.setAttribute("qtnext" + i, "<" + tracks[i].map.playbackUrl + "> T<myself>");
+            }
+            embedElement.setAttribute("qtnext" + (tracks.length), "GOTO0");
+            while (targetElement.hasChildNodes()) {
+                targetElement.removeChild(targetElement.firstChild);
+            }
+            htmlElement = document.createElement("html");
+            headElement = document.createElement("head");
+            bodyElement = document.createElement("body");
+            htmlElement.appendChild(headElement);
+            htmlElement.appendChild(bodyElement);
+            bodyElement.appendChild(embedElement);
+            targetElement.appendChild(htmlElement);
+        }
+
     </script>
 </head>
 <body>

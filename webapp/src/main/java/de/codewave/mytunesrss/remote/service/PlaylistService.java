@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.remote.service;
 
+import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
@@ -72,6 +73,37 @@ public class PlaylistService {
                                                                                                   transcodingBitrate,
                                                                                                   transcodingSamplerate,
                                                                                                   transcodeOnTheFlyIfPossible));
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    /**
+     * Get an URL for retrieving the playlist for a complete album.
+     *
+     * @param albumName                   The album name.
+     * @param type                        The playlist type (M3u or Xspf).
+     * @param alacTranscoding             <code>true</code> for ALAC transcoding or <code>false</code> for no ALAC transcoding.
+     * @param faadTranscoding             <code>true</code> for AAC transcoding or <code>false</code> for no AAC transcoding.
+     * @param lameTranscoding             <code>true</code> for MP3 transcoding or <code>false</code> for no MP3 transcoding.
+     * @param transcodingBitrate          The target transcoding bit rate.
+     * @param transcodingSamplerate       The target transcoding sample rate.
+     * @param transcodeOnTheFlyIfPossible <code>true</code> to use transcoding on the fly if possible or <code>false</code> otherwise.
+     *
+     * @return The URL for the specified playlist.
+     */
+    public String getAlbumPlaylistUrl(String albumName, String type, boolean alacTranscoding, boolean faadTranscoding, boolean lameTranscoding,
+            int transcodingBitrate, int transcodingSamplerate, boolean transcodeOnTheFlyIfPossible) throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            return MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist,
+                                                     "album=" + MyTunesRssBase64Utils.encode(albumName) + "/type=" +
+                                                             StringUtils.capitalize(type.toLowerCase()) + "/tc=" +
+                                                             MyTunesRssWebUtils.createTranscodingParamValue(alacTranscoding,
+                                                                                                            faadTranscoding,
+                                                                                                            lameTranscoding,
+                                                                                                            transcodingBitrate,
+                                                                                                            transcodingSamplerate,
+                                                                                                            transcodeOnTheFlyIfPossible));
         }
         throw new IllegalAccessException("Unauthorized");
     }

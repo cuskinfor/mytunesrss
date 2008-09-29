@@ -61,7 +61,7 @@ public class WebConfig {
     public static final String MYTUNESRSS_COM_COOKIE = "mytunesrss_com_cookie";
 
     public static enum PlaylistType {
-        M3u(), Xspf(), QtPlugin();
+        M3u(), Xspf(), QtPlugin(), Qtplugin(), Iphone();
 
         public String getFileSuffix() {
             switch (this) {
@@ -70,6 +70,8 @@ public class WebConfig {
                 case Xspf:
                     return "xspf";
                 case QtPlugin:
+                case Qtplugin:
+                case Iphone:
                     return "html";
                 default:
                     throw new IllegalArgumentException("illegal playlist type: " + this.name());
@@ -83,6 +85,8 @@ public class WebConfig {
                 case Xspf:
                     return MyTunesRssResource.TemplateXspf;
                 case QtPlugin:
+                case Qtplugin:
+                case Iphone:
                     return MyTunesRssResource.TemplateQtPlugin;
                 default:
                     throw new IllegalArgumentException("illegal playlist type: " + this.name());
