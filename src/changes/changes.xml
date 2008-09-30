@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.6-EAP-5" date="2008-xx-xx" description="EAP-5">
+            <action dev="mdescher" type="update">
+                JSON RPC sample application is iPhone optimized now.
+            </action>
             <action dev="mdescher" type="add">
                 Admin notification when a missing file has been requested.
             </action>
