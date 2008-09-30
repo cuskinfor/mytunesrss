@@ -6,16 +6,30 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <description>MyTunesRSS web application</description>
     <display-name>MyTunesRSS</display-name>
+    <!-- Listener for command handler registry -->
     <listener>
         <description>Command handler registry listener</description>
         <display-name>CommandHandlerRegistry</display-name>
         <listener-class>de.codewave.mytunesrss.command.MyTunesRssCommandHandlerRegistry</listener-class>
     </listener>
+    <!-- Listener for session manager initialization -->
     <listener>
         <description>Session manager listener</description>
         <display-name>SessionManager</display-name>
         <listener-class>de.codewave.utils.servlet.SessionManager</listener-class>
     </listener>
+    <context-param>
+        <description>Session info class</description>
+        <param-name>sessionInfoClass</param-name>
+        <param-value>de.codewave.mytunesrss.server.MyTunesRssSessionInfo</param-value>
+    </context-param>
+    <!-- Listener for remote API session manager initialization -->
+    <listener>
+        <description>Remote API session manager</description>
+        <display-name>RemoteApiSessionManager</display-name>
+        <listener-class>de.codewave.mytunesrss.remote.RemoteApiSessionManager</listener-class>
+    </listener>
+    <!-- Filter for setting the request encoding to UTF-8 if none has been specified -->
     <filter>
         <description>Filter for setting the request encoding.</description>
         <display-name>EncodingFilter</display-name>
@@ -27,40 +41,58 @@
             <param-value>UTF-8</param-value>
         </init-param>
     </filter>
+    <!-- Filter for decrypting the path information -->
     <filter>
         <description>Filter for decrypting the path info.</description>
         <display-name>PathInfoDecryptionFilter</display-name>
         <filter-name>PathInfoDecryptionFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.servlet.PathInfoDecryptionFilter</filter-class>
     </filter>
+    <!-- Filter for adding the path information key/value pairs to the request parameters -->
     <filter>
         <description>Filter for adding path info key/value pairs to the request parameters.</description>
         <display-name>PathInfoRequestParameterFilter</display-name>
         <filter-name>PathInfoRequestParameterFilter</filter-name>
         <filter-class>de.codewave.utils.servlet.PathInfoRequestParameterFilter</filter-class>
     </filter>
+    <!-- Filter for trimming all request parameter values -->
     <filter>
         <description>Filter for trimming all parameter strings.</description>
         <display-name>ServletRequestParameterTrimmer</display-name>
         <filter-name>ServletRequestParameterTrimmer</filter-name>
         <filter-class>de.codewave.utils.servlet.ServletRequestParameterTrimmer</filter-class>
     </filter>
+    <!-- Session manager filter -->
     <filter>
         <filter-name>SessionManagerFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.servlet.MyTunesRssSessionManager</filter-class>
     </filter>
+    <!-- Filter for applying a transaction to each request -->
     <filter>
         <filter-name>TransactionFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.servlet.TransactionFilter</filter-class>
     </filter>
+    <!-- Filter for handling the JSONP parameter -->
     <filter>
         <filter-name>JsonpFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.remote.JsonpFilter</filter-class>
     </filter>
+    <!-- Filter which converts a GET request with the BODY parameter into a POST request -->
     <filter>
         <filter-name>PostViaGetFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.remote.PostViaGetFilter</filter-class>
     </filter>
+    <!-- Filter for compressing the response -->
+    <filter>
+        <filter-name>CompressingFilter</filter-name>
+        <filter-class>de.codewave.utils.servlet.GzipFilter</filter-class>
+        <!--filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class-->
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <!-- Filter mappings -->
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
         <servlet-name>CommandServlet</servlet-name>
@@ -76,6 +108,14 @@
     <filter-mapping>
         <filter-name>ServletRequestParameterTrimmer</filter-name>
         <servlet-name>CommandServlet</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>CompressingFilter</filter-name>
+        <servlet-name>JsonRpcServlet</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>CompressingFilter</filter-name>
+        <servlet-name>XmlRpcServlet</servlet-name>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SessionManagerFilter</filter-name>
@@ -101,11 +141,6 @@
         <filter-name>TransactionFilter</filter-name>
         <servlet-name>XmlRpcServlet</servlet-name>
     </filter-mapping>
-    <context-param>
-        <description>Session info class</description>
-        <param-name>sessionInfoClass</param-name>
-        <param-value>de.codewave.mytunesrss.server.MyTunesRssSessionInfo</param-value>
-    </context-param>
     <servlet>
         <description>Command dispatcher servlet</description>
         <display-name>CommandServlet</display-name>

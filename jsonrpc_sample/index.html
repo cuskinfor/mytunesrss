@@ -8,7 +8,7 @@
         function mytunesrss(func, parameterArray, callback) {
             var jsonString = $H({version : "1.1", method : func, id : "" + reqId, params : $A(parameterArray)}).toJSON();
             reqId++;
-            var srcString = "http://codewave-test.dyn-o-saur.com:8080/jsonrpc" + sid + "?body=" + encodeURIComponent(jsonString) + "&jsonp=" +
+            var srcString = "http://codewave.dyn-o-saur.com:8080/jsonrpc" + sid + "?body=" + encodeURIComponent(jsonString) + "&jsonp=" +
                             encodeURIComponent("document.getElementById('content').contentWindow." + callback);
             var dyna = document.getElementById("dynascript");
             var scpt = document.createElement("script");
