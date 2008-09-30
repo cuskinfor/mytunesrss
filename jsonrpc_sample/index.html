@@ -1,5 +1,6 @@
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <script src="prototype.js" type="text/javascript"></script>
     <script type="text/javascript">
         var sid = "";
@@ -14,10 +15,14 @@
             var scpt = document.createElement("script");
             scpt.setAttribute("type", "text/javascript");
             scpt.setAttribute("src", srcString);
-            while (dyna.hasChildNodes()) {
-                dyna.removeChild(dyna.firstChild);
-            }
+            truncate(dyna);
             dyna.appendChild(scpt);
+        }
+
+        function truncate(elem) {
+            while (elem.hasChildNodes()) {
+                elem.removeChild(elem.firstChild);
+            }
         }
 
         function setSessionId(id) {
@@ -42,9 +47,7 @@
                 embedElement.setAttribute("qtnext" + i, "<" + tracks[i].map.playbackUrl + "> T<myself>");
             }
             embedElement.setAttribute("qtnext" + (tracks.length), "GOTO0");
-            while (targetElement.hasChildNodes()) {
-                targetElement.removeChild(targetElement.firstChild);
-            }
+            truncate(targetElement);
             htmlElement = document.createElement("html");
             headElement = document.createElement("head");
             bodyElement = document.createElement("body");
