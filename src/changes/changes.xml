@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.6-EAP-6" date="2008-xx-xx" description="EAP-6">
+            <action dev="mdescher" type="add">
+                Remote API function LoginService.ping and ServerService.getServerInfo.
+            </action>
+        </release>
+
         <release version="3.6-EAP-5" date="2008-10-05" description="EAP-5">
             <action dev="mdescher" type="update">
                 JSON RPC sample application is iPhone optimized now.

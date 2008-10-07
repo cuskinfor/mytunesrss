@@ -40,4 +40,8 @@ public class LoginService {
             throw new IllegalAccessException("Unauthorized");
         }
     }
+
+    public boolean ping() throws IllegalAccessException {
+        return MyTunesRssRemoteEnv.getSession().getUser() != null;
+    }
 }

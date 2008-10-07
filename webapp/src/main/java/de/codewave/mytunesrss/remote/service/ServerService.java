@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.network.MulticastService;
@@ -41,6 +42,16 @@ public class ServerService {
             statistics.put("artists", sysInfo.getArtistCount());
             statistics.put("genres", sysInfo.getGenreCount());
             return statistics;
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    public Object getServerInfo() throws IllegalAccessException, SQLException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            Map<String, String> info = new HashMap<String, String>();
+            info.put("version", MyTunesRss.VERSION);
+            return info;
         }
         throw new IllegalAccessException("Unauthorized");
     }
