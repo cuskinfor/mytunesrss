@@ -1,7 +1,7 @@
 package de.codewave.mytunesrss.remote.service;
 
-import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.network.MulticastService;
@@ -48,16 +48,12 @@ public class ServerService {
     }
 
     public Object getServerInfo() throws IllegalAccessException, SQLException {
-        User user = MyTunesRssRemoteEnv.getSession().getUser();
-        if (user != null) {
-            Map<String, Object> info = new HashMap<String, Object>();
-            info.put("version", MyTunesRss.VERSION);
-            Version version = new Version(MyTunesRss.VERSION);
-            info.put("major", version.getMajor());
-            info.put("minor", version.getMinor());
-            info.put("revision", version.getBugfix());
-            return info;
-        }
-        throw new IllegalAccessException("Unauthorized");
+        Map<String, Object> info = new HashMap<String, Object>();
+        info.put("version", MyTunesRss.VERSION);
+        Version version = new Version(MyTunesRss.VERSION);
+        info.put("major", version.getMajor());
+        info.put("minor", version.getMinor());
+        info.put("revision", version.getBugfix());
+        return info;
     }
 }

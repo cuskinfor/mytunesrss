@@ -41,7 +41,7 @@ public class LoginService {
         }
     }
 
-    public boolean ping() throws IllegalAccessException {
-        return MyTunesRssRemoteEnv.getSession().getUser() != null;
+    public boolean ping() {
+        return MyTunesRssRemoteEnv.getSession() != null && MyTunesRssRemoteEnv.getSession().getUser() != null;
     }
 }
