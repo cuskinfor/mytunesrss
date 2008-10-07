@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.network.RemoteServer;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
+import de.codewave.utils.Version;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -49,8 +50,12 @@ public class ServerService {
     public Object getServerInfo() throws IllegalAccessException, SQLException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-            Map<String, String> info = new HashMap<String, String>();
+            Map<String, Object> info = new HashMap<String, Object>();
             info.put("version", MyTunesRss.VERSION);
+            Version version = new Version(MyTunesRss.VERSION);
+            info.put("major", version.getMajor());
+            info.put("minor", version.getMinor());
+            info.put("revision", version.getBugfix());
             return info;
         }
         throw new IllegalAccessException("Unauthorized");
