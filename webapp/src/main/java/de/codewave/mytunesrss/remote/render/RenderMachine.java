@@ -1,10 +1,7 @@
 package de.codewave.mytunesrss.remote.render;
 
 import de.codewave.mytunesrss.remote.service.QueryResultWrapper;
-import de.codewave.mytunesrss.datastore.statement.Playlist;
-import de.codewave.mytunesrss.datastore.statement.Album;
-import de.codewave.mytunesrss.datastore.statement.Artist;
-import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.network.RemoteServer;
 import de.codewave.utils.sql.DataStoreQuery;
 
@@ -45,6 +42,7 @@ public class RenderMachine {
         addRenderer(QueryResultWrapper.class, new QueryResultWrapperRenderer());
         addRenderer(Playlist.class, new PlaylistRenderer());
         addRenderer(Album.class, new AlbumRenderer());
+        addRenderer(Genre.class, new GenreRenderer());
         addRenderer(Artist.class, new ArtistRenderer());
         addRenderer(Track.class, new TrackRenderer());
         addRenderer(RemoteServer.class, new RemoteServerRenderer());
