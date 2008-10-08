@@ -535,7 +535,7 @@
         <sql>DELETE FROM genre</sql>
         <sql>
             INSERT INTO genre (name, first_char, track_count, album_count, artist_count)
-            SELECT MAX(genre), SUBSTRING(MAX(genre) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(LOWER(album))), COUNT(DISTINCT(LOWER(artist))) FROM track WHERE genre IS NOT NULL GROUP BY LOWER(genre)
+            SELECT MAX(genre), SUBSTRING(LOWER(MAX(genre)) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(LOWER(album))), COUNT(DISTINCT(LOWER(artist))) FROM track WHERE genre IS NOT NULL GROUP BY LOWER(genre)
         </sql>
     </statement>
 

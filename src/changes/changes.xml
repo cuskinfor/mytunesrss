@@ -6,6 +6,12 @@
     <body>
 
         <release version="3.5.3" date="2008-09-21" description="3.5.3">
+            <action dev="mdescher" type="fix">
+                Genre first characters were not lower case in database.
+            </action>
+        </release>
+
+        <release version="3.5.3" date="2008-09-21" description="3.5.3">
             <action dev="mdescher" type="add">
                 Reasonable web config defaults for IPhone and PSP.
             </action>
