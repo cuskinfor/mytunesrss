@@ -23,15 +23,16 @@ public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ge
     private String myRestrictedPlaylistId;
 
     public FindGenreQuery(User user, int index) {
-       myIndex = index;
+        myIndex = index;
         myRestrictedPlaylistId = user.getPlaylistId();
     }
 
     public QueryResult<Genre> execute(Connection connection) throws SQLException {
-      SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenres" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted"));
-      statement.setInt("index", myIndex);
-      statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
-      return execute(statement, new GenreResultBuilder());
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection,
+                                                                   "findGenres" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted"));
+        statement.setInt("index", myIndex);
+        statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
+        return execute(statement, new GenreResultBuilder());
     }
 
     public static class GenreResultBuilder implements ResultBuilder<Genre> {

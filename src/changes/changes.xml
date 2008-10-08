@@ -9,6 +9,9 @@
 
         <release version="3.6-EAP-6" date="2008-xx-xx" description="EAP-6">
             <action dev="mdescher" type="fix">
+                Genre first characters were not lower case in database.
+            </action>
+            <action dev="mdescher" type="fix">
                 Added missing GenreRenderer for GenreService method calls.
             </action>
             <action dev="mdescher" type="add">
