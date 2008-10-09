@@ -95,51 +95,51 @@
     <!-- Filter mappings -->
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <servlet-name>CommandServlet</servlet-name>
+        <url-pattern>/mytunesrss/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>PathInfoDecryptionFilter</filter-name>
-        <servlet-name>CommandServlet</servlet-name>
+        <url-pattern>/mytunesrss/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>PathInfoRequestParameterFilter</filter-name>
-        <servlet-name>CommandServlet</servlet-name>
+        <url-pattern>/mytunesrss/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>ServletRequestParameterTrimmer</filter-name>
-        <servlet-name>CommandServlet</servlet-name>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>CompressingFilter</filter-name>
-        <servlet-name>JsonRpcServlet</servlet-name>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>CompressingFilter</filter-name>
-        <servlet-name>XmlRpcServlet</servlet-name>
+        <url-pattern>/mytunesrss/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SessionManagerFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>TransactionFilter</filter-name>
-        <servlet-name>CommandServlet</servlet-name>
+        <filter-name>CompressingFilter</filter-name>
+        <url-pattern>/jsonrpc/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>CompressingFilter</filter-name>
+        <url-pattern>/xmlrpc/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>PostViaGetFilter</filter-name>
-        <servlet-name>JsonRpcServlet</servlet-name>
+        <url-pattern>/jsonrpc/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>JsonpFilter</filter-name>
-        <servlet-name>JsonRpcServlet</servlet-name>
+        <url-pattern>/jsonrpc/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
-        <servlet-name>JsonRpcServlet</servlet-name>
+        <url-pattern>/mytunesrss/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
-        <servlet-name>XmlRpcServlet</servlet-name>
+        <url-pattern>/jsonrpc/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>TransactionFilter</filter-name>
+        <url-pattern>/xmlrpc/*</url-pattern>
     </filter-mapping>
     <servlet>
         <description>Command dispatcher servlet</description>
@@ -186,14 +186,6 @@
     <servlet-mapping>
         <servlet-name>ImageServlet</servlet-name>
         <url-pattern>/images/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>XmlRpcServlet</servlet-name>
-        <url-pattern>/xmlrpc</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>JsonRpcServlet</servlet-name>
-        <url-pattern>/jsonrpc</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>XmlRpcServlet</servlet-name>
