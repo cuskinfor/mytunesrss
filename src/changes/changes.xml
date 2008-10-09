@@ -12,6 +12,9 @@
                 Added transcoding service, LoginService.getUserInfo and LoginService.saveUserSettings.
             </action>
             <action dev="mdescher" type="fix">
+                Fixed servlet filter order.
+            </action>
+            <action dev="mdescher" type="fix">
                 Genre first characters were not lower case in database.
             </action>
             <action dev="mdescher" type="fix">
