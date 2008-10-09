@@ -9,7 +9,7 @@
 
         <release version="3.6-EAP-6" date="2008-xx-xx" description="EAP-6">
             <action dev="mdescher" type="add">
-                Transcoding service.
+                Added transcoding service, LoginService.getUserInfo and LoginService.saveUserSettings.
             </action>
             <action dev="mdescher" type="fix">
                 Genre first characters were not lower case in database.
