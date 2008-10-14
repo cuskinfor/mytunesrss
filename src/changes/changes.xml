@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.6-EAP-7" date="2008-xx-xx" description="EAP-7">
+            <action dev="mdescher" type="update">
+                Removed (useless) "map" and "list" elements in JSON RPC responses.
+            </action>
+        </release>
+
         <release version="3.6-EAP-6" date="2008-10-11" description="EAP-6">
             <action dev="mdescher" type="add">
                 Added transcoding service, LoginService.getUserInfo and LoginService.saveUserSettings.
