@@ -8,6 +8,10 @@
     <body>
 
         <release version="3.6-EAP-7" date="2008-xx-xx" description="EAP-7">
+            <action dev="mdescher" type="fix">
+                PlaylistService: accept NULL for playlist sort order to have original order and
+                also added a nice error message if the specified order parameter is invalid.
+            </action>
             <action dev="mdescher" type="update">
                 Removed (useless) "map" and "list" elements in JSON RPC responses.
             </action>
