@@ -9,6 +9,8 @@ import de.codewave.mytunesrss.servlet.TransactionFilter;
 
 import java.sql.SQLException;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Service for playlist retrieval and management.
  */
@@ -61,10 +63,17 @@ public class PlaylistService {
     public Object getTracks(String playlistId, String sortOrder) throws SQLException, IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
+            FindPlaylistTracksQuery.SortOrder sortOrderEnum = null;
+            if (StringUtils.isNotBlank(sortOrder)) {
+                try {
+                    sortOrderEnum = FindPlaylistTracksQuery.SortOrder.valueOf(sortOrder);
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Invalid sort order \"" + sortOrder + "\" specified.");
+                }
+            }
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter
                     .getTransaction().executeQuery(new FindPlaylistTracksQuery(user,
-                                                                               playlistId,
-                                                                               FindPlaylistTracksQuery.SortOrder.valueOf(sortOrder))), 0, -1));
+                                                                               playlistId, sortOrderEnum)), 0, -1));
         }
         throw new IllegalAccessException("Unauthorized");
     }
