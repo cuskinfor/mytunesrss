@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.6-EAP-7" date="2008-xx-xx" description="EAP-7">
+        <release version="3.6-EAP-7" date="2008-10-19" description="EAP-7">
             <action dev="mdescher" type="fix">
                 PlaylistService: accept NULL for playlist sort order to have original order and
                 also added a nice error message if the specified order parameter is invalid.
