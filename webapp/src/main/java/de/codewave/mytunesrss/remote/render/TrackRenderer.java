@@ -30,6 +30,7 @@ public class TrackRenderer implements Renderer<Map<String, Object>, Track> {
         result.put("tsUpdated", track.getTsUpdated());
         result.put("playbackUrl", MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.PlayTrack, "track=" + track.getId()));
         result.put("downloadUrl", MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.DownloadTrack, "track=" + track.getId()));
+        result.put("imageUrl", track.getImageCount() > 0 ? MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.ShowTrackImage, "track=" + track.getId()) : null);
         return result;
     }
 }
