@@ -7,9 +7,10 @@
 
     <body>
 
-        <release version="3.6-EAP-8" date="2008-xx-xx" description="EAP-8">
+        <release version="3.6-EAP-8" date="2008-10-24" description="EAP-8">
             <action dev="mdescher" type="add">
                 TrackService: "getTracks" and "search" added.
+                TrackRenderer: added "imageUrl" attribute.
             </action>
         </release>
 
