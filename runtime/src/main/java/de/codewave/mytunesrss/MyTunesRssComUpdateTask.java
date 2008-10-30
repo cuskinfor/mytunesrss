@@ -7,6 +7,7 @@ package de.codewave.mytunesrss;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,14 @@ public class MyTunesRssComUpdateTask extends TimerTask {
         PostMethod postMethod = new PostMethod(System.getProperty("MyTunesRSS.mytunesrsscomUrl", MYTUNESRSSCOM_URL));
         postMethod.addParameter("user", myUsername);
         postMethod.addParameter("pass", base64Hash);
-        postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getPort()));
+        if (StringUtils.isNotBlank(MyTunesRss.CONFIG.getTomcatProxyHost())) {
+            postMethod.addParameter("host", MyTunesRss.CONFIG.getTomcatProxyHost());
+        }
+        if (MyTunesRss.CONFIG.getTomcatProxyPort() > 0 && MyTunesRss.CONFIG.getTomcatProxyPort() < 65536) {
+            postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getTomcatProxyPort()));
+        } else {
+            postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getPort()));
+        }
         postMethod.addParameter("context", MyTunesRss.CONFIG.getWebappContext());
         HttpClient client = MyTunesRssUtils.createHttpClient();
         try {
