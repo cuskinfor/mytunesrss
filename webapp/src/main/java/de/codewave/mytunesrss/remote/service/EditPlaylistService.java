@@ -8,8 +8,6 @@ import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -18,9 +16,8 @@ import java.util.*;
  * Service for playlist retrieval and management.
  */
 public class EditPlaylistService {
-    private static final Logger LOG = LoggerFactory.getLogger(PlaylistService.class);
-    private static final String KEY_EDIT_PLAYLIST = "editPlaylist";
-    private static final String KEY_EDIT_PLAYLIST_TRACKS = "editPlaylistTracks";
+    private static final String KEY_EDIT_PLAYLIST = "playlist";
+    private static final String KEY_EDIT_PLAYLIST_TRACKS = "playlistContent";
 
     /**
      * Start editing a playlist. If an ID is specified it has be to the ID of a MyTunesRSS playlist owned by the current user.
@@ -80,8 +77,8 @@ public class EditPlaylistService {
      *
      * @return The playlist and list of tracks after adding the new tracks.
      *
-     * @throws IllegalAccessException
-     * @throws java.sql.SQLException
+     * @throws IllegalAccessException Unauthorized access.
+     * @throws java.sql.SQLException  Any database related exception.
      */
     public Object addTracks(String[] trackIds) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
@@ -99,8 +96,8 @@ public class EditPlaylistService {
      *
      * @return The render result.
      *
-     * @throws SQLException
-     * @throws IllegalAccessException
+     * @throws SQLException           Any database related exception.
+     * @throws IllegalAccessException Unauthorized access.
      */
     private Object addTracks(DataStoreQuery<DataStoreQuery.QueryResult<Track>> query) throws SQLException, IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
@@ -127,7 +124,8 @@ public class EditPlaylistService {
      *
      * @return The playlist and list of tracks after adding the new tracks from the albums.
      *
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException Unauthorized access.
+     * @throws java.sql.SQLException  Any database related exception.
      */
     public Object addAlbums(String[] albums) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
@@ -145,7 +143,8 @@ public class EditPlaylistService {
      *
      * @return The playlist and list of tracks after adding the new tracks from the artists.
      *
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException Unauthorized access.
+     * @throws java.sql.SQLException  Any database related exception.
      */
     public Object addArtists(String[] artists) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
@@ -163,7 +162,8 @@ public class EditPlaylistService {
      *
      * @return The playlist and list of tracks after adding the new tracks from the genres.
      *
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException Unauthorized access.
+     * @throws java.sql.SQLException  Any database related exception.
      */
     public Object addGenres(String[] genres) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
@@ -181,7 +181,7 @@ public class EditPlaylistService {
      *
      * @return The playlist and list of tracks after removing the tracks.
      *
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException Unauthorized access.
      */
     public Object removeTracks(String[] trackIds) throws IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
@@ -213,7 +213,8 @@ public class EditPlaylistService {
      *
      * @return The playlist and list of tracks after removing the tracks of the albums.
      *
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException Unauthorized access.
+     * @throws java.sql.SQLException  Any database related exception.
      */
     public Object removeAlbums(String[] albums) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
@@ -231,7 +232,8 @@ public class EditPlaylistService {
      *
      * @return The playlist and list of tracks after re,moving the tracks of the artists.
      *
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException Unauthorized access.
+     * @throws java.sql.SQLException  Any database related exception.
      */
     public Object removeArtists(String[] artists) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
@@ -249,7 +251,8 @@ public class EditPlaylistService {
      *
      * @return The playlist and list of tracks after removing the tracks of the genres.
      *
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException Unauthorized access.
+     * @throws java.sql.SQLException  Any database related exception.
      */
     public Object removeGenres(String[] genres) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
@@ -267,7 +270,8 @@ public class EditPlaylistService {
      *
      * @return The render result.
      *
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException Unauthorized access.
+     * @throws java.sql.SQLException  Any database related exception.
      */
     private Object removeTracks(DataStoreQuery<DataStoreQuery.QueryResult<Track>> query) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
@@ -293,9 +297,9 @@ public class EditPlaylistService {
     /**
      * Cancel editing the playlist.
      *
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException Unauthorized access.
      */
-    public Object cancelEditPlaylist() throws IllegalAccessException {
+    public void cancelEditPlaylist() throws IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
@@ -306,7 +310,6 @@ public class EditPlaylistService {
             } else {
                 throw new IllegalStateException("Not currently editing a playlist.");
             }
-            return null;
         }
         throw new IllegalAccessException("Unauthorized");
     }
@@ -317,9 +320,10 @@ public class EditPlaylistService {
      * @param playlistName Name of the playlist.
      * @param userPrivate  <code>true</code> for a private playlist or <code>false</code> for a public playlist.
      *
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException Unauthorized access.
+     * @throws java.sql.SQLException  Any database related exception.
      */
-    public Object savePlaylist(String playlistName, boolean userPrivate) throws IllegalAccessException, SQLException {
+    public void savePlaylist(String playlistName, boolean userPrivate) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
@@ -341,7 +345,6 @@ public class EditPlaylistService {
                 TransactionFilter.getTransaction().executeStatement(statement);
                 session.removeAttribute(KEY_EDIT_PLAYLIST);
                 session.removeAttribute(KEY_EDIT_PLAYLIST_TRACKS);
-                return null;
             } else {
                 throw new IllegalStateException("Not currently editing a playlist.");
             }
@@ -354,7 +357,7 @@ public class EditPlaylistService {
      *
      * @return The playlist and the list of tracks.
      *
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException Unauthorized access.
      */
     public Object getPlaylist() throws IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
@@ -378,8 +381,8 @@ public class EditPlaylistService {
      *
      * @return The number of playlists removed.
      *
-     * @throws SQLException
-     * @throws IllegalAccessException
+     * @throws SQLException           Any database related exception.
+     * @throws IllegalAccessException Unauthorized access.
      */
     public Object removePlaylists(String[] playlistIds) throws SQLException, IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
@@ -399,5 +402,43 @@ public class EditPlaylistService {
             return count;
         }
         throw new IllegalAccessException("Unauthorized");
+    }
+
+    /**
+     * Move tracks in the playlist to another position.
+     *
+     * @param first  Index of first track to move (0-based).
+     * @param count  Number of tracks to move.
+     * @param offset Offset to move, can be positive to move downwards or negative to move upwards.
+     */
+    public void moveTracks(int first, int count, int offset) {
+        Session session = MyTunesRssRemoteEnv.getSession();
+        User user = session.getUser();
+        if (user != null) {
+            Playlist playlist = (Playlist)session.getAttribute(KEY_EDIT_PLAYLIST);
+            if (playlist != null) {
+                List<Track> playlistTracks = (List<Track>)session.getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
+                for (int i = 0; i < Math.abs(offset); i++) {
+                    for (int k = 0; k < count; k++) {
+                        int swapLeft;
+                        if (offset < 0) {
+                            swapLeft = first + k - 1;
+                        } else {
+                            swapLeft = first + count - k;
+                        }
+                        if (swapLeft >= 0 && swapLeft + 1 < playlistTracks.size()) {
+                            Track tempTrack = playlistTracks.get(swapLeft);
+                            playlistTracks.set(swapLeft, playlistTracks.get(swapLeft + 1));
+                            playlistTracks.set(swapLeft + 1, tempTrack);
+                        } else {
+                            break;
+                        }
+                    }
+                    first += Math.signum(offset);
+                }
+            }
+        } else {
+            throw new IllegalStateException("Not currently editing a playlist.");
+        }
     }
 }

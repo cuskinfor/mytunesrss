@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.6-EAP-9" date="2008-xx-xx" description="EAP-9">
+            <action dev="mdescher" type="add">
+                EditPlaylistService: "moveTracks" added.
+            </action>
+        </release>
+
         <release version="3.6-EAP-8" date="2008-10-24" description="EAP-8">
             <action dev="mdescher" type="add">
                 TrackService: "getTracks" and "search" added.
