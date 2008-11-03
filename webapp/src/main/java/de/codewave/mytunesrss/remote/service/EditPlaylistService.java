@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.remote.service;
 
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
@@ -417,25 +418,7 @@ public class EditPlaylistService {
         if (user != null) {
             Playlist playlist = (Playlist)session.getAttribute(KEY_EDIT_PLAYLIST);
             if (playlist != null) {
-                List<Track> playlistTracks = (List<Track>)session.getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
-                for (int i = 0; i < Math.abs(offset); i++) {
-                    for (int k = 0; k < count; k++) {
-                        int swapLeft;
-                        if (offset < 0) {
-                            swapLeft = first + k - 1;
-                        } else {
-                            swapLeft = first + count - k;
-                        }
-                        if (swapLeft >= 0 && swapLeft + 1 < playlistTracks.size()) {
-                            Track tempTrack = playlistTracks.get(swapLeft);
-                            playlistTracks.set(swapLeft, playlistTracks.get(swapLeft + 1));
-                            playlistTracks.set(swapLeft + 1, tempTrack);
-                        } else {
-                            break;
-                        }
-                    }
-                    first += Math.signum(offset);
-                }
+                MyTunesRssWebUtils.movePlaylistTracks((List<Track>)session.getAttribute(KEY_EDIT_PLAYLIST_TRACKS), first, count, offset);
             }
         } else {
             throw new IllegalStateException("Not currently editing a playlist.");
