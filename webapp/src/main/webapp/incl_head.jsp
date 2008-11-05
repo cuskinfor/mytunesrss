@@ -8,3 +8,4 @@
 <![endif]-->
 <link rel="shortcut icon" href="${appUrl}/images/favicon.ico" type="image/x-icon" />
 <script src="${appUrl}/js/functions.js?ts=${sessionCreationTime}" type="text/javascript"></script>
+<script src="${appUrl}/js/prototype.js?ts=${sessionCreationTime}" type="text/javascript"></script>

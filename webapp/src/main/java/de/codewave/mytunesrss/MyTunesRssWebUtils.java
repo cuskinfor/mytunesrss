@@ -1,8 +1,8 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.servlet.WebConfig;
-import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.servlet.ServletUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
@@ -161,9 +161,10 @@ public class MyTunesRssWebUtils {
     /**
      * Move tracks in the playlist to another position.
      *
-     * @param first  Index of first track to move (0-based).
-     * @param count  Number of tracks to move.
-     * @param offset Offset to move, can be positive to move downwards or negative to move upwards.
+     * @param playlistTracks List of tracks.
+     * @param first          Index of first track to move (0-based).
+     * @param count          Number of tracks to move.
+     * @param offset         Offset to move, can be positive to move downwards or negative to move upwards.
      */
     public static void movePlaylistTracks(List<Track> playlistTracks, int first, int count, int offset) {
         for (int i = 0; i < Math.abs(offset); i++) {
