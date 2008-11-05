@@ -20,7 +20,7 @@
         <repository>
             <id>codewave-nexus</id>
             <name>Codewave Maven Repository</name>
-            <url>http://codewave.dyn-o-saur.com:20111/nexus/content/groups/public</url>
+            <url>http://nexus.codewave.dyn-o-saur.com/nexus/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
