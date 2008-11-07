@@ -42,7 +42,7 @@ public class EditPlaylistService {
                 List<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(query).getResults();
                 if (queryResult != null && queryResult.size() == 1) {
                     playlist = queryResult.get(0);
-                    tracks = new LinkedHashSet<Track>(TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(user,
+                    tracks = new ArrayList<Track>(TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(user,
                                                                                                                                   playlistId,
                                                                                                                                   null)).getResults());
                 } else {

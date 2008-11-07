@@ -173,7 +173,7 @@ public class MyTunesRssWebUtils {
                 if (offset < 0) {
                     swapLeft = first + k - 1;
                 } else {
-                    swapLeft = first + count - k;
+                    swapLeft = first + count - k - 1;
                 }
                 if (swapLeft >= 0 && swapLeft + 1 < playlistTracks.size()) {
                     Track tempTrack = playlistTracks.get(swapLeft);

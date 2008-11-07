@@ -10,7 +10,7 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 
 /**
  * de.codewave.mytunesrss.command.StartNewPlaylistCommandHandler
@@ -21,7 +21,7 @@ public class StartNewPlaylistCommandHandler extends MyTunesRssCommandHandler {
         if (isSessionAuthorized() && getAuthUser().isCreatePlaylists()) {
             getStates().put("addToPlaylistMode", Boolean.TRUE);
             getSession().setAttribute("playlist", new Playlist());
-            getSession().setAttribute("playlistContent", new LinkedHashSet<Track>());
+            getSession().setAttribute("playlistContent", new ArrayList<Track>());
             String backUrl = MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null));
             if (StringUtils.isNotEmpty(backUrl)) {
                 redirect(backUrl);

@@ -11,7 +11,8 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.lang.StringUtils;
 
 import java.sql.SQLException;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.command.LoadPlaylistCommandHandler
@@ -21,7 +22,9 @@ public abstract class LoadPlaylistCommandHandler extends MyTunesRssCommandHandle
         String playlistId = getRequestParameter("playlist", null);
         if (StringUtils.isNotEmpty(playlistId)) {
             Playlist playlist = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, playlistId, null, false, false)).nextResult();
-            LinkedHashSet<Track> tracks = new LinkedHashSet<Track>(getTransaction().executeQuery(new FindPlaylistTracksQuery(getAuthUser(), playlistId, null)).getResults());
+            List<Track> tracks = new ArrayList<Track>(getTransaction().executeQuery(new FindPlaylistTracksQuery(getAuthUser(),
+                                                                                                                playlistId,
+                                                                                                                null)).getResults());
             getSession().setAttribute("playlist", playlist);
             getSession().setAttribute("playlistContent", tracks);
         } else {

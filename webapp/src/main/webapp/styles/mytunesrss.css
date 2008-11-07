@@ -791,3 +791,7 @@ div.dialogButton {
     margin-top:20px;
     margin-left:10px;
 }
+
+td.editPlaylistMoveUp {
+    padding-right:0;
+}

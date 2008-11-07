@@ -18,19 +18,6 @@
 
     <jsp:include page="incl_head.jsp" />
 
-    <script type="text/javascript">
-        function moveUp(index) {
-            new Ajax.Request('${servletUrl}/moveTracks/${auth}/<mt:encrypt key="${encryptionKey}">offset=${param.index}</mt:encrypt>&index=' +
-                             index, {
-                onSuccess : function() {
-                    var temp = $('tracks_' + index).innerHTML;
-                    $('tracks_' + index).update($('tracks_' + (index - 1)).innerHTML);
-                    $('tracks_' + (index - 1)).update(temp);
-                }
-            });
-        }
-    </script>
-
 </head>
 
 <body>
@@ -67,10 +54,10 @@
         <input type="hidden" name="backUrl" value="${param.backUrl}" /> <input type="hidden" name="allowEditEmpty" value="${param.allowEditEmpty}" />
         <table cellspacing="0">
             <tr>
-                <th class="active" colspan="4"><fmt:message key="playlistSettings" /></th>
+                <th class="active" colspan="6"><fmt:message key="playlistSettings" /></th>
             </tr>
             <tr>
-                <td class="even" colspan="4">
+                <td class="even" colspan="6">
                     <input type="checkbox"
                            name="user_private"
                            value="true"
@@ -79,7 +66,7 @@
             </tr>
             <c:if test="${!states.addToPlaylistMode}">
                 <tr>
-                    <td colspan="4" style="padding:0">
+                    <td colspan="6" style="padding:0">
                         <c:set var="displayFilterUrl"
                                scope="request">${servletUrl}/editPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}
                         </c:set> <c:set var="filterTypeActive" scope="request" value="true" /> <c:set var="filterProtectionActive"
@@ -92,15 +79,22 @@
             <tr>
                 <c:choose> <c:when test="${!empty tracks}">
                     <th class="check"><input type="checkbox" name="none" value="none" onclick="selectAll('item', '${trackIds}', this)" /></th>
+                    <th class="active" colspan="2">&nbsp;</th>
                     <th class="active" colspan="3"><fmt:message key="playlistContent" /></th>
                 </c:when> <c:otherwise>
-                    <th class="active" colspan="4"><fmt:message key="playlistContent" /></th>
+                    <th class="active" colspan="6"><fmt:message key="playlistContent" /></th>
                 </c:otherwise> </c:choose>
             </tr>
             <c:forEach items="${tracks}" var="track" varStatus="trackLoop">
                 <tr class="${cwfn:choose(trackLoop.index % 2 == 0, 'even', 'odd')}">
                     <td class="check">
                         <input type="checkbox" id="item${track.id}" name="track" value="${track.id}" />
+                    </td>
+                    <td class="editPlaylistMoveUp">
+                        <a href="${servletUrl}/editPlaylistMove/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}/move=-1/pageIndex=${trackLoop.index}/allowEditEmpty=${param.allowEditEmpty}/backUrl=${param.backUrl}</mt:encrypt>"><img src="${appUrl}/images/move_up${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="U"/></a>
+                    </td>
+                    <td class="editPlaylistMoveDown">
+                        <a href="${servletUrl}/editPlaylistMove/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}/move=1/pageIndex=${trackLoop.index}/allowEditEmpty=${param.allowEditEmpty}/backUrl=${param.backUrl}</mt:encrypt>"><img src="${appUrl}/images/move_down${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="D"/></a>
                     </td>
                     <td>
                         <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif"
@@ -122,7 +116,7 @@
             </c:forEach>
         </table>
         <c:if test="${!empty pager}"> <c:set var="pagerCommand"
-                                             scope="request">${servletUrl}/editPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}</mt:encrypt>/index={index}/backUrl=${param.backUrl}
+                                             scope="request">${servletUrl}/editPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/backUrl=${param.backUrl}</mt:encrypt>/index={index}
         </c:set> <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
             <jsp:include page="incl_bottomPager.jsp" />
         </c:if>
