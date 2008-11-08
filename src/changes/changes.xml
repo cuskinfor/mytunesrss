@@ -9,7 +9,8 @@
 
         <release version="3.6-EAP-9" date="2008-xx-xx" description="EAP-9">
             <action dev="mdescher" type="update">
-                Several fixes and improvements for HTTP/HTTPS handling.
+                Several fixes and improvements for HTTP/HTTPS handling. MyTunesRSS honours proxy settings when sending data to mytunesrss.com. Proxy
+                server protocol (http/https) can be specified (e.g. when using Apache as SSL offloader).
             </action>
             <action dev="mdescher" type="add">
                 Editable playlist order.
@@ -21,15 +22,14 @@
 
         <release version="3.6-EAP-8" date="2008-10-24" description="EAP-8">
             <action dev="mdescher" type="add">
-                TrackService: "getTracks" and "search" added.
-                TrackRenderer: added "imageUrl" attribute.
+                TrackService: "getTracks" and "search" added. TrackRenderer: added "imageUrl" attribute.
             </action>
         </release>
 
         <release version="3.6-EAP-7" date="2008-10-19" description="EAP-7">
             <action dev="mdescher" type="fix">
-                PlaylistService: accept NULL for playlist sort order to have original order and
-                also added a nice error message if the specified order parameter is invalid.
+                PlaylistService: accept NULL for playlist sort order to have original order and also added a nice error message if the specified order
+                parameter is invalid.
             </action>
             <action dev="mdescher" type="update">
                 Removed (useless) "map" and "list" elements in JSON RPC responses.
@@ -63,8 +63,8 @@
             </action>
             <action dev="mdescher" type="add">
                 Support for GET requests with BODY parameter in JSON-RPC API calls. Without this we cannot make any use of the JSONP parameter for
-                cross-site-access. The sample application has been changed to use the JSONP parameter and can be started locally by simply opening
-                the "index.html" in a browser.
+                cross-site-access. The sample application has been changed to use the JSONP parameter and can be started locally by simply opening the
+                "index.html" in a browser.
             </action>
             <action dev="mdescher" type="add">
                 Number of missing iTunes files in the database update admin notification.
