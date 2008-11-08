@@ -60,6 +60,10 @@ public interface ServerConfigMBean {
 
     void setSslKeystoreKeyAlias(String alias);
 
+    String getTomcatProxyScheme();
+
+    void setTomcatProxyScheme(String scheme);
+
     String getTomcatProxyHost();
 
     void setTomcatProxyHost(String host);
@@ -67,6 +71,10 @@ public interface ServerConfigMBean {
     int getTomcatProxyPort();
 
     void setTomcatProxyPort(int port);
+
+    String getTomcatSslProxyScheme();
+
+    void setTomcatSslProxyScheme(String scheme);
 
     String getTomcatSslProxyHost();
 

@@ -141,6 +141,15 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
         onChange();
     }
 
+    public String getTomcatProxyScheme() {
+        return MyTunesRss.CONFIG.getTomcatProxyScheme();
+    }
+
+    public void setTomcatProxyScheme(String scheme) {
+        MyTunesRss.CONFIG.setTomcatProxyScheme(scheme);
+        onChange();
+    }
+
     public void setSslKeystorePassphrase(String passphrase) {
         MyTunesRss.CONFIG.setSslKeystorePass(passphrase);
         onChange();
@@ -173,6 +182,15 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
 
     public void setTomcatProxyPort(int port) {
         MyTunesRss.CONFIG.setTomcatProxyPort(port);
+    }
+
+    public String getTomcatSslProxyScheme() {
+        return MyTunesRss.CONFIG.getTomcatSslProxyScheme();
+    }
+
+    public void setTomcatSslProxyScheme(String scheme) {
+        MyTunesRss.CONFIG.setTomcatSslProxyScheme(scheme);
+        onChange();
     }
 
     public void setTomcatSslProxyHost(String host) {

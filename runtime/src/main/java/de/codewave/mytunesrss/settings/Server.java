@@ -47,6 +47,8 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
     private JScrollPane myAdditionContextsScrollpane;
     private JTable myAdditionalContextsTable;
     private JTextField myContextInput;
+    private JTextField myHttpProxySchemeInput;
+    private JTextField myHttpsProxySchemeInput;
 
     public void init() {
         initValues();
@@ -140,6 +142,8 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         myMaxThreadsInput.setText(MyTunesRss.CONFIG.getTomcatMaxThreads());
         myAjpPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getTomcatAjpPort(), 1, 65535, null));
         myContextInput.setText(MyTunesRss.CONFIG.getWebappContext());
+        myHttpProxySchemeInput.setText(MyTunesRss.CONFIG.getTomcatProxyScheme());
+        myHttpsProxySchemeInput.setText(MyTunesRss.CONFIG.getTomcatSslProxyScheme());
     }
 
     public String updateConfigFromGui() {
@@ -161,6 +165,8 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setTomcatAjpPort(MyTunesRssUtils.getStringInteger(myAjpPortInput.getText(), 0));
             MyTunesRss.CONFIG.setTomcatMaxThreads(myMaxThreadsInput.getText());
             MyTunesRss.CONFIG.setWebappContext(myContextInput.getText());
+            MyTunesRss.CONFIG.setTomcatProxyScheme(myHttpProxySchemeInput.getText());
+            MyTunesRss.CONFIG.setTomcatSslProxyScheme(myHttpsProxySchemeInput.getText());
         }
         return messages;
     }

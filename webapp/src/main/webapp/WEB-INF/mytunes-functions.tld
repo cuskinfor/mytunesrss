@@ -270,16 +270,4 @@
         </example>
     </function>
 
-    <function>
-        <description>
-            Make an HTTP link from an HTTPS link.
-        </description>
-        <name>makeHttp</name>
-        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String makeHttp(java.lang.String)</function-signature>
-        <example>
-            &lt;c:out value="${mtfn:makeHttp(url)}"/&gt;&lt;c:out&gt;
-        </example>
-    </function>
-
 </taglib>

@@ -28,6 +28,10 @@ public interface MiscConfigMBean {
 
     void setMyTunesRssComPassword(String password) throws UnsupportedEncodingException;
 
+    boolean isMyTunesRssComSslSettings();
+
+    void setMyTunesRssComSslSettings(boolean ssl);
+
     String getWebWelcomeMessage();
 
     void setWebWelcomeMessage(String message);

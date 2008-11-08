@@ -55,6 +55,7 @@ public class MyTunesRssConfig {
     private boolean myUploadCreateUserDir = true;
     private String myMyTunesRssComUser = "";
     private byte[] myMyTunesRssComPasswordHash = null;
+    private boolean myMyTunesRssComSsl = false;
     private boolean myUpdateDatabaseOnServerStart = true;
     private String myArtistDropWords = "";
     private boolean myLocalTempArchive;
@@ -97,8 +98,10 @@ public class MyTunesRssConfig {
     private List<String> myAdditionalContexts;
     private String myTomcatProxyHost;
     private int myTomcatProxyPort;
+    private String myTomcatProxyScheme;
     private String myTomcatSslProxyHost;
     private int myTomcatSslProxyPort;
+    private String myTomcatSslProxyScheme;
     private Map<String, DialogLayout> myDialogLayouts;
     private String myLameOnlyOptions = "--quiet -b {bitrate} --resample {samplerate} {infile} -";
     private String myLameTargetOptions = "--quiet -r -b {bitrate} --resample {samplerate} - -";
@@ -412,6 +415,22 @@ public class MyTunesRssConfig {
         myTomcatProxyPort = tomcatProxyPort;
     }
 
+    public String getTomcatProxyScheme() {
+        return myTomcatProxyScheme;
+    }
+
+    public void setTomcatProxyScheme(String tomcatProxyScheme) {
+        myTomcatProxyScheme = tomcatProxyScheme;
+    }
+
+    public String getTomcatSslProxyScheme() {
+        return myTomcatSslProxyScheme;
+    }
+
+    public void setTomcatSslProxyScheme(String tomcatSslProxyScheme) {
+        myTomcatSslProxyScheme = tomcatSslProxyScheme;
+    }
+
     public Collection<User> getUsers() {
         return new HashSet<User>(myUsers);
     }
@@ -488,6 +507,14 @@ public class MyTunesRssConfig {
 
     public void setMyTunesRssComUser(String myTunesRssComUser) {
         myMyTunesRssComUser = myTunesRssComUser;
+    }
+
+    public boolean isMyTunesRssComSsl() {
+        return myMyTunesRssComSsl;
+    }
+
+    public void setMyTunesRssComSsl(boolean myTunesRssComSsl) {
+        myMyTunesRssComSsl = myTunesRssComSsl;
     }
 
     public boolean isUpdateDatabaseOnServerStart() {
@@ -924,6 +951,7 @@ public class MyTunesRssConfig {
             setProxyServer(JXPathUtils.getBooleanValue(settings, "proxyServer", isProxyServer()));
             setProxyHost(JXPathUtils.getStringValue(settings, "proxyHost", getProxyHost()));
             setProxyPort(JXPathUtils.getIntValue(settings, "proxyPort", getProxyPort()));
+            setMyTunesRssComSsl(JXPathUtils.getBooleanValue(settings, "myTunesRssComSsl", isMyTunesRssComSsl()));
             setMyTunesRssComUser(JXPathUtils.getStringValue(settings, "myTunesRssComUser", getMyTunesRssComUser()));
             setMyTunesRssComPasswordHash(JXPathUtils.getByteArray(settings, "myTunesRssComPassword", getMyTunesRssComPasswordHash()));
             myFileTypes = new ArrayList<FileType>();
@@ -976,12 +1004,14 @@ public class MyTunesRssConfig {
             String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
             setWebappContext(context != null ? "/" + context : "");
             setTomcatProxyHost(JXPathUtils.getStringValue(settings, "tomcat/proxy-host", null));
+            setTomcatProxyScheme(JXPathUtils.getStringValue(settings, "tomcat/proxy-scheme", null));
             setTomcatProxyPort(JXPathUtils.getIntValue(settings, "tomcat/proxy-port", 0));
             setSendAnonyStat(JXPathUtils.getBooleanValue(settings, "anonymous-statistics", true));
             setSslKeystoreFile(JXPathUtils.getStringValue(settings, "ssl/keystore/file", null));
             setSslKeystoreKeyAlias(JXPathUtils.getStringValue(settings, "ssl/keystore/keyalias", null));
             setSslKeystorePass(JXPathUtils.getStringValue(settings, "ssl/keystore/pass", null));
             setSslPort(JXPathUtils.getIntValue(settings, "ssl/port", 0));
+            setTomcatSslProxyScheme(JXPathUtils.getStringValue(settings, "ssl/proxy-scheme", null));
             setTomcatSslProxyHost(JXPathUtils.getStringValue(settings, "ssl/proxy-host", null));
             setTomcatSslProxyPort(JXPathUtils.getIntValue(settings, "ssl/proxy-port", 0));
             myAdditionalContexts = new ArrayList<String>();
@@ -1100,6 +1130,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "proxyServer", myProxyServer));
             root.appendChild(DOMUtils.createTextElement(settings, "proxyHost", myProxyHost));
             root.appendChild(DOMUtils.createIntElement(settings, "proxyPort", myProxyPort));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "myTunesRssComSsl", myMyTunesRssComSsl));
             root.appendChild(DOMUtils.createTextElement(settings, "myTunesRssComUser", myMyTunesRssComUser));
             if (myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0) {
                 root.appendChild(DOMUtils.createByteArrayElement(settings, "myTunesRssComPassword", myMyTunesRssComPasswordHash));
@@ -1168,6 +1199,9 @@ public class MyTunesRssConfig {
             if (getTomcatAjpPort() > 0) {
                 tomcat.appendChild(DOMUtils.createIntElement(settings, "ajp-port", getTomcatAjpPort()));
             }
+            if (StringUtils.isNotEmpty(getTomcatProxyScheme())) {
+                tomcat.appendChild(DOMUtils.createTextElement(settings, "proxy-scheme", getTomcatProxyScheme()));
+            }
             if (StringUtils.isNotEmpty(getTomcatProxyHost())) {
                 tomcat.appendChild(DOMUtils.createTextElement(settings, "proxy-host", getTomcatProxyHost()));
             }
@@ -1202,6 +1236,9 @@ public class MyTunesRssConfig {
             Element ssl = settings.createElement("ssl");
             root.appendChild(ssl);
             ssl.appendChild(DOMUtils.createIntElement(settings, "port", getSslPort()));
+            if (StringUtils.isNotEmpty(getTomcatSslProxyScheme())) {
+                ssl.appendChild(DOMUtils.createTextElement(settings, "proxy-scheme", getTomcatSslProxyScheme()));
+            }
             if (StringUtils.isNotEmpty(getTomcatSslProxyHost())) {
                 ssl.appendChild(DOMUtils.createTextElement(settings, "proxy-host", getTomcatSslProxyHost()));
             }

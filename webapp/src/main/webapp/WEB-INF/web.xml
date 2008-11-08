@@ -41,6 +41,13 @@
             <param-value>UTF-8</param-value>
         </init-param>
     </filter>
+    <!-- Filter for adjusting the request scheme if a proxy scheme has been specified -->
+    <filter>
+        <description>Filter for adjusting the request scheme.</description>
+        <display-name>RequestSchemeFilter</display-name>
+        <filter-name>RequestSchemeFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.servlet.RequestSchemeFilter</filter-class>
+    </filter>
     <!-- Filter for decrypting the path information -->
     <filter>
         <description>Filter for decrypting the path info.</description>
@@ -96,6 +103,10 @@
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
         <url-pattern>/mytunesrss/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>RequestSchemeFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>PathInfoDecryptionFilter</filter-name>

@@ -51,13 +51,30 @@ public class MyTunesRssComUpdateTask extends TimerTask {
         PostMethod postMethod = new PostMethod(System.getProperty("MyTunesRSS.mytunesrsscomUrl", MYTUNESRSSCOM_URL));
         postMethod.addParameter("user", myUsername);
         postMethod.addParameter("pass", base64Hash);
-        if (StringUtils.isNotBlank(MyTunesRss.CONFIG.getTomcatProxyHost())) {
-            postMethod.addParameter("host", MyTunesRss.CONFIG.getTomcatProxyHost());
-        }
-        if (MyTunesRss.CONFIG.getTomcatProxyPort() > 0 && MyTunesRss.CONFIG.getTomcatProxyPort() < 65536) {
-            postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getTomcatProxyPort()));
+        if (MyTunesRss.CONFIG.isMyTunesRssComSsl()) {
+            if (!"http".equals(MyTunesRss.CONFIG.getTomcatSslProxyScheme())) {
+                postMethod.addParameter("https", "true");
+            }
+            if (StringUtils.isNotBlank(MyTunesRss.CONFIG.getTomcatSslProxyHost())) {
+                postMethod.addParameter("host", MyTunesRss.CONFIG.getTomcatSslProxyHost());
+            }
+            if (MyTunesRss.CONFIG.getTomcatSslProxyPort() > 0 && MyTunesRss.CONFIG.getTomcatSslProxyPort() < 65536) {
+                postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getTomcatSslProxyPort()));
+            } else {
+                postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getSslPort()));
+            }
         } else {
-            postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getPort()));
+            if ("https".equals(MyTunesRss.CONFIG.getTomcatProxyScheme())) {
+                postMethod.addParameter("https", "true");
+            }
+            if (StringUtils.isNotBlank(MyTunesRss.CONFIG.getTomcatProxyHost())) {
+                postMethod.addParameter("host", MyTunesRss.CONFIG.getTomcatProxyHost());
+            }
+            if (MyTunesRss.CONFIG.getTomcatProxyPort() > 0 && MyTunesRss.CONFIG.getTomcatProxyPort() < 65536) {
+                postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getTomcatProxyPort()));
+            } else {
+                postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getPort()));
+            }
         }
         postMethod.addParameter("context", MyTunesRss.CONFIG.getWebappContext());
         HttpClient client = MyTunesRssUtils.createHttpClient();

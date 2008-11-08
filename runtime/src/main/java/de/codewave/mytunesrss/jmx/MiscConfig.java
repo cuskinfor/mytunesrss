@@ -59,6 +59,15 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
         onChange();
     }
 
+    public boolean isMyTunesRssComSslSettings() {
+        return MyTunesRss.CONFIG.isMyTunesRssComSsl();
+    }
+
+    public void setMyTunesRssComSslSettings(boolean ssl) {
+        MyTunesRss.CONFIG.setMyTunesRssComSsl(ssl);
+        onChange();
+    }
+
     public String getWebWelcomeMessage() {
         return MyTunesRss.CONFIG.getWebWelcomeMessage();
     }

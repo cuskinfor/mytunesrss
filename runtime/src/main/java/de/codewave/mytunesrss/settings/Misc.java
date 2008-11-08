@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Misc implements MyTunesRssEventListener, SettingsForm {
     private static final Logger LOGGER = LoggerFactory.getLogger(Misc.class);
-    
+
     private JPanel myRootPanel;
     private JTextField myUsernameInput;
     private PasswordHashField myPasswordInput;
@@ -47,6 +47,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
     private JTextField myJmxPortInput;
     private JTextField myJmxUserNameInput;
     private JPasswordField myJmxPasswordInput;
+    private JCheckBox myMyTunesRssComSsl;
     private boolean myUpdateOnStartInputCache;
     private boolean myAutoStartServer;
 
@@ -89,6 +90,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         myJmxPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getJmxPort(), 1, 65535, null));
         myJmxUserNameInput.setText(MyTunesRss.CONFIG.getJmxUser());
         myJmxPasswordInput.setText(MyTunesRss.CONFIG.getJmxPassword());
+        myMyTunesRssComSsl.setSelected(MyTunesRss.CONFIG.isMyTunesRssComSsl());
     }
 
     private void createUIComponents() {
@@ -103,6 +105,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         SwingUtils.enableElementAndLabel(myUsernameInput, !serverActive);
         myPasswordLabel.setEnabled(!serverActive);
         myPasswordInput.setEnabled(!serverActive);
+        myMyTunesRssComSsl.setEnabled(!serverActive);
         myUpdateOnStartInput.setEnabled(!serverActive && !myAutoStartServer);
         myProgramUpdateButton.setEnabled(!serverActive);
     }
@@ -116,6 +119,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
             if (myPasswordInput.getPasswordHash() != null) {
                 MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(myPasswordInput.getPasswordHash());
             }
+            MyTunesRss.CONFIG.setMyTunesRssComSsl(myMyTunesRssComSsl.isSelected());
             MyTunesRss.CONFIG.setProxyServer(myUseProxyInput.isSelected());
             MyTunesRss.CONFIG.setProxyHost(myProxyHostInput.getText());
             MyTunesRss.CONFIG.setProxyPort(MyTunesRssUtils.getTextFieldInteger(myProxyPortInput, -1));

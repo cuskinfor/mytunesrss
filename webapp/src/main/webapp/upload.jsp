@@ -44,7 +44,7 @@
         </tr>
         <tr class="odd">
             <td>
-                <form name="upload" enctype="multipart/form-data" method="post" action="${mtfn:makeHttp(servletUrl)}/upload/${auth}" target="resultFrame">
+                <form name="upload" enctype="multipart/form-data" method="post" action="${servletUrl}/upload/${auth}" target="resultFrame">
                     <input type="file" name="file" /> <input type="submit" value="<fmt:message key="doUpload"/>" onclick="initProgress()"/>
                 </form>
             </td>
