@@ -7,24 +7,24 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.utils.swing.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 /**
  * Server settings panel
  */
 public class Server implements MyTunesRssEventListener, SettingsForm {
-    private static final Logger LOG = LoggerFactory.getLogger(Server.class);
-
     private JPanel myRootPanel;
     private JTextField myPortInput;
     private JCheckBox myAutoStartServerInput;
@@ -47,8 +47,9 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
     private JScrollPane myAdditionContextsScrollpane;
     private JTable myAdditionalContextsTable;
     private JTextField myContextInput;
-    private JTextField myHttpProxySchemeInput;
-    private JTextField myHttpsProxySchemeInput;
+    private JComboBox myHttpProxySchemeInput;
+    private JComboBox myHttpsProxySchemeInput;
+    private File myFileChooserDierctory;
 
     public void init() {
         initValues();
@@ -89,13 +90,20 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
                 }
             }
         });
+        mySelectKeystoreButton.addActionListener(new SelectKeystoreButtonListener());
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
                 "error.illegalServerPort")));
-        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myServerNameInput, MyTunesRssUtils.getBundleString("error.emptyServerName")));
-        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpsPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalHttpsPort")));
-        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpProxyPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalHttpProxyPort")));
-        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpsProxyPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalHttpsProxyPort")));
-        JTextFieldValidation.setValidation(new CompositeTextFieldValidation(myContextInput, new WebAppContextValidValidation(), new DuplicateWebAppContextValidation()));
+        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myServerNameInput,
+                                                                           MyTunesRssUtils.getBundleString("error.emptyServerName")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpsPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString(
+                "error.illegalHttpsPort")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpProxyPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString(
+                "error.illegalHttpProxyPort")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpsProxyPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString(
+                "error.illegalHttpsProxyPort")));
+        JTextFieldValidation.setValidation(new CompositeTextFieldValidation(myContextInput,
+                                                                            new WebAppContextValidValidation(),
+                                                                            new DuplicateWebAppContextValidation()));
         JTextFieldValidation.validateAll(myRootPanel);
     }
 
@@ -142,8 +150,12 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         myMaxThreadsInput.setText(MyTunesRss.CONFIG.getTomcatMaxThreads());
         myAjpPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getTomcatAjpPort(), 1, 65535, null));
         myContextInput.setText(MyTunesRss.CONFIG.getWebappContext());
-        myHttpProxySchemeInput.setText(MyTunesRss.CONFIG.getTomcatProxyScheme());
-        myHttpsProxySchemeInput.setText(MyTunesRss.CONFIG.getTomcatSslProxyScheme());
+        myHttpProxySchemeInput.addItem("HTTP");
+        myHttpProxySchemeInput.addItem("HTTPS");
+        myHttpsProxySchemeInput.addItem("HTTPS");
+        myHttpsProxySchemeInput.addItem("HTTP");
+        myHttpProxySchemeInput.setSelectedItem(StringUtils.defaultIfEmpty(MyTunesRss.CONFIG.getTomcatProxyScheme(), "HTTP").toUpperCase());
+        myHttpsProxySchemeInput.setSelectedItem(StringUtils.defaultIfEmpty(MyTunesRss.CONFIG.getTomcatSslProxyScheme(), "HTTPS").toUpperCase());
     }
 
     public String updateConfigFromGui() {
@@ -165,8 +177,8 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setTomcatAjpPort(MyTunesRssUtils.getStringInteger(myAjpPortInput.getText(), 0));
             MyTunesRss.CONFIG.setTomcatMaxThreads(myMaxThreadsInput.getText());
             MyTunesRss.CONFIG.setWebappContext(myContextInput.getText());
-            MyTunesRss.CONFIG.setTomcatProxyScheme(myHttpProxySchemeInput.getText());
-            MyTunesRss.CONFIG.setTomcatSslProxyScheme(myHttpsProxySchemeInput.getText());
+            MyTunesRss.CONFIG.setTomcatProxyScheme(myHttpProxySchemeInput.getSelectedItem().toString().toLowerCase());
+            MyTunesRss.CONFIG.setTomcatSslProxyScheme(myHttpsProxySchemeInput.getSelectedItem().toString().toLowerCase());
         }
         return messages;
     }
@@ -228,7 +240,8 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
             if (row > -1) {
                 String context = MyTunesRss.CONFIG.getAdditionalContexts().get(row);
                 int result = JOptionPane.showConfirmDialog(myRootPanel,
-                                                           MyTunesRssUtils.getBundleString("confirmation.deleteAddCtx", context.split(":")[0]),
+                                                           MyTunesRssUtils.getBundleString("confirmation.deleteAddCtx",
+                                                                                           context.split(":")[0]),
                                                            MyTunesRssUtils.getBundleString("confirmation.titleDeleteAddCtx"),
                                                            JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
@@ -252,10 +265,7 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         }
 
         protected boolean isValid(String text) {
-            if (StringUtils.isNotEmpty(text)) {
-                return text.startsWith("/") && text.length() > 1;
-            }
-            return true;
+            return !StringUtils.isNotEmpty(text) || text.startsWith("/") && text.length() > 1;
         }
     }
 
@@ -279,6 +289,30 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
                 }
             }
             return true;
+        }
+    }
+
+    public class SelectKeystoreButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent event) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            fileChooser.setCurrentDirectory(myFileChooserDierctory);
+            fileChooser.setDialogTitle(MyTunesRssUtils.getBundleString("dialog.lookupKeystore"));
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                public boolean accept(File file) {
+                    return true;
+                }
+
+                public String getDescription() {
+                    return MyTunesRssUtils.getBundleString("filechooser.filter.keystore");
+                }
+            });
+            int result = fileChooser.showDialog(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("filechooser.approve.keystore"));
+            if (result == JFileChooser.APPROVE_OPTION) {
+                myFileChooserDierctory = fileChooser.getCurrentDirectory();
+                myKeystoreInput.setText(fileChooser.getSelectedFile().getAbsolutePath());
+            }
         }
     }
 }

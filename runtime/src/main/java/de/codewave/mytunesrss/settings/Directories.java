@@ -50,7 +50,6 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
     private JLabel myTrackLabel;
     private JButton myDeleteBaseDirButton;
     private JScrollPane myScrollPane;
-    private JPanel myUploadPanel;
     private DefaultListModel myListModel;
     private File myFileChooserDierctory;
 
