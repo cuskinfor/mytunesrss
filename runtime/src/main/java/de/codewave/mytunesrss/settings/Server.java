@@ -190,9 +190,25 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
     public void setGuiMode(GuiMode mode) {
         boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
         SwingUtils.enableElementAndLabel(myPortInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myHttpProxySchemeInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myHttpProxyHostInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myHttpProxyPortInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myHttpsPortInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myHttpsProxySchemeInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myHttpsProxyHostInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myHttpsProxyPortInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myKeystoreInput, !serverActive);
+        mySelectKeystoreButton.setEnabled(!serverActive);
+        SwingUtils.enableElementAndLabel(myKeystorePasswordInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myKeystoreAliasInput, !serverActive);
         myAutoStartServerInput.setEnabled(!serverActive);
         myTempZipArchivesInput.setEnabled(!serverActive);
         SwingUtils.enableElementAndLabel(myServerNameInput, !serverActive && myAvailableOnLocalNetInput.isSelected());
+        SwingUtils.enableElementAndLabel(myAjpPortInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myContextInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myMaxThreadsInput, !serverActive);
+        SwingUtils.enableElementAndLabel(myAddContextButton, !serverActive);
+        SwingUtils.enableElementAndLabel(myRemoveContextButton, !serverActive && !myAdditionalContextsTable.getSelectionModel().isSelectionEmpty());
     }
 
     public String getDialogTitle() {
@@ -239,9 +255,8 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
             int row = myAdditionalContextsTable.getSelectedRow();
             if (row > -1) {
                 String context = MyTunesRss.CONFIG.getAdditionalContexts().get(row);
-                int result = JOptionPane.showConfirmDialog(myRootPanel,
-                                                           MyTunesRssUtils.getBundleString("confirmation.deleteAddCtx",
-                                                                                           context.split(":")[0]),
+                int result = JOptionPane.showConfirmDialog(myRootPanel, MyTunesRssUtils.getBundleString("confirmation.deleteAddCtx",
+                                                                                                        context.split(":")[0]),
                                                            MyTunesRssUtils.getBundleString("confirmation.titleDeleteAddCtx"),
                                                            JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
