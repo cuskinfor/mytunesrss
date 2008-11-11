@@ -34,9 +34,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.text.MessageFormat;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
@@ -73,12 +73,14 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             LOG.debug("Authorizing request for user \"" + userName + "\".");
             getRequest().setAttribute("authUser", user);
             getRequest().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(getRequest(),
-                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+                                                                                 "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" +
+                                                                                         MyTunesRssBase64Utils.encode(user.getPasswordHash())));
         } else if (scope == WebAppScope.Session) {
             LOG.debug("Authorizing session for user \"" + userName + "\".");
             getSession().setAttribute("authUser", user);
             getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(getRequest(),
-                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" + MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+                                                                                 "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" +
+                                                                                         MyTunesRssBase64Utils.encode(user.getPasswordHash())));
         }
         if (getAuthUser() != null && StringUtils.isNotEmpty(getAuthUser().getWebSettings())) {
             getWebConfig().clearWithDefaults(getRequest());
@@ -109,8 +111,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                         return true;
                     }
                 }
-            } catch (NumberFormatException e) {
-                // intentionally left blank
+            } catch (NumberFormatException e) {// intentionally left blank
             }
         }
         return false;
@@ -161,11 +162,14 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         WebConfig webConfig = getWebConfig();
         if (StringUtils.isEmpty(myTunesRssComUsername) || !webConfig.isMyTunesRssComAddress()) {
             getRequest().setAttribute("permServletUrl", servletUrl);
+            getRequest().setAttribute("downloadPlaybackServletUrl", MyTunesRssWebUtils.makeHttp(servletUrl));
         } else {
             String appUrl = ServletUtils.getApplicationUrl(getRequest());
-            getRequest().setAttribute("permServletUrl",
-                                      MyTunesRss.MYTUNESRSSCOM_URL + "/" + myTunesRssComUsername + getRequest().getContextPath() +
-                                              servletUrl.substring(appUrl.length()));
+            String url =
+                    MyTunesRss.MYTUNESRSSCOM_URL + "/" + myTunesRssComUsername + getRequest().getContextPath() + servletUrl.substring(appUrl.length())
+                    ;
+            getRequest().setAttribute("permServletUrl", url);
+            getRequest().setAttribute("downloadPlaybackServletUrl", url);
         }
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
         getRequest().setAttribute("mytunesrssVersion", MyTunesRss.VERSION);
@@ -252,8 +256,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         return MyTunesRssWebUtils.getWebConfig(getRequest());
     }
 
-    protected void forward(MyTunesRssCommand command) throws IOException, ServletException {
-        //prepareRequestForResource();
+    protected void forward(MyTunesRssCommand command) throws IOException, ServletException {//prepareRequestForResource();
         forward("/mytunesrss/" + command.getName());
     }
 
@@ -345,8 +348,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         return filter;
     }
 
-    public void executeAuthorized() throws Exception {
-        // intentionally left blank
+    public void executeAuthorized() throws Exception {// intentionally left blank
     }
 
     protected Pager createPager(int itemCount, int current) {

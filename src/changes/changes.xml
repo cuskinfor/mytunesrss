@@ -7,7 +7,16 @@
 
     <body>
 
-        <release version="3.6-EAP-9" date="2008-xx-xx" description="EAP-9">
+        <release version="3.6-EAP-10" date="2008-xx-xx" description="EAP-10">
+            <action dev="mdescher" type="update">
+                Cleanup of server configuration panel (enable/disable elements).
+            </action>
+            <action dev="mdescher" type="fix">
+                HTTP connector links for playback and download.
+            </action>
+        </release>
+
+        <release version="3.6-EAP-9" date="2008-11-09" description="EAP-9">
             <action dev="mdescher" type="update">
                 Several fixes and improvements for HTTP/HTTPS handling. MyTunesRSS honours proxy settings when sending data to mytunesrss.com. Proxy
                 server protocol (http/https) can be specified (e.g. when using Apache as SSL offloader).
