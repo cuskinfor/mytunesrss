@@ -46,7 +46,7 @@
                 <td class="tracks"><a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${playlist.trackCount}</a></td>
                 <td class="icon">
                     <a href="${servletUrl}/loadAndEditPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=true/playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                        <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                        <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="edit" /> </a>
                 </td>
                 <td class="icon">
                     <c:choose>
