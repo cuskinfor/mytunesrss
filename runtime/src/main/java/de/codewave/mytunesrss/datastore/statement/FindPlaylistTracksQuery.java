@@ -27,7 +27,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
     public static final String PSEUDO_ID_LAST_UPDATED = "PlaylistLastUpdated";
 
     public static enum SortOrder {
-        Album(), Artist()
+        Album(), Artist(), KeepOrder()
     }
 
     private String myId;

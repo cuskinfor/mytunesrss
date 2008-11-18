@@ -51,7 +51,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                     return;// early return
                 }
             } else {
-                query = TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), false);
+                query = TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true);
             }
             getRequest().setAttribute("sortOrder", sortOrderName);
             List<TrackUtils.EnhancedTrack> tracks = null;
@@ -59,6 +59,9 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                 DataStoreQuery.QueryResult<Track> result = getTransaction().executeQuery(query);
                 int pageSize = getWebConfig().getEffectivePageSize();
                 TrackUtils.EnhancedTracks enhancedTracks;
+                if (query instanceof FindPlaylistTracksQuery) {// keep sort order for playlists
+                    sortOrderValue = FindPlaylistTracksQuery.SortOrder.KeepOrder;
+                }
                 if (pageSize > 0 && result.getResultSize() > pageSize) {
                     int current = getSafeIntegerRequestParameter("index", 0);
                     Pager pager = createPager(result.getResultSize(), current);
@@ -67,7 +70,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                 } else {
                     enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), result.getResults(), sortOrderValue);
                 }
-                getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()));
+                getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()) && sortOrderValue != FindPlaylistTracksQuery.SortOrder.KeepOrder);
                 tracks = (List<TrackUtils.EnhancedTrack>)enhancedTracks.getTracks();
                 if (pageSize > 0 && tracks.size() > pageSize) {
                     tracks.get(0).setContinuation(!tracks.get(0).isNewSection());

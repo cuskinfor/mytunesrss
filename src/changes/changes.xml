@@ -9,6 +9,9 @@
 
         <release version="3.6-EAP-10" date="2008-xx-xx" description="EAP-10">
             <action dev="mdescher" type="update">
+                Always keep sort oder when browsing tracks of a playlist.
+            </action>
+            <action dev="mdescher" type="update">
                 Cleanup of server configuration panel (enable/disable elements).
             </action>
             <action dev="mdescher" type="fix">
