@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.6-EAP-10" date="2008-xx-xx" description="EAP-10">
+        <release version="3.6-EAP-10" date="2008-11-18" description="EAP-10">
             <action dev="mdescher" type="update">
                 Always keep sort oder when browsing tracks of a playlist.
             </action>
