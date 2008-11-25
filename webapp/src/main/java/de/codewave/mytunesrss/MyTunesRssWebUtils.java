@@ -118,8 +118,8 @@ public class MyTunesRssWebUtils {
         StringBuilder tc = new StringBuilder();
         if (alacTranscoding || faadTranscoding || lameTranscoding) {
             tc.append("A").append(alacTranscoding ? "1" : "0").append("_");
-            tc.append("F").append(alacTranscoding ? "1" : "0").append("_");
-            tc.append("L").append(alacTranscoding ? "1" : "0").append("_");
+            tc.append("F").append(faadTranscoding ? "1" : "0").append("_");
+            tc.append("L").append(lameTranscoding ? "1" : "0").append("_");
             tc.append("B").append(transcodingBitrate).append("_S").append(transcodingSamplerate).append("_O").append(
                     transcodeOnTheFlyIfPossible ? "1" : "0");
         }
