@@ -18,6 +18,12 @@
 
     <jsp:include page="incl_head.jsp"/>
 
+    <c:if test="${authUser.rss}">
+        <c:forEach items="${playlists}" var="playlist">
+            <link href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${playlist.name}" />" />
+        </c:forEach>
+    </c:if>
+
 </head>
 
 <body>

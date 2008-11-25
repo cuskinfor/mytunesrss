@@ -18,6 +18,20 @@
 
     <jsp:include page="incl_head.jsp"/>
 
+    <c:if test="${authUser.rss}">
+        <c:forEach items="${artists}" var="artist">
+            <c:choose>
+                <c:when test="${mtfn:unknown(artist.name)}">
+                    <c:set var="artistname"><fmt:message key="unknown"/></c:set>
+                </c:when>
+                <c:otherwise>
+                    <c:set var="artistname" value="${artist.name}"/>
+                </c:otherwise>
+            </c:choose>
+            <link href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${artistname}" />" />
+        </c:forEach>
+    </c:if>
+
 </head>
 
 <body>

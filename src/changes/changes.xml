@@ -8,6 +8,12 @@
     <body>
 
         <release version="3.6-EAP-11" date="2008-11-xx" description="EAP-11">
+            <action dev="mdescher" type="change">
+                Correct content type application/rss+xml for RSS feeds.
+            </action>
+            <action dev="mdescher" type="add">
+                RSS feeds in HEAD as alternate links (button to add feed in Firefox and Safari for example).
+            </action>
             <action dev="mdescher" type="fix">
                 Transcoding parameter (tc) was generated using only ALAC transcoding info for all three types (ALA, FAAD, LAME).
             </action>
