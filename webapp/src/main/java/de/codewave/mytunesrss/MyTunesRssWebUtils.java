@@ -95,11 +95,18 @@ public class MyTunesRssWebUtils {
         return StringUtils.isNotEmpty(userAgent) && userAgent.contains("iPhone");
     }
 
+    private static boolean isUserAgentSafari(HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        return StringUtils.isNotEmpty(userAgent) && userAgent.contains("Safari");
+    }
+
     public static UserAgent getUserAgent(HttpServletRequest request) {
         if (isUserAgentPsp(request)) {
             return UserAgent.Psp;
         } else if (isUserAgentIphone(request)) {
             return UserAgent.Iphone;
+        } else if (isUserAgentSafari(request)) {
+            return UserAgent.Safari;
         }
         return UserAgent.Unknown;
     }

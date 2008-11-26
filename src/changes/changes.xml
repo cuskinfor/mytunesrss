@@ -9,7 +9,7 @@
 
         <release version="3.6-EAP-11" date="2008-11-xx" description="EAP-11">
             <action dev="mdescher" type="change">
-                Correct content type application/rss+xml for RSS feeds.
+                Correct content type application/rss+xml for RSS feeds. Added "feed:" ro RSS feed URLs.
             </action>
             <action dev="mdescher" type="add">
                 RSS feeds in HEAD as alternate links (button to add feed in Firefox and Safari for example).

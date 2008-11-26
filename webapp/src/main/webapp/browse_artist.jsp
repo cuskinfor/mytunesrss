@@ -6,7 +6,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="mtt" %>
 
 <c:set var="backUrl" scope="request">${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(param.album)}/genre=${cwfn:encodeUrl(param.genre)}/page=${param.page}/index=${param.index}</mt:encrypt></c:set>
 
@@ -28,7 +27,7 @@
                     <c:set var="artistname" value="${artist.name}"/>
                 </c:otherwise>
             </c:choose>
-            <link href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${artistname}" />" />
+            <link href="feed:${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${artistname}" />" />
         </c:forEach>
     </c:if>
 
@@ -127,7 +126,7 @@
                         <c:when test="${empty sessionScope.playlist}">
                             <c:if test="${authUser.rss && config.showRss}">
                                 <td class="icon">
-                                    <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.xml">
+                                    <a href="feed:${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.xml">
                                         <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
                                 </td>

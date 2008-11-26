@@ -6,7 +6,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="mtt" %>
 
 <c:set var="backUrl" scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/index=${param.index}/sortOrder=${sortOrder}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
@@ -127,7 +126,7 @@
             <c:when test="${empty sessionScope.playlist}">
                 <c:if test="${authUser.rss && config.showRss}">
                     <th class="icon">
-                        <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${sectionArguments}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.xml">
+                        <a href="feed:${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${sectionArguments}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.xml">
                             <img src="${appUrl}/images/rss_th.gif" alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
                     </th>
                 </c:if>
@@ -210,7 +209,7 @@
         <c:when test="${empty sessionScope.playlist}">
             <c:if test="${authUser.rss && config.showRss}">
                 <td class="icon">
-                    <a href="${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml">
+                    <a href="feed:${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml">
                         <img src="${appUrl}/images/rss${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
                 </td>
             </c:if>
