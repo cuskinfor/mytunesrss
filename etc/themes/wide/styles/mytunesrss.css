@@ -286,18 +286,18 @@ td.artist {
 }
 
 td.albumthumb {
-    padding-left: 3px;
-    padding-top: 0;
-    padding-bottom: 0;
+    padding: 3px;
     height: 38px;
 }
 
 tr.odd td.albumthumb {
     background-color: #edf3fe;
-    padding-left: 3px;
-    padding-top: 0;
-    padding-bottom: 0;
+    padding: 3px 0 3px 3px;
     height: 38px;
+}
+
+td.albumname {
+    padding-left: 3px;
 }
 
 td.artist a {

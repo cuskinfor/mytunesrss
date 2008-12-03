@@ -27,7 +27,7 @@
                     <c:set var="albumname" value="${album.name}"/>
                 </c:otherwise>
             </c:choose>
-            <link href="feed:${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/${mtfn:virtualAlbumName(album)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${albumname}" />" />
+            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/${mtfn:virtualAlbumName(album)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${albumname}" />" />
         </c:forEach>
     </c:if>
 
@@ -84,7 +84,7 @@
 
     <table class="select" cellspacing="0">
         <tr>
-            <td colspan="${3 + mtfn:buttonColumns(authUser, config) + cwfn:choose(empty sessionScope.playlist, 1, 0)}" style="padding:0">
+            <td colspan="${4 + mtfn:buttonColumns(authUser, config) + cwfn:choose(empty sessionScope.playlist, 1, 0)}" style="padding:0">
                 <c:set var="displayFilterUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}</c:set>
                 <jsp:include page="/incl_display_filter.jsp"/>
             </td>
@@ -93,7 +93,7 @@
             <c:if test="${!empty sessionScope.playlist}">
                 <th class="check"><input type="checkbox" name="none" value="none" onclick="selectAllByLoop('album', 1, ${fn:length(albums)}, this)" /></th>
             </c:if>
-            <th class="active">
+            <th colspan="2" class="active">
                 <c:if test="${!empty param.genre}">${mtfn:capitalize(mtfn:decode64(param.genre))}</c:if>
                 <fmt:message key="albums"/>
                 <c:if test="${!empty param.artist}"> <fmt:message key="with"/> "${cwfn:choose(mtfn:unknown(mtfn:decode64(param.artist)), msgUnknown, mtfn:decode64(param.artist))}"</c:if>
@@ -109,10 +109,17 @@
                     </td>
                 </c:if>
                 <td class="albumthumb">
-                        <c:if test="${album.image}">
+                    <c:choose>
+                        <c:when test="${album.image}">
                             <img id="albumthumb_${loopStatus.index}" src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
                             <div class="tooltip" id="tooltip_albumthumb_${loopStatus.index}"><img src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
-                        </c:if>
+                        </c:when>
+                        <c:otherwise>
+                            &nbsp;
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+                <td class="albumname">
                     <c:choose>
                         <c:when test="${mtfn:unknown(album.name)}">
                             <fmt:message key="unknown"/>
@@ -145,7 +152,7 @@
                     <c:when test="${empty sessionScope.playlist}">
                         <c:if test="${authUser.rss && config.showRss}">
                             <td class="icon">
-                                <a href="feed:${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/${mtfn:virtualAlbumName(album)}.xml">
+                                <a href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/${mtfn:virtualAlbumName(album)}.xml">
                                     <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
                             </td>
@@ -193,6 +200,9 @@
                 <c:if test="${!empty sessionScope.playlist}">
                     <td class="check">&nbsp;</td>
                 </c:if>
+                <td>
+                    &nbsp;
+                </td>
                 <td colspan="2"><em>
                     <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><fmt:message key="allTracksOfAboveAlbums"/></a>
                 </em></td>
@@ -203,7 +213,7 @@
                     <c:when test="${empty sessionScope.playlist}">
                         <c:if test="${authUser.rss && config.showRss}">
                             <td class="icon">
-                                <a href="feed:${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xml">
+                                <a href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xml">
                                     <img src="${appUrl}/images/rss${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
                             </td>
@@ -249,6 +259,9 @@
                 <c:if test="${!empty sessionScope.playlist}">
                     <td class="check">&nbsp;</td>
                 </c:if>
+                <td>
+                    &nbsp;
+                </td>
                 <td colspan="2"><em>
                     <c:choose>
                         <c:when test="${singleArtist}">
@@ -273,7 +286,7 @@
                     <c:when test="${empty sessionScope.playlist}">
                         <c:if test="${authUser.rss && config.showRss}">
                             <td class="icon">
-                                <a href="feed:${permServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xml">
+                                <a href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xml">
                                     <img src="${appUrl}/images/rss${cwfn:choose(fn:length(albums) % 2 == 0, '_odd', '')}.gif"
                                          alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
                             </td>
