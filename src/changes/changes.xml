@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.6-EAP-12" date="2008-xx-xx" description="EAP-12">
+            <action dev="mdescher" type="fix">
+                Removed playlists from Yahoo Media Player. Added track names to Yahoo Media Player display.
+            </action>
+        </release>
+
         <release version="3.6-EAP-11" date="2008-12-01" description="EAP-11">
             <action dev="mdescher" type="change">
                 Correct content type application/rss+xml for RSS feeds. Added "feed:" to RSS feed URLs.
