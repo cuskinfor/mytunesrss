@@ -9,7 +9,7 @@
 
         <release version="3.6-EAP-12" date="2008-xx-xx" description="EAP-12">
             <action dev="mdescher" type="fix">
-                Do not add "feed:" on PSP.
+                Removed feed: for RSS feed URLs.
             </action>
             <action dev="mdescher" type="change">
                 Better album cover display (alignment, etc.) in album browser.

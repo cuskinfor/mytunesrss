@@ -171,11 +171,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             getRequest().setAttribute("permServletUrl", url);
             getRequest().setAttribute("downloadPlaybackServletUrl", url);
         }
-        if (MyTunesRssWebUtils.getUserAgent(getRequest()) == UserAgent.Psp) {
-            getRequest().setAttribute("permFeedServletUrl", getRequest().getAttribute("permServletUrl"));
-        } else {
-            getRequest().setAttribute("permFeedServletUrl", "feed:" + getRequest().getAttribute("permServletUrl"));
-        }
+        getRequest().setAttribute("permFeedServletUrl", getRequest().getAttribute("permServletUrl"));
         getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
         getRequest().setAttribute("mytunesrssVersion", MyTunesRss.VERSION);
         getRequest().setAttribute("sessionCreationTime", getSession().getCreationTime());
