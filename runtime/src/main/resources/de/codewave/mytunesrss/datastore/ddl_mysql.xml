@@ -18,5 +18,6 @@
     </fragment>
     <fragment name="drop_playlist_id_sequence">DROP TABLE playlist_id_sequence</fragment>
     <fragment name="image_datatype">BLOB(100000)</fragment>
+    <fragment name="statistics_datatype">BLOB(1024)</fragment>
 
 </statements>

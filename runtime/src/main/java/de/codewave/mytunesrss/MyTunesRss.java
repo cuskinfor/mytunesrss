@@ -16,6 +16,8 @@ import de.codewave.mytunesrss.settings.Settings;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesTask;
 import de.codewave.mytunesrss.task.InitializeDatabaseTask;
+import de.codewave.mytunesrss.statistics.StatisticsEventManager;
+import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.io.FileCache;
@@ -223,6 +225,7 @@ public class MyTunesRss {
             }
         }
         MyTunesRssJmxUtils.startJmxServer();
+        StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
         if (HEADLESS) {
             executeHeadlessMode();
         } else {

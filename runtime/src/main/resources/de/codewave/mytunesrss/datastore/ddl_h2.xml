@@ -17,5 +17,6 @@
     <fragment name="create_playlist_id_sequence">CREATE SEQUENCE playlist_id_sequence</fragment>
     <fragment name="drop_playlist_id_sequence">DROP SEQUENCE playlist_id_sequence</fragment>
     <fragment name="image_datatype">BINARY</fragment>
+    <fragment name="statistics_datatype">BINARY</fragment>
 
 </statements>

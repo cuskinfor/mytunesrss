@@ -97,6 +97,12 @@
                 UNIQUE (hash, size)
             )
         </sql>
+        <sql>
+            {create_table_prefix} statistics (
+                ts_create NUMERIC(19) NOT NULL,
+                data {statistics_datatype} NOT NULL
+            )
+        </sql>
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>
         <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
         <sql>CREATE INDEX idx_track_album ON track (album)</sql>
@@ -111,6 +117,7 @@
         <sql>CREATE INDEX idx_genre_first ON genre (first_char)</sql>
         <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
         <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
+        <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
         <sql>{create_playlist_id_sequence}</sql>
     </statement>
 

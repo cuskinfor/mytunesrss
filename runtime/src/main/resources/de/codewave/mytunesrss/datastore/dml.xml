@@ -565,6 +565,10 @@
         <sql>DELETE FROM playlist WHERE type = 'TEMP' AND ts_create &lt; :ts</sql>
     </statement>
 
+    <statement name="insertStatisticsEvent">
+        <sql>INSERT INTO statistics (ts_create, data) VALUES (:ts, :data)</sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[

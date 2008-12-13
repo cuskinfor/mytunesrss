@@ -6,6 +6,8 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.statistics.StatisticsEventManager;
+import de.codewave.mytunesrss.statistics.UploadEvent;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.ProgressRequestWrapper;
 import org.apache.commons.fileupload.FileItem;
@@ -43,6 +45,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
             StringBuilder info = new StringBuilder();
             for (FileItem item : items) {
                 processItem(item);
+                StatisticsEventManager.getInstance().fireEvent(new UploadEvent(getAuthUser(), item.getSize()));
                 info.append(item.getName()).append("\n");
             }
             runDatabaseUpdate();

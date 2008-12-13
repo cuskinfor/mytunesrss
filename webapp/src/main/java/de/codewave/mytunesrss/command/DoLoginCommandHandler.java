@@ -5,6 +5,8 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.statistics.StatisticsEventManager;
+import de.codewave.mytunesrss.statistics.LoginEvent;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.WebConfig;
@@ -30,6 +32,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                 webConfig.setUserName(userName);
                 webConfig.setPasswordHash(passwordHash);
                 webConfig.save(getRequest(), getResponse());
+                StatisticsEventManager.getInstance().fireEvent(new LoginEvent(getAuthUser()));
                 if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
                     restartMyTunesRssCom();
                 } else {

@@ -1,6 +1,8 @@
 package de.codewave.mytunesrss.server;
 
 import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.statistics.StatisticsEventManager;
+import de.codewave.mytunesrss.statistics.DownloadEvent;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 
@@ -25,6 +27,14 @@ public class MyTunesRssSessionInfo extends SessionManager.SessionInfo implements
         myBytesStreamed += bytes;
         getUser().setDownBytes(getUser().getDownBytes() + bytes);
         getUser().setQuotaDownBytes(getUser().getQuotaDownBytes() + bytes);
+    }
+
+    public void notifyBegin() {
+        // intentionally left blank
+    }
+
+    public void notifyEnd() {
+        // intentionally left blank
     }
 
     public void add(int i) {

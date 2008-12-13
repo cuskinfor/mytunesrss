@@ -95,4 +95,14 @@
         <sql>ALTER TABLE playlist ADD COLUMN container_id VARCHAR(100)</sql>
     </statement>
 
+    <statement name="migrate_3.6_eap_12">
+        <sql>
+            {create_table_prefix} statistics (
+                ts_create NUMERIC(19) NOT NULL,
+                data {statistics_datatype} NOT NULL
+            )
+        </sql>
+        <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
+    </statement>
+
 </statements>
