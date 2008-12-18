@@ -258,7 +258,7 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>codewave-utils</artifactId>
-            <version>0.43-SNAPSHOT</version>
+            <version>0.43</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
