@@ -9,6 +9,9 @@
 
         <release version="3.6-EAP-12" date="2008-xx-xx" description="EAP-12">
             <action dev="mdescher" type="add">
+                Statistics as CSV to admin via email.
+            </action>
+            <action dev="mdescher" type="add">
                 Store statistics in database: upload/download/login.
             </action>
             <action dev="mdescher" type="fix">

@@ -11,26 +11,32 @@ import java.io.ObjectOutput;
  * de.codewave.mytunesrss.statistics.DownloadBytesEvent
  */
 public class LoginEvent implements StatisticsEvent {
-    private User myUser;
+    private static final long serialVersionUID = 1L;
+
+    private String myUser;
 
     public LoginEvent() {
         // intentionally left blank
     }
 
     public LoginEvent(User user) {
-        myUser = user;
+        myUser = user.getName();
+    }
+
+    public String getUser() {
+        return myUser;
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(myUser.getName());
+        out.writeUTF(myUser);
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        myUser = MyTunesRss.CONFIG.getUser(in.readUTF());
+        myUser = in.readUTF();
     }
 
     @Override
     public String toString() {
-        return "# " + myUser.getName() + " logged in #";
+        return "# " + myUser + " logged in #";
     }
 }

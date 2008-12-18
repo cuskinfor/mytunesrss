@@ -67,6 +67,7 @@ public class Settings implements MyTunesRssEventListener {
         addSettingsItem(new Content());
         addSettingsItem(new UserManagement());
         addSettingsItem(new AdminNotify());
+        addSettingsItem(new Statistics());
         addSettingsItem(new Misc());
         addSettingsItem(new Streaming());
         addSettingsItem(new Addons());

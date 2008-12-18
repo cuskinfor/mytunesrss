@@ -32,7 +32,7 @@ import java.util.*;
  * de.codewave.mytunesrss.MyTunesRssConfig
  */
 public class MyTunesRssConfig {
-    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssConfig.class);
 
     private int myPort = 8080;
     private String myServerName = "MyTunesRSS";
@@ -123,6 +123,7 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnInternalError;
     private boolean myNotifyOnDatabaseUpdate;
     private boolean myNotifyOnMissingFile;
+    private int myStatisticKeepTime = 60;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -150,7 +151,7 @@ public class MyTunesRssConfig {
                         return MyTunesRssUtils.getBundleString("error.newWatchFolderContainsExistingOne", eachDatasource);
                     }
                 } catch (IOException e) {
-                    LOG.error("Could not check if existing datasource contains new datasource or vice versa, assuming everything is okay.", e);
+                    LOGGER.error("Could not check if existing datasource contains new datasource or vice versa, assuming everything is okay.", e);
                 }
             }
             myDatasources.add(datasource);
@@ -910,8 +911,16 @@ public class MyTunesRssConfig {
         myNotifyOnMissingFile = notifyOnMissingFile;
     }
 
+    public int getStatisticKeepTime() {
+        return myStatisticKeepTime;
+    }
+
+    public void setStatisticKeepTime(int statisticKeepTime) {
+        myStatisticKeepTime = statisticKeepTime;
+    }
+
     public void load() {
-        LOG.info("Loading configuration.");
+        LOGGER.info("Loading configuration.");
         try {
             File file = getSettingsFile();
             if (!file.isFile()) {
@@ -1052,8 +1061,14 @@ public class MyTunesRssConfig {
             if (myFileTypes.isEmpty()) {
                 myFileTypes = FileType.getDefaults();
             }
+            try {
+                setStatisticKeepTime(JXPathUtils.getIntValue(settings, "statistics-keep-time", getStatisticKeepTime()));
+            } catch (Exception e) {
+                LOGGER.warn("Could not read/parse statistics keep time, keeping default.");
+                // intentionally left blank; keep default
+            }
         } catch (IOException e) {
-            LOG.error("Could not read configuration file.", e);
+            LOGGER.error("Could not read configuration file.", e);
         }
     }
 
@@ -1081,19 +1096,19 @@ public class MyTunesRssConfig {
             myPathInfoKey = new SecretKeySpec(keyBytes, "DES");
         }
         if (myPathInfoKey == null) {
-            LOG.info("No path info encryption key found, generating a new one.");
+            LOGGER.info("No path info encryption key found, generating a new one.");
             try {
                 KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
                 keyGenerator.init(56);
                 myPathInfoKey = keyGenerator.generateKey();
             } catch (Exception e) {
-                LOG.error("Could not generate path info encryption key.", e);
+                LOGGER.error("Could not generate path info encryption key.", e);
             }
         }
     }
 
     public void save() {
-        LOG.info("Saving configuration.");
+        LOGGER.info("Saving configuration.");
         try {
             Document settings = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             Element root = settings.createElement("settings");
@@ -1267,6 +1282,7 @@ public class MyTunesRssConfig {
             notify.appendChild(DOMUtils.createBooleanElement(settings, "transcoding-failure", isNotifyOnTranscodingFailure()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "web-upload", isNotifyOnWebUpload()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "missing-file", isNotifyOnMissingFile()));
+            root.appendChild(DOMUtils.createIntElement(settings, "statistics-keep-time", getStatisticKeepTime()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
@@ -1277,7 +1293,7 @@ public class MyTunesRssConfig {
                 IOUtils.close(outputStream);
             }
         } catch (Exception e) {
-            LOG.error("Could not write settings file.", e);
+            LOGGER.error("Could not write settings file.", e);
         }
     }
 
