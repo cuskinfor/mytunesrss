@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.6-EAP-12" date="2008-xx-xx" description="EAP-12">
+        <release version="3.6-EAP-12" date="2008-12-18" description="EAP-12">
             <action dev="mdescher" type="add">
                 Statistics as CSV to admin via email.
             </action>
