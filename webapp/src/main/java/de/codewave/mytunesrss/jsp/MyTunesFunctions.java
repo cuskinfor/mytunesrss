@@ -184,23 +184,6 @@ public class MyTunesFunctions {
         return MyTunesRssUtils.getMemorySizeForDisplay(bytes);
     }
 
-    public static int getButtonColumns(User user, WebConfig config) {
-        int count = 0;
-        if (user.isRss() && config.isShowRss()) {
-            count++;
-        }
-        if (user.isPlaylist() && config.isShowPlaylist()) {
-            count++;
-        }
-        if (user.isDownload() && config.isShowDownload()) {
-            count++;
-        }
-        if (user.isPlayer() && config.isShowPlayer()) {
-            count++;
-        }
-        return count;
-    }
-
     public static int getSectionTrackCount(String sectionIds) {
         return StringUtils.split(sectionIds, ",").length;
     }

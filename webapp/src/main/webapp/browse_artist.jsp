@@ -84,7 +84,7 @@
 
         <table class="select" cellspacing="0">
             <tr>
-                <td colspan="${3 + mtfn:buttonColumns(authUser, config) + cwfn:choose(empty sessionScope.playlist, 1, 0)}" style="padding:0">
+                <td colspan="${4 + cwfn:choose(!empty sessionScope.playlist, 1, 0)}" style="padding:0">
                     <c:set var="displayFilterUrl" scope="request">${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/album=${cwfn:encodeUrl(param.album)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}</c:set>
                     <jsp:include page="/incl_display_filter.jsp"/>
                 </td>
@@ -99,7 +99,7 @@
                     <c:if test="${!empty param.album}"> <fmt:message key="on"/> "<c:out value="${mtfn:decode64(param.album)}" />"</c:if>
                 </th>
                 <th><fmt:message key="albums"/></th>
-                <th colspan="${1 + mtfn:buttonColumns(authUser, config)}"><fmt:message key="tracks"/></th>
+                <th colspan="2"><fmt:message key="tracks"/></th>
             </tr>
             <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
                 <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -122,31 +122,25 @@
                     <td class="tracks">
                         <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${artist.trackCount} </a>
                     </td>
-                    <c:choose>
-                        <c:when test="${empty sessionScope.playlist}">
-                            <c:if test="${authUser.rss && config.showRss}">
-                                <td class="icon">
+                    <td class="icon">
+                        <c:choose>
+                            <c:when test="${empty sessionScope.playlist}">
+                                <c:if test="${authUser.rss && config.showRss}">
                                     <a href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.xml">
                                         <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
-                                </td>
-                            </c:if>
-                            <c:if test="${authUser.playlist && config.showPlaylist}">
-                                <td class="icon">
+                                </c:if>
+                                <c:if test="${authUser.playlist && config.showPlaylist}">
                                     <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.${config.playlistFileSuffix}">
                                         <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
-                                </td>
-                            </c:if>
-                            <c:if test="${authUser.player && config.showPlayer}">
-                                <td class="icon">
+                                </c:if>
+                                <c:if test="${authUser.player && config.showPlayer}">
                                     <a href="#" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualArtistName(artist)}.xspf</mt:encrypt>'); return false">
                                         <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
-                                </td>
-                            </c:if>
-                            <c:if test="${authUser.download && config.showDownload}">
-                                <td class="icon">
+                                </c:if>
+                                <c:if test="${authUser.download && config.showDownload}">
                                     <c:choose>
                                         <c:when test="${authUser.maximumZipEntries <= 0 || artist.trackCount <= authUser.maximumZipEntries}">
                                             <a href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.zip">
@@ -157,16 +151,16 @@
                                                 <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
                                         </c:otherwise>
                                     </c:choose>
-                                </td>
-                            </c:if>
-                        </c:when>
-                        <c:otherwise>
-                            <td class="icon">
+                                </c:if>
+                            </c:when>
+                            <c:otherwise>
                                 <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                     <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
-                            </td>
-                        </c:otherwise>
-                    </c:choose>
+                                <a href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/name=${cwfn:encodeUrl(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                                    <img src="${appUrl}/images/one_click_playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
                 </tr>
             </c:forEach>
         </table>

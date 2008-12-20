@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="3.6-EAP-13" date="2008-12-20" description="EAP-13">
+            <action dev="mdescher" type="change">
+                Refactoring of HTML code for buttons (only one column).
+            </action>
+            <action dev="mdescher" type="add">
+                Special button for creating playlists with a single click (available in edit playlist mode).
+            </action>
+        </release>
+
         <release version="3.6-EAP-12" date="2008-12-18" description="EAP-12">
             <action dev="mdescher" type="add">
                 Statistics as CSV to admin via email.

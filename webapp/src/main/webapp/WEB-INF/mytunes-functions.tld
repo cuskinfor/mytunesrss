@@ -172,19 +172,6 @@
 
     <function>
         <description>
-            Get the number of button columns (rss, playlist, download, music player).
-        </description>
-        <name>buttonColumns</name>
-        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>int getButtonColumns(de.codewave.mytunesrss.User,de.codewave.mytunesrss.servlet.WebConfig)
-        </function-signature>
-        <example>
-            &lt;td colspan="${mtfn:buttonColumns(authUser, webConfig)}"/&gt;
-        </example>
-    </function>
-
-    <function>
-        <description>
             Get a base64 encoded string.
         </description>
         <name>encode64</name>

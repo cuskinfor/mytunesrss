@@ -84,7 +84,7 @@
                 </th>
                 <th><fmt:message key="albums"/></th>
                 <th><fmt:message key="artists"/></th>
-                <th colspan="${1 + mtfn:buttonColumns(authUser, config)}"><fmt:message key="tracks"/></th>
+                <th colspan="2"><fmt:message key="tracks"/></th>
             </tr>
             <c:forEach items="${genres}" var="genre" varStatus="loopStatus">
                 <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -100,31 +100,25 @@
                     <td class="tracks">
                         <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${genre.trackCount} </a>
                     </td>
-                    <c:choose>
-                        <c:when test="${empty sessionScope.playlist}">
-                            <c:if test="${authUser.rss && config.showRss}">
-                                <td class="icon">
+                    <td class="icon">
+                        <c:choose>
+                            <c:when test="${empty sessionScope.playlist}">
+                                <c:if test="${authUser.rss && config.showRss}">
                                     <a href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.xml">
                                         <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
-                                </td>
-                            </c:if>
-                            <c:if test="${authUser.playlist && config.showPlaylist}">
-                                <td class="icon">
+                                </c:if>
+                                <c:if test="${authUser.playlist && config.showPlaylist}">
                                     <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.${config.playlistFileSuffix}">
                                         <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
-                                </td>
-                            </c:if>
-                            <c:if test="${authUser.player && config.showPlayer}">
-                                <td class="icon">
+                                </c:if>
+                                <c:if test="${authUser.player && config.showPlayer}">
                                     <a href="#" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualGenreName(genre)}.xspf</mt:encrypt>'); return false">
                                         <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
-                                </td>
-                            </c:if>
-                            <c:if test="${authUser.download && config.showDownload}">
-                                <td class="icon">
+                                </c:if>
+                                <c:if test="${authUser.download && config.showDownload}">
                                     <c:choose>
                                         <c:when test="${authUser.maximumZipEntries <= 0 || genre.trackCount <= authUser.maximumZipEntries}">
                                             <a href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.zip">
@@ -135,16 +129,16 @@
                                                 <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
                                         </c:otherwise>
                                     </c:choose>
-                                </td>
-                            </c:if>
-                        </c:when>
-                        <c:otherwise>
-                            <td class="icon">
+                                </c:if>
+                            </c:when>
+                            <c:otherwise>
                                 <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                     <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
-                            </td>
-                        </c:otherwise>
-                    </c:choose>
+                                <a href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/name=${cwfn:encodeUrl(genre.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                                    <img src="${appUrl}/images/one_click_playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
                 </tr>
             </c:forEach>
         </table>

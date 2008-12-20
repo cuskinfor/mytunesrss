@@ -361,6 +361,7 @@ td.icon {
     padding: 0 10px 0 0;
     border-left: none;
     text-align: center;
+    white-space: nowrap;
 }
 
 a.rss {
@@ -533,6 +534,7 @@ th.icon {
     padding: 0 10px 0 0;
     border-left: none;
     text-align: center;
+    white-space: nowrap;
 }
 
 h1 a.portal {
@@ -794,4 +796,9 @@ div.dialogButton {
 
 td.editPlaylistMoveUp {
     padding-right:0;
+}
+
+em.ymp-skin {
+    margin-left: 5px;
+    margin-top: -1px;
 }

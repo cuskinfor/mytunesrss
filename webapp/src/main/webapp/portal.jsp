@@ -92,12 +92,12 @@
     <table cellspacing="0">
         <c:if test="${!empty statistics}">
             <tr>
-                <th class="active" colspan="${2 + mtfn:buttonColumns(authUser, config)}" align="right">
+                <th class="active" colspan="3" align="right">
                     <fmt:message key="statistics" />
                 </th>
             </tr>
             <tr id="statistics">
-                <td colspan="${2 + mtfn:buttonColumns(authUser, config)}">
+                <td colspan="3">
                     <table class="statistics">
                         <tr>
                             <td><fmt:message key="statistics.tracks" />: ${statistics.trackCount}</td>
@@ -114,7 +114,7 @@
                 <fmt:message key="playlists" />
             </th>
             <c:if test="${!empty playlists}">
-                <th colspan="${1 + mtfn:buttonColumns(authUser, config)}">
+                <th colspan="2">
                     <fmt:message key="tracks" />
                 </th>
             </c:if>
@@ -122,12 +122,12 @@
 
         <c:if test="${!empty container}">
             <tr class="even">
-                <td class="homefolder" colspan="${2 + mtfn:buttonColumns(authUser, config)}" style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}'">
+                <td class="homefolder" colspan="3" style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}'">
                     [ / ]
                 </td>
             </tr>
             <tr class="odd">
-                <td class="parentfolder" colspan="${2 + mtfn:buttonColumns(authUser, config)}" style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${container.containerId}</mt:encrypt>'">
+                <td class="parentfolder" colspan="3" style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${container.containerId}</mt:encrypt>'">
                     [ .. ]
                 </td>
             </tr>
@@ -148,26 +148,20 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <c:if test="${authUser.rss && config.showRss}">
-                    <td class="icon">
+                <td class="icon">
+                    <c:if test="${authUser.rss && config.showRss}">
                         <a href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xml">
                             <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
-                    </td>
-                </c:if>
-                <c:if test="${authUser.playlist && config.showPlaylist}">
-                    <td class="icon">
+                    </c:if>
+                    <c:if test="${authUser.playlist && config.showPlaylist}">
                         <a href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.${config.playlistFileSuffix}">
                             <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
-                    </td>
-                </c:if>
-                <c:if test="${authUser.player && config.showPlayer}">
-                    <td class="icon">
+                    </c:if>
+                    <c:if test="${authUser.player && config.showPlayer}">
                         <a href="#" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=playlist=${playlist.id}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:webSafeFileName(playlist.name)}.xspf</mt:encrypt>'); return false">
                             <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
-                    </td>
-                </c:if>
-                <c:if test="${authUser.download && config.showDownload}">
-                    <td class="icon">
+                    </c:if>
+                    <c:if test="${authUser.download && config.showDownload}">
                         <c:choose>
                             <c:when test="${authUser.maximumZipEntries <= 0 || playlist.trackCount <= authUser.maximumZipEntries}">
                                 <a href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.zip">
@@ -179,8 +173,8 @@
                                     <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
                             </c:otherwise>
                         </c:choose>
-                    </td>
-                </c:if>
+                    </c:if>
+                </td>
             </tr>
         </c:forEach>
         <c:if test="${empty playlists}">

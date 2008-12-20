@@ -13,6 +13,7 @@ import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.StringUtils;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 /**
@@ -23,17 +24,7 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized()) {
             Collection<Track> playlist = (Collection<Track>)getSession().getAttribute("playlistContent");
-            String[] trackIds = getNonEmptyParameterValues("track");
-            String trackList = getRequestParameter("tracklist", null);
-            if ((trackIds == null || trackIds.length == 0) && StringUtils.isNotEmpty(trackList)) {
-                trackIds = StringUtils.split(trackList, ',');
-            }
-            DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
-            if (trackIds != null && trackIds.length > 0) {
-                query = FindTrackQuery.getForId(trackIds);
-            } else {
-                query = TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true);
-            }
+            DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = getQuery();
             if (query != null) {
                 playlist.addAll(getTransaction().executeQuery(query).getResults());
                 ((Playlist)getSession().getAttribute("playlist")).setTrackCount(playlist.size());
@@ -49,5 +40,18 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
         } else {
             forward(MyTunesRssResource.Login);
         }
+    }
+
+    protected DataStoreQuery<DataStoreQuery.QueryResult<Track>> getQuery() throws SQLException {
+        String[] trackIds = getNonEmptyParameterValues("track");
+        String trackList = getRequestParameter("tracklist", null);
+        if ((trackIds == null || trackIds.length == 0) && StringUtils.isNotEmpty(trackList)) {
+            trackIds = StringUtils.split(trackList, ',');
+        }
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
+        if (trackIds != null && trackIds.length > 0) {
+            return FindTrackQuery.getForId(trackIds);
+        }
+        return TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true);
     }
 }
