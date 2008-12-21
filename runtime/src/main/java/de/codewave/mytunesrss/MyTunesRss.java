@@ -211,6 +211,7 @@ public class MyTunesRss {
             LOG.info("Starting quartz scheduler.");
         }
         QUARTZ_SCHEDULER.start();
+        MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
         STREAMING_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER, 10000, CONFIG.getStreamingCacheMaxFiles());
         File streamingCacheFile = new File(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/transcoder/cache.xml");

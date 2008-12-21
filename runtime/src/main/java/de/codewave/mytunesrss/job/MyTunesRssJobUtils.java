@@ -7,12 +7,27 @@ import org.slf4j.LoggerFactory;
 import org.quartz.*;
 
 import java.text.ParseException;
+import java.util.Date;
 
 /**
  * de.codewave.mytunesrss.job.MyTunesRssJobUtils
  */
 public class MyTunesRssJobUtils {
     private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssJobUtils.class);
+    private static final long MILLIS_PER_HOUR = 3600000;
+
+    public static void scheduleStatisticEventsJob() {
+        try {
+            MyTunesRss.QUARTZ_SCHEDULER.unscheduleJob("RemoveOldEvents", "StatisticEvents");
+            MyTunesRss.QUARTZ_SCHEDULER.addJob(new JobDetail(RemoveStatisticEventsJob.class.getSimpleName(), null, RemoveStatisticEventsJob.class), true);
+            Trigger trigger = new SimpleTrigger("RemoveOldEvents", "StatisticEvents", RemoveStatisticEventsJob.class.getSimpleName(), null, new Date(), null, SimpleTrigger.REPEAT_INDEFINITELY, MILLIS_PER_HOUR);
+            MyTunesRss.QUARTZ_SCHEDULER.scheduleJob(trigger);
+        } catch (SchedulerException e) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Could not schedule statistic events removal job.", e);
+            }
+        }
+    }
 
     /**
      * Schedule the database update job for all cron triggers in the configuration. Remove possibly existing triggers for that job first.
