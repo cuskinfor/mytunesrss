@@ -9,6 +9,12 @@
 
         <release version="3.6-EAP-13" date="2008-12-20" description="EAP-13">
             <action dev="mdescher" type="change">
+                Buttons for configuration pages instead of select box.
+            </action>
+        </release>
+
+        <release version="3.6-EAP-13" date="2008-12-20" description="EAP-13">
+            <action dev="mdescher" type="change">
                 Refactoring of HTML code for buttons (only one column).
             </action>
             <action dev="mdescher" type="add">

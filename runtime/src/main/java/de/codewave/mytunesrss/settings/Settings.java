@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
@@ -29,10 +30,11 @@ public class Settings implements MyTunesRssEventListener {
     private JLabel myServerStatusLabel;
     private JButton myServerInfoButton;
     private JLabel myLastUpdatedLabel;
-    private JComboBox mySettingsInput;
     private JButton myUpdateDatabaseButton;
     private JButton myDeleteDatabaseButton;
+    private JPanel myConfigButtonsPanel;
     private Info myInfoForm;
+    private SettingsForm[] mySettingsForms;
 
     public JPanel getRootPanel() {
         return myRootPanel;
@@ -59,22 +61,25 @@ public class Settings implements MyTunesRssEventListener {
         myDeleteDatabaseButton.addActionListener(new DeleteDatabaseButtonListener());
         myUpdateDatabaseButton.addActionListener(new UpdateDatabaseButtonListener());
 
-        mySettingsInput.addItem(MyTunesRssUtils.getBundleString("settings.configSelectionTitle"));
-        addSettingsItem(new Server());
-        addSettingsItem(new Database());
-        addSettingsItem(new Directories());
-        addSettingsItem(new DataImport());
-        addSettingsItem(new Content());
-        addSettingsItem(new UserManagement());
-        addSettingsItem(new AdminNotify());
-        addSettingsItem(new Statistics());
-        addSettingsItem(new Misc());
-        addSettingsItem(new Streaming());
-        addSettingsItem(new Addons());
+        int rows = 1;
+        int rowWidth = 0;
+        int lastPreferredWidth = 0;
+        int limit = 400;
         myInfoForm = new Info();
-        addSettingsItem(myInfoForm);
-        mySettingsInput.addActionListener(new SelectSettingsListener());
-
+        mySettingsForms = new SettingsForm[] {new Server(), new Database(), new Directories(), new DataImport(), new Content(), new UserManagement(),
+                                              new AdminNotify(), new Statistics(), new Misc(), new Streaming(), new Addons(), myInfoForm};
+        for (SettingsForm form : mySettingsForms) {
+            addSettingsItem(form);
+            int itemWidth = myConfigButtonsPanel.getPreferredSize().width - lastPreferredWidth;
+            rowWidth += itemWidth;
+            if (rowWidth > limit) {
+                rows++;
+                rowWidth = itemWidth;
+            }
+            lastPreferredWidth = myConfigButtonsPanel.getPreferredSize().width;
+        }
+        Dimension d = myConfigButtonsPanel.getPreferredSize();
+        myConfigButtonsPanel.setPreferredSize(new Dimension(d.width, d.height * rows));
         refreshLastUpdate();
         MyTunesRssEventManager.getInstance().addListener(this);
         initValues();
@@ -84,25 +89,22 @@ public class Settings implements MyTunesRssEventListener {
         setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
     }
 
-    private void addSettingsItem(SettingsForm settingsForm) {
+    private void addSettingsItem(final SettingsForm settingsForm) {
         settingsForm.init();
-        mySettingsInput.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof SettingsForm) {
-                    label.setText(((SettingsForm)value).getDialogTitle());
-                }
-                return label;
+        JButton button = new JButton(settingsForm.getDialogTitle());
+        button.putClientProperty("JComponent.sizeVariant", "mini");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showSettings(settingsForm);
             }
         });
-        mySettingsInput.addItem(settingsForm);
+        myConfigButtonsPanel.add(button);
     }
 
     public String updateConfigFromGui() {
         StringBuffer messages = new StringBuffer();
-        for (int i = 1; i < mySettingsInput.getItemCount(); i++) {
-            String message = ((SettingsForm)mySettingsInput.getItemAt(i)).updateConfigFromGui();
+        for (SettingsForm form : mySettingsForms) {
+            String message = form.updateConfigFromGui();
             if (message != null) {
                 messages.append(message).append(" ");
             }
@@ -205,64 +207,58 @@ public class Settings implements MyTunesRssEventListener {
         myInfoForm.forceRegistration();
     }
 
-    public class SelectSettingsListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            if (mySettingsInput.getSelectedItem() instanceof SettingsForm) {
-                final SettingsForm form = (SettingsForm)mySettingsInput.getSelectedItem();
-                String dialogTitle = MyTunesRssUtils.getBundleString("dialog.settings.commonTitle", form.getDialogTitle());
-                final JDialog dialog = new JDialog(MyTunesRss.ROOT_FRAME, dialogTitle, true);
-                dialog.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosing(WindowEvent windowEvent) {
-                        DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
-                        if (layout == null) {
-                            layout = MyTunesRss.CONFIG.createDialogLayout(form.getClass());
-                        }
-                        layout.setX((int)dialog.getLocation().getX());
-                        layout.setY((int)dialog.getLocation().getY());
-                        layout.setWidth((int)dialog.getSize().getWidth());
-                        layout.setHeight((int)dialog.getSize().getHeight());
-                        String messages = form.updateConfigFromGui();
-                        if (messages != null) {
-                            MyTunesRssUtils.showErrorMessage(messages);
-                        } else {
-                            dialog.dispose();
-                        }
-                    }
-                });
-                dialog.add(form.getRootPanel());
-                dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    protected void showSettings(final SettingsForm form) {
+        String dialogTitle = MyTunesRssUtils.getBundleString("dialog.settings.commonTitle", form.getDialogTitle());
+        final JDialog dialog = new JDialog(MyTunesRss.ROOT_FRAME, dialogTitle, true);
+        dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
                 DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
-                dialog.pack();
-                final Dimension minimalDimension = dialog.getSize();
-                dialog.setMinimumSize(minimalDimension);
-                dialog.addComponentListener(new ComponentAdapter() {
-                    @Override
-                    public void componentResized(final ComponentEvent e) {
-                        Dimension d = e.getComponent().getSize();
-                        boolean changed = false;
-                        if (d.width < minimalDimension.width) {
-                            d.width = minimalDimension.width;
-                            changed = true;
-                        }
-                        if (d.height < minimalDimension.height) {
-                            d.height = minimalDimension.height;
-                            changed = true;
-                        }
-                        if (changed) {
-                            e.getComponent().setSize(d);
-                        }
-                    }
-                });
-                if (layout != null && layout.isValid()) {
-                    dialog.setLocation(layout.getX(), layout.getY());
-                    dialog.setSize(layout.getWidth(), layout.getHeight());
-                    dialog.setVisible(true);
+                if (layout == null) {
+                    layout = MyTunesRss.CONFIG.createDialogLayout(form.getClass());
+                }
+                layout.setX((int)dialog.getLocation().getX());
+                layout.setY((int)dialog.getLocation().getY());
+                layout.setWidth((int)dialog.getSize().getWidth());
+                layout.setHeight((int)dialog.getSize().getHeight());
+                String messages = form.updateConfigFromGui();
+                if (messages != null) {
+                    MyTunesRssUtils.showErrorMessage(messages);
                 } else {
-                    SwingUtils.packAndShowRelativeTo(dialog, MyTunesRss.ROOT_FRAME);
+                    dialog.dispose();
                 }
             }
-            mySettingsInput.setSelectedIndex(0);
+        });
+        dialog.add(form.getRootPanel());
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
+        dialog.pack();
+        final Dimension minimalDimension = dialog.getSize();
+        dialog.setMinimumSize(minimalDimension);
+        dialog.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(final ComponentEvent e) {
+                Dimension d = e.getComponent().getSize();
+                boolean changed = false;
+                if (d.width < minimalDimension.width) {
+                    d.width = minimalDimension.width;
+                    changed = true;
+                }
+                if (d.height < minimalDimension.height) {
+                    d.height = minimalDimension.height;
+                    changed = true;
+                }
+                if (changed) {
+                    e.getComponent().setSize(d);
+                }
+            }
+        });
+        if (layout != null && layout.isValid()) {
+            dialog.setLocation(layout.getX(), layout.getY());
+            dialog.setSize(layout.getWidth(), layout.getHeight());
+            dialog.setVisible(true);
+        } else {
+            SwingUtils.packAndShowRelativeTo(dialog, MyTunesRss.ROOT_FRAME);
         }
     }
 
