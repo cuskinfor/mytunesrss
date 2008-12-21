@@ -79,7 +79,7 @@ public class Settings implements MyTunesRssEventListener {
             lastPreferredWidth = myConfigButtonsPanel.getPreferredSize().width;
         }
         Dimension d = myConfigButtonsPanel.getPreferredSize();
-        myConfigButtonsPanel.setPreferredSize(new Dimension(d.width, d.height * rows));
+        myConfigButtonsPanel.setPreferredSize(new Dimension(400, d.height * rows));
         refreshLastUpdate();
         MyTunesRssEventManager.getInstance().addListener(this);
         initValues();
@@ -93,6 +93,7 @@ public class Settings implements MyTunesRssEventListener {
         settingsForm.init();
         JButton button = new JButton(settingsForm.getDialogTitle());
         button.putClientProperty("JComponent.sizeVariant", "mini");
+        button.putClientProperty("JButton.buttonType", "roundRect");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showSettings(settingsForm);
