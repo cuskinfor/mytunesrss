@@ -19,8 +19,12 @@ public class InsertStatisticsEventStatement implements DataStoreStatement {
 
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "insertStatisticsEvent");
-        statement.setObject("ts", System.currentTimeMillis());
+        statement.setObject("ts", getTime());
         statement.setObject("data", myData);
         statement.execute();
+    }
+
+    long getTime() {
+        return System.currentTimeMillis();
     }
 }

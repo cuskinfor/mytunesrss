@@ -144,7 +144,6 @@ public class MyTunesRss {
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
     public static final ErrorQueue ERROR_QUEUE = new ErrorQueue();
     public static boolean QUIT_REQUEST;
-    public static Driver DATABASE_DRIVER;
     public static FileCache STREAMING_CACHE;
     public static Scheduler QUARTZ_SCHEDULER;
     public static MailSender MAILER = new MailSender();
