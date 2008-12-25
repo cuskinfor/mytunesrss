@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
@@ -53,7 +54,12 @@ public class MailSender {
             mailSender.setPassword(MyTunesRss.CONFIG.getMailPassword());
         }
         mailSender.setJavaMailProperties(mailProperties);
-        mailSender.send(message);
+        try {
+            mailSender.send(message);
+        } catch (MailException e) {
+            LOGGER.error("Could not send mail.", e);
+            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.couldNotSendMail", e.getMessage()));
+        }
         AnonyStatUtils.sendMail();
     }
 }

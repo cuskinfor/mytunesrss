@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.6-RC-1" date="2008-12-30" description="RC-1">
+            <action dev="mdescher" type="add">
+                Show an error message when a mail error occurs.
+            </action>
+        </release>
+
         <release version="3.6-EAP-14" date="2008-12-21" description="EAP-14">
             <action dev="mdescher" type="change">
                 Buttons for configuration pages instead of select box.
