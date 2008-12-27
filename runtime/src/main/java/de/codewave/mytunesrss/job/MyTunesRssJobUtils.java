@@ -2,9 +2,9 @@ package de.codewave.mytunesrss.job;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.quartz.*;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -19,8 +19,16 @@ public class MyTunesRssJobUtils {
     public static void scheduleStatisticEventsJob() {
         try {
             MyTunesRss.QUARTZ_SCHEDULER.unscheduleJob("RemoveOldEvents", "StatisticEvents");
-            MyTunesRss.QUARTZ_SCHEDULER.addJob(new JobDetail(RemoveStatisticEventsJob.class.getSimpleName(), null, RemoveStatisticEventsJob.class), true);
-            Trigger trigger = new SimpleTrigger("RemoveOldEvents", "StatisticEvents", RemoveStatisticEventsJob.class.getSimpleName(), null, new Date(), null, SimpleTrigger.REPEAT_INDEFINITELY, MILLIS_PER_HOUR);
+            MyTunesRss.QUARTZ_SCHEDULER.addJob(new JobDetail(RemoveStatisticEventsJob.class.getSimpleName(), null, RemoveStatisticEventsJob.class),
+                                               true);
+            Trigger trigger = new SimpleTrigger("RemoveOldEvents",
+                                                "StatisticEvents",
+                                                RemoveStatisticEventsJob.class.getSimpleName(),
+                                                null,
+                                                new Date(),
+                                                null,
+                                                SimpleTrigger.REPEAT_INDEFINITELY,
+                                                MILLIS_PER_HOUR);
             MyTunesRss.QUARTZ_SCHEDULER.scheduleJob(trigger);
         } catch (SchedulerException e) {
             if (LOG.isWarnEnabled()) {

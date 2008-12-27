@@ -5,7 +5,6 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 
 import javax.management.NotCompliantMBeanException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

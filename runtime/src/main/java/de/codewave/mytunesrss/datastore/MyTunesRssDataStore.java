@@ -47,8 +47,7 @@ public class MyTunesRssDataStore extends DataStore {
                         return DriverManager.getConnection(databaseConnection, databaseUser, databasePassword);
                     } catch (SQLException e) {
                         if (LOG.isWarnEnabled()) {
-                            LOG
-                                    .warn("Could not get a database connection.");
+                            LOG.warn("Could not get a database connection.");
                         }
                     }
                     try {
@@ -64,8 +63,7 @@ public class MyTunesRssDataStore extends DataStore {
                         LOG.error("Could not get a database connection.", e);
                     }
                 }
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils
-                        .getBundleString("error.noDatabaseConnection"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.noDatabaseConnection"));
                 MyTunesRssUtils.shutdown();
                 return null;
             }
@@ -93,18 +91,15 @@ public class MyTunesRssDataStore extends DataStore {
                         "dml.xml")), JXPathUtils.getContext(getClass().getResource("migration.xml"))};
         URL url = getClass().getResource("ddl_" + databaseType + ".xml");
         if (url != null) {
-            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils
-                    .getContext(url));
+            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils.getContext(url));
         }
         url = getClass().getResource("dml_" + databaseType + ".xml");
         if (url != null) {
-            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils
-                    .getContext(url));
+            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils.getContext(url));
         }
         url = getClass().getResource("migration_" + databaseType + ".xml");
         if (url != null) {
-            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils
-                    .getContext(url));
+            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils.getContext(url));
         }
         mySmartStatementFactory = SmartStatementFactory.getInstance(contexts);
     }

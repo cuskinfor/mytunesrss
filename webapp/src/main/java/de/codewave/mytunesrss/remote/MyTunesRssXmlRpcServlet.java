@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss.remote;
 
-import de.codewave.mytunesrss.MyTunesRss;
 import org.apache.xmlrpc.webserver.XmlRpcServlet;
 
 import javax.servlet.ServletException;

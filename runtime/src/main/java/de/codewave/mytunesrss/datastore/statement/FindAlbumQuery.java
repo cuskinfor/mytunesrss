@@ -35,7 +35,8 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     }
 
     public QueryResult<Album> execute(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAlbums" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted"));
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection,
+                                                                   "findAlbums" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted"));
         statement.setString("filter", myFilter);
         statement.setString("artist", myArtist);
         statement.setString("genre", myGenre);

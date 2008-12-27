@@ -14,9 +14,9 @@ import javax.management.NotCompliantMBeanException;
  * de.codewave.mytunesrss.jmx.DirectoriesConfig
  */
 public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesConfigMBean {
-  DirectoriesConfig() throws NotCompliantMBeanException {
-    super(DirectoriesConfigMBean.class);
-  }
+    DirectoriesConfig() throws NotCompliantMBeanException {
+        super(DirectoriesConfigMBean.class);
+    }
 
     public String[] getDatasources() {
         return MyTunesRss.CONFIG.getDatasources();

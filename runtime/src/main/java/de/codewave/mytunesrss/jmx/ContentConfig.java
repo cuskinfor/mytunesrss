@@ -87,7 +87,8 @@ public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean
             List<String> displayItems = new ArrayList<String>();
             for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
                 if (playlist.getType() == PlaylistType.ITunes || playlist.getType() == PlaylistType.M3uFile) {
-                    displayItems.add("id=\"" + playlist.getId() + "\", name=\"" + playlist.getName() + "\", status=\"" + (playlist.isHidden() ? "hidden" : "visible") + "\"");
+                    displayItems.add("id=\"" + playlist.getId() + "\", name=\"" + playlist.getName() + "\", status=\"" +
+                            (playlist.isHidden() ? "hidden" : "visible") + "\"");
                 }
             }
             return displayItems.toArray(new String[displayItems.size()]);

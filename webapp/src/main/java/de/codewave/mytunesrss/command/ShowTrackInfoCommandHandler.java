@@ -4,15 +4,15 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.camel.mp3.Mp3Info;
+import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
-import de.codewave.camel.mp3.Mp3Info;
-import de.codewave.camel.mp3.Mp3Utils;
 
-import java.util.Collection;
 import java.io.FileInputStream;
+import java.util.Collection;
 
 /**
  * de.codewave.mytunesrss.command.ShowTrackInfoCommandHandler

@@ -3,11 +3,9 @@ package de.codewave.mytunesrss;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-
-import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
 
 import java.util.Properties;
 
@@ -60,6 +58,5 @@ public class MailSender {
             LOGGER.error("Could not send mail.", e);
             MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.couldNotSendMail", e.getMessage()));
         }
-        AnonyStatUtils.sendMail();
     }
 }

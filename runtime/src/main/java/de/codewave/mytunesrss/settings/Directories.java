@@ -76,7 +76,8 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 String text = value.toString();
-                label.setIcon(new ImageIcon(getClass().getResource("xml".equalsIgnoreCase(FilenameUtils.getExtension(text)) ? "itunes.gif" : "folder.gif")));
+                label.setIcon(new ImageIcon(getClass().getResource(
+                        "xml".equalsIgnoreCase(FilenameUtils.getExtension(text)) ? "itunes.gif" : "folder.gif")));
                 label.setText(text);
                 label.setToolTipText(text);
                 return label;
@@ -169,7 +170,8 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
     }
 
     public void setGuiMode(GuiMode mode) {
-        boolean databaseOrServerActive = DatabaseBuilderTask.isRunning() || MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.DatabaseUpdating || mode == GuiMode.ServerRunning;
+        boolean databaseOrServerActive = DatabaseBuilderTask.isRunning() || MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.DatabaseUpdating ||
+                mode == GuiMode.ServerRunning;
         myBaseDirsList.setEnabled(!databaseOrServerActive);
         myAddBaseDirButton.setEnabled(!databaseOrServerActive);
         myDeleteBaseDirButton.setEnabled(!databaseOrServerActive && myBaseDirsList.getSelectedIndex() > -1);

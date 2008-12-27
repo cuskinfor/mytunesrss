@@ -2,12 +2,10 @@ package de.codewave.mytunesrss.remote;
 
 import org.apache.commons.lang.StringUtils;
 
-import javax.servlet.http.HttpServletResponseWrapper;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
-
-import de.codewave.utils.servlet.GzipFilterOutputStream;
 
 /**
  * de.codewave.mytunesrss.remote.JsonpFilterResponseWrapper

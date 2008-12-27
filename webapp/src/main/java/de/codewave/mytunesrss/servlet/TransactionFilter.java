@@ -18,8 +18,8 @@ public class TransactionFilter implements Filter {
         // intentionally left blank
     }
 
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException,
-            ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
         ServletContext servletContext = ((HttpServletRequest)servletRequest).getSession().getServletContext();
         DataStore store = (DataStore)servletContext.getAttribute(MyTunesRssDataStore.class.getName());
         DataStoreSession session = store.getTransaction();

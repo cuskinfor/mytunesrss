@@ -9,7 +9,6 @@ import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.StreamSender;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;

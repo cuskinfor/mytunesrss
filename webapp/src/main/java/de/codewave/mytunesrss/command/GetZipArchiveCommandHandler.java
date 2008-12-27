@@ -57,7 +57,8 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 } else {
                     getResponse().setContentType("application/zip");
                     OutputStream outputStream = getAuthUser().getOutputStreamWrapper(0).wrapStream(getResponse().getOutputStream());
-                    createZipArchive(outputStream, tracks, baseName, new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
+                    createZipArchive(outputStream, tracks, baseName, new MyTunesRssSendCounter(getAuthUser(),
+                                                                                               SessionManager.getSessionInfo(getRequest())));
                 }
             } finally {
                 getSession().setMaxInactiveInterval(getAuthUser().getSessionTimeout() * 60); // reset correct session timeout

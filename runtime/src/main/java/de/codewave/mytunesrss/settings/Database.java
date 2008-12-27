@@ -7,27 +7,17 @@ package de.codewave.mytunesrss.settings;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
-import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
-import de.codewave.mytunesrss.task.RecreateDatabaseTask;
-import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.swing.JTextFieldValidation;
-import de.codewave.utils.swing.SwingUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

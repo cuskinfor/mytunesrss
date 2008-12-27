@@ -10,6 +10,7 @@ import javax.management.*;
  * de.codewave.mytunesrss.jmx.UserConfigMBean
  */
 public interface UserConfigMBean {
-    String addUser(String name, String password) throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException,
-            NotCompliantMBeanException, InstanceAlreadyExistsException;
+    String addUser(String name, String password)
+            throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException, NotCompliantMBeanException,
+            InstanceAlreadyExistsException;
 }

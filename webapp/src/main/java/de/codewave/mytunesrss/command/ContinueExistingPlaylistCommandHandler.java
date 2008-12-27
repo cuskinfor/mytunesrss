@@ -4,8 +4,8 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.StringUtils;
 
 /**

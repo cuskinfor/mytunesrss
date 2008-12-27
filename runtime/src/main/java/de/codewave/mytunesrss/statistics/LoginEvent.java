@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss.statistics;
 
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.User;
 
 import java.io.IOException;

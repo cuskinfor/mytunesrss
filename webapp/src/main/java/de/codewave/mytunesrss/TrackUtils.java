@@ -22,7 +22,8 @@ import java.util.*;
 public class TrackUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackUtils.class);
 
-    public static EnhancedTracks getEnhancedTracks(DataStoreSession transaction, Collection<Track> tracks, FindPlaylistTracksQuery.SortOrder sortOrder) {
+    public static EnhancedTracks getEnhancedTracks(DataStoreSession transaction, Collection<Track> tracks,
+            FindPlaylistTracksQuery.SortOrder sortOrder) {
         EnhancedTracks enhancedTracks = new EnhancedTracks();
         enhancedTracks.setTracks(new ArrayList<EnhancedTrack>(tracks.size()));
         String lastAlbum = TrackUtils.class.getName();// we need some dummy name

@@ -103,8 +103,8 @@ public class TrackService {
     public Object getTracks(String[] ids) throws SQLException, IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-            return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter
-                    .getTransaction().executeQuery(FindTrackQuery.getForId(ids)), 0, -1));
+            return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForId(
+                    ids)), 0, -1));
         }
         throw new IllegalAccessException("Unauthorized");
     }

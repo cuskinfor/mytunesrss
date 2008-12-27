@@ -54,7 +54,8 @@ public class TrackRetrieveUtils {
         return null;
     }
 
-    public static DataStoreQuery<DataStoreQuery.QueryResult<Track>> getQuery(DataStoreSession session, HttpServletRequest servletRequest, User user, boolean keepPlaylistOrder) throws SQLException {
+    public static DataStoreQuery<DataStoreQuery.QueryResult<Track>> getQuery(DataStoreSession session, HttpServletRequest servletRequest, User user,
+            boolean keepPlaylistOrder) throws SQLException {
         String[] albums = getNonEmptyParameterValues(servletRequest, "album");
         decodeBase64(albums);
         String[] artists = getNonEmptyParameterValues(servletRequest, "artist");
@@ -73,12 +74,14 @@ public class TrackRetrieveUtils {
                 for (String artist : artists) { // full albums should not happen with more than one artist, otherwise this solution would be rather slow
                     FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, artist, null, -1);
                     DataStoreQuery.QueryResult<Album> albumsWithArtist = session.executeQuery(findAlbumQuery);
-                    for (Album albumWithArtist = albumsWithArtist.nextResult(); albumWithArtist != null; albumWithArtist = albumsWithArtist.nextResult()) {
+                    for (Album albumWithArtist = albumsWithArtist.nextResult(); albumWithArtist != null;
+                            albumWithArtist = albumsWithArtist.nextResult()) {
                         albumNames.add(albumWithArtist.getName());
                     }
                 }
-                return FindTrackQuery.getForAlbum(user, albumNames.toArray(new String[albumNames.size()]), sortOrderValue == FindPlaylistTracksQuery.SortOrder
-                    .Artist);
+                return FindTrackQuery.getForAlbum(user,
+                                                  albumNames.toArray(new String[albumNames.size()]),
+                                                  sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
             } else {
                 return FindTrackQuery.getForArtist(user, artists, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
             }
@@ -90,8 +93,9 @@ public class TrackRetrieveUtils {
                 for (Album albumWithGenre = albumsWithGenre.nextResult(); albumWithGenre != null; albumWithGenre = albumsWithGenre.nextResult()) {
                     albumNames.add(albumWithGenre.getName());
                 }
-                return FindTrackQuery.getForAlbum(user, albumNames.toArray(new String[albumNames.size()]), sortOrderValue == FindPlaylistTracksQuery.SortOrder
-                    .Artist);
+                return FindTrackQuery.getForAlbum(user,
+                                                  albumNames.toArray(new String[albumNames.size()]),
+                                                  sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
             } else {
                 return FindTrackQuery.getForGenre(user, new String[] {genre}, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
             }

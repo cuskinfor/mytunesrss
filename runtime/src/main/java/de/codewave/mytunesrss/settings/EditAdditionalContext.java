@@ -91,8 +91,7 @@ public class EditAdditionalContext {
             if (JOptionPane.showConfirmDialog(MyTunesRss.ROOT_FRAME,
                                               MyTunesRssUtils.getBundleString("confirm.cancelEditAddCtx"),
                                               MyTunesRssUtils.getBundleString("confirm.cancelEditAddCtxTitle"),
-                                              JOptionPane.YES_NO_OPTION) == JOptionPane
-                    .YES_OPTION) {
+                                              JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 myDialog.dispose();
             }
         }

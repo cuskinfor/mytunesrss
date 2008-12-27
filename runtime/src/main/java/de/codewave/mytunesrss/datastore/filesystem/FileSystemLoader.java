@@ -19,28 +19,29 @@ import java.util.Collection;
 public class FileSystemLoader {
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds, Collection<String> playlistIds) throws IOException, SQLException {
+    public static void loadFromFileSystem(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds,
+            Collection<String> playlistIds) throws IOException, SQLException {
         MyTunesRssFileProcessor fileProcessor = null;
-                if (baseDir != null && baseDir.isDirectory()) {
-                    fileProcessor = new MyTunesRssFileProcessor(baseDir, storeSession, lastUpdateTime, trackIds);
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Processing files from: \"" + baseDir + "\".");
-                    }
-                    IOUtils.processFiles(baseDir, fileProcessor, new FileFilter() {
-                        public boolean accept(File file) {
-                            return file.isDirectory() || FileSupportUtils.isSupported(file.getName());
-                        }
-                    });
-                    PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(storeSession, fileProcessor.getExistingIds());
-                    IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
-                        public boolean accept(File file) {
-                            return file.isDirectory() || "m3u".equals(FilenameUtils.getExtension(file.getName().toLowerCase()));
-                        }
-                    });
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Inserted/updated " + fileProcessor.getUpdatedCount() + " file system tracks.");
-                    }
-                    playlistIds.removeAll(playlistFileProcessor.getExistingIds());
+        if (baseDir != null && baseDir.isDirectory()) {
+            fileProcessor = new MyTunesRssFileProcessor(baseDir, storeSession, lastUpdateTime, trackIds);
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Processing files from: \"" + baseDir + "\".");
+            }
+            IOUtils.processFiles(baseDir, fileProcessor, new FileFilter() {
+                public boolean accept(File file) {
+                    return file.isDirectory() || FileSupportUtils.isSupported(file.getName());
+                }
+            });
+            PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(storeSession, fileProcessor.getExistingIds());
+            IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
+                public boolean accept(File file) {
+                    return file.isDirectory() || "m3u".equals(FilenameUtils.getExtension(file.getName().toLowerCase()));
+                }
+            });
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Inserted/updated " + fileProcessor.getUpdatedCount() + " file system tracks.");
+            }
+            playlistIds.removeAll(playlistFileProcessor.getExistingIds());
         }
     }
 }

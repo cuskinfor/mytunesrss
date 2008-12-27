@@ -43,8 +43,8 @@ public class EditPlaylistService {
                 if (queryResult != null && queryResult.size() == 1) {
                     playlist = queryResult.get(0);
                     tracks = new ArrayList<Track>(TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(user,
-                                                                                                                                  playlistId,
-                                                                                                                                  null)).getResults());
+                                                                                                                              playlistId,
+                                                                                                                              null)).getResults());
                 } else {
                     throw new IllegalArgumentException("Playlist not found");
                 }

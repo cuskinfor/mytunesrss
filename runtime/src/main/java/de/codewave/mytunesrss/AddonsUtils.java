@@ -84,7 +84,8 @@ public class AddonsUtils {
             try {
                 zipInputStream = CodewaveZipInputStreamFactory.newInstance(new FileInputStream(theme));
                 for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
-                    themeDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes/" + FilenameUtils.getBaseName(theme.getName()));
+                    themeDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes/" + FilenameUtils.getBaseName(
+                            theme.getName()));
                     saveFile(themeDir, entry.getName(), (InputStream)zipInputStream);
                 }
             } catch (IOException e) {
@@ -264,8 +265,9 @@ public class AddonsUtils {
 
     public static String deleteLanguage(String languageCode) {
         try {
-            File languageFile = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/MyTunesRssWeb_" +
-                languageCode + ".properties");
+            File languageFile = new File(
+                    PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/MyTunesRssWeb_" + languageCode + ".properties")
+                    ;
             if (languageFile.isFile()) {
                 languageFile.delete();
             } else {

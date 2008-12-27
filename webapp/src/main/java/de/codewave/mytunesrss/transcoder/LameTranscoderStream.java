@@ -1,17 +1,15 @@
 package de.codewave.mytunesrss.transcoder;
 
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.datastore.statement.Track;
 
 /**
  * de.codewave.mytunesrss.command.LameTranscoderStream

@@ -14,8 +14,8 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery
@@ -44,7 +44,8 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
     }
 
     public QueryResult<Playlist> execute(Connection connection) throws SQLException {
-        String name = myMatchingOwnerOnly ? "findUserPlaylists" : (StringUtils.isEmpty(myRestrictionPlaylistId) ? "findPlaylists" : "findPlaylistsRestricted");
+        String name = myMatchingOwnerOnly ? "findUserPlaylists" :
+                (StringUtils.isEmpty(myRestrictionPlaylistId) ? "findPlaylists" : "findPlaylistsRestricted");
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, name);
         if (myTypes != null) {
             List<String> typeNames = new ArrayList<String>(myTypes.size());

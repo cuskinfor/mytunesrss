@@ -79,9 +79,8 @@ public class EditUser implements MyTunesRssEventListener {
 
     public void display(final JFrame parent, User user) {
         myUser = user;
-        JDialog dialog = new JDialog(parent,
-                                     MyTunesRssUtils.getBundleString(user != null ? "editUser.editUserTitle" : "editUser.newUserTitle"),
-                                     true);
+        JDialog dialog = new JDialog(parent, MyTunesRssUtils.getBundleString(user != null ? "editUser.editUserTitle" : "editUser.newUserTitle"), true)
+                ;
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
@@ -141,10 +140,9 @@ public class EditUser implements MyTunesRssEventListener {
         } else {
             myApplyButton.setVisible(false);
         }
-        JTextFieldValidation.setValidation(new CompositeTextFieldValidation(myUserNameInput,
-                                                                            new NotEmptyTextFieldValidation(myUserNameInput,
-                                                                                                            MyTunesRssUtils.getBundleString(
-                                                                                                                    "error.missingUserName")),
+        JTextFieldValidation.setValidation(new CompositeTextFieldValidation(myUserNameInput, new NotEmptyTextFieldValidation(myUserNameInput,
+                                                                                                                             MyTunesRssUtils.getBundleString(
+                                                                                                                                     "error.missingUserName")),
                                                                             new MaxLengthTextFieldValidation(myUserNameInput,
                                                                                                              30,
                                                                                                              MyTunesRssUtils.getBundleString(
@@ -292,8 +290,8 @@ public class EditUser implements MyTunesRssEventListener {
             if (messages != null) {
                 MyTunesRssUtils.showErrorMessage(messages);
             } else {
-                if ((myUser == null || (!myUser.getName().equals(myUserNameInput.getText()))) && MyTunesRss.CONFIG.getUsers()
-                        .contains(new User(myUserNameInput.getText()))) {
+                if ((myUser == null || (!myUser.getName().equals(myUserNameInput.getText()))) && MyTunesRss.CONFIG.getUsers().contains(new User(
+                        myUserNameInput.getText()))) {
                     MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.duplicateUserName", myUserNameInput.getText()));
                 } else {
                     if (myUser != null) {
@@ -357,8 +355,7 @@ public class EditUser implements MyTunesRssEventListener {
             if (JOptionPane.showConfirmDialog(MyTunesRss.ROOT_FRAME,
                                               MyTunesRssUtils.getBundleString("confirm.cancelEditUser"),
                                               MyTunesRssUtils.getBundleString("confirm.cancelEditUserTitle"),
-                                              JOptionPane.YES_NO_OPTION) == JOptionPane
-                    .YES_OPTION) {
+                                              JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 myDialog.dispose();
             }
         }

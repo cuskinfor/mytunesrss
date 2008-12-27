@@ -18,11 +18,11 @@ import java.util.Map;
  */
 public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ShowImageCommandHandler.class);
-    private Map<Integer, byte[]> myDefaultImages = new HashMap<Integer,byte[]>();
+    private Map<Integer, byte[]> myDefaultImages = new HashMap<Integer, byte[]>();
 
     private byte[] getDefaultImage(int size) {
         if (myDefaultImages.get(size) == null) {
-            synchronized(myDefaultImages) {
+            synchronized (myDefaultImages) {
                 if (myDefaultImages.get(size) == null) {
                     InputStream inputStream = MyTunesRssCommandHandler.class.getClassLoader().getResourceAsStream(
                             "de/codewave/mytunesrss/default_rss_image.png");

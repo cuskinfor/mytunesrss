@@ -1,6 +1,5 @@
 package de.codewave.utils.servlet;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +34,8 @@ public class GzipFilter implements Filter {
      * @throws ServletException Any servlet exception from the chain.
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (response instanceof HttpServletResponse && request instanceof HttpServletRequest &&
-                ((HttpServletRequest)request).getHeader("Accept-Encoding") != null &&
-                ((HttpServletRequest)request).getHeader("Accept-Encoding").contains("gzip")) {
+        if (response instanceof HttpServletResponse && request instanceof HttpServletRequest && ((HttpServletRequest)request).getHeader(
+                "Accept-Encoding") != null && ((HttpServletRequest)request).getHeader("Accept-Encoding").contains("gzip")) {
             LOGGER.debug("Using GZIP filter.");
             chain.doFilter(request, new GzipFilterResponseWrapper((HttpServletResponse)response));
         } else {

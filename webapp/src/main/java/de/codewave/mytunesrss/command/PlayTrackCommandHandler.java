@@ -11,16 +11,12 @@ import de.codewave.camel.mp3.exception.IllegalHeaderException;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssSendCounter;
-import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatement;
-import de.codewave.mytunesrss.statistics.DownloadEvent;
-import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.servlet.*;
 import de.codewave.utils.sql.DataStoreQuery;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +70,6 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
                         streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
                         getAuthUser().playLastFmTrack(track);
-                        AnonyStatUtils.sendPlayTrack(transcoder != null ? transcoder.getTranscoderId() : "", FilenameUtils.getExtension(track.getFile().getName()).toLowerCase());
                     }
                 } else {
                     if (LOG.isWarnEnabled()) {

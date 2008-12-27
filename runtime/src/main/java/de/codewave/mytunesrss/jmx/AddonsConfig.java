@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.AddonsUtils;
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 
 import javax.management.NotCompliantMBeanException;

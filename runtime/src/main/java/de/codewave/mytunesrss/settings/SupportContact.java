@@ -67,7 +67,10 @@ public class SupportContact {
         public void actionPerformed(ActionEvent e) {
             MyTunesRss.CONFIG.setSupportName(myNameInput.getText());
             MyTunesRss.CONFIG.setSupportEmail(myEmailInput.getText());
-            SendSupportRequestTask requestTask = new SendSupportRequestTask(myNameInput.getText(), myEmailInput.getText(), myCommentInput.getText(), myItunesXmlInput.isSelected());
+            SendSupportRequestTask requestTask = new SendSupportRequestTask(myNameInput.getText(),
+                                                                            myEmailInput.getText(),
+                                                                            myCommentInput.getText(),
+                                                                            myItunesXmlInput.isSelected());
             if (!MyTunesRss.CONFIG.isProxyServer() ||
                     (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getProxyHost()) && MyTunesRss.CONFIG.getProxyPort() > 0)) {
                 MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.sendingSupportRequest"), null, false, requestTask);

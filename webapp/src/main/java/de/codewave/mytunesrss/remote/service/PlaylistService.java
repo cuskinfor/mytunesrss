@@ -6,10 +6,9 @@ import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
+import org.apache.commons.lang.StringUtils;
 
 import java.sql.SQLException;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Service for playlist retrieval and management.
@@ -72,8 +71,7 @@ public class PlaylistService {
                 }
             }
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter
-                    .getTransaction().executeQuery(new FindPlaylistTracksQuery(user,
-                                                                               playlistId, sortOrderEnum)), 0, -1));
+                    .getTransaction().executeQuery(new FindPlaylistTracksQuery(user, playlistId, sortOrderEnum)), 0, -1));
         }
         throw new IllegalAccessException("Unauthorized");
     }

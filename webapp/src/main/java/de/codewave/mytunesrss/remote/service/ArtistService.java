@@ -14,8 +14,8 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.remote.service.ArtistService
  */
 public class ArtistService {
-    public Object getArtists(String filter, String album, String genre, int letterIndex, int startItem, int maxItems) throws SQLException,
-            IllegalAccessException {
+    public Object getArtists(String filter, String album, String genre, int letterIndex, int startItem, int maxItems)
+            throws SQLException, IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             FindArtistQuery query = new FindArtistQuery(user, StringUtils.trimToNull(filter), StringUtils.trimToNull(album), StringUtils.trimToNull(

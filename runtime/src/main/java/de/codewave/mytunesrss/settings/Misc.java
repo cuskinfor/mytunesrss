@@ -11,14 +11,13 @@ import de.codewave.utils.swing.MinMaxValueTextFieldValidation;
 import de.codewave.utils.swing.NotEmptyTextFieldValidation;
 import de.codewave.utils.swing.SwingUtils;
 import de.codewave.utils.swing.components.PasswordHashField;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * de.codewave.mytunesrss.settings.Misc

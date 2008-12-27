@@ -60,7 +60,9 @@ public class ItunesLoader {
      * @param timeLastUpdate
      * @param trackIds
      * @param existsingPlaylistIds
+     *
      * @return Number of missing files.
+     *
      * @throws SQLException
      */
     public static long loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds,
@@ -82,7 +84,8 @@ public class ItunesLoader {
             } catch (Exception e) {
                 LOG.error("Could not read data from iTunes xml file.", e);
             }
-            LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks. " + trackListener.getMissingFiles() + " files were missing.");
+            LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks. " + trackListener.getMissingFiles() +
+                    " files were missing.");
             existsingPlaylistIds.removeAll(playlistListener.getExistingIds());
             return trackListener.getMissingFiles();
         }

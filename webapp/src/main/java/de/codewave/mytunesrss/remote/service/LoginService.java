@@ -56,8 +56,8 @@ public class LoginService {
         }
     }
 
-    public void saveUserSettings(String password, String email, String lastFmUser, String lastFmPassword) throws IllegalAccessException,
-            UnsupportedEncodingException {
+    public void saveUserSettings(String password, String email, String lastFmUser, String lastFmPassword)
+            throws IllegalAccessException, UnsupportedEncodingException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             if (user.isChangeEmail() && StringUtils.isNotBlank(email)) {

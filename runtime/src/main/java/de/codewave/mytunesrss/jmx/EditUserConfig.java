@@ -53,8 +53,9 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         return MyTunesRss.CONFIG.getUser(myUsername).getName();
     }
 
-    public void setName(String name) throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException,
-            NotCompliantMBeanException, InstanceAlreadyExistsException {
+    public void setName(String name)
+            throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException, NotCompliantMBeanException,
+            InstanceAlreadyExistsException {
         if (StringUtils.isNotEmpty(name)) {
             MyTunesRssJmxUtils.unregisterUsers();
             MyTunesRss.CONFIG.getUser(myUsername).setName(name);
@@ -337,7 +338,8 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     public void setLastFmPassword(String password) {
         if (StringUtils.isNotEmpty(password)) {
             try {
-                MyTunesRss.CONFIG.getUser(myUsername).setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
+                MyTunesRss.CONFIG.getUser(myUsername).setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.digest(StringUtils
+                        .trim(password).getBytes("UTF-8")));
                 onChange();
             } catch (UnsupportedEncodingException e) {
                 if (LOG.isErrorEnabled()) {

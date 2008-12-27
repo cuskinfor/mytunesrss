@@ -5,11 +5,18 @@ package de.codewave.mytunesrss.jmx;
  */
 public interface ApplicationMBean {
     String getVersion();
+
     String quit();
+
     String getLicense();
+
     String getCodewaveLogLevel();
+
     void setCodewaveLogLevel(String level);
+
     String sendSupportRequest(String name, String email, String comment, boolean includeItunesXml);
+
     boolean isSendAnonymousUsageStatistics();
+
     void setSendAnonymousUsageStatistics(boolean sendStatistics);
 }

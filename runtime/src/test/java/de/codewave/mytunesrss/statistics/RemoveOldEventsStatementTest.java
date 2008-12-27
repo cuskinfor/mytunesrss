@@ -1,11 +1,8 @@
 package de.codewave.mytunesrss.statistics;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssConfig;
-import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.MyTunesRssTestUtils;
-import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
-import de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement;
+import de.codewave.mytunesrss.User;
 import de.codewave.utils.sql.DataStoreSession;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;

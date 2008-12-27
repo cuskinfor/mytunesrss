@@ -13,9 +13,8 @@ import org.apache.commons.lang.StringUtils;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.command.BrowseAlbumCommandHandler
@@ -43,8 +42,10 @@ public class BrowseGenreCommandHandler extends MyTunesRssCommandHandler {
             }
             getRequest().setAttribute("genres", genres);
             DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
-                                                                                                                            Collections.singletonList(PlaylistType.MyTunes),
-                                                                                                                            null, null,
+                                                                                                                            Collections.singletonList(
+                                                                                                                                    PlaylistType.MyTunes),
+                                                                                                                            null,
+                                                                                                                            null,
                                                                                                                             false,
                                                                                                                             true));
             getRequest().setAttribute("editablePlaylists", playlistsQueryResult.getResults());

@@ -1,13 +1,13 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.lastfm.LastFmSession;
+import de.codewave.mytunesrss.lastfm.LastFmSubmission;
+import de.codewave.mytunesrss.lastfm.LastFmUtils;
 import de.codewave.utils.servlet.RangeHeader;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
-import de.codewave.mytunesrss.lastfm.LastFmSession;
-import de.codewave.mytunesrss.lastfm.LastFmUtils;
-import de.codewave.mytunesrss.lastfm.LastFmSubmission;
-import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -516,7 +516,8 @@ public class User implements MyTunesRssEventListener {
                             MyTunesRssEventManager.getInstance().addListener(User.this);
                         } else {
                             myLastFmHandshakeWaitTime = Math.min(myLastFmHandshakeWaitTime == 0 ? 60000 : myLastFmHandshakeWaitTime * 2, 7200000);
-                            LOG.warn("No LastFM session for user \"" + getName() + "\", setting handshake wait time to " + (myLastFmHandshakeWaitTime / 1000) + " seconds.");
+                            LOG.warn("No LastFM session for user \"" + getName() + "\", setting handshake wait time to " +
+                                    (myLastFmHandshakeWaitTime / 1000) + " seconds.");
                         }
                     }
                     if (myLastFmSession != null) {

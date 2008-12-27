@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.servlet;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

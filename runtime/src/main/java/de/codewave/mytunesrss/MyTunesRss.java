@@ -11,13 +11,12 @@ import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.mytunesrss.server.WebServer;
-import de.codewave.mytunesrss.settings.GuiMode;
 import de.codewave.mytunesrss.settings.Settings;
+import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;
+import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesTask;
 import de.codewave.mytunesrss.task.InitializeDatabaseTask;
-import de.codewave.mytunesrss.statistics.StatisticsEventManager;
-import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.io.FileCache;
@@ -28,11 +27,11 @@ import org.apache.catalina.LifecycleException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import snoozesoft.systray4j.SysTrayMenu;
 
 import javax.imageio.ImageIO;
@@ -149,8 +148,9 @@ public class MyTunesRss {
     public static MailSender MAILER = new MailSender();
     public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
 
-    public static void main(final String[] args) throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException,
-            InstantiationException, ClassNotFoundException, IOException, SQLException, SchedulerException {
+    public static void main(final String[] args)
+            throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException,
+            IOException, SQLException, SchedulerException {
         final Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
         HEADLESS = arguments.containsKey("headless");
         REGISTRATION.init(null, true);
@@ -199,8 +199,9 @@ public class MyTunesRss {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
             MyTunesRssUtils.shutdown();
         } else if (REGISTRATION.isExpirationDate() && !REGISTRATION.isExpired()) {
-            MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.expirationInfo", REGISTRATION.getExpiration(
-                    MyTunesRssUtils.getBundleString("common.dateFormat"))));
+            MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.expirationInfo",
+                                                                            REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
+                                                                                    "common.dateFormat"))));
         }
         if (MyTunesRss.CONFIG.isDefaultDatabase() && MyTunesRss.CONFIG.isDeleteDatabaseOnNextStartOnError()) {
             new DeleteDatabaseFilesTask().execute();
@@ -348,8 +349,9 @@ public class MyTunesRss {
         return true;
     }
 
-    private static void executeGuiMode() throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException,
-            ClassNotFoundException, IOException, InterruptedException {
+    private static void executeGuiMode()
+            throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException, IOException,
+            InterruptedException {
         showNewVersionInfo();
         SETTINGS = new Settings();
         //DATABASE_FORM = SETTINGS.getDatabaseForm();
@@ -406,8 +408,9 @@ public class MyTunesRss {
                 Point location = ROOT_FRAME.getLocation();
                 Dimension size = ROOT_FRAME.getSize();
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Frame is (" + location.x + ", " + location.y + ") - (" + (location.x + size.width) + ", " +
-                            (location.y + size.height) + ")");
+                    LOG.debug(
+                            "Frame is (" + location.x + ", " + location.y + ") - (" + (location.x + size.width) + ", " + (location.y + size.height) +
+                                    ")");
                 }
                 if (location.x >= screenSize.width || location.y >= screenSize.height || location.x + size.width <= 0 ||
                         location.y + size.height <= 0) {

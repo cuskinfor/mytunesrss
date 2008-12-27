@@ -77,7 +77,8 @@ public class MulticastService extends Thread {
                     }
                 }
                 try {
-                    Collection<String> localAddresses = new ArrayList(Arrays.asList(ServerInfo.getLocalAddresses(String.valueOf(MyTunesRss.CONFIG.getPort()))));
+                    Collection<String> localAddresses =
+                            new ArrayList(Arrays.asList(ServerInfo.getLocalAddresses(String.valueOf(MyTunesRss.CONFIG.getPort()))));
                     localAddresses.add("http://127.0.0.1:" + MyTunesRss.CONFIG.getPort());
                     socket.setSoTimeout(2000);
                     buffer = new byte[1024];
@@ -87,7 +88,7 @@ public class MulticastService extends Thread {
                         String answer = new String(receivePacket.getData(), 0, receivePacket.getLength(), "UTF-8");
                         String name = answer.substring(answer.indexOf(':') + 1);
                         int port = Integer.parseInt(answer.substring(0, answer.indexOf(':')));
-                      if (!localAddresses.contains("http://" + receivePacket.getAddress().getHostAddress() + ":" + port)) {
+                        if (!localAddresses.contains("http://" + receivePacket.getAddress().getHostAddress() + ":" + port)) {
                             otherInstances.add(new RemoteServer(name, receivePacket.getAddress().getHostName(), port));
                         }
                     }

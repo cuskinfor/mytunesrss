@@ -132,7 +132,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
     static String dropWordsFromArtist(String artist) {
         String dropWords = MyTunesRss.CONFIG.getArtistDropWords();
         if (StringUtils.isNotEmpty(dropWords) && StringUtils.isNotEmpty(artist)) {
-            for (StringTokenizer tokenizer = new StringTokenizer(dropWords, ","); tokenizer.hasMoreTokens(); ) {
+            for (StringTokenizer tokenizer = new StringTokenizer(dropWords, ","); tokenizer.hasMoreTokens();) {
                 String word = tokenizer.nextToken().toLowerCase();
                 while (artist.toLowerCase().startsWith(word + " ")) {
                     artist = artist.substring(word.length()).trim();

@@ -7,7 +7,10 @@ import javax.swing.*;
  */
 public interface SettingsForm {
     void init();
+
     String updateConfigFromGui();
+
     JPanel getRootPanel();
+
     String getDialogTitle();
 }

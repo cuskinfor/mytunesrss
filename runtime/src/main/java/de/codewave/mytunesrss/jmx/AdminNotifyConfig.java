@@ -1,11 +1,10 @@
 package de.codewave.mytunesrss.jmx;
 
-import javax.management.NotCompliantMBeanException;
-
 import de.codewave.mytunesrss.MyTunesRss;
 
-public class AdminNotifyConfig extends MyTunesRssMBean implements
-        AdminNotifyConfigMBean {
+import javax.management.NotCompliantMBeanException;
+
+public class AdminNotifyConfig extends MyTunesRssMBean implements AdminNotifyConfigMBean {
     public AdminNotifyConfig() throws NotCompliantMBeanException {
         super(AdminNotifyConfigMBean.class);
     }

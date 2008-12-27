@@ -3,9 +3,9 @@ package de.codewave.mytunesrss;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.FileType

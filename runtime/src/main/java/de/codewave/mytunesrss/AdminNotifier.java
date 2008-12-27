@@ -12,9 +12,10 @@ public class AdminNotifier {
     public void notifyDatabaseUpdate(long time, Map<String, Long> missingItunesFiles, SystemInformation systemInformation) {
         if (MyTunesRss.CONFIG.isNotifyOnDatabaseUpdate() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
             String subject = "Database has been updated";
-            String body = "The database has been updated. Update took " + (time / 1000L) + " seconds.\n\nTracks: " +
-                    systemInformation.getTrackCount() + "\nAlbums: " + systemInformation.getAlbumCount() + "\nArtists: " +
-                    systemInformation.getArtistCount() + "\nGenres: " + systemInformation.getGenreCount();
+            String body =
+                    "The database has been updated. Update took " + (time / 1000L) + " seconds.\n\nTracks: " + systemInformation.getTrackCount() +
+                            "\nAlbums: " + systemInformation.getAlbumCount() + "\nArtists: " + systemInformation.getArtistCount() + "\nGenres: " +
+                            systemInformation.getGenreCount();
             if (!missingItunesFiles.isEmpty()) {
                 body += "\n\nMissing files from iTunes libraries:\n";
                 for (Map.Entry<String, Long> entry : missingItunesFiles.entrySet()) {

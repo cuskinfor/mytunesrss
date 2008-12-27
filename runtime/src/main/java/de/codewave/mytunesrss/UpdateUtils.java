@@ -24,14 +24,14 @@ import java.net.URL;
 public class UpdateUtils {
     public static void checkForUpdate(boolean autoCheck) {
         CheckUpdateTask checkUpdateTask = new CheckUpdateTask();
-        MyTunesRssUtils.executeTask(MyTunesRssUtils.getBundleString("pleaseWait.updateCheckTitle"),
-                                    MyTunesRssUtils.getBundleString("pleaseWait.updateCheck"), MyTunesRssUtils.getBundleString("cancel"), true,
-                                    checkUpdateTask);
+        MyTunesRssUtils.executeTask(MyTunesRssUtils.getBundleString("pleaseWait.updateCheckTitle"), MyTunesRssUtils.getBundleString(
+                "pleaseWait.updateCheck"), MyTunesRssUtils.getBundleString("cancel"), true, checkUpdateTask);
         if (!checkUpdateTask.isCancelled()) {
             UpdateInfo updateInfo = checkUpdateTask.getUpdateInfo();
             if (updateInfo != null) {
                 String noNagVersion = MyTunesRss.CONFIG.getUpdateIgnoreVersion();
-                if (new Version(updateInfo.getVersion()).compareTo(new Version(MyTunesRss.VERSION)) > 0 && (!autoCheck || !noNagVersion.equals(updateInfo.getVersion()))) {
+                if (new Version(updateInfo.getVersion()).compareTo(new Version(MyTunesRss.VERSION)) > 0 && (!autoCheck || !noNagVersion.equals(
+                        updateInfo.getVersion()))) {
                     if (askForUpdate(updateInfo, autoCheck)) {
                         File targetFile = new File(updateInfo.getFileName());
                         final FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME,
@@ -55,9 +55,9 @@ public class UpdateUtils {
     }
 
     private static void downloadUpdate(final URL url, final File file, String version) {
-        MyTunesRssUtils.executeTask(MyTunesRssUtils.getBundleString("pleaseWait.dowloadTitle"),
-                                    MyTunesRssUtils.getBundleString("pleaseWait.downloadMessage", version), MyTunesRssUtils.getBundleString("cancel"), true,
-                                    new DownloadUpdateTask(url, file));
+        MyTunesRssUtils.executeTask(MyTunesRssUtils.getBundleString("pleaseWait.dowloadTitle"), MyTunesRssUtils.getBundleString(
+                "pleaseWait.downloadMessage",
+                version), MyTunesRssUtils.getBundleString("cancel"), true, new DownloadUpdateTask(url, file));
     }
 
     private static boolean askForUpdate(UpdateInfo updateInfo, boolean autoCheck) {
@@ -70,9 +70,9 @@ public class UpdateUtils {
         String cancel = MyTunesRssUtils.getBundleString("cancel");
         String moreInfo = MyTunesRssUtils.getBundleString("info.newVersionMoreInfo");
         if (autoCheck) {
-            pane.setOptions(new String[]{stopNagging, later, download, moreInfo});
+            pane.setOptions(new String[] {stopNagging, later, download, moreInfo});
         } else {
-            pane.setOptions(new String[]{cancel, download, moreInfo});
+            pane.setOptions(new String[] {cancel, download, moreInfo});
         }
         pane.setInitialValue(moreInfo);
         JDialog dialog = pane.createDialog(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("info.newVersionTitle", updateInfo.getVersion()));
@@ -145,11 +145,11 @@ public class UpdateUtils {
             long startTime = System.currentTimeMillis();
             new Thread(new Runnable() {
                 public void run() {
-                  Proxy proxy = null;
-                  if (MyTunesRss.CONFIG.isProxyServer()) {
-                    proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(MyTunesRss.CONFIG.getProxyHost(), MyTunesRss.CONFIG.getProxyPort()));
-                  }
-                  myUpdateInfo = NetworkUtils.getCurrentUpdateInfo(MyTunesRss.UPDATE_URL, MyTunesRss.BUNDLE.getLocale(), READ_TIMEOUT, proxy);
+                    Proxy proxy = null;
+                    if (MyTunesRss.CONFIG.isProxyServer()) {
+                        proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(MyTunesRss.CONFIG.getProxyHost(), MyTunesRss.CONFIG.getProxyPort()));
+                    }
+                    myUpdateInfo = NetworkUtils.getCurrentUpdateInfo(MyTunesRss.UPDATE_URL, MyTunesRss.BUNDLE.getLocale(), READ_TIMEOUT, proxy);
                     myDone = true;
                 }
             }, MyTunesRss.THREAD_PREFIX + "UpdateInfoGetter").start();

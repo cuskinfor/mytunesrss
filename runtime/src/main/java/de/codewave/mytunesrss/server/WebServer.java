@@ -18,12 +18,11 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Embedded;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.tomcat.util.IntrospectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.tomcat.util.IntrospectionUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -120,8 +119,8 @@ public class WebServer {
     private String getCatalinaBase(String encoding) {
         String catalinaBase = null;
         try {
-            catalinaBase = encoding != null ? URLDecoder.decode(WebServer.class.getResource("WebServer.class").getFile(), encoding) : URLDecoder.decode(
-                    WebServer.class.getResource("WebServer.class").getFile());
+            catalinaBase = encoding != null ? URLDecoder.decode(WebServer.class.getResource("WebServer.class").getFile(), encoding) :
+                    URLDecoder.decode(WebServer.class.getResource("WebServer.class").getFile());
         } catch (UnsupportedEncodingException e) {
             catalinaBase = URLDecoder.decode(WebServer.class.getResource("WebServer.class").getFile());
         }
@@ -141,8 +140,7 @@ public class WebServer {
     private byte checkServerHealth(int port, boolean logging) {
         HttpURLConnection connection = null;
         try {
-            URL targetUrl = new URL("http://127.0.0.1:" + port + MyTunesRss.CONFIG.getWebappContext() +
-                    "/mytunesrss/checkHealth?ignoreSession=true");
+            URL targetUrl = new URL("http://127.0.0.1:" + port + MyTunesRss.CONFIG.getWebappContext() + "/mytunesrss/checkHealth?ignoreSession=true");
             if (LOG.isInfoEnabled() && logging) {
                 LOG.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             }
@@ -258,7 +256,8 @@ public class WebServer {
                             sslConnector.setProxyPort(MyTunesRss.CONFIG.getTomcatSslProxyPort());
                         }
                         sslConnector.setURIEncoding("UTF-8");
-                        if (StringUtils.isEmpty(MyTunesRss.CONFIG.getSslKeystoreFile()) || !new File(MyTunesRss.CONFIG.getSslKeystoreFile()).isFile()) {
+                        if (StringUtils.isEmpty(MyTunesRss.CONFIG.getSslKeystoreFile()) ||
+                                !new File(MyTunesRss.CONFIG.getSslKeystoreFile()).isFile()) {
                             // copy default keystore to configured location
                             LOG.warn("Using default keystore because configured one does not exist but SSL is enabled.");
                             File tempFile = File.createTempFile("mytunesrss-", ".keystore");

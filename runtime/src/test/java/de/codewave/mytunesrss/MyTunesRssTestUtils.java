@@ -1,9 +1,7 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssConfig;
-import de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement;
 import de.codewave.utils.sql.DataStoreSession;
 
 import java.io.IOException;

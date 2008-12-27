@@ -11,8 +11,8 @@ import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.command.ShowPlaylistManagerCommandHandler
@@ -22,7 +22,13 @@ public class ShowPlaylistManagerCommandHandler extends MyTunesRssCommandHandler 
     @Override
     public void executeAuthorized() throws Exception {
         if (getAuthUser().isCreatePlaylists()) {
-            DataStoreQuery.QueryResult<Playlist> queryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), Collections.singletonList(PlaylistType.MyTunes), null, null, false, true));
+            DataStoreQuery.QueryResult<Playlist> queryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
+                                                                                                                   Collections.singletonList(
+                                                                                                                           PlaylistType.MyTunes),
+                                                                                                                   null,
+                                                                                                                   null,
+                                                                                                                   false,
+                                                                                                                   true));
             int pageSize = getWebConfig().getEffectivePageSize();
             List<Playlist> playlists;
             if (pageSize > 0 && queryResult.getResultSize() > pageSize) {

@@ -13,17 +13,11 @@ import java.util.List;
  * de.codewave.mytunesrss.datastore.statement.PagerConfig
  */
 public class PagerConfig {
-    public static final String[] CONDITION = new String[] {
-            "first_char < 'a' OR first_char > 'z'",
-            "first_char >= 'a' AND first_char < 'd'",
-            "first_char >= 'd' AND first_char < 'g'",
-            "first_char >= 'g' AND first_char < 'j'",
-            "first_char >= 'j' AND first_char < 'm'",
-            "first_char >= 'm' AND first_char < 'p'",
-            "first_char >= 'p' AND first_char < 't'",
-            "first_char >= 't' AND first_char < 'w'",
-            "first_char >= 'w' AND first_char <= 'z'"
-    };
+    public static final String[] CONDITION =
+            new String[] {"first_char < 'a' OR first_char > 'z'", "first_char >= 'a' AND first_char < 'd'", "first_char >= 'd' AND first_char < 'g'",
+                          "first_char >= 'g' AND first_char < 'j'", "first_char >= 'j' AND first_char < 'm'",
+                          "first_char >= 'm' AND first_char < 'p'", "first_char >= 'p' AND first_char < 't'",
+                          "first_char >= 't' AND first_char < 'w'", "first_char >= 'w' AND first_char <= 'z'"};
 
     public static final List<Pager.Page> PAGES = new ArrayList<Pager.Page>();
 

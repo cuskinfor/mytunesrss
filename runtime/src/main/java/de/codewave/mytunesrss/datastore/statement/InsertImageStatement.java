@@ -1,9 +1,9 @@
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.sql.SmartStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import de.codewave.utils.sql.SmartStatement;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -56,7 +56,7 @@ public class InsertImageStatement {
                 myStatement.setObject("data", myData);
                 myStatement.execute();
             } catch (SQLException e) {
-                    LOG.error("Could not insert image for hash \"" + myHash + "\".", e);
+                LOG.error("Could not insert image for hash \"" + myHash + "\".", e);
             }
         } else {
             if (LOG.isDebugEnabled()) {

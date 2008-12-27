@@ -53,12 +53,13 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 }
                 if (image != null && image.getData() != null && image.getData().length > MAX_IMAGE_DATA_SIZE) {
                     if (LOG.isInfoEnabled()) {
-                        LOG.info("Ignoring overly large image from file \"" + myFile.getAbsolutePath() + "\" (size = " + image.getData().length + ").");
+                        LOG.info("Ignoring overly large image from file \"" + myFile.getAbsolutePath() + "\" (size = " + image.getData().length +
+                                ").");
                     }
                     image = null;
                 }
-                String imageHash = image != null && image.getData() != null ? MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData())) :
-                        null;
+                String imageHash =
+                        image != null && image.getData() != null ? MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData())) : null;
                 if (imageHash != null) {
                     LOG.debug("Image hash is \"" + imageHash + "\".");
                     boolean existing = new FindImageQuery(imageHash, 32).execute(connection) != null;
@@ -67,7 +68,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     } else {
                         LOG.debug("Image with hash \"" + imageHash + "\" does not exist in database.");
                     }
-                    if (image != null  && image.getData() != null && image.getData().length > 0 && !existing) {
+                    if (image != null && image.getData() != null && image.getData().length > 0 && !existing) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Original image size is " + image.getData().length + " bytes.");
                         }

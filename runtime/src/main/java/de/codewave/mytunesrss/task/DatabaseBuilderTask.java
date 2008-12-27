@@ -77,7 +77,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
     private void addToDatasources(File file) {
         if (file.isDirectory()) {
-            for (Iterator<File> iter = myDatasources.iterator(); iter.hasNext(); ) {
+            for (Iterator<File> iter = myDatasources.iterator(); iter.hasNext();) {
                 File each = iter.next();
                 if (each.isDirectory()) {
                     try {
@@ -205,8 +205,11 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 LOG.info("Creating database checkpoint.");
                 LOG.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
             }
-            AnonyStatUtils.sendDatabaseUpdated((System.currentTimeMillis() - timeUpdateStart), storeSession.executeQuery(new GetSystemInformationQuery()));
-            MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart), missingItunesFiles, storeSession.executeQuery(new GetSystemInformationQuery()));
+            AnonyStatUtils.sendDatabaseUpdated((System.currentTimeMillis() - timeUpdateStart),
+                                               storeSession.executeQuery(new GetSystemInformationQuery()));
+            MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart),
+                                                         missingItunesFiles,
+                                                         storeSession.executeQuery(new GetSystemInformationQuery()));
             storeSession.commit();
         } catch (Exception e) {
             storeSession.rollback();
@@ -281,10 +284,11 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
 
     /**
-     *
      * @param systemInformation
      * @param storeSession
+     *
      * @return Map with the number of missing files per iTunes XML.
+     *
      * @throws SQLException
      * @throws IOException
      */
@@ -312,7 +316,11 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
                     event.setMessageKey("settings.databaseUpdateRunningItunes");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
-                    missingItunesFiles.put(datasource.getCanonicalPath(), ItunesLoader.loadFromITunes(datasource.toURL(), storeSession, timeLastUpdate, trackIds, itunesPlaylistIds));
+                    missingItunesFiles.put(datasource.getCanonicalPath(), ItunesLoader.loadFromITunes(datasource.toURL(),
+                                                                                                      storeSession,
+                                                                                                      timeLastUpdate,
+                                                                                                      trackIds,
+                                                                                                      itunesPlaylistIds));
                 } else if (datasource.isDirectory()) {
                     myState = State.UpdatingTracksFromFolder;
                     MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;

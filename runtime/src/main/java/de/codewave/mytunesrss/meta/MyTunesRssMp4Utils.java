@@ -26,7 +26,8 @@ public class MyTunesRssMp4Utils {
     public static Image getImage(File file) {
         if (FileSupportUtils.isMp4(file)) {
             try {
-                Mp4Atom atom = Mp4Utils.getAtoms(file, Collections.singletonList("moov.udta.meta.ilst.covr.data")).get("moov.udta.meta.ilst.covr.data");
+                Mp4Atom atom = Mp4Utils.getAtoms(file, Collections.singletonList("moov.udta.meta.ilst.covr.data"))
+                        .get("moov.udta.meta.ilst.covr.data");
                 if (atom != null) {
                     byte type = atom.getData()[3];
                     return new Image(type == 0x0d ? "image/jpeg" : "image/png", ArrayUtils.subarray(atom.getData(), 8, atom.getData().length - 8));

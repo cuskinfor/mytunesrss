@@ -1,12 +1,9 @@
 package de.codewave.mytunesrss.remote;
 
 import de.codewave.mytunesrss.User;
-import de.codewave.mytunesrss.datastore.statement.Playlist;
-import de.codewave.mytunesrss.datastore.statement.Track;
 
-import java.util.List;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.remote.Session

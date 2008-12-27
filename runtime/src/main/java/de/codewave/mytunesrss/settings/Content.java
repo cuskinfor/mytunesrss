@@ -3,7 +3,6 @@ package de.codewave.mytunesrss.settings;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
@@ -77,7 +76,8 @@ public class Content implements MyTunesRssEventListener, SettingsForm {
                     myPlaylistsPanel.setLayout(new GridLayoutManager(playlists.size() + 1, 2));
                     int row = 0;
                     for (Playlist playlist : playlists) {
-                        if (playlist.getType() == PlaylistType.ITunes || playlist.getType() == PlaylistType.ITunesFolder || playlist.getType() == PlaylistType.M3uFile) {
+                        if (playlist.getType() == PlaylistType.ITunes || playlist.getType() == PlaylistType.ITunesFolder ||
+                                playlist.getType() == PlaylistType.M3uFile) {
                             addPlaylist(playlist, row++);
                         }
                     }

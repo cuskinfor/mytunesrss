@@ -3,7 +3,6 @@ package de.codewave.mytunesrss.transcoder;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.datastore.statement.Track;
 
-import java.io.File;
 import java.io.IOException;
 
 /**

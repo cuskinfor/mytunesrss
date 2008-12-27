@@ -18,29 +18,31 @@ import java.io.UnsupportedEncodingException;
  * de.codewave.mytunesrss.jmx.UserConfig
  */
 public class UserConfig extends MyTunesRssMBean implements UserConfigMBean {
-  UserConfig() throws NotCompliantMBeanException {
-    super(UserConfigMBean.class);
-  }
+    UserConfig() throws NotCompliantMBeanException {
+        super(UserConfigMBean.class);
+    }
 
-  private static final Logger LOG = LoggerFactory.getLogger(UserConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserConfig.class);
 
-    public String addUser(String name, String password) throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException,
-            NotCompliantMBeanException, InstanceAlreadyExistsException {
+    public String addUser(String name, String password)
+            throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException, NotCompliantMBeanException,
+            InstanceAlreadyExistsException {
         if (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(password)) {
-        User user = new User(name);
-        try {
-            user.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
-            MyTunesRssJmxUtils.unregisterUsers();
-            MyTunesRss.CONFIG.addUser(user);
-            MyTunesRssJmxUtils.registerUsers();
-            onChange();
-            return MyTunesRssUtils.getBundleString("ok");
-        } catch (UnsupportedEncodingException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create password hash.", e);
+            User user = new User(name);
+            try {
+                user.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
+                MyTunesRssJmxUtils.unregisterUsers();
+                MyTunesRss.CONFIG.addUser(user);
+                MyTunesRssJmxUtils.registerUsers();
+                onChange();
+                return MyTunesRssUtils.getBundleString("ok");
+            } catch (UnsupportedEncodingException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not create password hash.", e);
+                }
+                return e.getMessage();
             }
-            return e.getMessage();
-        }} else {
+        } else {
             return MyTunesRssUtils.getBundleString("jmx.newUserMissingNameOrPassword");
         }
     }

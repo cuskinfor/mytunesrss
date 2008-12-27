@@ -1,10 +1,10 @@
 package de.codewave.mytunesrss.remote.render;
 
-import de.codewave.mytunesrss.remote.service.QueryResultWrapper;
+import de.codewave.mytunesrss.TrackUtils;
+import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.network.RemoteServer;
-import de.codewave.mytunesrss.User;
-import de.codewave.mytunesrss.TrackUtils;
+import de.codewave.mytunesrss.remote.service.QueryResultWrapper;
 import de.codewave.utils.sql.DataStoreQuery;
 
 import java.util.*;

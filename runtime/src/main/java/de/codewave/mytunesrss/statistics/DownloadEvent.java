@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss.statistics;
 
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.User;
 
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class DownloadEvent implements StatisticsEvent {
     }
 
     @Override
-     public String toString() {
+    public String toString() {
         return "# " + myUser + " downloaded " + myBytes + " bytes #";
     }
 }

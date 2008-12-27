@@ -66,10 +66,11 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                     }
                     if (randomPlaylistSources.getResultSize() == 1) {
                         Playlist firstResult = randomPlaylistSources.getResult(0);
-                        playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomType.toString() + "_" + randomPlaylistSize +
-                                "_" + firstResult.getId(), PlaylistType.MyTunes, MessageFormat.format(getBundleString("playlist.specialRandom"),
-                                                                                                      randomPlaylistSize,
-                                                                                                      firstResult.getName()), randomPlaylistSize));
+                        playlists.add(new Playlist(
+                                FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomType.toString() + "_" + randomPlaylistSize + "_" +
+                                        firstResult.getId(), PlaylistType.MyTunes, MessageFormat.format(getBundleString("playlist.specialRandom"),
+                                                                                                        randomPlaylistSize,
+                                                                                                        firstResult.getName()), randomPlaylistSize));
                     } else {
                         playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomType.toString() + "_" + randomPlaylistSize,
                                                    PlaylistType.MyTunes,
