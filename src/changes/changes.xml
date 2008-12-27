@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.6-RC-1" date="2008-12-30" description="RC-1">
+            <action dev="mdescher" type="fix">
+                Removed Yahoo Media Player link for non-mp3 files.
+            </action>
             <action dev="mdescher" type="add">
                 Show an error message when a mail error occurs.
             </action>
