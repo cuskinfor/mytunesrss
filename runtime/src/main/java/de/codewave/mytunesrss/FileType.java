@@ -20,7 +20,7 @@ public class FileType {
     public static List<FileType> getDefaults() {
         List<FileType> types = new ArrayList<FileType>();
         types.add(new FileType(true, "m4a", "audio/x-m4a", false, false));
-        types.add(new FileType(true, "m4p", "audio/x-m4p", false, true));
+        types.add(new FileType(true, "m4p", "video/x-m4p", false, true));
         types.add(new FileType(true, "wav", "audio/wav", false, false));
         types.add(new FileType(true, "mp4", "audio/x-mp4", false, false));
         types.add(new FileType(true, "avi", "video/x-msvideo", true, false));

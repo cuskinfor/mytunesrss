@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.6-RC-1" date="2008-12-30" description="RC-1">
+            <action dev="mdescher" type="update">
+                Changed default type for suffix "mp4" to "video/x-m4p".
+            </action>
             <action dev="mdescher" type="fix">
                 Removed Yahoo Media Player link for non-mp3 files.
             </action>
@@ -17,7 +20,7 @@
         </release>
 
         <release version="3.6-EAP-14" date="2008-12-21" description="EAP-14">
-            <action dev="mdescher" type="change">
+            <action dev="mdescher" type="update">
                 Buttons for configuration pages instead of select box.
             </action>
             <action dev="mdescher" type="add">
@@ -26,7 +29,7 @@
         </release>
 
         <release version="3.6-EAP-13" date="2008-12-20" description="EAP-13">
-            <action dev="mdescher" type="change">
+            <action dev="mdescher" type="update">
                 Refactoring of HTML code for buttons (only one column).
             </action>
             <action dev="mdescher" type="add">
@@ -44,7 +47,7 @@
             <action dev="mdescher" type="fix">
                 Removed feed: for RSS feed URLs.
             </action>
-            <action dev="mdescher" type="change">
+            <action dev="mdescher" type="update">
                 Better album cover display (alignment, etc.) in album browser.
             </action>
             <action dev="mdescher" type="fix">
@@ -53,7 +56,7 @@
         </release>
 
         <release version="3.6-EAP-11" date="2008-12-01" description="EAP-11">
-            <action dev="mdescher" type="change">
+            <action dev="mdescher" type="update">
                 Correct content type application/rss+xml for RSS feeds. Added "feed:" to RSS feed URLs.
             </action>
             <action dev="mdescher" type="add">
