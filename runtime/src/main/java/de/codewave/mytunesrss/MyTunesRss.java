@@ -211,8 +211,6 @@ public class MyTunesRss {
             LOG.info("Starting quartz scheduler.");
         }
         QUARTZ_SCHEDULER.start();
-        MyTunesRssJobUtils.scheduleStatisticEventsJob();
-        MyTunesRssJobUtils.scheduleDatabaseJob();
         STREAMING_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER, 10000, CONFIG.getStreamingCacheMaxFiles());
         File streamingCacheFile = new File(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/transcoder/cache.xml");
         if (streamingCacheFile.isFile()) {
@@ -370,6 +368,8 @@ public class MyTunesRss {
             UpdateUtils.checkForUpdate(true);
         }
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
+        MyTunesRssJobUtils.scheduleStatisticEventsJob();
+        MyTunesRssJobUtils.scheduleDatabaseJob();
         SETTINGS.init();
         DUMMY_FRAME.dispose();
         if (x == Integer.MAX_VALUE && y == Integer.MAX_VALUE) {
@@ -467,6 +467,8 @@ public class MyTunesRss {
             LOG.info("Headless mode");
         }
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
+        MyTunesRssJobUtils.scheduleStatisticEventsJob();
+        MyTunesRssJobUtils.scheduleDatabaseJob();
         if (CONFIG.isAutoStartServer()) {
             startWebserver();
         }

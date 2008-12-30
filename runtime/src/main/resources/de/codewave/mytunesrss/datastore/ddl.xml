@@ -122,6 +122,7 @@
     </statement>
 
     <statement name="dropAllTables">
+        <sql>DROP TABLE statistics</sql>
         <sql>DROP TABLE link_track_playlist</sql>
         <sql>DROP TABLE playlist</sql>
         <sql>DROP TABLE album</sql>

@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.6-RC-2" date="2008-12-30" description="RC-2">
+            <action dev="mdescher" type="fix">
+                Fixed statement to drop all tables and possible timing problem with database tasks. 
+            </action>
+        </release>
+
         <release version="3.6-RC-1" date="2008-12-30" description="RC-1">
             <action dev="mdescher" type="update">
                 Changed default type for suffix "mp4" to "video/x-m4p".
