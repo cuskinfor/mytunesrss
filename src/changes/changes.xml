@@ -7,9 +7,15 @@
 
     <body>
 
+        <release version="3.6-RC-3" date="xxxx-xx-xx" description="RC-3">
+            <action dev="mdescher" type="fix">
+                Fixed default type for m4p and mp4 (changed wrong type ion RC-1). 
+            </action>
+        </release>
+
         <release version="3.6-RC-2" date="2008-12-30" description="RC-2">
             <action dev="mdescher" type="fix">
-                Fixed statement to drop all tables and possible timing problem with database tasks. 
+                Fixed statement to drop all tables and possible timing problem with database tasks.
             </action>
         </release>
 
