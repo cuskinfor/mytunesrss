@@ -81,7 +81,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
             } catch (Throwable t) {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("Could not extract image from MP3 file.", t);
+                    LOG.warn("Could not extract image from file \"" + myFile.getAbsolutePath() + "\".", t);
                 }
             }
         }

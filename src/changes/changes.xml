@@ -8,8 +8,11 @@
     <body>
 
         <release version="3.6-RC-3" date="xxxx-xx-xx" description="RC-3">
+            <action dev="mdescher" type="update">
+                Better error message for exception while extracting image from file. 
+            </action>
             <action dev="mdescher" type="fix">
-                Fixed default type for m4p and mp4 (changed wrong type ion RC-1). 
+                Fixed default type for m4p and mp4 (changed wrong type ion RC-1).
             </action>
         </release>
 
