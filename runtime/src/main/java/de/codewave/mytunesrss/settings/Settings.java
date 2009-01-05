@@ -8,6 +8,7 @@ import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.swing.SwingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.SystemUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -91,8 +92,10 @@ public class Settings implements MyTunesRssEventListener {
     private void addSettingsItem(final SettingsForm settingsForm) {
         settingsForm.init();
         JButton button = new JButton(settingsForm.getDialogTitle());
-        button.putClientProperty("JComponent.sizeVariant", "mini");
-        button.putClientProperty("JButton.buttonType", "roundRect");
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            button.putClientProperty("JComponent.sizeVariant", "mini");
+            button.putClientProperty("JButton.buttonType", "bevel");
+        }
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showSettings(settingsForm);
