@@ -169,6 +169,10 @@
         <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:if>
         <a id="tracklink_${track.id}" href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
             <c:choose>
+                <c:when test="${!empty param['playlist']}">
+                    <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" /> -
+                    <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />
+                </c:when>
                 <c:when test="${sortOrder == 'Album'}">
                     <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
                     <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />

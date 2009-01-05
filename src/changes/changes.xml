@@ -9,7 +9,10 @@
 
         <release version="3.6-RC-3" date="xxxx-xx-xx" description="RC-3">
             <action dev="mdescher" type="update">
-                New version of camel. 
+                Display artist in track browser when displaying a playlist.
+            </action>
+            <action dev="mdescher" type="update">
+                New version of camel.
             </action>
             <action dev="mdescher" type="update">
                 Better error message for exception while extracting image from file.
