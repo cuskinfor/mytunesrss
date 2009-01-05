@@ -148,7 +148,7 @@
             OR (:types IS NOT NULL AND :id IS NULL AND track_count > 0 AND type IN (:types))
             OR (:types IS NULL AND :id IS NOT NULL AND track_count > 0 AND id = :id)
             OR (:types IS NOT NULL AND :id IS NOT NULL AND track_count > 0 AND type IN (:types) AND id = :id))
-            AND (:containerId IS NULL OR (:containerId ='ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
+            AND (:containerId IS NULL OR (:containerId = 'ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
             ORDER BY name
             ]]>
         </sql>
@@ -169,7 +169,7 @@
             OR (:types IS NOT NULL AND :id IS NULL AND p.track_count > 0 AND p.type IN (:types))
             OR (:types IS NULL AND :id IS NOT NULL AND p.track_count > 0 AND p.id = :id)
             OR (:types IS NOT NULL AND :id IS NOT NULL AND p.track_count > 0 AND p.type IN (:types) AND p.id = :id))
-            AND (:containerId IS NULL OR (:containerId ='ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
+            AND (:containerId IS NULL OR (:containerId = 'ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
             GROUP BY id, name, type, track_count, user_private, hidden, user_owner, container_id
             ORDER BY name
             ]]>
