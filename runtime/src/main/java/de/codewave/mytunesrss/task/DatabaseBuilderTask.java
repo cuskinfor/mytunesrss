@@ -296,6 +296,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         Map<String, Long> missingItunesFiles = new HashMap<String, Long>();
         long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
         Collection<String> itunesPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunes.name()));
+        itunesPlaylistIds.addAll(storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunesFolder.name())));
         Collection<String> m3uPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.M3uFile.name()));
         final Set<String> trackIds = storeSession.executeQuery(new DataStoreQuery<Set<String>>() {
             public Set<String> execute(Connection connection) throws SQLException {

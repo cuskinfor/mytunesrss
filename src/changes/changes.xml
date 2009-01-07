@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.6-RC-3" date="xxxx-xx-xx" description="RC-3">
+            <action dev="mdescher" type="fix">
+                Obsolete iTunes folders were not removed on database update.
+            </action>
             <action dev="mdescher" type="update">
                 Other settings button style on Mac OS X.
             </action>
