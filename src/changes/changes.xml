@@ -8,9 +8,6 @@
     <body>
 
         <release version="3.6-RC-3" date="xxxx-xx-xx" description="RC-3">
-            <action dev="mdescher" type="add">
-                Redirect servlet for being able to login into iphone.mytunesrss.com with SSL enabled.
-            </action>
             <action dev="mdescher" type="fix">
                 Obsolete iTunes folders were not removed on database update.
             </action>
