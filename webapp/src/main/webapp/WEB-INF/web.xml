@@ -186,6 +186,10 @@
             <param-value>-1</param-value>
         </init-param>
     </servlet>
+    <servlet>
+        <servlet-name>RedirectServlet</servlet-name>
+        <servlet-class>de.codewave.mytunesrss.servlet.RedirectServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
         <url-pattern>/mytunesrss/*</url-pattern>
@@ -205,6 +209,10 @@
     <servlet-mapping>
         <servlet-name>JsonRpcServlet</servlet-name>
         <url-pattern>/jsonrpc/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/redirect</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
