@@ -9,6 +9,9 @@
 
         <release version="3.6-RC-3" date="xxxx-xx-xx" description="RC-3">
             <action dev="mdescher" type="add">
+                Artwork for track is read from equally named image (jpeg -> gif -> png) in that order.
+            </action>
+            <action dev="mdescher" type="add">
                 Keep readme information for language add-ons. Display info for language and theme add-ons in configuration interface.
             </action>
             <action dev="mdescher" type="fix">

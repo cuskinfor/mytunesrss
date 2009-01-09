@@ -219,7 +219,9 @@
               <td colspan="2" align="center">
                 <c:choose>
                     <c:when test="${track.video}">
-                        <embed src="${appUrl}/images/movie_poster.png" href="${downloadPlaybackServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>" type="${mtfn:contentType(config, authUser, track)}" <c:if test="${userAgent == 'Iphone'}">target="myself"</c:if> scale="1"/>
+                        <c:set var="imgUrl" value="${appUrl}/images/movie_poster.png"/>
+                        <c:if test="${track.imageCount > 0}"><c:set var="imgUrl">${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=256</mt:encrypt></c:set></c:if>
+                        <embed src="${imgUrl}" href="${downloadPlaybackServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>" type="${mtfn:contentType(config, authUser, track)}" <c:if test="${userAgent == 'Iphone'}">target="myself"</c:if> scale="1"/>
                     </c:when>
                     <c:otherwise>
                         <img alt="${track.name} Album Art"
