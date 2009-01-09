@@ -255,9 +255,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     MyTunesRssEventManager.getInstance().fireEvent(event);
                     lastEventTime = System.currentTimeMillis();
                 }
-                if (track.getFile().lastModified() >= track.getLastImageUpdate()) {
-                    storeSession.executeStatement(new HandleTrackImagesStatement(track.getFile(), track.getId()));
-                }
+                storeSession.executeStatement(new HandleTrackImagesStatement(track.getFile(), track.getId(), track.getLastImageUpdate()));
                 doCheckpoint(storeSession, false);
             }
         } finally {
