@@ -24,8 +24,8 @@ import java.util.zip.ZipEntry;
 public class AddonsUtils {
     private static final Logger LOG = LoggerFactory.getLogger(AddonsUtils.class);
 
-    public static Collection<String> getThemes() {
-        List<String> themes = new ArrayList<String>();
+    public static Collection<ThemeDefinition> getThemes() {
+        List<ThemeDefinition> themes = new ArrayList<ThemeDefinition>();
         try {
             File themesDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes");
             if (!themesDir.exists()) {
@@ -37,7 +37,12 @@ public class AddonsUtils {
                         return new File(dir, name + "/images").isDirectory() && new File(dir, name + "/styles").isDirectory();
                     }
                 })) {
-                    themes.add(theme);
+                    File readme = new File(themesDir + "/" + theme, "readme.txt");
+                    if (readme.isFile()) {
+                        themes.add(new ThemeDefinition(theme, FileUtils.readFileToString(readme, "UTF-8")));
+                    } else {
+                        themes.add(new ThemeDefinition(theme, null));
+                    }
                 }
             }
         } catch (IOException e) {
@@ -45,12 +50,16 @@ public class AddonsUtils {
                 LOG.error("Problem reading existing themes.", e);
             }
         }
-        Collections.sort(themes);
+        Collections.sort(themes, new Comparator<ThemeDefinition>() {
+            public int compare(ThemeDefinition o1, ThemeDefinition o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
         return themes;
     }
 
-    public static Collection<String> getLanguages() {
-        List<String> languages = new ArrayList<String>();
+    public static Collection<LanguageDefinition> getLanguages() {
+        List<LanguageDefinition> languages = new ArrayList<LanguageDefinition>();
         try {
             File languagesDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages");
             if (!languagesDir.exists()) {
@@ -62,9 +71,14 @@ public class AddonsUtils {
                         return name.startsWith("MyTunesRssWeb_") && name.endsWith(".properties");
                     }
                 })) {
-                    int underscoreIndex = language.indexOf('_');
-                    if (underscoreIndex > -1 && underscoreIndex + 1 < language.length()) {
-                        languages.add(language.substring("MyTunesRssWeb_".length(), language.length() - ".properties".length()));
+                    String languageCode = getLanguageCode(language);
+                    if (languageCode != null) {
+                        File readme = new File(languagesDir, language + ".readme.txt");
+                        if (readme.isFile()) {
+                            languages.add(new LanguageDefinition(languageCode, FileUtils.readFileToString(readme, "UTF-8")));
+                        } else {
+                            languages.add(new LanguageDefinition(languageCode, null));
+                        }
                     }
                 }
             }
@@ -73,8 +87,20 @@ public class AddonsUtils {
                 LOG.error("Problem reading existing themes and languages.", e);
             }
         }
-        Collections.sort(languages);
+        Collections.sort(languages, new Comparator<LanguageDefinition>() {
+            public int compare(LanguageDefinition o1, LanguageDefinition o2) {
+                return o1.getCode().compareTo(o2.getCode());
+            }
+        });
         return languages;
+    }
+
+    private static String getLanguageCode(String language) {
+        int underscoreIndex = language.indexOf('_');
+        if (underscoreIndex > -1 && underscoreIndex + 1 < language.length()) {
+            return language.substring("MyTunesRssWeb_".length(), language.length() - ".properties".length());
+        }
+        return null;
     }
 
     public static String addTheme(File theme) {
@@ -184,11 +210,22 @@ public class AddonsUtils {
             File languageDir = null;
             try {
                 zipInputStream = CodewaveZipInputStreamFactory.newInstance(new FileInputStream(language));
+                String languageCode = null;
+                byte[] readme = null;
                 for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
                     languageDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages");
                     if (entry.getName().startsWith("MyTunesRssWeb_") && entry.getName().endsWith(".properties")) {
                         saveFile(languageDir, entry.getName(), (InputStream)zipInputStream);
+                        languageCode = getLanguageCode(entry.getName());
                     }
+                    if (entry.getName().equals("readme.txt")) {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        IOUtils.copy((InputStream)zipInputStream, baos);
+                        readme = baos.toByteArray();
+                    }
+                }
+                if (languageCode != null && readme != null) {
+                    saveFile(languageDir, "MyTunesRssWeb_" + languageCode + ".properties.readme.txt", new ByteArrayInputStream(readme));
                 }
             } catch (IOException e) {
                 if (languageDir != null && languageDir.exists()) {
@@ -270,6 +307,12 @@ public class AddonsUtils {
                     ;
             if (languageFile.isFile()) {
                 languageFile.delete();
+                File readmeFile = new File(
+                        PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/MyTunesRssWeb_" + languageCode +
+                                ".properties.readme.txt");
+                if (readmeFile.isFile()) {
+                    readmeFile.delete();
+                }
             } else {
                 return MyTunesRssUtils.getBundleString("error.deleteLanguageNoFile");
             }
@@ -305,5 +348,67 @@ public class AddonsUtils {
             }
         }
         return null;
+    }
+
+    public static class LanguageDefinition {
+        private String myCode;
+        private String myInfo;
+
+        public LanguageDefinition(String code, String info) {
+            myCode = code;
+            myInfo = info;
+        }
+
+        public String getCode() {
+            return myCode;
+        }
+
+        public void setCode(String code) {
+            myCode = code;
+        }
+
+        public String getInfo() {
+            return myInfo;
+        }
+
+        public void setInfo(String info) {
+            myInfo = info;
+        }
+
+        @Override
+        public String toString() {
+            return myCode;
+        }
+    }
+
+    public static class ThemeDefinition {
+        private String myName;
+        private String myInfo;
+
+        public ThemeDefinition(String name, String info) {
+            myName = name;
+            myInfo = info;
+        }
+
+        public String getName() {
+            return myName;
+        }
+
+        public void setName(String name) {
+            myName = name;
+        }
+
+        public String getInfo() {
+            return myInfo;
+        }
+
+        public void setInfo(String info) {
+            myInfo = info;
+        }
+
+        @Override
+        public String toString() {
+            return myName;
+        }
     }
 }

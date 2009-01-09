@@ -6,6 +6,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import javax.management.NotCompliantMBeanException;
 import java.io.File;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       Cologne Systems GmbH<br> <b>Creation Date:</b>
@@ -32,13 +33,23 @@ public class AddonsConfig extends MyTunesRssMBean implements AddonsConfigMBean {
     }
 
     public String[] getLanguages() {
-        Collection<String> collection = AddonsUtils.getLanguages();
-        return collection.toArray(new String[collection.size()]);
+        Collection<AddonsUtils.LanguageDefinition> collection = AddonsUtils.getLanguages();
+        String[] result = new String[collection.size()];
+        Iterator<AddonsUtils.LanguageDefinition> iter = collection.iterator();
+        for (int i = 0; i < collection.size(); i++) {
+            result[i] = iter.next().getCode();
+        }
+        return result;
     }
 
     public String[] getThemes() {
-        Collection<String> collection = AddonsUtils.getThemes();
-        return collection.toArray(new String[collection.size()]);
+        Collection<AddonsUtils.ThemeDefinition> collection = AddonsUtils.getThemes();
+        String[] result = new String[collection.size()];
+        Iterator<AddonsUtils.ThemeDefinition> iter = collection.iterator();
+        for (int i = 0; i < collection.size(); i++) {
+            result[i] = iter.next().getName();
+        }
+        return result;
     }
 
     public String removeLanguage(String languageCode) {

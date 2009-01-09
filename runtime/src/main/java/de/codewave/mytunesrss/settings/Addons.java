@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -48,7 +49,25 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
         myLanguagesScrollPane.setMaximumSize(myLanguagesScrollPane.getPreferredSize());
         myLanguagesScrollPane.getViewport().setOpaque(false);
         myThemesList.setModel(myThemesListModel);
+        myThemesList.setCellRenderer(new DefaultListCellRenderer() {
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                label.setText(((AddonsUtils.ThemeDefinition)value).getName());
+                String info = StringUtils.trimToNull(((AddonsUtils.ThemeDefinition)value).getInfo());
+                label.setToolTipText(info != null ? "<html>" + info.replace("\n", "<br>") + "</html>" : null);
+                return label;
+            }
+        });
         myLanguagesList.setModel(myLanguagesListModel);
+        myLanguagesList.setCellRenderer(new DefaultListCellRenderer() {
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                label.setText(((AddonsUtils.LanguageDefinition)value).getCode());
+                String info = StringUtils.trimToNull(((AddonsUtils.LanguageDefinition)value).getInfo());
+                label.setToolTipText(info != null ? "<html>" + info.replace("\n", "<br>") + "</html>" : null);
+                return label;
+            }
+        });
         myThemesList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 myDeleteThemeButton.setEnabled(myThemesList.getSelectedIndex() > -1);
@@ -116,11 +135,11 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
 
     private void initListModels() {
         myThemesListModel.clear();
-        for (String theme : AddonsUtils.getThemes()) {
+        for (AddonsUtils.ThemeDefinition theme : AddonsUtils.getThemes()) {
             myThemesListModel.addElement(theme);
         }
         myLanguagesListModel.clear();
-        for (String language : AddonsUtils.getLanguages()) {
+        for (AddonsUtils.LanguageDefinition language : AddonsUtils.getLanguages()) {
             myLanguagesListModel.addElement(language);
         }
     }
