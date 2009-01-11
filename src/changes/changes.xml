@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.6-RC-3" date="xxxx-xx-xx" description="RC-3">
+        <release version="3.6-RC-3" date="2008-01-11" description="RC-3">
             <action dev="mdescher" type="add">
                 Artwork for track is read from equally named image (jpeg -> gif -> png) in that order.
             </action>
