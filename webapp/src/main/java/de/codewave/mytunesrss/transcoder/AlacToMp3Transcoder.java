@@ -24,7 +24,7 @@ public class AlacToMp3Transcoder extends Transcoder {
     }
 
     public boolean isActive() {
-        return super.isActive() || myActive;
+        return myActive;
     }
 
     public InputStream getStream() throws IOException {
