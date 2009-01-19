@@ -10,12 +10,12 @@
 <c:choose>
     <c:when test="${config.flashplayerType eq 'jw'}">
         <embed
-          src="${appUrl}/flashplayer/mediaplayer.swf?file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${param.playlistParams}/playerRequest=true/type=Xspf</mt:encrypt>/${cwfn:encodeUrl(param.filename)}&amp;linktarget=_blank"
+          src="${appUrl}/flashplayer/mediaplayer.swf"
           width="100%"
           height="100%"
           allowscriptaccess="always"
           allowfullscreen="true"
-          flashvars="displaywidth=256"
+          flashvars="file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${param.playlistParams}/playerRequest=true/type=Xspf/jwplayer=true</mt:encrypt>/${cwfn:encodeUrl(param.filename)}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350"
         />
     </c:when>
     <c:otherwise>

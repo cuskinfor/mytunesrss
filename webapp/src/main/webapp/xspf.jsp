@@ -10,7 +10,7 @@
                 <album><c:out value="${cwfn:choose(mtfn:unknown(item.album), msgUnknown, item.album)}" /></album>
                 <title><c:out value="${item.name}"/></title>
                 <c:if test="${!empty item.genre}"><annotation><c:out value="${item.genre}"/></annotation></c:if>
-                <duration>${item.time * 1000}</duration>
+                <duration>${cwfn:choose(param.jwplayer == true, item.time, item.time * 1000)}</duration>
                 <image>${permServletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt></image>
                 <info>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt></info>
             </track>
