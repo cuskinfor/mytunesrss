@@ -24,7 +24,6 @@ public abstract class Transcoder {
     private boolean myPlayerRequest;
     private int myTargetBitrate;
     private int myTargetSampleRate;
-    private boolean myActive;
     private Track myTrack;
 
     public static Transcoder createTranscoder(Track track, WebConfig webConfig, HttpServletRequest request) {
@@ -101,9 +100,7 @@ public abstract class Transcoder {
 
     public abstract InputStream getStream() throws IOException;
 
-    public boolean isActive() {
-        return myActive;
-    }
+    protected abstract boolean isActive();
 
     public boolean isAvailable() {
         return myTargetBitrate > 0 && myTargetSampleRate > 0;
