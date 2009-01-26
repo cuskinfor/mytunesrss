@@ -582,6 +582,34 @@
         </sql>
     </statement>
 
+    <statement name="insertSmartInfo">
+        <sql>
+            INSERT INTO smart_info (playlist_id, album_pattern, artist_pattern, genre_pattern, title_pattern,
+                                    file_pattern, time_min, time_max, video, protected)
+            VALUES (:playlist_id, :album_pattern, :artist_pattern, :genre_pattern, :title_pattern,
+                    :file_pattern, :time_min, :time_max, :video, :protected)
+        </sql>
+    </statement>
+
+    <statement name="updateSmartInfo">
+        <sql>
+            UPDATE
+                smart_info
+            SET
+                album_pattern = :album_pattern,
+                artist_pattern = :artist_pattern,
+                genre_pattern = :genre_pattern,
+                title_pattern = :title_pattern,
+                file_pattern = :file_pattern,
+                time_min = :time_min,
+                time_max = :time_max,
+                video = :video,
+                protected = :protected
+            WHERE
+                playlist_id = :playlist_id
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[

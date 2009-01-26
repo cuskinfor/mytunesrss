@@ -105,4 +105,22 @@
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
     </statement>
 
+    <statement name="migrate_3.7_eap_1">
+        <sql>
+            {create_table_prefix} smart_info (
+                playlist_id VARCHAR(100) NOT NULL,
+                album_pattern VARCHAR(100),
+                artist_pattern VARCHAR(100),
+                genre_pattern VARCHAR(100),
+                title_pattern VARCHAR(100),
+                file_pattern VARCHAR(100),
+                time_min INTEGER,
+                time_max INTEGER,
+                video BOOLEAN,
+                protected BOOLEAN,
+                UNIQUE (playlist_id)
+            )
+        </sql>
+    </statement>
+
 </statements>

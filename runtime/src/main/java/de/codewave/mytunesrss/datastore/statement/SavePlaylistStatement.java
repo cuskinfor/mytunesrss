@@ -34,6 +34,10 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
         // intentionally left blank
     }
 
+    protected String getId() {
+        return myId;
+    }
+
     public void setId(String id) {
         myId = id;
     }
@@ -48,6 +52,10 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
 
     public void setTrackIds(List<String> trackIds) {
         myTrackIds = trackIds;
+    }
+
+    protected boolean isUpdate() {
+        return myUpdate;
     }
 
     public void setUpdate(boolean update) {

@@ -12,7 +12,6 @@
         <sql>SELECT * FROM information_schema.tables WHERE table_schema = 'PUBLIC' AND table_name = 'TRACK'</sql>
     </statement>
 
-    <fragment name="datatype_boolean">BOOLEAN</fragment>
     <fragment name="create_table_prefix">CREATE CACHED TABLE</fragment>
     <fragment name="create_playlist_id_sequence">CREATE SEQUENCE playlist_id_sequence</fragment>
     <fragment name="drop_playlist_id_sequence">DROP SEQUENCE playlist_id_sequence</fragment>

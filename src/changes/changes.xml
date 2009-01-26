@@ -7,7 +7,14 @@
 
     <body>
 
-        <release version="3.6" date="2008-01-23" description="Final release">
+        <release version="3.7-EAP-1" date="2009-xx-xx" description="3.7 EAP 1">
+            <action dev="mdescher" type="add">
+                Smart playlist (smart info table linked to playlist). Smart playlists get updated after
+                each database update and are then treated like normal playlist.
+            </action>
+        </release>
+
+        <release version="3.6" date="2009-01-23" description="Final release">
             <action dev="mdescher" type="update">
                 Updated to JW media player 4.3 and included a hack to fix the track times display in the player.
             </action>

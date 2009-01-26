@@ -29,6 +29,7 @@
 
     <ul class="links">
         <li><a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${cwfn:encode64(browseArtistUrl)}"><fmt:message key="newPlaylist"/></a></li>
+        <li><a href="${servletUrl}/editSmartPlaylist/${auth}"><fmt:message key="newSmartPlaylist"/></a></li>
     </ul>
 
     <jsp:include page="/incl_error.jsp" />

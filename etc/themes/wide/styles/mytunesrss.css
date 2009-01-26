@@ -469,6 +469,20 @@ tr.odd td.itunesfolder {
     background-repeat: no-repeat;
 }
 
+td.mytunessmart {
+    padding-left: 32px;
+    background-image: url( "../images/playlist_mt_smart.gif" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+tr.odd td.mytunessmart {
+    padding-left: 32px;
+    background-image: url( "../images/playlist_mt_smart_odd.gif" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
 td.homefolder {
     padding-left: 32px;
     background-image: url( "../images/home_folder.gif" );

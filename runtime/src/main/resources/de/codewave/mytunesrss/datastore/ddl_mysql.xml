@@ -8,7 +8,6 @@
         <sql>show tables</sql>
     </statement>
 
-    <fragment name="datatype_boolean">BOOLEAN</fragment>
     <fragment name="create_table_prefix">CREATE TABLE</fragment>
     <fragment name="create_playlist_id_sequence">
         CREATE TABLE playlist_id_sequence (

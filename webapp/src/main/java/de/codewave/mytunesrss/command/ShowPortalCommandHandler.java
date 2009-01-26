@@ -28,21 +28,21 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
             String containerId = getRequestParameter("cid", null);
             List<Playlist> playlists = new ArrayList<Playlist>();
             if (StringUtils.isEmpty(containerId) && getAuthUser().isSpecialPlaylists()) {
-                playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, PlaylistType.MyTunes, getBundleString(
+                playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, PlaylistType.MyTunesSmart, getBundleString(
                         "playlist.specialAllByAlbum"), -1));
-                playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ARTIST, PlaylistType.MyTunes, getBundleString(
+                playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ARTIST, PlaylistType.MyTunesSmart, getBundleString(
                         "playlist.specialAllByArtist"), -1));
                 int mostPlayedPlaylistSize = getWebConfig().getMostPlayedPlaylistSize();
                 if (mostPlayedPlaylistSize > 0) {
                     playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_MOST_PLAYED + "_" + mostPlayedPlaylistSize,
-                                               PlaylistType.MyTunes,
+                                               PlaylistType.MyTunesSmart,
                                                MessageFormat.format(getBundleString("playlist.specialMostPlayed"), mostPlayedPlaylistSize),
                                                mostPlayedPlaylistSize));
                 }
                 int lastUpdatedPlaylistSize = getWebConfig().getLastUpdatedPlaylistSize();
                 if (lastUpdatedPlaylistSize > 0) {
                     playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_LAST_UPDATED + "_" + lastUpdatedPlaylistSize,
-                                               PlaylistType.MyTunes,
+                                               PlaylistType.MyTunesSmart,
                                                MessageFormat.format(getBundleString("playlist.specialLastUpdated"), lastUpdatedPlaylistSize),
                                                lastUpdatedPlaylistSize));
                 }
@@ -68,12 +68,12 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                         Playlist firstResult = randomPlaylistSources.getResult(0);
                         playlists.add(new Playlist(
                                 FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomType.toString() + "_" + randomPlaylistSize + "_" +
-                                        firstResult.getId(), PlaylistType.MyTunes, MessageFormat.format(getBundleString("playlist.specialRandom"),
+                                        firstResult.getId(), PlaylistType.MyTunesSmart, MessageFormat.format(getBundleString("playlist.specialRandom"),
                                                                                                         randomPlaylistSize,
                                                                                                         firstResult.getName()), randomPlaylistSize));
                     } else {
                         playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomType.toString() + "_" + randomPlaylistSize,
-                                                   PlaylistType.MyTunes,
+                                                   PlaylistType.MyTunesSmart,
                                                    MessageFormat.format(getBundleString("playlist.specialRandomWholeLibrary"), randomPlaylistSize),
                                                    randomPlaylistSize));
                     }

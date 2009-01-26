@@ -15,7 +15,7 @@
                 file VARCHAR(1024) NOT NULL,
                 suffix VARCHAR(10) NOT NULL,
                 protected BOOLEAN,
-                video {datatype_boolean},
+                video BOOLEAN,
                 source VARCHAR(20),
                 genre VARCHAR(255),
                 mp4codec VARCHAR(4),
@@ -103,6 +103,21 @@
                 data {statistics_datatype} NOT NULL
             )
         </sql>
+        <sql>
+            {create_table_prefix} smart_info (
+                playlist_id VARCHAR(100) NOT NULL,
+                album_pattern VARCHAR(100),
+                artist_pattern VARCHAR(100),
+                genre_pattern VARCHAR(100),
+                title_pattern VARCHAR(100),
+                file_pattern VARCHAR(100),
+                time_min INTEGER,
+                time_max INTEGER,
+                video BOOLEAN,
+                protected BOOLEAN,
+                UNIQUE (playlist_id)
+            )
+        </sql>
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>
         <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
         <sql>CREATE INDEX idx_track_album ON track (album)</sql>
@@ -123,6 +138,7 @@
 
     <statement name="dropAllTables">
         <sql>DROP TABLE statistics</sql>
+        <sql>DROP TABLE smart_info</sql>
         <sql>DROP TABLE link_track_playlist</sql>
         <sql>DROP TABLE playlist</sql>
         <sql>DROP TABLE album</sql>
