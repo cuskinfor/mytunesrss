@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7-EAP-1" date="2009-xx-xx" description="3.7 EAP 1">
+            <action dev="mdescher" type="fix">
+                Fixed continuous playback in JW Media Player.
+            </action>
             <action dev="mdescher" type="add">
                 Smart playlist (smart info table linked to playlist). Smart playlists get updated after
                 each database update and are then treated like normal playlist.
