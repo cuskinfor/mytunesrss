@@ -6,6 +6,7 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
 import de.codewave.mytunesrss.jmx.ErrorQueue;
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
@@ -370,6 +371,7 @@ public class MyTunesRss {
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
+        MyTunesRssEventManager.getInstance().addListener(new RefreshSmartPlaylistsStatement());
         SETTINGS.init();
         DUMMY_FRAME.dispose();
         if (x == Integer.MAX_VALUE && y == Integer.MAX_VALUE) {
@@ -469,6 +471,7 @@ public class MyTunesRss {
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
+        MyTunesRssEventManager.getInstance().addListener(new RefreshSmartPlaylistsStatement());
         if (CONFIG.isAutoStartServer()) {
             startWebserver();
         }

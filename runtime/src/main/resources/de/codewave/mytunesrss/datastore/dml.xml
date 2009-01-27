@@ -610,6 +610,32 @@
         </sql>
     </statement>
 
+    <statement name="refreshSmartPlaylists">
+        <sql>
+            delete from link_track_playlist where playlist_id in (select playlist_id from smart_info)
+        </sql>
+        <sql>
+            insert into link_track_playlist (playlist_id, track_id)
+                select si.playlist_id, t.id from smart_info si, track t
+                    where (si.album_pattern is null or lower(t.album) like lower(si.album_pattern))
+                    and (si.artist_pattern is null or lower(t.artist) like lower(si.artist_pattern))
+                    and (si.genre_pattern is null or lower(t.genre) like lower(si.genre_pattern))
+                    and (si.file_pattern is null or lower(t.file) like lower(si.file_pattern))
+                    and (si.time_min is null or t.time &gt;= si.time_min)
+                    and (si.time_max is null or t.time &lt;= si.time_max)
+                    and (si.video is null or t.video = si.video)
+                    and (si.protected is null or t.protected = si.protected)
+        </sql>
+        <sql>
+            update
+                playlist as p
+            set
+                track_count = (select count(playlist_id) from link_track_playlist where playlist_id = p.id)
+            where
+                p.id in (select si.playlist_id from smart_info as si)
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[

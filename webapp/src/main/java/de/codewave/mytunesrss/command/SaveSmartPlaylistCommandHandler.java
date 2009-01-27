@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.MyTunesRssEvent;
+import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 
 /**
@@ -10,7 +12,9 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         // todo: implement
+        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.SMART_INFO_CHANGED);
         forward(MyTunesRssResource.PlaylistManager);
-        //forward(MyTunesRssResource.EditSmartPlaylist);
+
+        //in case of error: forward(MyTunesRssResource.EditSmartPlaylist);
     }
 }
