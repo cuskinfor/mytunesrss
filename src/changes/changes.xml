@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.6.1" date="2009-xx-xx" description="Bugfix release">
+        <release version="3.6.1" date="2009-01-30" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 Fixed continuous playback in JW Media Player.
             </action>
