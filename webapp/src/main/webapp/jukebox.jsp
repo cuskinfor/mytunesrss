@@ -15,7 +15,7 @@
           height="100%"
           allowscriptaccess="always"
           allowfullscreen="true"
-          flashvars="file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${param.playlistParams}/playerRequest=true/type=Xspf/jwplayer=true</mt:encrypt>/${cwfn:encodeUrl(param.filename)}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350"
+          flashvars="file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${param.playlistParams}/playerRequest=true/type=Xspf/jwplayer=true</mt:encrypt>/${cwfn:encodeUrl(param.filename)}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list"
         />
     </c:when>
     <c:otherwise>

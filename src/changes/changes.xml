@@ -7,7 +7,13 @@
 
     <body>
 
-        <release version="3.6" date="2008-01-23" description="Final release">
+        <release version="3.6.1" date="2009-01-30" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Fixed continuous playback in JW Media Player.
+            </action>
+        </release>
+
+        <release version="3.6" date="2009-01-23" description="Final release">
             <action dev="mdescher" type="update">
                 Updated to JW media player 4.3 and included a hack to fix the track times display in the player.
             </action>
