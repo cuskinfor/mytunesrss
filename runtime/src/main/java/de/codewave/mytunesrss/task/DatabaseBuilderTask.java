@@ -351,6 +351,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         if (LOG.isInfoEnabled()) {
             LOG.info("Obsolete tracks and playlists removed from database.");
         }
+        storeSession.executeStatement(new RefreshSmartPlaylistsStatement());
         return missingItunesFiles;
     }
 

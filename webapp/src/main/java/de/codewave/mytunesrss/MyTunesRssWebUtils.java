@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
@@ -83,6 +81,11 @@ public class MyTunesRssWebUtils {
             }
         }
         errors.add(error);
+    }
+
+    public static boolean isError(HttpServletRequest request, String holderName) {
+        Set<Error> errors = (Set<Error>)request.getSession().getAttribute(holderName);
+        return errors != null && !errors.isEmpty();
     }
 
     private static boolean isUserAgentPsp(HttpServletRequest request) {
@@ -210,6 +213,35 @@ public class MyTunesRssWebUtils {
             return httpScheme + "://" + httpHost + ":" + httpPort + (serverSeparator < url.length() ? url.substring(serverSeparator) : "");
         }
         return url;
+    }
+
+    public static void createParameterModel(HttpServletRequest request, String... parameterNames) {
+        for (String parameterName : parameterNames) {
+            String[] parts = parameterName.split(".");
+            Map map = null;
+            for (int i = 0; i < parts.length; i++) {
+                if (i < parts.length - 1) {
+                    if (map == null) {
+                        map = (Map)request.getAttribute(parts[i]);
+                        if (map == null) {
+                            map = new HashMap();
+                            request.setAttribute(parts[i], map);
+                        }
+                    } else {
+                        if (!map.containsKey(parts[i])) {
+                            map.put(parts[i], new HashMap());
+                        }
+                        map = (Map)map.get(parts[i]);
+                    }
+                } else {
+                    if (map == null) {
+                        request.setAttribute(parts[i], request.getParameter(parameterName));
+                    } else {
+                        map.put(parts[i], request.getParameter(parameterName));
+                    }
+                }
+            }
+        }
     }
 }
 

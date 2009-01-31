@@ -126,10 +126,10 @@
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
             AND (type != 'TEMP')
             AND (user_private IS NULL OR user_private = FALSE OR :username IS NULL OR user_owner = :username)
-            AND ((:types IS NULL AND :id IS NULL AND track_count > 0)
-            OR (:types IS NOT NULL AND :id IS NULL AND track_count > 0 AND type IN (:types))
-            OR (:types IS NULL AND :id IS NOT NULL AND track_count > 0 AND id = :id)
-            OR (:types IS NOT NULL AND :id IS NOT NULL AND track_count > 0 AND type IN (:types) AND id = :id))
+            AND ((:types IS NULL AND :id IS NULL)
+            OR (:types IS NOT NULL AND :id IS NULL AND type IN (:types))
+            OR (:types IS NULL AND :id IS NOT NULL AND id = :id)
+            OR (:types IS NOT NULL AND :id IS NOT NULL AND type IN (:types) AND id = :id))
             AND (:containerId IS NULL OR (:containerId = 'ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
             ORDER BY name
             ]]>
@@ -144,10 +144,10 @@
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
             AND (type != 'TEMP')
             AND user_owner = :username
-            AND ((:types IS NULL AND :id IS NULL AND track_count > 0)
-            OR (:types IS NOT NULL AND :id IS NULL AND track_count > 0 AND type IN (:types))
-            OR (:types IS NULL AND :id IS NOT NULL AND track_count > 0 AND id = :id)
-            OR (:types IS NOT NULL AND :id IS NOT NULL AND track_count > 0 AND type IN (:types) AND id = :id))
+            AND ((:types IS NULL AND :id IS NULL)
+            OR (:types IS NOT NULL AND :id IS NULL AND type IN (:types))
+            OR (:types IS NULL AND :id IS NOT NULL AND id = :id)
+            OR (:types IS NOT NULL AND :id IS NOT NULL AND type IN (:types) AND id = :id))
             AND (:containerId IS NULL OR (:containerId = 'ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
             ORDER BY name
             ]]>
@@ -165,10 +165,10 @@
             AND rltp.playlist_id = :restrictionPlaylistId
             AND ltp.track_id = rltp.track_id
             AND ltp.playlist_id = p.id
-            AND ((:types IS NULL AND :id IS NULL AND p.track_count > 0)
-            OR (:types IS NOT NULL AND :id IS NULL AND p.track_count > 0 AND p.type IN (:types))
-            OR (:types IS NULL AND :id IS NOT NULL AND p.track_count > 0 AND p.id = :id)
-            OR (:types IS NOT NULL AND :id IS NOT NULL AND p.track_count > 0 AND p.type IN (:types) AND p.id = :id))
+            AND ((:types IS NULL AND :id IS NULL)
+            OR (:types IS NOT NULL AND :id IS NULL AND p.type IN (:types))
+            OR (:types IS NULL AND :id IS NOT NULL AND p.id = :id)
+            OR (:types IS NOT NULL AND :id IS NOT NULL AND p.type IN (:types) AND p.id = :id))
             AND (:containerId IS NULL OR (:containerId = 'ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
             GROUP BY id, name, type, track_count, user_private, hidden, user_owner, container_id
             ORDER BY name
@@ -384,9 +384,6 @@
 
     <statement name="deletePlaylistById">
         <sql>
-            DELETE FROM link_track_playlist WHERE playlist_id = :id
-        </sql>
-        <sql>
             DELETE FROM playlist WHERE id = :id
         </sql>
     </statement>
@@ -583,6 +580,10 @@
     </statement>
 
     <statement name="insertSmartInfo">
+        <parameter name="time_min" type="java.lang.Integer"/>
+        <parameter name="time_max" type="java.lang.Integer"/>
+        <parameter name="protected" type="java.lang.Boolean"/>
+        <parameter name="video" type="java.lang.Boolean"/>
         <sql>
             INSERT INTO smart_info (playlist_id, album_pattern, artist_pattern, genre_pattern, title_pattern,
                                     file_pattern, time_min, time_max, video, protected)
@@ -591,7 +592,26 @@
         </sql>
     </statement>
 
+    <statement name="findSmartPlaylistById">
+        <sql>
+            SELECT
+                p.name AS name, p.track_count AS track_count, p.user_private AS user_private, p.hidden AS hidden,
+                p.user_owner AS user_owner, p.container_id AS container_id,
+                si.album_pattern AS album_pattern, si.artist_pattern AS artist_pattern, si.genre_pattern AS genre_pattern,
+                si.title_pattern AS title_pattern, si.file_pattern AS file_pattern, si.time_min AS time_min,
+                si.time_max AS time_max, si.video AS video, si.protected AS protected
+            FROM
+                playlist p, smart_info si
+            WHERE
+                p.id = :id AND si.playlist_id = :id
+        </sql>
+    </statement>
+
     <statement name="updateSmartInfo">
+        <parameter name="time_min" type="java.lang.Integer"/>
+        <parameter name="time_max" type="java.lang.Integer"/>
+        <parameter name="protected" type="java.lang.Boolean"/>
+        <parameter name="video" type="java.lang.Boolean"/>
         <sql>
             UPDATE
                 smart_info
@@ -620,6 +640,7 @@
                     where (si.album_pattern is null or lower(t.album) like lower(si.album_pattern))
                     and (si.artist_pattern is null or lower(t.artist) like lower(si.artist_pattern))
                     and (si.genre_pattern is null or lower(t.genre) like lower(si.genre_pattern))
+                    and (si.title_pattern is null or lower(t.name) like lower(si.title_pattern))
                     and (si.file_pattern is null or lower(t.file) like lower(si.file_pattern))
                     and (si.time_min is null or t.time &gt;= si.time_min)
                     and (si.time_max is null or t.time &lt;= si.time_max)

@@ -115,7 +115,8 @@
                 time_max INTEGER,
                 video BOOLEAN,
                 protected BOOLEAN,
-                UNIQUE (playlist_id)
+                UNIQUE (playlist_id),
+                CONSTRAINT fk_smart_info_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
             )
         </sql>
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>

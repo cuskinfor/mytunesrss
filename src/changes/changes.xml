@@ -9,6 +9,9 @@
 
         <release version="3.7-EAP-1" date="2009-xx-xx" description="3.7 EAP 1">
             <action dev="mdescher" type="fix">
+                New codewave-utils version.
+            </action>
+            <action dev="mdescher" type="fix">
                 Fixed continuous playback in JW Media Player.
             </action>
             <action dev="mdescher" type="add">

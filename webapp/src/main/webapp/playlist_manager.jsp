@@ -5,6 +5,7 @@
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <c:set var="backUrl" scope="request">${servletUrl}/showPlaylistManager/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}</mt:encrypt></c:set>
 <c:set var="browseArtistUrl" scope="request">${servletUrl}/browseArtist/${auth}/page=1</c:set>
@@ -43,10 +44,18 @@
         </tr>
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-                <td class="mytunes"><c:out value="${playlist.name}" /></td>
+                <td class="${fn:toLowerCase(playlist.type)}"><c:out value="${playlist.name}" /></td>
                 <td class="tracks"><a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${playlist.trackCount}</a></td>
                 <td class="icon">
-                    <a href="${servletUrl}/loadAndEditPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=true/playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                    <c:choose>
+                        <c:when test="${playlist.type == 'MyTunesSmart'}">
+                            <c:set var="link">${servletUrl}/editSmartPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlistId=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}</c:set>
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="link">${servletUrl}/loadAndEditPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=true/playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}</c:set>
+                        </c:otherwise>
+                    </c:choose>
+                    <a href="${link}">
                         <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="edit" /> </a>
                 </td>
                 <td class="icon">

@@ -371,7 +371,6 @@ public class MyTunesRss {
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
-        MyTunesRssEventManager.getInstance().addListener(new RefreshSmartPlaylistsStatement());
         SETTINGS.init();
         DUMMY_FRAME.dispose();
         if (x == Integer.MAX_VALUE && y == Integer.MAX_VALUE) {
@@ -471,7 +470,6 @@ public class MyTunesRss {
         MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
-        MyTunesRssEventManager.getInstance().addListener(new RefreshSmartPlaylistsStatement());
         if (CONFIG.isAutoStartServer()) {
             startWebserver();
         }

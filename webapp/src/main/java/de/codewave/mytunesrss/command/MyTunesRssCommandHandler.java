@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import java.io.File;
@@ -128,10 +129,17 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         MyTunesRssWebUtils.addError(getRequest(), error, "errors");
     }
 
+    protected boolean isError() {
+        return MyTunesRssWebUtils.isError(getRequest(), "errors");
+    }
+
     protected void addMessage(Error message) {
         MyTunesRssWebUtils.addError(getRequest(), message, "messages");
     }
 
+    protected void createParameterModel(String... parameterNames) {
+        MyTunesRssWebUtils.createParameterModel(getRequest(), parameterNames);
+    }
 
     protected DataStoreSession getTransaction() {
         return TransactionFilter.getTransaction();
