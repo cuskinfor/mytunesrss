@@ -10,13 +10,31 @@
 <c:choose>
     <c:when test="${config.flashplayerType eq 'jw'}">
         <embed
-          src="${appUrl}/flashplayer/mediaplayer.swf"
+          src="${appUrl}/flashplayer/mediaplayer-4-3.swf"
           width="100%"
           height="100%"
           allowscriptaccess="always"
           allowfullscreen="true"
           flashvars="file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${param.playlistParams}/playerRequest=true/type=Xspf/jwplayer=true</mt:encrypt>/${cwfn:encodeUrl(param.filename)}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list"
         />
+    </c:when>
+    <c:when test="${config.flashplayerType eq 'jw3'}">
+        <embed
+          src="${appUrl}/flashplayer/mediaplayer-3-15-cw.swf?file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${param.playlistParams}/playerRequest=true/type=Xspf</mt:encrypt>/${cwfn:encodeUrl(param.filename)}&amp;linktarget=_blank"
+          width="100%"
+          height="100%"
+          allowscriptaccess="always"
+          allowfullscreen="true"
+          flashvars="displaywidth=256"
+        />
+        <!--embed
+          src="${appUrl}/flashplayer/mediaplayer-3-17.swf"
+          width="100%"
+          height="100%"
+          allowscriptaccess="always"
+          allowfullscreen="true"
+          flashvars="file=${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${param.playlistParams}/playerRequest=true/type=Xspf/jwplayer=true</mt:encrypt>/${cwfn:encodeUrl(param.filename)}&amp;linktarget=_blank&amp;autostart=true&amp;repeat=list"
+        /-->
     </c:when>
     <c:otherwise>
         <embed
