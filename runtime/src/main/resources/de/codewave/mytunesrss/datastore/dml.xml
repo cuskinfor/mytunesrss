@@ -632,28 +632,33 @@
 
     <statement name="refreshSmartPlaylists">
         <sql>
-            delete from link_track_playlist where playlist_id in (select playlist_id from smart_info)
+            DELETE FROM
+                link_track_playlist
+            WHERE
+                playlist_id IN (SELECT playlist_id FROM smart_info)
         </sql>
         <sql>
-            insert into link_track_playlist (playlist_id, track_id)
-                select si.playlist_id, t.id from smart_info si, track t
-                    where (si.album_pattern is null or lower(t.album) like lower(si.album_pattern))
-                    and (si.artist_pattern is null or lower(t.artist) like lower(si.artist_pattern))
-                    and (si.genre_pattern is null or lower(t.genre) like lower(si.genre_pattern))
-                    and (si.title_pattern is null or lower(t.name) like lower(si.title_pattern))
-                    and (si.file_pattern is null or lower(t.file) like lower(si.file_pattern))
-                    and (si.time_min is null or t.time &gt;= si.time_min)
-                    and (si.time_max is null or t.time &lt;= si.time_max)
-                    and (si.video is null or t.video = si.video)
-                    and (si.protected is null or t.protected = si.protected)
+            INSERT INTO
+                link_track_playlist (playlist_id, track_id)
+                SELECT si.playlist_id, t.id FROM smart_info si, track t
+                    WHERE (si.album_pattern IS NULL OR LOWER(t.album) LIKE LOWER(si.album_pattern))
+                    AND (si.artist_pattern IS NULL OR LOWER(t.artist) LIKE LOWER(si.artist_pattern))
+                    AND (si.genre_pattern IS NULL OR LOWER(t.genre) LIKE LOWER(si.genre_pattern))
+                    AND (si.title_pattern IS NULL OR LOWER(t.name) LIKE LOWER(si.title_pattern))
+                    AND (si.file_pattern IS NULL OR LOWER(t.file) LIKE LOWER(si.file_pattern))
+                    AND (si.time_min IS NULL OR t.time &gt;= si.time_min)
+                    AND (si.time_max IS NULL OR t.time &lt;= si.time_max)
+                    AND (si.video IS NULL OR t.video = si.video)
+                    AND (si.protected IS NULL OR t.protected = si.protected)
+                ORDER BY t.album, t.pos_number, t.track_number, t.name
         </sql>
         <sql>
-            update
-                playlist as p
-            set
-                track_count = (select count(playlist_id) from link_track_playlist where playlist_id = p.id)
-            where
-                p.id in (select si.playlist_id from smart_info as si)
+            UPDATE
+                playlist p
+            SET
+                track_count = (SELECT COUNT(playlist_id) FROM link_track_playlist WHERE playlist_id = p.id)
+            WHERE
+                p.id IN (SELECT si.playlist_id FROM smart_info si)
         </sql>
     </statement>
 
