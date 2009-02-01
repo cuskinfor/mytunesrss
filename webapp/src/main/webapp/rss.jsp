@@ -3,11 +3,13 @@
     <channel>
         <title><c:out value="${channel}"/></title>
         <link>${permServletUrl}</link>
-        <image>
-            <url>${permServletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(imageTrackId)}</mt:encrypt></url>
-            <title><c:out value="${channel}"/></title>
-            <c:if test="${userAgent != 'Psp'}"><link>${permServletUrl}</link></c:if>
-        </image>
+        <c:if test="${!empty imageTrackId}">
+            <image>
+                <url>${permServletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(imageTrackId)}</mt:encrypt></url>
+                <title><c:out value="${channel}"/></title>
+                <c:if test="${userAgent != 'Psp'}"><link>${permServletUrl}</link></c:if>
+            </image>
+        </c:if>
         <description><fmt:message key="rssChannelDescription"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}</c:set>
             <item>
                 <title><c:out value="${track.name}"/></title>
