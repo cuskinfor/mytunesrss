@@ -18,6 +18,12 @@
                 Smart playlist (smart info table linked to playlist). Smart playlists get updated after
                 each database update and are then treated like normal playlist.
             </action>
+            <action dev="mdescher" type="update">
+                User can choose between 3 Flash players now: JW Player 4, JW Player 3 and simple player.
+            </action>
+            <action dev="mdescher" type="update">
+                Add image tag in RSS and XSPF only if image is available (i.e. no useless default images).
+            </action>
         </release>
 
         <release version="3.6" date="2009-01-23" description="Final release">
