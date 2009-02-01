@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="3.6.1" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                User can choose between 3 Flash players now: JW Player 4, JW Player 3 and simple player.
+            </action>
+            <action dev="mdescher" type="update">
+                Add image tag in RSS and XSPF only if image is available (i.e. no useless default images).
+            </action>
+        </release>
+
         <release version="3.6.1" date="2009-01-30" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 Fixed continuous playback in JW Media Player.
