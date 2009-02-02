@@ -6,9 +6,11 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.settings.DialogLayout;
 import de.codewave.utils.PrefsUtils;
+import de.codewave.utils.Version;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -33,6 +36,8 @@ import java.util.*;
  */
 public class MyTunesRssConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssConfig.class);
+    private static final SecretKeySpec CHECKSUM_KEY = new SecretKeySpec("codewave".getBytes(), "DES");
+    private static final String CREATION_TIME_KEY = "playmode";
 
     private int myPort = 8080;
     private String myServerName = "MyTunesRSS";
@@ -124,6 +129,7 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnDatabaseUpdate;
     private boolean myNotifyOnMissingFile;
     private int myStatisticKeepTime = 60;
+    private String myCryptedCreationTime;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -919,15 +925,52 @@ public class MyTunesRssConfig {
         myStatisticKeepTime = statisticKeepTime;
     }
 
+    private String encryptCreationTime(long creationTime) {
+        String checksum = Long.toString(creationTime);
+        try {
+            Cipher cipher = Cipher.getInstance(CHECKSUM_KEY.getAlgorithm());
+            cipher.init(Cipher.ENCRYPT_MODE, CHECKSUM_KEY);
+            return new String(Base64.encodeBase64(cipher.doFinal(checksum.getBytes("UTF-8"))), "UTF-8");
+        } catch (Exception e) {
+            LOGGER.error("Could not encrypt creation time!", e);
+        }
+        return null;
+    }
+
+    public long getConfigCreationTime() {
+        try {
+            Cipher cipher = Cipher.getInstance(CHECKSUM_KEY.getAlgorithm());
+            cipher.init(Cipher.DECRYPT_MODE, CHECKSUM_KEY);
+            String creationTime = new String(cipher.doFinal(Base64.decodeBase64(myCryptedCreationTime.getBytes("UTF-8"))), "UTF-8");
+            return Long.parseLong(creationTime);
+        } catch (Exception e) {
+            LOGGER.error("Could not decrypt creation time!", e);
+        }
+        return 1;
+    }
+
     public void load() {
         LOGGER.info("Loading configuration.");
         try {
             File file = getSettingsFile();
+            String freshCryptedCreationTime = encryptCreationTime(System.currentTimeMillis());
             if (!file.isFile()) {
-                FileUtils.writeStringToFile(file, "<settings/>");
+                FileUtils.writeStringToFile(file,
+                                            "<settings><" + CREATION_TIME_KEY + ">" + freshCryptedCreationTime + "</" + CREATION_TIME_KEY +
+                                                    "></settings>");
             }
             JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURL()), "settings");
-            setVersion(JXPathUtils.getStringValue(settings, "version", ""));
+            setVersion(StringUtils.defaultIfEmpty(JXPathUtils.getStringValue(settings, "version", "0"), "0"));
+            Version currentAppVersion = new Version(MyTunesRss.VERSION);
+            Version currentConfigVersion = new Version(getVersion());
+            Version minimumChecksumVersion = new Version("3.6.2");
+            myCryptedCreationTime = JXPathUtils.getStringValue(settings,
+                                                               CREATION_TIME_KEY,
+                                                               currentConfigVersion.compareTo(minimumChecksumVersion) >= 0 ? encryptCreationTime(1) :
+                                                                       freshCryptedCreationTime);
+            if (currentAppVersion.getMajor() != currentConfigVersion.getMajor() || currentAppVersion.getMinor() != currentConfigVersion.getMinor()) {
+                myCryptedCreationTime = freshCryptedCreationTime;
+            }
             migrate();
             setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
             setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
@@ -1162,6 +1205,7 @@ public class MyTunesRssConfig {
                 fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "active", fileType.isActive()));
             }
             root.appendChild(DOMUtils.createTextElement(settings, "artistDropWords", myArtistDropWords));
+            root.appendChild(DOMUtils.createTextElement(settings, CREATION_TIME_KEY, myCryptedCreationTime));
             root.appendChild(DOMUtils.createBooleanElement(settings, "quitConfirmation", myQuitConfirmation));
             root.appendChild(DOMUtils.createTextElement(settings, "webWelcomeMessage", myWebWelcomeMessage));
             if (myPathInfoKey != null) {

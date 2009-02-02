@@ -8,6 +8,10 @@
     <body>
 
         <release version="3.6.1" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="add">
+                Trial period check with creation timestamp in config xml. Minimum check version is 3.6.2 and a new major or minor starts a new trial
+                period.
+            </action>
             <action dev="mdescher" type="update">
                 User can choose between 3 Flash players now: JW Player 4, JW Player 3 and simple player.
             </action>
