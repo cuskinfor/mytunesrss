@@ -6,7 +6,6 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
-import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
 import de.codewave.mytunesrss.jmx.ErrorQueue;
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
@@ -154,14 +153,14 @@ public class MyTunesRss {
             IOException, SQLException, SchedulerException {
         final Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
         HEADLESS = arguments.containsKey("headless");
-        REGISTRATION.init(null, true);
-        MyTunesRss.CONFIG.load();
-        MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
-        registerDatabaseDriver();
         VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
         if (StringUtils.isEmpty(VERSION)) {
             VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");
         }
+        MyTunesRss.CONFIG.load();
+        REGISTRATION.init(null, true);
+        MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
+        registerDatabaseDriver();
         AnonyStatUtils.sendApplicationStarted();
         if (LOG.isInfoEnabled()) {
             LOG.info("Operating system: " + SystemUtils.OS_NAME + ", " + SystemUtils.OS_VERSION + ", " + SystemUtils.OS_ARCH);

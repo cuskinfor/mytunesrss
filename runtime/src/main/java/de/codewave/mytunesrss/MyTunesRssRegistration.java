@@ -25,6 +25,7 @@ public class MyTunesRssRegistration {
     private long myExpiration;
     private boolean myReleaseVersion;
     private boolean myValid;
+    private static final long TRIAL_PERIOD_MILLIS = 1000L * 3600L * 24L * 30L; // 30 days
 
     public static MyTunesRssRegistration register(File registrationFile) {
         try {
@@ -93,8 +94,14 @@ public class MyTunesRssRegistration {
 
     public void init(File file, boolean allowDefaultLicense) throws IOException {
         if (allowDefaultLicense) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Checking if default license specifies that this is a pre-release version.");
+            }
             handleRegistration(RegistrationUtils.getRegistrationData(getDefaultLicenseFile(), getPublicKey()));
             if (!myReleaseVersion) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("This is a pre-release version, so no other licenses are checked.");
+                }
                 return; // do not care about external license if this is a pre-release version
             }
         }
@@ -120,6 +127,8 @@ public class MyTunesRssRegistration {
                 LOG.info("Using default registration data.");
             }
             handleRegistration(RegistrationUtils.getRegistrationData(getDefaultLicenseFile(), getPublicKey()));
+            myExpiration = MyTunesRss.CONFIG.getConfigCreationTime() + TRIAL_PERIOD_MILLIS;
+            LOG.info("Set expiration to " + new SimpleDateFormat("yyyy-mm-dd").format(new Date(myExpiration)));
         }
     }
 
