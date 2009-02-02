@@ -37,6 +37,7 @@ import java.util.*;
 public class MyTunesRssConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssConfig.class);
     private static final SecretKeySpec CHECKSUM_KEY = new SecretKeySpec("codewave".getBytes(), "DES");
+    private static final String CREATION_TIME_KEY = "playmode";
 
     private int myPort = 8080;
     private String myServerName = "MyTunesRSS";
@@ -129,7 +130,6 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnMissingFile;
     private int myStatisticKeepTime = 60;
     private String myCryptedCreationTime;
-    private static final String CREATION_TIME_KEY = "playmode";
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
