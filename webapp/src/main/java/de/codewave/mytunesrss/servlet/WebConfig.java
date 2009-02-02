@@ -114,6 +114,8 @@ public class WebConfig {
             initWithPspDefaults();
         } else if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Iphone) {
             initWithIphoneDefaults();
+        } else if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.NintendoWii) {
+            initWithNintendoWiiDefaults();
         }
     }
 
@@ -161,6 +163,15 @@ public class WebConfig {
         myConfigValues.put(CFG_RSS_LIMIT, "100");
         myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_SHOW_PLAYER, "false");
+    }
+
+    private void initWithNintendoWiiDefaults() {
+        myConfigValues.put(CFG_FEED_TYPE_RSS, "false");
+        myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "false");
+        myConfigValues.put(CFG_SHOW_DOWNLOAD, "false");
+        myConfigValues.put(CFG_PAGE_SIZE, "30");
+        myConfigValues.put(CFG_SHOW_PLAYER, "true");
+        myConfigValues.put(CFG_FLASH_PLAYER_TYPE, "jw3");
     }
 
     public void load(User user) {

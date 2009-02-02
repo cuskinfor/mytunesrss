@@ -73,6 +73,7 @@ public class EditUser implements MyTunesRssEventListener {
     private JCheckBox myUrlEncryptionInput;
     private JTextField myEmailInput;
     private JCheckBox myPermChangeEmail;
+    private JButton myRemoveUserSettingFromProfileButton;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -115,6 +116,12 @@ public class EditUser implements MyTunesRssEventListener {
         mySaveButton.addActionListener(new SaveButtonActionListener(dialog, true));
         myApplyButton.addActionListener(new SaveButtonActionListener(dialog, false));
         myCancelButton.addActionListener(new SupportContact.CancelButtonActionListener(dialog));
+        myRemoveUserSettingFromProfileButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                myUser.setWebSettings(null);
+                MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.userSettingsRemovedFromProfile"));
+            }
+        });
         myResetHistoryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 myUser.setDownBytes(0);

@@ -123,4 +123,6 @@ public interface EditUserConfigMBean {
     boolean isPermissionChangeEmail();
 
     void setPermissionChangeEmail(boolean permissionChangeEmail);
+
+    String removeWebSettingsFromUserProfile();
 }

@@ -9,6 +9,12 @@
 
         <release version="3.6.1" date="2009-xx-xx" description="Bugfix release">
             <action dev="mdescher" type="add">
+                Configuration action to remove saved settings from user profile.
+            </action>
+            <action dev="mdescher" type="add">
+                Default web settings for Nintendo Wii.
+            </action>
+            <action dev="mdescher" type="add">
                 Trial period check with creation timestamp in config xml. Minimum check version is 3.6.2 and a new major or minor starts a new trial
                 period.
             </action>
