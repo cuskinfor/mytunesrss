@@ -375,4 +375,10 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         MyTunesRss.CONFIG.getUser(myUsername).setChangeEmail(permissionChangeEmail);
         onChange();
     }
+
+    public String removeWebSettingsFromUserProfile() {
+        MyTunesRss.CONFIG.getUser(myUsername).setWebSettings(null);
+        onChange();
+        return MyTunesRssUtils.getBundleString("info.userSettingsRemovedFromProfile");
+    }
 }

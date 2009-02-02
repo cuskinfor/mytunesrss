@@ -103,6 +103,11 @@ public class MyTunesRssWebUtils {
         return StringUtils.isNotEmpty(userAgent) && userAgent.contains("Safari");
     }
 
+    private static boolean isUserAgentNintendoWii(HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        return StringUtils.isNotEmpty(userAgent) && userAgent.contains("Nintendo Wii");
+    }
+
     public static UserAgent getUserAgent(HttpServletRequest request) {
         if (isUserAgentPsp(request)) {
             return UserAgent.Psp;
@@ -110,6 +115,8 @@ public class MyTunesRssWebUtils {
             return UserAgent.Iphone;
         } else if (isUserAgentSafari(request)) {
             return UserAgent.Safari;
+        } else if (isUserAgentNintendoWii(request)) {
+            return UserAgent.NintendoWii;
         }
         return UserAgent.Unknown;
     }
