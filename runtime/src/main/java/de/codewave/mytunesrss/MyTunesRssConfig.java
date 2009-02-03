@@ -968,7 +968,11 @@ public class MyTunesRssConfig {
                                                                CREATION_TIME_KEY,
                                                                currentConfigVersion.compareTo(minimumChecksumVersion) >= 0 ? encryptCreationTime(1) :
                                                                        freshCryptedCreationTime);
-            if (currentAppVersion.getMajor() != currentConfigVersion.getMajor() || currentAppVersion.getMinor() != currentConfigVersion.getMinor()) {
+            if (StringUtils.isNotBlank(currentConfigVersion.getAppendix())) {
+                // fresh evaluation period if last version was not a release version
+                myCryptedCreationTime = freshCryptedCreationTime;
+            } else if (currentAppVersion.getMajor() != currentConfigVersion.getMajor() || currentAppVersion.getMinor() != currentConfigVersion.getMinor()) {
+                // fresh evaluation period if the last version was a different major or minor version 
                 myCryptedCreationTime = freshCryptedCreationTime;
             }
             migrate();
