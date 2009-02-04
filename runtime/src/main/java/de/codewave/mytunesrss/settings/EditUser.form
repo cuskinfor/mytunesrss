@@ -24,7 +24,7 @@
           <scrollpane id="eded0" binding="myScrollPane">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="0" height="150"/>
+                <preferred-size width="250" height="150"/>
               </grid>
             </constraints>
             <properties/>
@@ -419,7 +419,7 @@
                   </component>
                   <component id="5fed" class="javax.swing.JButton" binding="myRemoveUserSettingFromProfileButton">
                     <constraints>
-                      <grid row="7" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="7" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.editUser.removeSettingsFromUserProfile"/>

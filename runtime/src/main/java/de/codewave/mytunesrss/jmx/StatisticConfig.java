@@ -8,6 +8,7 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.MailException;
 
 import javax.management.NotCompliantMBeanException;
 import java.sql.SQLException;
@@ -70,17 +71,22 @@ public class StatisticConfig extends MyTunesRssMBean implements StatisticConfigM
             List<String> csv = tx.executeQuery(new GetStatisticEventsQuery(from.getTimeInMillis(), nextDay.getTimeInMillis(), "yyyy-MM-dd"));
             tx.commit();
             String statisticsMailBody = StringUtils.join(csv, System.getProperty("line.separator"));
-            MyTunesRss.MAILER.sendMail(MyTunesRss.CONFIG.getAdminEmail(), MyTunesRssUtils.getBundleString("email.subject.statistics",
-                                                                                                          Integer.toString(from.get(Calendar.DAY_OF_MONTH)),
-                                                                                                          Integer.toString(
-                                                                                                                  from.get(Calendar.MONTH) + 1),
-                                                                                                          Integer.toString(from.get(Calendar.YEAR)),
-                                                                                                          Integer.toString(to.get(Calendar.DAY_OF_MONTH)),
-                                                                                                          Integer.toString(
-                                                                                                                  to.get(Calendar.MONTH) + 1),
-                                                                                                          Integer.toString(to.get(Calendar.YEAR))),
-                                       statisticsMailBody);
-            return MyTunesRssUtils.getBundleString("info.sendStatisticsDone");
+            try {
+                MyTunesRss.MAILER.sendMail(MyTunesRss.CONFIG.getAdminEmail(), MyTunesRssUtils.getBundleString("email.subject.statistics",
+                                                                                                              Integer.toString(from.get(Calendar.DAY_OF_MONTH)),
+                                                                                                              Integer.toString(
+                                                                                                                      from.get(Calendar.MONTH) + 1),
+                                                                                                              Integer.toString(from.get(Calendar.YEAR)),
+                                                                                                              Integer.toString(to.get(Calendar.DAY_OF_MONTH)),
+                                                                                                              Integer.toString(
+                                                                                                                      to.get(Calendar.MONTH) + 1),
+                                                                                                              Integer.toString(to.get(Calendar.YEAR))),
+                                           statisticsMailBody);
+                return MyTunesRssUtils.getBundleString("info.sendStatisticsDone");
+            } catch (MailException e) {
+                LOGGER.error("Could not send admin statstics email.", e);
+                return MyTunesRssUtils.getBundleString("error.couldNotSendMail", e.getMessage());
+            }
         } catch (final SQLException e) {
             try {
                 tx.rollback();
