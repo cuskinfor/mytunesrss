@@ -7,6 +7,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import javax.net.ssl.SSLSocketFactory;
 import java.util.Properties;
 
 /**
@@ -32,6 +33,8 @@ public class MailSender {
      * @param to      The to address.
      * @param subject The subject.
      * @param body    The mail body.
+     *
+     * @throws MailException Any exception while sending the mail.
      */
     public void sendMail(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -51,12 +54,12 @@ public class MailSender {
             mailSender.setUsername(MyTunesRss.CONFIG.getMailLogin());
             mailSender.setPassword(MyTunesRss.CONFIG.getMailPassword());
         }
-        mailSender.setJavaMailProperties(mailProperties);
-        try {
-            mailSender.send(message);
-        } catch (MailException e) {
-            LOGGER.error("Could not send mail.", e);
-            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.couldNotSendMail", e.getMessage()));
+        if (MyTunesRss.CONFIG.isMailTls()) {
+            mailProperties.setProperty("mail.smtp.starttls.enable", "true");
+            mailProperties.setProperty("mail.smtp.socketFactory.class", SSLSocketFactory.class.getName());
         }
+        mailProperties.setProperty("mail.smtp.connectiontimeout", "10000");
+        mailSender.setJavaMailProperties(mailProperties);
+        mailSender.send(message);
     }
 }

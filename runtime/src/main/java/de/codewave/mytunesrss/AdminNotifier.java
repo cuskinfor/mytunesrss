@@ -3,12 +3,17 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.mail.MailException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 
 public class AdminNotifier {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminNotifier.class);
+
     public void notifyDatabaseUpdate(long time, Map<String, Long> missingItunesFiles, SystemInformation systemInformation) {
         if (MyTunesRss.CONFIG.isNotifyOnDatabaseUpdate() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
             String subject = "Database has been updated";
@@ -101,6 +106,10 @@ public class AdminNotifier {
     }
 
     private void sendAdminMail(String subject, String body) {
-        MyTunesRss.MAILER.sendMail(MyTunesRss.CONFIG.getAdminEmail(), "MyTunesRSS: " + subject, body);
+        try {
+            MyTunesRss.MAILER.sendMail(MyTunesRss.CONFIG.getAdminEmail(), "MyTunesRSS: " + subject, body);
+        } catch (MailException e) {
+            LOGGER.error("Could not send admin email.", e);
+        }
     }
 }

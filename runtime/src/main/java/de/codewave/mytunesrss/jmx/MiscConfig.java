@@ -117,6 +117,15 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
         MyTunesRss.CONFIG.setMailSender(mailSender);
         onChange();
     }
+
+    public boolean isMailTls() {
+        return MyTunesRss.CONFIG.isMailTls();
+    }
+
+    public void setMailTls(boolean mailTls) {
+        MyTunesRss.CONFIG.setMailTls(mailTls);
+        onChange();
+    }
 }
 
 

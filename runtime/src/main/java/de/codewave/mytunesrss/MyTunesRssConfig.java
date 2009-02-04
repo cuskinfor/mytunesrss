@@ -115,6 +115,7 @@ public class MyTunesRssConfig {
     private List<FileType> myFileTypes = new ArrayList<FileType>();
     private String myMailHost;
     private int myMailPort;
+    private boolean myMailTls;
     private String myMailLogin;
     private String myMailPassword;
     private String myMailSender;
@@ -829,6 +830,14 @@ public class MyTunesRssConfig {
         myMailPort = mailPort;
     }
 
+    public boolean isMailTls() {
+        return myMailTls;
+    }
+
+    public void setMailTls(boolean mailTls) {
+        myMailTls = mailTls;
+    }
+
     public String getMailSender() {
         return myMailSender;
     }
@@ -1092,6 +1101,7 @@ public class MyTunesRssConfig {
             }
             setMailHost(JXPathUtils.getStringValue(settings, "mail-host", null));
             setMailPort(JXPathUtils.getIntValue(settings, "mail-port", -1));
+            setMailTls(JXPathUtils.getBooleanValue(settings, "mail-tls", false));
             setMailLogin(JXPathUtils.getStringValue(settings, "mail-login", null));
             setMailPassword(JXPathUtils.getStringValue(settings, "mail-password", null));
             setMailSender(JXPathUtils.getStringValue(settings, "mail-sender", null));
@@ -1315,6 +1325,7 @@ public class MyTunesRssConfig {
             keystore.appendChild(DOMUtils.createTextElement(settings, "keyalias", getSslKeystoreKeyAlias()));
             root.appendChild(DOMUtils.createTextElement(settings, "mail-host", getMailHost()));
             root.appendChild(DOMUtils.createIntElement(settings, "mail-port", getMailPort()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "mail-tls", isMailTls()));
             root.appendChild(DOMUtils.createTextElement(settings, "mail-login", getMailLogin()));
             root.appendChild(DOMUtils.createTextElement(settings, "mail-password", getMailPassword()));
             root.appendChild(DOMUtils.createTextElement(settings, "mail-sender", getMailSender()));
