@@ -177,26 +177,28 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            switch (columnIndex) {
-                case 0:
-                    myFileTypes.get(rowIndex).setActive((Boolean)aValue);
-                    break;
-                case 1:
-                    myFileTypes.get(rowIndex).setSuffix((String)aValue);
-                    break;
-                case 2:
-                    myFileTypes.get(rowIndex).setMimeType((String)aValue);
-                    break;
-                case 3:
-                    int lastDot = ((String)aValue).lastIndexOf('.');
-                    myFileTypes.get(rowIndex).setVideo(Boolean.valueOf(((String)aValue).substring(lastDot + 1)));
-                    break;
-                case 4:
-                    lastDot = ((String)aValue).lastIndexOf('.');
-                    myFileTypes.get(rowIndex).setProtected(Boolean.valueOf(((String)aValue).substring(lastDot + 1)));
-                    break;
-                default:
-                    throw new IllegalArgumentException("No such column: " + columnIndex + ".");
+            if (rowIndex < myFileTypes.size()) {
+                switch (columnIndex) {
+                    case 0:
+                        myFileTypes.get(rowIndex).setActive((Boolean)aValue);
+                        break;
+                    case 1:
+                        myFileTypes.get(rowIndex).setSuffix((String)aValue);
+                        break;
+                    case 2:
+                        myFileTypes.get(rowIndex).setMimeType((String)aValue);
+                        break;
+                    case 3:
+                        int lastDot = ((String)aValue).lastIndexOf('.');
+                        myFileTypes.get(rowIndex).setVideo(Boolean.valueOf(((String)aValue).substring(lastDot + 1)));
+                        break;
+                    case 4:
+                        lastDot = ((String)aValue).lastIndexOf('.');
+                        myFileTypes.get(rowIndex).setProtected(Boolean.valueOf(((String)aValue).substring(lastDot + 1)));
+                        break;
+                    default:
+                        throw new IllegalArgumentException("No such column: " + columnIndex + ".");
+                }
             }
         }
     }

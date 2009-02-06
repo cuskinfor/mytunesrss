@@ -47,6 +47,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
     private JTextField myJmxUserNameInput;
     private JPasswordField myJmxPasswordInput;
     private JCheckBox myMyTunesRssComSsl;
+    private JCheckBox mySmtpTlsInput;
     private boolean myUpdateOnStartInputCache;
     private boolean myAutoStartServer;
 
@@ -90,6 +91,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         myJmxUserNameInput.setText(MyTunesRss.CONFIG.getJmxUser());
         myJmxPasswordInput.setText(MyTunesRss.CONFIG.getJmxPassword());
         myMyTunesRssComSsl.setSelected(MyTunesRss.CONFIG.isMyTunesRssComSsl());
+        mySmtpTlsInput.setSelected(MyTunesRss.CONFIG.isMailTls());
     }
 
     private void createUIComponents() {
@@ -127,6 +129,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setWebWelcomeMessage(myWelcomeMessageInput.getText());
             MyTunesRss.CONFIG.setMailHost(myMailHostInput.getText());
             MyTunesRss.CONFIG.setMailPort(MyTunesRssUtils.getTextFieldInteger(myMailPortInput, -1));
+            MyTunesRss.CONFIG.setMailTls(mySmtpTlsInput.isSelected());
             MyTunesRss.CONFIG.setMailLogin(myMailLoginInput.getText());
             MyTunesRss.CONFIG.setMailPassword(new String(myMailPasswordInput.getPassword()));
             MyTunesRss.CONFIG.setMailSender(new String(myMailSenderInput.getText()));

@@ -7,7 +7,35 @@
 
     <body>
 
-        <release version="3.6" date="2008-01-23" description="Final release">
+        <release version="3.6.2" date="2009-02-06" description="Bugfix release">
+            <action dev="mdescher" type="add">
+                SMTP with TLS/SSL.
+            </action>
+            <action dev="mdescher" type="add">
+                Configuration action to remove saved settings from user profile.
+            </action>
+            <action dev="mdescher" type="add">
+                Default web settings for Nintendo Wii.
+            </action>
+            <action dev="mdescher" type="add">
+                Trial period check with creation timestamp in config xml. Minimum check version is 3.6.2 and a new major or minor starts a new trial
+                period.
+            </action>
+            <action dev="mdescher" type="update">
+                User can choose between 3 Flash players now: JW Player 4, JW Player 3 and simple player.
+            </action>
+            <action dev="mdescher" type="update">
+                Add image tag in RSS and XSPF only if image is available (i.e. no useless default images).
+            </action>
+        </release>
+
+        <release version="3.6.1" date="2009-01-30" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Fixed continuous playback in JW Media Player.
+            </action>
+        </release>
+
+        <release version="3.6" date="2009-01-23" description="Final release">
             <action dev="mdescher" type="update">
                 Updated to JW media player 4.3 and included a hack to fix the track times display in the player.
             </action>

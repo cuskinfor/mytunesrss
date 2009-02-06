@@ -53,6 +53,10 @@ public interface MiscConfigMBean {
     String getMailSender();
 
     void setMailSender(String mailSender);
+
+    boolean isMailTls();
+
+    void setMailTls(boolean mailTls);
 }
 
 

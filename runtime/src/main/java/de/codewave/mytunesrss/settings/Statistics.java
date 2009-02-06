@@ -10,6 +10,7 @@ import de.codewave.utils.swing.MinMaxValueTextFieldValidation;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.MailException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -118,21 +119,31 @@ public class Statistics implements SettingsForm {
                 List<String> csv = tx.executeQuery(new GetStatisticEventsQuery(from.getTimeInMillis(), nextDay.getTimeInMillis(), "yyyy-MM-dd"));
                 tx.commit();
                 String statisticsMailBody = StringUtils.join(csv, System.getProperty("line.separator"));
-                MyTunesRss.MAILER.sendMail(MyTunesRss.CONFIG.getAdminEmail(), MyTunesRssUtils.getBundleString("email.subject.statistics",
-                                                                                                              Integer.toString(from.get(Calendar.DAY_OF_MONTH)),
-                                                                                                              Integer.toString(
-                                                                                                                      from.get(Calendar.MONTH) + 1),
-                                                                                                              Integer.toString(from.get(Calendar.YEAR)),
-                                                                                                              Integer.toString(to.get(Calendar.DAY_OF_MONTH)),
-                                                                                                              Integer.toString(
-                                                                                                                      to.get(Calendar.MONTH) + 1),
-                                                                                                              Integer.toString(to.get(Calendar.YEAR))),
-                                           statisticsMailBody);
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.sendStatisticsDone"));
-                    }
-                });
+                try {
+                    MyTunesRss.MAILER.sendMail(MyTunesRss.CONFIG.getAdminEmail(), MyTunesRssUtils.getBundleString("email.subject.statistics",
+                                                                                                                  Integer.toString(from.get(Calendar.DAY_OF_MONTH)),
+                                                                                                                  Integer.toString(
+                                                                                                                          from.get(Calendar.MONTH) + 1),
+                                                                                                                  Integer.toString(from.get(Calendar.YEAR)),
+                                                                                                                  Integer.toString(to.get(Calendar.DAY_OF_MONTH)),
+                                                                                                                  Integer.toString(
+                                                                                                                          to.get(Calendar.MONTH) + 1),
+                                                                                                                  Integer.toString(to.get(Calendar.YEAR))),
+                                               statisticsMailBody);
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.sendStatisticsDone"));
+                        }
+                    });
+                } catch (final MailException e) {
+                    LOGGER.error("Could not send statistics email.", e);
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.couldNotSendMail", e.getMessage()));
+                        }
+                    });
+
+                }
             } catch (final SQLException e) {
                 try {
                     tx.rollback();
