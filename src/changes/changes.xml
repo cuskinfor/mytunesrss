@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7-EAP-1" date="2009-xx-xx" description="3.7 EAP 1">
+            <action dev="mdescher" type="fix">
+                File type mp4 (video/x-mp4) changed from audio to video.
+            </action>
             <action dev="mdescher" type="add">
                 SMTP with TLS/SSL.
             </action>
