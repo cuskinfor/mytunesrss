@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.6.3" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                File type mp4 (video/x-mp4) changed from audio to video.
+            </action>
+        </release>
+
         <release version="3.6.2" date="2009-02-06" description="Bugfix release">
             <action dev="mdescher" type="add">
                 SMTP with TLS/SSL.
