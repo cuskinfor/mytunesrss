@@ -132,7 +132,7 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         });
     }
 
-    private void initValues() {
+    public void initValues() {
         myAutoStartServerInput.setSelected(MyTunesRss.CONFIG.isAutoStartServer());
         myPortInput.setText(Integer.toString(MyTunesRss.CONFIG.getPort()));
         myServerNameInput.setText(MyTunesRss.CONFIG.getServerName());

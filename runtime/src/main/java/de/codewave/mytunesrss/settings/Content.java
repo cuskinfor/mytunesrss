@@ -45,7 +45,7 @@ public class Content implements MyTunesRssEventListener, SettingsForm {
         return myRootPanel;
     }
 
-    private void initValues() {
+    public void initValues() {
         refreshPlaylistList();
     }
 

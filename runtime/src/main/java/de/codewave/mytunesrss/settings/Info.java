@@ -72,7 +72,7 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
         });
     }
 
-    private void initValues() {
+    public void initValues() {
         myLogLevelInput.setSelectedItem(MyTunesRss.CONFIG.getCodewaveLogLevel().toString());
         mySendAnonyStats.setSelected(MyTunesRss.CONFIG.isSendAnonyStat());
     }

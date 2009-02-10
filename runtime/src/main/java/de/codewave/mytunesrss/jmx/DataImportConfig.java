@@ -3,9 +3,16 @@ package de.codewave.mytunesrss.jmx;
 import de.codewave.mytunesrss.FileType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.datastore.statement.UpdateTrackFileTypeStatement;
+import de.codewave.utils.sql.DataStoreSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.NotCompliantMBeanException;
+import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * de.codewave.mytunesrss.jmx.DataImportConfig
@@ -38,11 +45,12 @@ public class DataImportConfig extends MyTunesRssMBean implements DataImportConfi
         return MyTunesRss.CONFIG.getFileTypes();
     }
 
-    public String addFileType(boolean active, String suffix, String mimeType, boolean video, boolean protect) {
+    public String addFileType(boolean active, String suffix, String mimeType, boolean video, boolean protect) throws SQLException {
         FileType type = new FileType(active, suffix, mimeType, video, protect);
         if (FileType.isValid(type)) {
             if (!MyTunesRss.CONFIG.getFileTypes().contains(type)) {
                 MyTunesRss.CONFIG.getFileTypes().add(type);
+                UpdateTrackFileTypeStatement.execute(Collections.<FileType>emptySet(), Collections.singleton(type));
                 onChange();
                 return MyTunesRssUtils.getBundleString("jmx.fileTypeAdded", suffix);
             }
@@ -51,7 +59,7 @@ public class DataImportConfig extends MyTunesRssMBean implements DataImportConfi
         return MyTunesRssUtils.getBundleString("jmx.fileTypeInvalid");
     }
 
-    public String editFileType(String suffix, boolean active, String mimeType, boolean video, boolean protect) {
+    public String editFileType(String suffix, boolean active, String mimeType, boolean video, boolean protect) throws SQLException {
         FileType type = MyTunesRss.CONFIG.getFileType(suffix);
         if (type != null) {
             type.setActive(active);
@@ -59,9 +67,11 @@ public class DataImportConfig extends MyTunesRssMBean implements DataImportConfi
             type.setVideo(video);
             type.setProtected(protect);
             if (FileType.isValid(type)) {
+                Collection<FileType> oldTypes = MyTunesRss.CONFIG.getDeepFileTypesClone();
                 int i = MyTunesRss.CONFIG.getFileTypes().indexOf(type);
                 MyTunesRss.CONFIG.getFileTypes().remove(i);
                 MyTunesRss.CONFIG.getFileTypes().add(i, type);
+                UpdateTrackFileTypeStatement.execute(oldTypes, Collections.singleton(type));
                 onChange();
                 return MyTunesRssUtils.getBundleString("jmx.fileTypeChanged", suffix);
             }
@@ -80,10 +90,12 @@ public class DataImportConfig extends MyTunesRssMBean implements DataImportConfi
         return MyTunesRssUtils.getBundleString("jmx.fileTypeNotFound", suffix);
     }
 
-    public void resetToDefaults() {
+    public void resetToDefaults() throws SQLException {
+        Collection<FileType> oldTypes = MyTunesRss.CONFIG.getDeepFileTypesClone();
         MyTunesRss.CONFIG.getFileTypes().clear();
         MyTunesRss.CONFIG.getFileTypes().addAll(FileType.getDefaults());
         onChange();
+        UpdateTrackFileTypeStatement.execute(oldTypes, FileType.getDefaults());
     }
 
     public String getArtistDropWords() {

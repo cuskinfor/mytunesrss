@@ -32,8 +32,12 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm {
     public void init() {
         myScrollPane.getViewport().setOpaque(false);
         myCreateButton.addActionListener(new CreateUserActionListener());
-        refreshUserList();
         MyTunesRssEventManager.getInstance().addListener(this);
+        initValues();
+    }
+
+    public void initValues() {
+        refreshUserList();
     }
 
     public void setGuiMode(GuiMode mode) {

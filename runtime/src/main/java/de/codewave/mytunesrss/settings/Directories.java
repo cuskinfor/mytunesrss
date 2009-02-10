@@ -124,7 +124,7 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
         });
     }
 
-    private void initValues() {
+    public void initValues() {
         myListModel = new DefaultListModel();
         addAllToListModel();
         myBaseDirsList.setModel(myListModel);
