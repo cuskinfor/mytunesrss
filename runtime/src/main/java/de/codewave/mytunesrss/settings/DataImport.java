@@ -1,8 +1,10 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.statement.UpdateTrackFileTypeStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.swing.SwingUtils;
+import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -12,6 +14,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -73,8 +77,14 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
         MyTunesRss.CONFIG.setArtistDropWords(myArtistDropWords.getText());
         MyTunesRss.CONFIG.setIgnoreArtwork(myIgnoreArtworkInput.isSelected());
         MyTunesRss.CONFIG.setId3v2TrackComment(myId3v2CommentInput.getText());
+        final Collection<FileType> oldTypes = new HashSet<FileType>(MyTunesRss.CONFIG.getFileTypes());
         MyTunesRss.CONFIG.getFileTypes().clear();
         MyTunesRss.CONFIG.getFileTypes().addAll(myFileTypesTableModel.getFileTypes());
+        MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.updatingTrackFileTypes"), null, false, new PleaseWaitTask() {
+            public void execute() throws Exception {
+                MyTunesRss.STORE.getTransaction().executeStatement(new UpdateTrackFileTypeStatement(oldTypes, myFileTypesTableModel.getFileTypes()));
+            }
+        });
         return null;
     }
 
@@ -180,21 +190,21 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
             if (rowIndex < myFileTypes.size()) {
                 switch (columnIndex) {
                     case 0:
-                        myFileTypes.get(rowIndex).setActive((Boolean)aValue);
+                        myFileTypes.get(rowIndex).setActive((Boolean) aValue);
                         break;
                     case 1:
-                        myFileTypes.get(rowIndex).setSuffix((String)aValue);
+                        myFileTypes.get(rowIndex).setSuffix((String) aValue);
                         break;
                     case 2:
-                        myFileTypes.get(rowIndex).setMimeType((String)aValue);
+                        myFileTypes.get(rowIndex).setMimeType((String) aValue);
                         break;
                     case 3:
-                        int lastDot = ((String)aValue).lastIndexOf('.');
-                        myFileTypes.get(rowIndex).setVideo(Boolean.valueOf(((String)aValue).substring(lastDot + 1)));
+                        int lastDot = ((String) aValue).lastIndexOf('.');
+                        myFileTypes.get(rowIndex).setVideo(Boolean.valueOf(((String) aValue).substring(lastDot + 1)));
                         break;
                     case 4:
-                        lastDot = ((String)aValue).lastIndexOf('.');
-                        myFileTypes.get(rowIndex).setProtected(Boolean.valueOf(((String)aValue).substring(lastDot + 1)));
+                        lastDot = ((String) aValue).lastIndexOf('.');
+                        myFileTypes.get(rowIndex).setProtected(Boolean.valueOf(((String) aValue).substring(lastDot + 1)));
                         break;
                     default:
                         throw new IllegalArgumentException("No such column: " + columnIndex + ".");
@@ -210,10 +220,10 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
                 @Override
                 public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                     return super.getListCellRendererComponent(list,
-                                                              MyTunesRssUtils.getBundleString(value.toString()),
-                                                              index,
-                                                              isSelected,
-                                                              cellHasFocus);
+                            MyTunesRssUtils.getBundleString(value.toString()),
+                            index,
+                            isSelected,
+                            cellHasFocus);
                 }
             });
         }

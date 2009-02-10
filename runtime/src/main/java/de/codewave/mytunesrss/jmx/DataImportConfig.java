@@ -3,14 +3,21 @@ package de.codewave.mytunesrss.jmx;
 import de.codewave.mytunesrss.FileType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.datastore.statement.UpdateTrackFileTypeStatement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.NotCompliantMBeanException;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 /**
  * de.codewave.mytunesrss.jmx.DataImportConfig
  */
 public class DataImportConfig extends MyTunesRssMBean implements DataImportConfigMBean {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataImportConfig.class);
 
     public DataImportConfig() throws NotCompliantMBeanException {
         super(DataImportConfigMBean.class);
@@ -81,9 +88,15 @@ public class DataImportConfig extends MyTunesRssMBean implements DataImportConfi
     }
 
     public void resetToDefaults() {
+        Collection<FileType> oldTypes = new HashSet<FileType>(MyTunesRss.CONFIG.getFileTypes());
         MyTunesRss.CONFIG.getFileTypes().clear();
         MyTunesRss.CONFIG.getFileTypes().addAll(FileType.getDefaults());
         onChange();
+        try {
+            MyTunesRss.STORE.getTransaction().executeStatement(new UpdateTrackFileTypeStatement(oldTypes, FileType.getDefaults()));
+        } catch (SQLException e) {
+            LOGGER.error("Could not update file type information in database.", e);
+        }
     }
 
     public String getArtistDropWords() {

@@ -487,6 +487,12 @@
         </sql>
     </statement>
 
+    <statement name="updateTrackFileType">
+        <sql>
+            UPDATE track SET protected = :protected, video = :video WHERE suffix = :suffix
+        </sql>
+    </statement>
+
     <statement name="updateTrackAndImage">
         <parameter name="time" type="java.lang.Integer"/>
         <parameter name="track_number" type="java.lang.Integer"/>

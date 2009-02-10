@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.6.3" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="add">
+                Update file type information in the database on change.
+            </action>
             <action dev="mdescher" type="fix">
                 File type mp4 (video/x-mp4) changed from audio to video.
             </action>
