@@ -56,7 +56,7 @@ public class Statistics implements SettingsForm {
         }
     }
 
-    private void initValues() {
+    public void initValues() {
         myKeepTimeInput.setText(Integer.toString(MyTunesRss.CONFIG.getStatisticKeepTime()));
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(new Date());

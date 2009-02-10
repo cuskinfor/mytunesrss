@@ -159,7 +159,7 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
         });
     }
 
-    private void initValues() {
+    public void initValues() {
         myUpdateDatabaseOnServerStart.setSelected(MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart());
         myDeleteMissingFiles.setSelected(MyTunesRss.CONFIG.isItunesDeleteMissingFiles());
         myDbTypeInput.setSelectedItem(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));

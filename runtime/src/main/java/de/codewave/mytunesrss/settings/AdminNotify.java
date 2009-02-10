@@ -26,7 +26,7 @@ public class AdminNotify implements SettingsForm {
         initValues();
     }
 
-    private void initValues() {
+    public void initValues() {
         myAdminEmailInput.setText(MyTunesRss.CONFIG.getAdminEmail());
         myNotifyDatabaseUpdateInput.setSelected(MyTunesRss.CONFIG.isNotifyOnDatabaseUpdate());
         myNotifyEmailChangeInput.setSelected(MyTunesRss.CONFIG.isNotifyOnEmailChange());

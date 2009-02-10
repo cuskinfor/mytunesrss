@@ -129,7 +129,7 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
         });
     }
 
-    private void initValues() {
+    public void initValues() {
         initListModels();
     }
 

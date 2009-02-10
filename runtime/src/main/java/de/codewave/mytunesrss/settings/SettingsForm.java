@@ -8,6 +8,8 @@ import javax.swing.*;
 public interface SettingsForm {
     void init();
 
+    void initValues();
+
     String updateConfigFromGui();
 
     JPanel getRootPanel();

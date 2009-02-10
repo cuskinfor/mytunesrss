@@ -67,7 +67,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
                 "error.illegalJmxPort")));
     }
 
-    private void initValues() {
+    public void initValues() {
         myUsernameInput.setText(MyTunesRss.CONFIG.getMyTunesRssComUser());
         myPasswordInput.setPasswordHash(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash());
         myUseProxyInput.setSelected(MyTunesRss.CONFIG.isProxyServer());

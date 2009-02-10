@@ -88,7 +88,7 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
         });
     }
 
-    private void initValues() {
+    public void initValues() {
         myLameBinaryInput.setText(MyTunesRss.CONFIG.getLameBinary());
         myFaadBinaryInput.setText(MyTunesRss.CONFIG.getFaadBinary());
         myAlacBinaryInput.setText(MyTunesRss.CONFIG.getAlacBinary());

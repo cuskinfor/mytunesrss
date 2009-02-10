@@ -77,12 +77,12 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
         MyTunesRss.CONFIG.setArtistDropWords(myArtistDropWords.getText());
         MyTunesRss.CONFIG.setIgnoreArtwork(myIgnoreArtworkInput.isSelected());
         MyTunesRss.CONFIG.setId3v2TrackComment(myId3v2CommentInput.getText());
-        final Collection<FileType> oldTypes = new HashSet<FileType>(MyTunesRss.CONFIG.getFileTypes());
+        final Collection<FileType> oldTypes = MyTunesRss.CONFIG.getDeepFileTypesClone();
         MyTunesRss.CONFIG.getFileTypes().clear();
         MyTunesRss.CONFIG.getFileTypes().addAll(myFileTypesTableModel.getFileTypes());
         MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.updatingTrackFileTypes"), null, false, new PleaseWaitTask() {
             public void execute() throws Exception {
-                MyTunesRss.STORE.getTransaction().executeStatement(new UpdateTrackFileTypeStatement(oldTypes, myFileTypesTableModel.getFileTypes()));
+                UpdateTrackFileTypeStatement.execute(oldTypes, myFileTypesTableModel.getFileTypes());
             }
         });
         return null;
@@ -96,7 +96,7 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
         return MyTunesRssUtils.getBundleString("dialog.dataimport.title");
     }
 
-    private void initValues() {
+    public void initValues() {
         myIgnoreTimestampsInput.setSelected(MyTunesRss.CONFIG.isIgnoreTimestamps());
         myArtistDropWords.setText(MyTunesRss.CONFIG.getArtistDropWords());
         myIgnoreArtworkInput.setSelected(MyTunesRss.CONFIG.isIgnoreArtwork());

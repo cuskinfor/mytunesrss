@@ -211,6 +211,7 @@ public class Settings implements MyTunesRssEventListener {
     }
 
     protected void showSettings(final SettingsForm form) {
+        form.initValues();
         String dialogTitle = MyTunesRssUtils.getBundleString("dialog.settings.commonTitle", form.getDialogTitle());
         final JDialog dialog = new JDialog(MyTunesRss.ROOT_FRAME, dialogTitle, true);
         dialog.addWindowListener(new WindowAdapter() {

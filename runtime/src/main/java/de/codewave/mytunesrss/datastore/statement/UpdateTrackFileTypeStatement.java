@@ -1,15 +1,32 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.FileType;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 
 public class UpdateTrackFileTypeStatement implements DataStoreStatement {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateTrackFileTypeStatement.class);
+
+    public static void execute(Collection<FileType> oldTypes, Collection<FileType> newTypes) throws SQLException {
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
+        try {
+            session.executeStatement(new UpdateTrackFileTypeStatement(oldTypes, newTypes));
+            session.commit();
+        } catch (SQLException e) {
+            LOGGER.error("Could not update file type information in database.", e);
+            session.rollback();
+        }
+    }
+
     private Collection<FileType> myOldFileTypes;
     private Collection<FileType> myNewFileTypes;
 
@@ -22,6 +39,7 @@ public class UpdateTrackFileTypeStatement implements DataStoreStatement {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateTrackFileType");
         for (FileType fileType : myNewFileTypes) {
             if (isChanged(fileType)) {
+                LOGGER.debug("Updating file type \"" + fileType.getSuffix().toLowerCase() + "\".");
                 statement.clearParameters();
                 statement.setString("suffix", fileType.getSuffix().toLowerCase());
                 statement.setBoolean("video", fileType.isVideo());
