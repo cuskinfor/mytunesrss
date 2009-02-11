@@ -13,17 +13,28 @@ import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.Session;
 import de.codewave.mytunesrss.remote.render.RenderMachine;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 public class LoginService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginService.class);
+
     public String login(String username, String password, int sessionTimeoutMinutes) throws UnsupportedEncodingException, IllegalAccessException {
         User user = MyTunesRss.CONFIG.getUser(username);
         if (user != null) {
-            byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8"));
-            if (Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive()) {
+            byte[] passwordHash1 = MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8"));
+            byte[] passwordHash2 = new byte[0];
+            try {
+                passwordHash2 = Hex.decodeHex(password.toCharArray());
+            } catch (DecoderException e) {
+                LOGGER.debug("Could not decode hex value \"" + password + "\".");
+            }
+            if ((Arrays.equals(user.getPasswordHash(), passwordHash1) || Arrays.equals(user.getPasswordHash(), passwordHash2)) && user.isActive()) {
                 MyTunesRssRemoteEnv.getRequest().getSession().setAttribute("remoteApiUser", user);
                 String sid = new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest((MyTunesRssRemoteEnv.getRequest().getSession().getId() +
                         System.currentTimeMillis()).getBytes("UTF-8"))));
