@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.6.3" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Fixed CSS bug.
+            </action>
             <action dev="mdescher" type="add">
                 Update file type information in the database on change.
             </action>

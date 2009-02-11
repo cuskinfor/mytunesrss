@@ -357,10 +357,9 @@ tr.odd td.album a, tr.odd td.genreartist a, tr.odd td.tracks a {
 }
 
 td.icon {
-    width: 16px;
     padding: 0 10px 0 0;
     border-left: none;
-    text-align: center;
+    text-align: right;
     white-space: nowrap;
 }
 
