@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7-EAP-1" date="2009-xx-xx" description="3.7 EAP 1">
+            <action dev="mdescher" type="add">
+                Allow password to be SHA-1 hash of password in "LoginService.login".
+            </action>
             <action dev="mdescher" type="fix">
                 Fixed CSS bug.
             </action>
