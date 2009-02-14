@@ -133,7 +133,12 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
 
     private File findImageFile(File file) {
         for (String suffix : IMAGE_TO_MIME.keySet()) {
-            File imageFile = new File(file.getAbsolutePath() + "." + suffix);
+            File imageFile;
+            if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase(suffix)) {
+                imageFile = file;
+            } else {
+                imageFile = new File(file.getAbsolutePath() + "." + suffix);
+            }
             if (imageFile.isFile()) {
                 return imageFile;
             }

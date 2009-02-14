@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="3.6.4" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                When file is an image (jpg, png, gif) itself, it is used as the "artwork" information.
+            </action>
+            <action dev="mdescher" type="fix">
+                Artwork for track is read from equally named image when scanning watch folders as well.
+            </action>
+        </release>
+
         <release version="3.6.3" date="2009-02-12" description="Bugfix release">
             <action dev="mdescher" type="add">
                 Allow password to be SHA-1 hash of password in "LoginService.login".
