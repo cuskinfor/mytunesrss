@@ -8,6 +8,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import javax.net.ssl.SSLSocketFactory;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -33,7 +35,6 @@ public class MailSender {
      * @param to      The to address.
      * @param subject The subject.
      * @param body    The mail body.
-     *
      * @throws MailException Any exception while sending the mail.
      */
     public void sendMail(String to, String subject, String body) {
@@ -45,8 +46,16 @@ public class MailSender {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         Properties mailProperties = new Properties();
         mailSender.setHost(MyTunesRss.CONFIG.getMailHost());
+        List<Integer> ports = new ArrayList<Integer>();
         if (MyTunesRss.CONFIG.getMailPort() > 0) {
-            mailSender.setPort(MyTunesRss.CONFIG.getMailPort());
+            ports.add(MyTunesRss.CONFIG.getMailPort());
+        } else {
+            if (MyTunesRss.CONFIG.isMailTls()) {
+                ports.add(465);
+                ports.add(587);
+            } else {
+                ports.add(25);
+            }
         }
         mailProperties.setProperty("mail.smtp.localhost", "localhost");
         if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getMailLogin()) && StringUtils.isNotEmpty(MyTunesRss.CONFIG.getMailPassword())) {
@@ -60,6 +69,21 @@ public class MailSender {
         }
         mailProperties.setProperty("mail.smtp.connectiontimeout", "10000");
         mailSender.setJavaMailProperties(mailProperties);
-        mailSender.send(message);
+        MailException lastException = null;
+        for (Integer port : ports) {
+            mailSender.setPort(port);
+            try {
+                LOGGER.debug("Trying to send mail using host \"" + mailSender.getHost() + "\" and port \"" + mailSender.getPort() + "\".");
+                mailSender.send(message);
+                lastException = null;
+                break;
+            } catch (MailException e) {
+                LOGGER.debug("Could not send mail using port " + port + ".", e);
+                lastException = e;
+            }
+        }
+        if (lastException != null) {
+            throw lastException;
+        }
     }
 }
