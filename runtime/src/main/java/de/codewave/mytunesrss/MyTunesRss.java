@@ -19,6 +19,7 @@ import de.codewave.mytunesrss.task.DeleteDatabaseFilesTask;
 import de.codewave.mytunesrss.task.InitializeDatabaseTask;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
+import de.codewave.utils.Version;
 import de.codewave.utils.io.FileCache;
 import de.codewave.utils.maven.MavenUtils;
 import de.codewave.utils.swing.SwingUtils;
@@ -50,6 +51,7 @@ import java.net.URLClassLoader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.Timer;
 
@@ -67,9 +69,9 @@ public class MyTunesRss {
         }
         try {
             for (Iterator<File> iter =
-                    (Iterator<File>)FileUtils.iterateFiles(new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER)),
-                                                           new String[] {"log"},
-                                                           false); iter.hasNext();) {
+                    (Iterator<File>) FileUtils.iterateFiles(new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER)),
+                            new String[]{"log"},
+                            false); iter.hasNext();) {
                 iter.next().delete();
             }
         } catch (Exception e) {
@@ -77,7 +79,7 @@ public class MyTunesRss {
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRss.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRss.class);
 
     static {
         try {
@@ -85,37 +87,37 @@ public class MyTunesRss {
             if (file.isFile()) {
                 Properties properties = new Properties();
                 properties.load(new FileInputStream(file));
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Setting system properties from \"" + file.getAbsolutePath() + "\".");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Setting system properties from \"" + file.getAbsolutePath() + "\".");
                 }
                 for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                     System.setProperty(entry.getKey().toString(), entry.getValue().toString());
                 }
             }
         } catch (IOException e) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Could not load user system properties: " + e.getMessage());
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Could not load user system properties: " + e.getMessage());
             }
         }
         try {
             UPDATE_URL = new URL("http://www.codewave.de/download/versions/mytunesrss.xml");
         } catch (MalformedURLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create update url.", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not create update url.", e);
             }
         }
         try {
             SHA1_DIGEST = MessageDigest.getInstance("SHA-1");
         } catch (NoSuchAlgorithmException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create SHA-1 digest.", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not create SHA-1 digest.", e);
             }
         }
         try {
             MD5_DIGEST = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create MD5 digest.", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not create MD5 digest.", e);
             }
         }
     }
@@ -162,17 +164,17 @@ public class MyTunesRss {
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
         registerDatabaseDriver();
         AnonyStatUtils.sendApplicationStarted();
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Operating system: " + SystemUtils.OS_NAME + ", " + SystemUtils.OS_VERSION + ", " + SystemUtils.OS_ARCH);
-            LOG.info("Java: " + SystemUtils.JAVA_VERSION + "(" + SystemUtils.JAVA_HOME + ")");
-            LOG.info("Application version: " + VERSION);
-            LOG.info("Cache data path: " + PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER));
-            LOG.info("Preferences data path: " + PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER));
-            LOG.info("--------------------------------------------------------------------------------");
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Operating system: " + SystemUtils.OS_NAME + ", " + SystemUtils.OS_VERSION + ", " + SystemUtils.OS_ARCH);
+            LOGGER.info("Java: " + SystemUtils.JAVA_VERSION + "(" + SystemUtils.JAVA_HOME + ")");
+            LOGGER.info("Application version: " + VERSION);
+            LOGGER.info("Cache data path: " + PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER));
+            LOGGER.info("Preferences data path: " + PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER));
+            LOGGER.info("--------------------------------------------------------------------------------");
             for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
-                LOG.info(entry.getKey() + "=" + entry.getValue());
+                LOGGER.info(entry.getKey() + "=" + entry.getValue());
             }
-            LOG.info("--------------------------------------------------------------------------------");
+            LOGGER.info("--------------------------------------------------------------------------------");
         }
         if (!HEADLESS) {
             Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(ROOT_FRAME, false));
@@ -192,6 +194,10 @@ public class MyTunesRss {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
             MyTunesRssUtils.shutdown();
         }
+        if (new Version(CONFIG.getVersion()).compareTo(new Version(VERSION)) > 0) {
+            MyTunesRssUtils.showErrorMessage(MessageFormat.format(BUNDLE.getString("error.configVersionMismatch"), VERSION, CONFIG.getVersion()));
+            MyTunesRssUtils.shutdown();
+        }
         if (REGISTRATION.isExpiredPreReleaseVersion()) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.preReleaseVersionExpired"));
             MyTunesRssUtils.shutdown();
@@ -200,15 +206,15 @@ public class MyTunesRss {
             MyTunesRssUtils.shutdown();
         } else if (REGISTRATION.isExpirationDate() && !REGISTRATION.isExpired()) {
             MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.expirationInfo",
-                                                                            REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
-                                                                                    "common.dateFormat"))));
+                    REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
+                            "common.dateFormat"))));
         }
         if (MyTunesRss.CONFIG.isDefaultDatabase() && MyTunesRss.CONFIG.isDeleteDatabaseOnNextStartOnError()) {
             new DeleteDatabaseFilesTask().execute();
         }
         QUARTZ_SCHEDULER = new StdSchedulerFactory().getScheduler();
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Starting quartz scheduler.");
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Starting quartz scheduler.");
         }
         QUARTZ_SCHEDULER.start();
         STREAMING_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER, 10000, CONFIG.getStreamingCacheMaxFiles());
@@ -217,8 +223,8 @@ public class MyTunesRss {
             try {
                 STREAMING_CACHE.setContent(JXPathUtils.getContext(streamingCacheFile.toURL()));
             } catch (Exception e) {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("Could not read streaming cache file. Starting with empty cache.", e);
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("Could not read streaming cache file. Starting with empty cache.", e);
                 }
                 STREAMING_CACHE.clearCache();
             }
@@ -234,8 +240,8 @@ public class MyTunesRss {
                     try {
                         executeGuiMode();
                     } catch (Exception e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error(null, e);
+                        if (LOGGER.isErrorEnabled()) {
+                            LOGGER.error(null, e);
                         }
                     }
                 }
@@ -246,9 +252,9 @@ public class MyTunesRss {
     private static void registerDatabaseDriver()
             throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         File libDir = new File(PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER) + "/lib");
-        Collection<File> files = libDir.isDirectory() ? (Collection<File>)FileUtils.listFiles(libDir, new String[] {"jar"}, false) : null;
+        Collection<File> files = libDir.isDirectory() ? (Collection<File>) FileUtils.listFiles(libDir, new String[]{"jar"}, false) : null;
         String driverClassName = MyTunesRss.CONFIG.getDatabaseDriver();
-        LOG.info("Using database driver class \"" + driverClassName + "\".");
+        LOGGER.info("Using database driver class \"" + driverClassName + "\".");
         if (files != null && !files.isEmpty()) {
             Collection<URL> urls = new ArrayList<URL>();
             for (File file : files) {
@@ -256,7 +262,7 @@ public class MyTunesRss {
             }
             final ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), ClassLoader.getSystemClassLoader());
             try {
-                final Class<Driver> driverClass = (Class<Driver>)Class.forName(driverClassName, true, classLoader);
+                final Class<Driver> driverClass = (Class<Driver>) Class.forName(driverClassName, true, classLoader);
                 DriverManager.registerDriver(new Driver() {
                     private Driver myDriver = driverClass.newInstance();
 
@@ -285,16 +291,16 @@ public class MyTunesRss {
                     }
                 });
             } catch (ClassNotFoundException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Database driver class not found.", e);
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Database driver class not found.", e);
                 }
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.databaseDriverNotFound",
-                                                                                 driverClassName,
-                                                                                 libDir.getAbsolutePath()));
+                        driverClassName,
+                        libDir.getAbsolutePath()));
                 MyTunesRssUtils.shutdown();
             } catch (SQLException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error(null, e);
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error(null, e);
                 }
 
             }
@@ -302,12 +308,12 @@ public class MyTunesRss {
             try {
                 Class.forName(driverClassName);
             } catch (ClassNotFoundException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Database driver class not found.", e);
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Database driver class not found.", e);
                 }
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.databaseDriverNotFound",
-                                                                                 driverClassName,
-                                                                                 libDir.getAbsolutePath()));
+                        driverClassName,
+                        libDir.getAbsolutePath()));
                 MyTunesRssUtils.shutdown();
             }
         }
@@ -324,8 +330,8 @@ public class MyTunesRss {
             file.deleteOnExit();
             lockFile = new RandomAccessFile(file, "rw");
         } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not check for other running instance.", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not check for other running instance.", e);
             }
             return false;
         }
@@ -337,8 +343,8 @@ public class MyTunesRss {
                 }
                 Thread.sleep(500);
             } catch (IOException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not check for other running instance.", e);
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not check for other running instance.", e);
                 }
             } catch (InterruptedException e) {
                 // intentionally left blank
@@ -367,20 +373,25 @@ public class MyTunesRss {
         if (CONFIG.isCheckUpdateOnStart()) {
             UpdateUtils.checkForUpdate(true);
         }
-        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
+        InitializeDatabaseTask task = new InitializeDatabaseTask();
+        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, task);
+        if (task.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
+            MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString("error.databaseVersionMismatch"), MyTunesRss.VERSION, task.getDatabaseVersion().toString()));
+            MyTunesRssUtils.shutdownGracefully();
+        }
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
         SETTINGS.init();
         DUMMY_FRAME.dispose();
         if (x == Integer.MAX_VALUE && y == Integer.MAX_VALUE) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Initial start with no saved window postion, centering on screen.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Initial start with no saved window postion, centering on screen.");
             }
             ROOT_FRAME.setLocation(0, 0);
             SwingUtils.packAndShowRelativeTo(ROOT_FRAME, null);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Setting window to (" + x + ", " + y + ")");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Setting window to (" + x + ", " + y + ")");
             }
             ROOT_FRAME.setLocation(x, y);
             SwingUtils.packAndShow(ROOT_FRAME);
@@ -407,37 +418,37 @@ public class MyTunesRss {
                 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                 Point location = ROOT_FRAME.getLocation();
                 Dimension size = ROOT_FRAME.getSize();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(
                             "Frame is (" + location.x + ", " + location.y + ") - (" + (location.x + size.width) + ", " + (location.y + size.height) +
                                     ")");
                 }
                 if (location.x >= screenSize.width || location.y >= screenSize.height || location.x + size.width <= 0 ||
                         location.y + size.height <= 0) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Frame is completely off-screen, centering it on screen.");
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Frame is completely off-screen, centering it on screen.");
                     }
                     SwingUtils.packAndShowRelativeTo(frame, null);
                 } else {
                     if (location.x < 0) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Frame is left off-screen.");
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Frame is left off-screen.");
                         }
                         location.x = 0;
                     } else if (location.x + size.width > screenSize.width) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Frame is right off-screen.");
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Frame is right off-screen.");
                         }
                         location.x = screenSize.width - size.width;
                     }
                     if (location.y < 0) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Frame is top off-screen.");
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Frame is top off-screen.");
                         }
                         location.y = 0;
                     } else if (location.y + size.height > screenSize.height) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Frame is bottom off-screen.");
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Frame is bottom off-screen.");
                         }
                         location.y = screenSize.height - size.height;
                     }
@@ -463,10 +474,15 @@ public class MyTunesRss {
     }
 
     private static void executeHeadlessMode() throws IOException, SQLException {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Headless mode");
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Headless mode");
         }
-        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, new InitializeDatabaseTask());
+        InitializeDatabaseTask task = new InitializeDatabaseTask();
+        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, task);
+        if (task.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
+            MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString("error.databaseVersionMismatch"), MyTunesRss.VERSION, task.getDatabaseVersion().toString()));
+            MyTunesRssUtils.shutdownGracefully();
+        }
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
         if (CONFIG.isAutoStartServer()) {
@@ -499,9 +515,9 @@ public class MyTunesRss {
             if (StringUtils.isNotEmpty(CONFIG.getMyTunesRssComUser()) && CONFIG.getMyTunesRssComPasswordHash() != null &&
                     CONFIG.getMyTunesRssComPasswordHash().length > 0) {
                 MyTunesRssComUpdateTask myTunesRssComUpdater = new MyTunesRssComUpdateTask(SERVER_RUNNING_TIMER,
-                                                                                           300000,
-                                                                                           CONFIG.getMyTunesRssComUser(),
-                                                                                           CONFIG.getMyTunesRssComPasswordHash());
+                        300000,
+                        CONFIG.getMyTunesRssComUser(),
+                        CONFIG.getMyTunesRssComPasswordHash());
                 SERVER_RUNNING_TIMER.schedule(myTunesRssComUpdater, 0);
             }
             if (MyTunesRss.CONFIG.isAvailableOnLocalNet()) {
@@ -532,16 +548,16 @@ public class MyTunesRss {
     }
 
     private static void executeApple(Settings settings) {
-        LOG.debug("Trying to execute apple specific code.");
+        LOGGER.debug("Trying to execute apple specific code.");
         if (SystemUtils.IS_OS_MAC_OSX) {
             try {
-                LOG.debug("Executing apple specific code.");
+                LOGGER.debug("Executing apple specific code.");
                 Class appleExtensionsClass = Class.forName("de.codewave.apple.AppleExtensions");
                 Method activateMethod = appleExtensionsClass.getMethod("activate", EventListener.class);
                 activateMethod.invoke(null, new AppleExtensionsEventListener(settings));
             } catch (Exception e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not activate apple extensions.", e);
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not activate apple extensions.", e);
                 }
             }
         }
@@ -570,14 +586,14 @@ public class MyTunesRss {
             } else {
                 if (CONFIG.isQuitConfirmation()) {
                     int result = JOptionPane.showOptionDialog(ROOT_FRAME,
-                                                              MyTunesRssUtils.getBundleString("confirmation.quitMyTunesRss"),
-                                                              MyTunesRssUtils.getBundleString("pleaseWait.defaultTitle"),
-                                                              JOptionPane.YES_NO_OPTION,
-                                                              JOptionPane.QUESTION_MESSAGE,
-                                                              null,
-                                                              new QuitConfirmOption[] {QuitConfirmOption.NoButMinimize, QuitConfirmOption.No,
-                                                                                       QuitConfirmOption.Yes},
-                                                              QuitConfirmOption.No);
+                            MyTunesRssUtils.getBundleString("confirmation.quitMyTunesRss"),
+                            MyTunesRssUtils.getBundleString("pleaseWait.defaultTitle"),
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            new QuitConfirmOption[]{QuitConfirmOption.NoButMinimize, QuitConfirmOption.No,
+                                    QuitConfirmOption.Yes},
+                            QuitConfirmOption.No);
                     if (result == 1) {
                         return;
                     } else if (result == 0) {
@@ -606,17 +622,17 @@ public class MyTunesRss {
         }
 
         public void handleQuit() {
-            LOG.debug("Apple extension: handleQuit.");
+            LOGGER.debug("Apple extension: handleQuit.");
             mySettings.doQuitApplication();
         }
 
         public void handleReOpenApplication() {
-            LOG.debug("Apple extension: handleReOpenApplication.");
+            LOGGER.debug("Apple extension: handleReOpenApplication.");
             if (!ROOT_FRAME.isVisible()) {
-                LOG.debug("Root frame not visible, setting to visible.");
+                LOGGER.debug("Root frame not visible, setting to visible.");
                 ROOT_FRAME.setVisible(true);
             } else {
-                LOG.debug("Root frame already visible, nothing to do here.");
+                LOGGER.debug("Root frame already visible, nothing to do here.");
             }
         }
     }

@@ -984,7 +984,9 @@ public class MyTunesRssConfig {
                 // fresh evaluation period if the last version was a different major or minor version 
                 myCryptedCreationTime = freshCryptedCreationTime;
             }
-            migrate();
+            if (currentConfigVersion.compareTo(currentAppVersion) < 0) {
+                migrate();
+            }
             setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
             setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
             setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
@@ -1357,7 +1359,10 @@ public class MyTunesRssConfig {
     }
 
     private void migrate() {
-        setVersion(MyTunesRss.VERSION);
+        Version current = new Version(getVersion());
+        if (current.compareTo(new Version("3.6")) < 0) {
+            setVersion("3.6");
+        }
     }
 
     public boolean isDefaultDatabase() {
