@@ -8,6 +8,12 @@
     <body>
 
         <release version="3.6.4" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="add">
+                New version of codewave utils (version releated bugfixes).
+            </action>
+            <action dev="mdescher" type="add">
+                Do not start if either configuration or database is newer than application version.
+            </action>
             <action dev="mdescher" type="update">
                 Use standard ports for sending mail when no ports have been set (25 for non SSL/TLS and
                 465 and 587 for SSL/TLS enabled).

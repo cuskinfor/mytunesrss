@@ -54,10 +54,10 @@ public class MyTunesRssUtils {
 
     public static void showErrorMessage(JFrame parent, String message) {
         SwingUtils.showMessage(parent,
-                               JOptionPane.ERROR_MESSAGE,
-                               MyTunesRssUtils.getBundleString("error.title"),
-                               message,
-                               MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
+                JOptionPane.ERROR_MESSAGE,
+                MyTunesRssUtils.getBundleString("error.title"),
+                message,
+                MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
     }
 
     public static void showInfoMessage(String message) {
@@ -74,10 +74,10 @@ public class MyTunesRssUtils {
 
     public static void showInfoMessage(JFrame parent, String message) {
         SwingUtils.showMessage(parent,
-                               JOptionPane.INFORMATION_MESSAGE,
-                               MyTunesRssUtils.getBundleString("info.title"),
-                               message,
-                               MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
+                JOptionPane.INFORMATION_MESSAGE,
+                MyTunesRssUtils.getBundleString("info.title"),
+                message,
+                MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
     }
 
     public static void executeTask(String title, String text, String cancelButtonText, boolean progressBar, PleaseWaitTask task) {
@@ -158,10 +158,10 @@ public class MyTunesRssUtils {
             LOGGER.debug("Shutting down gracefully.");
         }
         DatabaseBuilderTask.interruptCurrentTask();
-        if (MyTunesRss.WEBSERVER.isRunning()) {
+        if (MyTunesRss.WEBSERVER != null && MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRss.stopWebserver();
         }
-        if (!MyTunesRss.WEBSERVER.isRunning()) {
+        if (MyTunesRss.WEBSERVER == null || !MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRssJmxUtils.stopJmxServer();
             MyTunesRss.CONFIG.setWindowX(MyTunesRss.ROOT_FRAME.getLocation().x);
             MyTunesRss.CONFIG.setWindowY(MyTunesRss.ROOT_FRAME.getLocation().y);
@@ -304,7 +304,7 @@ public class MyTunesRssUtils {
         }
         LoggerRepository repository = org.apache.log4j.Logger.getRootLogger().getLoggerRepository();
         for (Enumeration loggerEnum = repository.getCurrentLoggers(); loggerEnum.hasMoreElements();) {
-            org.apache.log4j.Logger logger = (org.apache.log4j.Logger)loggerEnum.nextElement();
+            org.apache.log4j.Logger logger = (org.apache.log4j.Logger) loggerEnum.nextElement();
             if (logger.getName().startsWith("de.codewave.")) {
                 logger.setLevel(level);
             }
