@@ -149,6 +149,7 @@ public class MigrationStatement implements DataStoreStatement {
                         databaseVersion = new Version("3.6-EAP-12");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                     }
+                    // migration for 3.6
                     if (databaseVersion.compareTo(new Version("3.6")) < 0) {
                         LOG.info("Migrating database to 3.6.");
                         databaseVersion = new Version("3.6");
