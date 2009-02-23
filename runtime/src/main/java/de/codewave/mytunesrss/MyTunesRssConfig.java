@@ -981,7 +981,7 @@ public class MyTunesRssConfig {
                 // fresh evaluation period if last version was not a release version
                 myCryptedCreationTime = freshCryptedCreationTime;
             } else if (currentAppVersion.getMajor() != currentConfigVersion.getMajor() || currentAppVersion.getMinor() != currentConfigVersion.getMinor()) {
-                // fresh evaluation period if the last version was a different major or minor version 
+                // fresh evaluation period if the last version was a different major or minor version
                 myCryptedCreationTime = freshCryptedCreationTime;
             }
             if (currentConfigVersion.compareTo(currentAppVersion) < 0) {
@@ -1257,10 +1257,12 @@ public class MyTunesRssConfig {
             Element database = settings.createElement("database");
             root.appendChild(database);
             database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType()));
-            database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
-            database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
-            database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
-            database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
+            if (!"h2".equals(getDatabaseType())) {
+                database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
+                database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
+                database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
+                database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
+            }
             root.appendChild(DOMUtils.createTextElement(settings, "id3v2-track-comment", getId3v2TrackComment()));
             Element jmx = settings.createElement("jmx");
             root.appendChild(jmx);
