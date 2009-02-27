@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * de.codewave.mytunesrss.settings.DataImport
  */
@@ -79,12 +81,28 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
         final Collection<FileType> oldTypes = MyTunesRss.CONFIG.getDeepFileTypesClone();
         MyTunesRss.CONFIG.getFileTypes().clear();
         MyTunesRss.CONFIG.getFileTypes().addAll(myFileTypesTableModel.getFileTypes());
-        MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.updatingTrackFileTypes"), null, false, new PleaseWaitTask() {
-            public void execute() throws Exception {
-                UpdateTrackFileTypeStatement.execute(oldTypes, myFileTypesTableModel.getFileTypes());
-            }
-        });
+        if (isFileTypesChanged(oldTypes, MyTunesRss.CONFIG.getFileTypes())) {
+            MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.updatingTrackFileTypes"), null, false, new PleaseWaitTask() {
+                public void execute() throws Exception {
+                    UpdateTrackFileTypeStatement.execute(oldTypes, myFileTypesTableModel.getFileTypes());
+                }
+            });
+        }
         return null;
+    }
+
+    private boolean isFileTypesChanged(Collection<FileType> oldTypes, List<FileType> fileTypes) {
+        if (oldTypes.size() != fileTypes.size()) {
+            return true;
+        }
+        for (FileType oldType : oldTypes) {
+            for (FileType newType : fileTypes) {
+                if (StringUtils.equalsIgnoreCase(oldType.getSuffix(), newType.getSuffix()) && (oldType.isProtected() != newType.isProtected() || oldType.isVideo() != newType.isVideo())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public JPanel getRootPanel() {

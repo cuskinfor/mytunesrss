@@ -118,7 +118,7 @@ public class FileType {
     @Override
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof FileType) {
-            return StringUtils.equals(((FileType)obj).getSuffix(), getSuffix());
+            return StringUtils.equals(((FileType) obj).getSuffix(), getSuffix());
         }
         return false;
     }
