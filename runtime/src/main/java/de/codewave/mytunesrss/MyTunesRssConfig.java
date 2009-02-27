@@ -1257,12 +1257,10 @@ public class MyTunesRssConfig {
             Element database = settings.createElement("database");
             root.appendChild(database);
             database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType()));
-            if (!"h2".equals(getDatabaseType())) {
-                database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
-                database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
-                database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
-                database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
-            }
+            database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
+            database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
+            database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
+            database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
             root.appendChild(DOMUtils.createTextElement(settings, "id3v2-track-comment", getId3v2TrackComment()));
             Element jmx = settings.createElement("jmx");
             root.appendChild(jmx);
