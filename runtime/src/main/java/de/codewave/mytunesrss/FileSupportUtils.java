@@ -30,12 +30,9 @@ public class FileSupportUtils {
         return null;
     }
 
-    public static String getContentType(String filename, boolean forceVideo) {
+    public static String getContentType(String filename) {
         FileType type = MyTunesRss.CONFIG.getFileType(getFileSuffix(filename));
         if (type != null) {
-            if (forceVideo) {
-                return type.getMimeType().replace("audio/", "video/");
-            }
             return type.getMimeType();
         }
         return "application/octet-stream";
@@ -48,7 +45,7 @@ public class FileSupportUtils {
 
     public static boolean isVideo(String filename) {
         FileType type = MyTunesRss.CONFIG.getFileType(getFileSuffix(filename));
-        return type != null && type.isVideo();
+        return type != null && type.getMediaType() == MediaType.Video;
     }
 
     public static boolean isMp3(File file) {

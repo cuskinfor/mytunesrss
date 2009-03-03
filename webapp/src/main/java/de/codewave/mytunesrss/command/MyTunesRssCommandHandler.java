@@ -327,10 +327,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             filter.setTextFilter(getRequest().getParameter("filterText"));
         }
         if (getRequest().getParameter("filterType") != null) {
-            if ("".equals(getRequest().getParameter("filterType"))) {
-                filter.setType(DisplayFilter.Type.All);
+            if (StringUtils.isBlank(getRequest().getParameter("filterMediaType"))) {
+                filter.setMediaType(null);
             } else {
-                filter.setType(DisplayFilter.Type.valueOf(getRequest().getParameter("filterType")));
+                filter.setMediaType(MediaType.valueOf(getRequest().getParameter("filterMediaType")));
             }
         }
         if (getRequest().getParameter("filterProtected") != null) {

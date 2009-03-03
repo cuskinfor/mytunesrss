@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.MediaType;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
     private int myTrackNumber;
     private String myFileName;
     private boolean myProtected;
-    private boolean myVideo;
+    private MediaType myMediaType;
     private String myGenre;
     private TrackSource mySource;
     private String myMp4Codec;
@@ -74,8 +75,8 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
         myProtected = aProtected;
     }
 
-    public void setVideo(boolean video) {
-        myVideo = video;
+    public void setMediaType(MediaType mediaType) {
+        myMediaType = mediaType;
     }
 
     public void setGenre(String genre) {
@@ -116,7 +117,7 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setInt("track_number", myTrackNumber);
             myStatement.setString("file", myFileName);
             myStatement.setBoolean("protected", myProtected);
-            myStatement.setBoolean("video", myVideo);
+            myStatement.setString("mediatype", myMediaType.name());
             myStatement.setString("source", mySource.name());
             myStatement.setString("genre", myGenre);
             myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
@@ -143,7 +144,7 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
         myTrackNumber = 0;
         myFileName = null;
         myProtected = false;
-        myVideo = false;
+        myMediaType = MediaType.Other;
         myGenre = null;
         myMp4Codec = null;
     }

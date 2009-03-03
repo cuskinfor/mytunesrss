@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.lastfm;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -76,7 +77,7 @@ public class LastFmUtils {
     }
 
     public static boolean sendNowPlaying(LastFmSession session, Track track) {
-        if (session != null && track != null && !track.isVideo()) {
+        if (session != null && track != null && track.getMediaType() == MediaType.Audio) {
             LOG.debug("Sending NOW PLAYING information to last.fm.");
             PostMethod postMethod = new PostMethod(session.getNowPlayingUrl());
             postMethod.getParams().setContentCharset("UTF-8");
@@ -120,7 +121,7 @@ public class LastFmUtils {
                 List<LastFmSubmission> submissions = new ArrayList<LastFmSubmission>();
                 for (LastFmSubmission submission = session.pollSubmission(); submission != null && index < 50;
                         submission = session.pollSubmission()) {
-                    if (submission.getTrack().getTime() >= 30 && !submission.getTrack().isVideo()) {// only track with at least 30 seconds
+                    if (submission.getTrack().getTime() >= 30 && submission.getTrack().getMediaType() == MediaType.Audio) {// only track with at least 30 seconds
                         submissions.add(submission);
                         postMethod.setParameter("a[" + index + "]", submission.getTrack().getOriginalArtist());
                         postMethod.setParameter("t[" + index + "]", submission.getTrack().getName());

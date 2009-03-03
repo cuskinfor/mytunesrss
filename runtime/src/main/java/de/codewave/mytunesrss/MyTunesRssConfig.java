@@ -965,8 +965,8 @@ public class MyTunesRssConfig {
             String freshCryptedCreationTime = encryptCreationTime(System.currentTimeMillis());
             if (!file.isFile()) {
                 FileUtils.writeStringToFile(file,
-                                            "<settings><" + CREATION_TIME_KEY + ">" + freshCryptedCreationTime + "</" + CREATION_TIME_KEY +
-                                                    "></settings>");
+                        "<settings><" + CREATION_TIME_KEY + ">" + freshCryptedCreationTime + "</" + CREATION_TIME_KEY +
+                                "></settings>");
             }
             JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURL()), "settings");
             setVersion(StringUtils.defaultIfEmpty(JXPathUtils.getStringValue(settings, "version", "0"), "0"));
@@ -974,9 +974,9 @@ public class MyTunesRssConfig {
             Version currentConfigVersion = new Version(getVersion());
             Version minimumChecksumVersion = new Version("3.6.2");
             myCryptedCreationTime = JXPathUtils.getStringValue(settings,
-                                                               CREATION_TIME_KEY,
-                                                               currentConfigVersion.compareTo(minimumChecksumVersion) >= 0 ? encryptCreationTime(1) :
-                                                                       freshCryptedCreationTime);
+                    CREATION_TIME_KEY,
+                    currentConfigVersion.compareTo(minimumChecksumVersion) >= 0 ? encryptCreationTime(1) :
+                            freshCryptedCreationTime);
             if (StringUtils.isNotBlank(currentConfigVersion.getAppendix())) {
                 // fresh evaluation period if last version was not a release version
                 myCryptedCreationTime = freshCryptedCreationTime;
@@ -1028,7 +1028,9 @@ public class MyTunesRssConfig {
                 FileType fileType = new FileType();
                 fileType.setMimeType(JXPathUtils.getStringValue(fileTypeContext, "mime-type", "audio/mp3"));
                 fileType.setSuffix(JXPathUtils.getStringValue(fileTypeContext, "suffix", "mp3"));
-                fileType.setVideo(JXPathUtils.getBooleanValue(fileTypeContext, "video", false));
+                // Loading the element "video" is for migration purposes from older versions
+                String mediaTypeFromOldVideoElement = JXPathUtils.getBooleanValue(fileTypeContext, "video", false) ? MediaType.Video.name() : MediaType.Audio.name();
+                fileType.setMediaType(MediaType.valueOf(JXPathUtils.getStringValue(fileTypeContext, "mediatype", mediaTypeFromOldVideoElement)));
                 fileType.setProtected(JXPathUtils.getBooleanValue(fileTypeContext, "protected", false));
                 fileType.setActive(JXPathUtils.getBooleanValue(fileTypeContext, "active", true));
                 myFileTypes.add(fileType);
@@ -1216,7 +1218,7 @@ public class MyTunesRssConfig {
                 fileTypes.appendChild(fileTypeElement);
                 fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "mime-type", fileType.getMimeType()));
                 fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "suffix", fileType.getSuffix()));
-                fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "video", fileType.isVideo()));
+                fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "mediatype", fileType.getMediaType().name()));
                 fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "protected", fileType.isProtected()));
                 fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "active", fileType.isActive()));
             }

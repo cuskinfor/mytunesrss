@@ -100,7 +100,7 @@
                         <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif"
                                                              alt="<fmt:message key="protected"/>"
                                                              style="vertical-align:middle" /></c:if>
-                        <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif"
+                        <c:if test="${track.mediaType.jspName == 'Video'}"><img src="${appUrl}/images/movie${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif"
                                                          alt="<fmt:message key="video"/>"
                                                          style="vertical-align:middle" /></c:if>
                         <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />

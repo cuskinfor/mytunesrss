@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.Pager;
+import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -55,12 +56,10 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                                                                                                                                      false,
                                                                                                                                      false));
                     StringBuilder randomType = new StringBuilder();
-                    if (getWebConfig().isRandomAudio()) {
-                        randomType.append('a');
+                    if (StringUtils.isNotBlank(getWebConfig().getRandomMediaType())) {
+                        randomType.append(getWebConfig().getRandomMediaType());
                     }
-                    if (getWebConfig().isRandomVideo()) {
-                        randomType.append('v');
-                    }
+                    randomType.append('-');
                     if (getWebConfig().isRandomProtected()) {
                         randomType.append('p');
                     }

@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.mytunesrss.MediaType;
+
 /**
  * de.codewave.mytunesrss.datastore.statement.SmartInfo
  */
@@ -12,7 +14,7 @@ public class SmartInfo {
     private Integer myTimeMin;
     private Integer myTimeMax;
     private Boolean myProtected;
-    private Boolean myVideo;
+    private MediaType myMediaType;
 
     public String getAlbumPattern() {
         return myAlbumPattern;
@@ -78,11 +80,11 @@ public class SmartInfo {
         myProtected = aProtected;
     }
 
-    public Boolean getVideo() {
-        return myVideo;
+    public MediaType getMediaType() {
+        return myMediaType;
     }
 
-    public void setVideo(Boolean video) {
-        myVideo = video;
+    public void setMediaType(MediaType mediaType) {
+        myMediaType = mediaType;
     }
 }

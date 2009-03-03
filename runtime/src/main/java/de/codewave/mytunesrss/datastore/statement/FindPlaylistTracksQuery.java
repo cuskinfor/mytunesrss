@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.MediaType;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
@@ -66,9 +67,8 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
         } else if (myId.startsWith(PSEUDO_ID_RANDOM)) {
             statement = MyTunesRssUtils.createStatement(connection, "findRandomTracks" + suffix);
             String[] splitted = myId.split("_", 4);
-            statement.setBoolean("audio", splitted[1].contains("a"));
-            statement.setBoolean("video", splitted[1].contains("v"));
-            statement.setBoolean("protected", splitted[1].contains("p"));
+            statement.setString("mediatype", StringUtils.trimToNull(splitted[1].split("-", 2)[0]));
+            statement.setBoolean("protected", "p".equals(splitted[1].split("-", 2)[1]));
             statement.setInt("maxCount", Integer.parseInt(splitted[2]));
             if (splitted.length > 3) {
                 String sourceId = splitted[3];
@@ -114,7 +114,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
             track.setTrackNumber(resultSet.getInt("TRACK_NUMBER"));
             track.setFile(new File(resultSet.getString("FILE")));
             track.setProtected(resultSet.getBoolean("PROTECTED"));
-            track.setVideo(resultSet.getBoolean("VIDEO"));
+            track.setMediaType(MediaType.valueOf(resultSet.getString("MEDIATYPE")));
             track.setGenre(resultSet.getString("GENRE"));
             track.setMp4Codec(resultSet.getString("MP4CODEC"));
             track.setTsPlayed(resultSet.getLong("TS_PLAYED"));

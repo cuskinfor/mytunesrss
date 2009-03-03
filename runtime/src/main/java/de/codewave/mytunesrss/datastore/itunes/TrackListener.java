@@ -111,7 +111,7 @@ public class TrackListener implements PListHandlerListener {
                             statement.setTrackNumber((int)(track.get("Track Number") != null ? (Long)track.get("Track Number") : 0));
                             statement.setFileName(filename);
                             statement.setProtected(FileSupportUtils.isProtected(filename));
-                            statement.setVideo(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue());
+                            statement.setMediaType(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue() ? MediaType.Video : MediaType.Audio);
                             statement.setGenre(StringUtils.trimToNull((String)track.get("Genre")));
                             statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String)track.get("Comments"))));
                             statement.setPos((int)(track.get("Disc Number") != null ? ((Long)track.get("Disc Number")).longValue() : 0),

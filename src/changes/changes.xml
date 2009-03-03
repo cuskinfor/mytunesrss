@@ -8,6 +8,15 @@
     <body>
 
         <release version="3.7-EAP-1" date="2009-xx-xx" description="3.7 EAP 1">
+            <action dev="mdescher" type="add">
+                "Tracks" with media type image are displayed with their "cover" art in the track browser.
+            </action>
+            <action dev="mdescher" type="add">
+                New default file type definitions for "jpg", "gif" and "png".
+            </action>
+            <action dev="mdescher" type="add">
+                Support for more media types than just audio and video (added image and unknown).
+            </action>
             <action dev="mdescher" type="update">
                 Updated H2 database.
             </action>

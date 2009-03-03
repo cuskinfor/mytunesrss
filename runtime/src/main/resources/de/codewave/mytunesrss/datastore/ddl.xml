@@ -15,7 +15,7 @@
                 file VARCHAR(1024) NOT NULL,
                 suffix VARCHAR(10) NOT NULL,
                 protected BOOLEAN,
-                video BOOLEAN,
+                mediatype VARCHAR(20),
                 source VARCHAR(20),
                 genre VARCHAR(255),
                 mp4codec VARCHAR(4),
@@ -113,7 +113,7 @@
                 file_pattern VARCHAR(100),
                 time_min INTEGER,
                 time_max INTEGER,
-                video BOOLEAN,
+                mediatype VARCHAR(20),
                 protected BOOLEAN,
                 UNIQUE (playlist_id),
                 CONSTRAINT fk_smart_info_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE

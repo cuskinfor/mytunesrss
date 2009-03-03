@@ -16,10 +16,12 @@
         <tr>
             <td><fmt:message key="filter.type"/>:</td>
             <td class="wide">
-                <select id="filterType" name="filterType">
+                <select id="filterMediaType" name="filterType">
                     <option value="All"><fmt:message key="filter.noRestriction"/></option>
-                    <option value="Audio" <c:if test="${displayFilter.type eq 'Audio'}">selected="selected"</c:if>><fmt:message key="filter.typeAudio"/></option>
-                    <option value="Video" <c:if test="${displayFilter.type eq 'Video'}">selected="selected"</c:if>><fmt:message key="filter.typeVideo"/></option>
+                    <option value="Audio" <c:if test="${displayFilter.mediaType.jspName == 'Audio'}">selected="selected"</c:if>><fmt:message key="filter.typeAudio"/></option>
+                    <option value="Video" <c:if test="${displayFilter.mediaType.jspName == 'Video'}">selected="selected"</c:if>><fmt:message key="filter.typeVideo"/></option>
+                    <option value="Image" <c:if test="${displayFilter.mediaType.jspName == 'Image'}">selected="selected"</c:if>><fmt:message key="filter.typeImage"/></option>
+                    <option value="Other" <c:if test="${displayFilter.mediaType.jspName == 'Other'}">selected="selected"</c:if>><fmt:message key="filter.typeOther"/></option>
                 </select>
             </td>
         </tr>

@@ -190,10 +190,12 @@
             <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.randomType" /></td>
                 <td>
-                    <select name="randomType">
-                        <option value="a" <c:if test="${config.randomAudio && !config.randomVideo}">selected="selected"</c:if>><fmt:message key="settings.randomTypeAudio"/></option>
-                        <option value="v" <c:if test="${!config.randomAudio && config.randomVideo}">selected="selected"</c:if>><fmt:message key="settings.randomTypeVideo"/></option>
-                        <option value="av" <c:if test="${config.randomAudio && config.randomVideo}">selected="selected"</c:if>><fmt:message key="settings.randomTypeBoth"/></option>
+                    <select name="randomMediaType">
+                        <option value="" <c:if test="${empty config.randomMediaType}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeAll"/></option>
+                        <option value="Audio" <c:if test="${config.randomMediaType == 'Audio'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeAudio"/></option>
+                        <option value="Video" <c:if test="${config.randomMediaType == 'Video'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeVideo"/></option>
+                        <option value="Image" <c:if test="${config.randomMediaType == 'Image'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeImage"/></option>
+                        <option value="Other" <c:if test="${config.randomMediaType == 'Other'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeOther"/></option>
                     </select>
                 </td>
             </tr>

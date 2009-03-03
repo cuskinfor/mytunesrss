@@ -80,8 +80,8 @@
                 <td>
                     <select name="smartPlaylist.smartInfo.video">
                         <option value=""><fmt:message key="smartPlaylist.smartInfo.video.null"/></option>
-                        <option value="true" <c:if test="${smartPlaylist.smartInfo.video == true}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.video.true"/></option>
-                        <option value="false" <c:if test="${!empty smartPlaylist.smartInfo.video && smartPlaylist.smartInfo.video == false}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.video.false"/></option>
+                        <option value="true" <c:if test="${smartPlaylist.smartInfo.mediaType.jspName == 'Video'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.video.true"/></option>
+                        <option value="false" <c:if test="${smartPlaylist.smartInfo.mediaType.jspName != 'Video'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.video.false"/></option>
                     </select>
                 </td>
             </tr>

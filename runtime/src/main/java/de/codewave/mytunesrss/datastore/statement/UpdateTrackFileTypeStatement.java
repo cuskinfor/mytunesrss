@@ -43,7 +43,7 @@ public class UpdateTrackFileTypeStatement implements DataStoreStatement {
                 LOGGER.debug("Updating file type \"" + fileType.getSuffix().toLowerCase() + "\".");
                 statement.clearParameters();
                 statement.setString("suffix", fileType.getSuffix().toLowerCase());
-                statement.setBoolean("video", fileType.isVideo());
+                statement.setString("mediatype", fileType.getMediaType().name());
                 statement.setBoolean("protected", fileType.isProtected());
                 statement.execute();
             }
@@ -53,7 +53,7 @@ public class UpdateTrackFileTypeStatement implements DataStoreStatement {
     private boolean isChanged(FileType fileType) {
         for (FileType oldType : myOldFileTypes) {
             if (oldType.getSuffix().equalsIgnoreCase(fileType.getSuffix())) {
-                return oldType.isVideo() != fileType.isVideo() || oldType.isProtected() != fileType.isProtected();
+                return oldType.getMediaType() != fileType.getMediaType() || oldType.isProtected() != fileType.isProtected();
             }
         }
         return true; // new file type

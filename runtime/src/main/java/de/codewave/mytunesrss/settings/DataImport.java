@@ -37,7 +37,7 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
     public void init() {
         myAddFileTypeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                myFileTypesTableModel.getFileTypes().add(new FileType(false, "", "", false, false));
+                myFileTypesTableModel.getFileTypes().add(new FileType(false, "", "", MediaType.Other, false));
                 myFileTypesTableModel.fireTableDataChanged();
             }
         });
@@ -64,9 +64,9 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
         });
         myFileTypesTableModel = new FileTypesTableModel();
         myFileTypesTable.setModel(myFileTypesTableModel);
-        JComboBox videoCombo = new I18nComboBox("settings.filetypes.video.false", "settings.filetypes.video.true");
-        videoCombo.setOpaque(true);
-        myFileTypesTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(videoCombo));
+        JComboBox mediaTypeCombo = new I18nComboBox("settings.filetypes.mediatype.Audio", "settings.filetypes.mediatype.Video", "settings.filetypes.mediatype.Image", "settings.filetypes.mediatype.Other");
+        mediaTypeCombo.setOpaque(true);
+        myFileTypesTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(mediaTypeCombo));
         JComboBox protectedCombo = new I18nComboBox("settings.filetypes.protected.false", "settings.filetypes.protected.true");
         protectedCombo.setOpaque(true);
         myFileTypesTable.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(protectedCombo));
@@ -97,7 +97,7 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
         }
         for (FileType oldType : oldTypes) {
             for (FileType newType : fileTypes) {
-                if (StringUtils.equalsIgnoreCase(oldType.getSuffix(), newType.getSuffix()) && (oldType.isProtected() != newType.isProtected() || oldType.isVideo() != newType.isVideo())) {
+                if (StringUtils.equalsIgnoreCase(oldType.getSuffix(), newType.getSuffix()) && (oldType.isProtected() != newType.isProtected() || oldType.getMediaType() != newType.getMediaType())) {
                     return true;
                 }
             }
@@ -169,7 +169,7 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
                 case 2:
                     return type.getMimeType();
                 case 3:
-                    return MyTunesRssUtils.getBundleString("settings.filetypes.video." + type.isVideo());
+                    return MyTunesRssUtils.getBundleString("settings.filetypes.mediatype." + type.getMediaType().name());
                 case 4:
                     return MyTunesRssUtils.getBundleString("settings.filetypes.protected." + type.isProtected());
                 default:
@@ -217,7 +217,7 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
                         break;
                     case 3:
                         int lastDot = ((String) aValue).lastIndexOf('.');
-                        myFileTypes.get(rowIndex).setVideo(Boolean.valueOf(((String) aValue).substring(lastDot + 1)));
+                        myFileTypes.get(rowIndex).setMediaType(MediaType.valueOf(((String) aValue).substring(lastDot + 1)));
                         break;
                     case 4:
                         lastDot = ((String) aValue).lastIndexOf('.');

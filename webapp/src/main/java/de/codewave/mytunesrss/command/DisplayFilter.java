@@ -1,21 +1,18 @@
 package de.codewave.mytunesrss.command;
 
 import org.apache.commons.lang.StringUtils;
+import de.codewave.mytunesrss.MediaType;
 
 /**
  * de.codewave.mytunesrss.command.DisplayFilter
  */
 public class DisplayFilter {
-    enum Type {
-        Audio, Video, All
-    }
-
     enum Protection {
         Protected, Unprotected, All
     }
 
     private String myTextFilter;
-    private Type myType;
+    private MediaType myMediaType;
     private Protection myProtection;
 
     public Protection getProtection() {
@@ -34,11 +31,11 @@ public class DisplayFilter {
         myTextFilter = textFilter;
     }
 
-    public Type getType() {
-        return myType;
+    public MediaType getMediaType() {
+        return myMediaType;
     }
 
-    public void setType(Type type) {
-        myType = type;
+    public void setMediaType(MediaType mediaType) {
+        myMediaType = mediaType;
     }
 }

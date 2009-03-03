@@ -129,7 +129,7 @@
             <td style="white-space:nowrap"><fmt:message key="type"/>:</td>
             <td>
                 <c:if test="${track.protected}"><img src="${appUrl}/images/protected.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle" /></c:if>
-                <c:if test="${track.video}"><img src="${appUrl}/images/movie.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle" /></c:if>
+                <c:if test="${track.mediaType.jspName == 'Video'}"><img src="${appUrl}/images/movie.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle" /></c:if>
                 <c:out value="${mtfn:suffix(null, null, track)}" />
             </td>
         </tr>
@@ -202,11 +202,11 @@
                 </td>
             </tr>
         </c:if>
-        <c:if test="${track.imageCount > 0 || (track.video && userAgent != 'Psp')}">
+        <c:if test="${track.imageCount > 0 || (track.mediaType.jspName == 'Video' && userAgent != 'Psp')}">
             <tr>
                 <th colspan="2" class="active">
                     <c:choose>
-                        <c:when test="${track.video}">
+                        <c:when test="${track.mediaType.jspName == 'Video'}">
                             <fmt:message key="trackinfo.movie"/>
                         </c:when>
                         <c:otherwise>
@@ -218,7 +218,7 @@
             <tr>
               <td colspan="2" align="center">
                 <c:choose>
-                    <c:when test="${track.video}">
+                    <c:when test="${track.mediaType.jspName == 'Video'}">
                         <c:set var="imgUrl" value="${appUrl}/images/movie_poster.png"/>
                         <c:if test="${track.imageCount > 0}"><c:set var="imgUrl">${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=256</mt:encrypt></c:set></c:if>
                         <embed src="${imgUrl}" href="${downloadPlaybackServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>" type="${mtfn:contentType(config, authUser, track)}" <c:if test="${userAgent == 'Iphone'}">target="myself"</c:if> scale="1"/>

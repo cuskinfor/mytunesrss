@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.FileType;
+import de.codewave.mytunesrss.MediaType;
 
 import java.util.List;
 import java.sql.SQLException;
@@ -27,9 +28,9 @@ public interface DataImportConfigMBean {
 
     List<FileType> getFileTypes();
 
-    String addFileType(boolean active, String suffix, String mimeType, boolean video, boolean protect) throws SQLException;
+    String addFileType(boolean active, String suffix, String mimeType, MediaType mediaType, boolean protect) throws SQLException;
 
-    String editFileType(String suffix, boolean active, String mimeType, boolean video, boolean protect) throws SQLException;
+    String editFileType(String suffix, boolean active, String mimeType, MediaType mediaType, boolean protect) throws SQLException;
 
     String removeFileType(String suffix);
 

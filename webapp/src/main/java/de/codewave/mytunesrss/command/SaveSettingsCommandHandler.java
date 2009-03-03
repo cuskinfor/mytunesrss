@@ -138,9 +138,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
             addError(new BundleError("error.settingsRandomPlaylistSizeRange"));
             return true;
         }
-        String randomType = getRequestParameter("randomType", "av");
-        webConfig.setRandomAudio(randomType.contains("a"));
-        webConfig.setRandomVideo(randomType.contains("v"));
+        webConfig.setRandomMediaType(getRequestParameter("randomMediaType", ""));
         webConfig.setRandomProtected(getBooleanRequestParameter("randomProtected", false));
         return false;
     }

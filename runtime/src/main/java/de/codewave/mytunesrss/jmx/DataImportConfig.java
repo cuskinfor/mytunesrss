@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.jmx;
 import de.codewave.mytunesrss.FileType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.datastore.statement.UpdateTrackFileTypeStatement;
 import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
@@ -45,8 +46,8 @@ public class DataImportConfig extends MyTunesRssMBean implements DataImportConfi
         return MyTunesRss.CONFIG.getFileTypes();
     }
 
-    public String addFileType(boolean active, String suffix, String mimeType, boolean video, boolean protect) throws SQLException {
-        FileType type = new FileType(active, suffix, mimeType, video, protect);
+    public String addFileType(boolean active, String suffix, String mimeType, MediaType mediaType, boolean protect) throws SQLException {
+        FileType type = new FileType(active, suffix, mimeType, mediaType, protect);
         if (FileType.isValid(type)) {
             if (!MyTunesRss.CONFIG.getFileTypes().contains(type)) {
                 MyTunesRss.CONFIG.getFileTypes().add(type);
@@ -59,12 +60,12 @@ public class DataImportConfig extends MyTunesRssMBean implements DataImportConfi
         return MyTunesRssUtils.getBundleString("jmx.fileTypeInvalid");
     }
 
-    public String editFileType(String suffix, boolean active, String mimeType, boolean video, boolean protect) throws SQLException {
+    public String editFileType(String suffix, boolean active, String mimeType, MediaType mediaType, boolean protect) throws SQLException {
         FileType type = MyTunesRss.CONFIG.getFileType(suffix);
         if (type != null) {
             type.setActive(active);
             type.setMimeType(mimeType);
-            type.setVideo(video);
+            type.setMediaType(mediaType);
             type.setProtected(protect);
             if (FileType.isValid(type)) {
                 Collection<FileType> oldTypes = MyTunesRss.CONFIG.getDeepFileTypesClone();

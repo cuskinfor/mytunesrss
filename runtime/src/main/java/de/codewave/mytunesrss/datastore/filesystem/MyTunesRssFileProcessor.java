@@ -108,7 +108,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         }
                         FileType type = MyTunesRss.CONFIG.getFileType(FileSupportUtils.getFileSuffix(file.getName()));
                         statement.setProtected(type.isProtected());
-                        statement.setVideo(type.isVideo());
+                        statement.setMediaType(type.getMediaType());
                         statement.setFileName(canonicalFilePath);
                         try {
                             myStoreSession.executeStatement(statement);

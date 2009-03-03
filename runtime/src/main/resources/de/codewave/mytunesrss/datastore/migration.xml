@@ -122,6 +122,18 @@
                 CONSTRAINT fk_smart_info_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
             )
         </sql>
+        <sql>
+            ALTER TABLE track ADD COLUMN mediatype VARCHAR(20)
+        </sql>
+        <sql>
+            UPDATE track SET mediatype = 'Audio' WHERE video = FALSE
+        </sql>
+        <sql>
+            UPDATE track SET mediatype = 'Video' WHERE video = TRUE
+        </sql>
+        <sql>
+            ALTER TABLE track DROP COLUMN video
+        </sql>
     </statement>
 
 </statements>

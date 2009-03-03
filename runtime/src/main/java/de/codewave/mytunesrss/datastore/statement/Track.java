@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.MediaType;
 
 import java.io.File;
 
@@ -21,7 +22,7 @@ public class Track {
     private int myTrackNumber;
     private File myFile;
     private boolean myProtected;
-    private boolean myVideo;
+    private MediaType myMediaType;
     private String myGenre;
     private String myMp4Codec;
     private int myImageCount;
@@ -105,12 +106,12 @@ public class Track {
         myProtected = aProtected;
     }
 
-    public boolean isVideo() {
-        return myVideo;
+    public MediaType getMediaType() {
+        return myMediaType;
     }
 
-    public void setVideo(boolean video) {
-        myVideo = video;
+    public void setMediaType(MediaType mediaType) {
+        myMediaType = mediaType;
     }
 
     public String getGenre() {
@@ -171,7 +172,7 @@ public class Track {
 
     public String getContentType() {
         String name = getFile().getName().toLowerCase();
-        return FileSupportUtils.getContentType(name, myVideo);
+        return FileSupportUtils.getContentType(name);
     }
 
     public long getContentLength() {

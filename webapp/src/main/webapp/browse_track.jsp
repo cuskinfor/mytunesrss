@@ -71,7 +71,7 @@
 </fieldset>
 
 <table cellspacing="0">
-<c:forEach items="${tracks}" var="track">
+<c:forEach items="${tracks}" var="track" varStatus="loopStatus">
 <c:if test="${track.newSection}">
     <c:set var="sectionFileName" value=""/>
     <c:set var="count" value="0" />
@@ -165,8 +165,12 @@
         </td>
     </c:if>
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
+        <c:if test="${track.mediaType.jspName == 'Image' && track.imageCount > 0}">
+            <img id="trackthumb_${loopStatus.index}" src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
+            <div class="tooltip" id="tooltip_trackthumb_${loopStatus.index}"><img src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
+        </c:if>
         <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
-        <c:if test="${track.video}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:if>
+        <c:if test="${track.mediaType.jspName == 'Video'}"><img src="${appUrl}/images/movie${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:if>
         <a id="tracklink_${track.id}" href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
             <c:choose>
                 <c:when test="${!empty param['playlist']}">

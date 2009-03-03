@@ -142,7 +142,7 @@ public class TrackUtils {
             setTrackNumber(track.getTrackNumber());
             setFile(track.getFile());
             setProtected(track.isProtected());
-            setVideo(track.isVideo());
+            setMediaType(track.getMediaType());
             setGenre(track.getGenre());
             setMp4Codec(track.getMp4Codec());
             setTsPlayed(track.getTsPlayed());

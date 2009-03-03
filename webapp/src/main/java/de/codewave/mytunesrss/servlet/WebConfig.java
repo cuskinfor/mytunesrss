@@ -50,8 +50,7 @@ public class WebConfig {
     private static final String CFG_YAHOO_MEDIAPLAYER = "yahooMediaPlayer";
     private static final String CFG_BROWSER_START_INDEX = "browserStartIndex";
     private static final String CFG_MYTUNESRSSCOM_ADDRESS = "myTunesRssComAddress";
-    private static final String CFG_RANDOM_AUDIO = "rndAudio";
-    private static final String CFG_RANDOM_VIDEO = "rndVideo";
+    private static final String CFG_RANDOM_MEDIATYPE = "rndMedia";
     private static final String CFG_RANDOM_PROTECTED = "rndProt";
     private static final String CFG_ALBUM_IMAGE_SIZE = "albImgSize";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
@@ -143,8 +142,7 @@ public class WebConfig {
         myConfigValues.put(CFG_YAHOO_MEDIAPLAYER, "false");
         myConfigValues.put(CFG_BROWSER_START_INDEX, "1");
         myConfigValues.put(CFG_MYTUNESRSSCOM_ADDRESS, "true");
-        myConfigValues.put(CFG_RANDOM_AUDIO, "true");
-        myConfigValues.put(CFG_RANDOM_VIDEO, "true");
+        myConfigValues.put(CFG_RANDOM_MEDIATYPE, "");
         myConfigValues.put(CFG_RANDOM_PROTECTED, "true");
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "128");
     }
@@ -517,20 +515,12 @@ public class WebConfig {
         myConfigValues.put(CFG_MYTUNESRSSCOM_ADDRESS, Boolean.toString(myTunesRssComAddress));
     }
 
-    public boolean isRandomAudio() {
-        return Boolean.parseBoolean(myConfigValues.get(CFG_RANDOM_AUDIO));
+    public String getRandomMediaType() {
+        return myConfigValues.get(CFG_RANDOM_MEDIATYPE);
     }
 
-    public void setRandomAudio(boolean rndAudio) {
-        myConfigValues.put(CFG_RANDOM_AUDIO, Boolean.toString(rndAudio));
-    }
-
-    public boolean isRandomVideo() {
-        return Boolean.parseBoolean(myConfigValues.get(CFG_RANDOM_VIDEO));
-    }
-
-    public void setRandomVideo(boolean rndVideo) {
-        myConfigValues.put(CFG_RANDOM_VIDEO, Boolean.toString(rndVideo));
+    public void setRandomMediaType(String rndMedia) {
+        myConfigValues.put(CFG_RANDOM_MEDIATYPE, rndMedia);
     }
 
     public boolean isRandomProtected() {

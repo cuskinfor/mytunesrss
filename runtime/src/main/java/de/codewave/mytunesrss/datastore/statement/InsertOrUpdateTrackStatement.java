@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.utils.sql.DataStoreStatement;
+import de.codewave.mytunesrss.MediaType;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement
@@ -26,7 +27,7 @@ public interface InsertOrUpdateTrackStatement extends DataStoreStatement {
 
     void setProtected(boolean aProtected);
 
-    void setVideo(boolean video);
+    void setMediaType(MediaType mediaType);
 
     void setGenre(String genre);
 

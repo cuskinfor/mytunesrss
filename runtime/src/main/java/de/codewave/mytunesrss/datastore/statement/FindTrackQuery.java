@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.MediaType;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SQLUtils;
@@ -137,7 +138,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             String pathname = resultSet.getString("FILE");
             track.setFile(StringUtils.isNotEmpty(pathname) ? new File(pathname) : null);
             track.setProtected(resultSet.getBoolean("PROTECTED"));
-            track.setVideo(resultSet.getBoolean("VIDEO"));
+            track.setMediaType(MediaType.valueOf(resultSet.getString("MEDIATYPE")));
             track.setGenre(resultSet.getString("GENRE"));
             track.setMp4Codec(resultSet.getString("MP4CODEC"));
             track.setTsPlayed(resultSet.getLong("TS_PLAYED"));

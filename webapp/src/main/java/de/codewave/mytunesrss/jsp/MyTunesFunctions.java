@@ -99,7 +99,7 @@ public class MyTunesFunctions {
     }
 
     public static String contentType(WebConfig config, User user, Track track) {
-        return FileSupportUtils.getContentType("dummy." + suffix(config, user, track), track.isVideo());
+        return FileSupportUtils.getContentType("dummy." + suffix(config, user, track));
     }
 
     public static boolean transcoding(PageContext pageContext, User user, Track track) {

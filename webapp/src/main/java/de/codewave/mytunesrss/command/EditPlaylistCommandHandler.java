@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
@@ -72,10 +73,7 @@ public class EditPlaylistCommandHandler extends MyTunesRssCommandHandler {
                     return false;
                 }
             }
-            if (filter.getType() == DisplayFilter.Type.Audio && track.isVideo()) {
-                return false;
-            }
-            if (filter.getType() == DisplayFilter.Type.Video && !track.isVideo()) {
+            if (filter.getMediaType() != null && filter.getMediaType() != track.getMediaType()) {
                 return false;
             }
             if (filter.getProtection() == DisplayFilter.Protection.Protected && !track.isProtected()) {
