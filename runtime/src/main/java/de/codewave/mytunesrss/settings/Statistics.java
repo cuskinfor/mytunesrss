@@ -2,11 +2,13 @@ package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.task.InitializeDatabaseTask;
 import de.codewave.mytunesrss.statistics.GetStatisticEventsQuery;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.swing.JTextFieldValidation;
 import de.codewave.utils.swing.MinMaxValueTextFieldValidation;
+import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,11 +103,11 @@ public class Statistics implements SettingsForm {
             } else if (!MyTunesRss.CONFIG.isValidMailConfig()) {
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.statisticsMissingEmailConfig"));
             } else {
-                new Thread(new Runnable() {
-                    public void run() {
+                MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.sendingStatisticsMail"), null, false, new PleaseWaitTask() {
+                    public void execute() throws Exception {
                         sendAdminStatistics(from, to);
                     }
-                }).start();
+                });
             }
         }
 

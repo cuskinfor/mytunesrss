@@ -7,7 +7,32 @@
 
     <body>
 
-        <release version="3.6.3" date="2009-xx-xx" description="Bugfix release">
+        <release version="3.6.4" date="2009-03-04" description="Bugfix release">
+            <action dev="mdescher" type="add">
+                New version of codewave utils (version releated bugfixes).
+            </action>
+            <action dev="mdescher" type="add">
+                Do not start if either configuration or database is newer than application version.
+            </action>
+            <action dev="mdescher" type="update">
+                Use standard ports for sending mail when no ports have been set (25 for non SSL/TLS and
+                465 and 587 for SSL/TLS enabled).
+            </action>
+            <action dev="mdescher" type="update">
+                When file is an image (jpg, png, gif) itself, it is used as the "artwork" information.
+            </action>
+            <action dev="mdescher" type="fix">
+                Artwork for track is read from equally named image when scanning watch folders as well.
+            </action>
+        </release>
+
+        <release version="3.6.3" date="2009-02-12" description="Bugfix release">
+            <action dev="mdescher" type="add">
+                Allow password to be SHA-1 hash of password in "LoginService.login".
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed CSS bug.
+            </action>
             <action dev="mdescher" type="add">
                 Update file type information in the database on change.
             </action>
