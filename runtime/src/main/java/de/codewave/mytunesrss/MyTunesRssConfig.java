@@ -47,8 +47,8 @@ public class MyTunesRssConfig {
     private boolean myAutoStartServer;
     private String myVersion;
     private boolean myIgnoreTimestamps;
-    private int myFileSystemAlbumNameFolder = 1;
-    private int myFileSystemArtistNameFolder = 2;
+    private String myAlbumFallback;
+    private String myArtistFallback;
     private Collection<User> myUsers = new HashSet<User>();
     private String mySupportName = "";
     private String mySupportEmail = "";
@@ -234,20 +234,20 @@ public class MyTunesRssConfig {
         myIgnoreTimestamps = ignoreTimestamps;
     }
 
-    public int getFileSystemAlbumNameFolder() {
-        return myFileSystemAlbumNameFolder;
+    public String getAlbumFallback() {
+        return myAlbumFallback;
     }
 
-    public void setFileSystemAlbumNameFolder(int fileSystemAlbumNameFolder) {
-        myFileSystemAlbumNameFolder = fileSystemAlbumNameFolder;
+    public void setAlbumFallback(String albumFallback) {
+        myAlbumFallback = albumFallback;
     }
 
-    public int getFileSystemArtistNameFolder() {
-        return myFileSystemArtistNameFolder;
+    public String getArtistFallback() {
+        return myArtistFallback;
     }
 
-    public void setFileSystemArtistNameFolder(int fileSystemArtistNameFolder) {
-        myFileSystemArtistNameFolder = fileSystemArtistNameFolder;
+    public void setArtistFallback(String artistFallback) {
+        myArtistFallback = artistFallback;
     }
 
     public boolean isItunesDeleteMissingFiles() {
@@ -1000,8 +1000,8 @@ public class MyTunesRssConfig {
                 dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
             }
             setDatasources(dataSources.toArray(new String[dataSources.size()]));
-            setFileSystemArtistNameFolder(JXPathUtils.getIntValue(settings, "artistFolder", getFileSystemArtistNameFolder()));
-            setFileSystemAlbumNameFolder(JXPathUtils.getIntValue(settings, "albumFolder", getFileSystemAlbumNameFolder()));
+            setAlbumFallback(JXPathUtils.getStringValue(settings, "albumFallback", "[dir:0]"));
+            setArtistFallback(JXPathUtils.getStringValue(settings, "artistFallback", "[dir:1]"));
             setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(settings, "iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
             setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
             setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
@@ -1188,8 +1188,8 @@ public class MyTunesRssConfig {
             for (int i = 0; i < myDatasources.size(); i++) {
                 dataSources.appendChild(DOMUtils.createTextElement(settings, "datasource", myDatasources.get(i)));
             }
-            root.appendChild(DOMUtils.createIntElement(settings, "artistFolder", myFileSystemArtistNameFolder));
-            root.appendChild(DOMUtils.createIntElement(settings, "albumFolder", myFileSystemAlbumNameFolder));
+            root.appendChild(DOMUtils.createTextElement(settings, "artistFallback", myArtistFallback));
+            root.appendChild(DOMUtils.createTextElement(settings, "albumFallback", myAlbumFallback));
             root.appendChild(DOMUtils.createBooleanElement(settings, "iTunesDeleteMissingFiles", myItunesDeleteMissingFiles));
             root.appendChild(DOMUtils.createTextElement(settings, "uploadDir", myUploadDir));
             root.appendChild(DOMUtils.createBooleanElement(settings, "uploadCreateUserDir", myUploadCreateUserDir));

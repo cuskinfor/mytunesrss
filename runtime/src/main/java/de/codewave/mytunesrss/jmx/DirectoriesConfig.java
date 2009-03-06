@@ -40,54 +40,21 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
         onChange();
     }
 
-    public String getFolderStructure() {
-        StringBuffer buffer = new StringBuffer();
-        if (MyTunesRss.CONFIG.getFileSystemAlbumNameFolder() == 2) {
-            buffer.append(Directories.FolderStructureRole.Album);
-        } else if (MyTunesRss.CONFIG.getFileSystemArtistNameFolder() == 2) {
-            buffer.append(Directories.FolderStructureRole.Artist);
-        } else {
-            buffer.append(Directories.FolderStructureRole.None);
-        }
-        buffer.append(" / ");
-        if (MyTunesRss.CONFIG.getFileSystemAlbumNameFolder() == 1) {
-            buffer.append(Directories.FolderStructureRole.Album);
-        } else if (MyTunesRss.CONFIG.getFileSystemArtistNameFolder() == 1) {
-            buffer.append(Directories.FolderStructureRole.Artist);
-        } else {
-            buffer.append(Directories.FolderStructureRole.None);
-        }
-        buffer.append(" / ").append(MyTunesRssUtils.getBundleString("settings.folderStructureTrack"));
-        return buffer.toString();
+    public String getAlbumFallback() {
+        return MyTunesRss.CONFIG.getAlbumFallback();
     }
 
-    public void setFolderStructureToAlbumAndArtist() {
-        MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(2);
-        MyTunesRss.CONFIG.setFileSystemArtistNameFolder(1);
+    public void setAlbumFallback(String albumFallback) {
+        MyTunesRss.CONFIG.setAlbumFallback(albumFallback);
         onChange();
     }
 
-    public void setFolderStructureToArtistAndAlbum() {
-        MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(1);
-        MyTunesRss.CONFIG.setFileSystemArtistNameFolder(2);
-        onChange();
+    public String getArtistFallback() {
+        return MyTunesRss.CONFIG.getArtistFallback();
     }
 
-    public void setFolderStructureToNone() {
-        MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(0);
-        MyTunesRss.CONFIG.setFileSystemArtistNameFolder(0);
-        onChange();
-    }
-
-    public void setFolderStructureToNoneAndAlbum() {
-        MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(1);
-        MyTunesRss.CONFIG.setFileSystemArtistNameFolder(0);
-        onChange();
-    }
-
-    public void setFolderStructureToNoneAndArtist() {
-        MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(0);
-        MyTunesRss.CONFIG.setFileSystemArtistNameFolder(1);
+    public void setArtistFallback(String artistFallback) {
+        MyTunesRss.CONFIG.setArtistFallback(artistFallback);
         onChange();
     }
 

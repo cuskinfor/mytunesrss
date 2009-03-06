@@ -174,7 +174,7 @@
         <a id="tracklink_${track.id}" href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
             <c:choose>
                 <c:when test="${!empty param['playlist']}">
-                    <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" /> -
+                    <c:if test="${!mtfn:unknown(track.artist)}"><c:out value="${track.artist}"/> -</c:if>
                     <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />
                 </c:when>
                 <c:when test="${sortOrder == 'Album'}">
@@ -182,7 +182,7 @@
                     <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />
                 </c:when>
                 <c:otherwise>
-                    <c:if test="${!track.simple}"><c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" /> - </c:if>
+                    <c:if test="${!track.simple && !mtfn:unknown(track.album)}"><c:out value="${track.album}" /> -</c:if>
                     <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
                     <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />
                 </c:otherwise>

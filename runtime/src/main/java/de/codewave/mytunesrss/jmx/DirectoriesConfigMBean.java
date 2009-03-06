@@ -14,17 +14,13 @@ public interface DirectoriesConfigMBean {
 
     void setCreateUserSubdir(boolean createUserSubdir);
 
-    String getFolderStructure();
+    String getAlbumFallback();
 
-    void setFolderStructureToNone();
+    void setAlbumFallback(String albumFallback);
 
-    void setFolderStructureToAlbumAndArtist();
+    String getArtistFallback();
 
-    void setFolderStructureToArtistAndAlbum();
-
-    void setFolderStructureToNoneAndAlbum();
-
-    void setFolderStructureToNoneAndArtist();
+    void setArtistFallback(String artistFallback);
 
     String getUploadDir();
 

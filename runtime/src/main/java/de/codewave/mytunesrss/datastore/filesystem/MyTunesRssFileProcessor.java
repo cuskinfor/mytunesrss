@@ -30,7 +30,7 @@ import java.util.*;
  * de.codewave.mytunesrss.datastore.filesystem.MyTunesRssFileProcessor
  */
 public class MyTunesRssFileProcessor implements FileProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssFileProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssFileProcessor.class);
     private static final String ATOM_ALBUM = "moov.udta.meta.ilst.\u00a9alb.data";
     private static final String ATOM_ARTIST = "moov.udta.meta.ilst.\u00a9ART.data";
     private static final String ATOM_TITLE = "moov.udta.meta.ilst.\u00a9nam.data";
@@ -87,8 +87,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         myExistingIds.add(fileId);
                     }
                     if ((file.lastModified() >= myLastUpdateTime || !existing)) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Processing file \"" + file.getAbsolutePath() + "\".");
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
                         }
                         InsertOrUpdateTrackStatement statement;
                         if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
@@ -123,8 +123,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
                             myExistingIds.add(fileId);
                         } catch (SQLException e) {
-                            if (LOG.isErrorEnabled()) {
-                                LOG.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
+                            if (LOGGER.isErrorEnabled()) {
+                                LOGGER.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
                             }
                         }
                     }
@@ -132,8 +132,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 }
             }
         } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
             }
         }
         myTrackIds.removeAll(myExistingIds);
@@ -143,13 +143,13 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         TrackMetaData meta = new TrackMetaData();
         Id3Tag tag = null;
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Reading ID3 information from file \"" + file.getAbsolutePath() + "\".");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Reading ID3 information from file \"" + file.getAbsolutePath() + "\".");
             }
             tag = Mp3Utils.readId3Tag(file);
         } catch (Exception e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not get ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not get ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
             }
         }
         if (tag == null) {
@@ -158,12 +158,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             try {
                 String album = tag.getAlbum();
                 if (StringUtils.isEmpty(album)) {
-                    album = getAncestorAlbumName(file);
+                    album = getFallbackAlbumName(file);
                 }
                 statement.setAlbum(MyTunesRssUtils.normalize(album));
                 String artist = tag.getArtist();
                 if (StringUtils.isEmpty(artist)) {
-                    artist = getAncestorArtistName(file);
+                    artist = getFallbackArtistName(file);
                 }
                 statement.setArtist(MyTunesRssUtils.normalize(artist));
                 String name = tag.getTitle();
@@ -172,7 +172,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 }
                 statement.setName(MyTunesRssUtils.normalize(name));
                 if (tag.isId3v2()) {
-                    Id3v2Tag id3v2Tag = ((Id3v2Tag)tag);
+                    Id3v2Tag id3v2Tag = ((Id3v2Tag) tag);
                     statement.setTime(id3v2Tag.getTimeSeconds());
                     statement.setTrackNumber(id3v2Tag.getTrackNumber());
                     meta.setImage(MyTunesRssMp3Utils.getImage(id3v2Tag));
@@ -187,7 +187,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             }
                         }
                     } catch (NumberFormatException e) {
-                        LOG.warn("Illegal TPA/TPOS value \"" + pos + "\" in \"" + file + "\".");
+                        LOGGER.warn("Illegal TPA/TPOS value \"" + pos + "\" in \"" + file + "\".");
                     }
                 }
                 String genre = tag.getGenreAsString();
@@ -196,8 +196,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 }
                 statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull(createComment(tag))));
             } catch (Exception e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
                 }
                 statement.clear();
                 statement.setId(fileId);
@@ -219,12 +219,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             String[] tokens = instructions[0].split(",");
                             String tagData;
                             if (instructions.length > 2 && instructions[2].trim().toUpperCase().contains("M")) {
-                                tagData = ((Id3v2Tag)tag).getFrameBodiesToString(tokens[0].trim(),
-                                                                                 tokens.length == 1 ? tokens[0].trim() : tokens[1].trim(),
-                                                                                 "\n");
+                                tagData = ((Id3v2Tag) tag).getFrameBodiesToString(tokens[0].trim(),
+                                        tokens.length == 1 ? tokens[0].trim() : tokens[1].trim(),
+                                        "\n");
                             } else {
-                                tagData = ((Id3v2Tag)tag).getFrameBodyToString(tokens[0].trim(),
-                                                                               tokens.length == 1 ? tokens[0].trim() : tokens[1].trim());
+                                tagData = ((Id3v2Tag) tag).getFrameBodyToString(tokens[0].trim(),
+                                        tokens.length == 1 ? tokens[0].trim() : tokens[1].trim());
                             }
                             String value = StringUtils.trimToEmpty(tagData);
                             if (StringUtils.isEmpty(value) && instructions.length > 1) {
@@ -235,16 +235,16 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     }
                 }
                 if (StringUtils.isNotBlank(comment)) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Created comment for ID3 tag: \"" + StringUtils.trimToEmpty(comment) + "\"");
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Created comment for ID3 tag: \"" + StringUtils.trimToEmpty(comment) + "\"");
                     }
                 }
                 return StringUtils.trimToNull(comment);
             }
-            return ((Id3v1Tag)tag).getComment();
+            return ((Id3v1Tag) tag).getComment();
         } catch (Exception e) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Could not create comment for ID3 tag", e);
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Could not create comment for ID3 tag", e);
             }
         }
         return null;
@@ -254,13 +254,13 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         TrackMetaData meta = new TrackMetaData();
         Map<String, Mp4Atom> atoms = null;
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
             }
             atoms = Mp4Utils.getAtoms(file, Arrays.asList(ATOM_ALBUM, ATOM_ARTIST, ATOM_TITLE, ATOM_TRACK_NUMBER, ATOM_GENRE, ATOM_STSD, ATOM_COVER));
         } catch (Exception e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
             }
         }
         if (atoms == null || atoms.isEmpty()) {
@@ -270,13 +270,13 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 Mp4Atom atom = atoms.get(ATOM_ALBUM);
                 String album = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                 if (StringUtils.isEmpty(album)) {
-                    album = getAncestorAlbumName(file);
+                    album = getFallbackAlbumName(file);
                 }
                 statement.setAlbum(MyTunesRssUtils.normalize(album));
                 atom = atoms.get(ATOM_ARTIST);
                 String artist = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                 if (StringUtils.isEmpty(artist)) {
-                    artist = getAncestorArtistName(file);
+                    artist = getFallbackArtistName(file);
                 }
                 statement.setArtist(MyTunesRssUtils.normalize(artist));
                 atom = atoms.get(ATOM_TITLE);
@@ -300,8 +300,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     statement.setGenre(StringUtils.trimToNull(genre));
                 }
             } catch (Exception e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
                 }
                 statement.clear();
                 statement.setId(fileId);
@@ -318,32 +318,36 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     private void setSimpleInfo(InsertOrUpdateTrackStatement statement, File file) {
         statement.setName(FilenameUtils.getBaseName(file.getName()));
-        statement.setAlbum(getAncestorAlbumName(file));
-        statement.setArtist(getAncestorArtistName(file));
+        statement.setAlbum(getFallbackAlbumName(file));
+        statement.setArtist(getFallbackArtistName(file));
     }
 
-    private String getAncestorAlbumName(File file) {
-        return getAncestorName(file, MyTunesRss.CONFIG.getFileSystemAlbumNameFolder());
+    private String getFallbackAlbumName(File file) {
+        return getFallbackName(file, new String(MyTunesRss.CONFIG.getAlbumFallback()));
     }
 
-    private String getAncestorName(File file, int level) {
-        if (level > 0) {
-            File ancestor = IOUtils.getAncestor(file, level);
-            try {
-                if (ancestor != null && IOUtils.isContained(myBaseDir, ancestor)) {
-                    return ancestor.getName();
+    private String getFallbackName(File file, String pattern) {
+        String name = new String(pattern);
+        for (String token : StringUtils.substringsBetween(pattern, "[dir:", "]")) {
+            String trimmedToken = StringUtils.trimToNull(token);
+            if (StringUtils.isNumeric(trimmedToken)) {
+                int number = Integer.parseInt(trimmedToken);
+                File dir = file.getParentFile();
+                while (dir != null && number > 0) {
+                    dir = dir.getParentFile();
+                    number--;
                 }
-            } catch (IOException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not check if ancestor folder is inside base folder.", e);
+                if (dir != null && dir.isDirectory()) {
+                    name = name.replace("[dir:" + token + "]", dir.getName());
                 }
-                return null;
             }
         }
-        return null;
+        name = StringUtils.trimToNull(name);
+        LOGGER.debug("Fallback name for \"" + file + "\" and pattern \"" + pattern + "\" is \"" + name + "\".");
+        return name;
     }
 
-    private String getAncestorArtistName(File file) {
-        return getAncestorName(file, MyTunesRss.CONFIG.getFileSystemArtistNameFolder());
+    private String getFallbackArtistName(File file) {
+        return getFallbackName(file, new String(MyTunesRss.CONFIG.getArtistFallback()));
     }
 }

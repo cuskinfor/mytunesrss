@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.utils.swing.SwingUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.swing.*;
@@ -21,20 +22,6 @@ import java.io.IOException;
  * de.codewave.mytunesrss.settings.Options
  */
 public class Directories implements MyTunesRssEventListener, SettingsForm {
-    public enum FolderStructureRole {
-        Artist, Album, None;
-
-        public String toString() {
-            switch (this) {
-                case Album:
-                    return MyTunesRssUtils.getBundleString("settings.folderStructureRoleAlbum");
-                case Artist:
-                    return MyTunesRssUtils.getBundleString("settings.folderStructureRoleArtist");
-                default:
-                    return MyTunesRssUtils.getBundleString("settings.folderStructureRoleNone");
-            }
-        }
-    }
 
     private JPanel myRootPanel;
     private JList myBaseDirsList;
@@ -42,14 +29,10 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
     private JTextField myUploadDirInput;
     private JButton myUploadDirLookupButton;
     private JCheckBox myCreateUserDir;
-    private JComboBox myFolderStructureGrandparent;
-    private JComboBox myFolderStructureParent;
-    private JLabel myStructureLabel;
-    private JLabel mySeparatorLabel1;
-    private JLabel mySeparatorLabel2;
-    private JLabel myTrackLabel;
     private JButton myDeleteBaseDirButton;
     private JScrollPane myScrollPane;
+    private JTextField myArtistFallbackInput;
+    private JTextField myAlbumFallbackInput;
     private DefaultListModel myListModel;
     private File myFileChooserDierctory;
 
@@ -65,16 +48,10 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
     public void init() {
         myScrollPane.setMaximumSize(myScrollPane.getPreferredSize());
         myScrollPane.getViewport().setOpaque(false);
-        myFolderStructureGrandparent.addItem(FolderStructureRole.None);
-        myFolderStructureGrandparent.addItem(FolderStructureRole.Album);
-        myFolderStructureGrandparent.addItem(FolderStructureRole.Artist);
-        myFolderStructureParent.addItem(FolderStructureRole.None);
-        myFolderStructureParent.addItem(FolderStructureRole.Album);
-        myFolderStructureParent.addItem(FolderStructureRole.Artist);
         initValues();
         myBaseDirsList.setCellRenderer(new DefaultListCellRenderer() {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 String text = value.toString();
                 label.setIcon(new ImageIcon(getClass().getResource(
                         "xml".equalsIgnoreCase(FilenameUtils.getExtension(text)) ? "itunes.gif" : "folder.gif")));
@@ -128,8 +105,8 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
         myListModel = new DefaultListModel();
         addAllToListModel();
         myBaseDirsList.setModel(myListModel);
-        setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemArtistNameFolder(), FolderStructureRole.Artist);
-        setFolderStructureRole(MyTunesRss.CONFIG.getFileSystemAlbumNameFolder(), FolderStructureRole.Album);
+        myAlbumFallbackInput.setText(MyTunesRss.CONFIG.getAlbumFallback());
+        myArtistFallbackInput.setText(MyTunesRss.CONFIG.getArtistFallback());
         myUploadDirInput.setText(MyTunesRss.CONFIG.getUploadDir());
         myCreateUserDir.setSelected(MyTunesRss.CONFIG.isUploadCreateUserDir());
     }
@@ -140,26 +117,9 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
         }
     }
 
-    private void setFolderStructureRole(int level, FolderStructureRole role) {
-        if (level == 1) {
-            myFolderStructureParent.setSelectedItem(role);
-        } else if (level == 2) {
-            myFolderStructureGrandparent.setSelectedItem(role);
-        }
-    }
-
-    private int getFolderStructureRole(FolderStructureRole role) {
-        if (myFolderStructureGrandparent.getSelectedItem().equals(role)) {
-            return 2;
-        } else if (myFolderStructureParent.getSelectedItem().equals(role)) {
-            return 1;
-        }
-        return 0;
-    }
-
     public String updateConfigFromGui() {
-        MyTunesRss.CONFIG.setFileSystemArtistNameFolder(getFolderStructureRole(FolderStructureRole.Artist));
-        MyTunesRss.CONFIG.setFileSystemAlbumNameFolder(getFolderStructureRole(FolderStructureRole.Album));
+        MyTunesRss.CONFIG.setAlbumFallback(myAlbumFallbackInput.getText());
+        MyTunesRss.CONFIG.setArtistFallback(myArtistFallbackInput.getText());
         MyTunesRss.CONFIG.setUploadDir(myUploadDirInput.getText());
         MyTunesRss.CONFIG.setUploadCreateUserDir(myCreateUserDir.isSelected());
         return null;
@@ -175,15 +135,11 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
         myBaseDirsList.setEnabled(!databaseOrServerActive);
         myAddBaseDirButton.setEnabled(!databaseOrServerActive);
         myDeleteBaseDirButton.setEnabled(!databaseOrServerActive && myBaseDirsList.getSelectedIndex() > -1);
-        myFolderStructureGrandparent.setEnabled(!databaseOrServerActive);
-        myFolderStructureParent.setEnabled(!databaseOrServerActive);
         myUploadDirInput.setEnabled(!databaseOrServerActive);
         myUploadDirLookupButton.setEnabled(!databaseOrServerActive);
         myCreateUserDir.setEnabled(!databaseOrServerActive);
-        myStructureLabel.setEnabled(!databaseOrServerActive);
-        mySeparatorLabel1.setEnabled(!databaseOrServerActive);
-        mySeparatorLabel2.setEnabled(!databaseOrServerActive);
-        myTrackLabel.setEnabled(!databaseOrServerActive);
+        SwingUtils.enableElementAndLabel(myAlbumFallbackInput, !databaseOrServerActive);
+        SwingUtils.enableElementAndLabel(myArtistFallbackInput, !databaseOrServerActive);
     }
 
     public String getDialogTitle() {

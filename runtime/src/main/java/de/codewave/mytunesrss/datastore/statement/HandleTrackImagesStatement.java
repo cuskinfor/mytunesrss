@@ -57,12 +57,12 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         try {
             Image image = getImage();
             if (image != IMAGE_UP_TO_DATE) {
-                if (image != null && image.getData() != null && image.getData().length > MAX_IMAGE_DATA_SIZE) {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Ignoring overly large image for file \"" + myFile.getAbsolutePath() + "\" (size = " + image.getData().length + ").");
-                    }
-                    image = null;
-                }
+//                if (image != null && image.getData() != null && image.getData().length > MAX_IMAGE_DATA_SIZE) {
+//                    if (LOG.isInfoEnabled()) {
+//                        LOG.info("Ignoring overly large image for file \"" + myFile.getAbsolutePath() + "\" (size = " + image.getData().length + ").");
+//                    }
+//                    image = null;
+//                }
                 String imageHash =
                         image != null && image.getData() != null ? MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData())) : null;
                 if (imageHash != null) {

@@ -7,6 +7,18 @@
 
     <body>
 
+        <release version="3.7-EAP-2" date="2009-xx-xx" description="3.7 EAP 2">
+            <action dev="mdescher" type="update">
+                Album and artist fallback names can be freely configured now with a pattern.
+            </action>
+            <action dev="mdescher" type="update">
+                Do not display (unknown) for album names in track list.
+            </action>
+            <action dev="mdescher" type="update">
+                No limit for original cover art image size (it is not inserted in original size anyway).
+            </action>
+        </release>
+
         <release version="3.7-EAP-1" date="2009-03-04" description="3.7 EAP 1">
             <action dev="mdescher" type="add">
                 "Tracks" with media type image are displayed with their "cover" art in the track browser.
