@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
@@ -35,20 +37,24 @@ public class MyTunesRssWebUtils {
     }
 
     public static String encryptPathInfo(HttpServletRequest request, String pathInfo) {
+        String result = pathInfo;
         try {
             if (MyTunesRss.CONFIG.getPathInfoKey() != null && (getAuthUser(request) == null || getAuthUser(request).isUrlEncryption())) {
                 Cipher cipher = Cipher.getInstance(MyTunesRss.CONFIG.getPathInfoKey().getAlgorithm());
                 cipher.init(Cipher.ENCRYPT_MODE, MyTunesRss.CONFIG.getPathInfoKey());
-                return "{" + MyTunesRssBase64Utils.encode(cipher.doFinal(pathInfo.getBytes("UTF-8"))) + "}";
-            } else {
-                return pathInfo;
+                result = "{" + MyTunesRssBase64Utils.encode(cipher.doFinal(pathInfo.getBytes("UTF-8"))) + "}";
             }
         } catch (Exception e) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("Could not encrypt path info.", e);
             }
         }
-        return pathInfo;
+        try {
+            return URLEncoder.encode(result, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not found!", e);
+
+        }
     }
 
     public static WebConfig getWebConfig(HttpServletRequest httpServletRequest) {

@@ -11,13 +11,12 @@ import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.Tag;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 /**
  * de.codewave.mytunesrss.jsp.FlipFlopTag
  */
 public class EncryptTag extends BodyTagSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(EncryptTag.class);
-
     private SecretKey myKey;
 
     public void setKey(SecretKey key) {
@@ -32,8 +31,8 @@ public class EncryptTag extends BodyTagSupport {
     @Override
     public int doEndTag() throws JspException {
         try {
-            pageContext.getOut().write(MyTunesRssWebUtils.encryptPathInfo((HttpServletRequest)pageContext.getRequest(),
-                                                                          getBodyContent().getString()));
+            pageContext.getOut().write(URLEncoder.encode(MyTunesRssWebUtils.encryptPathInfo((HttpServletRequest)pageContext.getRequest(),
+                                                                          getBodyContent().getString()), "UTF-8"));
         } catch (IOException e) {
             throw new JspException(e);
         }
