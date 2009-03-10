@@ -12,6 +12,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 /**
@@ -47,6 +48,13 @@ public class PathInfoDecryptionFilter implements Filter {
             String pathInfo = ((HttpServletRequest)getRequest()).getPathInfo();
             if (StringUtils.isNotEmpty(pathInfo)) {
                 String[] splitted = StringUtils.split(pathInfo, "/");
+                for (int i = 0; i < splitted.length; i++) {
+                    try {
+                        splitted[i] = URLDecoder.decode(splitted[i], "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException("UTF-8 not found!", e);
+                    }
+                }
                 try {
                     Cipher cipher = Cipher.getInstance(key.getAlgorithm());
                     cipher.init(Cipher.DECRYPT_MODE, key);
