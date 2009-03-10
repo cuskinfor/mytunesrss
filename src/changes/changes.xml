@@ -9,6 +9,9 @@
 
         <release version="3.7-EAP-2" date="2009-xx-xx" description="3.7 EAP 2">
             <action dev="mdescher" type="update">
+                More compliant RSS feeds.
+            </action>
+            <action dev="mdescher" type="update">
                 Encoded URLs correctly.
             </action>
             <action dev="mdescher" type="update">
