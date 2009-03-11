@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>webapp</artifactId>
     <packaging>war</packaging>
-    <version>3.7-EAP-2-SNAPSHOT</version>
+    <version>3.7-EAP-2</version>
     <name>Codewave MyTunesRSS Web Application</name>
     <distributionManagement>
         <site>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>runtime</artifactId>
-            <version>3.7-EAP-2-SNAPSHOT</version>
+            <version>3.7-EAP-2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>codewave-utils</artifactId>
-            <version>0.47-SNAPSHOT</version>
+            <version>0.47</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-lang</groupId>
@@ -126,4 +126,8 @@
             </plugin>
         </plugins>
     </build>
+
+  <scm>
+    <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/codewave-maven2-base/tags/mytunesrss-3.7-EAP-2</developerConnection>
+  </scm>
 </project>
