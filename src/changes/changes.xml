@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.6.5" date="2009-03-11" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Database initialization bugfix.
+            </action>
+        </release>
+
         <release version="3.6.4" date="2009-03-04" description="Bugfix release">
             <action dev="mdescher" type="add">
                 New version of codewave utils (version releated bugfixes).
