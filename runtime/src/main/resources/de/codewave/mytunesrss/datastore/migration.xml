@@ -105,7 +105,7 @@
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
     </statement>
 
-    <statement name="migrate_3.7_eap_1">
+    <statement name="migrate_3.7_eap_1_part1">
         <sql>
             {create_table_prefix} smart_info (
                 playlist_id VARCHAR(100) NOT NULL,
@@ -125,6 +125,8 @@
         <sql>
             ALTER TABLE track ADD COLUMN mediatype VARCHAR(20)
         </sql>
+    </statement>
+    <statement name="migrate_3.7_eap_1_part2">
         <sql>
             UPDATE track SET mediatype = 'Audio' WHERE video = FALSE
         </sql>
