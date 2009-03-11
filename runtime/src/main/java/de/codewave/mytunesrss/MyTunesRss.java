@@ -190,6 +190,15 @@ public class MyTunesRss {
             DUMMY_FRAME.setVisible(true);
             PLEASE_WAIT_ICON = new ImageIcon(MyTunesRss.class.getResource("PleaseWait.gif"));
         }
+        if (System.getProperty("de.codewave.mytunesrss") == null) {
+            String type = "generic";
+            if (SystemUtils.IS_OS_WINDOWS) {
+                type = "windows";
+            } else if (SystemUtils.IS_OS_MAC_OSX) {
+                type ="osx";
+            }
+            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.missingSystemProperty." + type));
+        }
         if (isOtherInstanceRunning(3000)) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
             MyTunesRssUtils.shutdown();

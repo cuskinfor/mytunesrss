@@ -7,6 +7,14 @@
 
     <body>
 
+        <release version="3.7-EAP-3" date="2009-xx-xx" description="3.7 EAP 3">
+            <action dev="mdescher" type="add">
+                Added check for special system property with warning message if property is not present. This should
+                warn users which start the application without the necessary startup parameters or not using the EXE
+                wrapper on Windows or the application bundle on Mac OS X.
+            </action>
+        </release>
+
         <release version="3.7-EAP-2" date="2009-03-11" description="3.7 EAP 2">
             <action dev="mdescher" type="fix">
                 Fixed EAP-1 database migration statement (splitted into 2 parts).
@@ -45,7 +53,8 @@
                 New codewave-utils version.
             </action>
             <action dev="mdescher" type="add">
-                Smart playlist (smart info table linked to playlist). Smart playlists get updated after each database update and are then treated like
+                Smart playlist (smart info table linked to playlist). Smart playlists get updated after each database
+                update and are then treated like
                 normal playlist.
             </action>
         </release>
@@ -61,7 +70,8 @@
                 Artwork for track is read from equally named image (jpeg -> gif -> png) in that order.
             </action>
             <action dev="mdescher" type="add">
-                Keep readme information for language add-ons. Display info for language and theme add-ons in configuration interface.
+                Keep readme information for language add-ons. Display info for language and theme add-ons in
+                configuration interface.
             </action>
             <action dev="mdescher" type="fix">
                 Obsolete iTunes folders were not removed on database update.
@@ -145,7 +155,8 @@
                 RSS feeds in HEAD as alternate links (button to add feed in Firefox and Safari for example).
             </action>
             <action dev="mdescher" type="fix">
-                Transcoding parameter (tc) was generated using only ALAC transcoding info for all three types (ALAC, FAAD, LAME).
+                Transcoding parameter (tc) was generated using only ALAC transcoding info for all three types (ALAC,
+                FAAD, LAME).
             </action>
         </release>
 
@@ -163,7 +174,8 @@
 
         <release version="3.6-EAP-9" date="2008-11-09" description="EAP-9">
             <action dev="mdescher" type="update">
-                Several fixes and improvements for HTTP/HTTPS handling. MyTunesRSS honours proxy settings when sending data to mytunesrss.com. Proxy
+                Several fixes and improvements for HTTP/HTTPS handling. MyTunesRSS honours proxy settings when sending
+                data to mytunesrss.com. Proxy
                 server protocol (http/https) can be specified (e.g. when using Apache as SSL offloader).
             </action>
             <action dev="mdescher" type="add">
@@ -182,7 +194,8 @@
 
         <release version="3.6-EAP-7" date="2008-10-19" description="EAP-7">
             <action dev="mdescher" type="fix">
-                PlaylistService: accept NULL for playlist sort order to have original order and also added a nice error message if the specified order
+                PlaylistService: accept NULL for playlist sort order to have original order and also added a nice error
+                message if the specified order
                 parameter is invalid.
             </action>
             <action dev="mdescher" type="update">
@@ -216,8 +229,10 @@
                 Admin notification when a missing file has been requested.
             </action>
             <action dev="mdescher" type="add">
-                Support for GET requests with BODY parameter in JSON-RPC API calls. Without this we cannot make any use of the JSONP parameter for
-                cross-site-access. The sample application has been changed to use the JSONP parameter and can be started locally by simply opening the
+                Support for GET requests with BODY parameter in JSON-RPC API calls. Without this we cannot make any use
+                of the JSONP parameter for
+                cross-site-access. The sample application has been changed to use the JSONP parameter and can be started
+                locally by simply opening the
                 "index.html" in a browser.
             </action>
             <action dev="mdescher" type="add">
@@ -245,11 +260,13 @@
                 JMX server settings in configuration GUI.
             </action>
             <action dev="mdescher" type="update">
-                Refactoring for TC parameter. More flexible now and handling centralized. Building request scoped web config from session scoped one
+                Refactoring for TC parameter. More flexible now and handling centralized. Building request scoped web
+                config from session scoped one
                 using the request parameters if available.
             </action>
             <action dev="mdescher" type="fix">
-                Remote API session manager fix (was static, multiple executors were started), now using a servlet context listener.
+                Remote API session manager fix (was static, multiple executors were started), now using a servlet
+                context listener.
             </action>
             <action dev="mdescher" type="update">
                 Remote API improvements, playlist/rss feed creation with transcoding parameters.
@@ -270,7 +287,8 @@
 
         <release version="3.6-EAP-1" date="2008-09-14" description="EAP-1">
             <action dev="mdescher" type="fix">
-                Removed synchronized for "isRunning" method in WebServer to prevent deadlock when starting the server with no users and database
+                Removed synchronized for "isRunning" method in WebServer to prevent deadlock when starting the server
+                with no users and database
                 update on server start enabled.
             </action>
             <action dev="mdescher" type="add">
@@ -286,12 +304,15 @@
                 Option to use the mytunesrss.com address (default is TRUE) in playlists and for RSS feeds.
             </action>
             <action dev="mdescher" type="fix">
-                URL encode file names on jukebox.jsp to prevent problems with non-web-safe characters. Bugfix for portal page. Version 1.1 of
-                codewave-zis for JDK 1.6 encoding bugfix if entry is not UTF-8 encoded. Do not create folder or file names with leading or trailing
+                URL encode file names on jukebox.jsp to prevent problems with non-web-safe characters. Bugfix for portal
+                page. Version 1.1 of
+                codewave-zis for JDK 1.6 encoding bugfix if entry is not UTF-8 encoded. Do not create folder or file
+                names with leading or trailing
                 dots in ZIP archives.
             </action>
             <action dev="mdescher" type="update">
-                Use temporary file for transcoder input to prevent problems with non-ASCII characters in files names (which do cause problems with
+                Use temporary file for transcoder input to prevent problems with non-ASCII characters in files names
+                (which do cause problems with
                 faad on Windows for example).
             </action>
             <action dev="mdescher" type="add">
@@ -307,7 +328,8 @@
                 Removed file-suffixes.properties and added a configuration GUI.
             </action>
             <action dev="mdescher" type="update">
-                Removed transcoder.properties (default and user) file and added command line options to configuration GUI and JMX interface.
+                Removed transcoder.properties (default and user) file and added command line options to configuration
+                GUI and JMX interface.
             </action>
             <action dev="mdescher" type="add">
                 Remote API authentication via HTTP header "X-MyTunesRSS-ID" as well (preferred over path info).
@@ -316,18 +338,24 @@
                 Support for optional JSONP parameter.
             </action>
             <action dev="mdescher" type="add">
-                Folder from iTunes marked with special icons in the web interface and each playlist knows its container if any. Navigation for iTunes
+                Folder from iTunes marked with special icons in the web interface and each playlist knows its container
+                if any. Navigation for iTunes
                 folders.
             </action>
             <action dev="mdescher" type="update">
-                Configuration GUI redesign. Main dialog has no configuration tabs and shows some status information only together with the most
-                important functions (database update/reset, server start/stop and quit). The configuration dialogs are separate modal dialog windows
-                now. This makes it easier to add options to individual settings pages without affection overall layout. Also adding new pages is
-                easier and does not make the number of tabs even bigger. The individual dialogs are resizable and the positions and sizes are saved in
+                Configuration GUI redesign. Main dialog has no configuration tabs and shows some status information only
+                together with the most
+                important functions (database update/reset, server start/stop and quit). The configuration dialogs are
+                separate modal dialog windows
+                now. This makes it easier to add options to individual settings pages without affection overall layout.
+                Also adding new pages is
+                easier and does not make the number of tabs even bigger. The individual dialogs are resizable and the
+                positions and sizes are saved in
                 the settings which makes the dialogs configuration much better.
             </action>
             <action dev="mdescher" type="update">
-                Moved xercesImpl into boot class path to prevent rare (OS X specific?) problems when loading the parser implementation classes.
+                Moved xercesImpl into boot class path to prevent rare (OS X specific?) problems when loading the parser
+                implementation classes.
             </action>
             <action dev="mdescher" type="update">
                 Switched from commons-logging to slf4j. Updated h2 to 1.0.75. Updated Tomcat to 5.5.23.
@@ -336,13 +364,15 @@
 
         <release version="3.5-RC-3" date="2008-07-20" description="RC3">
             <action dev="mdescher" type="fix">
-                Fixed apple extensions problem introduced through extracting the extensions framework into its own project.
+                Fixed apple extensions problem introduced through extracting the extensions framework into its own
+                project.
             </action>
             <action dev="mdescher" type="fix">
                 Checkbox state not correctly handled for "check for update on start" box.
             </action>
             <action dev="mdescher" type="update">
-                Removed apple extensions from project and created a new standalone project for this. So mytunesrss can be built without any problems
+                Removed apple extensions from project and created a new standalone project for this. So mytunesrss can
+                be built without any problems
                 on non-apple systems now.
             </action>
         </release>
@@ -355,7 +385,8 @@
                 Version number not submitted for anonymous statistic when starting application.
             </action>
             <action dev="mdescher" type="fix">
-                Downgraded to commons-logging 1.0.4 to prevent strange problems when starting the server for the second time.
+                Downgraded to commons-logging 1.0.4 to prevent strange problems when starting the server for the second
+                time.
             </action>
         </release>
 
@@ -379,7 +410,8 @@
                 Several JMX options added.
             </action>
             <action dev="mdescher" type="fix">
-                Do not add a watch folder for scanning if the same folder is already contained in the scanned folders set.
+                Do not add a watch folder for scanning if the same folder is already contained in the scanned folders
+                set.
             </action>
         </release>
 
@@ -421,7 +453,8 @@
                 Do not send a submission for one track multiple times in a row to last.fm.
             </action>
             <action dev="mdescher" type="add">
-                Import original artist into database (track table) so we have it even if some words are dropped from the name. This original name is
+                Import original artist into database (track table) so we have it even if some words are dropped from the
+                name. This original name is
                 used for last.fm scrobbling and for display purposes on the track info and in playlists and RSS feeds.
             </action>
             <action dev="mdescher" type="add">
@@ -473,7 +506,8 @@
                 Added database index for track.image_hash to speed up removal of orphaned images a lot.
             </action>
             <action dev="mdescher" type="add">
-                New playlist link replaced with edit existing playlist link when editable MyTunesRSS playlists exist. Dialog with selection of
+                New playlist link replaced with edit existing playlist link when editable MyTunesRSS playlists exist.
+                Dialog with selection of
                 playlist to edit and option to create a new playlist.
             </action>
             <action dev="mdescher" type="add">
@@ -504,10 +538,12 @@
 
         <release version="3.2-EAP-10" date="2008-04-20" description="EAP release">
             <action dev="mdescher" type="update">
-                Images with same hash value only inserted once into database. Images linked to tracks via their hash instead of the track id.
+                Images with same hash value only inserted once into database. Images linked to tracks via their hash
+                instead of the track id.
             </action>
             <action dev="mdescher" type="fix">
-                Use LogStreamCopyThread for transcoder error streams instead of writing to a file which was not thread safe.
+                Use LogStreamCopyThread for transcoder error streams instead of writing to a file which was not thread
+                safe.
             </action>
             <action dev="mdescher" type="update">
                 codewave-utils 0.40
@@ -516,7 +552,8 @@
                 Log level setting for codewave log (de.codewave): OFF, FATAL, ERROR, WARN, INFO, DEBUG.
             </action>
             <action dev="mdescher" type="fix">
-                If getting canonical file path for iTunes XML files fails, use the absolute path and Icu4j to normalize it.
+                If getting canonical file path for iTunes XML files fails, use the absolute path and Icu4j to normalize
+                it.
             </action>
             <action dev="mdescher" type="fix">
                 Album and artist name were always "unknown" for anything but MP3 and MP4.
@@ -546,7 +583,8 @@
 
         <release version="3.2-EAP-7" date="2008-04-08" description="EAP release">
             <action dev="mdescher" type="add">
-                New playlist type "iPhone" which makes the iPhone or iPod Touch play the playlist in the Quicktime plugin.
+                New playlist type "iPhone" which makes the iPhone or iPod Touch play the playlist in the Quicktime
+                plugin.
             </action>
             <action dev="mdescher" type="add">
                 HTTPS support.
@@ -615,8 +653,10 @@
                 crossdomain.xml which allows all domains.
             </action>
             <action dev="mdescher" type="add">
-                Session handling for remote API calls. The LoginService.login function now returns a session ID which can be used in the path info of
-                subsequent calls to identify the session. The LoginService.login call also gets a desired session timeout in seconds.
+                Session handling for remote API calls. The LoginService.login function now returns a session ID which
+                can be used in the path info of
+                subsequent calls to identify the session. The LoginService.login call also gets a desired session
+                timeout in seconds.
             </action>
             <action dev="mdescher" type="update">
                 camel-0.9.7.
@@ -631,13 +671,15 @@
 
         <release version="3.2-EAP-4" date="2008-03-12" description="EAP release">
             <action dev="mdescher" type="update">
-                codewave-utils-0.37 to hopefully fix playback on iPhone/iPod Touch by adding response headers for range requests.
+                codewave-utils-0.37 to hopefully fix playback on iPhone/iPod Touch by adding response headers for range
+                requests.
             </action>
             <action dev="mdescher" type="fix">
                 Fix for Yahoo Media Player requesting stupid image.
             </action>
             <action dev="mdescher" type="fix">
-                Fixed codewave log level setting after loading configuration. Set default log level (until config is loaded) from info to debug.
+                Fixed codewave log level setting after loading configuration. Set default log level (until config is
+                loaded) from info to debug.
             </action>
             <action dev="mdescher" type="fix">
                 Create an empty settings file when none is available.
@@ -646,8 +688,10 @@
 
         <release version="3.2-EAP-3" date="2008-03-10" description="EAP release">
             <action dev="mdescher" type="update">
-                Moved from system properties to settings.xml: - Database configuration -> database/type,driver,connection,user,password -
-                webapp.context -> tomcat/webapp-context - track.comment.id3v2 -> id3v2-track-comment - Jmx -> jmx/port,host,user,password -
+                Moved from system properties to settings.xml: - Database configuration ->
+                database/type,driver,connection,user,password -
+                webapp.context -> tomcat/webapp-context - track.comment.id3v2 -> id3v2-track-comment - Jmx ->
+                jmx/port,host,user,password -
                 tomcat.maxThreads -> tomcat/max-threads - ajp.port -> tomcat/ajp-port
             </action>
             <action dev="mdescher" type="add">
@@ -666,7 +710,8 @@
 
         <release version="3.2-EAP-1" date="2008-03-08" description="EAP release">
             <action dev="mdescher" type="add">
-                Support for multi disc albums (disc number, disc count from iTunesXml, TPA, TPOS from ID3 tags. Sort order of tracks according to disc
+                Support for multi disc albums (disc number, disc count from iTunesXml, TPA, TPOS from ID3 tags. Sort
+                order of tracks according to disc
                 number and track number.
             </action>
             <action dev="mdescher" type="add">
@@ -682,7 +727,8 @@
                 JW Media Player 3.15
             </action>
             <action dev="mdescher" type="add">
-                Database updates based on quartz cron expression triggers no matter whether or not the server is running.
+                Database updates based on quartz cron expression triggers no matter whether or not the server is
+                running.
             </action>
             <action dev="mdescher" type="add">
                 Quartz scheduler.
@@ -691,7 +737,8 @@
                 Optional database updates every X seconds while server is running.
             </action>
             <action dev="mdescher" type="update">
-                All settings stored in an XML file in the settings directory. No remaining usage of java.util.prefs API, so no registry usage on
+                All settings stored in an XML file in the settings directory. No remaining usage of java.util.prefs API,
+                so no registry usage on
                 Windows anymore.
             </action>
             <action dev="mdescher" type="update">
@@ -713,7 +760,8 @@
                 Improved cover art tooltip.
             </action>
             <action dev="mdescher" type="update">
-                Performance improvement when scanning watch folders since cover art is scanned in the same run, i.e. files are parsed only once.
+                Performance improvement when scanning watch folders since cover art is scanned in the same run, i.e.
+                files are parsed only once.
             </action>
             <action dev="mdescher" type="update">
                 New version of camel.
@@ -725,7 +773,8 @@
                 Support for single frame or multiple frame usage for ID3 tag comments.
             </action>
             <action dev="mdescher" type="add">
-                Support for default values in ID3v2 tag comment descriptions in the system property "track.comment.id3v2".
+                Support for default values in ID3v2 tag comment descriptions in the system property
+                "track.comment.id3v2".
             </action>
             <action dev="mdescher" type="fix">
                 ID3v2 tag comments: use empty string instead of the word "null" for missing or empty fields.
@@ -752,7 +801,8 @@
                 New version of codewave-utils.
             </action>
             <action dev="mdescher" type="fix">
-                Fixed some bugs in JSPs which resulted in invalid HTML. This fixes a display problem in Internet Explorer (missing track names).
+                Fixed some bugs in JSPs which resulted in invalid HTML. This fixes a display problem in Internet
+                Explorer (missing track names).
             </action>
             <action dev="mdescher" type="update">
                 New version of camel.
@@ -764,7 +814,8 @@
                 Compare lower case suffix to check for MP3 files when using Yahoo Media Player.
             </action>
             <action dev="mdescher" type="add">
-                Use system property "tomcat.maxThreads" for the maximum threads of the HTTP connector. Default is 200 threads.
+                Use system property "tomcat.maxThreads" for the maximum threads of the HTTP connector. Default is 200
+                threads.
             </action>
             <action dev="mdescher" type="add">
                 Debug logging option in JMX console and persistent.
@@ -779,7 +830,8 @@
 
         <release version="3.1.2" date="2008-01-23" description="Bugfix release">
             <action dev="mdescher" type="fix">
-                Fixed NullPointerException when saving user without selected restriction playlist ID. Catch all Exceptions when trying to register
+                Fixed NullPointerException when saving user without selected restriction playlist ID. Catch all
+                Exceptions when trying to register
                 MyTunesRSS.
             </action>
         </release>
