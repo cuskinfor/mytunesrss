@@ -85,6 +85,9 @@ public class MyTunesRssDataStore extends DataStore {
     }
 
     private void initSmartStatementFactory(String databaseType) {
+        if (databaseType.startsWith("h2")) {
+            databaseType = "h2"; // h2 and h2custom => h2 database dialect
+        }
         LOG.info("Using DML/DDL for database type \"" + databaseType + "\".");
         JXPathContext[] contexts =
                 new JXPathContext[] {JXPathUtils.getContext(getClass().getResource("ddl.xml")), JXPathUtils.getContext(getClass().getResource(

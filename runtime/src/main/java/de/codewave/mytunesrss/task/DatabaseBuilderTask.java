@@ -266,12 +266,12 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         }
     }
 
-    public static void doCheckpoint(DataStoreSession storeSession, boolean force) {
+    public static void doCheckpoint(DataStoreSession storeSession, boolean forceCommit) {
         long time = System.currentTimeMillis();
         if (TX_BEGIN == 0) {
             TX_BEGIN = time;
         }
-        if (time - TX_BEGIN > MAX_TX_DURATION || force) {
+        if (time - TX_BEGIN > MAX_TX_DURATION || forceCommit) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Committing transaction after " + (time - TX_BEGIN) + " milliseconds.");
             }

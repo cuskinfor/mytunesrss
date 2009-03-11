@@ -9,6 +9,13 @@
 
         <release version="3.7-EAP-3" date="2009-xx-xx" description="3.7 EAP 3">
             <action dev="mdescher" type="add">
+                New database type "h2custom" which uses the database dialect h2 but allows for
+                complete configuration of the h2 database.
+            </action>
+            <action dev="mdescher" type="fix">
+                Bugfix for database initialization.
+            </action>
+            <action dev="mdescher" type="add">
                 Added check for special system property with warning message if property is not present. This should
                 warn users which start the application without the necessary startup parameters or not using the EXE
                 wrapper on Windows or the application bundle on Mac OS X.

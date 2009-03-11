@@ -42,6 +42,7 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
         refreshTriggers();
         myDbExtraPanel.setVisible(!DatabaseType.h2.name().equals(MyTunesRss.CONFIG.getDatabaseType()));
         myDbTypeInput.addItem(DatabaseType.h2);
+        myDbTypeInput.addItem(DatabaseType.h2custom);
         myDbTypeInput.addItem(DatabaseType.postgres);
         myDbTypeInput.addItem(DatabaseType.mysql);
         myDbTypeInput.addItemListener(new ItemListener() {
@@ -262,7 +263,7 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
     }
 
     public enum DatabaseType {
-        h2(), postgres(), mysql();
+        h2(), h2custom(), postgres(), mysql();
 
 
         @Override

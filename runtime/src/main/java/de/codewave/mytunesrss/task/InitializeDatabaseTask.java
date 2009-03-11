@@ -27,6 +27,20 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
     public void execute() throws IOException, SQLException {
         MyTunesRss.STORE.init();
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
+        loadVersion(session);
+        if (myVersion == null) {
+            session.executeStatement(new CreateAllTablesStatement());
+            DatabaseBuilderTask.doCheckpoint(session, true);
+            loadVersion(session);
+        } else {
+            if (myVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0) {
+                session.executeStatement(new MigrationStatement());
+                DatabaseBuilderTask.doCheckpoint(session, true);
+            }
+        }
+    }
+
+    private void loadVersion(DataStoreSession session) throws SQLException {
         try {
             myVersion = session.executeQuery(new DataStoreQuery<Version>() {
                 public Version execute(Connection connection) throws SQLException {
@@ -46,17 +60,6 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
             });
         } finally {
             DatabaseBuilderTask.doCheckpoint(session, true);
-        }
-        if (myVersion == null) {
-            DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
-            storeSession.executeStatement(new CreateAllTablesStatement());
-            DatabaseBuilderTask.doCheckpoint(storeSession, true);
-        } else {
-            DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
-            if (myVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0) {
-                storeSession.executeStatement(new MigrationStatement());
-                DatabaseBuilderTask.doCheckpoint(storeSession, true);
-            }
         }
     }
 
