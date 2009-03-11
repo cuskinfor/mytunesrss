@@ -115,6 +115,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
                                 HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, meta.getImage(), 0);
                                 myStoreSession.executeStatement(handleTrackImagesStatement);
+                            } else if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
+                                HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, 0);
+                                myStoreSession.executeStatement(handleTrackImagesStatement);
                             }
                             myUpdatedCount++;
                             DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
