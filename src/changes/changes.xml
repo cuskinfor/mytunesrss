@@ -9,6 +9,10 @@
 
         <release version="3.7-EAP-3" date="2009-xx-xx" description="3.7 EAP 3">
             <action dev="mdescher" type="add">
+                User can select web language on login screen. This preferred language is stored in the
+                web configuration cookie and used instead of the request locale.
+            </action>
+            <action dev="mdescher" type="add">
                 New database type "h2custom" which uses the database dialect h2 but allows for
                 complete configuration of the h2 database.
             </action>

@@ -18,8 +18,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
@@ -104,7 +103,7 @@ public class MyTunesFunctions {
 
     public static boolean transcoding(PageContext pageContext, User user, Track track) {
         if (user != null && user.isTranscoder()) {
-            HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
+            HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
             WebConfig config = MyTunesRssWebUtils.getWebConfig(request);
             if (FileSupportUtils.isMp4(track.getFile()) && "alac".equals(track.getMp4Codec()) && config.isAlac() &&
                     MyTunesRss.CONFIG.isValidAlacBinary()) {
@@ -121,7 +120,7 @@ public class MyTunesFunctions {
 
     public static String tcParamValue(PageContext pageContext, User user, Track track) {
         if (user != null && user.isTranscoder() && MyTunesRss.CONFIG.isValidLameBinary()) {
-            HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
+            HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
             WebConfig config = MyTunesRssWebUtils.getWebConfig(request);
             if (FileSupportUtils.isMp4(track.getFile())) {
                 if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
@@ -169,9 +168,9 @@ public class MyTunesFunctions {
     }
 
     public static String flipFlop(HttpServletRequest request) {
-        String value1 = (String)request.getAttribute("flipFlop_value1");
-        String value2 = (String)request.getAttribute("flipFlop_value2");
-        String currentValue = (String)request.getAttribute("flipFlop_currentValue");
+        String value1 = (String) request.getAttribute("flipFlop_value1");
+        String value2 = (String) request.getAttribute("flipFlop_value2");
+        String currentValue = (String) request.getAttribute("flipFlop_currentValue");
         if (value1.equals(currentValue)) {
             request.setAttribute("flipFlop_currentValue", value2);
         } else {
@@ -189,14 +188,39 @@ public class MyTunesFunctions {
     }
 
     public static String formatDateAsDateAndTime(HttpServletRequest request, long milliseconds) {
-        LocalizationContext context = (LocalizationContext)request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+        LocalizationContext context = (LocalizationContext) request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
         ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb",
-                                                                                                         request.getLocale());
+                request.getLocale());
         SimpleDateFormat format = new SimpleDateFormat(bundle.getString("dateAndTimeFormat"));
         return format.format(new Date(milliseconds));
     }
 
     public static String[] splitComments(String comments) {
         return StringUtils.split(comments, '\n');
+    }
+
+    public static List<String[]> availableLanguages(Locale displayLocale) {
+        Set<String> codes = new HashSet<String>();
+        codes.add("de");
+        codes.add("en");
+        for (AddonsUtils.LanguageDefinition definition : AddonsUtils.getLanguages()) {
+            codes.add(definition.getCode());
+        }
+        List<String[]> langs = new ArrayList<String[]>(codes.size());
+        for (String code : codes) {
+            langs.add(new String[]{code, new Locale(code).getDisplayLanguage(displayLocale)});
+        }
+        Collections.sort(langs, new Comparator<String[]>() {
+            public int compare(String[] o1, String[] o2) {
+                return o1[1].compareTo(o2[1]);
+            }
+        });
+        return langs;
+    }
+
+    public static Locale preferredLocale(PageContext pageContext, boolean requestFallback) {
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        WebConfig config = MyTunesRssWebUtils.getWebConfig(request);
+        return StringUtils.isBlank(config.getLanguage()) ? (requestFallback ? pageContext.getRequest().getLocale() : null) : new Locale(config.getLanguage());
     }
 }

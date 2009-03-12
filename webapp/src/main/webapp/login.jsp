@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -31,6 +32,18 @@
     <div class="login">
 
       <table class="login" cellspacing="0">
+          <tr>
+              <td><fmt:message key="languageSelection"/></td>
+              <td>
+                  <select name="lc">
+                      <option value=""><fmt:message key="languageSelectionDefault"/></option>
+                      <c:forEach items="${mtfn:availableLanguages(mtfn:preferredLocale(pageContext, true))}" var="lang">
+                          <option value="${lang[0]}" <c:if test="${lang[0] == mtfn:preferredLocale(pageContext, false).language}">selected="selected"</c:if>><c:out value="${lang[1]}"/></option>
+                      </c:forEach>
+                  </select>
+              </td>
+              <td>&nbsp;</td>
+          </tr>
       <tr>
         <td>
           <fmt:message key="userName"/>

@@ -53,6 +53,7 @@ public class WebConfig {
     private static final String CFG_RANDOM_MEDIATYPE = "rndMedia";
     private static final String CFG_RANDOM_PROTECTED = "rndProt";
     private static final String CFG_ALBUM_IMAGE_SIZE = "albImgSize";
+    private static final String CFG_LANGUAGE = "lc";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -537,5 +538,17 @@ public class WebConfig {
 
     public void setAlbumImageSize(int imageSize) {
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, Integer.toString(imageSize));
+    }
+
+    public String getLanguage() {
+        return myConfigValues.get(CFG_LANGUAGE);
+    }
+
+    public void setLanguage(String lc) {
+        if (StringUtils.isNotBlank(lc)) {
+            myConfigValues.put(CFG_LANGUAGE, lc);
+        } else {
+            myConfigValues.remove(CFG_LANGUAGE);
+        }
     }
 }

@@ -14,6 +14,8 @@ import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import javax.servlet.ServletException;
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * de.codewave.mytunesrss.commanDoLoginCommandHandlerer
  */
@@ -27,6 +29,8 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                 authorize(WebAppScope.Session, userName);
                 WebConfig webConfig = getWebConfig();
                 Boolean rememberLogin = getBooleanRequestParameter("rememberLogin", false);
+                String lc = getRequest().getParameter("lc");
+                webConfig.setLanguage(lc);
                 webConfig.setLoginStored(rememberLogin);
                 webConfig.setUserName(userName);
                 webConfig.setPasswordHash(passwordHash);
