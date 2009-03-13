@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.remote.service;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 
@@ -9,8 +10,6 @@ import java.io.IOException;
  * de.codewave.mytunesrss.remote.service.VideoLanClientService
  */
 public class VideoLanClientService {
-    private static VideoLanClient myVideoLanClient = new VideoLanClient();
-
     private void assertAuthenticated() throws IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user == null) {
@@ -18,67 +17,93 @@ public class VideoLanClientService {
         }
     }
 
-
-    public void connect(String host, int port) throws IOException, InterruptedException, IllegalAccessException {
-        assertAuthenticated();
-        myVideoLanClient.connect(host, port);
+    private VideoLanClient connect() throws IOException, InterruptedException, IllegalAccessException {
+        VideoLanClient videoLanClient = new VideoLanClient();
+        videoLanClient.connect(MyTunesRss.CONFIG.getVideoLanClientHost(), MyTunesRss.CONFIG.getVideoLanClientPort());
+        return videoLanClient;
     }
 
-    public void disconnect() throws InterruptedException, IllegalAccessException, IOException {
-        assertAuthenticated();
-        myVideoLanClient.disconnect();
+    private void disconnect(VideoLanClient videoLanClient) throws InterruptedException, IllegalAccessException, IOException {
+        videoLanClient.disconnect();
     }
 
-    public String add(String item, boolean stop) throws IllegalAccessException, IOException, InterruptedException {
+    public String loadPlaylist(String item, boolean start) throws IllegalAccessException, IOException, InterruptedException {
         assertAuthenticated();
-        if (stop) {
-            return myVideoLanClient.sendCommands("add " + item, "stop");
-        } else {
-            return myVideoLanClient.sendCommands("add " + item);
+        VideoLanClient videoLanClient = connect();
+        try {
+            return videoLanClient.sendCommands("clear", "add " + item, start ? "start" : "stop");
+        } finally {
+            disconnect(videoLanClient);
         }
     }
 
-    public String enqueue(String item, boolean stop) throws IllegalAccessException, IOException, InterruptedException {
+    public String clearPlaylist() throws IllegalAccessException, IOException, InterruptedException {
         assertAuthenticated();
-        if (stop) {
-            return myVideoLanClient.sendCommands("enqueue " + item, "stop");
-        } else {
-            return myVideoLanClient.sendCommands("enqueue " + item);
+        VideoLanClient videoLanClient = connect();
+        try {
+            return videoLanClient.sendCommands("clear");
+        } finally {
+            disconnect(videoLanClient);
         }
     }
 
-    public String clear() throws IllegalAccessException, IOException, InterruptedException {
+    public String play(int index) throws IllegalAccessException, IOException, InterruptedException {
         assertAuthenticated();
-        return myVideoLanClient.sendCommands("clear");
-    }
-
-    public String play() throws IllegalAccessException, IOException, InterruptedException {
-        assertAuthenticated();
-        return myVideoLanClient.sendCommands("play");
+        VideoLanClient videoLanClient = connect();
+        try {
+            return videoLanClient.sendCommands("goto " + index);
+        } finally {
+            disconnect(videoLanClient);
+        }
     }
 
     public String pause() throws IllegalAccessException, IOException, InterruptedException {
         assertAuthenticated();
-        return myVideoLanClient.sendCommands("pause");
+        VideoLanClient videoLanClient = connect();
+        try {
+            return videoLanClient.sendCommands("pause");
+        } finally {
+            disconnect(videoLanClient);
+        }
     }
 
     public String stop() throws IllegalAccessException, IOException, InterruptedException {
         assertAuthenticated();
-        return myVideoLanClient.sendCommands("stop");
+        VideoLanClient videoLanClient = connect();
+        try {
+            return videoLanClient.sendCommands("stop");
+        } finally {
+            disconnect(videoLanClient);
+        }
     }
 
     public String next() throws IllegalAccessException, IOException, InterruptedException {
         assertAuthenticated();
-        return myVideoLanClient.sendCommands("next");
+        VideoLanClient videoLanClient = connect();
+        try {
+            return videoLanClient.sendCommands("next");
+        } finally {
+            disconnect(videoLanClient);
+        }
     }
 
     public String prev() throws IllegalAccessException, IOException, InterruptedException {
         assertAuthenticated();
-        return myVideoLanClient.sendCommands("prev");
+        VideoLanClient videoLanClient = connect();
+        try {
+            return videoLanClient.sendCommands("prev");
+        } finally {
+            disconnect(videoLanClient);
+        }
     }
 
     public String sendCommand(String command) throws IOException, IllegalAccessException, InterruptedException {
         assertAuthenticated();
-        return myVideoLanClient.sendCommands(command);
+        VideoLanClient videoLanClient = connect();
+        try {
+            return videoLanClient.sendCommands(command);
+        } finally {
+            disconnect(videoLanClient);
+        }
     }
 }

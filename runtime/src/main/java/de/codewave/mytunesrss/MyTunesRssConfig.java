@@ -131,6 +131,8 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnMissingFile;
     private int myStatisticKeepTime = 60;
     private String myCryptedCreationTime;
+    private String myVideoLanClientHost = "127.0.0.1";
+    private int myVideoLanClientPort = 12345;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -932,6 +934,22 @@ public class MyTunesRssConfig {
 
     public void setStatisticKeepTime(int statisticKeepTime) {
         myStatisticKeepTime = statisticKeepTime;
+    }
+
+    public String getVideoLanClientHost() {
+        return myVideoLanClientHost;
+    }
+
+    public void setVideoLanClientHost(String videoLanClientHost) {
+        myVideoLanClientHost = videoLanClientHost;
+    }
+
+    public int getVideoLanClientPort() {
+        return myVideoLanClientPort;
+    }
+
+    public void setVideoLanClientPort(int videoLanClientPort) {
+        myVideoLanClientPort = videoLanClientPort;
     }
 
     private String encryptCreationTime(long creationTime) {
