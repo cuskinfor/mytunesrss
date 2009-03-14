@@ -122,7 +122,7 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>SessionManagerFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/mytunesrss/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>CompressingFilter</filter-name>

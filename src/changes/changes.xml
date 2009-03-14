@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7-EAP-3" date="2009-xx-xx" description="3.7 EAP 3">
+            <action dev="mdescher" type="fix">
+                Removed href="#" from anchor tags and replaced by a style to show the pointer.
+            </action>
             <action dev="mdescher" type="add">
                 Remote control of Video Lan Client player through remote API.
             </action>

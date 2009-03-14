@@ -61,7 +61,7 @@
                 <td class="icon">
                     <c:choose>
                         <c:when test="${deleteConfirmation}">
-                            <a href="#" onclick="showDialog('confirmDeletePlaylist', [function() {document.location.href='${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}'}, null])">
+                            <a style="cursor:pointer" onclick="showDialog('confirmDeletePlaylist', [function() {document.location.href='${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}'}, null])">
                                 <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                         </c:when>
                         <c:otherwise>

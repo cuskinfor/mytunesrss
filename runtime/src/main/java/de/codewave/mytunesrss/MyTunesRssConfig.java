@@ -1146,6 +1146,8 @@ public class MyTunesRssConfig {
                 LOGGER.warn("Could not read/parse statistics keep time, keeping default.");
                 // intentionally left blank; keep default
             }
+            setVideoLanClientHost(JXPathUtils.getStringValue(settings, "remote-control/vlc/host", null));
+            setVideoLanClientPort(JXPathUtils.getIntValue(settings, "remote-control/vlc/port", 0));
         } catch (IOException e) {
             LOGGER.error("Could not read configuration file.", e);
         }
@@ -1364,6 +1366,12 @@ public class MyTunesRssConfig {
             notify.appendChild(DOMUtils.createBooleanElement(settings, "web-upload", isNotifyOnWebUpload()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "missing-file", isNotifyOnMissingFile()));
             root.appendChild(DOMUtils.createIntElement(settings, "statistics-keep-time", getStatisticKeepTime()));
+            Element remoteControl = settings.createElement("remote-control");
+            root.appendChild(remoteControl);
+            Element remoteControlVlc = settings.createElement("vlc");
+            remoteControl.appendChild(remoteControlVlc);
+            remoteControlVlc.appendChild(DOMUtils.createTextElement(settings, "host", getVideoLanClientHost()));
+            remoteControlVlc.appendChild(DOMUtils.createIntElement(settings, "port", getVideoLanClientPort()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

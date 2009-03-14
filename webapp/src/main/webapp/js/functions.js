@@ -168,3 +168,27 @@ function enableScrollWheel(element) {
         element.removeEventListener("mousewheel", cancelEvent, false);
     }
 }
+
+function jsonRpc(serverUrl, func, parameterArray) {
+    new Ajax.Request(serverUrl + "/../jsonrpc", {
+        postBody : $H({
+            "version" : "1.1",
+            "method" : "LoginService.login",
+            "id" : "0",
+            "params" : ["mdescher", "Im2faf4U", 1]
+        }).toJSON(),
+        onSuccess : function(result) {
+            new Ajax.Request(serverUrl + "/../jsonrpc", {
+                requestHeaders : $H({
+                    "X-MyTunesRSS-ID" : result.responseJSON.result
+                }),
+                postBody : $H({
+                    "version" : "1.1",
+                    "method" : func,
+                    "id" : "0",
+                    "params" : parameterArray
+                }).toJSON()
+            })
+        }
+    });
+}

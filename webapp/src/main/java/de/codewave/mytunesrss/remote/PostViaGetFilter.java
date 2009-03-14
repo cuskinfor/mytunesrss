@@ -21,10 +21,9 @@ public class PostViaGetFilter implements Filter {
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (request instanceof HttpServletRequest && StringUtils.isNotBlank(request.getParameter("body")) &&
-                "GET".equals(((HttpServletRequest)request).getMethod())) {
+        if (request instanceof HttpServletRequest && "GET".equals(((HttpServletRequest) request).getMethod()) && StringUtils.isNotBlank(request.getParameter("body"))) {
             LOGGER.debug("POST via GET servlet filter.");
-            HttpServletRequestWrapper wrapper = new PostViaGetRequestWrapper((HttpServletRequest)request, request.getParameter("body"));
+            HttpServletRequestWrapper wrapper = new PostViaGetRequestWrapper((HttpServletRequest) request, request.getParameter("body"));
             chain.doFilter(wrapper, response);
         } else {
             chain.doFilter(request, response);

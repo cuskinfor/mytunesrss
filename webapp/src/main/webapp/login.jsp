@@ -70,7 +70,7 @@
                 &nbsp;
               </td>
               <td class="forgottenpassword">
-                <a href="#" onclick="self.document.forms[0].action='${servletUrl}/sendForgottenPassword';self.document.forms[0].submit()"><fmt:message key="forgottenPasswordLink"/></a>
+                <a style="cursor:pointer" onclick="self.document.forms[0].action='${servletUrl}/sendForgottenPassword';self.document.forms[0].submit()"><fmt:message key="forgottenPasswordLink"/></a>
               </td>
               <td>
                 &nbsp;

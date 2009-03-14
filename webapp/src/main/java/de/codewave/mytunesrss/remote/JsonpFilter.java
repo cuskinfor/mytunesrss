@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 public class JsonpFilter implements Filter {
@@ -12,9 +13,13 @@ public class JsonpFilter implements Filter {
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String jsonp = request.getParameter("jsonp");
-        if (response instanceof HttpServletResponse && StringUtils.isNotEmpty(jsonp)) {
-            chain.doFilter(request, new JsonpFilterResponseWrapper((HttpServletResponse)response, jsonp));
+        if (request instanceof HttpServletRequest && "GET".equals(((HttpServletRequest) request).getMethod())) {
+            String jsonp = request.getParameter("jsonp");
+            if (response instanceof HttpServletResponse && StringUtils.isNotEmpty(jsonp)) {
+                chain.doFilter(request, new JsonpFilterResponseWrapper((HttpServletResponse)response, jsonp));
+            } else {
+                chain.doFilter(request, response);
+            }
         } else {
             chain.doFilter(request, response);
         }
