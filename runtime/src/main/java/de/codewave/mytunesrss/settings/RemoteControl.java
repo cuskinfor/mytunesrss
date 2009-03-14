@@ -16,6 +16,7 @@ public class RemoteControl implements SettingsForm {
     private JTextField myVlcPortInput;
 
     public void init() {
+        initValues();
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myVlcPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString(
                 "error.illegalVlcPort")));
     }

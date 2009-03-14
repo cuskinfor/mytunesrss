@@ -462,6 +462,7 @@ public class User implements MyTunesRssEventListener {
         setLastFmPasswordHash(JXPathUtils.getByteArray(settings, "lastFmPassword", null));
         setUrlEncryption(JXPathUtils.getBooleanValue(settings, "urlEncryption", true));
         setEmail(JXPathUtils.getStringValue(settings, "email", null));
+        setRemoteControl(JXPathUtils.getBooleanValue(settings, "remoteControl", false));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -509,6 +510,7 @@ public class User implements MyTunesRssEventListener {
             users.appendChild(DOMUtils.createByteArrayElement(settings, "lastFmPassword", getLastFmPasswordHash()));
         }
         users.appendChild(DOMUtils.createBooleanElement(settings, "urlEncryption", isUrlEncryption()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "remoteControl", isRemoteControl()));
     }
 
     public synchronized void playLastFmTrack(final Track track) {
