@@ -7,12 +7,12 @@
 
     <body>
 
-        <release version="3.7-EAP-3" date="2009-xx-xx" description="3.7 EAP 3">
+        <release version="3.7-EAP-3" date="2009-03-15" description="3.7 EAP 3">
             <action dev="mdescher" type="fix">
                 Removed href="#" from anchor tags and replaced by a style to show the pointer.
             </action>
             <action dev="mdescher" type="add">
-                Remote control of Video Lan Client player. Links in user interface and remote API. 
+                Remote control of Video Lan Client player. Links in user interface and remote API.
             </action>
             <action dev="mdescher" type="add">
                 User can select web language on login screen. This preferred language is stored in the
