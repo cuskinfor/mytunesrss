@@ -381,4 +381,13 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         onChange();
         return MyTunesRssUtils.getBundleString("info.userSettingsRemovedFromProfile");
     }
+
+    public boolean isPermissionRemoteControl() {
+        return MyTunesRss.CONFIG.getUser(myUsername).isRemoteControl();
+    }
+
+    public void setPermissionRemoteControl(boolean permissionRemoteControl) {
+        MyTunesRss.CONFIG.getUser(myUsername).setRemoteControl(permissionRemoteControl);
+        onChange();
+    }
 }

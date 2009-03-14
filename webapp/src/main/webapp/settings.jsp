@@ -317,6 +317,15 @@
                     </td>
                 </tr>
             </c:if>
+            <c:if test="${authUser.remoteControl}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.showRemoteControl" /></td>
+                    <td>
+                        <input type="checkbox" name="remoteControl" value="true" <c:if test="${config.remoteControl}">checked="checked"</c:if> />
+                        <img src="${appUrl}/images/remote_control.gif" alt="remote control" style="vertical-align:text-top;" />
+                    </td>
+                </tr>
+            </c:if>
             <c:if test="${authUser.transcoder && globalConfig.validLameBinary}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.useLame" /></td>

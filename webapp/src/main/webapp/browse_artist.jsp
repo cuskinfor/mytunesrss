@@ -125,6 +125,11 @@
                     <td class="icon">
                         <c:choose>
                             <c:when test="${empty sessionScope.playlist}">
+                                <c:if test="${authUser.remoteControl && config.remoteControl}">
+                                    <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', 'VideoLanClientService.loadArtist', ['${artist.name}', false, true])">
+                                        <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                             alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
+                                </c:if>
                                 <c:if test="${authUser.rss && config.showRss}">
                                     <a href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.xml">
                                         <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"

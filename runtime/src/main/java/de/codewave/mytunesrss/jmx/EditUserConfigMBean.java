@@ -125,4 +125,8 @@ public interface EditUserConfigMBean {
     void setPermissionChangeEmail(boolean permissionChangeEmail);
 
     String removeWebSettingsFromUserProfile();
+
+    boolean isPermissionRemoteControl();
+
+    void setPermissionRemoteControl(boolean permissionRemoteControl);
 }

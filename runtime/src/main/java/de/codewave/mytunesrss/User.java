@@ -79,6 +79,7 @@ public class User implements MyTunesRssEventListener {
     private boolean myUrlEncryption;
     private String myEmail;
     private boolean myChangeEmail;
+    private boolean myRemoteControl;
 
     public User(String name) {
         myName = name;
@@ -341,6 +342,14 @@ public class User implements MyTunesRssEventListener {
 
     public void setChangeEmail(boolean changeEmail) {
         myChangeEmail = changeEmail;
+    }
+
+    public boolean isRemoteControl() {
+        return myRemoteControl;
+    }
+
+    public void setRemoteControl(boolean remoteControl) {
+        myRemoteControl = remoteControl;
     }
 
     @Override

@@ -8,6 +8,8 @@ import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * de.codewave.mytunesrss.remote.service.VideoLanClientService
  */
@@ -48,8 +50,24 @@ public class VideoLanClientService {
         return loadItem("album=" + MyTunesRssBase64Utils.encode(albumName), start);
     }
 
-    public String loadArtist(String artistName, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        return loadItem("artist=" + MyTunesRssBase64Utils.encode(artistName), start);
+    public String loadArtist(String artistName, boolean fullAlbums, boolean start) throws IllegalAccessException, IOException, InterruptedException {
+        if (fullAlbums) {
+            return loadItem("fullAlbums=true/artist=" + MyTunesRssBase64Utils.encode(artistName), start);
+        } else {
+            return loadItem("artist=" + MyTunesRssBase64Utils.encode(artistName), start);
+        }
+    }
+
+    public String loadGenre(String genreName, boolean start) throws IllegalAccessException, IOException, InterruptedException {
+        return loadItem("genre=" + MyTunesRssBase64Utils.encode(genreName), start);
+    }
+
+    public String loadTrack(String trackId, boolean start) throws IllegalAccessException, IOException, InterruptedException {
+        return loadItem("track=" + trackId, start);
+    }
+
+    public String loadTracks(String[] trackIds, boolean start) throws IllegalAccessException, IOException, InterruptedException {
+        return loadItem("tracklist=" + StringUtils.join(trackIds, ","), start);
     }
 
     public String clearPlaylist() throws IllegalAccessException, IOException, InterruptedException {

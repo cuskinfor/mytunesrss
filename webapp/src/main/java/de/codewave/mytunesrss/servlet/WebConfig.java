@@ -54,6 +54,7 @@ public class WebConfig {
     private static final String CFG_RANDOM_PROTECTED = "rndProt";
     private static final String CFG_ALBUM_IMAGE_SIZE = "albImgSize";
     private static final String CFG_LANGUAGE = "lc";
+    private static final String CFG_SHOW_REMOTE_CONTROL = "rmCtrl";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -146,6 +147,7 @@ public class WebConfig {
         myConfigValues.put(CFG_RANDOM_MEDIATYPE, "");
         myConfigValues.put(CFG_RANDOM_PROTECTED, "true");
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "128");
+        myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "true");
     }
 
     private void initWithIphoneDefaults() {
@@ -550,5 +552,13 @@ public class WebConfig {
         } else {
             myConfigValues.remove(CFG_LANGUAGE);
         }
+    }
+
+    public boolean isRemoteControl() {
+        return Boolean.parseBoolean(myConfigValues.get(CFG_SHOW_REMOTE_CONTROL));
+    }
+
+    public void setRemoteControl(boolean remoteControl) {
+        myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, Boolean.toString(remoteControl));
     }
 }

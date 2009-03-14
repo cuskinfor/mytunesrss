@@ -74,6 +74,7 @@ public class EditUser implements MyTunesRssEventListener {
     private JTextField myEmailInput;
     private JCheckBox myPermChangeEmail;
     private JButton myRemoveUserSettingFromProfileButton;
+    private JCheckBox myPermRemoteControlnput;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -204,6 +205,7 @@ public class EditUser implements MyTunesRssEventListener {
             myUrlEncryptionInput.setSelected(myUser.isUrlEncryption());
             myEmailInput.setText(myUser.getEmail());
             myPermChangeEmail.setSelected(myUser.isChangeEmail());
+            myPermRemoteControlnput.setSelected(myUser.isRemoteControl());
         } else {
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
             myPermRssInput.setSelected(true);
@@ -342,6 +344,7 @@ public class EditUser implements MyTunesRssEventListener {
                     myUser.setLastFmPasswordHash(myLastFmPasswordInput.getPasswordHash());
                     myUser.setEditLastFmAccount(myPermEditLastFMAccountInput.isSelected());
                     myUser.setUrlEncryption(myUrlEncryptionInput.isSelected());
+                    myUser.setRemoteControl(myPermRemoteControlnput.isSelected());
                     MyTunesRss.CONFIG.addUser(myUser);
                     if (myClose) {
                         myDialog.dispose();
