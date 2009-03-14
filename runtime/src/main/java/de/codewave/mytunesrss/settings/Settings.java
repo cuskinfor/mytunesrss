@@ -67,7 +67,7 @@ public class Settings implements MyTunesRssEventListener {
         int limit = 400;
         myInfoForm = new Info();
         mySettingsForms = new SettingsForm[] {new Server(), new Database(), new Directories(), new DataImport(), new Content(), new UserManagement(),
-                                              new AdminNotify(), new Statistics(), new Misc(), new Streaming(), new Addons(), myInfoForm};
+                                              new AdminNotify(), new Statistics(), new Misc(), new Streaming(), new Addons(), new RemoteControl(), myInfoForm};
         for (SettingsForm form : mySettingsForms) {
             addSettingsItem(form);
             int itemWidth = myConfigButtonsPanel.getPreferredSize().width - lastPreferredWidth;
