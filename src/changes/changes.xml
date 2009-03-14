@@ -12,7 +12,7 @@
                 Removed href="#" from anchor tags and replaced by a style to show the pointer.
             </action>
             <action dev="mdescher" type="add">
-                Remote control of Video Lan Client player through remote API.
+                Remote control of Video Lan Client player. Links in user interface and remote API. 
             </action>
             <action dev="mdescher" type="add">
                 User can select web language on login screen. This preferred language is stored in the
