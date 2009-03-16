@@ -103,7 +103,7 @@ public class MyTunesRss {
             UPDATE_URL = new URL("http://www.codewave.de/download/versions/mytunesrss.xml");
         } catch (MalformedURLException e) {
             if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not create update url.", e);
+                LOGGER.error("Could not create update external.", e);
             }
         }
         try {

@@ -92,9 +92,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         }
                         InsertOrUpdateTrackStatement statement;
                         if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
-                            statement = existing ? new UpdateTrackAndImageStatement() : new InsertTrackAndImageStatement(TrackSource.FileSystem);
+                            statement = existing ? new UpdateTrackAndImageStatement(TrackSource.FileSystem) : new InsertTrackAndImageStatement(TrackSource.FileSystem);
                         } else {
-                            statement = existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.FileSystem);
+                            statement = existing ? new UpdateTrackStatement(TrackSource.FileSystem) : new InsertTrackStatement(TrackSource.FileSystem);
                         }
                         statement.clear();
                         statement.setId(fileId);

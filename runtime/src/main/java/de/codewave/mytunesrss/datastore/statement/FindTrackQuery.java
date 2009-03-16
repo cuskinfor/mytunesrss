@@ -128,6 +128,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
 
         public Track create(ResultSet resultSet) throws SQLException {
             Track track = new Track();
+            track.setSource(TrackSource.valueOf(resultSet.getString("SOURCE")));
             track.setId(resultSet.getString("ID"));
             track.setName(resultSet.getString("NAME"));
             track.setArtist(resultSet.getString("ARTIST"));
@@ -136,6 +137,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             track.setTime(resultSet.getInt("TIME"));
             track.setTrackNumber(resultSet.getInt("TRACK_NUMBER"));
             String pathname = resultSet.getString("FILE");
+            track.setFilename(pathname);
             track.setFile(StringUtils.isNotEmpty(pathname) ? new File(pathname) : null);
             track.setProtected(resultSet.getBoolean("PROTECTED"));
             track.setMediaType(MediaType.valueOf(resultSet.getString("MEDIATYPE")));

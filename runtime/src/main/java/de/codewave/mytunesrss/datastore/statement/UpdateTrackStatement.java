@@ -24,6 +24,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateTrackStatement.class);
     public static final String UNKNOWN = new String("!");
 
+    private TrackSource mySource;
     private String myId;
     private String myName;
     private String myArtist;
@@ -39,6 +40,10 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
     private int myPosNumber;
     private int myPosSize;
     private SmartStatement myStatement;
+
+    public UpdateTrackStatement(TrackSource source) {
+        mySource = source;
+    }
 
     public void setAlbum(String album) {
         myAlbum = album;
@@ -116,7 +121,13 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setBoolean("protected", myProtected);
             myStatement.setString("mediatype", myMediaType.name());
             myStatement.setString("genre", myGenre);
-            myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
+            if (mySource == TrackSource.YouTube) {
+                myStatement.setString("suffix", "flv");
+            } else if (mySource.isExternal()) {
+                myStatement.setString("suffix", "");
+            } else {
+                myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
+            }
             myStatement.setString("mp4codec", myMp4Codec);
             myStatement.setLong("ts_updated", System.currentTimeMillis());
             myStatement.setString("comment", myComment);

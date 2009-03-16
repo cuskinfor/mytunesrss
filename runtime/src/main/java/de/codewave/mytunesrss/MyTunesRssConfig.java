@@ -131,8 +131,8 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnMissingFile;
     private int myStatisticKeepTime = 60;
     private String myCryptedCreationTime;
-    private String myVideoLanClientHost = "127.0.0.1";
-    private int myVideoLanClientPort = 12345;
+    private String myVideoLanClientHost = "";
+    private int myVideoLanClientPort = 0;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -1017,6 +1017,7 @@ public class MyTunesRssConfig {
             while (contextIterator.hasNext()) {
                 dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
             }
+            //dataSources.add("http://gdata.youtube.com/feeds/base/users/rathergoodstuff/uploads?alt=rss&v=2&orderby=published&client=ytapi-youtube-profile"); // TODO
             setDatasources(dataSources.toArray(new String[dataSources.size()]));
             setAlbumFallback(JXPathUtils.getStringValue(settings, "albumFallback", "[dir:0]"));
             setArtistFallback(JXPathUtils.getStringValue(settings, "artistFallback", "[dir:1]"));

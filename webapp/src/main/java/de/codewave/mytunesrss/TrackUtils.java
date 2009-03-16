@@ -133,6 +133,7 @@ public class TrackUtils {
         private String mySectionPlaylistId;
 
         private EnhancedTrack(Track track) {
+            setSource(track.getSource());
             setId(track.getId());
             setName(track.getName());
             setAlbum(track.getAlbum());
@@ -140,6 +141,7 @@ public class TrackUtils {
             setOriginalArtist(track.getOriginalArtist());
             setTime(track.getTime());
             setTrackNumber(track.getTrackNumber());
+            setFilename(track.getFilename());
             setFile(track.getFile());
             setProtected(track.isProtected());
             setMediaType(track.getMediaType());

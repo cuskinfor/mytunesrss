@@ -101,7 +101,7 @@ public class TrackListener implements PListHandlerListener {
                             dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
                         try {
                             InsertOrUpdateTrackStatement statement =
-                                    existing ? new UpdateTrackStatement() : new InsertTrackStatement(TrackSource.ITunes);
+                                    existing ? new UpdateTrackStatement(TrackSource.ITunes) : new InsertTrackStatement(TrackSource.ITunes);
                             statement.clear();
                             statement.setId(trackId);
                             statement.setName(MyTunesRssUtils.normalize(name.trim()));

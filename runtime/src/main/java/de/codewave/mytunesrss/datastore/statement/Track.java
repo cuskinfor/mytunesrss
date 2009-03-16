@@ -33,6 +33,8 @@ public class Track {
     private String myComment;
     private int myPosNumber;
     private int myPosSize;
+    private String filename;
+    private TrackSource source;
 
     public String getAlbum() {
         return myAlbum;
@@ -201,6 +203,22 @@ public class Track {
 
     public void setPosSize(int posSize) {
         myPosSize = posSize;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public TrackSource getSource() {
+        return source;
+    }
+
+    public void setSource(TrackSource source) {
+        this.source = source;
     }
 
     @Override

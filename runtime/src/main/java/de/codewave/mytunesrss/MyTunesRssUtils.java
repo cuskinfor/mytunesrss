@@ -11,10 +11,8 @@ import de.codewave.utils.sql.SmartStatement;
 import de.codewave.utils.swing.SwingUtils;
 import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
 import de.codewave.utils.swing.pleasewait.PleaseWaitUtils;
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +22,8 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.mail.internet.ContentType;
+import javax.mail.internet.ParseException;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -344,5 +344,32 @@ public class MyTunesRssUtils {
             }
         }
         return StringUtils.trimToEmpty(defaultText);
+    }
+
+    public static String getBaseType(String contentType) {
+        try {
+            ContentType type = new ContentType(StringUtils.trimToEmpty(contentType));
+            return type.getBaseType();
+        } catch (ParseException e) {
+            LOGGER.warn("Could not get base type from content type \"" + contentType + "\".", e);
+        }
+        return "application/octet-stream";
+    }
+
+    public static String getContentTypeFromUrl(String url) {
+        HttpClient client = new HttpClient();
+        GetMethod method = new GetMethod(url);
+        try {
+            if (client.executeMethod(method) == 200) {
+                return getBaseType(method.getResponseHeader("Content-Type").getValue());
+            }
+        } catch (HttpException e) {
+            LOGGER.warn("Could not get content type from url \"" + url + "\".", e);
+        } catch (IOException e) {
+            LOGGER.warn("Could not get content type from url \"" + url + "\".", e);
+        } finally {
+            method.releaseConnection();
+        }
+        return "application/octet-stream";
     }
 }

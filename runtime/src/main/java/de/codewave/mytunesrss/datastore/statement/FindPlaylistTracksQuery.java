@@ -106,12 +106,14 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
         public Track create(ResultSet resultSet) throws SQLException {
             Track track = new Track();
             track.setId(resultSet.getString("ID"));
+            track.setSource(TrackSource.valueOf(resultSet.getString("SOURCE")));
             track.setName(resultSet.getString("NAME"));
             track.setArtist(resultSet.getString("ARTIST"));
             track.setOriginalArtist(resultSet.getString("ORIGINAL_ARTIST"));
             track.setAlbum(resultSet.getString("ALBUM"));
             track.setTime(resultSet.getInt("TIME"));
             track.setTrackNumber(resultSet.getInt("TRACK_NUMBER"));
+            track.setFilename(resultSet.getString("FILE"));
             track.setFile(new File(resultSet.getString("FILE")));
             track.setProtected(resultSet.getBoolean("PROTECTED"));
             track.setMediaType(MediaType.valueOf(resultSet.getString("MEDIATYPE")));
