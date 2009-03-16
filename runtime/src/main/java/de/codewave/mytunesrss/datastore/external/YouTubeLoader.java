@@ -62,7 +62,8 @@ public class YouTubeLoader {
                         String title = JXPathUtils.getStringValue(item, "title", null);
                         Map<String, String> redirectUrlParams = getRedirectUrlParams(JXPathUtils.getStringValue(item, "link", null));
                         if (redirectUrlParams != null) {
-                            String link = redirectUrlParams.get("LOCATION");
+                            String swf = redirectUrlParams.get("swf");
+                            String videoId = redirectUrlParams.get("video_id");
                             String author = JXPathUtils.getStringValue(item, "author", null);
                             String pubDate = JXPathUtils.getStringValue(item, "pubDate", null);
                             String lengthSeconds = redirectUrlParams.get("length_seconds");
@@ -72,14 +73,15 @@ public class YouTubeLoader {
                             } catch (ParseException e) {
                                 LOGGER.warn("Could not parse YouTube item publish date \"" + pubDate + "\".", e);
                             }
-                            String itemId = createItemId(link);
+                            String fileName = swf + "?video_id=" + videoId; 
+                            String itemId = createItemId(fileName);
                             boolean existing = myTrackIds.contains(itemId);
                             if (existing) {
                                 myExistingIds.add(itemId);
                             }
                             if ((modifyTime >= myLastUpdateTime || !existing)) {
                                 if (LOGGER.isDebugEnabled()) {
-                                    LOGGER.debug("Processing item from URL \"" + link + "\".");
+                                    LOGGER.debug("Processing item from url \"" + fileName + "\".");
                                 }
                                 InsertOrUpdateTrackStatement statement;
                                 if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
@@ -90,7 +92,7 @@ public class YouTubeLoader {
                                     statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
                                 }
                                 statement.setId(itemId);
-                                statement.setFileName(link);
+                                statement.setFileName(fileName);
                                 statement.setName(title);
                                 statement.setArtist(author);
                                 statement.setAlbum(feedTitle);
@@ -105,7 +107,7 @@ public class YouTubeLoader {
                                     myExistingIds.add(itemId);
                                 } catch (SQLException e) {
                                     if (LOGGER.isErrorEnabled()) {
-                                        LOGGER.error("Could not insert track \"" + link + "\" into database", e);
+                                        LOGGER.error("Could not insert track \"" + url + "\" into database", e);
                                     }
                                 }
                             }
@@ -141,7 +143,6 @@ public class YouTubeLoader {
                     if (sc == 301 || sc == 302 || sc == 303 || sc == 307) {
                         Map<String, String> redirectUrlParams = new HashMap<String, String>();
                         String location = method.getResponseHeader("Location").getValue();
-                        redirectUrlParams.put("LOCATION", location);
                         String params = StringUtils.split(location, "?")[1];
                         for (String param : StringUtils.split(params, "&")) {
                             String[] keyValue = StringUtils.split(param, "=");

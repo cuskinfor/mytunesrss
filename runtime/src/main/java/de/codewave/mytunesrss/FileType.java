@@ -55,17 +55,6 @@ public class FileType {
         return true;
     }
 
-    public static FileType getForMimeType(String mimeType) {
-        if (StringUtils.isNotBlank(mimeType)) {
-            for (FileType type : MyTunesRss.CONFIG.getFileTypes()) {
-                if (type.getMimeType().equalsIgnoreCase(mimeType)) {
-                    return type;
-                }
-            }
-        }
-        return null;
-    }
-
     public FileType() {
         // intentionally left blank
     }

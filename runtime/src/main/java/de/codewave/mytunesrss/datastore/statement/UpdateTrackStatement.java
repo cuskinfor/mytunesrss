@@ -122,7 +122,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setString("mediatype", myMediaType.name());
             myStatement.setString("genre", myGenre);
             if (mySource == TrackSource.YouTube) {
-                myStatement.setString("suffix", "flv");
+                myStatement.setString("suffix", "swf");
             } else if (mySource.isExternal()) {
                 myStatement.setString("suffix", "");
             } else {
