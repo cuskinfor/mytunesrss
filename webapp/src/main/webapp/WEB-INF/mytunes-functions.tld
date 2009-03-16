@@ -298,4 +298,15 @@
         </function-signature>
     </function>
 
+    <function>
+        <description>
+            Get the playback link for a track.
+        </description>
+        <name>playbackLink</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String playbackUrl(javax.servlet.jsp.PageContext,
+            de.codewave.mytunesrss.datastore.statement.Track)
+        </function-signature>
+    </function>
+
 </taglib>

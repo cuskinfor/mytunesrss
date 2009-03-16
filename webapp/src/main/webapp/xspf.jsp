@@ -5,14 +5,7 @@
     <trackList>
         <c:forEach items="${tracks}" var="item">
             <track>
-                <c:choose>
-                    <c:when test="${item.source.external}">
-                        <location>${item.filename}</location>
-                    </c:when>
-                    <c:otherwise>
-                        <location>${downloadPlaybackServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}/tc=${mtfn:tcParamValue(pageContext, authUser, item)}/playerRequest=${param.playerRequest}</mt:encrypt>/${mtfn:virtualTrackName(item)}.${mtfn:suffix(config, authUser, item)}</location>
-                    </c:otherwise>
-                </c:choose>
+                <location><c:out value="${mtfn:playbackLink(pageContext, track)}"/></location>
                 <creator><c:out value="${cwfn:choose(mtfn:unknown(item.originalArtist), msgUnknown, item.originalArtist)}" /></creator>
                 <album><c:out value="${cwfn:choose(mtfn:unknown(item.album), msgUnknown, item.album)}" /></album>
                 <title><c:out value="${item.name}"/></title>

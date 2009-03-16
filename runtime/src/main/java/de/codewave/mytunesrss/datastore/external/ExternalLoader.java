@@ -15,7 +15,9 @@ public class ExternalLoader {
 
     public static void process(String external, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds) {
         if (StringUtils.startsWithIgnoreCase(external, "youtube:")) {
-            new YouTubeLoader(storeSession, timeLastUpdate, trackIds).process(external.substring("youtube:".length()));
+            YouTubeLoader youTubeLoader = new YouTubeLoader(storeSession, timeLastUpdate, trackIds);
+            youTubeLoader.process(external.substring("youtube:".length()));
+            trackIds.removeAll(youTubeLoader.getExistingIds());
         } else {
             LOGGER.warn("External type \"" + external + "\" not supported.");
         }

@@ -19,7 +19,7 @@
                 <link>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></link>
                 <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></guid>
                 <pubDate>${pubDate}</pubDate>
-                <enclosure url="${downloadPlaybackServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/tc=${mtfn:tcParamValue(pageContext, authUser, track)}</mt:encrypt>/${cwfn:encodeUrl(virtualFileName)}"
+                <enclosure url="<c:out value="${mtfn:playbackLink(pageContext, track)}"/>"
                            type="${mtfn:contentType(config, authUser, track)}"
                            <c:if test="${!mtfn:transcoding(pageContext, authUser, track)}">length="${track.contentLength}"</c:if>
                         />

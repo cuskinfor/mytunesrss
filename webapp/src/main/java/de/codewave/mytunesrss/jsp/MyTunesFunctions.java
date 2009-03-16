@@ -14,11 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.io.UnsupportedEncodingException;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
@@ -222,5 +225,30 @@ public class MyTunesFunctions {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         WebConfig config = MyTunesRssWebUtils.getWebConfig(request);
         return StringUtils.isBlank(config.getLanguage()) ? (requestFallback ? pageContext.getRequest().getLocale() : null) : new Locale(config.getLanguage());
+    }
+
+    public static String playbackUrl(PageContext pageContext, Track track) {
+        if (track.getSource().isExternal()) {
+            return track.getFilename();
+        }
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        HttpSession session = request.getSession();
+        StringBuilder builder = new StringBuilder((String) request.getAttribute("downloadPlaybackServletUrl"));
+        String auth = (String) request.getAttribute("auth");
+        if (StringUtils.isBlank(auth)) {
+            auth = (String) session.getAttribute("auth");
+        }
+        builder.append("/").append("playTrack").append("/").append(auth);
+        StringBuilder pathInfo = new StringBuilder("track=");
+        User user = MyTunesRssWebUtils.getAuthUser(request);
+        try {
+            pathInfo.append(URLEncoder.encode(track.getId(), "UTF-8")).append("/tc=").append(tcParamValue(pageContext, user, track));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not found!");
+        }
+        pathInfo.append("/playerRequest=").append(request.getParameter("playerRequest"));
+        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
+        builder.append("/").append(virtualTrackName(track)).append(".").append(suffix(MyTunesRssWebUtils.getWebConfig(request), user, track));
+        return builder.toString();
     }
 }

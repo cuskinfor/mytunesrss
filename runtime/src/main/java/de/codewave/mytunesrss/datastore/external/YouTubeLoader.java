@@ -14,6 +14,9 @@ import de.codewave.mytunesrss.datastore.statement.UpdateTrackStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +26,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * de.codewave.mytunesrss.datastore.url.UrlLoader
@@ -30,14 +35,17 @@ import java.util.Set;
 public class YouTubeLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(YouTubeLoader.class);
     private static final String YOUTUBE_VIDEO_PREFIX = "http://www.youtube.com/watch?v=";
+    private static final String YOUTUBE_MYTUNESRSS_FILENAME_PREFIX = "http://youtube.com/get_video?video_id=";
     private static final String YOUTUBE_VIDEO_FEED_PREFIX = "http://gdata.youtube.com/feeds/api/videos/";
     private static final String YOUTUBE_API_CLIENT_ID = "ytapi-MichaelDescher-MyTuneRSS-l70f4r3p-0";
+    private static final Pattern YOUTUBE_ADDITIONAL_PARAM_PATTERN = Pattern.compile("swfArgs.*\\{.*\"t\".*?\"([^\"]+)\"");
 
     private Collection<String> myTrackIds;
     private Set<String> myExistingIds = new HashSet<String>();
     private DataStoreSession myStoreSession;
     private int myUpdatedCount;
     private YouTubeService myService;
+    private HttpClient myHttpClient = new HttpClient(new MultiThreadedHttpConnectionManager());
 
     public YouTubeLoader(DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds) {
         myService = new YouTubeService(YOUTUBE_API_CLIENT_ID);
@@ -91,7 +99,7 @@ public class YouTubeLoader {
                 statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
             }
             statement.setId(trackId);
-            statement.setFileName(YOUTUBE_VIDEO_PREFIX + videoId);
+            statement.setFileName(YOUTUBE_MYTUNESRSS_FILENAME_PREFIX + videoId + "&t=" + retrieveAdditionalParam(videoId) + "&fmt=18");
             statement.setName(videoEntry.getTitle().getPlainText());
             statement.setArtist(videoEntry.getAuthors().get(0).getName());
             statement.setAlbum(album);
@@ -114,5 +122,26 @@ public class YouTubeLoader {
         } else {
             LOGGER.warn("Illegal video id \"" + videoEntry.getId() + "\".");
         }
+    }
+
+    private String retrieveAdditionalParam(String videoId) {
+        GetMethod method = new GetMethod(YOUTUBE_VIDEO_PREFIX + videoId);
+        try {
+            if (myHttpClient.executeMethod(method) == 200) {
+                Matcher matcher = YOUTUBE_ADDITIONAL_PARAM_PATTERN.matcher(method.getResponseBodyAsString());
+                if (matcher.find()) {
+                    return matcher.group(1);
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error("Could not retrieve additional parameter for youtube video using url \"" + (YOUTUBE_VIDEO_PREFIX + videoId) + "\".", e);
+        } finally {
+            method.releaseConnection();
+        }
+        return null;
+    }
+
+    public Set<String> getExistingIds() {
+        return myExistingIds;
     }
 }
