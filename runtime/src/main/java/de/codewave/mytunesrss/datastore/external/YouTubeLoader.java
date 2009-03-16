@@ -1,172 +1,118 @@
 package de.codewave.mytunesrss.datastore.external;
 
+import com.google.gdata.client.youtube.YouTubeService;
+import com.google.gdata.data.youtube.VideoEntry;
+import com.google.gdata.data.youtube.VideoFeed;
+import com.google.gdata.data.youtube.YouTubeMediaGroup;
+import com.google.gdata.util.ServiceException;
 import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.mytunesrss.datastore.statement.UpdateTrackStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.xml.JXPathUtils;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * de.codewave.mytunesrss.datastore.url.UrlLoader
  */
 public class YouTubeLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(YouTubeLoader.class);
-    private static final SimpleDateFormat PUBLISH_DATE_FORMAT = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US);
-    private static final Pattern EMBED_URL_PATTERN = Pattern.compile(".*embedUrl[ =]*'(.*?)';.*", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+    private static final String YOUTUBE_VIDEO_PREFIX = "http://www.youtube.com/watch?v=";
+    private static final String YOUTUBE_VIDEO_FEED_PREFIX = "http://gdata.youtube.com/feeds/api/videos/";
+    private static final String YOUTUBE_API_CLIENT_ID = "ytapi-MichaelDescher-MyTuneRSS-l70f4r3p-0";
 
-    private long myLastUpdateTime;
     private Collection<String> myTrackIds;
     private Set<String> myExistingIds = new HashSet<String>();
     private DataStoreSession myStoreSession;
     private int myUpdatedCount;
+    private YouTubeService myService;
 
     public YouTubeLoader(DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds) {
+        myService = new YouTubeService(YOUTUBE_API_CLIENT_ID);
         myStoreSession = storeSession;
-        myLastUpdateTime = lastUpdateTime;
         myTrackIds = trackIds;
     }
 
     public void process(String url) {
-        HttpClient client = new HttpClient();
-        GetMethod method = new GetMethod(url);
-        try {
-            if (client.executeMethod(method) == 200) {
-                String contentType = MyTunesRssUtils.getBaseType(method.getResponseHeader("Content-Type").getValue());
-                if (StringUtils.equalsIgnoreCase(contentType, "application/rss+xml")) {
-                    JXPathContext rssFeed = JXPathUtils.getContext(method.getResponseBodyAsString());
-                    String feedTitle = JXPathUtils.getStringValue(rssFeed, "/rss/channel/title", null);
-                    for (Iterator<JXPathContext> itemIterator = JXPathUtils.getContextIterator(rssFeed, "/rss/channel/item"); itemIterator.hasNext();) {
-                        JXPathContext item = itemIterator.next();
-                        String title = JXPathUtils.getStringValue(item, "title", null);
-                        Map<String, String> redirectUrlParams = getRedirectUrlParams(JXPathUtils.getStringValue(item, "link", null));
-                        if (redirectUrlParams != null) {
-                            String swf = redirectUrlParams.get("swf");
-                            String videoId = redirectUrlParams.get("video_id");
-                            String author = JXPathUtils.getStringValue(item, "author", null);
-                            String pubDate = JXPathUtils.getStringValue(item, "pubDate", null);
-                            String lengthSeconds = redirectUrlParams.get("length_seconds");
-                            long modifyTime = System.currentTimeMillis();
-                            try {
-                                modifyTime = StringUtils.isNotBlank(pubDate) ? PUBLISH_DATE_FORMAT.parse(pubDate).getTime() : System.currentTimeMillis();
-                            } catch (ParseException e) {
-                                LOGGER.warn("Could not parse YouTube item publish date \"" + pubDate + "\".", e);
-                            }
-                            String fileName = swf + "?video_id=" + videoId; 
-                            String itemId = createItemId(fileName);
-                            boolean existing = myTrackIds.contains(itemId);
-                            if (existing) {
-                                myExistingIds.add(itemId);
-                            }
-                            if ((modifyTime >= myLastUpdateTime || !existing)) {
-                                if (LOGGER.isDebugEnabled()) {
-                                    LOGGER.debug("Processing item from url \"" + fileName + "\".");
-                                }
-                                InsertOrUpdateTrackStatement statement;
-                                if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
-                                    // TODO
-                                    // statement = existing ? new UpdateTrackAndImageStatement() : new InsertTrackAndImageStatement(TrackSource.YouTube);
-                                    statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
-                                } else {
-                                    statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
-                                }
-                                statement.setId(itemId);
-                                statement.setFileName(fileName);
-                                statement.setName(title);
-                                statement.setArtist(author);
-                                statement.setAlbum(feedTitle);
-                                if (StringUtils.isNotBlank(lengthSeconds) && StringUtils.isNumeric(lengthSeconds)) {
-                                    statement.setTime(Integer.parseInt(lengthSeconds));
-                                }
-                                statement.setMediaType(MediaType.Video);
-                                try {
-                                    myStoreSession.executeStatement(statement);
-                                    myUpdatedCount++;
-                                    DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
-                                    myExistingIds.add(itemId);
-                                } catch (SQLException e) {
-                                    if (LOGGER.isErrorEnabled()) {
-                                        LOGGER.error("Could not insert track \"" + url + "\" into database", e);
-                                    }
-                                }
-                            }
-                        } else {
-                            LOGGER.error("Did not get redirect url from youtube url \"" + url + "\".");
-                        }
-                    }
-                } else {
-                    LOGGER.error("Received wrong content type \"" + contentType + "\" from youtube url \"" + url + "\".");
+        if (StringUtils.startsWithIgnoreCase(url, YOUTUBE_VIDEO_PREFIX)) {
+            try {
+                processVideoEntry(myService.getEntry(new URL(YOUTUBE_VIDEO_FEED_PREFIX + url.substring(YOUTUBE_VIDEO_PREFIX.length())), VideoEntry.class));
+            } catch (IOException e) {
+                LOGGER.debug("Could not process youtube video from url \"" + url + "\".", e);
+            } catch (ServiceException e) {
+                LOGGER.debug("Could not process youtube video from url \"" + url + "\".", e);
+            }
+        } else {
+            try {
+                VideoFeed videoFeed = myService.getFeed(new URL(url), VideoFeed.class);
+                String album = videoFeed.getTitle().getPlainText();
+                for (VideoEntry videoEntry : videoFeed.getEntries()) {
+                    processVideoEntry(videoEntry, album);
                 }
+            } catch (Exception e) {
+                LOGGER.error("Could not process youtube video from url \"" + url + "\".", e);
+            }
+        }
+    }
+
+    private void processVideoEntry(VideoEntry videoEntry) {
+        processVideoEntry(videoEntry, null);
+    }
+
+    private void processVideoEntry(VideoEntry videoEntry, String album) {
+        if (videoEntry.getId().lastIndexOf(":") > -1 && videoEntry.getId().lastIndexOf(":") + 1 < videoEntry.getId().length()) {
+            String videoId = videoEntry.getId().substring(videoEntry.getId().lastIndexOf(":") + 1);
+            String trackId = "youtube_" + videoId;
+            boolean existing = myTrackIds.contains(trackId);
+            if (existing) {
+                myExistingIds.add(trackId);
+            }
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Processing youtube video \"" + videoId + "\".");
+            }
+            InsertOrUpdateTrackStatement statement;
+            if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
+                // TODO
+                // statement = existing ? new UpdateTrackAndImageStatement() : new InsertTrackAndImageStatement(TrackSource.YouTube);
+                statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
             } else {
-                LOGGER.error("Could not read from youtube url \"" + url + "\": " + method.getStatusText());
+                statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
             }
-        } catch (IOException e) {
-            LOGGER.error("Could not read from youtube url \"" + url + "\".", e);
-        } finally {
-            method.releaseConnection();
-        }
-    }
-
-    private Map<String, String> getRedirectUrlParams(String itemUrl) {
-        HttpClient client = new HttpClient();
-        GetMethod method = new GetMethod(itemUrl);
-        try {
-            if (client.executeMethod(method) == 200) {
-                Matcher matcher = EMBED_URL_PATTERN.matcher(method.getResponseBodyAsString());
-                if (matcher.matches() && matcher.groupCount() == 1) {
-                    String embedUrl = matcher.group(1);
-                    method.releaseConnection();
-                    method = new GetMethod(embedUrl);
-                    method.setFollowRedirects(false);
-                    int sc = client.executeMethod(method);
-                    if (sc == 301 || sc == 302 || sc == 303 || sc == 307) {
-                        Map<String, String> redirectUrlParams = new HashMap<String, String>();
-                        String location = method.getResponseHeader("Location").getValue();
-                        String params = StringUtils.split(location, "?")[1];
-                        for (String param : StringUtils.split(params, "&")) {
-                            String[] keyValue = StringUtils.split(param, "=");
-                            redirectUrlParams.put(keyValue[0], keyValue.length == 2 ? keyValue[1] : "");
-                        }
-                        return redirectUrlParams;
-                    }
+            statement.setId(trackId);
+            statement.setFileName(YOUTUBE_VIDEO_PREFIX + videoId);
+            statement.setName(videoEntry.getTitle().getPlainText());
+            statement.setArtist(videoEntry.getAuthors().get(0).getName());
+            statement.setAlbum(album);
+            YouTubeMediaGroup mediaGroup = videoEntry.getMediaGroup();
+            if (mediaGroup != null) {
+                statement.setGenre(mediaGroup.getYouTubeCategory() != null ? mediaGroup.getYouTubeCategory().getLabel() : null);
+                statement.setTime(mediaGroup.getDuration() != null ? (int) mediaGroup.getDuration().longValue() : 0);
+            }
+            statement.setMediaType(MediaType.Video);
+            try {
+                myStoreSession.executeStatement(statement);
+                myUpdatedCount++;
+                DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
+                myExistingIds.add(trackId);
+            } catch (SQLException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not insert youtube video \"" + videoId + "\" into database", e);
                 }
             }
-        } catch (HttpException e) {
-            LOGGER.warn("Could not get redirect url params from item url \"" + itemUrl + "\".", e);
-        } catch (IOException e) {
-            LOGGER.warn("Could not get redirect url params from item url \"" + itemUrl + "\".", e);
-        } finally {
-            method.releaseConnection();
-        }
-        return null;
-    }
-
-    private String createItemId(String link) {
-        try {
-            return "ext_" + new String(Hex.encodeHex(MyTunesRss.SHA1_DIGEST.digest(link.getBytes("UTF-8"))));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 not found!");
+        } else {
+            LOGGER.warn("Illegal video id \"" + videoEntry.getId() + "\".");
         }
     }
 }

@@ -328,17 +328,20 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     private String getFallbackName(File file, String pattern) {
         String name = new String(pattern);
-        for (String token : StringUtils.substringsBetween(pattern, "[dir:", "]")) {
-            String trimmedToken = StringUtils.trimToNull(token);
-            if (StringUtils.isNumeric(trimmedToken)) {
-                int number = Integer.parseInt(trimmedToken);
-                File dir = file.getParentFile();
-                while (dir != null && number > 0) {
-                    dir = dir.getParentFile();
-                    number--;
-                }
-                if (dir != null && dir.isDirectory()) {
-                    name = name.replace("[dir:" + token + "]", dir.getName());
+        String[] tokens = StringUtils.substringsBetween(pattern, "[dir:", "]");
+        if (tokens != null) {
+            for (String token : tokens) {
+                String trimmedToken = StringUtils.trimToNull(token);
+                if (StringUtils.isNumeric(trimmedToken)) {
+                    int number = Integer.parseInt(trimmedToken);
+                    File dir = file.getParentFile();
+                    while (dir != null && number > 0) {
+                        dir = dir.getParentFile();
+                        number--;
+                    }
+                    if (dir != null && dir.isDirectory()) {
+                        name = name.replace("[dir:" + token + "]", dir.getName());
+                    }
                 }
             }
         }
