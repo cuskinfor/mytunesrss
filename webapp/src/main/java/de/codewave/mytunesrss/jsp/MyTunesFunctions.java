@@ -227,7 +227,7 @@ public class MyTunesFunctions {
         return StringUtils.isBlank(config.getLanguage()) ? (requestFallback ? pageContext.getRequest().getLocale() : null) : new Locale(config.getLanguage());
     }
 
-    public static String playbackUrl(PageContext pageContext, Track track) {
+    public static String playbackUrl(PageContext pageContext, Track track, String extraPathInfo) {
         if (track.getSource().isExternal()) {
             return track.getFilename();
         }
@@ -247,6 +247,9 @@ public class MyTunesFunctions {
             throw new RuntimeException("UTF-8 not found!");
         }
         pathInfo.append("/playerRequest=").append(request.getParameter("playerRequest"));
+        if (StringUtils.isNotBlank(extraPathInfo)) {
+            pathInfo.append("/").append(extraPathInfo);
+        }
         builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
         builder.append("/").append(virtualTrackName(track)).append(".").append(suffix(MyTunesRssWebUtils.getWebConfig(request), user, track));
         return builder.toString();

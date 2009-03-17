@@ -19,9 +19,9 @@
 
     <div style="text-align:center;margin-top:70px">
 
-        <embed src="${appUrl}/images/movie_poster.png" href="${downloadPlaybackServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(tracks[0].id)}/tc=${mtfn:tcParamValue(pageContext, authUser, tracks[0])}/playerRequest=${param.playerRequest}</mt:encrypt>/${mtfn:virtualTrackName(tracks[0])}.${mtfn:suffix(config, authUser, tracks[0])}" type="${mtfn:contentType(config, authUser, tracks[0])}" target="myself"
+        <embed src="${appUrl}/images/movie_poster.png" href="<c:out value="${mtfn:playbackLink(pageContext, tracks[0], null)}"/>" type="${mtfn:contentType(config, authUser, tracks[0])}" target="myself"
             <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus" begin="1">
-                qtnext${trackLoopStatus.index}="<${downloadPlaybackServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(track.id)}/tc=${mtfn:tcParamValue(pageContext, authUser, track)}/playerRequest=${param.playerRequest}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}> T<myself>"
+                qtnext${trackLoopStatus.index}="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>> T<myself>"
             </c:forEach>
             qtnext${fn:length(tracks)}="GOTO0"
         />

@@ -13,10 +13,10 @@ import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.mytunesrss.datastore.statement.UpdateTrackStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.sql.DataStoreSession;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +26,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * de.codewave.mytunesrss.datastore.url.UrlLoader
@@ -40,17 +40,30 @@ public class YouTubeLoader {
     private static final String YOUTUBE_API_CLIENT_ID = "ytapi-MichaelDescher-MyTuneRSS-l70f4r3p-0";
     private static final Pattern YOUTUBE_ADDITIONAL_PARAM_PATTERN = Pattern.compile("swfArgs.*\\{.*\"t\".*?\"([^\"]+)\"");
 
+    public static boolean handles(String external) {
+        if (StringUtils.startsWithIgnoreCase(external, "http://")) {
+            if (StringUtils.contains(StringUtils.substringBetween(external, "http://", "/"), "youtube.com")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private Collection<String> myTrackIds;
     private Set<String> myExistingIds = new HashSet<String>();
     private DataStoreSession myStoreSession;
     private int myUpdatedCount;
     private YouTubeService myService;
     private HttpClient myHttpClient = new HttpClient(new MultiThreadedHttpConnectionManager());
+    private long myLastUpdate;
+    private Set<ExternalLoader.Flag> myFlags;
 
-    public YouTubeLoader(DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds) {
+    public YouTubeLoader(DataStoreSession storeSession, long lastUpdate, Set<ExternalLoader.Flag> flags, Collection<String> trackIds) {
         myService = new YouTubeService(YOUTUBE_API_CLIENT_ID);
         myStoreSession = storeSession;
         myTrackIds = trackIds;
+        myLastUpdate = lastUpdate;
+        myFlags = flags;
     }
 
     public void process(String url) {
@@ -87,36 +100,39 @@ public class YouTubeLoader {
             if (existing) {
                 myExistingIds.add(trackId);
             }
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Processing youtube video \"" + videoId + "\".");
-            }
-            InsertOrUpdateTrackStatement statement;
-            if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
-                // TODO
-                // statement = existing ? new UpdateTrackAndImageStatement() : new InsertTrackAndImageStatement(TrackSource.YouTube);
-                statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
-            } else {
-                statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
-            }
-            statement.setId(trackId);
-            statement.setFileName(YOUTUBE_MYTUNESRSS_FILENAME_PREFIX + videoId + "&t=" + retrieveAdditionalParam(videoId) + "&fmt=18");
-            statement.setName(videoEntry.getTitle().getPlainText());
-            statement.setArtist(videoEntry.getAuthors().get(0).getName());
-            statement.setAlbum(album);
-            YouTubeMediaGroup mediaGroup = videoEntry.getMediaGroup();
-            if (mediaGroup != null) {
-                statement.setGenre(mediaGroup.getYouTubeCategory() != null ? mediaGroup.getYouTubeCategory().getLabel() : null);
-                statement.setTime(mediaGroup.getDuration() != null ? (int) mediaGroup.getDuration().longValue() : 0);
-            }
-            statement.setMediaType(MediaType.Video);
-            try {
-                myStoreSession.executeStatement(statement);
-                myUpdatedCount++;
-                DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
-                myExistingIds.add(trackId);
-            } catch (SQLException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not insert youtube video \"" + videoId + "\" into database", e);
+            if (!existing || myLastUpdate <= videoEntry.getUpdated().getValue()) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Processing youtube video \"" + videoId + "\".");
+                }
+                InsertOrUpdateTrackStatement statement;
+                if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
+                    // TODO
+                    // statement = existing ? new UpdateTrackAndImageStatement() : new InsertTrackAndImageStatement(TrackSource.YouTube);
+                    statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
+                } else {
+                    statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
+                }
+                statement.setId(trackId);
+                statement.setSticky(myFlags.contains(ExternalLoader.Flag.Sticky));
+                statement.setFileName(YOUTUBE_MYTUNESRSS_FILENAME_PREFIX + videoId + "&t=" + retrieveAdditionalParam(videoId) + "&fmt=18");
+                statement.setName(videoEntry.getTitle().getPlainText());
+                statement.setArtist(videoEntry.getAuthors().get(0).getName());
+                statement.setAlbum(album);
+                YouTubeMediaGroup mediaGroup = videoEntry.getMediaGroup();
+                if (mediaGroup != null) {
+                    statement.setGenre(mediaGroup.getYouTubeCategory() != null ? mediaGroup.getYouTubeCategory().getLabel() : null);
+                    statement.setTime(mediaGroup.getDuration() != null ? (int) mediaGroup.getDuration().longValue() : 0);
+                }
+                statement.setMediaType(MediaType.Video);
+                try {
+                    myStoreSession.executeStatement(statement);
+                    myUpdatedCount++;
+                    DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
+                    myExistingIds.add(trackId);
+                } catch (SQLException e) {
+                    if (LOGGER.isErrorEnabled()) {
+                        LOGGER.error("Could not insert youtube video \"" + videoId + "\" into database", e);
+                    }
                 }
             }
         } else {

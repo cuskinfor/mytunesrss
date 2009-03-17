@@ -27,6 +27,7 @@
                 pos_number INTEGER,
                 pos_size INTEGER,
                 image_hash CHAR(24),
+                sticky BOOLEAN,
                 UNIQUE (id)
             )
         </sql>

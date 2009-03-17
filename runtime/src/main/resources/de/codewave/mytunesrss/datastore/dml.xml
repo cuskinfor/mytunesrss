@@ -434,7 +434,7 @@
     </statement>
 
     <statement name="removeTrack">
-        <sql>DELETE FROM track WHERE id = :track_id</sql>
+        <sql>DELETE FROM track WHERE id = :track_id AND sticky = FALSE</sql>
     </statement>
 
     <statement name="findImage">

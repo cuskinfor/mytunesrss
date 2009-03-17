@@ -166,7 +166,7 @@
                     &nbsp;
                 </td>
                 <td>
-                    <a href="${downloadPlaybackServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(null, null, track)}">
+                    <a href="<c:out value="${mtfn:playbackLink(pageContext, track, 'notranscode=true')}"/>">
                         <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="tooltip.originalDownload"/>" title="<fmt:message key="tooltip.originalDownload"/>" />
                         <fmt:message key="originalDownload"/>
                     </a>
@@ -226,7 +226,7 @@
                     <c:when test="${track.mediaType.jspName == 'Video'}">
                         <c:set var="imgUrl" value="${appUrl}/images/movie_poster.png"/>
                         <c:if test="${track.imageCount > 0}"><c:set var="imgUrl">${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=256</mt:encrypt></c:set></c:if>
-                        <embed src="${imgUrl}" href="${downloadPlaybackServletUrl}/playTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/notranscode=true</mt:encrypt>" type="${mtfn:contentType(config, authUser, track)}" <c:if test="${userAgent == 'Iphone'}">target="myself"</c:if> scale="1"/>
+                        <embed src="${imgUrl}" href="<c:out value="${mtfn:playbackLink(pageContext, track, 'notranscode=true')}"/>" type="${mtfn:contentType(config, authUser, track)}" <c:if test="${userAgent == 'Iphone'}">target="myself"</c:if> scale="1"/>
                     </c:when>
                     <c:otherwise>
                         <img alt="${track.name} Album Art"

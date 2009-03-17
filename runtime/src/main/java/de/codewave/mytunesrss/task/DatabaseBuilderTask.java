@@ -69,15 +69,15 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     public DatabaseBuilderTask() {
         if (MyTunesRss.CONFIG.getDatasources() != null && MyTunesRss.CONFIG.getDatasources().length > 0) {
             for (String datasource : MyTunesRss.CONFIG.getDatasources()) {
-                if (datasource.startsWith("ext:")) {
+                if (StringUtils.startsWith(datasource, "[ext:")) {
                     addToDatasources(datasource);
                 } else {
                     addToDatasources(new File(datasource));
                 }
             }
         }
-        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getUploadDir())) {
-            addToDatasources(new File(MyTunesRss.CONFIG.getUploadDir().trim()));
+        if (StringUtils.isNotBlank(MyTunesRss.CONFIG.getUploadDir())) {
+            addToDatasources(new File(StringUtils.trim(MyTunesRss.CONFIG.getUploadDir())));
         }
     }
 
@@ -223,10 +223,10 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 LOGGER.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
             }
             AnonyStatUtils.sendDatabaseUpdated((System.currentTimeMillis() - timeUpdateStart),
-                                               storeSession.executeQuery(new GetSystemInformationQuery()));
+                    storeSession.executeQuery(new GetSystemInformationQuery()));
             MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart),
-                                                         missingItunesFiles,
-                                                         storeSession.executeQuery(new GetSystemInformationQuery()));
+                    missingItunesFiles,
+                    storeSession.executeQuery(new GetSystemInformationQuery()));
             storeSession.commit();
         } catch (Exception e) {
             storeSession.rollback();
@@ -301,9 +301,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     /**
      * @param systemInformation
      * @param storeSession
-     *
      * @return Map with the number of missing files per iTunes XML.
-     *
      * @throws SQLException
      * @throws IOException
      */
@@ -333,10 +331,10 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     event.setMessageKey("settings.databaseUpdateRunningItunes");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
                     missingItunesFiles.put(datasource.getCanonicalPath(), ItunesLoader.loadFromITunes(datasource.toURL(),
-                                                                                                      storeSession,
-                                                                                                      timeLastUpdate,
-                                                                                                      trackIds,
-                                                                                                      itunesPlaylistIds));
+                            storeSession,
+                            timeLastUpdate,
+                            trackIds,
+                            itunesPlaylistIds));
                 } else if (datasource.isDirectory()) {
                     myState = State.UpdatingTracksFromFolder;
                     MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
@@ -353,11 +351,11 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
                 event.setMessageKey("settings.databaseUpdateRunningExternal");
                 MyTunesRssEventManager.getInstance().fireEvent(event);
-                ExternalLoader.process(external.substring("ext:".length()), storeSession, timeLastUpdate, trackIds);
+                ExternalLoader.process(StringUtils.trim(StringUtils.substringAfter(external, "]")), StringUtils.trim(StringUtils.substringBetween(external, "[ext:", "]")), storeSession, timeLastUpdate, trackIds);
             }
         }
         if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Removing " + trackIds.size() + " tracks from database.");
+            LOGGER.info("Trying to remove up to " + trackIds.size() + " tracks from database.");
         }
         storeSession.executeStatement(new RemoveTrackStatement(trackIds));
         DatabaseBuilderTask.doCheckpoint(storeSession, true);

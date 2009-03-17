@@ -19,7 +19,7 @@
                 <link>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></link>
                 <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></guid>
                 <pubDate>${pubDate}</pubDate>
-                <enclosure url="<c:out value="${mtfn:playbackLink(pageContext, track)}"/>"
+                <enclosure url="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>"
                            type="${mtfn:contentType(config, authUser, track)}"
                            <c:if test="${!mtfn:transcoding(pageContext, authUser, track)}">length="${track.contentLength}"</c:if>
                         />

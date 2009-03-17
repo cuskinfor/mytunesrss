@@ -40,6 +40,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
     private int myPosNumber;
     private int myPosSize;
     private SmartStatement myStatement;
+    private boolean mySticky;
 
     public UpdateTrackStatement(TrackSource source) {
         mySource = source;
@@ -102,6 +103,10 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
         return "updateTrack";
     }
 
+    public void setSticky(boolean sticky) {
+        mySticky = sticky;
+    }
+
     public synchronized void execute(Connection connection) throws SQLException {
         try {
             String originalArtist = myArtist;
@@ -133,6 +138,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setString("comment", myComment);
             myStatement.setInt("pos_number", myPosNumber);
             myStatement.setInt("pos_size", myPosSize);
+            myStatement.setBoolean("sticky", mySticky);
             myStatement.execute();
         } catch (SQLException e) {
             if (UpdateTrackStatement.LOG.isErrorEnabled()) {

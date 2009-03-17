@@ -305,7 +305,7 @@
         <name>playbackLink</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>java.lang.String playbackUrl(javax.servlet.jsp.PageContext,
-            de.codewave.mytunesrss.datastore.statement.Track)
+            de.codewave.mytunesrss.datastore.statement.Track, java.lang.String)
         </function-signature>
     </function>
 

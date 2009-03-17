@@ -138,4 +138,10 @@
         </sql>
     </statement>
 
+    <statement name="migrate_3.7_eap_4">
+        <sql>
+            ALTER TABLE track ADD COLUMN sticky BOOLEAN
+        </sql>
+    </statement>
+
 </statements>
