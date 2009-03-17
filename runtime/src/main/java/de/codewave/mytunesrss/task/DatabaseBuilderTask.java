@@ -253,6 +253,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                         public Track create(ResultSet resultSet) throws SQLException {
                             Track track = new Track();
                             track.setId(resultSet.getString("ID"));
+                            track.setSource(TrackSource.valueOf(resultSet.getString("SOURCE")));
                             track.setFile(new File(resultSet.getString("FILE")));
                             track.setLastImageUpdate(resultSet.getLong("LAST_IMAGE_UPDATE"));
                             return track;
@@ -272,7 +273,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     MyTunesRssEventManager.getInstance().fireEvent(event);
                     lastEventTime = System.currentTimeMillis();
                 }
-                storeSession.executeStatement(new HandleTrackImagesStatement(track.getFile(), track.getId(), track.getLastImageUpdate()));
+                storeSession.executeStatement(new HandleTrackImagesStatement(track.getSource(), track.getFile(), track.getId(), track.getLastImageUpdate()));
                 doCheckpoint(storeSession, false);
             }
         } finally {

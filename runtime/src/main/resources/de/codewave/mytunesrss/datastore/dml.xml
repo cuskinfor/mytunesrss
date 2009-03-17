@@ -357,7 +357,7 @@
 
     <statement name="findAllTracksForImageUpdate">
         <sql>
-            SELECT id AS id, file AS file, last_image_update AS last_image_update FROM track WHERE last_image_update IS NULL OR last_image_update &lt; :timeUpdateStart
+            SELECT id AS id, source AS source, file AS file, last_image_update AS last_image_update FROM track WHERE last_image_update IS NULL OR last_image_update &lt; :timeUpdateStart
         </sql>
     </statement>
 

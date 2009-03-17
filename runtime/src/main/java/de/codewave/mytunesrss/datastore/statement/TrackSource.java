@@ -11,4 +11,8 @@ public enum TrackSource {
                 return false;
         }
     }
+
+    public String getJspName() {
+        return name();
+    }
 }

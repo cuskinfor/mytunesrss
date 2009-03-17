@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.MiscUtils;
@@ -228,8 +229,9 @@ public class MyTunesFunctions {
     }
 
     public static String playbackUrl(PageContext pageContext, Track track, String extraPathInfo) {
-        if (track.getSource().isExternal()) {
-            return track.getFilename();
+        MyTunesRssCommand command = MyTunesRssCommand.PlayTrack;
+        if (track.getSource() == TrackSource.YouTube) {
+            command = MyTunesRssCommand.YouTubeRedirect;
         }
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         HttpSession session = request.getSession();
@@ -238,7 +240,7 @@ public class MyTunesFunctions {
         if (StringUtils.isBlank(auth)) {
             auth = (String) session.getAttribute("auth");
         }
-        builder.append("/").append("playTrack").append("/").append(auth);
+        builder.append("/").append(command.getName()).append("/").append(auth);
         StringBuilder pathInfo = new StringBuilder("track=");
         User user = MyTunesRssWebUtils.getAuthUser(request);
         try {

@@ -76,12 +76,12 @@
             </tr>
 
             <tr <mt:flipFlop/>>
-                <td><fmt:message key="smartPlaylist.smartInfo.video" /></td>
+                <td><fmt:message key="smartPlaylist.smartInfo.mediatype" /></td>
                 <td>
-                    <select name="smartPlaylist.smartInfo.video">
-                        <option value=""><fmt:message key="smartPlaylist.smartInfo.video.null"/></option>
-                        <option value="true" <c:if test="${smartPlaylist.smartInfo.mediaType.jspName == 'Video'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.video.true"/></option>
-                        <option value="false" <c:if test="${smartPlaylist.smartInfo.mediaType.jspName != 'Video'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.video.false"/></option>
+                    <select name="smartPlaylist.smartInfo.mediatype">
+                        <option value=""><fmt:message key="smartPlaylist.smartInfo.mediatype.null"/></option>
+                        <option value="Video" <c:if test="${smartPlaylist.smartInfo.mediaType.jspName == 'Video'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.mediatype.video"/></option>
+                        <option value="Audio" <c:if test="${smartPlaylist.smartInfo.mediaType.jspName == 'Audio'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.mediatype.audio"/></option>
                     </select>
                 </td>
             </tr>

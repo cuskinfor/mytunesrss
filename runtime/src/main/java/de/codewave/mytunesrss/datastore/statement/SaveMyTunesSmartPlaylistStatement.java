@@ -52,7 +52,9 @@ public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
         if (mySmartInfo.getProtected() != null) {
             statement.setBoolean("protected", mySmartInfo.getProtected());
         }
-        statement.setString("mediatype", mySmartInfo.getMediaType().name());
+        if (mySmartInfo.getMediaType() != null) {
+            statement.setString("mediatype", mySmartInfo.getMediaType().name());
+        }
         statement.execute();
     }
 }

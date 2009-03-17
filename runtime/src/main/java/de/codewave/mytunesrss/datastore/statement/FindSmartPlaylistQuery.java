@@ -4,11 +4,12 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
+import org.apache.commons.lang.StringUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -68,7 +69,10 @@ public class FindSmartPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryR
                 smartInfo.setTimeMin(null);
             }
             smartInfo.setTitlePattern(resultSet.getString("TITLE_PATTERN"));
-            smartInfo.setMediaType(MediaType.valueOf(resultSet.getString("MEDIATYPE")));
+            String mediaTypeName = resultSet.getString("MEDIATYPE");
+            if (StringUtils.isNotBlank(mediaTypeName)) {
+                smartInfo.setMediaType(MediaType.valueOf(resultSet.getString("MEDIATYPE")));
+            }
             return smartPlaylist;
         }
     }

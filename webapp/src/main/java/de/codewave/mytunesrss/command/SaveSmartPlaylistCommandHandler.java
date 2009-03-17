@@ -1,7 +1,5 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.MyTunesRssEvent;
-import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.datastore.statement.SaveMyTunesSmartPlaylistStatement;
 import de.codewave.mytunesrss.datastore.statement.SmartInfo;
@@ -35,7 +33,7 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
             if (StringUtils.isNotBlank(getRequestParameter("smartPlaylist.smartInfo.timeMax", null))) {
                 smartInfo.setTimeMax(getIntegerRequestParameter("smartPlaylist.smartInfo.timeMax", 0));
             }
-            if (StringUtils.isNotBlank(getRequestParameter("smartPlaylist.smartInfo.video", null))) {
+            if (StringUtils.isNotBlank(getRequestParameter("smartPlaylist.smartInfo.mediatype", null))) {
                 smartInfo.setMediaType(MediaType.valueOf(getRequestParameter("smartPlaylist.smartInfo.mediatype", MediaType.Other.name())));
             }
             if (StringUtils.isNotBlank(getRequestParameter("smartPlaylist.smartInfo.protected", null))) {
@@ -62,7 +60,7 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
                                  "smartPlaylist.smartInfo.timeMin",
                                  "smartPlaylist.smartInfo.timeMax",
                                  "smartPlaylist.smartInfo.protected",
-                                 "smartPlaylist.smartInfo.video");
+                    "smartPlaylist.smartInfo.mediatype");
             getRequest().setAttribute("fields", EditSmartPlaylistCommandHandler.getFields());
             forward(MyTunesRssResource.EditSmartPlaylist);
         }

@@ -4,9 +4,11 @@ import com.google.gdata.client.youtube.YouTubeService;
 import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
 import com.google.gdata.data.youtube.YouTubeMediaGroup;
+import com.google.gdata.data.media.mediarss.MediaThumbnail;
 import com.google.gdata.util.ServiceException;
 import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
@@ -35,10 +37,10 @@ import java.util.regex.Pattern;
 public class YouTubeLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(YouTubeLoader.class);
     private static final String YOUTUBE_VIDEO_PREFIX = "http://www.youtube.com/watch?v=";
-    private static final String YOUTUBE_MYTUNESRSS_FILENAME_PREFIX = "http://youtube.com/get_video?video_id=";
     private static final String YOUTUBE_VIDEO_FEED_PREFIX = "http://gdata.youtube.com/feeds/api/videos/";
     private static final String YOUTUBE_API_CLIENT_ID = "ytapi-MichaelDescher-MyTuneRSS-l70f4r3p-0";
     private static final Pattern YOUTUBE_ADDITIONAL_PARAM_PATTERN = Pattern.compile("swfArgs.*\\{.*\"t\".*?\"([^\"]+)\"");
+    private static final HttpClient HTTP_CLIENT = new HttpClient(new MultiThreadedHttpConnectionManager());
 
     public static boolean handles(String external) {
         if (StringUtils.startsWithIgnoreCase(external, "http://")) {
@@ -54,7 +56,6 @@ public class YouTubeLoader {
     private DataStoreSession myStoreSession;
     private int myUpdatedCount;
     private YouTubeService myService;
-    private HttpClient myHttpClient = new HttpClient(new MultiThreadedHttpConnectionManager());
     private long myLastUpdate;
     private Set<ExternalLoader.Flag> myFlags;
 
@@ -113,8 +114,8 @@ public class YouTubeLoader {
                     statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
                 }
                 statement.setId(trackId);
+                statement.setFileName("youtube.mp4");
                 statement.setSticky(myFlags.contains(ExternalLoader.Flag.Sticky));
-                statement.setFileName(YOUTUBE_MYTUNESRSS_FILENAME_PREFIX + videoId + "&t=" + retrieveAdditionalParam(videoId) + "&fmt=18");
                 statement.setName(videoEntry.getTitle().getPlainText());
                 statement.setArtist(videoEntry.getAuthors().get(0).getName());
                 statement.setAlbum(album);
@@ -140,10 +141,10 @@ public class YouTubeLoader {
         }
     }
 
-    private String retrieveAdditionalParam(String videoId) {
+    public static String retrieveAdditionalParam(String videoId) {
         GetMethod method = new GetMethod(YOUTUBE_VIDEO_PREFIX + videoId);
         try {
-            if (myHttpClient.executeMethod(method) == 200) {
+            if (HTTP_CLIENT.executeMethod(method) == 200) {
                 Matcher matcher = YOUTUBE_ADDITIONAL_PARAM_PATTERN.matcher(method.getResponseBodyAsString());
                 if (matcher.find()) {
                     return matcher.group(1);
@@ -159,5 +160,11 @@ public class YouTubeLoader {
 
     public Set<String> getExistingIds() {
         return myExistingIds;
+    }
+
+    public static MediaThumbnail getMediaThumbnail(String videoId) throws IOException, ServiceException {
+        YouTubeService service = new YouTubeService(YOUTUBE_API_CLIENT_ID);
+        VideoEntry videoEntry = service.getEntry(new URL(YOUTUBE_VIDEO_FEED_PREFIX + videoId), VideoEntry.class);
+        return videoEntry.getOrCreateMediaGroup().getThumbnails().get(0);
     }
 }
