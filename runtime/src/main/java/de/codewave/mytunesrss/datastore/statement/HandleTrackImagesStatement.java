@@ -28,6 +28,7 @@ import java.util.Map;
 
 import com.google.gdata.util.ServiceException;
 import com.google.gdata.data.media.mediarss.MediaThumbnail;
+import com.google.gdata.data.youtube.VideoEntry;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackImagesStatement
@@ -108,19 +109,23 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         if (image == null) {
             if (mySource == TrackSource.YouTube) {
                 try {
-                    MediaThumbnail thumbnail = YouTubeLoader.getMediaThumbnail(StringUtils.substringAfter(myTrackId, "youtube_"));
-                    GetMethod method = new GetMethod(thumbnail.getUrl());
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    try {
-                        if (new HttpClient().executeMethod(method) == 200) {
-                            IOUtils.copy(method.getResponseBodyAsStream(), baos);
-                            return new Image(IMAGE_TO_MIME.get(StringUtils.lowerCase(StringUtils.substringAfterLast(thumbnail.getUrl(), "/"))), baos.toByteArray());
+                    VideoEntry videoEntry = YouTubeLoader.getVideoEntry(StringUtils.substringAfter(myTrackId, "youtube_"));
+                    if (videoEntry.getUpdated().getValue() >= myLastUpdateTime) {
+                        MediaThumbnail thumbnail = videoEntry.getOrCreateMediaGroup().getThumbnails().get(0);;
+                        GetMethod method = new GetMethod(thumbnail.getUrl());
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        try {
+                            if (new HttpClient().executeMethod(method) == 200) {
+                                IOUtils.copy(method.getResponseBodyAsStream(), baos);
+                                return new Image(IMAGE_TO_MIME.get(StringUtils.lowerCase(StringUtils.substringAfterLast(thumbnail.getUrl(), "/"))), baos.toByteArray());
+                            }
+                        } finally {
+                            IOUtils.closeQuietly(baos);
+                            method.releaseConnection();
                         }
-                    } finally {
-                        IOUtils.closeQuietly(baos);
-                        method.releaseConnection();
+                    } else {
+                        return IMAGE_UP_TO_DATE;
                     }
-
                 } catch (ServiceException e) {
                     LOG.error("Could not read youtube image.", e);
                 }

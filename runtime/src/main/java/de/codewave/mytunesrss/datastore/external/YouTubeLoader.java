@@ -9,10 +9,7 @@ import com.google.gdata.util.ServiceException;
 import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.meta.Image;
-import de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement;
-import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
-import de.codewave.mytunesrss.datastore.statement.TrackSource;
-import de.codewave.mytunesrss.datastore.statement.UpdateTrackStatement;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.httpclient.HttpClient;
@@ -68,10 +65,10 @@ public class YouTubeLoader {
         return null;
     }
 
-    public static MediaThumbnail getMediaThumbnail(String videoId) throws IOException, ServiceException {
+    public static VideoEntry getVideoEntry(String videoId) throws IOException, ServiceException {
         YouTubeService service = new YouTubeService(YOUTUBE_API_CLIENT_ID);
         VideoEntry videoEntry = service.getEntry(new URL(YOUTUBE_VIDEO_FEED_PREFIX + videoId), VideoEntry.class);
-        return videoEntry.getOrCreateMediaGroup().getThumbnails().get(0);
+        return videoEntry;
     }
 
     private Collection<String> myTrackIds;
@@ -128,9 +125,7 @@ public class YouTubeLoader {
                 }
                 InsertOrUpdateTrackStatement statement;
                 if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
-                    // TODO
-                    // statement = existing ? new UpdateTrackAndImageStatement() : new InsertTrackAndImageStatement(TrackSource.YouTube);
-                    statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
+                    statement = existing ? new UpdateTrackAndImageStatement(TrackSource.YouTube) : new InsertTrackAndImageStatement(TrackSource.YouTube);
                 } else {
                     statement = existing ? new UpdateTrackStatement(TrackSource.YouTube) : new InsertTrackStatement(TrackSource.YouTube);
                 }
@@ -139,14 +134,16 @@ public class YouTubeLoader {
                 statement.setName(videoEntry.getTitle().getPlainText());
                 statement.setArtist(videoEntry.getAuthors().get(0).getName());
                 statement.setAlbum(album);
-                YouTubeMediaGroup mediaGroup = videoEntry.getMediaGroup();
-                if (mediaGroup != null) {
-                    statement.setGenre(mediaGroup.getYouTubeCategory() != null ? mediaGroup.getYouTubeCategory().getLabel() : null);
-                    statement.setTime(mediaGroup.getDuration() != null ? (int) mediaGroup.getDuration().longValue() : 0);
-                }
+                YouTubeMediaGroup mediaGroup = videoEntry.getOrCreateMediaGroup();
+                statement.setGenre(mediaGroup.getYouTubeCategory() != null ? mediaGroup.getYouTubeCategory().getLabel() : null);
+                statement.setTime(mediaGroup.getDuration() != null ? (int) mediaGroup.getDuration().longValue() : 0);
                 statement.setMediaType(MediaType.Video);
                 try {
                     myStoreSession.executeStatement(statement);
+                    if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
+                        HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(TrackSource.YouTube, null, trackId, 0);
+                        myStoreSession.executeStatement(handleTrackImagesStatement);
+                    }
                     myUpdatedCount++;
                     DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
                     myExistingIds.add(trackId);
