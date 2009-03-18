@@ -69,10 +69,11 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     public DatabaseBuilderTask() {
         if (MyTunesRss.CONFIG.getDatasources() != null && MyTunesRss.CONFIG.getDatasources().length > 0) {
             for (String datasource : MyTunesRss.CONFIG.getDatasources()) {
-                if (StringUtils.startsWith(datasource, "[ext:")) {
+                File file = new File(datasource);
+                if (!file.exists()) {
                     addToDatasources(datasource);
                 } else {
-                    addToDatasources(new File(datasource));
+                    addToDatasources(file);
                 }
             }
         }
@@ -82,7 +83,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     }
 
     private void addToDatasources(String external) {
-        LOGGER.debug("Adding external \"" + external + "\" to database update sources.");
+        LOGGER.debug("Adding non-file datasource \"" + external + "\" to database update sources.");
         myExternalDatasources.add(external);
     }
 
@@ -352,7 +353,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
                 event.setMessageKey("settings.databaseUpdateRunningExternal");
                 MyTunesRssEventManager.getInstance().fireEvent(event);
-                ExternalLoader.process(StringUtils.trim(StringUtils.substringAfter(external, "]")), StringUtils.trim(StringUtils.substringBetween(external, "[ext:", "]")), storeSession, timeLastUpdate, trackIds);
+                ExternalLoader.process(StringUtils.trim(external), storeSession, timeLastUpdate, trackIds);
             }
         }
         if (LOGGER.isInfoEnabled()) {

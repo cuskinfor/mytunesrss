@@ -15,36 +15,9 @@ import java.util.HashSet;
 public class ExternalLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExternalLoader.class);
 
-    public enum Flag {
-        Sticky('s');
-
-        private char myChar;
-
-        Flag(char c) {
-            myChar = c;
-        }
-
-        public static Flag getForChar(char c) {
-            for (Flag flag : Flag.values()) {
-                if (flag.myChar == c) {
-                    return flag;
-                }
-            }
-            throw new IllegalArgumentException("No flag for \"" + c + "\"!");
-        }
-
-        public static Set<Flag> getForChars(String chars) {
-            Set<Flag> flags = new HashSet<Flag>();
-            for (char c : chars.toCharArray()) {
-                flags.add(getForChar(c));
-            }
-            return flags;
-        }
-    }
-
-    public static void process(String external, String flags, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds) {
+    public static void process(String external, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds) {
         if (YouTubeLoader.handles(external)) {
-            YouTubeLoader youTubeLoader = new YouTubeLoader(storeSession, timeLastUpdate, Flag.getForChars(flags), trackIds);
+            YouTubeLoader youTubeLoader = new YouTubeLoader(storeSession, timeLastUpdate, trackIds);
             youTubeLoader.process(external);
             trackIds.removeAll(youTubeLoader.getExistingIds());
         } else {

@@ -51,20 +51,41 @@ public class YouTubeLoader {
         return false;
     }
 
+    public static String retrieveAdditionalParam(String videoId) {
+        GetMethod method = new GetMethod(YOUTUBE_VIDEO_PREFIX + videoId);
+        try {
+            if (HTTP_CLIENT.executeMethod(method) == 200) {
+                Matcher matcher = YOUTUBE_ADDITIONAL_PARAM_PATTERN.matcher(method.getResponseBodyAsString());
+                if (matcher.find()) {
+                    return matcher.group(1);
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error("Could not retrieve additional parameter for youtube video using url \"" + (YOUTUBE_VIDEO_PREFIX + videoId) + "\".", e);
+        } finally {
+            method.releaseConnection();
+        }
+        return null;
+    }
+
+    public static MediaThumbnail getMediaThumbnail(String videoId) throws IOException, ServiceException {
+        YouTubeService service = new YouTubeService(YOUTUBE_API_CLIENT_ID);
+        VideoEntry videoEntry = service.getEntry(new URL(YOUTUBE_VIDEO_FEED_PREFIX + videoId), VideoEntry.class);
+        return videoEntry.getOrCreateMediaGroup().getThumbnails().get(0);
+    }
+
     private Collection<String> myTrackIds;
     private Set<String> myExistingIds = new HashSet<String>();
     private DataStoreSession myStoreSession;
     private int myUpdatedCount;
     private YouTubeService myService;
     private long myLastUpdate;
-    private Set<ExternalLoader.Flag> myFlags;
 
-    public YouTubeLoader(DataStoreSession storeSession, long lastUpdate, Set<ExternalLoader.Flag> flags, Collection<String> trackIds) {
+    public YouTubeLoader(DataStoreSession storeSession, long lastUpdate, Collection<String> trackIds) {
         myService = new YouTubeService(YOUTUBE_API_CLIENT_ID);
         myStoreSession = storeSession;
         myTrackIds = trackIds;
         myLastUpdate = lastUpdate;
-        myFlags = flags;
     }
 
     public void process(String url) {
@@ -115,7 +136,6 @@ public class YouTubeLoader {
                 }
                 statement.setId(trackId);
                 statement.setFileName("youtube.mp4");
-                statement.setSticky(myFlags.contains(ExternalLoader.Flag.Sticky));
                 statement.setName(videoEntry.getTitle().getPlainText());
                 statement.setArtist(videoEntry.getAuthors().get(0).getName());
                 statement.setAlbum(album);
@@ -141,30 +161,7 @@ public class YouTubeLoader {
         }
     }
 
-    public static String retrieveAdditionalParam(String videoId) {
-        GetMethod method = new GetMethod(YOUTUBE_VIDEO_PREFIX + videoId);
-        try {
-            if (HTTP_CLIENT.executeMethod(method) == 200) {
-                Matcher matcher = YOUTUBE_ADDITIONAL_PARAM_PATTERN.matcher(method.getResponseBodyAsString());
-                if (matcher.find()) {
-                    return matcher.group(1);
-                }
-            }
-        } catch (IOException e) {
-            LOGGER.error("Could not retrieve additional parameter for youtube video using url \"" + (YOUTUBE_VIDEO_PREFIX + videoId) + "\".", e);
-        } finally {
-            method.releaseConnection();
-        }
-        return null;
-    }
-
     public Set<String> getExistingIds() {
         return myExistingIds;
-    }
-
-    public static MediaThumbnail getMediaThumbnail(String videoId) throws IOException, ServiceException {
-        YouTubeService service = new YouTubeService(YOUTUBE_API_CLIENT_ID);
-        VideoEntry videoEntry = service.getEntry(new URL(YOUTUBE_VIDEO_FEED_PREFIX + videoId), VideoEntry.class);
-        return videoEntry.getOrCreateMediaGroup().getThumbnails().get(0);
     }
 }
