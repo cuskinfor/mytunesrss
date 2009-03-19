@@ -142,7 +142,7 @@ public class MyTunesRssConfig {
         myDatasources = new ArrayList<String>();
         for (String datasource : datasources) {
             if (StringUtils.isNotBlank(datasource)) {
-                myDatasources.add(datasource.trim());
+                myDatasources.add(StringUtils.trim(datasource));
             }
         }
         Collections.sort(myDatasources);
@@ -153,7 +153,7 @@ public class MyTunesRssConfig {
             for (String eachDatasource : myDatasources) {
                 try {
                     if (datasource.equals(eachDatasource)) {
-                        return MyTunesRssUtils.getBundleString("error.watchFolderAlreadyExists", eachDatasource);
+                        return MyTunesRssUtils.getBundleString("error.datasourceAlreadyExists", eachDatasource);
                     } else if (IOUtils.isContained(new File(eachDatasource), new File(datasource))) {
                         return MyTunesRssUtils.getBundleString("error.existingWatchFolderContainsNewOne", eachDatasource);
                     } else if (IOUtils.isContained(new File(datasource), new File(eachDatasource))) {
@@ -163,7 +163,16 @@ public class MyTunesRssConfig {
                     LOGGER.error("Could not check if existing datasource contains new datasource or vice versa, assuming everything is okay.", e);
                 }
             }
-            myDatasources.add(datasource);
+            myDatasources.add(StringUtils.trim(datasource));
+            Collections.sort(myDatasources);
+            return null;
+        } else if (StringUtils.startsWithIgnoreCase(datasource, "http://")) {
+            for (String eachDatasource : myDatasources) {
+                if (datasource.equals(eachDatasource)) {
+                    return MyTunesRssUtils.getBundleString("error.datasourceAlreadyExists", eachDatasource);
+                }
+            }
+            myDatasources.add(StringUtils.trim(datasource));
             Collections.sort(myDatasources);
             return null;
         }
@@ -171,8 +180,8 @@ public class MyTunesRssConfig {
     }
 
     public String removeDatasource(String datasource) {
-        if (myDatasources.contains(datasource)) {
-            myDatasources.remove(datasource);
+        if (myDatasources.contains(StringUtils.trim(datasource))) {
+            myDatasources.remove(StringUtils.trim(datasource));
             return null;
         }
         return MyTunesRssUtils.getBundleString("error.datasourceDoesNotExist");
