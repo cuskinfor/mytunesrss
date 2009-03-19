@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.swing.SwingUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -53,8 +54,13 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 String text = value.toString();
-                label.setIcon(new ImageIcon(getClass().getResource(
-                        "xml".equalsIgnoreCase(FilenameUtils.getExtension(text)) ? "itunes.gif" : "folder.gif")));
+                if (StringUtils.startsWithIgnoreCase(text, "http://")) {
+                    label.setIcon(new ImageIcon(getClass().getResource("http.gif")));
+                } else if (StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(text), "xml")) {
+                    label.setIcon(new ImageIcon(getClass().getResource("itunes.gif")));
+                } else {
+                    label.setIcon(new ImageIcon(getClass().getResource("folder.gif")));
+                }
                 label.setText(text);
                 label.setToolTipText(text);
                 return label;

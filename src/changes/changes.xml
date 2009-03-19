@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="3.7-EAP-4" date="2009-xx-xx" description="3.7 EAP 4">
+            <action dev="mdescher" type="update">
+                ESC key closes settings dialog windows.
+            </action>
+            <action dev="mdescher" type="add">
+                YouTube support.
+            </action>
+        </release>
+
         <release version="3.7-EAP-3" date="2009-03-15" description="3.7 EAP 3">
             <action dev="mdescher" type="fix">
                 Removed href="#" from anchor tags and replaced by a style to show the pointer.

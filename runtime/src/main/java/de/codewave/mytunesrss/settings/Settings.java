@@ -6,9 +6,9 @@ import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.task.RecreateDatabaseTask;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.swing.SwingUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.lang.SystemUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,8 +66,8 @@ public class Settings implements MyTunesRssEventListener {
         int lastPreferredWidth = 0;
         int limit = 400;
         myInfoForm = new Info();
-        mySettingsForms = new SettingsForm[] {new Server(), new Database(), new Directories(), new DataImport(), new Content(), new UserManagement(),
-                                              new AdminNotify(), new Statistics(), new Misc(), new Streaming(), new Addons(), new RemoteControl(), myInfoForm};
+        mySettingsForms = new SettingsForm[]{new Server(), new Database(), new Directories(), new DataImport(), new Content(), new UserManagement(),
+                new AdminNotify(), new Statistics(), new Misc(), new Streaming(), new Addons(), new RemoteControl(), myInfoForm};
         for (SettingsForm form : mySettingsForms) {
             addSettingsItem(form);
             int itemWidth = myConfigButtonsPanel.getPreferredSize().width - lastPreferredWidth;
@@ -214,6 +214,11 @@ public class Settings implements MyTunesRssEventListener {
         form.initValues();
         String dialogTitle = MyTunesRssUtils.getBundleString("dialog.settings.commonTitle", form.getDialogTitle());
         final JDialog dialog = new JDialog(MyTunesRss.ROOT_FRAME, dialogTitle, true);
+        dialog.getRootPane().registerKeyboardAction(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
@@ -221,10 +226,10 @@ public class Settings implements MyTunesRssEventListener {
                 if (layout == null) {
                     layout = MyTunesRss.CONFIG.createDialogLayout(form.getClass());
                 }
-                layout.setX((int)dialog.getLocation().getX());
-                layout.setY((int)dialog.getLocation().getY());
-                layout.setWidth((int)dialog.getSize().getWidth());
-                layout.setHeight((int)dialog.getSize().getHeight());
+                layout.setX((int) dialog.getLocation().getX());
+                layout.setY((int) dialog.getLocation().getY());
+                layout.setWidth((int) dialog.getSize().getWidth());
+                layout.setHeight((int) dialog.getSize().getHeight());
                 String messages = form.updateConfigFromGui();
                 if (messages != null) {
                     MyTunesRssUtils.showErrorMessage(messages);
@@ -277,13 +282,13 @@ public class Settings implements MyTunesRssEventListener {
             String optionOk = MyTunesRssUtils.getBundleString("ok");
             String optionCancel = MyTunesRssUtils.getBundleString("cancel");
             Object option = SwingUtils.showOptionsMessage(MyTunesRss.ROOT_FRAME, JOptionPane.QUESTION_MESSAGE, null, MyTunesRssUtils.getBundleString(
-                    "question.deleteDatabase"), MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH, new Object[] {optionCancel, optionOk});
+                    "question.deleteDatabase"), MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH, new Object[]{optionCancel, optionOk});
             if (optionOk.equals(option)) {
                 MyTunesRssUtils.executeTask(null,
-                                            MyTunesRssUtils.getBundleString("pleaseWait.recreatingDatabase"),
-                                            null,
-                                            false,
-                                            new RecreateDatabaseTask());
+                        MyTunesRssUtils.getBundleString("pleaseWait.recreatingDatabase"),
+                        null,
+                        false,
+                        new RecreateDatabaseTask());
             }
         }
     }
