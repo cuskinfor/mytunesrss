@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.7-EAP-4" date="2009-xx-xx" description="3.7 EAP 4">
+        <release version="3.7-EAP-4" date="2009-03-20" description="3.7 EAP 4">
             <action dev="mdescher" type="add">
                 Log memory limits on startup.
             </action>
