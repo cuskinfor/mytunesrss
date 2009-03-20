@@ -11,10 +11,10 @@ import javax.management.NotCompliantMBeanException;
 /**
  * de.codewave.mytunesrss.jmx.Application
  */
-public class Application extends MyTunesRssMBean implements ApplicationMBean {
+public class ApplicationConfig extends MyTunesRssMBean implements ApplicationConfigMBean {
 
-    Application() throws NotCompliantMBeanException {
-        super(ApplicationMBean.class);
+    ApplicationConfig() throws NotCompliantMBeanException {
+        super(ApplicationConfigMBean.class);
     }
 
     public String getVersion() {
@@ -51,7 +51,7 @@ public class Application extends MyTunesRssMBean implements ApplicationMBean {
     }
 
     public void setCodewaveLogLevel(String level) {
-        MyTunesRssUtils.setCodewaveLogLevel(Level.toLevel(level.toUpperCase()));
+        MyTunesRssUtils.setCodewaveLogLevel(Level.toLevel(StringUtils.upperCase(level)));
         onChange();
     }
 

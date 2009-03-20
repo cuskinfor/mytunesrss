@@ -50,13 +50,13 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     }
 
     public String getName() {
-        return MyTunesRss.CONFIG.getUser(myUsername).getName();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUser(myUsername).getName());
     }
 
     public void setName(String name)
             throws MBeanRegistrationException, InstanceNotFoundException, MalformedObjectNameException, NotCompliantMBeanException,
             InstanceAlreadyExistsException {
-        if (StringUtils.isNotEmpty(name)) {
+        if (StringUtils.isNotBlank(name)) {
             MyTunesRssJmxUtils.unregisterUsers();
             MyTunesRss.CONFIG.getUser(myUsername).setName(name);
             MyTunesRssJmxUtils.registerUsers();
@@ -65,7 +65,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     }
 
     public void setPassword(String password) {
-        if (StringUtils.isNotEmpty(password)) {
+        if (StringUtils.isNotBlank(password)) {
             try {
                 MyTunesRss.CONFIG.getUser(myUsername).setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
                 onChange();
@@ -302,7 +302,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
                 User user = MyTunesRss.CONFIG.getUser(myUsername);
                 user.setPlaylistId(null);
                 for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
-                    if (playlist.getName().toLowerCase().contains(playlistName.toLowerCase())) {
+                    if (StringUtils.containsIgnoreCase(playlist.getName(), playlistName)) {
                         user.setPlaylistId(playlist.getId());
                     }
                 }
@@ -327,16 +327,16 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     }
 
     public String getLastFmUsername() {
-        return MyTunesRss.CONFIG.getUser(myUsername).getLastFmUsername();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUser(myUsername).getLastFmUsername());
     }
 
     public void setLastFmUsername(String username) {
-        MyTunesRss.CONFIG.getUser(myUsername).setLastFmUsername(username);
+        MyTunesRss.CONFIG.getUser(myUsername).setLastFmUsername(StringUtils.trimToNull(username));
         onChange();
     }
 
     public void setLastFmPassword(String password) {
-        if (StringUtils.isNotEmpty(password)) {
+        if (StringUtils.isNotBlank(password)) {
             try {
                 MyTunesRss.CONFIG.getUser(myUsername).setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.digest(StringUtils
                         .trim(password).getBytes("UTF-8")));

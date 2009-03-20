@@ -6,16 +6,17 @@ package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.settings.Directories;
 
 import javax.management.NotCompliantMBeanException;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * de.codewave.mytunesrss.jmx.DirectoriesConfig
  */
-public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesConfigMBean {
-    DirectoriesConfig() throws NotCompliantMBeanException {
-        super(DirectoriesConfigMBean.class);
+public class DatasourcesConfig extends MyTunesRssMBean implements DatasourcesConfigMBean {
+    DatasourcesConfig() throws NotCompliantMBeanException {
+        super(DatasourcesConfigMBean.class);
     }
 
     public String[] getDatasources() {
@@ -32,40 +33,40 @@ public class DirectoriesConfig extends MyTunesRssMBean implements DirectoriesCon
     }
 
     public String getUploadDir() {
-        return MyTunesRss.CONFIG.getUploadDir();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUploadDir());
     }
 
     public void setUploadDir(String uploadDir) {
-        MyTunesRss.CONFIG.setUploadDir(uploadDir);
+        MyTunesRss.CONFIG.setUploadDir(StringUtils.trimToNull(uploadDir));
         onChange();
     }
 
     public String getAlbumFallback() {
-        return MyTunesRss.CONFIG.getAlbumFallback();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getAlbumFallback());
     }
 
     public void setAlbumFallback(String albumFallback) {
-        MyTunesRss.CONFIG.setAlbumFallback(albumFallback);
+        MyTunesRss.CONFIG.setAlbumFallback(StringUtils.trimToNull(albumFallback));
         onChange();
     }
 
     public String getArtistFallback() {
-        return MyTunesRss.CONFIG.getArtistFallback();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getArtistFallback());
     }
 
     public void setArtistFallback(String artistFallback) {
-        MyTunesRss.CONFIG.setArtistFallback(artistFallback);
+        MyTunesRss.CONFIG.setArtistFallback(StringUtils.trimToNull(artistFallback));
         onChange();
     }
 
     public String addDatasource(String watchFolder) {
-        String error = MyTunesRss.CONFIG.addDatasource(watchFolder);
+        String error = MyTunesRss.CONFIG.addDatasource(StringUtils.trimToEmpty(watchFolder));
         onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
 
     public String removeDatasource(String watchFolder) {
-        String error = MyTunesRss.CONFIG.removeDatasource(watchFolder);
+        String error = MyTunesRss.CONFIG.removeDatasource(StringUtils.trimToEmpty(watchFolder));
         onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }

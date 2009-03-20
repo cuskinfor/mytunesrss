@@ -28,11 +28,11 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
     }
 
     public String getProxyHost() {
-        return MyTunesRss.CONFIG.getProxyHost();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getProxyHost());
     }
 
     public void setProxyHost(String proxyHost) {
-        MyTunesRss.CONFIG.setProxyHost(proxyHost);
+        MyTunesRss.CONFIG.setProxyHost(StringUtils.trimToNull(proxyHost));
         onChange();
     }
 
@@ -46,17 +46,19 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
     }
 
     public String getMyTunesRssComUser() {
-        return MyTunesRss.CONFIG.getMyTunesRssComUser();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getMyTunesRssComUser());
     }
 
     public void setMyTunesRssComUser(String usermame) {
-        MyTunesRss.CONFIG.setMyTunesRssComUser(usermame);
+        MyTunesRss.CONFIG.setMyTunesRssComUser(StringUtils.trimToNull(usermame));
         onChange();
     }
 
     public void setMyTunesRssComPassword(String password) throws UnsupportedEncodingException {
-        MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(MyTunesRss.SHA1_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
-        onChange();
+        if (StringUtils.isNotBlank(password)) {
+            MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(MyTunesRss.SHA1_DIGEST.digest(StringUtils.trimToEmpty(password).getBytes("UTF-8")));
+            onChange();
+        }
     }
 
     public boolean isMyTunesRssComSslSettings() {
@@ -69,35 +71,37 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
     }
 
     public String getWebWelcomeMessage() {
-        return MyTunesRss.CONFIG.getWebWelcomeMessage();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebWelcomeMessage());
     }
 
     public void setWebWelcomeMessage(String message) {
-        MyTunesRss.CONFIG.setWebWelcomeMessage(message);
+        MyTunesRss.CONFIG.setWebWelcomeMessage(StringUtils.trimToNull(message));
         onChange();
     }
 
     public String getMailHost() {
-        return MyTunesRss.CONFIG.getMailHost();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getMailHost());
     }
 
     public void setMailHost(String mailHost) {
-        MyTunesRss.CONFIG.setMailHost(mailHost);
+        MyTunesRss.CONFIG.setMailHost(StringUtils.trimToNull(mailHost));
         onChange();
     }
 
     public String getMailLogin() {
-        return MyTunesRss.CONFIG.getMailLogin();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getMailLogin());
     }
 
     public void setMailLogin(String mailLogin) {
-        MyTunesRss.CONFIG.setMailLogin(mailLogin);
+        MyTunesRss.CONFIG.setMailLogin(StringUtils.trimToNull(mailLogin));
         onChange();
     }
 
     public void setMailPassword(String mailPassword) {
-        MyTunesRss.CONFIG.setMailPassword(mailPassword);
-        onChange();
+        if (StringUtils.isNotBlank(mailPassword)) {
+            MyTunesRss.CONFIG.setMailPassword(StringUtils.trimToNull(mailPassword));
+            onChange();
+        }
     }
 
     public int getMailPort() {
@@ -110,11 +114,11 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
     }
 
     public String getMailSender() {
-        return MyTunesRss.CONFIG.getMailSender();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getMailSender());
     }
 
     public void setMailSender(String mailSender) {
-        MyTunesRss.CONFIG.setMailSender(mailSender);
+        MyTunesRss.CONFIG.setMailSender(StringUtils.trimToNull(mailSender));
         onChange();
     }
 

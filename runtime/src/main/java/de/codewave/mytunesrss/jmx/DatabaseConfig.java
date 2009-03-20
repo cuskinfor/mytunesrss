@@ -13,6 +13,8 @@ import de.codewave.mytunesrss.task.RecreateDatabaseTask;
 import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.log4j.lf5.util.StreamUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.management.NotCompliantMBeanException;
 import java.sql.SQLException;
@@ -107,7 +109,7 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
     }
 
     public String addSchedule(String schedule) {
-        String technicalSchedule = getTechnicalSchedule(schedule);
+        String technicalSchedule = getTechnicalSchedule(StringUtils.trimToEmpty(schedule));
         if (technicalSchedule != null) {
             MyTunesRss.CONFIG.getDatabaseCronTriggers().add(technicalSchedule);
             MyTunesRssJobUtils.scheduleDatabaseJob();
@@ -199,47 +201,47 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
     }
 
     public String getDatabaseConnection() {
-        return MyTunesRss.CONFIG.getDatabaseConnection();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabaseConnection());
     }
 
     public void setDatabaseConnection(String databaseConnection) {
-        MyTunesRss.CONFIG.setDatabaseConnection(databaseConnection);
+        MyTunesRss.CONFIG.setDatabaseConnection(StringUtils.trimToNull(databaseConnection));
         onChange();
     }
 
     public String getDatabaseDriver() {
-        return MyTunesRss.CONFIG.getDatabaseDriver();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabaseDriver());
     }
 
     public void setDatabaseDriver(String databaseDriver) {
-        MyTunesRss.CONFIG.setDatabaseDriver(databaseDriver);
+        MyTunesRss.CONFIG.setDatabaseDriver(StringUtils.trimToNull(databaseDriver));
         onChange();
     }
 
     public String getDatabasePassword() {
-        return MyTunesRss.CONFIG.getDatabasePassword();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabasePassword());
     }
 
     public void setDatabasePassword(String databasePassword) {
-        MyTunesRss.CONFIG.setDatabasePassword(databasePassword);
+        MyTunesRss.CONFIG.setDatabasePassword(StringUtils.trimToNull(databasePassword));
         onChange();
     }
 
     public String getDatabaseType() {
-        return MyTunesRss.CONFIG.getDatabaseType();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabaseType());
     }
 
     public void setDatabaseType(String databaseType) {
-        MyTunesRss.CONFIG.setDatabaseType(databaseType);
+        MyTunesRss.CONFIG.setDatabaseType(StringUtils.trimToNull(databaseType));
         onChange();
     }
 
     public String getDatabaseUser() {
-        return MyTunesRss.CONFIG.getDatabaseUser();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabaseUser());
     }
 
     public void setDatabaseUser(String user) {
-        MyTunesRss.CONFIG.setDatabaseUser(user);
+        MyTunesRss.CONFIG.setDatabaseUser(StringUtils.trimToNull(user));
         onChange();
     }
 }

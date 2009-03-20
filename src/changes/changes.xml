@@ -8,6 +8,13 @@
     <body>
 
         <release version="3.7-EAP-4" date="2009-xx-xx" description="3.7 EAP 4">
+            <action dev="mdescher" type="add">
+                Log memory limits on startup.
+            </action>
+            <action dev="mdescher" type="update">
+                More robust JMX interface (String getters/setters do a trimToEmpty/trimToNull on the output/input
+                values.
+            </action>
             <action dev="mdescher" type="update">
                 ESC key closes settings dialog windows.
             </action>

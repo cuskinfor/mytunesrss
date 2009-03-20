@@ -7,7 +7,7 @@ package de.codewave.mytunesrss.jmx;
 /**
  * de.codewave.mytunesrss.jmx.DirectoriesConfigMBean
  */
-public interface DirectoriesConfigMBean {
+public interface DatasourcesConfigMBean {
     String[] getDatasources();
 
     boolean isCreateUserSubdir();

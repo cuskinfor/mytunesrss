@@ -3,7 +3,7 @@ package de.codewave.mytunesrss.jmx;
 /**
  * de.codewave.mytunesrss.jmx.ApplicationMBean
  */
-public interface ApplicationMBean {
+public interface ApplicationConfigMBean {
     String getVersion();
 
     String quit();

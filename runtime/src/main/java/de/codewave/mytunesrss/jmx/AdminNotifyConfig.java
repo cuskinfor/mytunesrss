@@ -4,17 +4,19 @@ import de.codewave.mytunesrss.MyTunesRss;
 
 import javax.management.NotCompliantMBeanException;
 
+import org.apache.commons.lang.StringUtils;
+
 public class AdminNotifyConfig extends MyTunesRssMBean implements AdminNotifyConfigMBean {
     public AdminNotifyConfig() throws NotCompliantMBeanException {
         super(AdminNotifyConfigMBean.class);
     }
 
     public String getAdminEmail() {
-        return MyTunesRss.CONFIG.getAdminEmail();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getAdminEmail());
     }
 
     public void setAdminEmail(String adminEmail) {
-        MyTunesRss.CONFIG.setAdminEmail(adminEmail);
+        MyTunesRss.CONFIG.setAdminEmail(StringUtils.trimToNull(adminEmail));
         onChange();
     }
 

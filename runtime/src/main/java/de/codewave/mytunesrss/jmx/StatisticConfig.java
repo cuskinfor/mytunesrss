@@ -49,12 +49,12 @@ public class StatisticConfig extends MyTunesRssMBean implements StatisticConfigM
         Calendar from = new GregorianCalendar();
         Calendar to = new GregorianCalendar();
         try {
-            from.setTime(sdf.parse(fromDate));
+            from.setTime(sdf.parse(StringUtils.trimToEmpty(fromDate)));
         } catch (ParseException e) {
             return MyTunesRssUtils.getBundleString("error.jmx.statistic.couldNotParseFromDate");
         }
         try {
-            to.setTime(sdf.parse(toDate));
+            to.setTime(sdf.parse(StringUtils.trimToEmpty(toDate)));
         } catch (ParseException e) {
             return MyTunesRssUtils.getBundleString("error.jmx.statistic.couldNotParseToDate");
         }

@@ -21,11 +21,11 @@ public class RemoteControlConfig extends MyTunesRssMBean implements RemoteContro
 
 
     public String getVideoLanClientHost() {
-        return MyTunesRss.CONFIG.getVideoLanClientHost();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getVideoLanClientHost());
     }
 
     public void setVideoLanClientHost(String host) {
-        MyTunesRss.CONFIG.setVideoLanClientHost(host);
+        MyTunesRss.CONFIG.setVideoLanClientHost(StringUtils.trimToNull(host));
         onChange();
     }
 

@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.datastore.statement.UpdateTrackFileTypeStatement;
 import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.StringUtils;
 
 import javax.management.NotCompliantMBeanException;
 import java.sql.SQLException;
@@ -34,11 +35,11 @@ public class DataImportConfig extends MyTunesRssMBean implements DataImportConfi
     }
 
     public String getId3v2TagCommentPattern() {
-        return MyTunesRss.CONFIG.getId3v2TrackComment();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getId3v2TrackComment());
     }
 
     public void setId3v2TagCommentPattern(String pattern) {
-        MyTunesRss.CONFIG.setId3v2TrackComment(pattern);
+        MyTunesRss.CONFIG.setId3v2TrackComment(StringUtils.trimToNull(pattern));
         onChange();
     }
 
@@ -100,11 +101,11 @@ public class DataImportConfig extends MyTunesRssMBean implements DataImportConfi
     }
 
     public String getArtistDropWords() {
-        return MyTunesRss.CONFIG.getArtistDropWords();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getArtistDropWords());
     }
 
     public void setArtistDropWords(String artistDropWords) {
-        MyTunesRss.CONFIG.setArtistDropWords(artistDropWords);
+        MyTunesRss.CONFIG.setArtistDropWords(StringUtils.trimToNull(artistDropWords));
         onChange();
     }
 

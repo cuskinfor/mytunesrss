@@ -48,11 +48,11 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
     }
 
     public String getServerName() {
-        return MyTunesRss.CONFIG.getServerName();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getServerName());
     }
 
     public void setServerName(String name) {
-        MyTunesRss.CONFIG.setServerName(name);
+        MyTunesRss.CONFIG.setServerName(StringUtils.trimToNull(name));
         onChange();
     }
 
@@ -116,15 +116,15 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
     }
 
     public String getSslKeystoreFile() {
-        return MyTunesRss.CONFIG.getSslKeystoreFile();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getSslKeystoreFile());
     }
 
     public String getSslKeystoreKeyAlias() {
-        return MyTunesRss.CONFIG.getSslKeystoreKeyAlias();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
     }
 
     public String getSslKeystorePassphrase() {
-        return MyTunesRss.CONFIG.getSslKeystorePass();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getSslKeystorePass());
     }
 
     public int getSslPort() {
@@ -132,26 +132,26 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
     }
 
     public void setSslKeystoreFile(String file) {
-        MyTunesRss.CONFIG.setSslKeystoreFile(file);
+        MyTunesRss.CONFIG.setSslKeystoreFile(StringUtils.trimToNull(file));
         onChange();
     }
 
     public void setSslKeystoreKeyAlias(String alias) {
-        MyTunesRss.CONFIG.setSslKeystoreKeyAlias(alias);
+        MyTunesRss.CONFIG.setSslKeystoreKeyAlias(StringUtils.trimToNull(alias));
         onChange();
     }
 
     public String getTomcatProxyScheme() {
-        return MyTunesRss.CONFIG.getTomcatProxyScheme();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getTomcatProxyScheme());
     }
 
     public void setTomcatProxyScheme(String scheme) {
-        MyTunesRss.CONFIG.setTomcatProxyScheme(scheme);
+        MyTunesRss.CONFIG.setTomcatProxyScheme(StringUtils.trimToNull(scheme));
         onChange();
     }
 
     public void setSslKeystorePassphrase(String passphrase) {
-        MyTunesRss.CONFIG.setSslKeystorePass(passphrase);
+        MyTunesRss.CONFIG.setSslKeystorePass(StringUtils.trimToNull(passphrase));
         onChange();
     }
 
@@ -185,11 +185,11 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
     }
 
     public String getTomcatSslProxyScheme() {
-        return MyTunesRss.CONFIG.getTomcatSslProxyScheme();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getTomcatSslProxyScheme());
     }
 
     public void setTomcatSslProxyScheme(String scheme) {
-        MyTunesRss.CONFIG.setTomcatSslProxyScheme(scheme);
+        MyTunesRss.CONFIG.setTomcatSslProxyScheme(StringUtils.trimToNull(scheme));
         onChange();
     }
 
@@ -202,11 +202,11 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
     }
 
     public String addAdditionalContext(String context, String docbase) {
-        if (StringUtils.isEmpty(context) || StringUtils.isEmpty(docbase)) {
+        if (StringUtils.isBlank(context) || StringUtils.isBlank(docbase)) {
             return MyTunesRssUtils.getBundleString("jmx.illegalContextArguments");
         }
         context = StringUtils.trimToEmpty(context);
-        if (!context.startsWith("/")) {
+        if (!StringUtils.startsWith(context, "/")) {
             context = "/" + context;
         }
         docbase = StringUtils.trimToEmpty(docbase);
@@ -214,7 +214,7 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
             return MyTunesRssUtils.getBundleString("jmx.contextDocBaseDoesNotExist");
         }
         for (Iterator<String> iter = MyTunesRss.CONFIG.getAdditionalContexts().iterator(); iter.hasNext();) {
-            if (iter.next().startsWith(context + ":")) {
+            if (StringUtils.startsWith(iter.next(), context + ":")) {
 
                 return MyTunesRssUtils.getBundleString("jmx.contextAlreadyExists");
             }
@@ -238,16 +238,16 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
     }
 
     public String getWebappContext() {
-        return MyTunesRss.CONFIG.getWebappContext();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext());
     }
 
     public String removeAdditionalContext(String context) {
         context = StringUtils.trimToEmpty(context);
-        if (!context.startsWith("/")) {
+        if (!StringUtils.startsWith(context, "/")) {
             context = "/" + context;
         }
         for (Iterator<String> iter = MyTunesRss.CONFIG.getAdditionalContexts().iterator(); iter.hasNext();) {
-            if (iter.next().startsWith(context + ":")) {
+            if (StringUtils.startsWith(iter.next(), context + ":")) {
                 iter.remove();
                 return MyTunesRssUtils.getBundleString("ok");
             }
@@ -256,7 +256,7 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
     }
 
     public void setWebappContext(String context) {
-        MyTunesRss.CONFIG.setWebappContext(context);
+        MyTunesRss.CONFIG.setWebappContext(StringUtils.trimToNull(context));
     }
 
     public int getTomcatMaxThreads() {

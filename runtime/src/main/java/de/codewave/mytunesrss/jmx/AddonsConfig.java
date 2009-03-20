@@ -8,6 +8,8 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       Cologne Systems GmbH<br> <b>Creation Date:</b>
  * 01.03.2007
@@ -21,13 +23,13 @@ public class AddonsConfig extends MyTunesRssMBean implements AddonsConfigMBean {
     }
 
     public String addLanguage(String languagePath) {
-        String error = AddonsUtils.addLanguage(new File(languagePath));
+        String error = AddonsUtils.addLanguage(new File(StringUtils.trimToEmpty(languagePath)));
         onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
 
     public String addTheme(String themePath) {
-        String error = AddonsUtils.addTheme(new File(themePath));
+        String error = AddonsUtils.addTheme(new File(StringUtils.trimToEmpty(themePath)));
         onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
@@ -53,13 +55,13 @@ public class AddonsConfig extends MyTunesRssMBean implements AddonsConfigMBean {
     }
 
     public String removeLanguage(String languageCode) {
-        String error = AddonsUtils.deleteLanguage(languageCode);
+        String error = AddonsUtils.deleteLanguage(StringUtils.trimToEmpty(languageCode));
         onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }
 
     public String removeTheme(String themeName) {
-        String error = AddonsUtils.deleteTheme(themeName);
+        String error = AddonsUtils.deleteTheme(StringUtils.trimToEmpty(themeName));
         onChange();
         return error != null ? error : MyTunesRssUtils.getBundleString("ok");
     }

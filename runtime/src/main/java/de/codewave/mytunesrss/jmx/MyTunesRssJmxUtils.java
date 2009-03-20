@@ -43,7 +43,7 @@ public class MyTunesRssJmxUtils {
             APPLICATION_NAME = new ObjectName("MyTunesRSS:type=config,name=Application");
             DATABASE_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Database");
             DATAIMPORT_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=DataImport");
-            DIRECTORIES_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Directories");
+            DIRECTORIES_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=DataSources");
             USER_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Users");
             MISC_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Miscellaneous");
             ADDONS_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Addons");
@@ -64,10 +64,10 @@ public class MyTunesRssJmxUtils {
         if (INITIALIZED) {
             try {
                 MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-                server.registerMBean(new Application(), APPLICATION_NAME);
+                server.registerMBean(new ApplicationConfig(), APPLICATION_NAME);
                 server.registerMBean(new ServerConfig(), SERVER_CONFIG_NAME);
                 server.registerMBean(new DatabaseConfig(), DATABASE_CONFIG_NAME);
-                server.registerMBean(new DirectoriesConfig(), DIRECTORIES_CONFIG_NAME);
+                server.registerMBean(new DatasourcesConfig(), DIRECTORIES_CONFIG_NAME);
                 server.registerMBean(new DataImportConfig(), DATAIMPORT_CONFIG_NAME);
                 server.registerMBean(new UserConfig(), USER_CONFIG_NAME);
                 server.registerMBean(new MiscConfig(), MISC_CONFIG_NAME);

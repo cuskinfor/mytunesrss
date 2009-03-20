@@ -9,6 +9,7 @@ import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.StringUtils;
 
 import javax.management.NotCompliantMBeanException;
 import java.sql.SQLException;
@@ -26,7 +27,7 @@ public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean
     }
 
     public String showPlaylist(String playlistId) {
-        String error = changePlaylistAttribute(playlistId, false);
+        String error = changePlaylistAttribute(StringUtils.trimToEmpty(playlistId), false);
         if (error == null) {
             onChange();
         }
@@ -36,7 +37,7 @@ public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean
     private String changePlaylistAttribute(String playlistId, boolean hidden) {
         try {
             DataStoreSession session = MyTunesRss.STORE.getTransaction();
-            DataStoreQuery.QueryResult<Playlist> queryResult = session.executeQuery(new FindPlaylistQuery(null, playlistId, null, true));
+            DataStoreQuery.QueryResult<Playlist> queryResult = session.executeQuery(new FindPlaylistQuery(null, StringUtils.trimToEmpty(playlistId), null, true));
             if (queryResult.getResultSize() == 1) {
                 Playlist playlist = queryResult.nextResult();
                 SavePlaylistAttributesStatement statement = new SavePlaylistAttributesStatement();
@@ -73,7 +74,7 @@ public class ContentConfig extends MyTunesRssMBean implements ContentConfigMBean
     }
 
     public String hidePlaylist(String playlistId) {
-        String error = changePlaylistAttribute(playlistId, true);
+        String error = changePlaylistAttribute(StringUtils.trimToEmpty(playlistId), true);
         if (error == null) {
             onChange();
         }

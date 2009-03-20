@@ -5,6 +5,8 @@ import de.codewave.mytunesrss.MyTunesRss;
 import javax.management.NotCompliantMBeanException;
 import java.math.BigDecimal;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       Cologne Systems GmbH<br> <b>Creation Date:</b>
  * 01.03.2007
@@ -18,11 +20,11 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
     }
 
     public String getFaadBinary() {
-        return MyTunesRss.CONFIG.getFaadBinary();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getFaadBinary());
     }
 
     public String getAlacBinary() {
-        return MyTunesRss.CONFIG.getAlacBinary();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getAlacBinary());
     }
 
     public int getCacheMaxFiles() {
@@ -34,16 +36,16 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
     }
 
     public String getLameBinary() {
-        return MyTunesRss.CONFIG.getLameBinary();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getLameBinary());
     }
 
     public void setFaadBinary(String faadBinary) {
-        MyTunesRss.CONFIG.setFaadBinary(faadBinary);
+        MyTunesRss.CONFIG.setFaadBinary(StringUtils.trimToNull(faadBinary));
         onChange();
     }
 
     public void setAlacBinary(String alacBinary) {
-        MyTunesRss.CONFIG.setAlacBinary(alacBinary);
+        MyTunesRss.CONFIG.setAlacBinary(StringUtils.trimToNull(alacBinary));
         onChange();
     }
 
@@ -58,7 +60,7 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
     }
 
     public void setLameBinary(String lameBinary) {
-        MyTunesRss.CONFIG.setLameBinary(lameBinary);
+        MyTunesRss.CONFIG.setLameBinary(StringUtils.trimToNull(lameBinary));
         onChange();
     }
 
@@ -81,38 +83,38 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
     }
 
     public String getLameOnlyOptions() {
-        return MyTunesRss.CONFIG.getLameOnlyOptions();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getLameOnlyOptions());
     }
 
     public void setLameOnlyOptions(String options) {
-        MyTunesRss.CONFIG.setLameOnlyOptions(options);
+        MyTunesRss.CONFIG.setLameOnlyOptions(StringUtils.trimToNull(options));
         onChange();
     }
 
     public String getLameTargetOptions() {
-        return MyTunesRss.CONFIG.getLameTargetOptions();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getLameTargetOptions());
     }
 
     public void setLameTargetOptions(String options) {
-        MyTunesRss.CONFIG.setLameTargetOptions(options);
+        MyTunesRss.CONFIG.setLameTargetOptions(StringUtils.trimToNull(options));
         onChange();
     }
 
     public String getFaadSourceOptions() {
-        return MyTunesRss.CONFIG.getFaadSourceOptions();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getFaadSourceOptions());
     }
 
     public void setFaadSourceOptions(String options) {
-        MyTunesRss.CONFIG.setFaadSourceOptions(options);
+        MyTunesRss.CONFIG.setFaadSourceOptions(StringUtils.trimToNull(options));
         onChange();
     }
 
     public String getAlacSourceOptions() {
-        return MyTunesRss.CONFIG.getAlacSourceOptions();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getAlacSourceOptions());
     }
 
     public void setAlacSourceOptions(String options) {
-        MyTunesRss.CONFIG.setAlacSourceOptions(options);
+        MyTunesRss.CONFIG.setAlacSourceOptions(StringUtils.trimToNull(options));
         onChange();
     }
 }
