@@ -128,7 +128,7 @@ public class MyTunesRssRegistration {
             }
             handleRegistration(RegistrationUtils.getRegistrationData(getDefaultLicenseFile(), getPublicKey()));
             myExpiration = MyTunesRss.CONFIG.getConfigCreationTime() + TRIAL_PERIOD_MILLIS;
-            LOG.info("Set expiration to " + new SimpleDateFormat("yyyy-mm-dd").format(new Date(myExpiration)));
+            LOG.info("Set expiration to " + new SimpleDateFormat("yyyy-MM-dd").format(new Date(myExpiration)));
         }
     }
 
