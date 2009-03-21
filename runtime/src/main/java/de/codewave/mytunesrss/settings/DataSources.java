@@ -9,6 +9,8 @@ import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.swing.SwingUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -22,7 +24,8 @@ import java.io.IOException;
 /**
  * de.codewave.mytunesrss.settings.Options
  */
-public class Directories implements MyTunesRssEventListener, SettingsForm {
+public class DataSources implements MyTunesRssEventListener, SettingsForm {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataSources.class);
 
     private JPanel myRootPanel;
     private JList myBaseDirsList;
@@ -34,6 +37,7 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
     private JScrollPane myScrollPane;
     private JTextField myArtistFallbackInput;
     private JTextField myAlbumFallbackInput;
+    private JButton myAddRemoteButton;
     private DefaultListModel myListModel;
     private File myFileChooserDierctory;
 
@@ -54,7 +58,7 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 String text = value.toString();
-                if (StringUtils.startsWithIgnoreCase(text, "http://")) {
+                if (MyTunesRssUtils.isValidRemoteUrl(text)) {
                     label.setIcon(new ImageIcon(getClass().getResource("http.gif")));
                 } else if (StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(text), "xml")) {
                     label.setIcon(new ImageIcon(getClass().getResource("itunes.gif")));
@@ -79,6 +83,7 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
                 myUploadDirInput.setText(file.getCanonicalPath());
             }
         });
+        myAddRemoteButton.addActionListener(new AddRemoteActionListener());
         MyTunesRssEventManager.getInstance().addListener(this);
     }
 
@@ -200,6 +205,24 @@ public class Directories implements MyTunesRssEventListener, SettingsForm {
                 } else {
                     MyTunesRssUtils.showErrorMessage(error);
                 }
+            }
+        }
+    }
+
+    public class AddRemoteActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            EnterTextLineDialog dialog = new EnterTextLineDialog();
+            dialog.setResizable(false);
+            dialog.setTitle(MyTunesRssUtils.getBundleString("dialog.title.addRemoteDataSource"));
+            while (true) {
+                SwingUtils.packAndShowRelativeTo(dialog, myRootPanel.getParent());
+                if (dialog.isCancelled()) {
+                    break;
+                }
+                if (MyTunesRssUtils.isValidRemoteUrl(dialog.getTextLine())) {
+                    break;
+                }
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.invalidRemoteUrl"));
             }
         }
     }

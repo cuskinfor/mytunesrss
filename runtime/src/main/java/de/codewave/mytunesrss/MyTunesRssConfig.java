@@ -166,7 +166,7 @@ public class MyTunesRssConfig {
             myDatasources.add(StringUtils.trim(datasource));
             Collections.sort(myDatasources);
             return null;
-        } else if (StringUtils.startsWithIgnoreCase(datasource, "http://")) {
+        } else if (MyTunesRssUtils.isValidRemoteUrl(datasource)) {
             for (String eachDatasource : myDatasources) {
                 if (datasource.equals(eachDatasource)) {
                     return MyTunesRssUtils.getBundleString("error.datasourceAlreadyExists", eachDatasource);

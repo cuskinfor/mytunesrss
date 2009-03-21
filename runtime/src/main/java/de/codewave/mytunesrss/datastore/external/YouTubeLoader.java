@@ -8,6 +8,7 @@ import com.google.gdata.data.media.mediarss.MediaThumbnail;
 import com.google.gdata.util.ServiceException;
 import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
@@ -40,8 +41,8 @@ public class YouTubeLoader {
     private static final HttpClient HTTP_CLIENT = new HttpClient(new MultiThreadedHttpConnectionManager());
 
     public static boolean handles(String external) {
-        if (StringUtils.startsWithIgnoreCase(external, "http://")) {
-            if (StringUtils.contains(StringUtils.substringBetween(external, "http://", "/"), "youtube.com")) {
+        if (MyTunesRssUtils.isValidRemoteUrl(external)) {
+            if (StringUtils.containsIgnoreCase(MyTunesRssUtils.getHost(external), "youtube.com")) {
                 return true;
             }
         }

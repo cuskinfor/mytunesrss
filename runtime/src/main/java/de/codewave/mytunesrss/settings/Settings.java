@@ -66,7 +66,7 @@ public class Settings implements MyTunesRssEventListener {
         int lastPreferredWidth = 0;
         int limit = 400;
         myInfoForm = new Info();
-        mySettingsForms = new SettingsForm[]{new Server(), new Database(), new Directories(), new DataImport(), new Content(), new UserManagement(),
+        mySettingsForms = new SettingsForm[]{new Server(), new Database(), new DataSources(), new DataImport(), new Content(), new UserManagement(),
                 new AdminNotify(), new Statistics(), new Misc(), new Streaming(), new Addons(), new RemoteControl(), myInfoForm};
         for (SettingsForm form : mySettingsForms) {
             addSettingsItem(form);

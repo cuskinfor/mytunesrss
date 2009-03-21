@@ -372,4 +372,31 @@ public class MyTunesRssUtils {
         }
         return "application/octet-stream";
     }
+
+    /**
+     * Check if the specified URL is a valid MyTunesRSS remote datasource url.
+     *
+     * @param url An url string.
+     * @return <code>true</code> if the specified url is a valid MyTunesRSS datasource url or <code>false</code> otherwise.
+     */
+    public static boolean isValidRemoteUrl(String url) {
+        if (StringUtils.startsWithIgnoreCase(url, "http://") || StringUtils.startsWithIgnoreCase(url, "https://")) {
+            return StringUtils.isNotBlank(getHost(url));
+        }
+        return false;
+    }
+
+    /**
+     * Get the host name of an url string.
+     *
+     * @param url An url string.
+     * @return The host name of the url.
+     */
+    public static String getHost(String url) {
+        String host = StringUtils.substringBetween(url, "://", "/");
+        if (StringUtils.isBlank(host)) {
+            host = StringUtils.substringAfter(url, "://");
+        }
+        return StringUtils.trimToNull(host);
+    }
 }
