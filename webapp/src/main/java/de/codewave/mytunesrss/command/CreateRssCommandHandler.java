@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * de.codewave.mytunesrss.command.CreateRssCommandHandler
  */
@@ -25,9 +27,11 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
     public void executeAuthorized() throws Exception {
         if (getAuthUser().isRss()) {
             String feedUrl = getRequest().getRequestURL().toString();
-            String channel = feedUrl.substring(feedUrl.lastIndexOf('/') + 1);
-            channel = channel.substring(0, channel.lastIndexOf('.'));
-            getRequest().setAttribute("channel", MiscUtils.decodeUrl(channel.replace('_', ' ')));
+            String channel = StringUtils.trimToNull(StringUtils.substringAfterLast(feedUrl, "/"));
+            if (channel != null) {
+                channel = StringUtils.trimToNull(StringUtils.substringBeforeLast(channel, "."));
+            }
+            getRequest().setAttribute("channel", channel != null ? MiscUtils.decodeUrl(channel.replace('_', ' ')) : "MyTunesRSS");
             getRequest().setAttribute("pubDate", PUBLISH_DATE_FORMAT.format(new Date()));
             getRequest().setAttribute("feedUrl", feedUrl);
             Collection<Track> tracks = getTracks().getResults();

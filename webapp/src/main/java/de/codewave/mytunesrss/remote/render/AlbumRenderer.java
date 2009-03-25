@@ -20,6 +20,10 @@ public class AlbumRenderer implements Renderer<Map, Album> {
         result.put("artistCount", album.getArtistCount());
         result.put("imageUrl", album.isImage() ? MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.ShowAlbumImage, "album=" + album.getName()) :
                 null);
+        result.put("downloadUrl", MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.GetZipArchive, "album=" + album.getName()));
+        result.put("m3uUrl", MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, "album=" + album.getName() + "/type=M3u"));
+        result.put("xspfUrl", MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, "album=" + album.getName() + "/type=Xspf"));
+        result.put("rssUrl", MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreateRss, "album=" + album.getName()));
         return result;
     }
 }

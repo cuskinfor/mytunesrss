@@ -1,15 +1,6 @@
 {
     "version": "1.1",
-    "method": "PlaylistService.getPlaylistUrl",
+    "method": "PlaylistService.getPlaylists",
     "id": "12345",
-    "params": [
-        "7BCDC71A8B3A7148_E5DE128E68F5E8B9",
-        "m3u",
-        true,
-        true,
-        true,
-        11050,
-        32,
-        true
-    ]
+    "params": []
 }

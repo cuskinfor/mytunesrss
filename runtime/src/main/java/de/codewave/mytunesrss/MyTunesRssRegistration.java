@@ -20,12 +20,14 @@ import java.util.Date;
 public class MyTunesRssRegistration {
     private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssRegistration.class);
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final long TRIAL_PERIOD_MILLIS = 1000L * 3600L * 24L * 30L; // 30 days
 
     private String myName;
     private long myExpiration;
     private boolean myReleaseVersion;
     private boolean myValid;
-    private static final long TRIAL_PERIOD_MILLIS = 1000L * 3600L * 24L * 30L; // 30 days
+    private boolean myDisableGui;
+    private boolean myDisableWebLogin;
 
     public static MyTunesRssRegistration register(File registrationFile) {
         try {
@@ -142,6 +144,8 @@ public class MyTunesRssRegistration {
             myReleaseVersion = JXPathUtils.getBooleanValue(registrationContext, "/registration/release-version", true);
             myName = JXPathUtils.getStringValue(registrationContext, "/registration/name", "unregistered");
             String expirationDate = JXPathUtils.getStringValue(registrationContext, "/registration/expiration", null);
+            myDisableGui = JXPathUtils.getBooleanValue(registrationContext, "/registration/disable-gui", false);
+            myDisableWebLogin = JXPathUtils.getBooleanValue(registrationContext, "/registration/disable-web-login", false);
             if (expirationDate != null) {
                 try {
                     myExpiration = DATE_FORMAT.parse(expirationDate).getTime();
@@ -185,5 +189,13 @@ public class MyTunesRssRegistration {
 
     public boolean isExpiredPreReleaseVersion() {
         return !myReleaseVersion && isExpired();
+    }
+
+    public boolean isDisableGui() {
+        return myDisableGui;
+    }
+
+    public boolean isDisableWebLogin() {
+        return myDisableWebLogin;
     }
 }
