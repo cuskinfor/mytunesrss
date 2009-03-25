@@ -147,7 +147,7 @@ public class MyTunesRssRegistration {
             String expirationDate = JXPathUtils.getStringValue(registrationContext, "/registration/expiration", null);
             myDisableGui = JXPathUtils.getBooleanValue(registrationContext, "/registration/disable-gui", false);
             myDisableWebLogin = JXPathUtils.getBooleanValue(registrationContext, "/registration/disable-web-login", false);
-            myDisableJmxHtml = JXPathUtils.getBooleanValue(registrationContext, "/registration/disable-jmx_html", false);
+            myDisableJmxHtml = JXPathUtils.getBooleanValue(registrationContext, "/registration/disable-jmx-html", false);
             if (expirationDate != null) {
                 try {
                     myExpiration = DATE_FORMAT.parse(expirationDate).getTime();
