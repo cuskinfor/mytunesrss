@@ -28,6 +28,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -149,18 +150,26 @@ public class MyTunesRss {
     public static Scheduler QUARTZ_SCHEDULER;
     public static MailSender MAILER = new MailSender();
     public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
+    public static String JMX_HOST;
+    public static int JMX_PORT = -1;
 
     public static void main(final String[] args)
             throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException,
             IOException, SQLException, SchedulerException {
         final Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
-        HEADLESS = arguments.containsKey("headless");
+        JMX_HOST = getFirstTrimmedArgument(arguments, "jmxHost");
+        try {
+            JMX_PORT = Integer.parseInt(getFirstTrimmedArgument(arguments, "jmxPort"));
+        } catch (NumberFormatException e) {
+            // ignore
+        }
         VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
         if (StringUtils.isEmpty(VERSION)) {
             VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");
         }
         MyTunesRss.CONFIG.load();
         REGISTRATION.init(null, true);
+        HEADLESS = arguments.containsKey("headless") || REGISTRATION.isDisableGui();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
         registerDatabaseDriver();
         AnonyStatUtils.sendApplicationStarted();
@@ -247,6 +256,14 @@ public class MyTunesRss {
                 }
             });
         }
+    }
+
+    private static String getFirstTrimmedArgument(Map<String, String[]> args, String name) {
+        String[] values = args.get(name);
+        if (values != null && values.length > 0) {
+            return StringUtils.trimToNull(values[0]);
+        }
+        return null;
     }
 
     private static void registerDatabaseDriver()
