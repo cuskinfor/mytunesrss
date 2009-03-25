@@ -28,6 +28,7 @@ public class MyTunesRssRegistration {
     private boolean myValid;
     private boolean myDisableGui;
     private boolean myDisableWebLogin;
+    private boolean myDisableJmxHtml;
 
     public static MyTunesRssRegistration register(File registrationFile) {
         try {
@@ -146,6 +147,7 @@ public class MyTunesRssRegistration {
             String expirationDate = JXPathUtils.getStringValue(registrationContext, "/registration/expiration", null);
             myDisableGui = JXPathUtils.getBooleanValue(registrationContext, "/registration/disable-gui", false);
             myDisableWebLogin = JXPathUtils.getBooleanValue(registrationContext, "/registration/disable-web-login", false);
+            myDisableJmxHtml = JXPathUtils.getBooleanValue(registrationContext, "/registration/disable-jmx_html", false);
             if (expirationDate != null) {
                 try {
                     myExpiration = DATE_FORMAT.parse(expirationDate).getTime();
@@ -197,5 +199,9 @@ public class MyTunesRssRegistration {
 
     public boolean isDisableWebLogin() {
         return myDisableWebLogin;
+    }
+
+    public boolean isDisableJmxHtml() {
+        return myDisableJmxHtml;
     }
 }
