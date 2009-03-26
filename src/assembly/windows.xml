@@ -54,7 +54,6 @@
             <outputDirectory>data</outputDirectory>
             <directory>etc</directory>
             <includes>
-                <include>java.properties</include>
                 <include>systray4j.dll</include>
             </includes>
         </fileSet>
