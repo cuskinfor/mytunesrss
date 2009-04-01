@@ -95,7 +95,6 @@ public class MyTunesRssConfig {
     private String myJmxPassword;
     private String myTomcatMaxThreads;
     private int myTomcatAjpPort;
-    private boolean mySendAnonyStat;
     private String mySslKeystoreFile;
     private String mySslKeystorePass;
     private int mySslPort;
@@ -693,14 +692,6 @@ public class MyTunesRssConfig {
         myTomcatAjpPort = tomcatAjpPort;
     }
 
-    public boolean isSendAnonyStat() {
-        return mySendAnonyStat;
-    }
-
-    public void setSendAnonyStat(boolean sendAnonyStat) {
-        mySendAnonyStat = sendAnonyStat;
-    }
-
     public String getSslKeystoreFile() {
         return mySslKeystoreFile;
     }
@@ -1069,7 +1060,6 @@ public class MyTunesRssConfig {
             setTomcatProxyHost(JXPathUtils.getStringValue(settings, "tomcat/proxy-host", null));
             setTomcatProxyScheme(JXPathUtils.getStringValue(settings, "tomcat/proxy-scheme", null));
             setTomcatProxyPort(JXPathUtils.getIntValue(settings, "tomcat/proxy-port", 0));
-            setSendAnonyStat(JXPathUtils.getBooleanValue(settings, "anonymous-statistics", true));
             setSslKeystoreFile(JXPathUtils.getStringValue(settings, "ssl/keystore/file", null));
             setSslKeystoreKeyAlias(JXPathUtils.getStringValue(settings, "ssl/keystore/keyalias", null));
             setSslKeystorePass(JXPathUtils.getStringValue(settings, "ssl/keystore/pass", null));
@@ -1303,7 +1293,6 @@ public class MyTunesRssConfig {
                     dialogLayout.appendChild(DOMUtils.createIntElement(settings, "height", layout.getValue().getHeight()));
                 }
             }
-            root.appendChild(DOMUtils.createBooleanElement(settings, "anonymous-statistics", isSendAnonyStat()));
             Element ssl = settings.createElement("ssl");
             root.appendChild(ssl);
             ssl.appendChild(DOMUtils.createIntElement(settings, "port", getSslPort()));

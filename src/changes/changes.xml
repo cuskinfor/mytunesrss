@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.6.6" date="xxxx-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                Removed anonymous usage statistics.
+            </action>
             <action dev="mdescher" type="fix">
                 Fixed a problem with RSS feed links which did not contain a real file name in the end.
             </action>

@@ -4,7 +4,6 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.jmx.ErrorQueue;
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
@@ -172,7 +171,6 @@ public class MyTunesRss {
         HEADLESS = arguments.containsKey("headless") || REGISTRATION.isDisableGui();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
         registerDatabaseDriver();
-        AnonyStatUtils.sendApplicationStarted();
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Operating system: " + SystemUtils.OS_NAME + ", " + SystemUtils.OS_VERSION + ", " + SystemUtils.OS_ARCH);
             LOGGER.info("Java: " + SystemUtils.JAVA_VERSION + "(" + SystemUtils.JAVA_HOME + ")");

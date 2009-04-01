@@ -71,13 +71,4 @@ public class Application extends MyTunesRssMBean implements ApplicationMBean {
             return MyTunesRssUtils.getBundleString("error.illegalProxySettings");
         }
     }
-
-    public boolean isSendAnonymousUsageStatistics() {
-        return MyTunesRss.CONFIG.isSendAnonyStat();
-    }
-
-    public void setSendAnonymousUsageStatistics(boolean sendStatistics) {
-        MyTunesRss.CONFIG.setSendAnonyStat(sendStatistics);
-        onChange();
-    }
 }

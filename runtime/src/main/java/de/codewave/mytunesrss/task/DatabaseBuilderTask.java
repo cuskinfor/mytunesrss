@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.anonystat.AnonyStatUtils;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
 import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
@@ -205,8 +204,6 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 LOG.info("Creating database checkpoint.");
                 LOG.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
             }
-            AnonyStatUtils.sendDatabaseUpdated((System.currentTimeMillis() - timeUpdateStart),
-                                               storeSession.executeQuery(new GetSystemInformationQuery()));
             MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart),
                                                          missingItunesFiles,
                                                          storeSession.executeQuery(new GetSystemInformationQuery()));
