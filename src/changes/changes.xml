@@ -9,6 +9,9 @@
 
         <release version="3.7-EAP-5" date="2009-xx-xx" description="3.7 EAP 5">
             <action dev="mdescher" type="update">
+                Removed anonymous usage statistics.
+            </action>
+            <action dev="mdescher" type="update">
                 Some minor refatorings of the datasources panel and button for adding remote datasources.
             </action>
         </release>
