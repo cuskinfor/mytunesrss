@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.6.6" date="xxxx-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="add">
+                Warning message when changing the database type from standard H2 to anything else.
+            </action>
             <action dev="mdescher" type="update">
                 Removed anonymous usage statistics.
             </action>
