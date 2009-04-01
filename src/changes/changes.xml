@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7-EAP-5" date="2009-xx-xx" description="3.7 EAP 5">
+            <action dev="mdescher" type="add">
+                Warning message when changing the database type from standard H2 to anything else.
+            </action>
             <action dev="mdescher" type="update">
                 Removed anonymous usage statistics.
             </action>

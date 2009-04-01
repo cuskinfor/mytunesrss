@@ -47,6 +47,9 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
         myDbTypeInput.addItem(DatabaseType.mysql);
         myDbTypeInput.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
+                if (myRootPanel.isShowing() && e.getStateChange() == ItemEvent.DESELECTED && e.getItem() == DatabaseType.h2) {
+                    MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.selectOtherDatabaseType"));
+                }
                 myDbExtraPanel.setVisible(myDbTypeInput.getSelectedItem() != DatabaseType.h2);
             }
         });
