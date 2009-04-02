@@ -178,6 +178,16 @@ public class MyTunesRssConfig {
         return MyTunesRssUtils.getBundleString("error.datasourceDoesNotExist");
     }
 
+    public String replaceDatasource(int index, String datasource) {
+        String oldDatasource = myDatasources.remove(index);
+        String result = addDatasource(datasource);
+        if (result != null) {
+            myDatasources.add(oldDatasource);
+        }
+        Collections.sort(myDatasources);
+        return result;
+    }
+
     public String removeDatasource(String datasource) {
         if (myDatasources.contains(StringUtils.trim(datasource))) {
             myDatasources.remove(StringUtils.trim(datasource));

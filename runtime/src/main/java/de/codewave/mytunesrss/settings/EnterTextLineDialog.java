@@ -60,6 +60,10 @@ public class EnterTextLineDialog extends JDialog {
         return myCancelled;
     }
 
+    public void setTextLine(String textLine) {
+        myTextLineInput.setText(textLine);
+    }
+
     public String getTextLine() {
         return myTextLineInput.getText();
     }

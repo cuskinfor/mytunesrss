@@ -18,6 +18,8 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -75,11 +77,22 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
                 myDeleteBaseDirButton.setEnabled(myBaseDirsList.getSelectedIndex() > -1);
             }
         });
+        myBaseDirsList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int index = myBaseDirsList.locationToIndex(e.getPoint());
+                    if (index >= 0 && index < myBaseDirsList.getModel().getSize()) {
+                        editDataSource(index);
+                    }
+                }
+            }
+        });
         myAddBaseDirButton.addActionListener(new AddWatchFolderButtonListener());
         myDeleteBaseDirButton.addActionListener(new DeleteWatchFolderButtonListener());
         myUploadDirLookupButton.addActionListener(new AddWatchFolderButtonListener() {
             @Override
-            protected void handleChosenFile(File file) throws IOException {
+            protected void handleChosenFile(int editIndex, File file) throws IOException {
                 myUploadDirInput.setText(file.getCanonicalPath());
             }
         });
@@ -157,7 +170,26 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
         return MyTunesRssUtils.getBundleString("dialog.directories.title");
     }
 
+    protected void editDataSource(int index) {
+        if (new File(myListModel.get(index).toString()).exists()) {
+            new AddWatchFolderButtonListener(index).actionPerformed(null);
+        } else {
+            new AddRemoteActionListener(index).actionPerformed(null);
+        }
+    }
+
     public class AddWatchFolderButtonListener implements ActionListener {
+        private int myEditIndex;
+
+        public AddWatchFolderButtonListener() {
+            myEditIndex = -1;
+        }
+
+        public AddWatchFolderButtonListener(int editIndex) {
+            myEditIndex = editIndex;
+            myFileChooserDierctory = new File(MyTunesRss.CONFIG.getDatasources()[editIndex]).getParentFile();
+        }
+
         public void actionPerformed(ActionEvent event) {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setAcceptAllFileFilterUsed(false);
@@ -177,15 +209,15 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
             if (result == JFileChooser.APPROVE_OPTION) {
                 try {
                     myFileChooserDierctory = fileChooser.getCurrentDirectory();
-                    handleChosenFile(fileChooser.getSelectedFile());
+                    handleChosenFile(myEditIndex, fileChooser.getSelectedFile());
                 } catch (IOException e) {
                     MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.lookupDir", e.getMessage()));
                 }
             }
         }
 
-        protected void handleChosenFile(File file) throws IOException {
-            String error = MyTunesRss.CONFIG.addDatasource(file.getCanonicalPath());
+        protected void handleChosenFile(int editIndex, File file) throws IOException {
+            String error = editIndex == -1 ? MyTunesRss.CONFIG.addDatasource(file.getCanonicalPath()) : MyTunesRss.CONFIG.replaceDatasource(editIndex, file.getCanonicalPath());
             if (error == null) {
                 myListModel.clear();
                 addAllToListModel();
@@ -210,19 +242,39 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
     }
 
     public class AddRemoteActionListener implements ActionListener {
+        private int myEditIndex;
+
+        public AddRemoteActionListener() {
+            myEditIndex = -1;
+        }
+
+        public AddRemoteActionListener(int editIndex) {
+            myEditIndex = editIndex;
+        }
+
         public void actionPerformed(ActionEvent e) {
             EnterTextLineDialog dialog = new EnterTextLineDialog();
             dialog.setResizable(false);
             dialog.setTitle(MyTunesRssUtils.getBundleString("dialog.title.addRemoteDataSource"));
+            if (myEditIndex != -1) {
+                dialog.setTextLine(myListModel.get(myEditIndex).toString());
+            }
             while (true) {
                 SwingUtils.packAndShowRelativeTo(dialog, myRootPanel.getParent());
                 if (dialog.isCancelled()) {
-                    break;
+                    return;
                 }
                 if (MyTunesRssUtils.isValidRemoteUrl(dialog.getTextLine())) {
                     break;
                 }
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.invalidRemoteUrl"));
+            }
+            String error = myEditIndex == -1 ? MyTunesRss.CONFIG.addDatasource(dialog.getTextLine()) : MyTunesRss.CONFIG.replaceDatasource(myEditIndex, dialog.getTextLine());
+            if (error == null) {
+                myListModel.clear();
+                addAllToListModel();
+            } else {
+                MyTunesRssUtils.showErrorMessage(error);
             }
         }
     }
