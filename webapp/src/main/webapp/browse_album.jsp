@@ -152,7 +152,7 @@
                     <c:choose>
                         <c:when test="${empty sessionScope.playlist}">
                             <c:if test="${authUser.remoteControl && config.remoteControl}">
-                                <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', 'VideoLanClientService.loadAlbum', ['${album.name}', true])">
+                                <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', '${rcService}.loadAlbum', ['${album.name}', true])">
                                     <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                             </c:if>
@@ -212,7 +212,7 @@
                     <c:choose>
                         <c:when test="${empty sessionScope.playlist}">
                             <c:if test="${authUser.remoteControl && config.remoteControl}">
-                                <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', 'VideoLanClientService.loadArtist', ['${mtfn:decode64(param.artist)}', true, true])">
+                                <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', '${rcService}.loadArtist', ['${mtfn:decode64(param.artist)}', true, true])">
                                     <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                             </c:if>
@@ -284,7 +284,7 @@
                     <c:choose>
                         <c:when test="${empty sessionScope.playlist}">
                             <c:if test="${authUser.remoteControl && config.remoteControl}">
-                                <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', 'VideoLanClientService.loadArtist', ['${mtfn:decode64(param.artist)}', false, true])">
+                                <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', '${rcService}.loadArtist', ['${mtfn:decode64(param.artist)}', false, true])">
                                     <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                             </c:if>

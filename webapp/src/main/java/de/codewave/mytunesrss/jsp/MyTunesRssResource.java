@@ -49,6 +49,7 @@ public enum MyTunesRssResource {
     }
 
     public void beforeForward(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("rcService", MyTunesRss.CONFIG.getRemoteControlType().getServiceName());
         Map<String, Boolean> states = (Map<String, Boolean>)request.getSession().getAttribute("states");
         if (this != EditPlaylist && (states == null || !Boolean.TRUE.equals(states.get("addToPlaylistMode")))) {
             request.getSession().removeAttribute("playlist");

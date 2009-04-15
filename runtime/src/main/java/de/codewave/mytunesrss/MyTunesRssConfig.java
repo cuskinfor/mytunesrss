@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.settings.DialogLayout;
+import de.codewave.mytunesrss.settings.RemoteControlType;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.io.IOUtils;
@@ -132,6 +133,7 @@ public class MyTunesRssConfig {
     private String myCryptedCreationTime;
     private String myVideoLanClientHost = "";
     private int myVideoLanClientPort = 0;
+    private RemoteControlType myRemoteControlType;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -962,6 +964,14 @@ public class MyTunesRssConfig {
         myVideoLanClientPort = videoLanClientPort;
     }
 
+    public RemoteControlType getRemoteControlType() {
+        return myRemoteControlType;
+    }
+
+    public void setRemoteControlType(RemoteControlType remoteControlType) {
+        myRemoteControlType = remoteControlType;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1158,6 +1168,7 @@ public class MyTunesRssConfig {
             }
             setVideoLanClientHost(JXPathUtils.getStringValue(settings, "remote-control/vlc/host", null));
             setVideoLanClientPort(JXPathUtils.getIntValue(settings, "remote-control/vlc/port", 0));
+            setRemoteControlType(RemoteControlType.valueOf(JXPathUtils.getStringValue(settings, "remote-control/type", RemoteControlType.None.name())));
         } catch (IOException e) {
             LOGGER.error("Could not read configuration file.", e);
         }
@@ -1377,6 +1388,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createIntElement(settings, "statistics-keep-time", getStatisticKeepTime()));
             Element remoteControl = settings.createElement("remote-control");
             root.appendChild(remoteControl);
+            remoteControl.appendChild(DOMUtils.createTextElement(settings, "type", getRemoteControlType().name()));
             Element remoteControlVlc = settings.createElement("vlc");
             remoteControl.appendChild(remoteControlVlc);
             remoteControlVlc.appendChild(DOMUtils.createTextElement(settings, "host", getVideoLanClientHost()));

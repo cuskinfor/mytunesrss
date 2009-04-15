@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7-EAP-5" date="2009-xx-xx" description="3.7 EAP 5">
+            <action dev="mdescher" type="add">
+                Quicktime player remote control via AppleScript (on Mac OS X only of course).
+            </action>
             <action dev="mdescher" type="update">
                 JW Media Player 4.4.
             </action>

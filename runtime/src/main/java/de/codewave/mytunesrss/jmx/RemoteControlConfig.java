@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.settings.RemoteControlType;
 import org.apache.commons.lang.StringUtils;
 
 import javax.management.NotCompliantMBeanException;
@@ -35,6 +36,25 @@ public class RemoteControlConfig extends MyTunesRssMBean implements RemoteContro
 
     public void setVideoLanClientPort(int port) {
         MyTunesRss.CONFIG.setVideoLanClientPort(port);
+        onChange();
+    }
+
+    public String getRemoteControlType() {
+        return MyTunesRss.CONFIG.getRemoteControlType().toString();
+    }
+
+    public void disableRemoteControl() {
+        MyTunesRss.CONFIG.setRemoteControlType(RemoteControlType.None);
+        onChange();
+    }
+
+    public void setRemoteControlVideoLanClient() {
+        MyTunesRss.CONFIG.setRemoteControlType(RemoteControlType.Vlc);
+        onChange();
+    }
+
+    public void setRemoteControlQuicktime() {
+        MyTunesRss.CONFIG.setRemoteControlType(RemoteControlType.Quicktime);
         onChange();
     }
 }
