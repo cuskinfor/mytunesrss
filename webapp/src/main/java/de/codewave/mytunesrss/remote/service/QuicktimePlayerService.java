@@ -2,19 +2,17 @@ package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.User;
-import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.servlet.WebConfig;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Arrays;
 
 /**
  * de.codewave.mytunesrss.remote.service.VideoLanClientService
  */
-public class QuicktimePlayerService {
+public class QuicktimePlayerService implements RemoteControlService {
     private void assertAuthenticated() throws IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user == null) {
@@ -22,85 +20,94 @@ public class QuicktimePlayerService {
         }
     }
 
-    public String loadPlaylist(String playlistId, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        return loadItem("playlist=" + playlistId, start);
+    public void loadPlaylist(String playlistId, boolean start) throws IllegalAccessException, IOException {
+        loadItem("playlist=" + playlistId, start);
     }
 
-    private String loadItem(String pathInfo, boolean start) throws IllegalAccessException, IOException, InterruptedException {
+    private void loadItem(String pathInfo, boolean start) throws IllegalAccessException, IOException {
         assertAuthenticated();
-        String url = MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, pathInfo + "/type=" + WebConfig.PlaylistType.M3u);
-        AppleScriptClient client = new AppleScriptClient();
+        String url = MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, pathInfo + "/type=" + WebConfig.PlaylistType.M3u) + "/mytunesrss.m3u";
+        AppleScriptClient client = new AppleScriptClient("QuickTime Player");
         if (start) {
-            client.executeAppleScript("tell application \"QuickTime Player\"", "launch", "activate", "stop every document", "close every document", "open location \"" + url + "\"", "present document 1 scale screen mode normal", "play document 1", "end tell");
+            client.executeAppleScript("stop every document", "close every document", "open location \"" + url + "\"", "present document 1 scale screen mode normal", "play document 1");
         } else {
-            client.executeAppleScript("tell application \"QuickTime Player\"", "launch", "activate", "stop every document", "close every document", "open location \"" + url + "\"", "present document 1 scale screen mode normal", "end tell");
+            client.executeAppleScript("stop every document", "close every document", "open location \"" + url + "\"", "present document 1 scale screen mode normal");
         }
-        return null;
     }
 
-    public String loadAlbum(String albumName, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        return loadItem("album=" + MyTunesRssBase64Utils.encode(albumName), start);
+    public void loadAlbum(String albumName, boolean start) throws IllegalAccessException, IOException {
+        loadItem("album=" + MyTunesRssBase64Utils.encode(albumName), start);
     }
 
-    public String loadArtist(String artistName, boolean fullAlbums, boolean start) throws IllegalAccessException, IOException, InterruptedException {
+    public void loadArtist(String artistName, boolean fullAlbums, boolean start) throws IllegalAccessException, IOException {
         if (fullAlbums) {
-            return loadItem("fullAlbums=true/artist=" + MyTunesRssBase64Utils.encode(artistName), start);
+            loadItem("fullAlbums=true/artist=" + MyTunesRssBase64Utils.encode(artistName), start);
         } else {
-            return loadItem("artist=" + MyTunesRssBase64Utils.encode(artistName), start);
+            loadItem("artist=" + MyTunesRssBase64Utils.encode(artistName), start);
         }
     }
 
-    public String loadGenre(String genreName, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        return loadItem("genre=" + MyTunesRssBase64Utils.encode(genreName), start);
+    public void loadGenre(String genreName, boolean start) throws IllegalAccessException, IOException {
+        loadItem("genre=" + MyTunesRssBase64Utils.encode(genreName), start);
     }
 
-    public String loadTrack(String trackId, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        return loadItem("track=" + trackId, start);
+    public void loadTrack(String trackId, boolean start) throws IllegalAccessException, IOException {
+        loadItem("track=" + trackId, start);
     }
 
-    public String loadTracks(String[] trackIds, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        return loadItem("tracklist=" + StringUtils.join(trackIds, ","), start);
+    public void loadTracks(String[] trackIds, boolean start) throws IllegalAccessException, IOException {
+        loadItem("tracklist=" + StringUtils.join(trackIds, ","), start);
     }
 
-    public String clearPlaylist() throws IllegalAccessException, IOException, InterruptedException {
+    public void clearPlaylist() throws IllegalAccessException, IOException {
         assertAuthenticated();
-        // todo: implement method
-        throw new UnsupportedOperationException("method clearPlaylist of class QuicktimePlayerService is not yet implemented!");
+        new AppleScriptClient("QuickTime Player").executeAppleScript("close every document");
     }
 
-    public String play(int index) throws IllegalAccessException, IOException, InterruptedException {
+    public void play(int index) throws IllegalAccessException, IOException {
         assertAuthenticated();
-        // todo: implement method
-        throw new UnsupportedOperationException("method play of class QuicktimePlayerService is not yet implemented!");
+        new AppleScriptClient("QuickTime Player").executeAppleScript("activate", "present document 1 scale screen mode normal", "set current time of document 1 to start time of track " + index + " of document 1", "play document 1");
     }
 
-    public String pause() throws IllegalAccessException, IOException, InterruptedException {
+    public void pause() throws IllegalAccessException, IOException {
         assertAuthenticated();
-        // todo: implement method
-        throw new UnsupportedOperationException("method pause of class QuicktimePlayerService is not yet implemented!");
+        new AppleScriptClient("QuickTime Player").executeAppleScript("pause");
     }
 
-    public String stop() throws IllegalAccessException, IOException, InterruptedException {
+    public void stop() throws IllegalAccessException, IOException {
         assertAuthenticated();
-        // todo: implement method
-        throw new UnsupportedOperationException("method stop of class QuicktimePlayerService is not yet implemented!");
+        new AppleScriptClient("QuickTime Player").executeAppleScript("stop");
     }
 
-    public String next() throws IllegalAccessException, IOException, InterruptedException {
+    public void next() throws IllegalAccessException, IOException {
         assertAuthenticated();
-        // todo: implement method
-        throw new UnsupportedOperationException("method next of class QuicktimePlayerService is not yet implemented!");
+        new AppleScriptClient("QuickTime Player").executeAppleScript(
+                "set currentpos to current time of document 1",
+                "set tracklist to get start time of every track of document 1",
+                "repeat with i from 1 to count of my tracklist",
+                "if (currentpos < item i of my tracklist) then",
+                "set current time of document 1 to item i of my tracklist",
+                "exit repeat",
+                "end if",
+                "end repeat",
+                "play document 1"
+        );
     }
 
-    public String prev() throws IllegalAccessException, IOException, InterruptedException {
+    public void prev() throws IllegalAccessException, IOException, InterruptedException {
         assertAuthenticated();
-        // todo: implement method
-        throw new UnsupportedOperationException("method prev of class QuicktimePlayerService is not yet implemented!");
-    }
-
-    public String sendCommand(String command) throws IOException, IllegalAccessException, InterruptedException {
-        assertAuthenticated();
-        // todo: implement method
-        throw new UnsupportedOperationException("method sendCommand of class QuicktimePlayerService is not yet implemented!");
+        new AppleScriptClient("QuickTime Player").executeAppleScript(
+                "set currentpos to current time of document 1",
+                "set tracklist to get start time of every track of document 1",
+                "repeat with i from 1 to count of my tracklist",
+                "if (currentpos < item i of my tracklist) then",
+                "if (i > 2) then",
+                "set current time of document 1 to item (i - 2) of my tracklist",
+                "end if",
+                "exit repeat",
+                "end if",
+                "end repeat",
+                "play document 1"
+        );
     }
 }
