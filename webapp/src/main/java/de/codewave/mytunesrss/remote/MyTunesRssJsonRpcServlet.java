@@ -30,8 +30,7 @@ public class MyTunesRssJsonRpcServlet extends JSONRPCServlet {
         JSONRPCBridge.getGlobalBridge().registerObject("ServerService", new ServerService());
         JSONRPCBridge.getGlobalBridge().registerObject("GenreService", new GenreService());
         JSONRPCBridge.getGlobalBridge().registerObject("TranscodingService", new TranscodingService());
-        JSONRPCBridge.getGlobalBridge().registerObject("VideoLanClientService", new VideoLanClientService());
-        JSONRPCBridge.getGlobalBridge().registerObject("QuicktimePlayerService", new QuicktimePlayerService());
+        JSONRPCBridge.getGlobalBridge().registerObject("RemoteControlService", new RemoteControlService());
         try {
             JSONRPCBridge.setSerializer(new MyTunesRssJsonSerializer());
         } catch (Exception e) {

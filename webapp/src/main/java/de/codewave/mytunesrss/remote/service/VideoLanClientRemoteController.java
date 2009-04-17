@@ -2,7 +2,6 @@ package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.servlet.WebConfig;
@@ -13,14 +12,7 @@ import java.io.IOException;
 /**
  * de.codewave.mytunesrss.remote.service.VideoLanClientService
  */
-public class VideoLanClientService implements RemoteControlService {
-    private void assertAuthenticated() throws IllegalAccessException {
-        User user = MyTunesRssRemoteEnv.getSession().getUser();
-        if (user == null) {
-            throw new IllegalAccessException("Unauthorized");
-        }
-    }
-
+public class VideoLanClientRemoteController implements RemoteController {
     private VideoLanClient getVideoLanClient() throws IllegalAccessException, IOException, InterruptedException {
         VideoLanClient videoLanClient = new VideoLanClient();
         videoLanClient.connect(MyTunesRss.CONFIG.getVideoLanClientHost(), MyTunesRss.CONFIG.getVideoLanClientPort());
@@ -32,7 +24,6 @@ public class VideoLanClientService implements RemoteControlService {
     }
 
     private void loadItem(String pathInfo, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        assertAuthenticated();
         String url = MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, pathInfo + "/type=" + WebConfig.PlaylistType.M3u) + "/mytunesrss.m3u";
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
@@ -71,7 +62,6 @@ public class VideoLanClientService implements RemoteControlService {
     }
 
     public void clearPlaylist() throws IllegalAccessException, IOException, InterruptedException {
-        assertAuthenticated();
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
             videoLanClient.sendCommands("clear");
@@ -81,7 +71,6 @@ public class VideoLanClientService implements RemoteControlService {
     }
 
     public void play(int index) throws IllegalAccessException, IOException, InterruptedException {
-        assertAuthenticated();
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
             videoLanClient.sendCommands("goto " + index);
@@ -91,7 +80,6 @@ public class VideoLanClientService implements RemoteControlService {
     }
 
     public void pause() throws IllegalAccessException, IOException, InterruptedException {
-        assertAuthenticated();
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
             videoLanClient.sendCommands("pause");
@@ -101,7 +89,6 @@ public class VideoLanClientService implements RemoteControlService {
     }
 
     public void stop() throws IllegalAccessException, IOException, InterruptedException {
-        assertAuthenticated();
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
             videoLanClient.sendCommands("stop");
@@ -111,7 +98,6 @@ public class VideoLanClientService implements RemoteControlService {
     }
 
     public void next() throws IllegalAccessException, IOException, InterruptedException {
-        assertAuthenticated();
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
             videoLanClient.sendCommands("next");
@@ -121,7 +107,6 @@ public class VideoLanClientService implements RemoteControlService {
     }
 
     public void prev() throws IllegalAccessException, IOException, InterruptedException {
-        assertAuthenticated();
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
             videoLanClient.sendCommands("prev");
@@ -131,7 +116,6 @@ public class VideoLanClientService implements RemoteControlService {
     }
 
     public String sendCommand(String command) throws IOException, IllegalAccessException, InterruptedException {
-        assertAuthenticated();
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
             return videoLanClient.sendCommands(command);

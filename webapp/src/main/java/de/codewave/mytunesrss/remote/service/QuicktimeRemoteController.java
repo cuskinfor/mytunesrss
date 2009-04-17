@@ -12,20 +12,13 @@ import java.io.IOException;
 /**
  * de.codewave.mytunesrss.remote.service.VideoLanClientService
  */
-public class QuicktimePlayerService implements RemoteControlService {
-    private void assertAuthenticated() throws IllegalAccessException {
-        User user = MyTunesRssRemoteEnv.getSession().getUser();
-        if (user == null) {
-            throw new IllegalAccessException("Unauthorized");
-        }
-    }
+public class QuicktimeRemoteController implements RemoteController {
 
     public void loadPlaylist(String playlistId, boolean start) throws IllegalAccessException, IOException {
         loadItem("playlist=" + playlistId, start);
     }
 
     private void loadItem(String pathInfo, boolean start) throws IllegalAccessException, IOException {
-        assertAuthenticated();
         String url = MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, pathInfo + "/type=" + WebConfig.PlaylistType.M3u) + "/mytunesrss.m3u";
         AppleScriptClient client = new AppleScriptClient("QuickTime Player");
         if (start) {
@@ -60,27 +53,22 @@ public class QuicktimePlayerService implements RemoteControlService {
     }
 
     public void clearPlaylist() throws IllegalAccessException, IOException {
-        assertAuthenticated();
         new AppleScriptClient("QuickTime Player").executeAppleScript("close every document");
     }
 
     public void play(int index) throws IllegalAccessException, IOException {
-        assertAuthenticated();
         new AppleScriptClient("QuickTime Player").executeAppleScript("activate", "present document 1 scale screen mode normal", "set current time of document 1 to start time of track " + index + " of document 1", "play document 1");
     }
 
     public void pause() throws IllegalAccessException, IOException {
-        assertAuthenticated();
         new AppleScriptClient("QuickTime Player").executeAppleScript("pause");
     }
 
     public void stop() throws IllegalAccessException, IOException {
-        assertAuthenticated();
         new AppleScriptClient("QuickTime Player").executeAppleScript("stop");
     }
 
     public void next() throws IllegalAccessException, IOException {
-        assertAuthenticated();
         new AppleScriptClient("QuickTime Player").executeAppleScript(
                 "set currentpos to current time of document 1",
                 "set tracklist to get start time of every track of document 1",
@@ -95,7 +83,6 @@ public class QuicktimePlayerService implements RemoteControlService {
     }
 
     public void prev() throws IllegalAccessException, IOException, InterruptedException {
-        assertAuthenticated();
         new AppleScriptClient("QuickTime Player").executeAppleScript(
                 "set currentpos to current time of document 1",
                 "set tracklist to get start time of every track of document 1",

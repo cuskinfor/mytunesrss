@@ -128,12 +128,12 @@
                     <c:if test="${authUser.remoteControl && config.remoteControl}">
                         <c:choose>
                             <c:when test="${empty track.sectionPlaylistId}">
-                                <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', '${rcService}.loadTracks', [['${fn:join(fn:split(track.sectionIds, ","), "','")}'], true])">
+                                <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', 'RemoteControlService.loadTracks', [['${fn:join(fn:split(track.sectionIds, ","), "','")}'], true])">
                                     <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                             </c:when>
                             <c:otherwise>
-                                <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', '${rcService}.loadPlaylist', ['${track.sectionPlaylistId}', true])">
+                                <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', 'RemoteControlService.loadPlaylist', ['${track.sectionPlaylistId}', true])">
                                     <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                             </c:otherwise>
@@ -225,7 +225,7 @@
         <c:choose>
             <c:when test="${empty sessionScope.playlist}">
                 <c:if test="${authUser.remoteControl && config.remoteControl}">
-                    <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', '${rcService}.loadTrack', ['${track.id}', true])">
+                    <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', 'RemoteControlService.loadTrack', ['${track.id}', true])">
                         <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                              alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                 </c:if>

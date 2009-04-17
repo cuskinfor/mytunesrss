@@ -1,32 +1,90 @@
 package de.codewave.mytunesrss.remote.service;
 
-import java.io.IOException;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 
 /**
  * de.codewave.mytunesrss.remote.service.RemoteControlService
  */
-public interface RemoteControlService {
-    void loadPlaylist(String playlistId, boolean start) throws Exception;
+public class RemoteControlService implements RemoteController {
+    private RemoteController myRemoteController;
 
-    void loadAlbum(String albumName, boolean start) throws Exception;
+    private void assertAuthenticated() throws IllegalAccessException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user == null) {
+            throw new IllegalAccessException("Unauthorized");
+        }
+    }
 
-    void loadArtist(String artistName, boolean fullAlbums, boolean start) throws Exception;
+    private RemoteController getController() {
+        switch (MyTunesRss.CONFIG.getRemoteControlType()) {
+            case Vlc:
+                return new VideoLanClientRemoteController();
+            case Quicktime:
+                return new QuicktimeRemoteController();
+            default:
+                return new NoopRemoteController();
+        }
+    }
 
-    void loadGenre(String genreName, boolean start) throws Exception;
+    public void loadPlaylist(String playlistId, boolean start) throws Exception {
+        assertAuthenticated();
+        getController().loadPlaylist(playlistId, start);
+    }
 
-    void loadTrack(String trackId, boolean start) throws Exception;
+    public void loadAlbum(String albumName, boolean start) throws Exception {
+        assertAuthenticated();
+        getController().loadAlbum(albumName, start);
+    }
 
-    void loadTracks(String[] trackIds, boolean start) throws Exception;
+    public void loadArtist(String artistName, boolean fullAlbums, boolean start) throws Exception {
+        assertAuthenticated();
+        getController().loadArtist(artistName, fullAlbums, start);
+    }
 
-    void clearPlaylist() throws Exception;
+    public void loadGenre(String genreName, boolean start) throws Exception {
+        assertAuthenticated();
+        getController().loadGenre(genreName, start);
+    }
 
-    void play(int index) throws Exception;
+    public void loadTrack(String trackId, boolean start) throws Exception {
+        assertAuthenticated();
+        getController().loadTrack(trackId, start);
+    }
 
-    void pause() throws Exception;
+    public void loadTracks(String[] trackIds, boolean start) throws Exception {
+        assertAuthenticated();
+        getController().loadTracks(trackIds, start);
+    }
 
-    void stop() throws Exception;
+    public void clearPlaylist() throws Exception {
+        assertAuthenticated();
+        getController().clearPlaylist();
+    }
 
-    void next() throws Exception;
+    public void play(int index) throws Exception {
+        assertAuthenticated();
+        getController().play(index);
+    }
 
-    void prev() throws Exception;
+    public void pause() throws Exception {
+        assertAuthenticated();
+        getController().pause();
+    }
+
+    public void stop() throws Exception {
+        assertAuthenticated();
+        getController().stop();
+    }
+
+    public void next() throws Exception {
+        assertAuthenticated();
+        getController().next();
+    }
+
+    public void prev() throws Exception {
+        assertAuthenticated();
+        getController().prev();
+    }
 }
