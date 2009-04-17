@@ -57,15 +57,19 @@ public class QuicktimeRemoteController implements RemoteController {
     }
 
     public void play(int index) throws IllegalAccessException, IOException {
-        new AppleScriptClient("QuickTime Player").executeAppleScript("activate", "present document 1 scale screen mode normal", "set current time of document 1 to start time of track " + index + " of document 1", "play document 1");
+        if (index > 0) {
+            new AppleScriptClient("QuickTime Player").executeAppleScript("activate", "present document 1 scale screen mode normal", "set current time of document 1 to start time of track " + index + " of document 1", "play document 1");
+        } else {
+            new AppleScriptClient("QuickTime Player").executeAppleScript("activate", "present document 1 scale screen mode normal", "play document 1");
+        }
     }
 
     public void pause() throws IllegalAccessException, IOException {
-        new AppleScriptClient("QuickTime Player").executeAppleScript("pause");
+        new AppleScriptClient("QuickTime Player").executeAppleScript("pause document 1");
     }
 
     public void stop() throws IllegalAccessException, IOException {
-        new AppleScriptClient("QuickTime Player").executeAppleScript("stop");
+        new AppleScriptClient("QuickTime Player").executeAppleScript("stop document 1");
     }
 
     public void next() throws IllegalAccessException, IOException {

@@ -36,6 +36,7 @@ public enum MyTunesRssResource {
     BrowseGenre("/browse_genre.jsp"),
     Jukebox("/jukebox.jsp"),
     UploadFinished("/upload_finished.jsp"),
+    RemoteControl("/remote_control.jsp"),
     EditSmartPlaylist("/edit_smart_playlist.jsp");
 
     private String myValue;
