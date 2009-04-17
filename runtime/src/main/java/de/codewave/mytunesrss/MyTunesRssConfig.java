@@ -972,6 +972,10 @@ public class MyTunesRssConfig {
         myRemoteControlType = remoteControlType;
     }
 
+    public boolean isRemoteControl() {
+        return myRemoteControlType != RemoteControlType.None;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {

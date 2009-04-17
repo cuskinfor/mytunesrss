@@ -317,7 +317,7 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${authUser.remoteControl}">
+            <c:if test="${authUser.remoteControl && globalConfig.remoteControl && globalConfig.remoteControl}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.showRemoteControl" /></td>
                     <td>

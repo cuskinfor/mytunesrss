@@ -103,7 +103,7 @@
                     <td class="icon">
                         <c:choose>
                             <c:when test="${empty sessionScope.playlist}">
-                                <c:if test="${authUser.remoteControl && config.remoteControl}">
+                                <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                                     <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', 'RemoteControlService.loadGenre', ['${genre.name}', true])">
                                         <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
