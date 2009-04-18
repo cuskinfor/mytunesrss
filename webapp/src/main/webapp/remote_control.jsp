@@ -25,13 +25,13 @@
 
         <c:choose>
             <c:when test="${!empty param.album}">
-                jsonRpc('${servletUrl}', 'RemoteControlService.loadAlbum', ['${fn:replace(param.album, "'", "\\'")}', true]);
+                jsonRpc('${servletUrl}', 'RemoteControlService.loadAlbum', ['${fn:replace(mtfn:decode64(param.album), "'", "\\'")}', true]);
             </c:when>
             <c:when test="${!empty param.artist}">
-                jsonRpc('${servletUrl}', 'RemoteControlService.loadArtist', ['${fn:replace(param.artist, "'", "\\'")}', ${param.fullAlbums == "true"} ,true]);
+                jsonRpc('${servletUrl}', 'RemoteControlService.loadArtist', ['${fn:replace(mtfn:decode64(param.artist), "'", "\\'")}', ${param.fullAlbums == "true"} ,true]);
             </c:when>
             <c:when test="${!empty param.genre}">
-                jsonRpc('${servletUrl}', 'RemoteControlService.loadGenre', ['${fn:replace(param.genre, "'", "\\'")}', true]);
+                jsonRpc('${servletUrl}', 'RemoteControlService.loadGenre', ['${fn:replace(mtfn:decode64(param.genre), "'", "\\'")}', true]);
             </c:when>
             <c:when test="${!empty param.playlist}">
                 jsonRpc('${servletUrl}', 'RemoteControlService.loadPlaylist', ['${fn:replace(param.playlist, "'", "\\'")}', true]);
@@ -73,21 +73,26 @@
                 document.getElementById("pager_next").style.display = "none";
                 document.getElementById("pager_last").style.display = "none";
             }
-            start = Math.floor(currentPage / pagesPerPager) * pagesPerPager;
-            for (i = 0; i < pagesPerPager; i++) {
-                if ((start + i) * itemsPerPage < trackNames.length) {
-                    if (start + i == currentPage) {
-                        document.getElementById("pager_active_" + i).innerHTML = (start + i);
-                        document.getElementById("pager_active_" + i).style.display = "inline";
-                        document.getElementById("pager_inactive_" + i).style.display = "none";
+            if (trackNames.length <= itemsPerPage) {
+                document.getElementById("pager").style.display = "none";
+            } else {
+                document.getElementById("pager").style.display = "block";
+                start = Math.floor(currentPage / pagesPerPager) * pagesPerPager;
+                for (i = 0; i < pagesPerPager; i++) {
+                    if ((start + i) * itemsPerPage < trackNames.length) {
+                        if (start + i == currentPage) {
+                            document.getElementById("pager_active_" + i).innerHTML = (start + i);
+                            document.getElementById("pager_active_" + i).style.display = "inline";
+                            document.getElementById("pager_inactive_" + i).style.display = "none";
+                        } else {
+                            document.getElementById("pager_inactive_" + i).innerHTML = (start + i);
+                            document.getElementById("pager_active_" + i).style.display = "none";
+                            document.getElementById("pager_inactive_" + i).style.display = "inline";
+                        }
                     } else {
-                        document.getElementById("pager_inactive_" + i).innerHTML = (start + i);
                         document.getElementById("pager_active_" + i).style.display = "none";
-                        document.getElementById("pager_inactive_" + i).style.display = "inline";
+                        document.getElementById("pager_inactive_" + i).style.display = "none";
                     }
-                } else {
-                    document.getElementById("pager_active_" + i).style.display = "none";
-                    document.getElementById("pager_inactive_" + i).style.display = "none";
                 }
             }
         }
@@ -115,7 +120,7 @@
 
     <div class="body">
 
-        <h1 class="search"><span><fmt:message key="myTunesRss" /></span></h1>
+        <h1 class="search" style="cursor:pointer" onclick="self.document.location.href='${mtfn:decode64(param.backUrl)}'"><span><fmt:message key="myTunesRss" /></span></h1>
 
         <table cellspacing="0">
 
@@ -127,7 +132,7 @@
 
         </table>
 
-        <div class="pager">
+        <div id="pager" class="pager">
 
             <img id="pager_first" src="${appUrl}/images/pager_first.gif" alt="first" style="cursor:pointer" onclick="currentPage = 0;createPlaylist()"/>
             <img id="pager_previous" src="${appUrl}/images/pager_previous.gif" alt="previous" style="cursor:pointer" onclick="currentPage--;createPlaylist()"/>

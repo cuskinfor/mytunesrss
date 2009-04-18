@@ -126,7 +126,7 @@
                         <c:choose>
                             <c:when test="${empty sessionScope.playlist}">
                                 <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
-                                    <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">artist=${artist.name}/fullAlbums=false</mt:encrypt>">
+                                    <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/fullAlbums=false</mt:encrypt>">
                                         <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                              alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                                 </c:if>
