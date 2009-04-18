@@ -7,6 +7,8 @@
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
+<c:set var="backUrl" scope="request">${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(param.track)}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -137,7 +139,7 @@
             <td>&nbsp;</td>
             <td>
                         <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
-                            <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>">
+                            <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                 <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                      alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                         </c:if>

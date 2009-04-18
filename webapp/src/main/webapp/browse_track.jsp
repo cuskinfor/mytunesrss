@@ -133,7 +133,7 @@
                                          alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                             </c:when>
                             <c:otherwise>
-                                <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${track.sectionPlaylistId}</mt:encrypt>">
+                                <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${track.sectionPlaylistId}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                     <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                             </c:otherwise>
@@ -225,7 +225,7 @@
         <c:choose>
             <c:when test="${empty sessionScope.playlist}">
                 <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
-                    <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>">
+                    <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                         <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                              alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                 </c:if>

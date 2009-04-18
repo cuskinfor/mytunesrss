@@ -150,7 +150,7 @@
                 </td>
                 <td class="icon">
                     <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
-                        <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>">
+                        <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                             <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                  alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                     </c:if>
