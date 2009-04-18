@@ -22,19 +22,34 @@
                 "<c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />"<c:if test="${!trackLoopStatus.last}">,</c:if>
             </c:forEach>
         );
-        var trackIds = new Array(
-            <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus">
-                "${track.id}"<c:if test="${!trackLoopStatus.last}">,</c:if>
-            </c:forEach>
-        );
 
-        jsonRpc('${servletUrl}', 'RemoteControlService.loadTracks', [$A(trackIds), true]);
+        <c:choose>
+            <c:when test="${!empty param.album}">
+                jsonRpc('${servletUrl}', 'RemoteControlService.loadAlbum', ['${fn:replace(param.album, "'", "\\'")}', true]);
+            </c:when>
+            <c:when test="${!empty param.artist}">
+                jsonRpc('${servletUrl}', 'RemoteControlService.loadArtist', ['${fn:replace(param.artist, "'", "\\'")}', ${param.fullAlbums == "true"} ,true]);
+            </c:when>
+            <c:when test="${!empty param.genre}">
+                jsonRpc('${servletUrl}', 'RemoteControlService.loadGenre', ['${fn:replace(param.genre, "'", "\\'")}', true]);
+            </c:when>
+            <c:when test="${!empty param.playlist}">
+                jsonRpc('${servletUrl}', 'RemoteControlService.loadPlaylist', ['${fn:replace(param.playlist, "'", "\\'")}', true]);
+            </c:when>
+            <c:when test="${!empty param.tracklist}">
+                jsonRpc('${servletUrl}', 'RemoteControlService.loadTracks', [['${fn:join(fn:split(param.tracklist, ","), "','")}'], true]);
+            </c:when>
+            <c:otherwise>
+                jsonRpc('${servletUrl}', 'RemoteControlService.loadTrack', ['${fn:replace(param.track, "'", "\\'")}', true]);
+            </c:otherwise>
+        </c:choose>
 
         var itemsPerPage = 10;
         var pagesPerPager = 10;
         var currentPage = 0;
 
         function createPlaylist() {
+            unhighlightAllTracks();
             var start = currentPage * itemsPerPage;
             for (var i = 0; i < itemsPerPage; i++) {
                 if (start + i < trackNames.length) {
@@ -78,9 +93,8 @@
         }
 
         function startPlayback(index) {
-            jsonRpc('${servletUrl}', 'RemoteControlService.play', [currentPage * itemsPerPage + index + 1]);
             unhighlightAllTracks();
-            highlightTrack(index);
+            jsonRpc('${servletUrl}', 'RemoteControlService.play', [currentPage * itemsPerPage + index + 1]);
         }
 
         function highlightTrack(index) {

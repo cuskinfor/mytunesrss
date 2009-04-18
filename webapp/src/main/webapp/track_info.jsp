@@ -137,7 +137,7 @@
             <td>&nbsp;</td>
             <td>
                         <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
-                            <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', 'RemoteControlService.loadTrack', ['${track.id}', true])">
+                            <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>">
                                 <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                      alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                         </c:if>
