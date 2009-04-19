@@ -5,6 +5,7 @@ import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.network.RemoteServer;
 import de.codewave.mytunesrss.remote.service.QueryResultWrapper;
+import de.codewave.mytunesrss.remote.service.RemoteTrackInfo;
 import de.codewave.utils.sql.DataStoreQuery;
 
 import java.util.*;

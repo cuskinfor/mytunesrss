@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.servlet.WebConfig;
@@ -22,9 +21,20 @@ public class QuicktimeRemoteController implements RemoteController {
         String url = MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, pathInfo + "/type=" + WebConfig.PlaylistType.M3u) + "/mytunesrss.m3u";
         AppleScriptClient client = new AppleScriptClient("QuickTime Player");
         if (start) {
-            client.executeAppleScript("stop every document", "close every document", "open location \"" + url + "\"", "present document 1 scale screen mode normal", "play document 1");
+            client.executeAppleScript(
+                    "stop every document",
+                    "close every document",
+                    "open location \"" + url + "\"",
+                    "activate",
+                    "present document 1 scale screen mode normal",
+                    "play document 1"
+            );
         } else {
-            client.executeAppleScript("stop every document", "close every document", "open location \"" + url + "\"", "present document 1 scale screen mode normal");
+            client.executeAppleScript(
+                    "stop every document",
+                    "close every document",
+                    "open location \"" + url + "\""
+            );
         }
     }
 
@@ -58,9 +68,18 @@ public class QuicktimeRemoteController implements RemoteController {
 
     public void play(int index) throws IllegalAccessException, IOException {
         if (index > 0) {
-            new AppleScriptClient("QuickTime Player").executeAppleScript("activate", "present document 1 scale screen mode normal", "set current time of document 1 to start time of track " + index + " of document 1", "play document 1");
+            new AppleScriptClient("QuickTime Player").executeAppleScript(
+                    "activate",
+                    "present document 1 scale screen mode normal",
+                    "set current time of document 1 to start time of track " + index + " of document 1",
+                    "play document 1"
+            );
         } else {
-            new AppleScriptClient("QuickTime Player").executeAppleScript("activate", "present document 1 scale screen mode normal", "play document 1");
+            new AppleScriptClient("QuickTime Player").executeAppleScript(
+                    "activate",
+                    "present document 1 scale screen mode normal",
+                    "play document 1"
+            );
         }
     }
 
@@ -77,10 +96,10 @@ public class QuicktimeRemoteController implements RemoteController {
                 "set currentpos to current time of document 1",
                 "set tracklist to get start time of every track of document 1",
                 "repeat with i from 1 to count of my tracklist",
-                "if (currentpos < item i of my tracklist) then",
-                "set current time of document 1 to item i of my tracklist",
-                "exit repeat",
-                "end if",
+                "  if (currentpos < item i of my tracklist) then",
+                "    set current time of document 1 to item i of my tracklist",
+                "    exit repeat",
+                "  end if",
                 "end repeat",
                 "play document 1"
         );
@@ -91,14 +110,52 @@ public class QuicktimeRemoteController implements RemoteController {
                 "set currentpos to current time of document 1",
                 "set tracklist to get start time of every track of document 1",
                 "repeat with i from 1 to count of my tracklist",
-                "if (currentpos < item i of my tracklist) then",
-                "if (i > 2) then",
-                "set current time of document 1 to item (i - 2) of my tracklist",
-                "end if",
-                "exit repeat",
-                "end if",
+                "  if (currentpos < item i of my tracklist) then",
+                "    if (i > 2) then",
+                "      set current time of document 1 to item (i - 2) of my tracklist",
+                "    end if",
+                "    exit repeat",
+                "  end if",
                 "end repeat",
                 "play document 1"
         );
+    }
+
+    public void jumpTo(int percentage) throws Exception {
+        new AppleScriptClient("QuickTime Player").executeAppleScript(
+                "set currentpos to current time of document 1",
+                "set tracknumber to 0",
+                "set tracklist to get start time of every track of document 1",
+                "repeat with i from 1 to count of my tracklist",
+                "  if (currentpos < item i of my tracklist) then",
+                "    set tracknumber to i",
+                "    exit repeat",
+                "  end if",
+                "end repeat",
+                "set current time of document 1 to item (i - 1) of my tracklist + (duration of track (i - 1) of document 1 * " + ((double)percentage / 100.0) + ")"
+        );
+    }
+
+    public RemoteTrackInfo getCurrentTrackInfo() throws Exception {
+        String appleScriptResponse = new AppleScriptClient("QuickTime Player").executeAppleScript(
+                "set currentpos to current time of document 1",
+                "set tracknumber to 0",
+                "set tracklist to get start time of every track of document 1",
+                "repeat with i from 1 to count of my tracklist",
+                "  if (currentpos < item i of my tracklist) then",
+                "    set tracknumber to i",
+                "    exit repeat",
+                "  end if",
+                "end repeat",
+                "get (i - 1) & currentpos - (item (i - 1) of my tracklist) & duration of track (i - 1) of document 1 & playing of document 1"
+        );
+        RemoteTrackInfo trackInfo = new RemoteTrackInfo();
+        appleScriptResponse = StringUtils.removeEnd(StringUtils.removeStart(StringUtils.trimToEmpty(appleScriptResponse), "{"), "}");
+        String[] splitted = StringUtils.split(appleScriptResponse, ",");
+        trackInfo.setCurrentTrack(Integer.parseInt(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[0]), "-1")));
+        trackInfo.setCurrentTime(Integer.parseInt(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[1]), "-1")));
+        trackInfo.setLength(Integer.parseInt(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[2]), "-1")));
+        trackInfo.setPlaying(Boolean.parseBoolean(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[3]), "false")));
+        return trackInfo;
     }
 }

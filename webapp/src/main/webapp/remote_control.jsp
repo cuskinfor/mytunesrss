@@ -22,6 +22,11 @@
                 "<c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />"<c:if test="${!trackLoopStatus.last}">,</c:if>
             </c:forEach>
         );
+        var imageUrls = new Array(
+                <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus">
+                    "<c:if test="${track.imageCount > 0}">${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=32</mt:encrypt></c:if>"<c:if test="${!trackLoopStatus.last}">,</c:if>
+                </c:forEach>
+        );
 
         <c:choose>
             <c:when test="${!empty param.album}">
@@ -55,6 +60,11 @@
                 if (start + i < trackNames.length) {
                     document.getElementById("trackrow" + i).style.display = "table-row";
                     document.getElementById("track" + i).innerHTML = trackNames[start + i];
+                    if (imageUrls[start + i] != "") {
+                        document.getElementById("cover" + i).innerHTML = "<img src=\"" + imageUrls[start + i] + "\"/>";
+                    } else {
+                        document.getElementById("cover" + i).innerHTML = "&nbsp;";
+                    }
                 } else {
                     document.getElementById("trackrow" + i).style.display = "none";
                 }
@@ -112,6 +122,30 @@
             }
         }
 
+        function updateInterface(trackInfo) {
+            var firstTrackOnPage = itemsPerPage * currentPage;
+            var highlightIndex = trackInfo.currentTrack - firstTrackOnPage - 1;
+            unhighlightAllTracks();
+            if (trackInfo.playing && highlightIndex >= 0 && highlightIndex < itemsPerPage) {
+                highlightTrack(highlightIndex);
+            }
+            if (trackInfo.playing) {
+                var percentage = trackInfo.currentTime * 100 / trackInfo.length;
+                document.getElementById("progressDiv").style.display = "block";
+                document.getElementById("progressBar").style.width = (percentage) + "%";
+            } else if (!trackInfo.playing) {
+                document.getElementById("progressDiv").style.display = "none";
+            }
+        }
+
+        new PeriodicalExecuter(function() {
+            jsonRpc('${servletUrl}', 'RemoteControlService.getCurrentTrackInfo', [], updateInterface);
+        }, 2);
+
+        function jumpTo() {
+            jsonRpc('${servletUrl}', 'RemoteControlService.jumpTo', [50]);
+        }
+        
     </script>
 
 </head>
@@ -126,6 +160,7 @@
 
             <c:forEach begin="0" end="9" varStatus="itemLoopStatus">
                 <tr id="trackrow${itemLoopStatus.index}" class="${cwfn:choose(itemLoopStatus.count % 2 == 0, 'even', 'odd')}">
+                    <td id="cover${itemLoopStatus.index}" width="32">&nbsp;</td>
                     <td style="cursor:pointer" onclick="startPlayback(${itemLoopStatus.index})" class="artist" id="track${itemLoopStatus.index}"/>
                 </tr>
             </c:forEach>
@@ -145,6 +180,12 @@
             <img id="pager_next" src="${appUrl}/images/pager_next.gif" alt="next" style="cursor:pointer" onclick="currentPage++;createPlaylist()"/>
             <img id="pager_last" src="${appUrl}/images/pager_last.gif" alt="last" style="cursor:pointer" onclick="currentPage = Math.floor(trackNames.length / itemsPerPage);createPlaylist()"/>
 
+        </div>
+
+        <div id="progressDiv">
+            <div id="progressBackground" onclick="jumpTo()">
+                <div id="progressBar">&nbsp;</div>
+            </div>
         </div>
 
     </div>

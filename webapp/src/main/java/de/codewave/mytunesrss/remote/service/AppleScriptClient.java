@@ -1,10 +1,13 @@
 package de.codewave.mytunesrss.remote.service;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * de.codewave.mytunesrss.remote.service.QtPlayerClient
@@ -21,7 +24,7 @@ public class AppleScriptClient {
         myApplication = StringUtils.trimToNull(comonLinePrefix);
     }
 
-    public void executeAppleScript(String... commands) throws IOException {
+    public String executeAppleScript(String... commands) throws IOException {
         String[] finalCommands;
         if (myApplication != null) {
             finalCommands = new String[commands.length + 2];
@@ -40,6 +43,14 @@ public class AppleScriptClient {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("AppleScript: " + StringUtils.join(finalCommands, "\n"));
         }
-        new ProcessBuilder().command(processCommands).start();
+        Process p = new ProcessBuilder().command(processCommands).start();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        try {
+            p.waitFor();
+            return reader.readLine();
+        } catch (Exception e) {
+            IOUtils.closeQuietly(reader);
+        }
+        return null;
     }
 }

@@ -115,6 +115,16 @@ public class VideoLanClientRemoteController implements RemoteController {
         }
     }
 
+    public void jumpTo(int percentage) throws Exception {
+        // todo: implement method
+        throw new UnsupportedOperationException("method jumpTo of class VideoLanClientRemoteController is not yet implemented!");
+    }
+
+    public RemoteTrackInfo getCurrentTrackInfo() throws Exception {
+        // todo: implement method
+        throw new UnsupportedOperationException("method getCurrentTrackInfo of class VideoLanClientRemoteController is not yet implemented!");
+    }
+
     public String sendCommand(String command) throws IOException, IllegalAccessException, InterruptedException {
         VideoLanClient videoLanClient = getVideoLanClient();
         try {

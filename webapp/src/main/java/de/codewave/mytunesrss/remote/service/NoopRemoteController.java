@@ -51,4 +51,13 @@ public class NoopRemoteController implements RemoteController {
     public void prev() {
         // intentionally left blank
     }
+
+    public void jumpTo(int percentage) throws Exception {
+        // intentionally left blank
+    }
+
+    public RemoteTrackInfo getCurrentTrackInfo() throws Exception {
+        // intentionally left blank
+        return null;
+    }
 }

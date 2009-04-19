@@ -169,7 +169,7 @@ function enableScrollWheel(element) {
     }
 }
 
-function jsonRpc(serverUrl, func, parameterArray) {
+function jsonRpc(serverUrl, func, parameterArray, resultCallback) {
     new Ajax.Request(serverUrl + "/../jsonrpc", {
         postBody : $H({
             "version" : "1.1",
@@ -187,7 +187,12 @@ function jsonRpc(serverUrl, func, parameterArray) {
                     "method" : func,
                     "id" : "0",
                     "params" : parameterArray
-                }).toJSON()
+                }).toJSON(),
+                onSuccess : function(result) {
+                    if (resultCallback != undefined) {
+                        resultCallback(result.responseJSON.result);
+                    }
+                }
             })
         }
     });

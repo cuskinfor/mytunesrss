@@ -29,4 +29,8 @@ public interface RemoteController {
     void next() throws Exception;
 
     void prev() throws Exception;
+
+    void jumpTo(int percentage) throws Exception;
+
+    RemoteTrackInfo getCurrentTrackInfo() throws Exception;
 }
