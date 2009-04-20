@@ -125,32 +125,87 @@
         function updateInterface(trackInfo) {
             var firstTrackOnPage = itemsPerPage * currentPage;
             var highlightIndex = trackInfo.currentTrack - firstTrackOnPage - 1;
+
             unhighlightAllTracks();
+
             if (trackInfo.playing && highlightIndex >= 0 && highlightIndex < itemsPerPage) {
                 highlightTrack(highlightIndex);
             }
+
             if (trackInfo.playing) {
-                var percentage = trackInfo.currentTime * 100 / trackInfo.length;
-                document.getElementById("progressDiv").style.display = "block";
-                document.getElementById("progressBar").style.width = (percentage) + "%";
+                $("rc_play").style.display = "none";
+                $("rc_pause").style.display = "inline";
             } else if (!trackInfo.playing) {
-                document.getElementById("progressDiv").style.display = "none";
+                $("rc_play").style.display = "inline";
+                $("rc_pause").style.display = "none";
+            }
+
+            var percentage = trackInfo.currentTime * 100 / trackInfo.length;
+            if (percentage > 0 && percentage <= 100) {
+                document.getElementById("progressBar").style.width = (percentage) + "%";
+            } else {
+                document.getElementById("progressBar").style.width = 0;
             }
         }
 
-        new PeriodicalExecuter(function() {
+        function getStateAndUpdateInterface() {
             jsonRpc('${servletUrl}', 'RemoteControlService.getCurrentTrackInfo', [], updateInterface);
+        }
+
+        new PeriodicalExecuter(function() {
+            getStateAndUpdateInterface();
         }, 2);
 
-        function jumpTo() {
-            jsonRpc('${servletUrl}', 'RemoteControlService.jumpTo', [50]);
+        function play() {
+            jsonRpc('${servletUrl}', 'RemoteControlService.play', [0]);
+            getStateAndUpdateInterface();
         }
-        
+
+        function pause() {
+            jsonRpc('${servletUrl}', 'RemoteControlService.pause', []);
+            getStateAndUpdateInterface();
+        }
+
+        function stop() {
+            jsonRpc('${servletUrl}', 'RemoteControlService.stop', []);
+            getStateAndUpdateInterface();
+        }
+
+        function nextTrack() {
+            jsonRpc('${servletUrl}', 'RemoteControlService.next', []);
+            getStateAndUpdateInterface();
+        }
+
+        function previousTrack() {
+            jsonRpc('${servletUrl}', 'RemoteControlService.prev', []);
+            getStateAndUpdateInterface();
+        }
+
+        function registerObserver() {
+            Event.observe("progressBackground", "click", function(event) {
+                if (event.isLeftClick()) {
+                    var containerLeft = Position.page($("progressBackground"))[0];
+                    var containerTop = Position.page($("progressBackground"))[1];
+                    var mouseX = event.pointerX();
+                    var mouseY = event.pointerY();
+                    var horizontalPosition = mouseX - containerLeft;
+                    var verticalPosition = mouseY - containerTop;
+                    var containerDimensions = $('progressBackground').getDimensions();
+                    var height = containerDimensions.height;
+                    var width = containerDimensions.width;
+                    if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
+                        jsonRpc('${servletUrl}', 'RemoteControlService.jumpTo', [Math.round(horizontalPosition * 100 / width)]);
+                        getStateAndUpdateInterface();
+                    }
+                }
+            });
+        }
+
     </script>
 
 </head>
 
-<body onload="createPlaylist()">
+<body onload="createPlaylist();registerObserver()">
 
     <div class="body">
 
@@ -160,7 +215,7 @@
 
             <c:forEach begin="0" end="9" varStatus="itemLoopStatus">
                 <tr id="trackrow${itemLoopStatus.index}" class="${cwfn:choose(itemLoopStatus.count % 2 == 0, 'even', 'odd')}">
-                    <td id="cover${itemLoopStatus.index}" width="32">&nbsp;</td>
+                    <td id="cover${itemLoopStatus.index}" class="remotecontrolTrackImage">&nbsp;</td>
                     <td style="cursor:pointer" onclick="startPlayback(${itemLoopStatus.index})" class="artist" id="track${itemLoopStatus.index}"/>
                 </tr>
             </c:forEach>
@@ -182,8 +237,17 @@
 
         </div>
 
-        <div id="progressDiv">
-            <div id="progressBackground" onclick="jumpTo()">
+
+        <div class="remotecontrolPanel">
+            <img src="${appUrl}/images/rc_prev.png" alt="prev" onclick="previousTrack()" style="cursor:pointer"/>
+            <img id="rc_play" src="${appUrl}/images/rc_play.png" alt="prev" onclick="play()" style="cursor:pointer;display:none"/>
+            <img id="rc_pause" src="${appUrl}/images/rc_pause.png" alt="prev" onclick="pause()" style="cursor:pointer"/>
+            <img src="${appUrl}/images/rc_stop.png" alt="stop" onclick="stop()" style="cursor:pointer"/>
+            <img src="${appUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
+        </div>
+
+        <div id="progressDiv" style="display:block">
+            <div id="progressBackground">
                 <div id="progressBar">&nbsp;</div>
             </div>
         </div>

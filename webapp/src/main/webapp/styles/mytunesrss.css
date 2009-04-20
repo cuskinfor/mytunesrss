@@ -815,3 +815,14 @@ em.ymp-skin {
     margin-left: 5px;
     margin-top: -1px;
 }
+
+div.remotecontrolPanel {
+    text-align: center;
+    padding-top: 20px;
+}
+
+td.remotecontrolTrackImage {
+    padding: 2px;
+    width: 36px;
+    height: 36px;
+}

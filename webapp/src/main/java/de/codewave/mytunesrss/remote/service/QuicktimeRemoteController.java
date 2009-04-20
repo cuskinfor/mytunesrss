@@ -13,11 +13,11 @@ import java.io.IOException;
  */
 public class QuicktimeRemoteController implements RemoteController {
 
-    public void loadPlaylist(String playlistId, boolean start) throws IllegalAccessException, IOException {
+    public void loadPlaylist(String playlistId, boolean start) throws IOException {
         loadItem("playlist=" + playlistId, start);
     }
 
-    private void loadItem(String pathInfo, boolean start) throws IllegalAccessException, IOException {
+    private void loadItem(String pathInfo, boolean start) throws IOException {
         String url = MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, pathInfo + "/type=" + WebConfig.PlaylistType.M3u) + "/mytunesrss.m3u";
         AppleScriptClient client = new AppleScriptClient("QuickTime Player");
         if (start) {
@@ -38,11 +38,11 @@ public class QuicktimeRemoteController implements RemoteController {
         }
     }
 
-    public void loadAlbum(String albumName, boolean start) throws IllegalAccessException, IOException {
+    public void loadAlbum(String albumName, boolean start) throws IOException {
         loadItem("album=" + MyTunesRssBase64Utils.encode(albumName), start);
     }
 
-    public void loadArtist(String artistName, boolean fullAlbums, boolean start) throws IllegalAccessException, IOException {
+    public void loadArtist(String artistName, boolean fullAlbums, boolean start) throws IOException {
         if (fullAlbums) {
             loadItem("fullAlbums=true/artist=" + MyTunesRssBase64Utils.encode(artistName), start);
         } else {
@@ -50,23 +50,23 @@ public class QuicktimeRemoteController implements RemoteController {
         }
     }
 
-    public void loadGenre(String genreName, boolean start) throws IllegalAccessException, IOException {
+    public void loadGenre(String genreName, boolean start) throws IOException {
         loadItem("genre=" + MyTunesRssBase64Utils.encode(genreName), start);
     }
 
-    public void loadTrack(String trackId, boolean start) throws IllegalAccessException, IOException {
+    public void loadTrack(String trackId, boolean start) throws IOException {
         loadItem("track=" + trackId, start);
     }
 
-    public void loadTracks(String[] trackIds, boolean start) throws IllegalAccessException, IOException {
+    public void loadTracks(String[] trackIds, boolean start) throws IOException {
         loadItem("tracklist=" + StringUtils.join(trackIds, ","), start);
     }
 
-    public void clearPlaylist() throws IllegalAccessException, IOException {
+    public void clearPlaylist() throws IOException {
         new AppleScriptClient("QuickTime Player").executeAppleScript("close every document");
     }
 
-    public void play(int index) throws IllegalAccessException, IOException {
+    public void play(int index) throws IOException {
         if (index > 0) {
             new AppleScriptClient("QuickTime Player").executeAppleScript(
                     "activate",
@@ -87,11 +87,12 @@ public class QuicktimeRemoteController implements RemoteController {
         new AppleScriptClient("QuickTime Player").executeAppleScript("pause document 1");
     }
 
-    public void stop() throws IllegalAccessException, IOException {
+    public void stop() throws IOException {
         new AppleScriptClient("QuickTime Player").executeAppleScript("stop document 1");
+        jumpTo(0);
     }
 
-    public void next() throws IllegalAccessException, IOException {
+    public void next() throws IOException {
         new AppleScriptClient("QuickTime Player").executeAppleScript(
                 "set currentpos to current time of document 1",
                 "set tracklist to get start time of every track of document 1",
@@ -105,7 +106,7 @@ public class QuicktimeRemoteController implements RemoteController {
         );
     }
 
-    public void prev() throws IllegalAccessException, IOException, InterruptedException {
+    public void prev() throws IOException {
         new AppleScriptClient("QuickTime Player").executeAppleScript(
                 "set currentpos to current time of document 1",
                 "set tracklist to get start time of every track of document 1",
@@ -121,7 +122,7 @@ public class QuicktimeRemoteController implements RemoteController {
         );
     }
 
-    public void jumpTo(int percentage) throws Exception {
+    public void jumpTo(int percentage) throws IOException {
         new AppleScriptClient("QuickTime Player").executeAppleScript(
                 "set currentpos to current time of document 1",
                 "set tracknumber to 0",
@@ -132,11 +133,11 @@ public class QuicktimeRemoteController implements RemoteController {
                 "    exit repeat",
                 "  end if",
                 "end repeat",
-                "set current time of document 1 to item (i - 1) of my tracklist + (duration of track (i - 1) of document 1 * " + ((double)percentage / 100.0) + ")"
+                "set current time of document 1 to item (i - 1) of my tracklist + (duration of track (i - 1) of document 1 * " + ((double) percentage / 100.0) + ")"
         );
     }
 
-    public RemoteTrackInfo getCurrentTrackInfo() throws Exception {
+    public RemoteTrackInfo getCurrentTrackInfo() throws IOException {
         String appleScriptResponse = new AppleScriptClient("QuickTime Player").executeAppleScript(
                 "set currentpos to current time of document 1",
                 "set tracknumber to 0",
