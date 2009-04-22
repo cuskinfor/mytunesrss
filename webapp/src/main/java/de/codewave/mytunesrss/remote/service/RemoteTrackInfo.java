@@ -7,8 +7,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class RemoteTrackInfo {
     private int myCurrentTrack;
-    private int myLength;
-    private int myCurrentTime;
+    private int myLength = -1;
+    private int myCurrentTime = 0;
     private boolean myPlaying;
 
     public int getCurrentTrack() {

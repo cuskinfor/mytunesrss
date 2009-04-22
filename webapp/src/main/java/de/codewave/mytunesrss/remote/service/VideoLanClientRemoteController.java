@@ -33,6 +33,10 @@ public class VideoLanClientRemoteController implements RemoteController {
         try {
             if (start) {
                 videoLanClient.sendCommands("clear", "add " + url);
+                if (!StringUtils.contains(videoLanClient.sendCommands("status"), "play state")) {
+                    videoLanClient.sendCommands("pause", "goto 0");
+                }
+                videoLanClient.sendCommands("f on");
             } else {
                 videoLanClient.sendCommands("clear", "add " + url, "stop");
             }
@@ -77,7 +81,14 @@ public class VideoLanClientRemoteController implements RemoteController {
     public void play(int index) throws IllegalAccessException, IOException, InterruptedException {
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
-            videoLanClient.sendCommands("goto " + index);
+            if (index == 0) {
+                if (!StringUtils.contains(videoLanClient.sendCommands("status"), "play state")) {
+                    videoLanClient.sendCommands("pause");
+                }
+            } else {
+                videoLanClient.sendCommands("goto " + (index - 1));
+            }
+            videoLanClient.sendCommands("f on");
         } finally {
             videoLanClient.disconnect();
         }
@@ -86,7 +97,9 @@ public class VideoLanClientRemoteController implements RemoteController {
     public void pause() throws IllegalAccessException, IOException, InterruptedException {
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
-            videoLanClient.sendCommands("pause");
+            if (StringUtils.contains(videoLanClient.sendCommands("status"), "play state")) {
+                videoLanClient.sendCommands("pause");
+            }
         } finally {
             videoLanClient.disconnect();
         }
@@ -95,7 +108,11 @@ public class VideoLanClientRemoteController implements RemoteController {
     public void stop() throws IllegalAccessException, IOException, InterruptedException {
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
-            videoLanClient.sendCommands("stop");
+            if (StringUtils.contains(videoLanClient.sendCommands("status"), "play state")) {
+                videoLanClient.sendCommands("seek 0", "pause");
+            } else {
+                videoLanClient.sendCommands("pause", "seek 0", "pause");
+            }
         } finally {
             videoLanClient.disconnect();
         }
@@ -104,7 +121,7 @@ public class VideoLanClientRemoteController implements RemoteController {
     public void next() throws IllegalAccessException, IOException, InterruptedException {
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
-            videoLanClient.sendCommands("next");
+            videoLanClient.sendCommands("next", "f on");
         } finally {
             videoLanClient.disconnect();
         }
@@ -113,20 +130,48 @@ public class VideoLanClientRemoteController implements RemoteController {
     public void prev() throws IllegalAccessException, IOException, InterruptedException {
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
-            videoLanClient.sendCommands("prev");
+            videoLanClient.sendCommands("prev", "f on");
         } finally {
             videoLanClient.disconnect();
         }
     }
 
     public void jumpTo(int percentage) throws Exception {
-        // todo: implement method
-        throw new UnsupportedOperationException("method jumpTo of class VideoLanClientRemoteController is not yet implemented!");
+        // intentionally left blank
     }
 
     public RemoteTrackInfo getCurrentTrackInfo() throws Exception {
-        // todo: implement method
-        throw new UnsupportedOperationException("method getCurrentTrackInfo of class VideoLanClientRemoteController is not yet implemented!");
+        VideoLanClient videoLanClient = getVideoLanClient();
+        RemoteTrackInfo info = new RemoteTrackInfo();
+        try {
+            String currentTrack = StringUtils.trim(StringUtils.substringBefore(StringUtils.substringAfter(videoLanClient.sendCommands("status"), "new input:"), ")"));
+            if (StringUtils.isNotBlank(currentTrack)) {
+                info.setPlaying(true);
+                int i = 0;
+                String[] playlist = StringUtils.split(videoLanClient.sendCommands("playlist"), "|");
+                for (String entry : playlist) {
+                    if (StringUtils.isNotBlank(entry)) {
+                        if (StringUtils.contains(entry, currentTrack)) {
+                            info.setCurrentTrack((i / 2) + 1);
+                            break;
+                        }
+                        i++;
+                    }
+                }
+            }
+        } finally {
+            videoLanClient.disconnect();
+        }
+        return info;
+    }
+
+    /**
+     * Get the remote control features of the video lan client remote control service.
+     *
+     * @return The feature set.
+     */
+    public RemoteControlFeatures getFeatures() {
+        return new RemoteControlFeatures(false, false);
     }
 
     public String sendCommand(String command) throws IOException, IllegalAccessException, InterruptedException {

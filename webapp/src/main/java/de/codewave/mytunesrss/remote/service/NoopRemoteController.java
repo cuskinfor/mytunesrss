@@ -60,4 +60,9 @@ public class NoopRemoteController implements RemoteController {
         // intentionally left blank
         return null;
     }
+
+    public RemoteControlFeatures getFeatures() {
+        // intentionally left blank
+        return new RemoteControlFeatures(false, false);
+    }
 }

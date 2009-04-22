@@ -97,4 +97,9 @@ public class RemoteControlService implements RemoteController {
         assertAuthenticated();
         return getController().getCurrentTrackInfo();
     }
+
+    public RemoteControlFeatures getFeatures() throws Exception {
+        assertAuthenticated();
+        return getController().getFeatures();
+    }
 }

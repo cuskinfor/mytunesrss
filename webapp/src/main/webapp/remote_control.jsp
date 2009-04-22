@@ -22,36 +22,17 @@
                 "<c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />"<c:if test="${!trackLoopStatus.last}">,</c:if>
             </c:forEach>
         );
+
         var imageUrls = new Array(
                 <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus">
                     "<c:if test="${track.imageCount > 0}">${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=32</mt:encrypt></c:if>"<c:if test="${!trackLoopStatus.last}">,</c:if>
                 </c:forEach>
         );
 
-        <c:choose>
-            <c:when test="${!empty param.album}">
-                jsonRpc('${servletUrl}', 'RemoteControlService.loadAlbum', ['${fn:replace(mtfn:decode64(param.album), "'", "\\'")}', true]);
-            </c:when>
-            <c:when test="${!empty param.artist}">
-                jsonRpc('${servletUrl}', 'RemoteControlService.loadArtist', ['${fn:replace(mtfn:decode64(param.artist), "'", "\\'")}', ${param.fullAlbums == "true"} ,true]);
-            </c:when>
-            <c:when test="${!empty param.genre}">
-                jsonRpc('${servletUrl}', 'RemoteControlService.loadGenre', ['${fn:replace(mtfn:decode64(param.genre), "'", "\\'")}', true]);
-            </c:when>
-            <c:when test="${!empty param.playlist}">
-                jsonRpc('${servletUrl}', 'RemoteControlService.loadPlaylist', ['${fn:replace(param.playlist, "'", "\\'")}', true]);
-            </c:when>
-            <c:when test="${!empty param.tracklist}">
-                jsonRpc('${servletUrl}', 'RemoteControlService.loadTracks', [['${fn:join(fn:split(param.tracklist, ","), "','")}'], true]);
-            </c:when>
-            <c:otherwise>
-                jsonRpc('${servletUrl}', 'RemoteControlService.loadTrack', ['${fn:replace(param.track, "'", "\\'")}', true]);
-            </c:otherwise>
-        </c:choose>
-
         var itemsPerPage = 10;
         var pagesPerPager = 10;
         var currentPage = 0;
+        var featureSet;
 
         function createPlaylist() {
             unhighlightAllTracks();
@@ -152,10 +133,6 @@
             jsonRpc('${servletUrl}', 'RemoteControlService.getCurrentTrackInfo', [], updateInterface);
         }
 
-        new PeriodicalExecuter(function() {
-            getStateAndUpdateInterface();
-        }, 2);
-
         function play() {
             jsonRpc('${servletUrl}', 'RemoteControlService.play', [0]);
             getStateAndUpdateInterface();
@@ -182,30 +159,66 @@
         }
 
         function registerObserver() {
-            Event.observe("progressBackground", "click", function(event) {
-                if (event.isLeftClick()) {
-                    var containerLeft = Position.page($("progressBackground"))[0];
-                    var containerTop = Position.page($("progressBackground"))[1];
-                    var mouseX = event.pointerX();
-                    var mouseY = event.pointerY();
-                    var horizontalPosition = mouseX - containerLeft;
-                    var verticalPosition = mouseY - containerTop;
-                    var containerDimensions = $('progressBackground').getDimensions();
-                    var height = containerDimensions.height;
-                    var width = containerDimensions.width;
-                    if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
-                        jsonRpc('${servletUrl}', 'RemoteControlService.jumpTo', [Math.round(horizontalPosition * 100 / width)]);
-                        getStateAndUpdateInterface();
+            if (featureSet.jumpTo) {
+                Event.observe("progressBackground", "click", function(event) {
+                    if (event.isLeftClick()) {
+                        var containerLeft = Position.page($("progressBackground"))[0];
+                        var containerTop = Position.page($("progressBackground"))[1];
+                        var mouseX = event.pointerX();
+                        var mouseY = event.pointerY();
+                        var horizontalPosition = mouseX - containerLeft;
+                        var verticalPosition = mouseY - containerTop;
+                        var containerDimensions = $('progressBackground').getDimensions();
+                        var height = containerDimensions.height;
+                        var width = containerDimensions.width;
+                        if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
+                            jsonRpc('${servletUrl}', 'RemoteControlService.jumpTo', [Math.round(horizontalPosition * 100 / width)]);
+                            getStateAndUpdateInterface();
+                        }
                     }
+                });
+            }
+        }
+
+        function init() {
+            jsonRpc('${servletUrl}', 'RemoteControlService.getFeatures', [], function(features) {
+                featureSet = features;
+                if (featureSet.timeInfo) {
+                    $("progressDiv").style.display = "block";
+                    registerObserver();
                 }
             });
+            new PeriodicalExecuter(function() {
+                getStateAndUpdateInterface();
+            }, 2);
+            createPlaylist();
+            <c:choose>
+                <c:when test="${!empty param.album}">
+                    jsonRpc('${servletUrl}', 'RemoteControlService.loadAlbum', ['${fn:replace(mtfn:decode64(param.album), "'", "\\'")}', true]);
+                </c:when>
+                <c:when test="${!empty param.artist}">
+                    jsonRpc('${servletUrl}', 'RemoteControlService.loadArtist', ['${fn:replace(mtfn:decode64(param.artist), "'", "\\'")}', ${param.fullAlbums == "true"} ,true]);
+                </c:when>
+                <c:when test="${!empty param.genre}">
+                    jsonRpc('${servletUrl}', 'RemoteControlService.loadGenre', ['${fn:replace(mtfn:decode64(param.genre), "'", "\\'")}', true]);
+                </c:when>
+                <c:when test="${!empty param.playlist}">
+                    jsonRpc('${servletUrl}', 'RemoteControlService.loadPlaylist', ['${fn:replace(param.playlist, "'", "\\'")}', true]);
+                </c:when>
+                <c:when test="${!empty param.tracklist}">
+                    jsonRpc('${servletUrl}', 'RemoteControlService.loadTracks', [['${fn:join(fn:split(param.tracklist, ","), "','")}'], true]);
+                </c:when>
+                <c:otherwise>
+                    jsonRpc('${servletUrl}', 'RemoteControlService.loadTrack', ['${fn:replace(param.track, "'", "\\'")}', true]);
+                </c:otherwise>
+            </c:choose>
         }
 
     </script>
 
 </head>
 
-<body onload="createPlaylist();registerObserver()">
+<body onload="init()">
 
     <div class="body">
 
@@ -246,7 +259,7 @@
             <img src="${appUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
         </div>
 
-        <div id="progressDiv" style="display:block">
+        <div id="progressDiv" style="display:none">
             <div id="progressBackground">
                 <div id="progressBar">&nbsp;</div>
             </div>

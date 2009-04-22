@@ -1,7 +1,5 @@
 package de.codewave.mytunesrss.remote.service;
 
-import java.io.IOException;
-
 /**
  * de.codewave.mytunesrss.remote.service.RemoteControlService
  */
@@ -20,6 +18,12 @@ public interface RemoteController {
 
     void clearPlaylist() throws Exception;
 
+    /**
+     * Play a certain track of the current playlist.
+     *
+     * @param index The 1-based index of the track to play. A value of 0 should start playback at the current position (used to resume from a pause command).
+     * @throws Exception Any exception from the service.
+     */
     void play(int index) throws Exception;
 
     void pause() throws Exception;
@@ -33,4 +37,6 @@ public interface RemoteController {
     void jumpTo(int percentage) throws Exception;
 
     RemoteTrackInfo getCurrentTrackInfo() throws Exception;
+
+    RemoteControlFeatures getFeatures() throws Exception;
 }
