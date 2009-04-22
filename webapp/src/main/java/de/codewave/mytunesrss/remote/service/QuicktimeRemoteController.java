@@ -19,6 +19,10 @@ public class QuicktimeRemoteController implements RemoteController {
 
     private void loadItem(String pathInfo, boolean start) throws IOException {
         String url = MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, pathInfo + "/type=" + WebConfig.PlaylistType.M3u) + "/mytunesrss.m3u";
+        loadUrl(url, start);
+    }
+
+    private void loadUrl(String url, boolean start) throws IOException {
         AppleScriptClient client = new AppleScriptClient("QuickTime Player");
         if (start) {
             client.executeAppleScript(
@@ -55,7 +59,7 @@ public class QuicktimeRemoteController implements RemoteController {
     }
 
     public void loadTrack(String trackId, boolean start) throws IOException {
-        loadItem("track=" + trackId, start);
+        loadUrl(MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.PlayTrack, "/track=" + trackId), start);
     }
 
     public void loadTracks(String[] trackIds, boolean start) throws IOException {

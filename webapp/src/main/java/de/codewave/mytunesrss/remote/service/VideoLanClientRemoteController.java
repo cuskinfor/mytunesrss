@@ -25,6 +25,10 @@ public class VideoLanClientRemoteController implements RemoteController {
 
     private void loadItem(String pathInfo, boolean start) throws IllegalAccessException, IOException, InterruptedException {
         String url = MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, pathInfo + "/type=" + WebConfig.PlaylistType.M3u) + "/mytunesrss.m3u";
+        loadUrl(url, start);
+    }
+
+    private void loadUrl(String url, boolean start) throws IllegalAccessException, IOException, InterruptedException {
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
             if (start) {
@@ -54,7 +58,7 @@ public class VideoLanClientRemoteController implements RemoteController {
     }
 
     public void loadTrack(String trackId, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        loadItem("track=" + trackId, start);
+        loadUrl(MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.PlayTrack, "/track=" + trackId), start);
     }
 
     public void loadTracks(String[] trackIds, boolean start) throws IllegalAccessException, IOException, InterruptedException {
