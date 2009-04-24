@@ -1,5 +1,8 @@
 package de.codewave.mytunesrss.datastore.statement;
 
+import com.google.gdata.data.media.mediarss.MediaThumbnail;
+import com.google.gdata.data.youtube.VideoEntry;
+import com.google.gdata.util.ServiceException;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
@@ -9,32 +12,28 @@ import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.mytunesrss.meta.MyTunesRssMp4Utils;
 import de.codewave.utils.graphics.ImageUtils;
 import de.codewave.utils.sql.DataStoreStatement;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gdata.util.ServiceException;
-import com.google.gdata.data.media.mediarss.MediaThumbnail;
-import com.google.gdata.data.youtube.VideoEntry;
-
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackImagesStatement
  */
 public class HandleTrackImagesStatement implements DataStoreStatement {
-    private static final Logger LOG = LoggerFactory.getLogger(HandleTrackImagesStatement.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HandleTrackImagesStatement.class);
     private static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
     private static final Image IMAGE_UP_TO_DATE = new Image(null, null);
     private static final int MAX_IMAGE_DATA_SIZE = 1024 * 1000 * 2; // maximum image size is 2 MB
@@ -70,24 +69,24 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
             Image image = getImage();
             if (image != IMAGE_UP_TO_DATE) {
 //                if (image != null && image.getData() != null && image.getData().length > MAX_IMAGE_DATA_SIZE) {
-//                    if (LOG.isInfoEnabled()) {
-//                        LOG.info("Ignoring overly large image for file \"" + myFile.getAbsolutePath() + "\" (size = " + image.getData().length + ").");
+//                    if (LOGGER.isInfoEnabled()) {
+//                        LOGGER.info("Ignoring overly large image for file \"" + myFile.getAbsolutePath() + "\" (size = " + image.getData().length + ").");
 //                    }
 //                    image = null;
 //                }
                 String imageHash =
                         image != null && image.getData() != null ? MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData())) : null;
                 if (imageHash != null) {
-                    LOG.debug("Image hash is \"" + imageHash + "\".");
+                    LOGGER.debug("Image hash is \"" + imageHash + "\".");
                     boolean existing = new FindImageQuery(imageHash, 32).execute(connection) != null;
                     if (existing) {
-                        LOG.debug("Image with hash \"" + imageHash + "\" already exists in database.");
+                        LOGGER.debug("Image with hash \"" + imageHash + "\" already exists in database.");
                     } else {
-                        LOG.debug("Image with hash \"" + imageHash + "\" does not exist in database.");
+                        LOGGER.debug("Image with hash \"" + imageHash + "\" does not exist in database.");
                     }
                     if (image != null && image.getData() != null && image.getData().length > 0 && !existing) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Original image size is " + image.getData().length + " bytes.");
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Original image size is " + image.getData().length + " bytes.");
                         }
                         new InsertImageStatement(imageHash, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
                         new InsertImageStatement(imageHash, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
@@ -98,8 +97,8 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
             }
         } catch (Throwable t) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Could not extract image from file \"" + myFile.getAbsolutePath() + "\".", t);
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Could not extract image from file \"" + myFile.getAbsolutePath() + "\".", t);
             }
         }
     }
@@ -111,7 +110,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 try {
                     VideoEntry videoEntry = YouTubeLoader.getVideoEntry(StringUtils.substringAfter(myTrackId, "youtube_"));
                     if (videoEntry.getUpdated().getValue() >= myLastUpdateTime) {
-                        MediaThumbnail thumbnail = videoEntry.getOrCreateMediaGroup().getThumbnails().get(0);;
+                        MediaThumbnail thumbnail = videoEntry.getOrCreateMediaGroup().getThumbnails().get(0);
                         GetMethod method = new GetMethod(thumbnail.getUrl());
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         try {
@@ -127,15 +126,15 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                         return IMAGE_UP_TO_DATE;
                     }
                 } catch (ServiceException e) {
-                    LOG.error("Could not read youtube image.", e);
+                    LOGGER.error("Could not read youtube image.", e);
                 }
                 return null;
             }
             File imageFile = findImageFile(myFile);
             if (imageFile != null) {
                 if (imageFile.lastModified() >= myLastUpdateTime) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Reading image information from file \"" + imageFile.getAbsolutePath() + "\".");
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Reading image information from file \"" + imageFile.getAbsolutePath() + "\".");
                     }
                     image = new Image(IMAGE_TO_MIME.get(FilenameUtils.getExtension(imageFile.getName()).toLowerCase()), FileUtils.readFileToByteArray(
                             imageFile));
@@ -145,8 +144,8 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
             } else {
                 if (FileSupportUtils.isMp3(myFile)) {
                     if (myFile.lastModified() >= myLastUpdateTime) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
                         }
                         image = MyTunesRssMp3Utils.getImage(myFile);
                     } else {
@@ -154,8 +153,8 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     }
                 } else if (FileSupportUtils.isMp4(myFile)) {
                     if (myFile.lastModified() >= myLastUpdateTime) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
                         }
                         image = MyTunesRssMp4Utils.getImage(myFile);
                     } else {

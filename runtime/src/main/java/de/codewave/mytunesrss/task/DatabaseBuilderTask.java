@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.datastore.external.ExternalLoader;
 import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
@@ -12,13 +13,22 @@ import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.swing.Task;
+import de.codewave.camel.mp4.Mp4Atom;
+import de.codewave.camel.mp4.Mp4Utils;
+import de.codewave.camel.CamelUtils;
+import de.codewave.camel.Endianness;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageReader;
+import javax.imageio.ImageIO;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -398,4 +408,42 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     public static State getState() {
         return myState;
     }
+
+    /*
+    private Map<String, File> loadItunesArtwork() throws IOException {
+        LOGGER.debug("Loading iTunes artwork.");
+        for (String datasource : MyTunesRss.CONFIG.getDatasources()) {
+            File file = new File(datasource);
+            if (file.isFile()) {
+                // assume itunes xml
+                LOGGER.debug("Trying directory \"" + file.getParentFile().getAbsolutePath() + "/Album Artwork\".");
+                String[] idPair = StringUtils.split(trackId, "_");
+                if (idPair.length == 2) {
+                    String dirLevel1 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 1), 16), 2, '0');
+                    String dirLevel2 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 2), 16), 2, '0');
+                    String dirLevel3 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 3), 16), 2, '0');
+                    File itcFile = new File(file.getParentFile(), "Album Artwork/Download/" + idPair[0] + "/" + dirLevel1 + "/" + dirLevel2 + "/" + dirLevel3 + "/" + idPair[0] + "-" + idPair[1] + ".itc");
+                    LOGGER.debug("Trying ITC file \"" + itcFile.getAbsolutePath() + "\".");
+                    if (itcFile.isFile()) { // && itcFile.lastModified() >= myLastUpdateTime) {
+                        LOGGER.debug("Reading atoms from ITC file \"" + itcFile.getAbsolutePath() + "\".");
+                        Map<String, Mp4Atom> atoms = Mp4Utils.getAtoms(itcFile, Collections.<String>singletonList("item"));
+                        Mp4Atom itemAtom = atoms.get("item");
+                        if (itemAtom != null) {
+                            LOGGER.debug("Found item atom in ITC file \"" + itcFile.getAbsolutePath() + "\".");
+                            int offset = CamelUtils.getValue(itemAtom.getData(), 4, 4, false, Endianness.Big);
+                            Iterator<ImageReader> iter = ImageIO.getImageReaders(new MemoryCacheImageInputStream(new ByteArrayInputStream(itemAtom.getData(), offset, itemAtom.getData().length - offset)));
+                            if (iter.hasNext()) {
+                                ImageReader reader = iter.next();
+                                String mimeType = reader.getOriginatingProvider().getMIMETypes()[0];
+                                LOGGER.debug("Extracting image of type \"" + mimeType + "\" from ITC file \"" + itcFile.getAbsolutePath() + "\".");
+                                return new Image(mimeType, ArrayUtils.subarray(itemAtom.getData(), offset, itemAtom.getData().length));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    */
 }
