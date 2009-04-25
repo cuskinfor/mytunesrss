@@ -4,12 +4,22 @@
 
 package de.codewave.mytunesrss.meta;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+
 /**
  * de.codewave.mytunesrss.meta.Image
  */
 public class Image {
     private String myMimeType;
     private byte[] myData;
+
+    public Image(String mimeType, InputStream is) throws IOException {
+        this(mimeType, IOUtils.toByteArray(new BufferedInputStream(is)));
+    }
 
     public Image(String mimeType, byte[] data) {
         myMimeType = mimeType;

@@ -123,9 +123,9 @@
             <![CDATA[
             SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
             FROM playlist
-            WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
+            WHERE (hidden IS NULL OR :includeHidden IS TRUE OR hidden IS FALSE)
             AND (type != 'TEMP')
-            AND (user_private IS NULL OR user_private = FALSE OR :username IS NULL OR user_owner = :username)
+            AND (user_private IS NULL OR user_private IS FALSE OR :username IS NULL OR user_owner = :username)
             AND ((:types IS NULL AND :id IS NULL)
             OR (:types IS NOT NULL AND :id IS NULL AND type IN (:types))
             OR (:types IS NULL AND :id IS NOT NULL AND id = :id)
@@ -141,7 +141,7 @@
             <![CDATA[
             SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
             FROM playlist
-            WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
+            WHERE (hidden IS NULL OR :includeHidden IS TRUE OR hidden IS FALSE)
             AND (type != 'TEMP')
             AND user_owner = :username
             AND ((:types IS NULL AND :id IS NULL)
@@ -159,8 +159,8 @@
             <![CDATA[
             SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
             FROM playlist p, link_track_playlist rltp, link_track_playlist ltp
-            WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
-            AND (user_private IS NULL OR user_private = FALSE OR :username IS NULL OR user_owner = :username)
+            WHERE (hidden IS NULL OR :includeHidden IS TRUE OR hidden IS FALSE)
+            AND (user_private IS NULL OR user_private IS FALSE OR :username IS NULL OR user_owner = :username)
             AND (type != 'TEMP')
             AND rltp.playlist_id = :restrictionPlaylistId
             AND ltp.track_id = rltp.track_id
@@ -434,7 +434,7 @@
     </statement>
 
     <statement name="removeTrack">
-        <sql>DELETE FROM track WHERE id = :track_id AND sticky = FALSE</sql>
+        <sql>DELETE FROM track WHERE id = :track_id AND sticky IS NOT TRUE</sql>
     </statement>
 
     <statement name="findImage">
