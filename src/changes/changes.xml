@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="3.7-EAP-7" date="2009-xx-xx" description="3.7 EAP 7">
+            <action dev="mdescher" type="add">
+                Users can have parent users now. Some settings are inherited from the parent user.
+            </action>
+            <action dev="mdescher" type="add">
+                Store position and size of user editing dialog.
+            </action>
+        </release>
+
         <release version="3.7-EAP-6" date="2009-04-26" description="3.7 EAP 6">
             <action dev="mdescher" type="update">
                 Visual feedback for remote control and ability to use the complete

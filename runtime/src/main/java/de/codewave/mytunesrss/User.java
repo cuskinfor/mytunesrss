@@ -80,6 +80,7 @@ public class User implements MyTunesRssEventListener {
     private String myEmail;
     private boolean myChangeEmail;
     private boolean myRemoteControl;
+    private String myParentUserName;
 
     public User(String name) {
         myName = name;
@@ -113,7 +114,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isDownload() {
-        return myDownload;
+        return getParent() != null ? getParent().isDownload() : myDownload;
     }
 
     public void setDownload(boolean download) {
@@ -121,7 +122,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isPlaylist() {
-        return myPlaylist;
+        return getParent() != null ? getParent().isPlaylist() : myPlaylist;
     }
 
     public void setPlaylist(boolean playlist) {
@@ -129,7 +130,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isRss() {
-        return myRss;
+        return getParent() != null ? getParent().isRss() : myRss;
     }
 
     public void setRss(boolean rss) {
@@ -137,7 +138,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isUpload() {
-        return myUpload;
+        return getParent() != null ? getParent().isUpload() : myUpload;
     }
 
     public void setUpload(boolean upload) {
@@ -145,7 +146,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isPlayer() {
-        return myPlayer;
+        return getParent() != null ? getParent().isPlayer() : myPlayer;
     }
 
     public void setPlayer(boolean player) {
@@ -153,7 +154,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isChangePassword() {
-        return myChangePassword;
+        return getParent() != null ? getParent().isChangePassword() : myChangePassword;
     }
 
     public void setChangePassword(boolean changePassword) {
@@ -161,7 +162,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isEditLastFmAccount() {
-        return myEditLastFmAccount;
+        return getParent() != null ? getParent().isEditLastFmAccount() : myEditLastFmAccount;
     }
 
     public void setEditLastFmAccount(boolean editLastFmAccount) {
@@ -169,7 +170,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public long getBytesQuota() {
-        return myBytesQuota;
+        return getParent() != null ? getParent().getBytesQuota() : myBytesQuota;
     }
 
     public void setBytesQuota(long bytesQuota) {
@@ -201,7 +202,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public QuotaType getQuotaType() {
-        return myQuotaType != null ? myQuotaType : QuotaType.None;
+        return getParent() != null ? getParent().getQuotaType() : (myQuotaType != null ? myQuotaType : QuotaType.None);
     }
 
     public void setQuotaType(QuotaType quotaType) {
@@ -209,7 +210,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isQuota() {
-        return myQuotaType != null && myQuotaType != QuotaType.None;
+        return getParent() != null ? getParent().isQuota() : (myQuotaType != null && myQuotaType != QuotaType.None);
     }
 
     public long getResetTime() {
@@ -221,7 +222,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public int getMaximumZipEntries() {
-        return myMaximumZipEntries;
+        return getParent() != null ? getParent().getMaximumZipEntries() : myMaximumZipEntries;
     }
 
     public void setMaximumZipEntries(int maximumZipEntries) {
@@ -229,7 +230,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public String getFileTypes() {
-        return myFileTypes;
+        return getParent() != null ? getParent().getFileTypes() : myFileTypes;
     }
 
     public void setFileTypes(String fileTypes) {
@@ -237,7 +238,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public int getSessionTimeout() {
-        return mySessionTimeout;
+        return getParent() != null ? getParent().getSessionTimeout() : mySessionTimeout;
     }
 
     public void setSessionTimeout(int sessionTimeout) {
@@ -245,7 +246,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isSpecialPlaylists() {
-        return mySpecialPlaylists;
+        return getParent() != null ? getParent().isSpecialPlaylists() : mySpecialPlaylists;
     }
 
     public void setSpecialPlaylists(boolean specialPlaylists) {
@@ -253,7 +254,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isTranscoder() {
-        return myTranscoder;
+        return getParent() != null ? getParent().isTranscoder() : myTranscoder;
     }
 
     public void setTranscoder(boolean transcoder) {
@@ -261,7 +262,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public int getBandwidthLimit() {
-        return myBandwidthLimit;
+        return getParent() != null ? getParent().getBandwidthLimit() : myBandwidthLimit;
     }
 
     public void setBandwidthLimit(int bandwidthLimit) {
@@ -269,7 +270,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public String getPlaylistId() {
-        return myPlaylistId;
+        return getParent() != null ? getParent().getPlaylistId() : myPlaylistId;
     }
 
     public void setPlaylistId(String playlistId) {
@@ -285,7 +286,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isCreatePlaylists() {
-        return myCreatePlaylists;
+        return getParent() != null ? getParent().isCreatePlaylists() : myCreatePlaylists;
     }
 
     public void setCreatePlaylists(boolean createPlaylists) {
@@ -321,7 +322,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isUrlEncryption() {
-        return myUrlEncryption;
+        return getParent() != null ? getParent().isUrlEncryption() : myUrlEncryption;
     }
 
     public void setUrlEncryption(boolean urlEncryption) {
@@ -337,7 +338,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isChangeEmail() {
-        return myChangeEmail;
+        return getParent() != null ? getParent().isChangeEmail() : myChangeEmail;
     }
 
     public void setChangeEmail(boolean changeEmail) {
@@ -345,7 +346,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isRemoteControl() {
-        return myRemoteControl;
+        return getParent() != null ? getParent().isRemoteControl() : myRemoteControl;
     }
 
     public void setRemoteControl(boolean remoteControl) {
@@ -431,6 +432,14 @@ public class User implements MyTunesRssEventListener {
         myWebSettings = webSettings;
     }
 
+    public String getParentUserName() {
+        return myParentUserName;
+    }
+
+    public void setParentUserName(String parentUserName) {
+        myParentUserName = parentUserName;
+    }
+
     public void loadFromPreferences(JXPathContext settings) {
         setActive(JXPathUtils.getBooleanValue(settings, "active", true));
         setPasswordHash(JXPathUtils.getByteArray(settings, "password", null));
@@ -463,6 +472,7 @@ public class User implements MyTunesRssEventListener {
         setUrlEncryption(JXPathUtils.getBooleanValue(settings, "urlEncryption", true));
         setEmail(JXPathUtils.getStringValue(settings, "email", null));
         setRemoteControl(JXPathUtils.getBooleanValue(settings, "remoteControl", false));
+        setParentUserName(JXPathUtils.getStringValue(settings, "parent", null));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -511,6 +521,7 @@ public class User implements MyTunesRssEventListener {
         }
         users.appendChild(DOMUtils.createBooleanElement(settings, "urlEncryption", isUrlEncryption()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "remoteControl", isRemoteControl()));
+        users.appendChild(DOMUtils.createTextElement(settings, "parent", getParentUserName()));
     }
 
     public synchronized void playLastFmTrack(final Track track) {
@@ -551,5 +562,9 @@ public class User implements MyTunesRssEventListener {
             };
             new Thread(runnable).start();
         }
+    }
+
+    private User getParent() {
+        return MyTunesRss.CONFIG.getUser(getParentUserName());
     }
 }
