@@ -131,9 +131,9 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         if (imageFile != null) {
             return readImageFromImageFile(imageFile);
         } else {
-            if (mySource == TrackSource.ITunes) {
-                image = findItunesArtwork();
-            }
+//            if (mySource == TrackSource.ITunes) {
+//                image = findItunesArtwork();
+//            }
             if (image == null) {
                 image = readImageFromTrackFile(image);
             }
