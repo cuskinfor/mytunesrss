@@ -7,6 +7,14 @@
 
     <body>
 
+        <release version="3.7-EAP-6" date="2009-04-26" description="3.7 EAP 6">
+            <action dev="mdescher" type="update">
+                Visual feedback for remote control and ability to use the complete
+                interface for selecting tracks, skipping to previous/next track, etc.
+                Quicktime offers more options then VLC.
+            </action>
+        </release>
+
         <release version="3.7-EAP-5" date="2009-04-18" description="3.7 EAP 5">
             <action dev="mdescher" type="add">
                 Quicktime player remote control via AppleScript (on Mac OS X only of course).
@@ -122,7 +130,8 @@
                 objects.
             </action>
             <action dev="mdescher" type="add">
-                License file can specify the following options: "disableGui" to always run headless. "disableWebLogin" to disable
+                License file can specify the following options: "disableGui" to always run headless. "disableWebLogin"
+                to disable
                 regular login to the web client (via form post and cookies), i.e. only authentication information from
                 existing links work. "disableJmxHtml" to disable HTML output in the JXM interface and only return plain
                 XML.
