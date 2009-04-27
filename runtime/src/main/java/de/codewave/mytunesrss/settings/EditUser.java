@@ -80,10 +80,15 @@ public class EditUser implements MyTunesRssEventListener {
         myUser = user;
         DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(EditUser.class);
         final JDialog dialog = new JDialog(parent, MyTunesRssUtils.getBundleString(user != null ? "editUser.editUserTitle" : "editUser.newUserTitle"), true);
+        dialog.getRootPane().registerKeyboardAction(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
-                closeDialog(dialog);
+                cancelDialog(dialog);
             }
         });
         dialog.add(myRootPanel);
@@ -192,6 +197,8 @@ public class EditUser implements MyTunesRssEventListener {
             public void itemStateChanged(ItemEvent e) {
                 if (myParentUserInput.getSelectedIndex() > 0) {
                     initFromParent();
+                } else {
+                    setParentUser(false);
                 }
             }
         });
@@ -221,6 +228,43 @@ public class EditUser implements MyTunesRssEventListener {
         myUrlEncryptionInput.setSelected(parent.isUrlEncryption());
         myPermChangeEmail.setSelected(parent.isChangeEmail());
         myPermRemoteControlnput.setSelected(parent.isRemoteControl());
+        mySaveUserSettingsInput.setSelected(parent.isSaveWebSettings());
+        if (parent.getPlaylistId() == null) {
+            myRestrictionPlaylistInput.setSelectedIndex(0);
+        } else {
+            for (int i = 0; i < myRestrictionPlaylistInput.getItemCount(); i++) {
+                if (parent.getPlaylistId().equals(((Playlist) myRestrictionPlaylistInput.getItemAt(i)).getId())) {
+                    myRestrictionPlaylistInput.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+        setParentUser(true);
+    }
+
+    private void setParentUser(boolean parentUser) {
+        SwingUtils.enableElementAndLabel(myPermRssInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermPlaylistInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermDownloadInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermUploadInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermPlayerInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermChangePasswordInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermSpecialPlaylists, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermEditSettings, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermCreatePlaylists, !parentUser);
+        SwingUtils.enableElementAndLabel(myQuotaTypeInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myBytesQuotaInput, !parentUser && myQuotaTypeInput.getSelectedItem() != User.QuotaType.None);
+        SwingUtils.enableElementAndLabel(myMaxZipEntriesInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myFileTypesInput, !parentUser);
+        SwingUtils.enableElementAndLabel(mySessionTimeoutInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermTranscoderInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myBandwidthLimit, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermEditLastFMAccountInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myUrlEncryptionInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermChangeEmail, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermRemoteControlnput, !parentUser);
+        SwingUtils.enableElementAndLabel(mySaveUserSettingsInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myRestrictionPlaylistInput, !parentUser);
     }
 
     private void createParentUserList() {
@@ -271,8 +315,12 @@ public class EditUser implements MyTunesRssEventListener {
             myPermRemoteControlnput.setSelected(myUser.isRemoteControl());
             if (StringUtils.isNotEmpty(myUser.getParentUserName())) {
                 myParentUserInput.setSelectedItem(myUser.getParentUserName());
+                initFromParent();
+            } else {
+                setParentUser(false);
             }
         } else {
+            setParentUser(false);
             myQuotaTypeInput.setSelectedItem(User.QuotaType.None);
             myPermRssInput.setSelected(true);
             myPermPlaylistInput.setSelected(true);
@@ -423,6 +471,16 @@ public class EditUser implements MyTunesRssEventListener {
         }
     }
 
+    private void cancelDialog(JDialog dialog) {
+        if (JOptionPane.showConfirmDialog(MyTunesRss.ROOT_FRAME,
+                MyTunesRssUtils.getBundleString("confirm.cancelEditUser"),
+                MyTunesRssUtils.getBundleString("confirm.cancelEditUserTitle"),
+                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            closeDialog(dialog);
+            dialog.dispose();
+        }
+    }
+
     public class CancelButtonActionListener implements ActionListener {
         private JDialog myDialog;
 
@@ -431,13 +489,7 @@ public class EditUser implements MyTunesRssEventListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (JOptionPane.showConfirmDialog(MyTunesRss.ROOT_FRAME,
-                    MyTunesRssUtils.getBundleString("confirm.cancelEditUser"),
-                    MyTunesRssUtils.getBundleString("confirm.cancelEditUserTitle"),
-                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                closeDialog(myDialog);
-                myDialog.dispose();
-            }
+            cancelDialog(myDialog);
         }
     }
 

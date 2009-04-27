@@ -278,7 +278,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isSaveWebSettings() {
-        return mySaveWebSettings;
+        return getParent() != null ? getParent().isSaveWebSettings() : mySaveWebSettings;
     }
 
     public void setSaveWebSettings(boolean saveWebSettings) {
@@ -294,7 +294,7 @@ public class User implements MyTunesRssEventListener {
     }
 
     public boolean isEditWebSettings() {
-        return myEditWebSettings;
+        return getParent() != null ? getParent().isEditWebSettings() : myEditWebSettings;
     }
 
     public void setEditWebSettings(boolean editWebSettings) {

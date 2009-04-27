@@ -9,10 +9,12 @@
 
         <release version="3.7-EAP-7" date="2009-xx-xx" description="3.7 EAP 7">
             <action dev="mdescher" type="add">
-                Users can have parent users now. Some settings are inherited from the parent user.
+                Optional parent user which the user inherits most settings from. Simple user grouping
+                concept.
             </action>
             <action dev="mdescher" type="add">
-                Store position and size of user editing dialog.
+                Store position and size of user editing dialog. Allow ESC and close button to cancel
+                edit user dialog.
             </action>
         </release>
 
