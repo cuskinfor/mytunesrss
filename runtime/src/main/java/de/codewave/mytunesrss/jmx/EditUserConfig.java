@@ -228,10 +228,10 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     public String getQuotaInfo() {
         if (MyTunesRss.CONFIG.getUser(myUsername).getQuotaType() != User.QuotaType.None) {
             return MessageFormat.format(MyTunesRssUtils.getBundleString("jmx.quota"),
-                                        MyTunesRssUtils.getMemorySizeForDisplay(MyTunesRss.CONFIG.getUser(myUsername).getBytesQuota()),
-                                        MyTunesRss.CONFIG.getUser(myUsername).getQuotaType().toString(),
-                                        MyTunesRssUtils.getMemorySizeForDisplay(MyTunesRss.CONFIG.getUser(myUsername).getQuotaDownBytes()),
-                                        MyTunesRssUtils.getMemorySizeForDisplay(MyTunesRss.CONFIG.getUser(myUsername).getQuotaRemaining()));
+                    MyTunesRssUtils.getMemorySizeForDisplay(MyTunesRss.CONFIG.getUser(myUsername).getBytesQuota()),
+                    MyTunesRss.CONFIG.getUser(myUsername).getQuotaType().toString(),
+                    MyTunesRssUtils.getMemorySizeForDisplay(MyTunesRss.CONFIG.getUser(myUsername).getQuotaDownBytes()),
+                    MyTunesRssUtils.getMemorySizeForDisplay(MyTunesRss.CONFIG.getUser(myUsername).getQuotaRemaining()));
         }
         return MyTunesRss.CONFIG.getUser(myUsername).getQuotaType().toString();
     }
@@ -388,6 +388,30 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
 
     public void setPermissionRemoteControl(boolean permissionRemoteControl) {
         MyTunesRss.CONFIG.getUser(myUsername).setRemoteControl(permissionRemoteControl);
+        onChange();
+    }
+
+    public String getParentUser() {
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUser(myUsername).getParentUserName());
+    }
+
+    public String setParentUser(String username) {
+        if (StringUtils.isNotBlank(username)) {
+            if (username.equals(myUsername)) {
+                return MyTunesRssUtils.getBundleString("jmx.parentUserSelfNotAllowed");
+            }
+            if (MyTunesRss.CONFIG.getUser(username) == null) {
+                return MyTunesRssUtils.getBundleString("jmx.parentUserNotFound");
+            }
+            MyTunesRss.CONFIG.getUser(myUsername).setParentUserName(username);
+            onChange();
+            return MyTunesRssUtils.getBundleString("jmx.parentUserSet", username);
+        }
+        return null;
+    }
+
+    public void removeParentUser() {
+        MyTunesRss.CONFIG.getUser(myUsername).setParentUserName(null);
         onChange();
     }
 }

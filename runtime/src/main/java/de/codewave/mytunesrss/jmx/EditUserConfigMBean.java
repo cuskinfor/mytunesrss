@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.jmx;
 
 import javax.management.*;
+import java.io.UnsupportedEncodingException;
 
 /**
  * de.codewave.mytunesrss.jmx.EditUserConfigMBean
@@ -129,4 +130,10 @@ public interface EditUserConfigMBean {
     boolean isPermissionRemoteControl();
 
     void setPermissionRemoteControl(boolean permissionRemoteControl);
+
+    String getParentUser();
+
+    String setParentUser(String username);
+
+    void removeParentUser();
 }
