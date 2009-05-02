@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.7-EAP-8" date="2009-xx-xx" description="3.7 EAP 8">
+        <release version="3.7-EAP-8" date="2009-05-01" description="3.7 EAP 8">
             <action dev="mdescher" type="add">
                 Option for disabling certain MP4 codecs (these are not imported into the MyTunesRSS database).
             </action>
