@@ -117,4 +117,13 @@ public class DataImportConfig extends MyTunesRssMBean implements DataImportConfi
         MyTunesRss.CONFIG.setIgnoreArtwork(ignoreCoverArtwork);
         onChange();
     }
+
+    public String getDisabledMp4Codecs() {
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDisabledMp4Codecs());
+    }
+
+    public void setDisabledMp4Codecs(String codecs) {
+        MyTunesRss.CONFIG.setDisabledMp4Codecs(StringUtils.trimToNull(codecs));
+        onChange();
+    }
 }

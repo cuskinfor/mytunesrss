@@ -134,6 +134,7 @@ public class MyTunesRssConfig {
     private String myVideoLanClientHost = "";
     private int myVideoLanClientPort = 0;
     private RemoteControlType myRemoteControlType;
+    private String myDisabledMp4Codecs;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -976,6 +977,14 @@ public class MyTunesRssConfig {
         return myRemoteControlType != RemoteControlType.None;
     }
 
+    public String getDisabledMp4Codecs() {
+        return myDisabledMp4Codecs;
+    }
+
+    public void setDisabledMp4Codecs(String disabledMp4Codecs) {
+        myDisabledMp4Codecs = disabledMp4Codecs;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1173,6 +1182,7 @@ public class MyTunesRssConfig {
             setVideoLanClientHost(JXPathUtils.getStringValue(settings, "remote-control/vlc/host", null));
             setVideoLanClientPort(JXPathUtils.getIntValue(settings, "remote-control/vlc/port", 0));
             setRemoteControlType(RemoteControlType.valueOf(JXPathUtils.getStringValue(settings, "remote-control/type", RemoteControlType.None.name())));
+            setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", null));
         } catch (IOException e) {
             LOGGER.error("Could not read configuration file.", e);
         }
@@ -1397,6 +1407,7 @@ public class MyTunesRssConfig {
             remoteControl.appendChild(remoteControlVlc);
             remoteControlVlc.appendChild(DOMUtils.createTextElement(settings, "host", getVideoLanClientHost()));
             remoteControlVlc.appendChild(DOMUtils.createIntElement(settings, "port", getVideoLanClientPort()));
+            root.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", getDisabledMp4Codecs()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

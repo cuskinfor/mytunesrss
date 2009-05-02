@@ -35,4 +35,8 @@ public interface DataImportConfigMBean {
     String removeFileType(String suffix);
 
     void resetToDefaults() throws SQLException;
+
+    String getDisabledMp4Codecs();
+
+    void setDisabledMp4Codecs(String codecs);
 }

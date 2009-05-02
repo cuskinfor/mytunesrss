@@ -39,7 +39,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private static final String ATOM_STSD = "moov.trak.mdia.minf.stbl.stsd";
     private static final String ATOM_COVER = "moov.udta.meta.ilst.covr.data";
 
-    private File myBaseDir;
     private long myLastUpdateTime;
     private DataStoreSession myStoreSession;
     private int myUpdatedCount;
@@ -48,13 +47,14 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private long myScannedCount;
     private long myLastEventTime;
     private long myStartTime;
+    private String[] myDisabledMp4Codecs;
 
-    public MyTunesRssFileProcessor(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds)
+    public MyTunesRssFileProcessor(DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds)
             throws SQLException {
-        myBaseDir = baseDir;
         myStoreSession = storeSession;
         myLastUpdateTime = lastUpdateTime;
         myTrackIds = trackIds;
+        myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(MyTunesRss.CONFIG.getDisabledMp4Codecs()), ",");
     }
 
     public Set<String> getExistingIds() {
@@ -86,7 +86,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     if (existing) {
                         myExistingIds.add(fileId);
                     }
-                    if ((file.lastModified() >= myLastUpdateTime || !existing)) {
+                    if ((file.lastModified() >= myLastUpdateTime || !existing || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0))) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
                         }
@@ -103,6 +103,11 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             meta = parseMp3MetaData(file, statement, fileId);
                         } else if (FileSupportUtils.isMp4(file)) {
                             meta = parseMp4MetaData(file, statement, fileId);
+                            if (meta.getMp4Codec() != null && ArrayUtils.contains(myDisabledMp4Codecs, meta.getMp4Codec().toLowerCase())) {
+                                myExistingIds.remove(fileId);
+                                DatabaseBuilderTask.doCheckpoint(myStoreSession, false);
+                                return; // early return!!!
+                            }
                         } else {
                             setSimpleInfo(statement, file);
                         }
@@ -292,7 +297,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 }
                 atom = atoms.get(ATOM_STSD);
                 if (atom != null) {
-                    statement.setMp4Codec(atom.getDataAsString(12, 4, "UTF-8"));
+                    String mp4Codec = atom.getDataAsString(12, 4, "UTF-8");
+                    meta.setMp4Codec(mp4Codec);
+                    statement.setMp4Codec(mp4Codec);
                 }
                 atom = atoms.get(ATOM_GENRE);
                 String genre = atom != null ? atom.getDataAsString(8, "UTF-8") : null;

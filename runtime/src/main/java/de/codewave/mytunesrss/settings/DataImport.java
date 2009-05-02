@@ -32,6 +32,7 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
     private JButton myAddFileTypeButton;
     private JButton myRemoveFileTypeButton;
     private JButton myResetFileTypesButton;
+    private JTextField myDisabledMp4CodecsInput;
     private FileTypesTableModel myFileTypesTableModel;
 
     public void init() {
@@ -88,6 +89,7 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
                 }
             });
         }
+        MyTunesRss.CONFIG.setDisabledMp4Codecs(StringUtils.trimToNull(myDisabledMp4CodecsInput.getText()));
         return null;
     }
 
@@ -119,6 +121,7 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
         myIgnoreArtworkInput.setSelected(MyTunesRss.CONFIG.isIgnoreArtwork());
         myId3v2CommentInput.setText(MyTunesRss.CONFIG.getId3v2TrackComment());
         myFileTypesTableModel.setFileTypes(MyTunesRss.CONFIG.getDeepFileTypesClone());
+        myDisabledMp4CodecsInput.setText(MyTunesRss.CONFIG.getDisabledMp4Codecs());
     }
 
     public void setGuiMode(GuiMode mode) {

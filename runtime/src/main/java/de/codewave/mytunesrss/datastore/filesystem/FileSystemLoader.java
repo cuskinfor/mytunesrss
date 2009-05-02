@@ -23,7 +23,7 @@ public class FileSystemLoader {
             Collection<String> playlistIds) throws IOException, SQLException {
         MyTunesRssFileProcessor fileProcessor = null;
         if (baseDir != null && baseDir.isDirectory()) {
-            fileProcessor = new MyTunesRssFileProcessor(baseDir, storeSession, lastUpdateTime, trackIds);
+            fileProcessor = new MyTunesRssFileProcessor(storeSession, lastUpdateTime, trackIds);
             if (LOG.isInfoEnabled()) {
                 LOG.info("Processing files from: \"" + baseDir + "\".");
             }

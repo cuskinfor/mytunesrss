@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
+import de.codewave.camel.mp4.Mp4Atom;
+import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
@@ -8,9 +10,8 @@ import de.codewave.mytunesrss.datastore.statement.UpdateTrackStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
-import de.codewave.camel.mp4.Mp4Atom;
-import de.codewave.camel.mp4.Mp4Utils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,13 +35,15 @@ public class TrackListener implements PListHandlerListener {
     private long myLastEventTime;
     private long myStartTime;
     private long myMissingFiles;
+    private String[] myDisabledMp4Codecs;
 
     public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
-            Collection<String> trackIds) throws SQLException {
+                         Collection<String> trackIds) throws SQLException {
         myDataStoreSession = dataStoreSession;
         myLibraryListener = libraryListener;
         myTrackIdToPersId = trackIdToPersId;
         myTrackIds = trackIds;
+        myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(MyTunesRss.CONFIG.getDisabledMp4Codecs()), ",");
     }
 
     public int getUpdatedCount() {
@@ -52,9 +55,9 @@ public class TrackListener implements PListHandlerListener {
     }
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
-        Map track = (Map)value;
+        Map track = (Map) value;
         String trackId = calculateTrackId(track);
-        myTrackIdToPersId.put((Long)track.get("Track ID"), trackId);
+        myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
         if (processTrack(track, myTrackIds.remove(trackId))) {
             myUpdatedCount++;
             DatabaseBuilderTask.updateHelpTables(myDataStoreSession, myUpdatedCount);
@@ -86,18 +89,19 @@ public class TrackListener implements PListHandlerListener {
             myLastEventTime = System.currentTimeMillis();
         }
         String trackId = calculateTrackId(track);
-        String name = (String)track.get("Name");
-        String trackType = (String)track.get("Track Type");
+        String name = (String) track.get("Name");
+        String trackType = (String) track.get("Track Type");
         if (trackType == null || "File".equals(trackType)) {
-            String filename = ItunesLoader.getFileNameForLocation((String)track.get("Location"));
-            if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && FileSupportUtils.isSupported(filename)) {
+            String filename = ItunesLoader.getFileNameForLocation((String) track.get("Location"));
+            String mp4Codec = getMp4Codec(track, filename);
+            if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && FileSupportUtils.isSupported(filename) && !isMp4CodecDisabled(mp4Codec)) {
                 if (!new File(filename).isFile()) {
                     myMissingFiles++;
                 }
                 if (!MyTunesRss.CONFIG.isItunesDeleteMissingFiles() || new File(filename).isFile()) {
-                    Date dateModified = ((Date)track.get("Date Modified"));
+                    Date dateModified = ((Date) track.get("Date Modified"));
                     long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
-                    Date dateAdded = ((Date)track.get("Date Added"));
+                    Date dateAdded = ((Date) track.get("Date Added"));
                     long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
                     if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() ||
                             dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
@@ -107,33 +111,18 @@ public class TrackListener implements PListHandlerListener {
                             statement.clear();
                             statement.setId(trackId);
                             statement.setName(MyTunesRssUtils.normalize(name.trim()));
-                            statement.setArtist(MyTunesRssUtils.normalize(StringUtils.trimToNull((String)track.get("Artist"))));
-                            statement.setAlbum(MyTunesRssUtils.normalize(StringUtils.trimToNull((String)track.get("Album"))));
-                            statement.setTime((int)(track.get("Total Time") != null ? (Long)track.get("Total Time") / 1000 : 0));
-                            statement.setTrackNumber((int)(track.get("Track Number") != null ? (Long)track.get("Track Number") : 0));
+                            statement.setArtist(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Artist"))));
+                            statement.setAlbum(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Album"))));
+                            statement.setTime((int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0));
+                            statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
                             statement.setFileName(filename);
                             statement.setProtected(FileSupportUtils.isProtected(filename));
-                            statement.setMediaType(track.get("Has Video") != null && ((Boolean)track.get("Has Video")).booleanValue() ? MediaType.Video : MediaType.Audio);
-                            statement.setGenre(StringUtils.trimToNull((String)track.get("Genre")));
-                            statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String)track.get("Comments"))));
-                            statement.setPos((int)(track.get("Disc Number") != null ? ((Long)track.get("Disc Number")).longValue() : 0),
-                                             (int)(track.get("Disc Count") != null ? ((Long)track.get("Disc Count")).longValue() : 0));
-                            if (FileSupportUtils.isMp4(filename)) {
-                                String kind = (String)track.get("Kind");
-                                if (StringUtils.isNotEmpty(kind)) {
-                                    kind = kind.toLowerCase();
-                                    if (kind.contains("aac")) {
-                                        statement.setMp4Codec("mp4a");
-                                    } else if (kind.contains("apple lossless")) {
-                                        statement.setMp4Codec("alac");
-                                    } else {
-                                        File file = new File(filename);
-                                        if (file.exists()) {
-                                            statement.setMp4Codec(getMp4Codec(file));
-                                        }
-                                    }
-                                }
-                            }
+                            statement.setMediaType(track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue() ? MediaType.Video : MediaType.Audio);
+                            statement.setGenre(StringUtils.trimToNull((String) track.get("Genre")));
+                            statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Comments"))));
+                            statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
+                                    (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
+                            statement.setMp4Codec(mp4Codec);
                             myDataStoreSession.executeStatement(statement);
                             return true;
                         } catch (SQLException e) {
@@ -150,11 +139,34 @@ public class TrackListener implements PListHandlerListener {
         return false;
     }
 
+    private boolean isMp4CodecDisabled(String mp4Codec) {
+        return mp4Codec != null && ArrayUtils.contains(myDisabledMp4Codecs, mp4Codec.toLowerCase());
+    }
+
+    private String getMp4Codec(Map track, String filename) {
+        if (FileSupportUtils.isMp4(filename)) {
+            String kind = (String) track.get("Kind");
+            if (StringUtils.isNotEmpty(kind)) {
+                kind = kind.toLowerCase();
+                if (kind.contains("aac")) {
+                    return "mp4a";
+                } else if (kind.contains("apple lossless")) {
+                    return "alac";
+                } else {
+                    File file = new File(filename);
+                    if (file.exists()) {
+                        return getMp4Codec(file);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Get the MP4 codec of the specified MP4 file.
      *
      * @param file The file.
-     *
      * @return The MP4 codec used in the file.
      */
     private String getMp4Codec(File file) {
