@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7-EAP-8" date="2009-xx-xx" description="3.7 EAP 8">
+            <action dev="mdescher" type="add">
+                Get all MP4 codecs from files which are not identified trough the iTunes XML.
+            </action>
             <action dev="mdescher" type="fix">
                 Put PostViaGet servlet filter before JsonP filter since otherwise JsonP does not work.
             </action>

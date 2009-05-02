@@ -8,6 +8,8 @@ import de.codewave.mytunesrss.datastore.statement.UpdateTrackStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
+import de.codewave.camel.mp4.Mp4Atom;
+import de.codewave.camel.mp4.Mp4Utils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,6 +126,11 @@ public class TrackListener implements PListHandlerListener {
                                         statement.setMp4Codec("mp4a");
                                     } else if (kind.contains("apple lossless")) {
                                         statement.setMp4Codec("alac");
+                                    } else {
+                                        File file = new File(filename);
+                                        if (file.exists()) {
+                                            statement.setMp4Codec(getMp4Codec(file));
+                                        }
                                     }
                                 }
                             }
@@ -141,5 +148,31 @@ public class TrackListener implements PListHandlerListener {
         }
         myTrackIdToPersId.remove(track.get("Track ID"));
         return false;
+    }
+
+    /**
+     * Get the MP4 codec of the specified MP4 file.
+     *
+     * @param file The file.
+     *
+     * @return The MP4 codec used in the file.
+     */
+    private String getMp4Codec(File file) {
+        Map<String, Mp4Atom> atoms = null;
+        try {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
+            }
+            atoms = Mp4Utils.getAtoms(file, Arrays.asList("moov.trak.mdia.minf.stbl.stsd"));
+            Mp4Atom atom = atoms.get("moov.trak.mdia.minf.stbl.stsd");
+            if (atom != null) {
+                return atom.getDataAsString(12, 4, "UTF-8");
+            }
+        } catch (Exception e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
+            }
+        }
+        return null;
     }
 }
