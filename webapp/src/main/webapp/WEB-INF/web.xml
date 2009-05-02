@@ -133,11 +133,11 @@
         <url-pattern>/xmlrpc/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>PostViaGetFilter</filter-name>
+        <filter-name>JsonpFilter</filter-name>
         <url-pattern>/jsonrpc/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>JsonpFilter</filter-name>
+        <filter-name>PostViaGetFilter</filter-name>
         <url-pattern>/jsonrpc/*</url-pattern>
     </filter-mapping>
     <filter-mapping>

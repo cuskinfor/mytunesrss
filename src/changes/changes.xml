@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.7-EAP-8" date="2009-xx-xx" description="3.7 EAP 8">
+            <action dev="mdescher" type="fix">
+                Put PostViaGet servlet filter before JsonP filter since otherwise JsonP does not work.
+            </action>
+        </release>
+
         <release version="3.7-EAP-7" date="2009-05-01" description="3.7 EAP 7">
             <action dev="mdescher" type="add">
                 Optional parent user which the user inherits most settings from. Simple user grouping
