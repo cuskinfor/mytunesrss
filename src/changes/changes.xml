@@ -7,7 +7,16 @@
 
     <body>
 
-        <release version="3.7-EAP-8" date="2009-05-01" description="3.7 EAP 8">
+        <release version="3.7-EAP-9" date="2009-05-04" description="3.7 EAP 9">
+            <action dev="mdescher" type="fix">
+                Added de.codewave.mytunesrss property to exe wrapper.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed SQL bug.
+            </action>
+        </release>
+
+        <release version="3.7-EAP-8" date="2009-05-02" description="3.7 EAP 8">
             <action dev="mdescher" type="add">
                 Option for disabling certain MP4 codecs (these are not imported into the MyTunesRSS database).
             </action>
@@ -19,7 +28,7 @@
             </action>
         </release>
 
-        <release version="3.7-EAP-7" date="2009-05-01" description="3.7 EAP 7">
+        <release version="3.7-EAP-7" date="2009-05-02" description="3.7 EAP 7">
             <action dev="mdescher" type="add">
                 Optional parent user which the user inherits most settings from. Simple user grouping
                 concept.
