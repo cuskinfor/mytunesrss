@@ -2,7 +2,7 @@
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>data/mytunesrss.jar</jar>
-  <outfile>/Users/mdescher/Projekte/mytunesrss-3.6.x/etc/MyTunesRSS.exe</outfile>
+  <outfile>/Users/mdescher/Projekte/mytunesrss/etc/MyTunesRSS.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>data</chdir>
@@ -23,5 +23,6 @@
     <opt>-Xbootclasspath/p:lib/codewave-zis-1.1.jar;lib/xercesImpl-2.8.1.jar</opt>
     <opt>-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl</opt>
     <opt>-Dcom.sun.management.jmxremote</opt>
+    <opt>-Dde.codewave.mytunesrss</opt>
   </jre>
 </launch4jConfig>
