@@ -21,7 +21,7 @@ public class LameTranscoderStream extends InputStream {
 
     public LameTranscoderStream(Track track, String lameBinary, int outputBitRate, int outputSampleRate) throws IOException {
         String[] command = (lameBinary + " " + MyTunesRss.CONFIG.getLameOnlyOptions()).split(" ");
-        AbstractTranscoderStream.replaceTokens(command, track, outputBitRate, outputSampleRate);
+        AudioTranscoderStream.replaceTokens(command, track, outputBitRate, outputSampleRate);
         if (LOG.isDebugEnabled()) {
             LOG.debug("executing command \"" + StringUtils.join(command, " ") + "\".");
         }

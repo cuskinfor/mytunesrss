@@ -6,6 +6,8 @@ package de.codewave.mytunesrss.servlet;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
+
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +57,7 @@ public class WebConfig {
     private static final String CFG_ALBUM_IMAGE_SIZE = "albImgSize";
     private static final String CFG_LANGUAGE = "lc";
     private static final String CFG_SHOW_REMOTE_CONTROL = "rmCtrl";
+    private static final String CFG_ACTIVE_TRANSCODERS = "actTra";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -560,5 +563,17 @@ public class WebConfig {
 
     public void setRemoteControl(boolean remoteControl) {
         myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, Boolean.toString(remoteControl));
+    }
+    
+    public String getActiveTranscoders() {
+        return myConfigValues.get(CFG_ACTIVE_TRANSCODERS);
+    }
+    
+    public void setActiveTranscoders(String activeTranscoders) {
+        myConfigValues.put(CFG_ACTIVE_TRANSCODERS, activeTranscoders);
+    }
+    
+    public boolean isActiveTranscoder(String name) {
+        return ArrayUtils.contains(StringUtils.split(getActiveTranscoders(), ','), name);
     }
 }

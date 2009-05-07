@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.transcoder;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.FindTrackImageQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.meta.Image;
@@ -23,16 +24,18 @@ import java.sql.SQLException;
 /**
  * de.codewave.mytunesrss.command.LameTranscoderStream
  */
-public abstract class AbstractTranscoderStream extends InputStream {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractTranscoderStream.class);
+public class AudioTranscoderStream extends InputStream {
+    private static final Logger LOG = LoggerFactory.getLogger(AudioTranscoderStream.class);
 
     private Process myTargetProcess;
     private Process mySourceProcess;
+    private TranscoderConfig myTranscoderConfig;
 
-    public AbstractTranscoderStream(Track track, String targetBinary, String sourceBinary, int outputBitRate, int outputSampleRate)
+    public AudioTranscoderStream(TranscoderConfig transcoderConfig, Track track, int outputBitRate, int outputSampleRate)
             throws IOException {
+        myTranscoderConfig = transcoderConfig;
         final String[] targetCommand = new String[getTargetArguments().split(" ").length + 1];
-        targetCommand[0] = targetBinary;
+        targetCommand[0] = MyTunesRss.CONFIG.getLameBinary();
         int i = 1;
         for (String part : getTargetArguments().split(" ")) {
             targetCommand[i++] = part;
@@ -42,7 +45,7 @@ public abstract class AbstractTranscoderStream extends InputStream {
             LOG.debug("executing " + getTargetName() + " command \"" + StringUtils.join(targetCommand, " ") + "\".");
         }
         final String[] sourceCommand = new String[getSourceArguments().split(" ").length + 1];
-        sourceCommand[0] = sourceBinary;
+        sourceCommand[0] = transcoderConfig.getBinary();
         i = 1;
         for (String part : getSourceArguments().split(" ")) {
             sourceCommand[i++] = part;
@@ -83,14 +86,22 @@ public abstract class AbstractTranscoderStream extends InputStream {
         super.close();
     }
 
-    protected abstract String getSourceName();
+    protected String getSourceName() {
+        return myTranscoderConfig.getName();
+    }
 
-    protected abstract String getTargetName();
+    protected String getTargetName() {
+        return "lame";
+    }
 
-    protected abstract String getSourceArguments();
+    protected String getSourceArguments() {
+        return myTranscoderConfig.getOptions();
+    }
 
-    protected abstract String getTargetArguments();
-
+    protected String getTargetArguments() {
+        return MyTunesRss.CONFIG.getLameTargetOptions();
+    }
+    
     public static void replaceTokens(String[] command, Track track, int outputBitRate, int outputSampleRate) {
         for (int i = 0; i < command.length; i++) {
             if ("{bitrate}".equals(command[i])) {

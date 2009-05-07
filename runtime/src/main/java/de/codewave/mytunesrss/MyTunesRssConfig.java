@@ -135,6 +135,7 @@ public class MyTunesRssConfig {
     private int myVideoLanClientPort = 0;
     private RemoteControlType myRemoteControlType;
     private String myDisabledMp4Codecs;
+    private List<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -985,6 +986,14 @@ public class MyTunesRssConfig {
         myDisabledMp4Codecs = disabledMp4Codecs;
     }
 
+    public List<TranscoderConfig> getTranscoderConfigs() {
+        return myTranscoderConfigs;
+    }
+    
+    public void setTranscoderConfigs(List<TranscoderConfig> configs) {
+        myTranscoderConfigs = configs;
+    }
+    
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
