@@ -47,6 +47,7 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
                 myTranscoders.add(transcoder);
                 transcoder.getDeleteButton().addActionListener(new DeleteTranscoderActionListener(transcoder));
                 refreshTranscoders();
+                myTranscodersPanel.scrollRectToVisible(new Rectangle(0, myTranscodersPanel.getHeight() - 2, 1, 1));
             }
         });
         JTextFieldValidation.setValidation(new FileExistsTextFieldValidation(myLameBinaryInput, true, false, MyTunesRssUtils.getBundleString(
