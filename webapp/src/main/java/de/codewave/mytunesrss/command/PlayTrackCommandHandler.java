@@ -9,6 +9,7 @@ import de.codewave.camel.mp3.Id3v2Tag;
 import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.camel.mp3.exception.IllegalHeaderException;
 import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssSendCounter;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
@@ -58,7 +59,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                     } else {
-                        Transcoder transcoder = "false".equals(getRequestParameter("notranscode", "false")) ? Transcoder.createTranscoder(track,
+                        Transcoder transcoder = track.getMediaType() == MediaType.Audio && "false".equals(getRequestParameter("notranscode", "false")) ? Transcoder.createTranscoder(track,
                                                                                                                                           getWebConfig(),
                                                                                                                                           getRequest()) :
                                 null;
