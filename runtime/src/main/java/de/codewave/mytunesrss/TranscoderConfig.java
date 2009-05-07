@@ -32,6 +32,10 @@ public class TranscoderConfig {
 
     private String[] myMp4CodecsSplitted;
 
+    public TranscoderConfig() {
+        // intentionally left blank
+    }
+
     TranscoderConfig(JXPathContext context) {
         setName(JXPathUtils.getStringValue(context, "name", null));
         setBinary(JXPathUtils.getStringValue(context, "binary", null));

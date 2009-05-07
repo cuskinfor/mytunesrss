@@ -9,7 +9,15 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.*;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.GridConstraints;
 
 /**
  * de.codewave.mytunesrss.settings.Streaming
@@ -24,11 +32,23 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
     private JTextField myBandwidthLimitInput;
     private JLabel myBandwidthLimitLabel;
     private JTextField myLameTargetOptions;
+    private JScrollPane myScrollPane;
+    private JPanel myTranscodersPanel;
+    private JButton myAddTranscoderButton;
+    private List<Transcoder> myTranscoders = new ArrayList<Transcoder>();
 
     public void init() {
-        initValues();
+        myScrollPane.getViewport().setOpaque(false);
         myLameBinaryLookupButton.addActionListener(new SelectBinaryActionListener(myLameBinaryInput, MyTunesRssUtils.getBundleString(
                 "dialog.lookupLameBinary")));
+        myAddTranscoderButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Transcoder transcoder = new Transcoder();
+                myTranscoders.add(transcoder);
+                transcoder.getDeleteButton().addActionListener(new DeleteTranscoderActionListener(transcoder));
+                refreshTranscoders();
+            }
+        });
         JTextFieldValidation.setValidation(new FileExistsTextFieldValidation(myLameBinaryInput, true, false, MyTunesRssUtils.getBundleString(
                 "error.lameBinaryFileMissing")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myCacheTimeout, 0, 1440, true, MyTunesRssUtils.getBundleString(
@@ -46,6 +66,7 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
             }
         });
         MyTunesRssEventManager.getInstance().addListener(this);
+        initValues();
     }
 
     public void handleEvent(final MyTunesRssEvent event) {
@@ -85,6 +106,55 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
         myLimitBandwidthCheckBox.setSelected(MyTunesRss.CONFIG.isBandwidthLimit());
         myBandwidthLimitInput.setEnabled(myLimitBandwidthCheckBox.isSelected());
         myLameTargetOptions.setText(MyTunesRss.CONFIG.getLameTargetOptions());
+        myTranscoders.clear();
+        for (TranscoderConfig tc : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+            Transcoder transcoder = new Transcoder();
+            myTranscoders.add(transcoder);
+            transcoder.getDeleteButton().addActionListener(new DeleteTranscoderActionListener(transcoder));
+            transcoder.init(tc);
+        }
+        refreshTranscoders();
+    }
+
+    private void refreshTranscoders() {
+        myTranscodersPanel.removeAll();
+        int row = 0;
+        myTranscodersPanel.setLayout(new GridLayoutManager(myTranscoders.size() + 1, 1));
+        for (Transcoder transcoder : myTranscoders) {
+            addTranscoder(transcoder, row++);
+        }
+        addPanelComponent(new JLabel(""), new GridConstraints(row,
+                0,
+                1,
+                1,
+                GridConstraints.ANCHOR_WEST,
+                GridConstraints.FILL_BOTH,
+                GridConstraints.SIZEPOLICY_WANT_GROW,
+                GridConstraints.SIZEPOLICY_WANT_GROW,
+                null,
+                null,
+                null));
+        myTranscodersPanel.validate();
+        myScrollPane.validate();
+    }
+
+    private void addTranscoder(Transcoder transcoder, int row) {
+        GridConstraints gbcTc = new GridConstraints(row,
+                0,
+                1,
+                1,
+                GridConstraints.ANCHOR_WEST,
+                GridConstraints.FILL_HORIZONTAL,
+                GridConstraints.SIZEPOLICY_WANT_GROW,
+                GridConstraints.SIZEPOLICY_FIXED,
+                null,
+                null,
+                null);
+        addPanelComponent(transcoder.getRootPanel(), gbcTc);
+    }
+
+    private void addPanelComponent(JComponent component, GridConstraints gridConstraints) {
+        myTranscodersPanel.add(component, gridConstraints);
     }
 
     public String updateConfigFromGui() {
@@ -92,6 +162,21 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
         if (messages != null) {
             return messages;
         } else {
+            Set<String> transcoderNames = new HashSet<String>();
+            List<TranscoderConfig> transcoderConfigs = new ArrayList<TranscoderConfig>();
+            for (Transcoder tc : myTranscoders) {
+                TranscoderConfig config = new TranscoderConfig();
+                messages = tc.updateTranscoderConfig(config);
+                if (messages != null) {
+                    return messages;
+                }
+                transcoderNames.add(config.getName());
+                transcoderConfigs.add(config);
+            }
+            if (transcoderNames.size() < transcoderConfigs.size()) {
+                return MyTunesRssUtils.getBundleString("error.duplicateTranscoderName");
+            }
+            MyTunesRss.CONFIG.setTranscoderConfigs(transcoderConfigs);
             MyTunesRss.CONFIG.setLameBinary(myLameBinaryInput.getText());
             if (StringUtils.isNotEmpty(myCacheTimeout.getText())) {
                 MyTunesRss.CONFIG.setStreamingCacheTimeout(Integer.parseInt(myCacheTimeout.getText()));
@@ -150,6 +235,19 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
             if (result == JFileChooser.APPROVE_OPTION) {
                 myInput.setText(fileChooser.getSelectedFile().getAbsolutePath());
             }
+        }
+    }
+
+    public class DeleteTranscoderActionListener implements ActionListener {
+        private Transcoder myTranscoder;
+
+        public DeleteTranscoderActionListener(Transcoder transcoder) {
+            myTranscoder = transcoder;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            myTranscoders.remove(myTranscoder);
+            refreshTranscoders();
         }
     }
 }
