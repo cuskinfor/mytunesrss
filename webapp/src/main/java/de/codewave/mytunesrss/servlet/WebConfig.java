@@ -5,8 +5,8 @@
 package de.codewave.mytunesrss.servlet;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -40,11 +40,8 @@ public class WebConfig {
     private static final String CFG_LAST_UPDATED_PLAYLIST_SIZE = "lastUpdatedPlaylistSize";
     private static final String CFG_MOST_PLAYED_PLAYLIST_SIZE = "mostPlayedPlaylistSize";
     private static final String CFG_PLAYLIST_TYPE = "playlistType";
-    private static final String CFG_USE_LAME = "lame";
     private static final String CFG_LAME_TARGET_BITRATE = "lameBitrate";
     private static final String CFG_LAME_TARGET_SAMPLE_RATE = "lameSampleRate";
-    private static final String CFG_USE_FAAD = "faad";
-    private static final String CFG_USE_ALAC = "alac";
     private static final String CFG_THEME = "theme";
     private static final String CFG_TRANSCODE_OTF_IF_POSSIBLE = "transcodeOnTheFlyIfPossible";
     private static final String CFG_RANDOM_SOURCE = "rndSrc";
@@ -59,6 +56,12 @@ public class WebConfig {
     private static final String CFG_SHOW_REMOTE_CONTROL = "rmCtrl";
     private static final String CFG_ACTIVE_TRANSCODERS = "actTra";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
+
+    private static final String[] VALID_NAMES = {CFG_USER_NAME, CFG_PASSWORD_HASH, CFG_LOGIN_STORED, CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE,
+            CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
+            CFG_PLAYLIST_TYPE, CFG_LAME_TARGET_BITRATE, CFG_LAME_TARGET_SAMPLE_RATE, CFG_THEME, CFG_TRANSCODE_OTF_IF_POSSIBLE, CFG_RANDOM_SOURCE,
+            CFG_FLASH_PLAYER_TYPE, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
+            CFG_ALBUM_IMAGE_SIZE, CFG_LANGUAGE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS};
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
     public static final String MYTUNESRSS_COM_COOKIE = "mytunesrss_com_cookie";
@@ -136,11 +139,8 @@ public class WebConfig {
         myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.M3u.name());
-        myConfigValues.put(CFG_USE_LAME, "false");
         myConfigValues.put(CFG_LAME_TARGET_BITRATE, "96");
         myConfigValues.put(CFG_LAME_TARGET_SAMPLE_RATE, "22050");
-        myConfigValues.put(CFG_USE_FAAD, "false");
-        myConfigValues.put(CFG_USE_ALAC, "false");
         myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, "false");
         myConfigValues.put(CFG_RANDOM_SOURCE, "");
         myConfigValues.put(CFG_FLASH_PLAYER_TYPE, "jw");
@@ -227,7 +227,10 @@ public class WebConfig {
         for (String keyValueToken : StringUtils.split(cookieValue, ';')) {
             int k = keyValueToken.indexOf('=');
             if (k > 0) {
-                myConfigValues.put(keyValueToken.substring(0, k), k < keyValueToken.length() - 1 ? keyValueToken.substring(k + 1) : "");
+                String keyName = keyValueToken.substring(0, k);
+                if (ArrayUtils.contains(VALID_NAMES, keyName)) {
+                    myConfigValues.put(keyName, k < keyValueToken.length() - 1 ? keyValueToken.substring(k + 1) : "");
+                }
             } else {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("Illegal configuration token found in cookie: \"" + keyValueToken + "\".");
@@ -237,7 +240,7 @@ public class WebConfig {
     }
 
     public void save(HttpServletRequest request, HttpServletResponse response) {
-        if (StringUtils.isEmpty((String)request.getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER))) {
+        if (StringUtils.isEmpty((String) request.getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER))) {
             Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, createCookieValue());
             cookie.setComment("MyTunesRSS settings cookie");
             cookie.setMaxAge(3600 * 24 * 365);// one year
@@ -425,14 +428,6 @@ public class WebConfig {
         return PlaylistType.valueOf(getPlaylistType()).getTemplateResource();
     }
 
-    public boolean isLame() {
-        return Boolean.parseBoolean(myConfigValues.get(CFG_USE_LAME));
-    }
-
-    public void setLame(boolean lame) {
-        myConfigValues.put(CFG_USE_LAME, Boolean.toString(lame));
-    }
-
     public int getLameTargetBitrate() {
         return Integer.parseInt(myConfigValues.get(CFG_LAME_TARGET_BITRATE));
     }
@@ -455,30 +450,6 @@ public class WebConfig {
 
     public void setTranscodeOnTheFlyIfPossible(boolean transcodeOnTheFlyIfPossible) {
         myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, Boolean.toString(transcodeOnTheFlyIfPossible));
-    }
-
-    public boolean isFaad() {
-        return Boolean.parseBoolean(myConfigValues.get(CFG_USE_FAAD));
-    }
-
-    public void setFaad(boolean faad) {
-        myConfigValues.put(CFG_USE_FAAD, Boolean.toString(faad));
-    }
-
-    public boolean isAlac() {
-        return Boolean.parseBoolean(myConfigValues.get(CFG_USE_ALAC));
-    }
-
-    public void setAlac(boolean alac) {
-        myConfigValues.put(CFG_USE_ALAC, Boolean.toString(alac));
-    }
-
-    private boolean isAnyTranscoder() {
-        return isLame() || isFaad() || isAlac();
-    }
-
-    public boolean isValidTranscoder() {
-        return isAnyTranscoder() && getLameTargetBitrate() > 0 && getLameTargetSampleRate() > 0;
     }
 
     public String getRandomSource() {
@@ -564,16 +535,25 @@ public class WebConfig {
     public void setRemoteControl(boolean remoteControl) {
         myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, Boolean.toString(remoteControl));
     }
-    
+
     public String getActiveTranscoders() {
         return myConfigValues.get(CFG_ACTIVE_TRANSCODERS);
     }
-    
+
     public void setActiveTranscoders(String activeTranscoders) {
         myConfigValues.put(CFG_ACTIVE_TRANSCODERS, activeTranscoders);
     }
-    
+
     public boolean isActiveTranscoder(String name) {
         return ArrayUtils.contains(StringUtils.split(getActiveTranscoders(), ','), name);
+    }
+
+    public TranscoderConfig getTranscoder(Track track) {
+        for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+            if (isActiveTranscoder(config.getName()) && config.isValidFor(FileSupportUtils.getFileSuffix(track.getFilename()), track.getMp4Codec())) {
+                return config;
+            }
+        }
+        return null;
     }
 }

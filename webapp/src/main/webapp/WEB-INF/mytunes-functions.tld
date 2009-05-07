@@ -309,4 +309,15 @@
         </function-signature>
     </function>
 
+    <function>
+        <description>
+            Check if a transcoder is active in a web configuration.
+        </description>
+        <name>isTranscoder</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>boolean
+            isTranscoder(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.TranscoderConfig)
+        </function-signature>
+    </function>
+
 </taglib>

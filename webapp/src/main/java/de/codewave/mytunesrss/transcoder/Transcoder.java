@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss.transcoder;
 
-import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -10,15 +9,12 @@ import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.StreamSender;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 /**
  * de.codewave.mytunesrss.command.Transcoder
@@ -31,19 +27,8 @@ public abstract class Transcoder {
     private Track myTrack;
 
     public static Transcoder createTranscoder(Track track, WebConfig webConfig, HttpServletRequest request) {
-        Transcoder transcoder = null;
-        if (FileSupportUtils.isMp3(track.getFile())) {
-           transcoder = new Mp3ToMp3Transcoder(track, webConfig, request);
-        } else {
-            for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
-                if (config.getMimeType().equalsIgnoreCase(FileSupportUtils.getContentType(track.getFilename()))) {
-                    if (StringUtils.isBlank(config.getMp4Codecs()) || ArrayUtils.contains(StringUtils.split(config.getMp4Codecs(), ','), track.getMp4Codec())) {
-                        transcoder = new AudioTranscoder(config, track, webConfig, request);
-                        break;
-                    }
-                }
-            }
-        }
+        TranscoderConfig transcoderConfig = webConfig.getTranscoder(track);
+        Transcoder transcoder = transcoderConfig != null ? new AudioTranscoder(transcoderConfig, track, webConfig, request) : null;
         return transcoder != null && transcoder.isAvailable() && transcoder.isActive() ? transcoder : null;
     }
 
@@ -83,7 +68,7 @@ public abstract class Transcoder {
                 MyTunesRss.STREAMING_CACHE.add(identifier, transcodedFile, MyTunesRss.CONFIG.getStreamingCacheTimeout() * 60000);
                 MyTunesRss.STREAMING_CACHE.lock(identifier);
             }
-            return new FileSender(transcodedFile, getTargetContentType(), (int)transcodedFile.length()) {
+            return new FileSender(transcodedFile, getTargetContentType(), (int) transcodedFile.length()) {
                 protected void afterSend() {
                     MyTunesRss.STREAMING_CACHE.unlock(identifier);
                 }

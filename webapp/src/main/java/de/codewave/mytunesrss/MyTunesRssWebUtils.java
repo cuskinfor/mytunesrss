@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
-import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.*;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
@@ -29,9 +29,9 @@ public class MyTunesRssWebUtils {
     }
 
     public static User getAuthUser(HttpServletRequest request) {
-        User user = (User)request.getSession().getAttribute("authUser");
+        User user = (User) request.getSession().getAttribute("authUser");
         if (user == null) {
-            user = (User)request.getAttribute("authUser");
+            user = (User) request.getAttribute("authUser");
         }
         return user;
     }
@@ -58,9 +58,9 @@ public class MyTunesRssWebUtils {
     }
 
     public static WebConfig getWebConfig(HttpServletRequest httpServletRequest) {
-        WebConfig webConfig = (WebConfig)httpServletRequest.getAttribute("config");
+        WebConfig webConfig = (WebConfig) httpServletRequest.getAttribute("config");
         if (webConfig == null) {
-            webConfig = (WebConfig)httpServletRequest.getSession().getAttribute("config");
+            webConfig = (WebConfig) httpServletRequest.getSession().getAttribute("config");
             if (webConfig == null) {
                 webConfig = new WebConfig();
                 webConfig.clearWithDefaults(httpServletRequest);
@@ -76,10 +76,10 @@ public class MyTunesRssWebUtils {
     }
 
     public static void addError(HttpServletRequest request, Error error, String holderName) {
-        Set<Error> errors = (Set<Error>)request.getSession().getAttribute(holderName);
+        Set<Error> errors = (Set<Error>) request.getSession().getAttribute(holderName);
         if (errors == null) {
             synchronized (request.getSession()) {
-                errors = (Set<Error>)request.getSession().getAttribute(holderName);
+                errors = (Set<Error>) request.getSession().getAttribute(holderName);
                 if (errors == null) {
                     errors = new HashSet<Error>();
                     request.getSession().setAttribute(holderName, errors);
@@ -90,7 +90,7 @@ public class MyTunesRssWebUtils {
     }
 
     public static boolean isError(HttpServletRequest request, String holderName) {
-        Set<Error> errors = (Set<Error>)request.getSession().getAttribute(holderName);
+        Set<Error> errors = (Set<Error>) request.getSession().getAttribute(holderName);
         return errors != null && !errors.isEmpty();
     }
 
@@ -128,42 +128,32 @@ public class MyTunesRssWebUtils {
     }
 
     public static String createTranscodingPathInfo(WebConfig config) {
-        return createTranscodingParamValue(config.isAlac(),
-                                           config.isFaad(),
-                                           config.isLame(),
-                                           config.getLameTargetBitrate(),
-                                           config.getLameTargetSampleRate(),
-                                           config.isTranscodeOnTheFlyIfPossible());
+        return createTranscodingParamValue(StringUtils.split(StringUtils.trimToEmpty(config.getActiveTranscoders()), ','),
+                config.getLameTargetBitrate(),
+                config.getLameTargetSampleRate(),
+                config.isTranscodeOnTheFlyIfPossible());
     }
 
-    public static String createTranscodingParamValue(boolean alacTranscoding, boolean faadTranscoding, boolean lameTranscoding,
-            int transcodingBitrate, int transcodingSamplerate, boolean transcodeOnTheFlyIfPossible) {
+    public static String createTranscodingParamValue(String[] transcoderNames, int transcodingBitrate, int transcodingSamplerate, boolean transcodeOnTheFlyIfPossible) {
         StringBuilder tc = new StringBuilder();
-        if (alacTranscoding || faadTranscoding || lameTranscoding) {
-            tc.append("A").append(alacTranscoding ? "1" : "0").append("_");
-            tc.append("F").append(faadTranscoding ? "1" : "0").append("_");
-            tc.append("L").append(lameTranscoding ? "1" : "0").append("_");
-            tc.append("B").append(transcodingBitrate).append("_S").append(transcodingSamplerate).append("_O").append(
-                    transcodeOnTheFlyIfPossible ? "1" : "0");
+        for (String tcName : transcoderNames) {
+            tc.append("N").append(tcName).append("_");
         }
+        tc.append("B").append(transcodingBitrate).append("_S").append(transcodingSamplerate).append("_O").append(
+                transcodeOnTheFlyIfPossible ? "1" : "0");
         return tc.toString();
     }
 
     public static void setTranscodingFromRequest(WebConfig config, HttpServletRequest request) {
         String tcValue = request.getParameter("tc");
+        StringBuilder names = new StringBuilder();
         if (StringUtils.isNotBlank(tcValue)) {
             for (String tc : tcValue.trim().split("_")) {
                 char key = tc.charAt(0);
                 String value = tc.substring(1);
                 switch (key) {
-                    case 'A':
-                        config.setAlac("1".equals(value));
-                        break;
-                    case 'F':
-                        config.setFaad("1".equals(value));
-                        break;
-                    case 'L':
-                        config.setLame("1".equals(value));
+                    case 'N':
+                        names.append(",").append(tc.substring(1));
                         break;
                     case 'B':
                         config.setLameTargetBitrate(Integer.valueOf(value));
@@ -178,6 +168,7 @@ public class MyTunesRssWebUtils {
                         LOG.warn("Illegal transcodig parameter \"" + tc + "\" ignored.");
                 }
             }
+            config.setActiveTranscoders(names.substring(1));
         }
     }
 
@@ -220,7 +211,7 @@ public class MyTunesRssWebUtils {
             }
             int portSeparator = url.indexOf(':', schemePrefix.length());
             String oldHost = portSeparator != -1 ? url.substring(schemePrefix.length(), portSeparator) : url.substring(schemePrefix.length(),
-                                                                                                                       serverSeparator);
+                    serverSeparator);
             String httpHost = MyTunesRss.CONFIG.isTomcatProxy() ? MyTunesRss.CONFIG.getTomcatProxyHost() : oldHost;
             String httpScheme = MyTunesRss.CONFIG.isTomcatProxy() ? MyTunesRss.CONFIG.getTomcatProxyScheme() : "http";
             return httpScheme + "://" + httpHost + ":" + httpPort + (serverSeparator < url.length() ? url.substring(serverSeparator) : "");
@@ -235,7 +226,7 @@ public class MyTunesRssWebUtils {
             for (int i = 0; i < parts.length; i++) {
                 if (i < parts.length - 1) {
                     if (map == null) {
-                        map = (Map)request.getAttribute(parts[i]);
+                        map = (Map) request.getAttribute(parts[i]);
                         if (map == null) {
                             map = new HashMap();
                             request.setAttribute(parts[i], map);
@@ -244,7 +235,7 @@ public class MyTunesRssWebUtils {
                         if (!map.containsKey(parts[i])) {
                             map.put(parts[i], new HashMap());
                         }
-                        map = (Map)map.get(parts[i]);
+                        map = (Map) map.get(parts[i]);
                     }
                 } else {
                     if (map == null) {

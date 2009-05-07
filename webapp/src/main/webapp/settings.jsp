@@ -326,39 +326,21 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${authUser.transcoder && globalConfig.validLameBinary}">
-                <tr <mt:flipFlop/>>
-                    <td><fmt:message key="settings.useLame" /></td>
-                    <td>
-                        <input type="checkbox" name="useLame" value="true" <c:if test="${config.lame}">checked="checked"</c:if> />
-                    </td>
-                </tr>
-            </c:if>
-            <c:if test="${authUser.transcoder && globalConfig.validLameBinary && globalConfig.validFaadBinary}">
-                <tr <mt:flipFlop/>>
-                    <td><fmt:message key="settings.useFaad" /></td>
-                    <td>
-                        <input type="checkbox" name="useFaad" value="true" <c:if test="${config.faad}">checked="checked"</c:if> />
-                    </td>
-                </tr>
-            </c:if>
-            <c:if test="${authUser.transcoder && globalConfig.validLameBinary && globalConfig.validAlacBinary}">
-                <tr <mt:flipFlop/>>
-                    <td><fmt:message key="settings.useAlac" /></td>
-                    <td>
-                        <input type="checkbox" name="useAlac" value="true" <c:if test="${config.alac}">checked="checked"</c:if> />
-                    </td>
-                </tr>
-            </c:if>
-            <c:if test="${authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaadBinary)}">
+            <c:if test="${authUser.transcoder && globalConfig.validLameBinary && !empty globalConfig.transcoderConfigs}">
+                <c:forEach var="tc" items="${globalConfig.transcoderConfigs}">
+                    <tr <mt:flipFlop/>>
+                        <td><fmt:message key="settings.transcoder" />: <c:out value="${tc.name}" /></td>
+                        <td>
+                            <input type="checkbox" name="transcoder" value="${tc.name}" <c:if test="${mtfn:isTranscoder(config, tc)}">checked="checked"</c:if> />
+                        </td>
+                    </tr>
+                </c:forEach>
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.transcodeOnTheFlyIfPossible" /></td>
                     <td>
                         <input type="checkbox" name="transcodeOnTheFlyIfPossible" value="true" <c:if test="${config.transcodeOnTheFlyIfPossible}">checked="checked"</c:if> />
                     </td>
                 </tr>
-            </c:if>
-            <c:if test="${authUser.transcoder && (globalConfig.validLameBinary || globalConfig.validFaadBinary)}">
                 <tr <mt:flipFlop/>>
                     <td><fmt:message key="settings.lameTargetBitrate" /></td>
                     <td>

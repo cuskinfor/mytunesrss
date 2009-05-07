@@ -19,14 +19,6 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
         super(StreamingConfigMBean.class);
     }
 
-    public String getFaadBinary() {
-        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getFaadBinary());
-    }
-
-    public String getAlacBinary() {
-        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getAlacBinary());
-    }
-
     public int getCacheMaxFiles() {
         return MyTunesRss.CONFIG.getStreamingCacheMaxFiles();
     }
@@ -37,16 +29,6 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
 
     public String getLameBinary() {
         return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getLameBinary());
-    }
-
-    public void setFaadBinary(String faadBinary) {
-        MyTunesRss.CONFIG.setFaadBinary(StringUtils.trimToNull(faadBinary));
-        onChange();
-    }
-
-    public void setAlacBinary(String alacBinary) {
-        MyTunesRss.CONFIG.setAlacBinary(StringUtils.trimToNull(alacBinary));
-        onChange();
     }
 
     public void setCacheMaxFiles(int maxFiles) {
@@ -82,39 +64,12 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
         onChange();
     }
 
-    public String getLameOnlyOptions() {
-        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getLameOnlyOptions());
-    }
-
-    public void setLameOnlyOptions(String options) {
-        MyTunesRss.CONFIG.setLameOnlyOptions(StringUtils.trimToNull(options));
-        onChange();
-    }
-
     public String getLameTargetOptions() {
         return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getLameTargetOptions());
     }
 
     public void setLameTargetOptions(String options) {
         MyTunesRss.CONFIG.setLameTargetOptions(StringUtils.trimToNull(options));
-        onChange();
-    }
-
-    public String getFaadSourceOptions() {
-        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getFaadSourceOptions());
-    }
-
-    public void setFaadSourceOptions(String options) {
-        MyTunesRss.CONFIG.setFaadSourceOptions(StringUtils.trimToNull(options));
-        onChange();
-    }
-
-    public String getAlacSourceOptions() {
-        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getAlacSourceOptions());
-    }
-
-    public void setAlacSourceOptions(String options) {
-        MyTunesRss.CONFIG.setAlacSourceOptions(StringUtils.trimToNull(options));
         onChange();
     }
 }

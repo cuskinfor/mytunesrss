@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.7-EAP-10" date="2009-05-xx" description="3.7 EAP 10">
+            <action dev="mdescher" type="update">
+                Generic audio transcoder support. Always transcodes to MP3.
+            </action>
+        </release>
+
         <release version="3.7-EAP-9" date="2009-05-04" description="3.7 EAP 9">
             <action dev="mdescher" type="fix">
                 Added de.codewave.mytunesrss property to exe wrapper.

@@ -69,8 +69,6 @@ public class MyTunesRssConfig {
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
     private String myLameBinary = "";
-    private String myFaadBinary = "";
-    private String myAlacBinary = "";
     private int myStreamingCacheTimeout = 20;
     private int myStreamingCacheMaxFiles = 300;
     private boolean myBandwidthLimit;
@@ -108,10 +106,7 @@ public class MyTunesRssConfig {
     private int myTomcatSslProxyPort;
     private String myTomcatSslProxyScheme;
     private Map<String, DialogLayout> myDialogLayouts;
-    private String myLameOnlyOptions = "--quiet -b {bitrate} --resample {samplerate} {infile} -";
     private String myLameTargetOptions = "--quiet -r -b {bitrate} --resample {samplerate} - -";
-    private String myAlacSourceOptions = "{infile}";
-    private String myFaadSourceOptions = "-f 2 -g -w {infile}";
     private List<FileType> myFileTypes = new ArrayList<FileType>();
     private String myMailHost;
     private int myMailPort;
@@ -340,31 +335,6 @@ public class MyTunesRssConfig {
 
     public void setLameBinary(String lameBinary) {
         myLameBinary = lameBinary;
-    }
-
-    public String getFaadBinary() {
-        return myFaadBinary;
-    }
-
-    public boolean isValidFaadBinary() {
-        return StringUtils.isNotEmpty(myFaadBinary) && new File(myFaadBinary).isFile();
-    }
-
-    public void setFaadBinary(String faadBinary) {
-        myFaadBinary = faadBinary;
-    }
-
-    public String getAlacBinary() {
-        return myAlacBinary;
-    }
-
-    public boolean isValidAlacBinary() {
-        return StringUtils.isNotEmpty(myAlacBinary) && new File(myAlacBinary).isFile();
-    }
-
-
-    public void setAlacBinary(String alacBinary) {
-        myAlacBinary = alacBinary;
     }
 
     public int getStreamingCacheTimeout() {
@@ -767,30 +737,6 @@ public class MyTunesRssConfig {
         return layout;
     }
 
-    public String getAlacSourceOptions() {
-        return myAlacSourceOptions;
-    }
-
-    public void setAlacSourceOptions(String alacSourceOptions) {
-        myAlacSourceOptions = alacSourceOptions;
-    }
-
-    public String getFaadSourceOptions() {
-        return myFaadSourceOptions;
-    }
-
-    public void setFaadSourceOptions(String faadSourceOptions) {
-        myFaadSourceOptions = faadSourceOptions;
-    }
-
-    public String getLameOnlyOptions() {
-        return myLameOnlyOptions;
-    }
-
-    public void setLameOnlyOptions(String lameOnlyOptions) {
-        myLameOnlyOptions = lameOnlyOptions;
-    }
-
     public String getLameTargetOptions() {
         return myLameTargetOptions;
     }
@@ -989,11 +935,11 @@ public class MyTunesRssConfig {
     public List<TranscoderConfig> getTranscoderConfigs() {
         return myTranscoderConfigs;
     }
-    
+
     public void setTranscoderConfigs(List<TranscoderConfig> configs) {
         myTranscoderConfigs = configs;
     }
-    
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1101,12 +1047,7 @@ public class MyTunesRssConfig {
             setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
             readPathInfoEncryptionKey(settings);
             setLameBinary(JXPathUtils.getStringValue(settings, "lameBinary", getLameBinary()));
-            setFaadBinary(JXPathUtils.getStringValue(settings, "faadBinary", getFaadBinary()));
-            setAlacBinary(JXPathUtils.getStringValue(settings, "alacBinary", getAlacBinary()));
-            setLameOnlyOptions(JXPathUtils.getStringValue(settings, "lameOnlyOptions", getLameOnlyOptions()));
             setLameTargetOptions(JXPathUtils.getStringValue(settings, "lameTargetOptions", getLameTargetOptions()));
-            setAlacSourceOptions(JXPathUtils.getStringValue(settings, "alacSourceOptions", getAlacSourceOptions()));
-            setFaadSourceOptions(JXPathUtils.getStringValue(settings, "faadSourceOptions", getFaadSourceOptions()));
             setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
             setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
             setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
@@ -1192,6 +1133,12 @@ public class MyTunesRssConfig {
             setVideoLanClientPort(JXPathUtils.getIntValue(settings, "remote-control/vlc/port", 0));
             setRemoteControlType(RemoteControlType.valueOf(JXPathUtils.getStringValue(settings, "remote-control/type", RemoteControlType.None.name())));
             setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", null));
+            Iterator<JXPathContext> transcoderConfigIterator = JXPathUtils.getContextIterator(settings, "transcoders/config");
+            myTranscoderConfigs = new ArrayList<TranscoderConfig>();
+            while (transcoderConfigIterator.hasNext()) {
+                JXPathContext transcoderConfigContext = transcoderConfigIterator.next();
+                myTranscoderConfigs.add(new TranscoderConfig(transcoderConfigContext));
+            }
         } catch (IOException e) {
             LOGGER.error("Could not read configuration file.", e);
         }
@@ -1294,12 +1241,7 @@ public class MyTunesRssConfig {
                 root.appendChild(DOMUtils.createByteArrayElement(settings, "pathInfoKey", myPathInfoKey.getEncoded()));
             }
             root.appendChild(DOMUtils.createTextElement(settings, "lameBinary", myLameBinary));
-            root.appendChild(DOMUtils.createTextElement(settings, "faadBinary", myFaadBinary));
-            root.appendChild(DOMUtils.createTextElement(settings, "alacBinary", myAlacBinary));
-            root.appendChild(DOMUtils.createTextElement(settings, "lameOnlyOptions", myLameOnlyOptions));
             root.appendChild(DOMUtils.createTextElement(settings, "lameTargetOptions", myLameTargetOptions));
-            root.appendChild(DOMUtils.createTextElement(settings, "alacSourceOptions", myAlacSourceOptions));
-            root.appendChild(DOMUtils.createTextElement(settings, "faadSourceOptions", myFaadSourceOptions));
             root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheTimeout", myStreamingCacheTimeout));
             root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheMaxFiles", myStreamingCacheMaxFiles));
             root.appendChild(DOMUtils.createBooleanElement(settings, "bandwidthLimit", myBandwidthLimit));
@@ -1417,6 +1359,13 @@ public class MyTunesRssConfig {
             remoteControlVlc.appendChild(DOMUtils.createTextElement(settings, "host", getVideoLanClientHost()));
             remoteControlVlc.appendChild(DOMUtils.createIntElement(settings, "port", getVideoLanClientPort()));
             root.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", getDisabledMp4Codecs()));
+            Element transcoderConfigs = settings.createElement("transcoders");
+            root.appendChild(transcoderConfigs);
+            for (TranscoderConfig transcoderConfig : getTranscoderConfigs()) {
+                Element config = settings.createElement("config");
+                transcoderConfigs.appendChild(config);
+                transcoderConfig.writeTo(settings, config);
+            }
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

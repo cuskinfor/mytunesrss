@@ -19,10 +19,10 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.io.UnsupportedEncodingException;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
@@ -91,12 +91,8 @@ public class MyTunesFunctions {
     }
 
     public static String suffix(WebConfig config, User user, Track track) {
-        if (config != null && user != null && FileSupportUtils.isMp4(track.getFile()) && user.isTranscoder()) {
-            if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
-                return "mp3";
-            } else if ("mp4a".equals(track.getMp4Codec()) && config.isFaad() && MyTunesRss.CONFIG.isValidFaadBinary()) {
-                return "mp3";
-            }
+        if (config != null && user != null && user.isTranscoder() && config.getTranscoder(track) != null) {
+            return "mp3";
         }
         return FilenameUtils.getExtension(track.getFile().getName());
     }
@@ -109,15 +105,7 @@ public class MyTunesFunctions {
         if (user != null && user.isTranscoder()) {
             HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
             WebConfig config = MyTunesRssWebUtils.getWebConfig(request);
-            if (FileSupportUtils.isMp4(track.getFile()) && "alac".equals(track.getMp4Codec()) && config.isAlac() &&
-                    MyTunesRss.CONFIG.isValidAlacBinary()) {
-                return true;
-            } else if (FileSupportUtils.isMp4(track.getFile()) && "mp4a".equals(track.getMp4Codec()) && config.isFaad() &&
-                    MyTunesRss.CONFIG.isValidFaadBinary()) {
-                return true;
-            } else if (FileSupportUtils.isMp3(track.getFile()) && config.isLame() && MyTunesRss.CONFIG.isValidLameBinary()) {
-                return true;
-            }
+            return config.getTranscoder(track) != null;
         }
         return false;
     }
@@ -126,15 +114,7 @@ public class MyTunesFunctions {
         if (user != null && user.isTranscoder() && MyTunesRss.CONFIG.isValidLameBinary()) {
             HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
             WebConfig config = MyTunesRssWebUtils.getWebConfig(request);
-            if (FileSupportUtils.isMp4(track.getFile())) {
-                if ("alac".equals(track.getMp4Codec()) && config.isAlac() && MyTunesRss.CONFIG.isValidAlacBinary()) {
-                    return MyTunesRssWebUtils.createTranscodingPathInfo(config);
-                } else if ("mp4a".equals(track.getMp4Codec()) && config.isFaad() && MyTunesRss.CONFIG.isValidFaadBinary()) {
-                    return MyTunesRssWebUtils.createTranscodingPathInfo(config);
-                }
-            } else if (FileSupportUtils.isMp3(track.getFile()) && config.isLame()) {
-                return MyTunesRssWebUtils.createTranscodingPathInfo(config);
-            }
+            return MyTunesRssWebUtils.createTranscodingPathInfo(config);
         }
 
         return "";
@@ -255,5 +235,9 @@ public class MyTunesFunctions {
         builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
         builder.append("/").append(virtualTrackName(track)).append(".").append(suffix(MyTunesRssWebUtils.getWebConfig(request), user, track));
         return builder.toString();
+    }
+
+    public static boolean isTranscoder(WebConfig webConfig, TranscoderConfig transcoderConfig) {
+        return webConfig.isActiveTranscoder(transcoderConfig.getName());
     }
 }

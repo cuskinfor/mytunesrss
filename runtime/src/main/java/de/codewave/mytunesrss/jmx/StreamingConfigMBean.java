@@ -10,14 +10,6 @@ public interface StreamingConfigMBean {
 
     void setLameBinary(String lameBinary);
 
-    String getFaadBinary();
-
-    void setFaadBinary(String faadBinary);
-
-    String getAlacBinary();
-
-    void setAlacBinary(String alacBinary);
-
     int getCacheTimeout();
 
     void setCacheTimeout(int timeout);
@@ -34,19 +26,7 @@ public interface StreamingConfigMBean {
 
     void setBandwidthLimitFactor(BigDecimal factor);
 
-    String getLameOnlyOptions();
-
-    void setLameOnlyOptions(String options);
-
     String getLameTargetOptions();
 
     void setLameTargetOptions(String options);
-
-    String getFaadSourceOptions();
-
-    void setFaadSourceOptions(String options);
-
-    String getAlacSourceOptions();
-
-    void setAlacSourceOptions(String options);
 }

@@ -13,9 +13,12 @@ import de.codewave.mytunesrss.servlet.WebConfig;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 
 /**
  * de.codewave.mytunesrss.command.SaveSettingsCommandHandler
@@ -53,11 +56,8 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setPlaylistType(getRequestParameter("playlistType", "m3u"));
         webConfig.setShowPlayer(getBooleanRequestParameter("showPlayer", false));
         webConfig.setTheme(getRequest().getParameter("theme"));
-        webConfig.setLame(getBooleanRequestParameter("useLame", false));
         webConfig.setLameTargetBitrate(getIntegerRequestParameter("lameTargetBitrate", 96));
         webConfig.setLameTargetSampleRate(getIntegerRequestParameter("lameTargetSampleRate", 22050));
-        webConfig.setFaad(getBooleanRequestParameter("useFaad", false));
-        webConfig.setAlac(getBooleanRequestParameter("useAlac", false));
         webConfig.setTranscodeOnTheFlyIfPossible(getBooleanRequestParameter("transcodeOnTheFlyIfPossible", false));
         webConfig.setRandomSource(getRequestParameter("randomSource", ""));
         webConfig.setFlashplayerType(getRequestParameter("flashplayerType", "jw"));
@@ -71,6 +71,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setMyTunesRssComAddress(getBooleanRequestParameter("myTunesRssComAddress", false));
         webConfig.setAlbumImageSize(getIntegerRequestParameter("albImgSize", 128));
         webConfig.setRemoteControl(getBooleanRequestParameter("remoteControl", false));
+        transferTranscoders(webConfig);
         boolean error = false;
         error |= transferAndValidatePageSize(webConfig);
         error |= transferAndValidateRssFeedLimit(webConfig);
@@ -80,6 +81,16 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         error |= transferAndValidatePassword();
         error |= transferAndValidateLastFmAccount();
         return !error;
+    }
+
+    private void transferTranscoders(WebConfig webConfig) {
+        StringBuilder transcoders = new StringBuilder();
+        if (getRequest().getParameterValues("transcoder") != null) {
+            for (String tcName : getRequest().getParameterValues("transcoder")) {
+                transcoders.append(",").append(tcName);
+            }
+        }
+        webConfig.setActiveTranscoders(transcoders.length() > 0 ? transcoders.substring(1) : null);
     }
 
     private boolean transferAndValidateLastFmAccount() {
