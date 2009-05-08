@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.7-EAP-10" date="2009-05-xx" description="3.7 EAP 10">
+        <release version="3.7-EAP-10" date="2009-05-08" description="3.7 EAP 10">
             <action dev="mdescher" type="update">
                 Generic audio transcoder support. Always transcodes to MP3.
             </action>
