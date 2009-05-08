@@ -158,6 +158,7 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
                 mode == GuiMode.ServerRunning;
         myBaseDirsList.setEnabled(!databaseOrServerActive);
         myAddBaseDirButton.setEnabled(!databaseOrServerActive);
+        myAddRemoteButton.setEnabled(!databaseOrServerActive);
         myDeleteBaseDirButton.setEnabled(!databaseOrServerActive && myBaseDirsList.getSelectedIndex() > -1);
         myUploadDirInput.setEnabled(!databaseOrServerActive);
         myUploadDirLookupButton.setEnabled(!databaseOrServerActive);

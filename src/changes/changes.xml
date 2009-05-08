@@ -7,6 +7,16 @@
 
     <body>
 
+        <release version="3.7-EAP-11" date="xxxx-xx-xx" description="3.7 EAP 11">
+            <action dev="mdescher" type="fix">
+                Parse MP4 codec from iTunes file only if the file has been modified since the last update or
+                the track really gets updated for other reasons.
+            </action>
+            <action dev="mdescher" type="fix">
+                Disable button for adding remote data sources during database update and while server is running.
+            </action>
+        </release>
+
         <release version="3.7-EAP-10" date="2009-05-08" description="3.7 EAP 10">
             <action dev="mdescher" type="update">
                 Generic audio transcoder support. Always transcodes to MP3.

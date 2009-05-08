@@ -10,12 +10,13 @@ import de.codewave.mytunesrss.datastore.statement.UpdateTrackStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -24,12 +25,12 @@ import java.util.*;
  */
 public class TrackListener implements PListHandlerListener {
     private static final Logger LOG = LoggerFactory.getLogger(TrackListener.class);
+    private static final String MP4_CODEC_NOT_CHECKED = new String();
 
     private DataStoreSession myDataStoreSession;
     private LibraryListener myLibraryListener;
     private int myUpdatedCount;
     private Map<Long, String> myTrackIdToPersId;
-    private Collection<Map> myTrackCache = new HashSet<Map>();
     private Collection<String> myTrackIds;
     private long myScannedCount;
     private long myLastEventTime;
@@ -93,7 +94,7 @@ public class TrackListener implements PListHandlerListener {
         String trackType = (String) track.get("Track Type");
         if (trackType == null || "File".equals(trackType)) {
             String filename = ItunesLoader.getFileNameForLocation((String) track.get("Location"));
-            String mp4Codec = getMp4Codec(track, filename);
+            String mp4Codec = getMp4Codec(track, filename, myLibraryListener.getTimeLastUpate());
             if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && FileSupportUtils.isSupported(filename) && !isMp4CodecDisabled(mp4Codec)) {
                 if (!new File(filename).isFile()) {
                     myMissingFiles++;
@@ -122,7 +123,7 @@ public class TrackListener implements PListHandlerListener {
                             statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Comments"))));
                             statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
                                     (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
-                            statement.setMp4Codec(mp4Codec);
+                            statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, filename, 0) : mp4Codec);
                             myDataStoreSession.executeStatement(statement);
                             return true;
                         } catch (SQLException e) {
@@ -143,7 +144,10 @@ public class TrackListener implements PListHandlerListener {
         return mp4Codec != null && ArrayUtils.contains(myDisabledMp4Codecs, mp4Codec.toLowerCase());
     }
 
-    private String getMp4Codec(Map track, String filename) {
+    private String getMp4Codec(Map track, String filename, long lastUpdateTime) {
+        if (new File(filename).lastModified() < lastUpdateTime) {
+            return MP4_CODEC_NOT_CHECKED;
+        }
         if (FileSupportUtils.isMp4(filename)) {
             String kind = (String) track.get("Kind");
             if (StringUtils.isNotEmpty(kind)) {
@@ -180,7 +184,7 @@ public class TrackListener implements PListHandlerListener {
             if (atom != null) {
                 return atom.getDataAsString(12, 4, "UTF-8");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
             }
