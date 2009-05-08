@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7-EAP-11" date="xxxx-xx-xx" description="3.7 EAP 11">
+            <action dev="mdescher" type="add">
+                JMX configuration for transcoders.
+            </action>
             <action dev="mdescher" type="fix">
                 Parse MP4 codec from iTunes file only if the file has been modified since the last update or
                 the track really gets updated for other reasons.

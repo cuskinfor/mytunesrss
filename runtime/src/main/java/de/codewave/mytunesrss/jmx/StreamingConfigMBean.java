@@ -10,6 +10,10 @@ public interface StreamingConfigMBean {
 
     void setLameBinary(String lameBinary);
 
+    String getLameOptions();
+
+    void setLameOptions(String lameOptions);
+
     int getCacheTimeout();
 
     void setCacheTimeout(int timeout);
@@ -29,4 +33,10 @@ public interface StreamingConfigMBean {
     String getLameTargetOptions();
 
     void setLameTargetOptions(String options);
+
+    String[] getTranscoders();
+
+    String addTranscoder(String name, String suffixes, String mp4codecs, String binary, String options);
+
+    String deleteTranscoder(String name);
 }
