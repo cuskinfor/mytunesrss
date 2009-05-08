@@ -247,8 +247,14 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
         }
 
         public void actionPerformed(ActionEvent e) {
-            myTranscoders.remove(myTranscoder);
-            refreshTranscoders();
+            int result = JOptionPane.showConfirmDialog(myRootPanel,
+                    MyTunesRssUtils.getBundleString("confirmation.deleteTranscoder", myTranscoder.getName()),
+                    MyTunesRssUtils.getBundleString("confirmation.titleDeleteTranscoder"),
+                    JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                myTranscoders.remove(myTranscoder);
+                refreshTranscoders();
+            }
         }
     }
 }

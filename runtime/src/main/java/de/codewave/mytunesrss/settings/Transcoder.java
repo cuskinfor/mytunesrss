@@ -46,6 +46,10 @@ public class Transcoder {
         return myDeleteButton;
     }
 
+    public String getName() {
+        return myNameInput.getText();
+    }
+
     public void init(TranscoderConfig tc) {
         myNameInput.setText(tc.getName());
         mySuffixesInput.setText(tc.getSuffixes());
