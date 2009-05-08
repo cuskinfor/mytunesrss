@@ -155,6 +155,7 @@ public class TrackUtils {
             setComment(track.getComment());
             setPosNumber(track.getPosNumber());
             setPosSize(track.getPosSize());
+            setLastUpdate(track.getLastUpdate());
         }
 
         public boolean isNewSection() {

@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
  * de.codewave.mytunesrss.command.CreateRssCommandHandler
  */
 public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
-    private static final SimpleDateFormat PUBLISH_DATE_FORMAT = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US);
 
     @Override
     public void executeAuthorized() throws Exception {
@@ -32,7 +31,6 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
                 channel = StringUtils.trimToNull(StringUtils.substringBeforeLast(channel, "."));
             }
             getRequest().setAttribute("channel", channel != null ? MiscUtils.decodeUrl(channel.replace('_', ' ')) : "MyTunesRSS");
-            getRequest().setAttribute("pubDate", PUBLISH_DATE_FORMAT.format(new Date()));
             getRequest().setAttribute("feedUrl", feedUrl);
             Collection<Track> tracks = getTracks().getResults();
             if (tracks != null && !tracks.isEmpty()) {

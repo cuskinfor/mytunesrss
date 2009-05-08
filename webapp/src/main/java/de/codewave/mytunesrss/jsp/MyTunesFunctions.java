@@ -32,6 +32,8 @@ public class MyTunesFunctions {
 
     private static final String DEFAULT_NAME = "MyTunesRSS";
 
+    private static final SimpleDateFormat PUBLISH_DATE_FORMAT = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US);
+
     public static String webSafeFileName(String name) {
         name = getLegalFileName(name);
         return MiscUtils.encodeUrl(name);
@@ -239,5 +241,9 @@ public class MyTunesFunctions {
 
     public static boolean isTranscoder(WebConfig webConfig, TranscoderConfig transcoderConfig) {
         return webConfig.isActiveTranscoder(transcoderConfig.getName());
+    }
+
+    public static String rssDate(long timestamp) {
+        return PUBLISH_DATE_FORMAT.format(new Date(timestamp));
     }
 }

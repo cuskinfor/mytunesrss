@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.sql.DataStoreStatement;
+import de.codewave.utils.sql.SmartStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,6 +169,15 @@ public class MigrationStatement implements DataStoreStatement {
                         LOG.info("Migrating database to 3.7 EAP 4.");
                         MyTunesRssUtils.createStatement(connection, "migrate_3.7_eap_4").execute();
                         databaseVersion = new Version("3.7-EAP-4");
+                        new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
+                    }
+                    // migration for 3.7-EAP-11
+                    if (databaseVersion.compareTo(new Version("3.7-EAP-11")) < 0) {
+                        LOG.info("Migrating database to 3.7 EAP 11.");
+                        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "migrate_3.7_eap_11");
+                        statement.setLong("ts_now", System.currentTimeMillis());
+                        statement.execute();
+                        databaseVersion = new Version("3.7-EAP-11");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                     }
                 } finally {

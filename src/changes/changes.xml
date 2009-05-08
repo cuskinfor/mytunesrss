@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7-EAP-11" date="xxxx-xx-xx" description="3.7 EAP 11">
+            <action dev="mdescher" type="fix">
+                Use last update timestamp of track for RSS feed item publish timestamp.
+            </action>
             <action dev="mdescher" type="add">
                 JMX configuration for transcoders.
             </action>

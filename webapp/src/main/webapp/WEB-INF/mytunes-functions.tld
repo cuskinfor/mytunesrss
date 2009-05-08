@@ -320,4 +320,13 @@
         </function-signature>
     </function>
 
+    <function>
+        <description>
+            Format a timestamp as an RSS feed date.
+        </description>
+        <name>rssDate</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String rssDate(long)</function-signature>
+    </function>
+
 </taglib>
