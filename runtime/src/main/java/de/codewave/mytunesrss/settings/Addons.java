@@ -43,7 +43,7 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
         };
     }
 
-    public void init() {
+    public Addons() {
         myThemesScrollPane.setMaximumSize(myThemesScrollPane.getPreferredSize());
         myThemesScrollPane.getViewport().setOpaque(false);
         myLanguagesScrollPane.setMaximumSize(myLanguagesScrollPane.getPreferredSize());
@@ -100,7 +100,6 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
                 return AddonsUtils.deleteLanguage(language);
             }
         });
-        initValues();
         MyTunesRssEventManager.getInstance().addListener(this);
     }
 

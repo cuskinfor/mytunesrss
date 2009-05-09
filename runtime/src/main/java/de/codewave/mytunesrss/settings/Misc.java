@@ -31,7 +31,6 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
     private JTextField myProxyHostInput;
     private JTextField myProxyPortInput;
     private JCheckBox myUseProxyInput;
-    private JLabel myPasswordLabel;
     private JCheckBox myQuitConfirmationInput;
     private JCheckBox myUpdateOnStartInput;
     private JButton myProgramUpdateButton;
@@ -53,10 +52,6 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
 
     public Misc() {
         MyTunesRssEventManager.getInstance().addListener(this);
-    }
-
-    public void init() {
-        initValues();
         myUseProxyInput.addActionListener(new UseProxyActionListener());
         myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput,
@@ -96,19 +91,6 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
 
     private void createUIComponents() {
         myPasswordInput = new PasswordHashField(MyTunesRssUtils.getBundleString("passwordHasBeenSet"), MyTunesRss.SHA1_DIGEST);
-    }
-
-    public void setGuiMode(GuiMode mode) {
-        boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
-        SwingUtils.enableElementAndLabel(myProxyHostInput, !serverActive && myUseProxyInput.isSelected());
-        SwingUtils.enableElementAndLabel(myProxyPortInput, !serverActive && myUseProxyInput.isSelected());
-        myUseProxyInput.setEnabled(!serverActive);
-        SwingUtils.enableElementAndLabel(myUsernameInput, !serverActive);
-        myPasswordLabel.setEnabled(!serverActive);
-        myPasswordInput.setEnabled(!serverActive);
-        myMyTunesRssComSsl.setEnabled(!serverActive);
-        myUpdateOnStartInput.setEnabled(!serverActive && !myAutoStartServer);
-        myProgramUpdateButton.setEnabled(!serverActive);
     }
 
     public String updateConfigFromGui() {
@@ -178,19 +160,6 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
                         break;
                     case CONFIGURATION_CHANGED:
                         initValues();
-                        break;
-                    case DATABASE_UPDATE_STATE_CHANGED:
-                        setGuiMode(GuiMode.DatabaseUpdating);
-                        break;
-                    case DATABASE_UPDATE_FINISHED:
-                    case DATABASE_UPDATE_FINISHED_NOT_RUN:
-                        setGuiMode(GuiMode.DatabaseIdle);
-                        break;
-                    case SERVER_STARTED:
-                        setGuiMode(GuiMode.ServerRunning);
-                        break;
-                    case SERVER_STOPPED:
-                        setGuiMode(GuiMode.ServerIdle);
                         break;
                 }
             }

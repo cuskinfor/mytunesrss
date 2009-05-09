@@ -455,8 +455,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="mediatype" type="java.lang.String"/>
         <sql>
-            INSERT INTO track (id, name, artist, original_artist, album, time, track_number, file, protected, mediatype, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, last_update)
-            VALUES (:id, :name, :artist, :original_artist, :album, :time, :track_number, :file, :protected, :mediatype, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :ts_updated)
+            INSERT INTO track (id, name, artist, original_artist, album, time, track_number, file, protected, mediatype, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
+            VALUES (:id, :name, :artist, :original_artist, :album, :time, :track_number, :file, :protected, :mediatype, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size)
         </sql>
     </statement>
 
@@ -466,8 +466,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="mediatype" type="java.lang.String"/>
         <sql>
-            INSERT INTO track (id, name, artist, original_artist, album, time, track_number, file, protected, mediatype, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, last_update)
-            VALUES (:id, :name, :artist, :original_artist, :album, :time, :track_number, :file, :protected, :mediatype, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :ts_updated)
+            INSERT INTO track (id, name, artist, original_artist, album, time, track_number, file, protected, mediatype, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
+            VALUES (:id, :name, :artist, :original_artist, :album, :time, :track_number, :file, :protected, :mediatype, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size)
         </sql>
     </statement>
 
@@ -479,7 +479,7 @@
         <sql>
             UPDATE track SET name = :name, album = :album, artist = :artist, original_artist = :original_artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
-                             ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size, last_update = :ts_updated
+                             ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size
             WHERE id = :id
         </sql>
     </statement>
@@ -499,7 +499,7 @@
             UPDATE track SET name = :name, album = :album, artist = :artist, original_artist = :original_artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated, pos_number = :pos_number,
-                             pos_size = :pos_size, last_update = :ts_updated
+                             pos_size = :pos_size
             WHERE id = :id
         </sql>
     </statement>
@@ -686,12 +686,12 @@
     <fragment name="trackColumns">
         t.source AS source, t.id AS id, t.name AS name, t.artist AS artist, t.original_artist AS original_artist, t.album AS album, t.time AS time, t.track_number AS track_number,
         t.file AS file, t.protected AS protected, t.mediatype AS mediatype, t.genre AS genre, t.mp4codec AS mp4codec, t.ts_played AS ts_played, t.ts_updated AS ts_updated,
-        t.playcount AS playcount, t.last_image_update AS last_image_update, t.comment AS comment, t.pos_number AS pos_number, t.pos_size AS pos_size, t.last_update AS last_update
+        t.playcount AS playcount, t.last_image_update AS last_image_update, t.comment AS comment, t.pos_number AS pos_number, t.pos_size AS pos_size
     </fragment>
 
     <fragment name="groupByTrackColumns">
         source, id, name, artist, original_artist, album, time, track_number, file, protected, mediatype, genre, mp4codec, ts_played, ts_updated, playcount, last_image_update,
-        comment, pos_number, pos_size, last_update
+        comment, pos_number, pos_size
     </fragment>
 
     <fragment name="updatePlaylistCount">

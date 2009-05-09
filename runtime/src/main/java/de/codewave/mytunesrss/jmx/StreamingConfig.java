@@ -49,15 +49,6 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
         onChange();
     }
 
-    public String getLameOptions() {
-        return MyTunesRss.CONFIG.getLameTargetOptions();
-    }
-
-    public void setLameOptions(String lameOptions) {
-        MyTunesRss.CONFIG.setLameTargetOptions(lameOptions);
-        onChange();
-    }
-
     public BigDecimal getBandwidthLimitFactor() {
         return MyTunesRss.CONFIG.getBandwidthLimitFactor();
     }

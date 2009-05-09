@@ -3,11 +3,9 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import de.codewave.utils.swing.JTextFieldValidation;
 import de.codewave.utils.swing.MinMaxValueTextFieldValidation;
-import de.codewave.utils.swing.SwingUtils;
+import org.apache.commons.lang.SystemUtils;
 
 import javax.swing.*;
-
-import org.apache.commons.lang.SystemUtils;
 
 /**
  * de.codewave.mytunesrss.settings.RemoteControl
@@ -18,14 +16,13 @@ public class RemoteControl implements SettingsForm, MyTunesRssEventListener {
     private JTextField myVlcPortInput;
     private JComboBox myRemoteControlTypeInput;
 
-    public void init() {
+    public RemoteControl() {
         MyTunesRssEventManager.getInstance().addListener(this);
         myRemoteControlTypeInput.addItem(RemoteControlType.None);
         myRemoteControlTypeInput.addItem(RemoteControlType.Vlc);
         if (SystemUtils.IS_OS_MAC_OSX) {
             myRemoteControlTypeInput.addItem(RemoteControlType.Quicktime);
         }
-        initValues();
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myVlcPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString(
                 "error.illegalVlcPort")));
     }
@@ -43,30 +40,9 @@ public class RemoteControl implements SettingsForm, MyTunesRssEventListener {
                     case CONFIGURATION_CHANGED:
                         initValues();
                         break;
-                    case SERVER_STARTED:
-                        setGuiMode(GuiMode.ServerRunning);
-                        break;
-                    case SERVER_STOPPED:
-                        setGuiMode(GuiMode.ServerIdle);
-                        break;
                 }
             }
         });
-    }
-
-    private void setGuiMode(GuiMode guiMode) {
-        switch (guiMode) {
-            case ServerRunning:
-                SwingUtils.enableElementAndLabel(myRemoteControlTypeInput, false);
-                SwingUtils.enableElementAndLabel(myVlcHostInput, false);
-                SwingUtils.enableElementAndLabel(myVlcPortInput, false);
-                break;
-            case ServerIdle:
-                SwingUtils.enableElementAndLabel(myRemoteControlTypeInput, true);
-                SwingUtils.enableElementAndLabel(myVlcHostInput, true);
-                SwingUtils.enableElementAndLabel(myVlcPortInput, true);
-                break;
-        }
     }
 
     public String updateConfigFromGui() {

@@ -6,8 +6,6 @@ import javax.swing.*;
  * de.codewave.mytunesrss.settings.SettingsForm
  */
 public interface SettingsForm {
-    void init();
-
     void initValues();
 
     String updateConfigFromGui();

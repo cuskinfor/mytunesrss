@@ -29,11 +29,10 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm {
     private EditUserActionListener myEditUserActionListener = new EditUserActionListener();
     private DeleteUserActionListener myDeleteUserActionListener = new DeleteUserActionListener();
 
-    public void init() {
+    public UserManagement() {
         myScrollPane.getViewport().setOpaque(false);
         myCreateButton.addActionListener(new CreateUserActionListener());
         MyTunesRssEventManager.getInstance().addListener(this);
-        initValues();
     }
 
     public void initValues() {

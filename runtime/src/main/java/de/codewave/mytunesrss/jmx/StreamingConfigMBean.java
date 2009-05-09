@@ -10,10 +10,6 @@ public interface StreamingConfigMBean {
 
     void setLameBinary(String lameBinary);
 
-    String getLameOptions();
-
-    void setLameOptions(String lameOptions);
-
     int getCacheTimeout();
 
     void setCacheTimeout(int timeout);

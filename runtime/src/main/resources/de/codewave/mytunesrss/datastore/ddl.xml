@@ -28,7 +28,6 @@
                 pos_size INTEGER,
                 image_hash CHAR(24),
                 sticky BOOLEAN,
-                last_update NUMERIC(19),
                 UNIQUE (id)
             )
         </sql>

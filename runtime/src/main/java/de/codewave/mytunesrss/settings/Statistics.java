@@ -40,7 +40,7 @@ public class Statistics implements SettingsForm {
     private JButton mySendButton;
 
 
-    public void init() {
+    public Statistics() {
         initNumberSelect(myFromDayInput, 1, 31);
         initNumberSelect(myFromMonthInput, 1, 12);
         initNumberSelect(myToDayInput, 1, 31);
@@ -48,7 +48,6 @@ public class Statistics implements SettingsForm {
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myKeepTimeInput, 0, 1000, true, MyTunesRssUtils.getBundleString(
                 "error.invalidStatisticsKeepTime")));
         mySendButton.addActionListener(new SendStatisticsButtonListener());
-        initValues();
     }
 
     private void initNumberSelect(JComboBox comboBox, int from, int to) {

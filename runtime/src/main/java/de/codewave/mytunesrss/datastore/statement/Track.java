@@ -36,7 +36,6 @@ public class Track {
     private int myPosSize;
     private String filename;
     private TrackSource source;
-    private long lastUpdate;
 
     public String getAlbum() {
         return myAlbum;
@@ -221,14 +220,6 @@ public class Track {
 
     public void setSource(TrackSource source) {
         this.source = source;
-    }
-
-    public long getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(long lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     @Override

@@ -127,7 +127,6 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
             track.setComment(resultSet.getString("COMMENT"));
             track.setPosNumber(resultSet.getInt("POS_NUMBER"));
             track.setPosSize(resultSet.getInt("POS_SIZE"));
-            track.setLastUpdate(resultSet.getLong("LAST_UPDATE"));
             return track;
         }
     }

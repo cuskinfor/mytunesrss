@@ -21,11 +21,6 @@ public class AdminNotify implements SettingsForm {
     private JCheckBox myNotifyWebUploadInput;
     private JCheckBox myNotifyMissingFileInput;
 
-
-    public void init() {
-        initValues();
-    }
-
     public void initValues() {
         myAdminEmailInput.setText(MyTunesRss.CONFIG.getAdminEmail());
         myNotifyDatabaseUpdateInput.setSelected(MyTunesRss.CONFIG.isNotifyOnDatabaseUpdate());

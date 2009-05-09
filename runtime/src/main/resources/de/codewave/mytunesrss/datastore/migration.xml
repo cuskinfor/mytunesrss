@@ -153,4 +153,10 @@
         </sql>
     </statement>
 
+    <statement name="migrate_3.7_eap_12">
+        <sql>
+            ALTER TABLE track DROP COLUMN last_update
+        </sql>
+    </statement>
+
 </statements>

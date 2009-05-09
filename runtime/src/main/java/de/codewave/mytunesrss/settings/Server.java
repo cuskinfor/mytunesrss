@@ -51,8 +51,7 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
     private JComboBox myHttpsProxySchemeInput;
     private File myFileChooserDierctory;
 
-    public void init() {
-        initValues();
+    public Server() {
         MyTunesRssEventManager.getInstance().addListener(this);
         myAutoStartServerInput.addActionListener(new AutoStartServerInputListener());
         myAvailableOnLocalNetInput.addChangeListener(new ChangeListener() {

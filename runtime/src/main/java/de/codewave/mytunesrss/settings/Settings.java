@@ -90,7 +90,6 @@ public class Settings implements MyTunesRssEventListener {
     }
 
     private void addSettingsItem(final SettingsForm settingsForm) {
-        settingsForm.init();
         JButton button = new JButton(settingsForm.getDialogTitle());
         if (SystemUtils.IS_OS_MAC_OSX) {
             button.putClientProperty("JComponent.sizeVariant", "mini");
@@ -176,12 +175,7 @@ public class Settings implements MyTunesRssEventListener {
     }
 
     public void doStartServer() {
-        String messages = updateConfigFromGui();
-        if (messages == null) {
-            MyTunesRss.startWebserver();
-        } else {
-            MyTunesRssUtils.showErrorMessage(messages);
-        }
+        MyTunesRss.startWebserver();
     }
 
     public void doStopServer() {
@@ -189,12 +183,7 @@ public class Settings implements MyTunesRssEventListener {
     }
 
     public void doQuitApplication() {
-        String messages = updateConfigFromGui();
-        if (messages == null) {
-            MyTunesRssUtils.shutdownGracefully();
-        } else {
-            MyTunesRssUtils.showErrorMessage(messages);
-        }
+        MyTunesRssUtils.shutdownGracefully();
     }
 
     public void setServerStatus(String text, String tooltipText) {

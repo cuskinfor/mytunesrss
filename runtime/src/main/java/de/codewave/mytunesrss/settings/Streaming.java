@@ -37,7 +37,7 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
     private JButton myAddTranscoderButton;
     private List<Transcoder> myTranscoders = new ArrayList<Transcoder>();
 
-    public void init() {
+    public Streaming() {
         myScrollPane.getViewport().setOpaque(false);
         myLameBinaryLookupButton.addActionListener(new SelectBinaryActionListener(myLameBinaryInput, MyTunesRssUtils.getBundleString(
                 "dialog.lookupLameBinary")));
@@ -67,7 +67,6 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
             }
         });
         MyTunesRssEventManager.getInstance().addListener(this);
-        initValues();
     }
 
     public void handleEvent(final MyTunesRssEvent event) {
@@ -76,19 +75,6 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
                 switch (event) {
                     case CONFIGURATION_CHANGED:
                         initValues();
-                        break;
-                    case DATABASE_UPDATE_STATE_CHANGED:
-                        setGuiMode(GuiMode.DatabaseUpdating);
-                        break;
-                    case DATABASE_UPDATE_FINISHED:
-                    case DATABASE_UPDATE_FINISHED_NOT_RUN:
-                        setGuiMode(GuiMode.DatabaseIdle);
-                        break;
-                    case SERVER_STARTED:
-                        setGuiMode(GuiMode.ServerRunning);
-                        break;
-                    case SERVER_STOPPED:
-                        setGuiMode(GuiMode.ServerIdle);
                         break;
                 }
             }
@@ -202,17 +188,6 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
 
     public JPanel getRootPanel() {
         return myRootPanel;
-    }
-
-    public void setGuiMode(GuiMode mode) {
-        boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
-        SwingUtils.enableElementAndLabel(myLameBinaryInput, !serverActive);
-        SwingUtils.enableElementAndLabel(myCacheTimeout, !serverActive);
-        SwingUtils.enableElementAndLabel(myCacheLimit, !serverActive);
-        myLameBinaryLookupButton.setEnabled(!serverActive);
-        myLimitBandwidthCheckBox.setEnabled(!serverActive);
-        myBandwidthLimitInput.setEnabled(myLimitBandwidthCheckBox.isSelected() && !serverActive);
-        myBandwidthLimitLabel.setEnabled(!serverActive);
     }
 
     public String getDialogTitle() {

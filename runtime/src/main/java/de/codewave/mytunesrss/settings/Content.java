@@ -30,10 +30,9 @@ public class Content implements MyTunesRssEventListener, SettingsForm {
     private JScrollPane myScrollPane;
     private JPanel myPlaylistsPanel;
 
-    public void init() {
+    public Content() {
         myScrollPane.getViewport().setOpaque(false);
         MyTunesRssEventManager.getInstance().addListener(this);
-        initValues();
     }
 
     public String updateConfigFromGui() {

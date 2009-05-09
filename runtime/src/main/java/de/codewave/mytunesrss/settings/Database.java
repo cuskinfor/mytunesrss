@@ -37,7 +37,7 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
     private JPanel myDbExtraPanel;
     private DeleteTriggerActionListener myDeleteTriggerActionListener = new DeleteTriggerActionListener();
 
-    public void init() {
+    public Database() {
         myScrollPane.getViewport().setOpaque(false);
         refreshTriggers();
         myDbExtraPanel.setVisible(!DatabaseType.h2.name().equals(MyTunesRss.CONFIG.getDatabaseType()));
@@ -53,7 +53,6 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
                 myDbExtraPanel.setVisible(myDbTypeInput.getSelectedItem() != DatabaseType.h2);
             }
         });
-        initValues();
         MyTunesRssEventManager.getInstance().addListener(this);
     }
 
@@ -223,8 +222,11 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
     public void setGuiMode(GuiMode mode) {
         boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
         boolean databaseActive = DatabaseBuilderTask.isRunning() || mode == GuiMode.DatabaseUpdating;
-        myUpdateDatabaseOnServerStart.setEnabled(!serverActive);
-        myDeleteMissingFiles.setEnabled(!databaseActive);
+        myDbTypeInput.setEnabled(!databaseActive && !serverActive);
+        myDbDriverInput.setEnabled(!databaseActive && !serverActive);
+        myDbConnectInput.setEnabled(!databaseActive && !serverActive);
+        myDbUserInput.setEnabled(!databaseActive && !serverActive);
+        myDbPassInput.setEnabled(!databaseActive && !serverActive);
     }
 
     public String getDialogTitle() {

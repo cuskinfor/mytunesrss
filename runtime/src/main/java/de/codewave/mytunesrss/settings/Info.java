@@ -32,9 +32,6 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
 
     public Info() {
         MyTunesRssEventManager.getInstance().addListener(this);
-    }
-
-    public void init() {
         refreshRegistration();
         mySupportContactButton.addActionListener(new SupportContactActionListener());
         myRegisterButton.addActionListener(new LicenseLookupButtonListener());
@@ -48,11 +45,6 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
         myLogLevelInput.addItem("WARN");
         myLogLevelInput.addItem("INFO");
         myLogLevelInput.addItem("DEBUG");
-        initValues();
-    }
-
-    public void setGuiMode(GuiMode mode) {
-        // intentionally left blank
     }
 
     public void forceRegistration() {

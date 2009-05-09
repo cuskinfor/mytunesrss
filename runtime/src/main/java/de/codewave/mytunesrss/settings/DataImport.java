@@ -35,7 +35,7 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
     private JTextField myDisabledMp4CodecsInput;
     private FileTypesTableModel myFileTypesTableModel;
 
-    public void init() {
+    public DataImport() {
         myAddFileTypeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 myFileTypesTableModel.getFileTypes().add(new FileType(false, "", "", MediaType.Other, false));
@@ -71,7 +71,6 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
         JComboBox protectedCombo = new I18nComboBox("settings.filetypes.protected.false", "settings.filetypes.protected.true");
         protectedCombo.setOpaque(true);
         myFileTypesTable.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(protectedCombo));
-        initValues();
     }
 
     public String updateConfigFromGui() {

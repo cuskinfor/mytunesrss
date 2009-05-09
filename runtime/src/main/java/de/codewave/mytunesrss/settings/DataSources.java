@@ -52,10 +52,9 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
         };
     }
 
-    public void init() {
+    public DataSources() {
         myScrollPane.setMaximumSize(myScrollPane.getPreferredSize());
         myScrollPane.getViewport().setOpaque(false);
-        initValues();
         myBaseDirsList.setCellRenderer(new DefaultListCellRenderer() {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);

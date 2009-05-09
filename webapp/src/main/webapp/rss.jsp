@@ -18,7 +18,7 @@
                 <c:choose><c:when test="${userAgent == 'Psp'}"><author><c:out value="${track.originalArtist}"/></author></c:when><c:otherwise><dc:creator><c:out value="${track.originalArtist}"/></dc:creator></c:otherwise></c:choose>
                 <link>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></link>
                 <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></guid>
-                <pubDate>${mtfn:rssDate(track.lastUpdate)}</pubDate>
+                <pubDate>${mtfn:rssDate(track.tsUpdated)}</pubDate>
                 <enclosure url="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>"
                            type="${mtfn:contentType(config, authUser, track)}"
                            <c:if test="${!mtfn:transcoding(pageContext, authUser, track)}">length="${track.contentLength}"</c:if>
