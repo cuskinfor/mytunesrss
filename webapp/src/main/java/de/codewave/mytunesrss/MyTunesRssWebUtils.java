@@ -168,7 +168,9 @@ public class MyTunesRssWebUtils {
                         LOG.warn("Illegal transcodig parameter \"" + tc + "\" ignored.");
                 }
             }
-            config.setActiveTranscoders(names.substring(1));
+            if (names.length() > 1) {
+                config.setActiveTranscoders(names.substring(1));
+            }
         }
     }
 

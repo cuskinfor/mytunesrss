@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7-EAP-11" date="xxxx-xx-xx" description="3.7 EAP 11">
+            <action dev="mdescher" type="fix">
+                Bugfix for transcoder names from request if none were specified.
+            </action>
             <action dev="mdescher" type="update">
                 Use X-Forwarded-For header in server info and login failure admin notification if possible.
             </action>
