@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.7-EAP-11" date="xxxx-xx-xx" description="3.7 EAP 11">
+        <release version="3.7-EAP-11" date="2009-05-09" description="3.7 EAP 11">
             <action dev="mdescher" type="fix">
                 Bugfix for transcoder names from request if none were specified.
             </action>
