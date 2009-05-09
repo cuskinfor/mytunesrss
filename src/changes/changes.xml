@@ -9,6 +9,9 @@
 
         <release version="3.7-EAP-11" date="xxxx-xx-xx" description="3.7 EAP 11">
             <action dev="mdescher" type="update">
+                Use X-Forwarded-For header in server info and login failure admin notification if possible.
+            </action>
+            <action dev="mdescher" type="update">
                 Do not initialize values in panels on creation and do not save settings from panels
                 when starting the server or quitting the application. This was old code from the time
                 when the configuration was still active when starting the server or quitting the application.

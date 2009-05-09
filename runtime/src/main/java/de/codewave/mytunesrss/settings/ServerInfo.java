@@ -181,7 +181,7 @@ public class ServerInfo {
             MyTunesRssSessionInfo info = sessions.get(row);
             switch (column) {
                 case 0:
-                    return info.getRemoteAddress();
+                    return info.getBestRemoteAddress();
                 case 1:
                     return info.getUser() != null ? info.getUser().getName() : "";
                 case 2:

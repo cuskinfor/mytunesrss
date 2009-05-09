@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.statistics.LoginEvent;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
+import de.codewave.utils.servlet.ServletUtils;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -43,7 +44,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                 }
             } else {
                 addError(new BundleError("error.loginDenied"));
-                MyTunesRss.ADMIN_NOTIFY.notifyLoginFailure(userName, getRequest().getRemoteHost());
+                MyTunesRss.ADMIN_NOTIFY.notifyLoginFailure(userName, ServletUtils.getBestRemoteAddress(getRequest()));
                 forward(MyTunesRssResource.Login);
             }
         } else if (!isSessionAuthorized()) {
