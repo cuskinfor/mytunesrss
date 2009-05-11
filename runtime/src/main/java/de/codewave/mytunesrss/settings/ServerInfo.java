@@ -15,8 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -44,7 +43,12 @@ public class ServerInfo {
         myServerPort = serverPort;
         fetchServerStatusLater();
         init();
-        JDialog dialog = new JDialog(parent, MyTunesRssUtils.getBundleString("serverStatus.title"), true);
+        final JDialog dialog = new JDialog(parent, MyTunesRssUtils.getBundleString("serverStatus.title"), true);
+        dialog.getRootPane().registerKeyboardAction(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
