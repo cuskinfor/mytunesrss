@@ -39,7 +39,7 @@
         <tr>
             <th class="active"><fmt:message key="playlists"/></th>
 						<c:if test="${!empty playlists}">
-							<th colspan="4"><fmt:message key="tracks"/></th>
+							<th colspan="3"><fmt:message key="tracks"/></th>
 						</c:if>
         </tr>
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
@@ -57,8 +57,6 @@
                     </c:choose>
                     <a href="${link}">
                         <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="edit" /> </a>
-                </td>
-                <td class="icon">
                     <c:choose>
                         <c:when test="${deleteConfirmation}">
                             <a style="cursor:pointer" onclick="showDialog('confirmDeletePlaylist', [function() {document.location.href='${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}'}, null])">
@@ -72,9 +70,9 @@
                 </td>
             </tr>
         </c:forEach>
-			<c:if test="${empty playlists}">
-				<tr><td><em><fmt:message key="noPlaylists"/></em></td></tr>
-			</c:if>
+        <c:if test="${empty playlists}">
+            <tr><td colspan="3"><em><fmt:message key="noPlaylists"/></em></td></tr>
+        </c:if>
     </table>
 
     <c:if test="${!empty pager}">

@@ -126,10 +126,10 @@
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
             AND (type != 'TEMP')
             AND (user_private IS NULL OR user_private = FALSE OR :username IS NULL OR user_owner = :username)
-            AND ((:types IS NULL AND :id IS NULL)
-            OR (:types IS NOT NULL AND :id IS NULL AND type IN (:types))
-            OR (:types IS NULL AND :id IS NOT NULL AND id = :id)
-            OR (:types IS NOT NULL AND :id IS NOT NULL AND type IN (:types) AND id = :id))
+            AND ((:size_of_types = 0 AND :id IS NULL)
+            OR (:size_of_types > 0 AND :id IS NULL AND type IN (:types[]))
+            OR (:size_of_types = 0 AND :id IS NOT NULL AND id = :id)
+            OR (:size_of_types > 0 AND :id IS NOT NULL AND type IN (:types[]) AND id = :id))
             AND (:containerId IS NULL OR (:containerId = 'ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
             ORDER BY name
             ]]>
@@ -144,10 +144,10 @@
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
             AND (type != 'TEMP')
             AND user_owner = :username
-            AND ((:types IS NULL AND :id IS NULL)
-            OR (:types IS NOT NULL AND :id IS NULL AND type IN (:types))
-            OR (:types IS NULL AND :id IS NOT NULL AND id = :id)
-            OR (:types IS NOT NULL AND :id IS NOT NULL AND type IN (:types) AND id = :id))
+            AND ((:size_of_types = 0 AND :id IS NULL)
+            OR (:size_of_types > 0 AND :id IS NULL AND type IN (:types[]))
+            OR (:size_of_types = 0 AND :id IS NOT NULL AND id = :id)
+            OR (:size_of_types > 0 AND :id IS NOT NULL AND type IN (:types[]) AND id = :id))
             AND (:containerId IS NULL OR (:containerId = 'ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
             ORDER BY name
             ]]>
@@ -165,10 +165,10 @@
             AND rltp.playlist_id = :restrictionPlaylistId
             AND ltp.track_id = rltp.track_id
             AND ltp.playlist_id = p.id
-            AND ((:types IS NULL AND :id IS NULL)
-            OR (:types IS NOT NULL AND :id IS NULL AND p.type IN (:types))
-            OR (:types IS NULL AND :id IS NOT NULL AND p.id = :id)
-            OR (:types IS NOT NULL AND :id IS NOT NULL AND p.type IN (:types) AND p.id = :id))
+            AND ((:size_of_types = 0 AND :id IS NULL)
+            OR (:size_of_types > 0 AND :id IS NULL AND p.type IN (:types[]))
+            OR (:size_of_types = 0 AND :id IS NOT NULL AND p.id = :id)
+            OR (:size_of_types > 0 AND :id IS NOT NULL AND p.type IN (:types[]) AND p.id = :id))
             AND (:containerId IS NULL OR (:containerId = 'ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
             GROUP BY id, name, type, track_count, user_private, hidden, user_owner, container_id
             ORDER BY name

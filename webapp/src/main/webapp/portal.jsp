@@ -114,7 +114,7 @@
                 <fmt:message key="playlists" />
             </th>
             <c:if test="${!empty playlists}">
-                <th colspan="2">
+                <th class="active" colspan="2">
                     <fmt:message key="tracks" />
                 </th>
             </c:if>

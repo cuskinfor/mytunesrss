@@ -35,16 +35,16 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
         refreshRegistration();
         mySupportContactButton.addActionListener(new SupportContactActionListener());
         myRegisterButton.addActionListener(new LicenseLookupButtonListener());
-        myLogLevelInput.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                MyTunesRssUtils.setCodewaveLogLevel(Level.toLevel(myLogLevelInput.getSelectedItem().toString()));
-            }
-        });
         myLogLevelInput.addItem("OFF");
         myLogLevelInput.addItem("ERROR");
         myLogLevelInput.addItem("WARN");
         myLogLevelInput.addItem("INFO");
         myLogLevelInput.addItem("DEBUG");
+        myLogLevelInput.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MyTunesRssUtils.setCodewaveLogLevel(Level.toLevel(myLogLevelInput.getSelectedItem().toString()));
+            }
+        });
     }
 
     public void forceRegistration() {

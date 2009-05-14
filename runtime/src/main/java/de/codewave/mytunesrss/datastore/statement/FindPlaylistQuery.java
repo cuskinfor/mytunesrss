@@ -54,7 +54,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
             }
             statement.setItems("types", typeNames);
         } else {
-            statement.setObject("types", null);
+            statement.setItems("types", (Object[])null);
         }
         statement.setString("id", myId);
         statement.setString("containerId", myContainerId);
