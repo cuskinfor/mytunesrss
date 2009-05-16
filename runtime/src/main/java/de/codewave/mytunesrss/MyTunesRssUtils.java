@@ -60,6 +60,19 @@ public class MyTunesRssUtils {
                 MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
     }
 
+    public static Object showQuestionMessage(String message, Object... options) {
+        return showQuestionMessage(MyTunesRss.ROOT_FRAME, message, options);
+    }
+
+    public static Object showQuestionMessage(JFrame parent, String message, Object... options) {
+        return SwingUtils.showOptionsMessage(parent,
+                JOptionPane.QUESTION_MESSAGE,
+                MyTunesRssUtils.getBundleString("question.title"),
+                message,
+                MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH, options);
+
+    }
+
     public static void showInfoMessage(String message) {
         if (MyTunesRss.HEADLESS) {
             if (LOGGER.isInfoEnabled()) {

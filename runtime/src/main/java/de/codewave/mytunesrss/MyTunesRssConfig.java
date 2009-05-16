@@ -1145,16 +1145,20 @@ public class MyTunesRssConfig {
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
-        setDatabaseType("h2");
-        setDatabaseDriver("org.h2.Driver");
-        setDatabaseConnection("jdbc:h2:file:" + PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/" + "h2/MyTunesRSS");
-        setDatabaseUser("sa");
-        setDatabasePassword("");
+        setDefaultDatabaseSettings();
         setDatabaseType(JXPathUtils.getStringValue(settings, "database/type", getDatabaseType()));
         setDatabaseDriver(JXPathUtils.getStringValue(settings, "database/driver", getDatabaseDriver()));
         setDatabaseConnection(JXPathUtils.getStringValue(settings, "database/connection", getDatabaseConnection()));
         setDatabaseUser(JXPathUtils.getStringValue(settings, "database/user", getDatabaseUser()));
         setDatabasePassword(JXPathUtils.getStringValue(settings, "database/password", getDatabasePassword()));
+    }
+
+    public void setDefaultDatabaseSettings() throws IOException {
+        setDatabaseType("h2");
+        setDatabaseDriver("org.h2.Driver");
+        setDatabaseConnection("jdbc:h2:file:" + PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/" + "h2/MyTunesRSS");
+        setDatabaseUser("sa");
+        setDatabasePassword("");
     }
 
     private static File getSettingsFile() throws IOException {

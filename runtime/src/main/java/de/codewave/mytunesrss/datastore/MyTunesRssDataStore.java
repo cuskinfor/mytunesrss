@@ -64,6 +64,16 @@ public class MyTunesRssDataStore extends DataStore {
                     }
                 }
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.noDatabaseConnection"));
+                if (!MyTunesRss.HEADLESS) {
+                    String yes = MyTunesRssUtils.getBundleString("yes");
+                    String no = MyTunesRssUtils.getBundleString("no");
+                    String[] options = new String[] {no, yes};
+                    String answer = MyTunesRssUtils.showQuestionMessage(MyTunesRssUtils.getBundleString("question.resetToDefaultH2"), options).toString();
+                    if (answer == yes) {
+                        MyTunesRss.CONFIG.setDefaultDatabaseSettings();
+                        MyTunesRss.CONFIG.save();
+                    }
+                }
                 MyTunesRssUtils.shutdown();
                 return null;
             }
