@@ -7,6 +7,33 @@
 
     <body>
 
+        <release version="3.6.6" date="2009-05-16" description="Bugfix release">
+            <action dev="mdescher" type="add">
+                Option to reset the database to default settings if MyTunesRSS cannot initialize the database in gui mode.
+            </action>
+            <action dev="mdescher" type="add">
+                Warning message when changing the database type from standard H2 to anything else.
+            </action>
+            <action dev="mdescher" type="update">
+                Removed anonymous usage statistics.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed a problem with RSS feed links which did not contain a real file name in the end.
+            </action>
+            <action dev="mdescher" type="add">
+                Download, RSS, M3u and Xspf links in the remote api calls which return album, artist and playlist objects.
+            </action>
+            <action dev="mdescher" type="add">
+                License file can specify the following options: "disableGui" to always run headless. "disableWebLogin" to disable
+                regular login to the web client (via form post and cookies), i.e. only authentication information from
+                existing links work. "disableJmxHtml" to disable HTML output in the JXM interface and only return plain
+                XML.
+            </action>
+            <action dev="mdescher" type="add">
+                jmxHost and jmxPort command line options to override jmx host and port from configuration.
+            </action>
+        </release>
+
         <release version="3.6.5" date="2009-03-11" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 Database initialization bugfix.

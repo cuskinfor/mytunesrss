@@ -78,15 +78,17 @@ public class MyTunesRssJmxUtils {
                 HttpAdaptor adaptor = new HttpAdaptor();
                 ObjectName name = HTTP_ADAPTOR_NAME;
                 server.registerMBean(adaptor, name);
-                adaptor.setPort(MyTunesRss.CONFIG.getJmxPort());
-                adaptor.setHost(MyTunesRss.CONFIG.getJmxHost());
+                adaptor.setPort(MyTunesRss.JMX_PORT > 0 && MyTunesRss.JMX_PORT < 65536 ? MyTunesRss.JMX_PORT : MyTunesRss.CONFIG.getJmxPort());
+                adaptor.setHost(MyTunesRss.JMX_HOST != null ? MyTunesRss.JMX_HOST : MyTunesRss.CONFIG.getJmxHost());
                 String username = MyTunesRss.CONFIG.getJmxUser();
                 String password = MyTunesRss.CONFIG.getJmxPassword();
                 if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
                     adaptor.setAuthenticationMethod("basic");
                     adaptor.addAuthorization(username, password);
                 }
-                adaptor.setProcessor(new XSLTProcessor());
+                if (!MyTunesRss.REGISTRATION.isDisableJmxHtml()) {
+                    adaptor.setProcessor(new XSLTProcessor());
+                }
                 adaptor.start();
             } catch (Exception e) {
                 if (LOG.isErrorEnabled()) {

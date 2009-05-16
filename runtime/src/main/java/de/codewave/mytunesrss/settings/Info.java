@@ -29,7 +29,6 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
     private JButton myRegisterButton;
     private JComboBox myLogLevelInput;
     private JButton mySupportContactButton;
-    private JCheckBox mySendAnonyStats;
 
     public Info() {
         MyTunesRssEventManager.getInstance().addListener(this);
@@ -74,7 +73,6 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
 
     public void initValues() {
         myLogLevelInput.setSelectedItem(MyTunesRss.CONFIG.getCodewaveLogLevel().toString());
-        mySendAnonyStats.setSelected(MyTunesRss.CONFIG.isSendAnonyStat());
     }
 
     private void refreshRegistration() {
@@ -88,7 +86,6 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
 
     public String updateConfigFromGui() {
         MyTunesRss.CONFIG.setCodewaveLogLevel(Level.toLevel(myLogLevelInput.getSelectedItem().toString()));
-        MyTunesRss.CONFIG.setSendAnonyStat(mySendAnonyStats.isSelected());
         return null;
     }
 
