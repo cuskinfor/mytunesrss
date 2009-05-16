@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.6.6" date="xxxx-xx-xx" description="Bugfix release">
+        <release version="3.6.6" date="2009-05-16" description="Bugfix release">
             <action dev="mdescher" type="add">
                 Option to reset the database to default settings if MyTunesRSS cannot initialize the database in gui mode.
             </action>
