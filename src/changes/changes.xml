@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.7-RC-1" date="2009-xx-xx" description="3.7 RC 1">
+            <action dev="mdescher" type="update">
+                Update h2 database to 1.1.112.
+            </action>
+        </release>
+
         <release version="3.7-EAP-11" date="2009-05-09" description="3.7 EAP 11">
             <action dev="mdescher" type="fix">
                 Bugfix for transcoder names from request if none were specified.
@@ -189,7 +195,7 @@
             </action>
         </release>
 
-        <release version="3.6.6" date="xxxx-xx-xx" description="Bugfix release">
+        <release version="3.6.6" date="2009-05-16" description="Bugfix release">
             <action dev="mdescher" type="add">
                 Option to reset the database to default settings if MyTunesRSS cannot initialize the database in gui
                 mode.
