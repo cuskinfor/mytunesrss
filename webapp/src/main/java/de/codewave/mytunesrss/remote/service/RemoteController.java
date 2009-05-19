@@ -37,6 +37,4 @@ public interface RemoteController {
     void jumpTo(int percentage) throws Exception;
 
     RemoteTrackInfo getCurrentTrackInfo() throws Exception;
-
-    RemoteControlFeatures getFeatures() throws Exception;
 }

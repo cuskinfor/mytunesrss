@@ -163,13 +163,4 @@ public class QuicktimeRemoteController implements RemoteController {
         trackInfo.setPlaying(Boolean.parseBoolean(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[3]), "false")));
         return trackInfo;
     }
-
-    /**
-     * Get the feature set of the quicktime remote contol service.
-     *
-     * @return The feature set.
-     */
-    public RemoteControlFeatures getFeatures() {
-        return new RemoteControlFeatures(true, true);
-    }
 }

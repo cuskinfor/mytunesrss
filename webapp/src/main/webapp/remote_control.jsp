@@ -15,6 +15,8 @@
 
     <jsp:include page="incl_head.jsp"/>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
+    
     <script type="text/javascript">
 
         var trackNames = new Array(
@@ -32,7 +34,6 @@
         var itemsPerPage = 10;
         var pagesPerPager = 10;
         var currentPage = 0;
-        var featureSet;
 
         function createPlaylist() {
             unhighlightAllTracks();
@@ -159,35 +160,28 @@
         }
 
         function registerObserver() {
-            if (featureSet.jumpTo) {
-                Event.observe("progressBackground", "click", function(event) {
-                    if (event.isLeftClick()) {
-                        var containerLeft = Position.page($("progressBackground"))[0];
-                        var containerTop = Position.page($("progressBackground"))[1];
-                        var mouseX = event.pointerX();
-                        var mouseY = event.pointerY();
-                        var horizontalPosition = mouseX - containerLeft;
-                        var verticalPosition = mouseY - containerTop;
-                        var containerDimensions = $('progressBackground').getDimensions();
-                        var height = containerDimensions.height;
-                        var width = containerDimensions.width;
-                        if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
-                            jsonRpc('${servletUrl}', 'RemoteControlService.jumpTo', [Math.round(horizontalPosition * 100 / width)]);
-                            getStateAndUpdateInterface();
-                        }
+            Event.observe("progressBackground", "click", function(event) {
+                if (event.isLeftClick()) {
+                    var containerLeft = Position.page($("progressBackground"))[0];
+                    var containerTop = Position.page($("progressBackground"))[1];
+                    var mouseX = event.pointerX();
+                    var mouseY = event.pointerY();
+                    var horizontalPosition = mouseX - containerLeft;
+                    var verticalPosition = mouseY - containerTop;
+                    var containerDimensions = $('progressBackground').getDimensions();
+                    var height = containerDimensions.height;
+                    var width = containerDimensions.width;
+                    if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
+                        jsonRpc('${servletUrl}', 'RemoteControlService.jumpTo', [Math.round(horizontalPosition * 100 / width)]);
+                        getStateAndUpdateInterface();
                     }
-                });
-            }
+                }
+            });
         }
 
         function init() {
-            jsonRpc('${servletUrl}', 'RemoteControlService.getFeatures', [], function(features) {
-                featureSet = features;
-                if (featureSet.timeInfo) {
-                    $("progressDiv").style.display = "block";
-                    registerObserver();
-                }
-            });
+            $("progressDiv").style.display = "block";
+            registerObserver();
             new PeriodicalExecuter(function() {
                 getStateAndUpdateInterface();
             }, 2);

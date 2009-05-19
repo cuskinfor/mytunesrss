@@ -137,7 +137,13 @@ public class VideoLanClientRemoteController implements RemoteController {
     }
 
     public void jumpTo(int percentage) throws Exception {
-        // intentionally left blank
+        VideoLanClient videoLanClient = getVideoLanClient();
+        try {
+            int max = Integer.parseInt(videoLanClient.sendCommands("get_length"));
+            videoLanClient.sendCommands("seek " + (max * percentage) / 100);
+        } finally {
+            videoLanClient.disconnect();
+        }
     }
 
     public RemoteTrackInfo getCurrentTrackInfo() throws Exception {
@@ -158,20 +164,13 @@ public class VideoLanClientRemoteController implements RemoteController {
                         i++;
                     }
                 }
+                info.setLength(Integer.parseInt(videoLanClient.sendCommands("get_length")));
+                info.setCurrentTime(Integer.parseInt(videoLanClient.sendCommands("get_time")));
             }
         } finally {
             videoLanClient.disconnect();
         }
         return info;
-    }
-
-    /**
-     * Get the remote control features of the video lan client remote control service.
-     *
-     * @return The feature set.
-     */
-    public RemoteControlFeatures getFeatures() {
-        return new RemoteControlFeatures(false, false);
     }
 
     public String sendCommand(String command) throws IOException, IllegalAccessException, InterruptedException {
