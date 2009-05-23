@@ -9,6 +9,9 @@
 
         <release version="3.7-RC-1" date="2009-xx-xx" description="3.7 RC 1">
             <action dev="mdescher" type="update">
+                Volume control for remote control.
+            </action>
+            <action dev="mdescher" type="update">
                 Progress bar and jump-to support for VLC remote control. Does not
                 work for a few tracks though. Removed features API for remote control.
             </action>

@@ -10,6 +10,7 @@ public class RemoteTrackInfo {
     private int myLength = -1;
     private int myCurrentTime = 0;
     private boolean myPlaying;
+    private int myVolume;
 
     public int getCurrentTrack() {
         return myCurrentTrack;
@@ -41,5 +42,13 @@ public class RemoteTrackInfo {
 
     public void setPlaying(boolean playing) {
         myPlaying = playing;
+    }
+
+    public int getVolume() {
+        return myVolume;
+    }
+
+    public void setVolume(int volume) {
+        myVolume = volume;
     }
 }

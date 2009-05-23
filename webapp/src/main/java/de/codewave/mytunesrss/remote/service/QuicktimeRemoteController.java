@@ -163,4 +163,9 @@ public class QuicktimeRemoteController implements RemoteController {
         trackInfo.setPlaying(Boolean.parseBoolean(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[3]), "false")));
         return trackInfo;
     }
+
+    public void setVolume(int percentage) throws Exception {
+        int normalizedPercentage = Math.min(Math.max(0, percentage), 100);
+        new AppleScriptClient("QuickTime Player").executeAppleScript("set sound volume of document 1 to " + (int) (((256.0 * (float)normalizedPercentage) / 100.0)));
+    }
 }

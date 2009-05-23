@@ -16,7 +16,7 @@
     <jsp:include page="incl_head.jsp"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
-    
+
     <script type="text/javascript">
 
         var trackNames = new Array(
@@ -128,6 +128,12 @@
             } else {
                 document.getElementById("progressBar").style.width = 0;
             }
+
+            if (trackInfo.volume > 0 && trackInfo.volume <= 100) {
+                document.getElementById("volumeBar").style.width = (trackInfo.volume) + "%";
+            } else {
+                document.getElementById("volumeBar").style.width = 0;
+            }
         }
 
         function getStateAndUpdateInterface() {
@@ -177,10 +183,26 @@
                     }
                 }
             });
+            Event.observe("volumeBackground", "click", function(event) {
+                if (event.isLeftClick()) {
+                    var containerLeft = Position.page($("volumeBackground"))[0];
+                    var containerTop = Position.page($("volumeBackground"))[1];
+                    var mouseX = event.pointerX();
+                    var mouseY = event.pointerY();
+                    var horizontalPosition = mouseX - containerLeft;
+                    var verticalPosition = mouseY - containerTop;
+                    var containerDimensions = $('volumeBackground').getDimensions();
+                    var height = containerDimensions.height;
+                    var width = containerDimensions.width;
+                    if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
+                        jsonRpc('${servletUrl}', 'RemoteControlService.setVolume', [Math.round(horizontalPosition * 100 / width)]);
+                        getStateAndUpdateInterface();
+                    }
+                }
+            });
         }
 
         function init() {
-            $("progressDiv").style.display = "block";
             registerObserver();
             new PeriodicalExecuter(function() {
                 getStateAndUpdateInterface();
@@ -206,6 +228,7 @@
                     jsonRpc('${servletUrl}', 'RemoteControlService.loadTrack', ['${fn:replace(param.track, "'", "\\'")}', true]);
                 </c:otherwise>
             </c:choose>
+            jsonRpc('${servletUrl}', 'RemoteControlService.setVolume', 80);
         }
 
     </script>
@@ -253,7 +276,14 @@
             <img src="${appUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
         </div>
 
-        <div id="progressDiv" style="display:none">
+        <img src="${appUrl}/images/volume.png" style="padding-right:10px"/>
+        <div id="volumeDiv">
+            <div id="volumeBackground">
+                <div id="volumeBar">&nbsp;</div>
+            </div>
+        </div>
+
+        <div id="progressDiv" style="display:block">
             <div id="progressBackground">
                 <div id="progressBar">&nbsp;</div>
             </div>

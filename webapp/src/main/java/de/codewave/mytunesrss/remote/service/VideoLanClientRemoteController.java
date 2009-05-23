@@ -167,10 +167,22 @@ public class VideoLanClientRemoteController implements RemoteController {
                 info.setLength(Integer.parseInt(videoLanClient.sendCommands("get_length")));
                 info.setCurrentTime(Integer.parseInt(videoLanClient.sendCommands("get_time")));
             }
+            String volume = StringUtils.trim(StringUtils.substringBefore(StringUtils.substringAfter(videoLanClient.sendCommands("volume"), "audio volume:"), ")"));
+            info.setVolume((int)(((Float.parseFloat(volume) * 100.0) / 1024.0)));
         } finally {
             videoLanClient.disconnect();
         }
         return info;
+    }
+
+    public void setVolume(int percentage) throws Exception {
+        VideoLanClient videoLanClient = getVideoLanClient();
+        try {
+            int normalizedPercentage = Math.min(Math.max(0, percentage), 100);
+            videoLanClient.sendCommands("volume " + (int) (((1024.0 * (float) normalizedPercentage) / 100.0)));
+        } finally {
+            videoLanClient.disconnect();
+        }
     }
 
     public String sendCommand(String command) throws IOException, IllegalAccessException, InterruptedException {

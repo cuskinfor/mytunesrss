@@ -60,4 +60,8 @@ public class NoopRemoteController implements RemoteController {
         // intentionally left blank
         return null;
     }
+
+    public void setVolume(int percentage) throws Exception {
+        // intentionally left blank
+    }
 }

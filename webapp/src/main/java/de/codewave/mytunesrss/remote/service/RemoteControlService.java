@@ -97,4 +97,9 @@ public class RemoteControlService implements RemoteController {
         assertAuthenticated();
         return getController().getCurrentTrackInfo();
     }
+
+    public void setVolume(int percentage) throws Exception {
+        assertAuthenticated();
+        getController().setVolume(percentage);
+    }
 }
