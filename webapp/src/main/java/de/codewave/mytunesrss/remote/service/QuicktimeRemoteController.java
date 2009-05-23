@@ -152,7 +152,7 @@ public class QuicktimeRemoteController implements RemoteController {
                 "    exit repeat",
                 "  end if",
                 "end repeat",
-                "get (i - 1) & currentpos - (item (i - 1) of my tracklist) & duration of track (i - 1) of document 1 & playing of document 1"
+                "get (i - 1) & currentpos - (item (i - 1) of my tracklist) & duration of track (i - 1) of document 1 & playing of document 1 & sound volume of document 1"
         );
         RemoteTrackInfo trackInfo = new RemoteTrackInfo();
         appleScriptResponse = StringUtils.removeEnd(StringUtils.removeStart(StringUtils.trimToEmpty(appleScriptResponse), "{"), "}");
@@ -161,6 +161,7 @@ public class QuicktimeRemoteController implements RemoteController {
         trackInfo.setCurrentTime(Integer.parseInt(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[1]), "-1")));
         trackInfo.setLength(Integer.parseInt(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[2]), "-1")));
         trackInfo.setPlaying(Boolean.parseBoolean(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[3]), "false")));
+        trackInfo.setVolume((int)((Float.parseFloat(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[4]), "-1.0")) * 100.0) / 256.0));
         return trackInfo;
     }
 
