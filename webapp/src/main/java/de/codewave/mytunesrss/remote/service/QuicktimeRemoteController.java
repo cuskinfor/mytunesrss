@@ -30,7 +30,6 @@ public class QuicktimeRemoteController implements RemoteController {
                     "close every document",
                     "open location \"" + url + "\"",
                     "activate",
-                    "present document 1 scale screen mode normal",
                     "play document 1"
             );
         } else {
@@ -74,14 +73,12 @@ public class QuicktimeRemoteController implements RemoteController {
         if (index > 0) {
             new AppleScriptClient("QuickTime Player").executeAppleScript(
                     "activate",
-                    "present document 1 scale screen mode normal",
                     "set current time of document 1 to start time of track " + index + " of document 1",
                     "play document 1"
             );
         } else {
             new AppleScriptClient("QuickTime Player").executeAppleScript(
                     "activate",
-                    "present document 1 scale screen mode normal",
                     "play document 1"
             );
         }
@@ -168,5 +165,13 @@ public class QuicktimeRemoteController implements RemoteController {
     public void setVolume(int percentage) throws Exception {
         int normalizedPercentage = Math.min(Math.max(0, percentage), 100);
         new AppleScriptClient("QuickTime Player").executeAppleScript("set sound volume of document 1 to " + (int) (((256.0 * (float)normalizedPercentage) / 100.0)));
+    }
+
+    public void setFullscreen(boolean fullscreen) throws Exception {
+        if (fullscreen) {
+            new AppleScriptClient("QuickTime Player").executeAppleScript("stop document 1", "present document 1 scale screen", "play document 1");
+        } else {
+            new AppleScriptClient("QuickTime Player").executeAppleScript("stop document 1", "play document 1");
+        }
     }
 }

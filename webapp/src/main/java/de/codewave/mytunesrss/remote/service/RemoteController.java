@@ -39,4 +39,6 @@ public interface RemoteController {
     RemoteTrackInfo getCurrentTrackInfo() throws Exception;
 
     void setVolume(int percentage) throws Exception;
+
+    void setFullscreen(boolean fullscreen) throws Exception;
 }

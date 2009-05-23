@@ -64,4 +64,8 @@ public class NoopRemoteController implements RemoteController {
     public void setVolume(int percentage) throws Exception {
         // intentionally left blank
     }
+
+    public void setFullscreen(boolean fullscreen) throws Exception {
+        // intentionally left blank
+    }
 }

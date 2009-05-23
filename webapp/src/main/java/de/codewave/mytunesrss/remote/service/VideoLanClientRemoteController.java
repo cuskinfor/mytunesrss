@@ -36,7 +36,6 @@ public class VideoLanClientRemoteController implements RemoteController {
                 if (!StringUtils.contains(videoLanClient.sendCommands("status"), "play state")) {
                     videoLanClient.sendCommands("pause", "goto 0");
                 }
-                videoLanClient.sendCommands("f on");
             } else {
                 videoLanClient.sendCommands("clear", "add " + url, "stop");
             }
@@ -88,7 +87,6 @@ public class VideoLanClientRemoteController implements RemoteController {
             } else {
                 videoLanClient.sendCommands("goto " + (index - 1));
             }
-            videoLanClient.sendCommands("f on");
         } finally {
             videoLanClient.disconnect();
         }
@@ -121,7 +119,7 @@ public class VideoLanClientRemoteController implements RemoteController {
     public void next() throws IllegalAccessException, IOException, InterruptedException {
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
-            videoLanClient.sendCommands("next", "f on");
+            videoLanClient.sendCommands("next");
         } finally {
             videoLanClient.disconnect();
         }
@@ -180,6 +178,15 @@ public class VideoLanClientRemoteController implements RemoteController {
         try {
             int normalizedPercentage = Math.min(Math.max(0, percentage), 100);
             videoLanClient.sendCommands("volume " + (int) (((1024.0 * (float) normalizedPercentage) / 100.0)));
+        } finally {
+            videoLanClient.disconnect();
+        }
+    }
+
+    public void setFullscreen(boolean fullscreen) throws Exception {
+        VideoLanClient videoLanClient = getVideoLanClient();
+        try {
+            videoLanClient.sendCommands("f " + (fullscreen ? "on" : "off"));
         } finally {
             videoLanClient.disconnect();
         }
