@@ -139,7 +139,11 @@ public class QuicktimeRemoteController implements RemoteController {
     }
 
     public RemoteTrackInfo getCurrentTrackInfo() throws IOException {
-        String appleScriptResponse = new AppleScriptClient("QuickTime Player").executeAppleScript(
+        String appleScriptResponse = new AppleScriptClient("QuickTime Player").executeAppleScript("get documents");
+        if ("{}".equals(appleScriptResponse)) {
+            return null; // nothing playing
+        }
+        appleScriptResponse = new AppleScriptClient("QuickTime Player").executeAppleScript(
                 "set currentpos to current time of document 1",
                 "set tracknumber to 0",
                 "set tracklist to get start time of every track of document 1",
@@ -154,6 +158,9 @@ public class QuicktimeRemoteController implements RemoteController {
         RemoteTrackInfo trackInfo = new RemoteTrackInfo();
         appleScriptResponse = StringUtils.removeEnd(StringUtils.removeStart(StringUtils.trimToEmpty(appleScriptResponse), "{"), "}");
         String[] splitted = StringUtils.split(appleScriptResponse, ",");
+        if (splitted.length != 5) {
+            return null;
+        }
         trackInfo.setCurrentTrack(Integer.parseInt(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[0]), "-1")));
         trackInfo.setCurrentTime(Integer.parseInt(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[1]), "-1")));
         trackInfo.setLength(Integer.parseInt(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[2]), "-1")));

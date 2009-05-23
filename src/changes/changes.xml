@@ -9,7 +9,8 @@
 
         <release version="3.7-RC-1" date="2009-xx-xx" description="3.7 RC 1">
             <action dev="mdescher" type="update">
-                Volume control for remote control.
+                Volume control for remote control. Fullscreen toggle for remote control. Automatically go back from
+                remote control page if remote info is NULL or UNDEFINED. 
             </action>
             <action dev="mdescher" type="update">
                 Progress bar and jump-to support for VLC remote control. Does not
