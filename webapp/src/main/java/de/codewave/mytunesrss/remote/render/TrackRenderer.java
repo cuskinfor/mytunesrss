@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.remote.render;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class TrackRenderer implements Renderer<Map<String, Object>, Track> {
         result.put("trackNumber", track.getTrackNumber());
         result.put("tsPlayed", track.getTsPlayed());
         result.put("tsUpdated", track.getTsUpdated());
-        result.put("playbackUrl", MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.PlayTrack, "track=" + track.getId()));
+        result.put("playbackUrl", MyTunesFunctions.playbackUrl(MyTunesRssRemoteEnv.getRequest(), track, null));
         result.put("downloadUrl", MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.DownloadTrack, "track=" + track.getId()));
         result.put("imageUrl", track.getImageCount() > 0 ? MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.ShowTrackImage,
                                                                                              "track=" + track.getId()) : null);

@@ -128,7 +128,7 @@
                     <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                         <c:choose>
                             <c:when test="${empty track.sectionPlaylistId}">
-                                <a style="cursor:pointer" onclick="jsonRpc('${servletUrl}', 'RemoteControlService.loadTracks', [['${fn:join(fn:split(track.sectionIds, ","), "','")}'], true])">
+                                <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${track.sectionIds}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                     <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                          alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                             </c:when>
@@ -244,13 +244,13 @@
                 <c:if test="${authUser.download && config.showDownload}">
                         <c:choose>
                             <c:when test="${!config.yahooMediaPlayer || mtfn:lowerSuffix(config, authUser, track) ne 'mp3'}">
-                                <a href="${downloadPlaybackServletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" title="<c:out value="${track.name}"/>"/>
+                                <a href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>"/>
                                     <img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" />
                                 </a>
                             </c:when>
                             <c:otherwise>
                                 <c:set var="yahoo" value="true"/>
-                                <a class="htrack" href="${downloadPlaybackServletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" title="<c:out value="${track.name}"/>"/>
+                                <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>"/>
                                     <img src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=64</mt:encrypt>" style="display:none" alt=""/>
                                 </a>
                             </c:otherwise>
@@ -261,7 +261,7 @@
             <c:otherwise>
                 <c:if test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && config.showDownload && authUser.download && config.yahooMediaPlayer}">
                     <c:set var="yahoo" value="true"/>
-                    <a class="htrack" href="${downloadPlaybackServletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" title="<c:out value="${track.name}"/>"/>
+                    <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>"/>
                         <img src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=64</mt:encrypt>" style="display:none" alt=""/>
                     </a>
                 </c:if>

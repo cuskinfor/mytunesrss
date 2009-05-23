@@ -25,6 +25,7 @@ public class MyTunesRssRemoteEnv {
 
     public static void setRequest(HttpServletRequest request) {
         THREAD_REQUESTS.set(request);
+        request.setAttribute("downloadPlaybackServletUrl", MyTunesRssWebUtils.makeHttp(MyTunesRssWebUtils.getServletUrl(request)));
         String sid = getRequest().getHeader("X-MyTunesRSS-ID");
         if (StringUtils.isEmpty(sid)) {
             sid = getRequest().getPathInfo();

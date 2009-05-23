@@ -10,6 +10,7 @@ import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -107,6 +108,10 @@ public class User implements MyTunesRssEventListener {
 
     public byte[] getPasswordHash() {
         return myPasswordHash;
+    }
+
+    public String getHexEncodedPasswordHash() {
+        return new String(Hex.encodeHex(getPasswordHash()));
     }
 
     public void setPasswordHash(byte[] passwordHash) {

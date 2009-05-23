@@ -113,8 +113,11 @@ public class MyTunesFunctions {
     }
 
     public static String tcParamValue(PageContext pageContext, User user, Track track) {
+        return tcParamValue((HttpServletRequest) pageContext.getRequest(), user, track);
+    }
+
+    public static String tcParamValue(HttpServletRequest request, User user, Track track) {
         if (user != null && user.isTranscoder() && MyTunesRss.CONFIG.isValidLameBinary()) {
-            HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
             WebConfig config = MyTunesRssWebUtils.getWebConfig(request);
             return MyTunesRssWebUtils.createTranscodingPathInfo(config);
         }
@@ -211,11 +214,14 @@ public class MyTunesFunctions {
     }
 
     public static String playbackUrl(PageContext pageContext, Track track, String extraPathInfo) {
+        return playbackUrl((HttpServletRequest) pageContext.getRequest(), track, extraPathInfo);
+    }
+
+    public static String playbackUrl(HttpServletRequest request, Track track, String extraPathInfo) {
         MyTunesRssCommand command = MyTunesRssCommand.PlayTrack;
         if (track.getSource() == TrackSource.YouTube) {
             command = MyTunesRssCommand.YouTubeRedirect;
         }
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         HttpSession session = request.getSession();
         StringBuilder builder = new StringBuilder((String) request.getAttribute("downloadPlaybackServletUrl"));
         String auth = (String) request.getAttribute("auth");
@@ -226,7 +232,7 @@ public class MyTunesFunctions {
         StringBuilder pathInfo = new StringBuilder("track=");
         User user = MyTunesRssWebUtils.getAuthUser(request);
         try {
-            pathInfo.append(URLEncoder.encode(track.getId(), "UTF-8")).append("/tc=").append(tcParamValue(pageContext, user, track));
+            pathInfo.append(URLEncoder.encode(track.getId(), "UTF-8")).append("/tc=").append(tcParamValue(request, user, track));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("UTF-8 not found!");
         }

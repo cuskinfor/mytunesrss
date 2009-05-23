@@ -98,7 +98,10 @@ public class TranscoderConfig {
         return StringUtils.isNotBlank(myBinary) && new File(myBinary).isFile();
     }
 
-    public boolean isValidFor(String suffix, String mp4codec) {
+    public boolean isValidFor(String suffix, String mp4codec, MediaType mediaType) {
+        if (mediaType != MediaType.Audio) {
+            return false;
+        }
         if (ArrayUtils.contains(mySuffixesSplitted, StringUtils.trim(StringUtils.lowerCase(suffix)))) {
             if (StringUtils.isBlank(myMp4Codecs) || StringUtils.isBlank(mp4codec)) {
                 return true;

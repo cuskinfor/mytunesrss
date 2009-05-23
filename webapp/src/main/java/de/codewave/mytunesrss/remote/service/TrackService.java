@@ -5,6 +5,7 @@ import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.TrackUtils;
 import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
@@ -45,8 +46,9 @@ public class TrackService {
      *
      * @return The URL for playback of the track.
      */
-    public String getPlaybackUrl(String trackId) {
-        return MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.PlayTrack, "track=" + trackId);
+    public String getPlaybackUrl(String trackId) throws SQLException {
+        Collection<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForId(new String[]{trackId})).getResults();
+        return MyTunesFunctions.playbackUrl(MyTunesRssRemoteEnv.getRequest(), tracks.iterator().next(), null);
     }
 
     public Object getTrackInfo(String trackId) throws IllegalAccessException, SQLException, IOException {

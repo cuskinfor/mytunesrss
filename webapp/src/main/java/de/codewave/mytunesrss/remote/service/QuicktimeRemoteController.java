@@ -1,12 +1,18 @@
 package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
+import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.servlet.WebConfig;
+import de.codewave.mytunesrss.servlet.TransactionFilter;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.remote.service.VideoLanClientService
@@ -57,8 +63,9 @@ public class QuicktimeRemoteController implements RemoteController {
         loadItem("genre=" + MyTunesRssBase64Utils.encode(genreName), start);
     }
 
-    public void loadTrack(String trackId, boolean start) throws IOException {
-        loadUrl(MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.PlayTrack, "/track=" + trackId), start);
+    public void loadTrack(String trackId, boolean start) throws IOException, SQLException {
+        Collection<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForId(new String[]{trackId})).getResults();
+        loadUrl(MyTunesFunctions.playbackUrl(MyTunesRssRemoteEnv.getRequest(), tracks.iterator().next(), null), start);
     }
 
     public void loadTracks(String[] trackIds, boolean start) throws IOException {

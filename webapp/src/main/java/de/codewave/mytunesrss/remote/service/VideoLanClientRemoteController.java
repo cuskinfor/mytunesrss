@@ -2,17 +2,28 @@ package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
+import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.servlet.WebConfig;
+import de.codewave.mytunesrss.servlet.TransactionFilter;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.servlet.jsp.PageContext;
 import java.io.IOException;
+import java.util.Collection;
+import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.remote.service.VideoLanClientService
  */
 public class VideoLanClientRemoteController implements RemoteController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VideoLanClientRemoteController.class);
+
     private VideoLanClient getVideoLanClient() throws IllegalAccessException, IOException, InterruptedException {
         VideoLanClient videoLanClient = new VideoLanClient();
         videoLanClient.connect(MyTunesRss.CONFIG.getVideoLanClientHost(), MyTunesRss.CONFIG.getVideoLanClientPort());
@@ -60,8 +71,13 @@ public class VideoLanClientRemoteController implements RemoteController {
         loadItem("genre=" + MyTunesRssBase64Utils.encode(genreName), start);
     }
 
-    public void loadTrack(String trackId, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        loadUrl(MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.PlayTrack, "/track=" + trackId), start);
+    public void loadTrack(String trackId, boolean start) throws IllegalAccessException, IOException, InterruptedException, SQLException {
+        Collection<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForId(new String[]{trackId})).getResults();
+        if (tracks.size() == 1) {
+            loadUrl(MyTunesFunctions.playbackUrl(MyTunesRssRemoteEnv.getRequest(), tracks.iterator().next(), null), start);
+        } else {
+            throw new SQLException("Query did not return single track!");
+        }
     }
 
     public void loadTracks(String[] trackIds, boolean start) throws IllegalAccessException, IOException, InterruptedException {
@@ -166,7 +182,12 @@ public class VideoLanClientRemoteController implements RemoteController {
                 info.setCurrentTime(Integer.parseInt(videoLanClient.sendCommands("get_time")));
             }
             String volume = StringUtils.trim(StringUtils.substringBefore(StringUtils.substringAfter(videoLanClient.sendCommands("volume"), "audio volume:"), ")"));
-            info.setVolume((int)(((Float.parseFloat(volume) * 100.0) / 1024.0)));
+            try {
+                info.setVolume((int)(((Float.parseFloat(volume) * 100.0) / 1024.0)));
+            } catch (NumberFormatException e) {
+                LOGGER.warn("Could not get volume information.", e);
+                info.setVolume(-1);
+            }
         } finally {
             videoLanClient.disconnect();
         }
