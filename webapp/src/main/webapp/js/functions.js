@@ -169,25 +169,17 @@ function enableScrollWheel(element) {
     }
 }
 
-function jsonRpc(serverUrl, login, password, func, parameterArray, resultCallback) {
-    new Ajax.Request(serverUrl + "/../jsonrpc", {
-        postBody : $H({
-            "version" : "1.1",
-            "method" : "LoginService.login",
-            "id" : "0",
-            "params" : [login, password, 1]
-        }).toJSON(),
-        onSuccess : function(result) {
-            jsonRpcWithSession(serverUrl, func, parameterArray, resultCallback, result.responseJSON.result);
-        }
-    });
-}
-
-function jsonRpcWithSession(serverUrl, func, parameterArray, resultCallback, sessionId) {
-    new Ajax.Request(serverUrl + "/../jsonrpc", {
-        requestHeaders : $H({
+function jsonRpc(serverUrl, func, parameterArray, resultCallback, sessionId) {
+    var headers;
+    if (sessionId != undefined) {
+        headers = $H({
             "X-MyTunesRSS-ID" : sessionId
-        }),
+        })
+    } else {
+        headers = $H()
+    }
+    new Ajax.Request(serverUrl + "/../jsonrpc", {
+        requestHeaders : headers,
         postBody : $H({
             "version" : "1.1",
             "method" : func,
@@ -199,5 +191,5 @@ function jsonRpcWithSession(serverUrl, func, parameterArray, resultCallback, ses
                 resultCallback(result.responseJSON.result);
             }
         }
-    })
+    });
 }

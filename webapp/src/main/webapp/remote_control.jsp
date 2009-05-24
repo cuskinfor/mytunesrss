@@ -91,7 +91,7 @@
 
         function startPlayback(index) {
             unhighlightAllTracks();
-            jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.play', [currentPage * itemsPerPage + index + 1]);
+            execJsonRpc('RemoteControlService.play', [currentPage * itemsPerPage + index + 1]);
         }
 
         function highlightTrack(index) {
@@ -141,34 +141,34 @@
         }
 
         function getStateAndUpdateInterface() {
-            jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.getCurrentTrackInfo', [], updateInterface);
+            execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], updateInterface);
         }
 
         function play() {
-            jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.play', [0], getStateAndUpdateInterface);
+            execJsonRpc('RemoteControlService.play', [0], getStateAndUpdateInterface);
         }
 
         function pause() {
-            jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.pause', [], getStateAndUpdateInterface);
+            execJsonRpc('RemoteControlService.pause', [], getStateAndUpdateInterface);
         }
 
         function stop() {
-            jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.stop', [], getStateAndUpdateInterface);
+            execJsonRpc('RemoteControlService.stop', [], getStateAndUpdateInterface);
         }
 
         function nextTrack() {
-            jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.next', [], getStateAndUpdateInterface);
+            execJsonRpc('RemoteControlService.next', [], getStateAndUpdateInterface);
         }
 
         function previousTrack() {
-            jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.prev', [], getStateAndUpdateInterface);
+            execJsonRpc('RemoteControlService.prev', [], getStateAndUpdateInterface);
         }
 
         var fullscreen = false;
 
         function toggleFullscreen() {
             fullscreen = !fullscreen;
-            jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.setFullscreen', [fullscreen]);
+            execJsonRpc('RemoteControlService.setFullscreen', [fullscreen]);
         }
 
         function registerObserver() {
@@ -184,7 +184,7 @@
                     var height = containerDimensions.height;
                     var width = containerDimensions.width;
                     if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
-                        jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.jumpTo', [Math.round(horizontalPosition * 100 / width)]);
+                        execJsonRpc('RemoteControlService.jumpTo', [Math.round(horizontalPosition * 100 / width)]);
                         getStateAndUpdateInterface();
                     }
                 }
@@ -201,34 +201,36 @@
                     var height = containerDimensions.height;
                     var width = containerDimensions.width;
                     if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
-                        jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.setVolume', [Math.round(horizontalPosition * 100 / width)]);
+                        execJsonRpc('RemoteControlService.setVolume', [Math.round(horizontalPosition * 100 / width)]);
                         getStateAndUpdateInterface();
                     }
                 }
             });
         }
 
+        var sessionId;
+
         function init() {
             registerObserver();
             createPlaylist();
             <c:choose>
                 <c:when test="${!empty param.album}">
-                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadAlbum', ['${fn:replace(mtfn:decode64(param.album), "'", "\\'")}'], init2);
+                    execJsonRpc('RemoteControlService.loadAlbum', ['${fn:replace(mtfn:decode64(param.album), "'", "\\'")}'], init2);
                 </c:when>
                 <c:when test="${!empty param.artist}">
-                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadArtist', ['${fn:replace(mtfn:decode64(param.artist), "'", "\\'")}', ${param.fullAlbums == "true"}], init2);
+                    execJsonRpc('RemoteControlService.loadArtist', ['${fn:replace(mtfn:decode64(param.artist), "'", "\\'")}', ${param.fullAlbums == "true"}], init2);
                 </c:when>
                 <c:when test="${!empty param.genre}">
-                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadGenre', ['${fn:replace(mtfn:decode64(param.genre), "'", "\\'")}'], init2);
+                    execJsonRpc('RemoteControlService.loadGenre', ['${fn:replace(mtfn:decode64(param.genre), "'", "\\'")}'], init2);
                 </c:when>
                 <c:when test="${!empty param.playlist}">
-                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadPlaylist', ['${fn:replace(param.playlist, "'", "\\'")}'], init2);
+                    execJsonRpc('RemoteControlService.loadPlaylist', ['${fn:replace(param.playlist, "'", "\\'")}'], init2);
                 </c:when>
                 <c:when test="${!empty param.tracklist}">
-                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadTracks', [['${fn:join(fn:split(param.tracklist, ","), "','")}']], init2);
+                    execJsonRpc('RemoteControlService.loadTracks', [['${fn:join(fn:split(param.tracklist, ","), "','")}']], init2);
                 </c:when>
                 <c:otherwise>
-                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadTrack', ['${fn:replace(param.track, "'", "\\'")}'], init2);
+                    execJsonRpc('RemoteControlService.loadTrack', ['${fn:replace(param.track, "'", "\\'")}'], init2);
                 </c:otherwise>
             </c:choose>
         }
@@ -237,7 +239,24 @@
         new PeriodicalExecuter(function() {
             getStateAndUpdateInterface();
         }, 2);
+        execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], init3);
+    }
+
+    function init3(trackInfo) {
+        if (trackInfo == null || trackInfo == undefined) {
+            execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], init3);
+        }
         startPlayback(0);
+    }
+
+    function execJsonRpc(method, params, callback) {
+        if (sessionId == null || sessionId == undefined) {
+            jsonRpc('${servletUrl}', 'LoginService.login', ['${authUser.name}', '${authUser.hexEncodedPasswordHash}', 1], function(loginResult) {
+                sessionId = loginResult;
+                jsonRpc('${servletUrl}', method, params, callback, sessionId);
+            })
+        }
+        jsonRpc('${servletUrl}', method, params, callback, sessionId);
     }
 
     </script>

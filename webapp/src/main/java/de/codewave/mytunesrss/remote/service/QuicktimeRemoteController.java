@@ -34,7 +34,7 @@ public class QuicktimeRemoteController implements RemoteController {
                 "stop every document",
                 "close every document",
                 "open location \"" + url + "\"",
-                "set current time of document 1 to start time of track 1 of document 1"
+                "get streaming status code of document 1"
         );
     }
 
@@ -144,7 +144,7 @@ public class QuicktimeRemoteController implements RemoteController {
         appleScriptResponse = new AppleScriptClient("QuickTime Player").executeAppleScript(
                 "set currentpos to current time of document 1",
                 "set tracknumber to 0",
-                "set tracklist to get start time of every track of document 1",
+                "set tracklist to get start time of every track of document 1 & 0",
                 "repeat with i from 1 to count of my tracklist",
                 "  if (currentpos < item i of my tracklist) then",
                 "    set tracknumber to i",

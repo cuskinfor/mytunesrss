@@ -48,7 +48,7 @@ public class AppleScriptClient {
         try {
             p.waitFor();
             String response = reader.readLine();
-            LOGGER.debug("Apple script response: " + response);
+            LOGGER.debug("AppleScript response: " + response);
             return response;
         } catch (Exception e) {
             IOUtils.closeQuietly(reader);
