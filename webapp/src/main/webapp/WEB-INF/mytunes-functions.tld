@@ -311,6 +311,17 @@
 
     <function>
         <description>
+            Get the download link for a track.
+        </description>
+        <name>downloadLink</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String downloadUrl(javax.servlet.jsp.PageContext,
+            de.codewave.mytunesrss.datastore.statement.Track, java.lang.String)
+        </function-signature>
+    </function>
+
+    <function>
+        <description>
             Check if a transcoder is active in a web configuration.
         </description>
         <name>isTranscoder</name>

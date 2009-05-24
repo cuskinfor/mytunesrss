@@ -156,7 +156,7 @@
                                     <img src="${appUrl}/images/player${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
                         </c:if>
                         <c:if test="${authUser.download && config.showDownload}">
-                                <a href="${downloadPlaybackServletUrl}/downloadTrack/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}" title="${track.name}">
+                                <a href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="${track.name}">
                                     <img src="${appUrl}/images/download${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" />
                                 </a>
                         </c:if>
@@ -168,7 +168,7 @@
                     &nbsp;
                 </td>
                 <td>
-                    <a href="<c:out value="${mtfn:playbackLink(pageContext, track, 'notranscode=true')}"/>">
+                    <a href="<c:out value="${mtfn:downloadLink(pageContext, track, 'notranscode=true')}"/>">
                         <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="tooltip.originalDownload"/>" title="<fmt:message key="tooltip.originalDownload"/>" />
                         <fmt:message key="originalDownload"/>
                     </a>

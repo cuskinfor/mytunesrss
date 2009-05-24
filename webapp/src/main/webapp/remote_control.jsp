@@ -106,8 +106,9 @@
 
         function updateInterface(trackInfo) {
             if (trackInfo == null || trackInfo == undefined) {
-                self.document.location.href='${mtfn:decode64(param.backUrl)}';
+                return;
             }
+            
             var firstTrackOnPage = itemsPerPage * currentPage;
             var highlightIndex = trackInfo.currentTrack - firstTrackOnPage - 1;
 

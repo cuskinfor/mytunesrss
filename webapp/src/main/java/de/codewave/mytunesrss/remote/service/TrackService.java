@@ -35,8 +35,9 @@ public class TrackService {
      *
      * @return The URL for playback of the track.
      */
-    public String getDownloadUrl(String trackId) {
-        return MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.DownloadTrack, "track=" + trackId);
+    public String getDownloadUrl(String trackId) throws SQLException {
+        Collection<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForId(new String[]{trackId})).getResults();
+        return MyTunesFunctions.downloadUrl(MyTunesRssRemoteEnv.getRequest(), tracks.iterator().next(), null);
     }
 
     /**
