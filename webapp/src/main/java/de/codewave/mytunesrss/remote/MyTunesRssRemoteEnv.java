@@ -26,7 +26,6 @@ public class MyTunesRssRemoteEnv {
     public static void setRequest(HttpServletRequest request) {
         THREAD_REQUESTS.set(request);
         request.setAttribute("downloadPlaybackServletUrl", MyTunesRssWebUtils.makeHttp(MyTunesRssWebUtils.getServletUrl(request)));
-        request.setAttribute("auth", getAuth());
         String sid = getRequest().getHeader("X-MyTunesRSS-ID");
         if (StringUtils.isEmpty(sid)) {
             sid = getRequest().getPathInfo();
@@ -37,6 +36,7 @@ public class MyTunesRssRemoteEnv {
             }
             THREAD_SESSIONS.set(RemoteApiSessionManager.getInstance(request).getSession(sid));
             LOG.debug("Received remote API call for session \"" + sid + "\".");
+            request.setAttribute("auth", getAuth());
         }
     }
 
