@@ -28,34 +28,34 @@ public class RemoteControlService implements RemoteController {
         }
     }
 
-    public void loadPlaylist(String playlistId, boolean start) throws Exception {
+    public void loadPlaylist(String playlistId) throws Exception {
         assertAuthenticated();
-        getController().loadPlaylist(playlistId, start);
+        getController().loadPlaylist(playlistId);
     }
 
-    public void loadAlbum(String albumName, boolean start) throws Exception {
+    public void loadAlbum(String albumName) throws Exception {
         assertAuthenticated();
-        getController().loadAlbum(albumName, start);
+        getController().loadAlbum(albumName);
     }
 
-    public void loadArtist(String artistName, boolean fullAlbums, boolean start) throws Exception {
+    public void loadArtist(String artistName, boolean fullAlbums) throws Exception {
         assertAuthenticated();
-        getController().loadArtist(artistName, fullAlbums, start);
+        getController().loadArtist(artistName, fullAlbums);
     }
 
-    public void loadGenre(String genreName, boolean start) throws Exception {
+    public void loadGenre(String genreName) throws Exception {
         assertAuthenticated();
-        getController().loadGenre(genreName, start);
+        getController().loadGenre(genreName);
     }
 
-    public void loadTrack(String trackId, boolean start) throws Exception {
+    public void loadTrack(String trackId) throws Exception {
         assertAuthenticated();
-        getController().loadTrack(trackId, start);
+        getController().loadTrack(trackId);
     }
 
-    public void loadTracks(String[] trackIds, boolean start) throws Exception {
+    public void loadTracks(String[] trackIds) throws Exception {
         assertAuthenticated();
-        getController().loadTracks(trackIds, start);
+        getController().loadTracks(trackIds);
     }
 
     public void clearPlaylist() throws Exception {

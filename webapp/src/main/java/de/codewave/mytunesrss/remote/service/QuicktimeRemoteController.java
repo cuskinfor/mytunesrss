@@ -1,75 +1,66 @@
 package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
-import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
+import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
-import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
+import de.codewave.mytunesrss.servlet.WebConfig;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.sql.SQLException;
+import java.util.Collection;
 
 /**
  * de.codewave.mytunesrss.remote.service.VideoLanClientService
  */
 public class QuicktimeRemoteController implements RemoteController {
 
-    public void loadPlaylist(String playlistId, boolean start) throws IOException {
-        loadItem("playlist=" + playlistId, start);
+    public void loadPlaylist(String playlistId) throws IOException {
+        loadItem("playlist=" + playlistId);
     }
 
-    private void loadItem(String pathInfo, boolean start) throws IOException {
+    private void loadItem(String pathInfo) throws IOException {
         String url = MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, pathInfo + "/type=" + WebConfig.PlaylistType.M3u) + "/mytunesrss.m3u";
-        loadUrl(url, start);
+        loadUrl(url);
     }
 
-    private void loadUrl(String url, boolean start) throws IOException {
+    private void loadUrl(String url) throws IOException {
         AppleScriptClient client = new AppleScriptClient("QuickTime Player");
-        if (start) {
-            client.executeAppleScript(
-                    "stop every document",
-                    "close every document",
-                    "open location \"" + url + "\"",
-                    "activate",
-                    "play document 1"
-            );
-        } else {
-            client.executeAppleScript(
-                    "stop every document",
-                    "close every document",
-                    "open location \"" + url + "\""
-            );
-        }
+        client.executeAppleScript(
+                "stop every document",
+                "close every document",
+                "open location \"" + url + "\"",
+                "set current time of document 1 to start time of track 1 of document 1"
+        );
     }
 
-    public void loadAlbum(String albumName, boolean start) throws IOException {
-        loadItem("album=" + MyTunesRssBase64Utils.encode(albumName), start);
+    public void loadAlbum(String albumName) throws IOException {
+        loadItem("album=" + MyTunesRssBase64Utils.encode(albumName));
     }
 
-    public void loadArtist(String artistName, boolean fullAlbums, boolean start) throws IOException {
+    public void loadArtist(String artistName, boolean fullAlbums) throws IOException {
         if (fullAlbums) {
-            loadItem("fullAlbums=true/artist=" + MyTunesRssBase64Utils.encode(artistName), start);
+            loadItem("fullAlbums=true/artist=" + MyTunesRssBase64Utils.encode(artistName));
         } else {
-            loadItem("artist=" + MyTunesRssBase64Utils.encode(artistName), start);
+            loadItem("artist=" + MyTunesRssBase64Utils.encode(artistName));
         }
     }
 
-    public void loadGenre(String genreName, boolean start) throws IOException {
-        loadItem("genre=" + MyTunesRssBase64Utils.encode(genreName), start);
+    public void loadGenre(String genreName) throws IOException {
+        loadItem("genre=" + MyTunesRssBase64Utils.encode(genreName));
     }
 
-    public void loadTrack(String trackId, boolean start) throws IOException, SQLException {
+    public void loadTrack(String trackId) throws IOException, SQLException {
         Collection<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForId(new String[]{trackId})).getResults();
-        loadUrl(MyTunesFunctions.playbackUrl(MyTunesRssRemoteEnv.getRequest(), tracks.iterator().next(), null), start);
+        loadUrl(MyTunesFunctions.playbackUrl(MyTunesRssRemoteEnv.getRequest(), tracks.iterator().next(), null));
     }
 
-    public void loadTracks(String[] trackIds, boolean start) throws IOException {
-        loadItem("tracklist=" + StringUtils.join(trackIds, ","), start);
+    public void loadTracks(String[] trackIds) throws IOException {
+        loadItem("tracklist=" + StringUtils.join(trackIds, ","));
     }
 
     public void clearPlaylist() throws IOException {
@@ -172,13 +163,13 @@ public class QuicktimeRemoteController implements RemoteController {
         trackInfo.setCurrentTime(Integer.parseInt(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[1]), "-1")));
         trackInfo.setLength(Integer.parseInt(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[2]), "-1")));
         trackInfo.setPlaying(Boolean.parseBoolean(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[3]), "false")));
-        trackInfo.setVolume((int)((Float.parseFloat(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[4]), "-1.0")) * 100.0) / 256.0));
+        trackInfo.setVolume((int) ((Float.parseFloat(StringUtils.defaultIfEmpty(StringUtils.trimToEmpty(splitted[4]), "-1.0")) * 100.0) / 256.0));
         return trackInfo;
     }
 
     public void setVolume(int percentage) throws Exception {
         int normalizedPercentage = Math.min(Math.max(0, percentage), 100);
-        new AppleScriptClient("QuickTime Player").executeAppleScript("set sound volume of document 1 to " + (int) (((256.0 * (float)normalizedPercentage) / 100.0)));
+        new AppleScriptClient("QuickTime Player").executeAppleScript("set sound volume of document 1 to " + (int) (((256.0 * (float) normalizedPercentage) / 100.0)));
     }
 
     public void setFullscreen(boolean fullscreen) throws Exception {

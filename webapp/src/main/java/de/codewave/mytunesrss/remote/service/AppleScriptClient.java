@@ -47,7 +47,9 @@ public class AppleScriptClient {
         BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
         try {
             p.waitFor();
-            return reader.readLine();
+            String response = reader.readLine();
+            LOGGER.debug("Apple script response: " + response);
+            return response;
         } catch (Exception e) {
             IOUtils.closeQuietly(reader);
         }

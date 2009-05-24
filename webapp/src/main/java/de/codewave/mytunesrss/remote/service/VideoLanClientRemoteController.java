@@ -2,21 +2,20 @@ package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
-import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
+import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
-import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
+import de.codewave.mytunesrss.servlet.WebConfig;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.jsp.PageContext;
 import java.io.IOException;
-import java.util.Collection;
 import java.sql.SQLException;
+import java.util.Collection;
 
 /**
  * de.codewave.mytunesrss.remote.service.VideoLanClientService
@@ -30,58 +29,47 @@ public class VideoLanClientRemoteController implements RemoteController {
         return videoLanClient;
     }
 
-    public void loadPlaylist(String playlistId, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        loadItem("playlist=" + playlistId, start);
+    public void loadPlaylist(String playlistId) throws IllegalAccessException, IOException, InterruptedException {
+        loadItem("playlist=" + playlistId);
     }
 
-    private void loadItem(String pathInfo, boolean start) throws IllegalAccessException, IOException, InterruptedException {
+    private void loadItem(String pathInfo) throws IllegalAccessException, IOException, InterruptedException {
         String url = MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, pathInfo + "/type=" + WebConfig.PlaylistType.M3u) + "/mytunesrss.m3u";
-        loadUrl(url, start);
+        loadUrl(url);
     }
 
-    private void loadUrl(String url, boolean start) throws IllegalAccessException, IOException, InterruptedException {
+    private void loadUrl(String url) throws IllegalAccessException, IOException, InterruptedException {
         VideoLanClient videoLanClient = getVideoLanClient();
         try {
-            if (start) {
-                videoLanClient.sendCommands("clear", "add " + url);
-                if (!StringUtils.contains(videoLanClient.sendCommands("status"), "play state")) {
-                    videoLanClient.sendCommands("pause", "goto 0");
-                }
-            } else {
-                videoLanClient.sendCommands("clear", "add " + url, "stop");
-            }
+            videoLanClient.sendCommands("clear", "add " + url, "stop");
         } finally {
             videoLanClient.disconnect();
         }
     }
 
-    public void loadAlbum(String albumName, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        loadItem("album=" + MyTunesRssBase64Utils.encode(albumName), start);
+    public void loadAlbum(String albumName) throws IllegalAccessException, IOException, InterruptedException {
+        loadItem("album=" + MyTunesRssBase64Utils.encode(albumName));
     }
 
-    public void loadArtist(String artistName, boolean fullAlbums, boolean start) throws IllegalAccessException, IOException, InterruptedException {
+    public void loadArtist(String artistName, boolean fullAlbums) throws IllegalAccessException, IOException, InterruptedException {
         if (fullAlbums) {
-            loadItem("fullAlbums=true/artist=" + MyTunesRssBase64Utils.encode(artistName), start);
+            loadItem("fullAlbums=true/artist=" + MyTunesRssBase64Utils.encode(artistName));
         } else {
-            loadItem("artist=" + MyTunesRssBase64Utils.encode(artistName), start);
+            loadItem("artist=" + MyTunesRssBase64Utils.encode(artistName));
         }
     }
 
-    public void loadGenre(String genreName, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        loadItem("genre=" + MyTunesRssBase64Utils.encode(genreName), start);
+    public void loadGenre(String genreName) throws IllegalAccessException, IOException, InterruptedException {
+        loadItem("genre=" + MyTunesRssBase64Utils.encode(genreName));
     }
 
-    public void loadTrack(String trackId, boolean start) throws IllegalAccessException, IOException, InterruptedException, SQLException {
+    public void loadTrack(String trackId) throws IllegalAccessException, IOException, InterruptedException, SQLException {
         Collection<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForId(new String[]{trackId})).getResults();
-        if (tracks.size() == 1) {
-            loadUrl(MyTunesFunctions.playbackUrl(MyTunesRssRemoteEnv.getRequest(), tracks.iterator().next(), null), start);
-        } else {
-            throw new SQLException("Query did not return single track!");
-        }
+        loadUrl(MyTunesFunctions.playbackUrl(MyTunesRssRemoteEnv.getRequest(), tracks.iterator().next(), null));
     }
 
-    public void loadTracks(String[] trackIds, boolean start) throws IllegalAccessException, IOException, InterruptedException {
-        loadItem("tracklist=" + StringUtils.join(trackIds, ","), start);
+    public void loadTracks(String[] trackIds) throws IllegalAccessException, IOException, InterruptedException {
+        loadItem("tracklist=" + StringUtils.join(trackIds, ","));
     }
 
     public void clearPlaylist() throws IllegalAccessException, IOException, InterruptedException {
@@ -183,7 +171,7 @@ public class VideoLanClientRemoteController implements RemoteController {
             }
             String volume = StringUtils.trim(StringUtils.substringBefore(StringUtils.substringAfter(videoLanClient.sendCommands("volume"), "audio volume:"), ")"));
             try {
-                info.setVolume((int)(((Float.parseFloat(volume) * 100.0) / 1024.0)));
+                info.setVolume((int) (((Float.parseFloat(volume) * 100.0) / 1024.0)));
             } catch (NumberFormatException e) {
                 LOGGER.warn("Could not get volume information.", e);
                 info.setVolume(-1);

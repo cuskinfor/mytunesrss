@@ -108,7 +108,7 @@
             if (trackInfo == null || trackInfo == undefined) {
                 return;
             }
-            
+
             var firstTrackOnPage = itemsPerPage * currentPage;
             var highlightIndex = trackInfo.currentTrack - firstTrackOnPage - 1;
 
@@ -213,22 +213,22 @@
             createPlaylist();
             <c:choose>
                 <c:when test="${!empty param.album}">
-                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadAlbum', ['${fn:replace(mtfn:decode64(param.album), "'", "\\'")}', true], init2);
+                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadAlbum', ['${fn:replace(mtfn:decode64(param.album), "'", "\\'")}'], init2);
                 </c:when>
                 <c:when test="${!empty param.artist}">
-                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadArtist', ['${fn:replace(mtfn:decode64(param.artist), "'", "\\'")}', ${param.fullAlbums == "true"} ,true], init2);
+                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadArtist', ['${fn:replace(mtfn:decode64(param.artist), "'", "\\'")}', ${param.fullAlbums == "true"}], init2);
                 </c:when>
                 <c:when test="${!empty param.genre}">
-                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadGenre', ['${fn:replace(mtfn:decode64(param.genre), "'", "\\'")}', true], init2);
+                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadGenre', ['${fn:replace(mtfn:decode64(param.genre), "'", "\\'")}'], init2);
                 </c:when>
                 <c:when test="${!empty param.playlist}">
-                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadPlaylist', ['${fn:replace(param.playlist, "'", "\\'")}', true], init2);
+                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadPlaylist', ['${fn:replace(param.playlist, "'", "\\'")}'], init2);
                 </c:when>
                 <c:when test="${!empty param.tracklist}">
-                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadTracks', [['${fn:join(fn:split(param.tracklist, ","), "','")}'], true], init2);
+                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadTracks', [['${fn:join(fn:split(param.tracklist, ","), "','")}']], init2);
                 </c:when>
                 <c:otherwise>
-                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadTrack', ['${fn:replace(param.track, "'", "\\'")}', true], init2);
+                    jsonRpc('${servletUrl}', '${authUser.name}', '${authUser.hexEncodedPasswordHash}', 'RemoteControlService.loadTrack', ['${fn:replace(param.track, "'", "\\'")}'], init2);
                 </c:otherwise>
             </c:choose>
         }
@@ -237,6 +237,7 @@
         new PeriodicalExecuter(function() {
             getStateAndUpdateInterface();
         }, 2);
+        startPlayback(0);
     }
 
     </script>

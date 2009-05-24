@@ -4,17 +4,17 @@ package de.codewave.mytunesrss.remote.service;
  * de.codewave.mytunesrss.remote.service.RemoteControlService
  */
 public interface RemoteController {
-    void loadPlaylist(String playlistId, boolean start) throws Exception;
+    void loadPlaylist(String playlistId) throws Exception;
 
-    void loadAlbum(String albumName, boolean start) throws Exception;
+    void loadAlbum(String albumName) throws Exception;
 
-    void loadArtist(String artistName, boolean fullAlbums, boolean start) throws Exception;
+    void loadArtist(String artistName, boolean fullAlbums) throws Exception;
 
-    void loadGenre(String genreName, boolean start) throws Exception;
+    void loadGenre(String genreName) throws Exception;
 
-    void loadTrack(String trackId, boolean start) throws Exception;
+    void loadTrack(String trackId) throws Exception;
 
-    void loadTracks(String[] trackIds, boolean start) throws Exception;
+    void loadTracks(String[] trackIds) throws Exception;
 
     void clearPlaylist() throws Exception;
 

@@ -4,27 +4,27 @@ package de.codewave.mytunesrss.remote.service;
  * de.codewave.mytunesrss.remote.service.NoopRemoteController
  */
 public class NoopRemoteController implements RemoteController {
-    public void loadPlaylist(String playlistId, boolean start) {
+    public void loadPlaylist(String playlistId) {
         // intentionally left blank
     }
 
-    public void loadAlbum(String albumName, boolean start) {
+    public void loadAlbum(String albumName) {
         // intentionally left blank
     }
 
-    public void loadArtist(String artistName, boolean fullAlbums, boolean start) {
+    public void loadArtist(String artistName, boolean fullAlbums) {
         // intentionally left blank
     }
 
-    public void loadGenre(String genreName, boolean start) {
+    public void loadGenre(String genreName) {
         // intentionally left blank
     }
 
-    public void loadTrack(String trackId, boolean start) {
+    public void loadTrack(String trackId) {
         // intentionally left blank
     }
 
-    public void loadTracks(String[] trackIds, boolean start) {
+    public void loadTracks(String[] trackIds) {
         // intentionally left blank
     }
 
