@@ -67,12 +67,14 @@ public class VideoLanClient {
         StringBuilder builder = new StringBuilder();
         BufferedReader in = new BufferedReader(new InputStreamReader(myTelnetClient.getInputStream()));
         try {
-            for (String line = in.readLine(); line != null && !StringUtils.contains(line, DUMMY_COMMAND); line = in.readLine()) {
+            String line;
+            for (line = in.readLine(); line != null && !StringUtils.contains(line, DUMMY_COMMAND); line = in.readLine()) {
                 LOGGER.debug("Received line \"" + line + "\".");
                 builder.append(line);
             }
+            LOGGER.debug("Received final line \"" + line + "\".");
         } catch (IOException e) {
-            LOGGER.error(null, e);
+            LOGGER.error("Could not read response.", e);
 
         }
         return builder.toString();
