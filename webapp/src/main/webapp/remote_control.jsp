@@ -246,7 +246,13 @@
         if (trackInfo == null || trackInfo == undefined) {
             execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], init3);
         }
-        startPlayback(0);
+        execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], init4);
+    }
+
+    function init4(trackInfo) {
+        if (!trackInfo.playing) {
+            startPlayback(0);
+        }
     }
 
     function execJsonRpc(method, params, callback) {
