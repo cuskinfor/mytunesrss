@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.server;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssConfig;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.quicktime.QuicktimePlayerException;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.servlet.SessionManager;
@@ -82,6 +83,7 @@ public class WebServer {
                         }
                         MyTunesRss.CONFIG.save();// save on successful server start
                         myRunning.set(true);
+                        MyTunesRss.QUICKTIME_PLAYER.init();
                         return true;
                     } else {
                         MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverStart"));
@@ -97,6 +99,10 @@ public class WebServer {
                     myEmbeddedTomcat = null;
                     return false;
                 } catch (IOException e) {
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverStart") + e.getMessage());
+                    myEmbeddedTomcat = null;
+                    return false;
+                } catch (QuicktimePlayerException e) {
                     MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverStart") + e.getMessage());
                     myEmbeddedTomcat = null;
                     return false;
@@ -326,6 +332,11 @@ public class WebServer {
         }
         MyTunesRss.CONFIG.save();// save on successful server stop
         myRunning.set(false);
+        try {
+            MyTunesRss.QUICKTIME_PLAYER.destroy();
+        } catch (QuicktimePlayerException e) {
+            LOG.error("Could not destroy quicktime player.", e);
+        }
         return true;
     }
 

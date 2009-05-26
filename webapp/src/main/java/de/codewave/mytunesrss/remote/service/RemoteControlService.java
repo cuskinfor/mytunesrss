@@ -22,7 +22,7 @@ public class RemoteControlService implements RemoteController {
             case Vlc:
                 return new VideoLanClientRemoteController();
             case Quicktime:
-                return new QuicktimeRemoteController();
+                return new QuicktimePlayerRemoteController();
             default:
                 return new NoopRemoteController();
         }

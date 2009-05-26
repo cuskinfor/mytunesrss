@@ -16,6 +16,7 @@ import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesTask;
 import de.codewave.mytunesrss.task.InitializeDatabaseTask;
+import de.codewave.mytunesrss.quicktime.QuicktimePlayer;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
@@ -151,6 +152,7 @@ public class MyTunesRss {
     public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
     public static String JMX_HOST;
     public static int JMX_PORT = -1;
+    public static final QuicktimePlayer QUICKTIME_PLAYER = new QuicktimePlayer(); 
 
     public static void main(final String[] args)
             throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException,

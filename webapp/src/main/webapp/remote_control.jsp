@@ -211,7 +211,6 @@
         var sessionId;
 
         function init() {
-            registerObserver();
             createPlaylist();
             <c:choose>
                 <c:when test="${!empty param.album}">
@@ -229,8 +228,11 @@
                 <c:when test="${!empty param.tracklist}">
                     execJsonRpc('RemoteControlService.loadTracks', [['${fn:join(fn:split(param.tracklist, ","), "','")}']], init2);
                 </c:when>
-                <c:otherwise>
+                <c:when test="${!empty param.track}">
                     execJsonRpc('RemoteControlService.loadTrack', ['${fn:replace(param.track, "'", "\\'")}'], init2);
+                </c:when>
+                <c:otherwise>
+                    init2();
                 </c:otherwise>
             </c:choose>
         }
@@ -253,6 +255,7 @@
         if (!trackInfo.playing) {
             startPlayback(0);
         }
+        registerObserver();
     }
 
     function execJsonRpc(method, params, callback) {
