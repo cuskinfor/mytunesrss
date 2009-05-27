@@ -83,7 +83,9 @@ public class WebServer {
                         }
                         MyTunesRss.CONFIG.save();// save on successful server start
                         myRunning.set(true);
-                        MyTunesRss.QUICKTIME_PLAYER.init();
+                        if (MyTunesRss.QUICKTIME_PLAYER != null) {
+                            MyTunesRss.QUICKTIME_PLAYER.init();
+                        }
                         return true;
                     } else {
                         MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverStart"));
@@ -333,7 +335,9 @@ public class WebServer {
         MyTunesRss.CONFIG.save();// save on successful server stop
         myRunning.set(false);
         try {
-            MyTunesRss.QUICKTIME_PLAYER.destroy();
+            if (MyTunesRss.QUICKTIME_PLAYER != null) {
+                MyTunesRss.QUICKTIME_PLAYER.destroy();
+            }
         } catch (QuicktimePlayerException e) {
             LOG.error("Could not destroy quicktime player.", e);
         }

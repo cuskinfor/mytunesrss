@@ -33,7 +33,7 @@ public class MyTunesRssJmxUtils {
     private static ObjectName CONTENT_CONFIG_NAME;
     private static ObjectName ADMIN_NOTIFY_CONFIG_NAME;
     private static ObjectName STATISTIC_CONFIG_NAME;
-    private static ObjectName REMOTE_CONTROL_CONFIG_NAME;
+    //private static ObjectName REMOTE_CONTROL_CONFIG_NAME;
     private static boolean INITIALIZED;
 
     static {
@@ -51,7 +51,7 @@ public class MyTunesRssJmxUtils {
             CONTENT_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Content");
             ADMIN_NOTIFY_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=AdminNotification");
             STATISTIC_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Statistic");
-            REMOTE_CONTROL_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=RemoteControl");
+            //REMOTE_CONTROL_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=RemoteControl");
             INITIALIZED = true;
         } catch (MalformedObjectNameException e) {
             if (LOG.isErrorEnabled()) {
@@ -76,7 +76,7 @@ public class MyTunesRssJmxUtils {
                 server.registerMBean(new ContentConfig(), CONTENT_CONFIG_NAME);
                 server.registerMBean(new AdminNotifyConfig(), ADMIN_NOTIFY_CONFIG_NAME);
                 server.registerMBean(new StatisticConfig(), STATISTIC_CONFIG_NAME);
-                server.registerMBean(new RemoteControlConfig(), REMOTE_CONTROL_CONFIG_NAME);
+                //server.registerMBean(new RemoteControlConfig(), REMOTE_CONTROL_CONFIG_NAME);
                 registerUsers();
                 HttpAdaptor adaptor = new HttpAdaptor();
                 ObjectName name = HTTP_ADAPTOR_NAME;
@@ -122,10 +122,12 @@ public class MyTunesRssJmxUtils {
                     LOG.error("Could not stop JMX server.", e);
                 }
             }
-            for (ObjectName name : new ObjectName[] {HTTP_ADAPTOR_NAME, SERVER_CONFIG_NAME, APPLICATION_NAME, DATABASE_CONFIG_NAME,
-                                                     DIRECTORIES_CONFIG_NAME, DATAIMPORT_CONFIG_NAME, USER_CONFIG_NAME, MISC_CONFIG_NAME,
-                                                     ADDONS_CONFIG_NAME, CONTENT_CONFIG_NAME, ADMIN_NOTIFY_CONFIG_NAME, STATISTIC_CONFIG_NAME,
-                                                     STREAMING_CONFIG_NAME, REMOTE_CONTROL_CONFIG_NAME}) {
+            for (ObjectName name : new ObjectName[]{HTTP_ADAPTOR_NAME, SERVER_CONFIG_NAME, APPLICATION_NAME, DATABASE_CONFIG_NAME,
+                    DIRECTORIES_CONFIG_NAME, DATAIMPORT_CONFIG_NAME, USER_CONFIG_NAME, MISC_CONFIG_NAME,
+                    ADDONS_CONFIG_NAME, CONTENT_CONFIG_NAME, ADMIN_NOTIFY_CONFIG_NAME, STATISTIC_CONFIG_NAME,
+                    STREAMING_CONFIG_NAME
+                    //, REMOTE_CONTROL_CONFIG_NAME
+            }) {
                 try {
                     server.unregisterMBean(name);
                 } catch (Exception e) {

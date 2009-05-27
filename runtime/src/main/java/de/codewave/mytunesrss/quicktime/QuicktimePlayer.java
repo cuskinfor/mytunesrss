@@ -61,6 +61,13 @@ public class QuicktimePlayer {
         }
     }
 
+    public synchronized void shuffle() throws QuicktimePlayerException {
+        if (myMovieController != null) {
+            stop();
+        }
+        Collections.shuffle(myTracks);
+    }
+
     public synchronized void clearPlaylist() throws QuicktimePlayerException {
         stop();
         LOGGER.debug("Clearing playlist.");

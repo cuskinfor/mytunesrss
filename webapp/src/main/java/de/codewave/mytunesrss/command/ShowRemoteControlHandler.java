@@ -13,17 +13,18 @@ import java.util.List;
 public class ShowRemoteControlHandler extends CreatePlaylistBaseCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        List<Track> currentPlaylist;
         DataStoreQuery.QueryResult<Track> tracks = getTracks();
         if (tracks == null || tracks.getResultSize() == 0) {
-            currentPlaylist = MyTunesRss.QUICKTIME_PLAYER.getPlaylist();
-            if (currentPlaylist.isEmpty()) {
+            if (MyTunesRss.QUICKTIME_PLAYER.getPlaylist().isEmpty()) {
                 throw new IllegalArgumentException("No tracks found for request parameters!");
             }
         } else {
-            currentPlaylist = tracks.getResults();
+            MyTunesRss.QUICKTIME_PLAYER.setTracks(tracks.getResults());
         }
-        getRequest().setAttribute("tracks", currentPlaylist);
+        if (Boolean.valueOf(getRequestParameter("shuffle", "false"))) {
+            MyTunesRss.QUICKTIME_PLAYER.shuffle();
+        }
+        getRequest().setAttribute("tracks", MyTunesRss.QUICKTIME_PLAYER.getPlaylist());
         forward(MyTunesRssResource.RemoteControl);
     }
 }

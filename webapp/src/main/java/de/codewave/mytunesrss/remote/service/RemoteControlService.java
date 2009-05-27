@@ -8,7 +8,6 @@ import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
  * de.codewave.mytunesrss.remote.service.RemoteControlService
  */
 public class RemoteControlService implements RemoteController {
-    private RemoteController myRemoteController;
 
     private void assertAuthenticated() throws IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
@@ -18,14 +17,15 @@ public class RemoteControlService implements RemoteController {
     }
 
     private RemoteController getController() {
-        switch (MyTunesRss.CONFIG.getRemoteControlType()) {
-            case Vlc:
-                return new VideoLanClientRemoteController();
-            case Quicktime:
-                return new QuicktimePlayerRemoteController();
-            default:
-                return new NoopRemoteController();
-        }
+        return MyTunesRss.QUICKTIME_PLAYER != null ? new QuicktimePlayerRemoteController() : new NoopRemoteController();
+//        switch (MyTunesRss.CONFIG.getRemoteControlType()) {
+//            case Vlc:
+//                return new VideoLanClientRemoteController();
+//            case Quicktime:
+//                return new QuicktimePlayerRemoteController();
+//            default:
+//                return new NoopRemoteController();
+//        }
     }
 
     public void loadPlaylist(String playlistId) throws Exception {
@@ -106,5 +106,10 @@ public class RemoteControlService implements RemoteController {
     public void setFullscreen(boolean fullscreen) throws Exception {
         assertAuthenticated();
         getController().setFullscreen(fullscreen);
+    }
+
+    public void shuffle() throws Exception {
+        assertAuthenticated();
+        getController().shuffle();
     }
 }

@@ -179,4 +179,9 @@ public class QuicktimeRemoteController implements RemoteController {
             new AppleScriptClient("QuickTime Player").executeAppleScript("stop document 1", "play document 1");
         }
     }
+
+    public void shuffle() throws Exception {
+        // todo: implement method
+        throw new UnsupportedOperationException("method shuffle of class QuicktimeRemoteController is not yet implemented!");
+    }
 }

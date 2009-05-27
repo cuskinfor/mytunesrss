@@ -201,6 +201,11 @@ public class VideoLanClientRemoteController implements RemoteController {
         }
     }
 
+    public void shuffle() {
+        // todo: implement method
+        throw new UnsupportedOperationException("method shuffle of class VideoLanClientRemoteController is not yet implemented!");
+    }
+
     public String sendCommand(String command) throws IOException, IllegalAccessException, InterruptedException {
         VideoLanClient videoLanClient = getVideoLanClient();
         try {

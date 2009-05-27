@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.jmx.ErrorQueue;
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.network.MulticastService;
+import de.codewave.mytunesrss.quicktime.QuicktimePlayer;
 import de.codewave.mytunesrss.server.WebServer;
 import de.codewave.mytunesrss.settings.Settings;
 import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;
@@ -16,7 +17,6 @@ import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesTask;
 import de.codewave.mytunesrss.task.InitializeDatabaseTask;
-import de.codewave.mytunesrss.quicktime.QuicktimePlayer;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
@@ -28,7 +28,6 @@ import org.apache.catalina.LifecycleException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -152,7 +151,7 @@ public class MyTunesRss {
     public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
     public static String JMX_HOST;
     public static int JMX_PORT = -1;
-    public static final QuicktimePlayer QUICKTIME_PLAYER = new QuicktimePlayer(); 
+    public static QuicktimePlayer QUICKTIME_PLAYER;
 
     public static void main(final String[] args)
             throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException,
@@ -173,6 +172,7 @@ public class MyTunesRss {
         HEADLESS = arguments.containsKey("headless") || REGISTRATION.isDisableGui();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
         registerDatabaseDriver();
+        initializeQuicktimePlayer();
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Operating system: " + SystemUtils.OS_NAME + ", " + SystemUtils.OS_VERSION + ", " + SystemUtils.OS_ARCH);
             LOGGER.info("Java: " + SystemUtils.JAVA_VERSION + "(" + SystemUtils.JAVA_HOME + ")");
@@ -205,7 +205,7 @@ public class MyTunesRss {
             if (SystemUtils.IS_OS_WINDOWS) {
                 type = "windows";
             } else if (SystemUtils.IS_OS_MAC_OSX) {
-                type ="osx";
+                type = "osx";
             }
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.missingSystemProperty." + type));
         }
@@ -268,6 +268,17 @@ public class MyTunesRss {
         }
     }
 
+    private static void initializeQuicktimePlayer() {
+        try {
+            // try to find class
+            Class.forName("quicktime.util.QTBuild");
+            QUICKTIME_PLAYER = new QuicktimePlayer();
+            LOGGER.info("Quicktime player created successfully.");
+        } catch (ClassNotFoundException e) {
+            LOGGER.info("No quicktime environment found, quicktime player disabled.");
+        }
+    }
+
     private static String getFirstTrimmedArgument(Map<String, String[]> args, String name) {
         String[] values = args.get(name);
         if (values != null && values.length > 0) {
@@ -276,18 +287,29 @@ public class MyTunesRss {
         return null;
     }
 
+    private static ClassLoader createExtraClassloader(File libDir) {
+        try {
+            Collection<File> files = libDir.isDirectory() ? (Collection<File>) FileUtils.listFiles(libDir, new String[]{"jar", "zip"}, false) : null;
+            if (files != null && !files.isEmpty()) {
+                Collection<URL> urls = new ArrayList<URL>();
+                for (File file : files) {
+                    urls.add(file.toURL());
+                }
+                return new URLClassLoader(urls.toArray(new URL[urls.size()]), ClassLoader.getSystemClassLoader());
+            }
+        } catch (IOException e) {
+            LOGGER.error("Could not create extra classloader.", e);
+        }
+        return null;
+    }
+
     private static void registerDatabaseDriver()
             throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         File libDir = new File(PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER) + "/lib");
-        Collection<File> files = libDir.isDirectory() ? (Collection<File>) FileUtils.listFiles(libDir, new String[]{"jar"}, false) : null;
+        ClassLoader classLoader = createExtraClassloader(libDir);
         String driverClassName = MyTunesRss.CONFIG.getDatabaseDriver();
         LOGGER.info("Using database driver class \"" + driverClassName + "\".");
-        if (files != null && !files.isEmpty()) {
-            Collection<URL> urls = new ArrayList<URL>();
-            for (File file : files) {
-                urls.add(file.toURL());
-            }
-            final ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), ClassLoader.getSystemClassLoader());
+        if (classLoader != null) {
             try {
                 final Class<Driver> driverClass = (Class<Driver>) Class.forName(driverClassName, true, classLoader);
                 DriverManager.registerDriver(new Driver() {

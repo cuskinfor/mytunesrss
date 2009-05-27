@@ -921,7 +921,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isRemoteControl() {
-        return myRemoteControlType != RemoteControlType.None;
+        return MyTunesRss.QUICKTIME_PLAYER != null; // myRemoteControlType != RemoteControlType.None;
     }
 
     public String getDisabledMp4Codecs() {
@@ -1005,7 +1005,6 @@ public class MyTunesRssConfig {
             while (contextIterator.hasNext()) {
                 dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
             }
-            //dataSources.add("http://gdata.youtube.com/feeds/base/users/rathergoodstuff/uploads?alt=rss&v=2&orderby=published&client=ytapi-youtube-profile"); // TODO
             setDatasources(dataSources.toArray(new String[dataSources.size()]));
             setAlbumFallback(JXPathUtils.getStringValue(settings, "albumFallback", "[dir:0]"));
             setArtistFallback(JXPathUtils.getStringValue(settings, "artistFallback", "[dir:1]"));

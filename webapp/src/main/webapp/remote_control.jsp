@@ -164,6 +164,10 @@
             execJsonRpc('RemoteControlService.prev', [], getStateAndUpdateInterface);
         }
 
+        function shuffle() {
+            self.document.location.href = '${servletUrl}/showRemoteControl/${auth}/shuffle=true/backUrl=${param.backUrl}';
+        }
+
         var fullscreen = false;
 
         function toggleFullscreen() {
@@ -212,61 +216,28 @@
 
         function init() {
             createPlaylist();
-            <c:choose>
-                <c:when test="${!empty param.album}">
-                    execJsonRpc('RemoteControlService.loadAlbum', ['${fn:replace(mtfn:decode64(param.album), "'", "\\'")}'], init2);
-                </c:when>
-                <c:when test="${!empty param.artist}">
-                    execJsonRpc('RemoteControlService.loadArtist', ['${fn:replace(mtfn:decode64(param.artist), "'", "\\'")}', ${param.fullAlbums == "true"}], init2);
-                </c:when>
-                <c:when test="${!empty param.genre}">
-                    execJsonRpc('RemoteControlService.loadGenre', ['${fn:replace(mtfn:decode64(param.genre), "'", "\\'")}'], init2);
-                </c:when>
-                <c:when test="${!empty param.playlist}">
-                    execJsonRpc('RemoteControlService.loadPlaylist', ['${fn:replace(param.playlist, "'", "\\'")}'], init2);
-                </c:when>
-                <c:when test="${!empty param.tracklist}">
-                    execJsonRpc('RemoteControlService.loadTracks', [['${fn:join(fn:split(param.tracklist, ","), "','")}']], init2);
-                </c:when>
-                <c:when test="${!empty param.track}">
-                    execJsonRpc('RemoteControlService.loadTrack', ['${fn:replace(param.track, "'", "\\'")}'], init2);
-                </c:when>
-                <c:otherwise>
-                    init2();
-                </c:otherwise>
-            </c:choose>
+            execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], init2);
         }
 
-    function init2() {
-        new PeriodicalExecuter(function() {
-            getStateAndUpdateInterface();
-        }, 2);
-        execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], init3);
-    }
-
-    function init3(trackInfo) {
-        if (trackInfo == null || trackInfo == undefined) {
-            execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], init3);
+        function init2(trackInfo) {
+            registerObserver();
+            new PeriodicalExecuter(function() {
+                getStateAndUpdateInterface();
+            }, 2);
+            if (!trackInfo.playing) {
+                startPlayback(0);
+            }
         }
-        execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], init4);
-    }
 
-    function init4(trackInfo) {
-        if (!trackInfo.playing) {
-            startPlayback(0);
+        function execJsonRpc(method, params, callback) {
+            if (sessionId == null || sessionId == undefined) {
+                jsonRpc('${servletUrl}', 'LoginService.login', ['${authUser.name}', '${authUser.hexEncodedPasswordHash}', 1], function(loginResult) {
+                    sessionId = loginResult;
+                    jsonRpc('${servletUrl}', method, params, callback, sessionId);
+                })
+            }
+            jsonRpc('${servletUrl}', method, params, callback, sessionId);
         }
-        registerObserver();
-    }
-
-    function execJsonRpc(method, params, callback) {
-        if (sessionId == null || sessionId == undefined) {
-            jsonRpc('${servletUrl}', 'LoginService.login', ['${authUser.name}', '${authUser.hexEncodedPasswordHash}', 1], function(loginResult) {
-                sessionId = loginResult;
-                jsonRpc('${servletUrl}', method, params, callback, sessionId);
-            })
-        }
-        jsonRpc('${servletUrl}', method, params, callback, sessionId);
-    }
 
     </script>
 
@@ -311,7 +282,7 @@
             <img id="rc_pause" src="${appUrl}/images/rc_pause.png" alt="prev" onclick="pause()" style="cursor:pointer"/>
             <img src="${appUrl}/images/rc_stop.png" alt="stop" onclick="stop()" style="cursor:pointer"/>
             <img src="${appUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
-            <img src="${appUrl}/images/fullscreen.png" alt="toggle fullscreen" onclick="toggleFullscreen()" style="cursor:pointer"/>
+            <img src="${appUrl}/images/fullscreen.png" alt="toggle fullscreen" onclick="shuffle() //toggleFullscreen()" style="cursor:pointer"/>
         </div>
 
         <img src="${appUrl}/images/volume.png" style="padding-right:10px"/>

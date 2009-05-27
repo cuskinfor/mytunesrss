@@ -41,4 +41,6 @@ public interface RemoteController {
     void setVolume(int percentage) throws Exception;
 
     void setFullscreen(boolean fullscreen) throws Exception;
+
+    void shuffle() throws Exception;
 }

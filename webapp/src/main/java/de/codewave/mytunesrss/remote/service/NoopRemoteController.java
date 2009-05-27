@@ -52,20 +52,24 @@ public class NoopRemoteController implements RemoteController {
         // intentionally left blank
     }
 
-    public void jumpTo(int percentage) throws Exception {
+    public void jumpTo(int percentage) {
         // intentionally left blank
     }
 
-    public RemoteTrackInfo getCurrentTrackInfo() throws Exception {
+    public RemoteTrackInfo getCurrentTrackInfo() {
         // intentionally left blank
         return null;
     }
 
-    public void setVolume(int percentage) throws Exception {
+    public void setVolume(int percentage) {
         // intentionally left blank
     }
 
-    public void setFullscreen(boolean fullscreen) throws Exception {
+    public void setFullscreen(boolean fullscreen) {
+        // intentionally left blank
+    }
+
+    public void shuffle() {
         // intentionally left blank
     }
 }
