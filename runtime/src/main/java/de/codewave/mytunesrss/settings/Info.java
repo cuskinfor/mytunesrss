@@ -29,6 +29,7 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
     private JButton myRegisterButton;
     private JComboBox myLogLevelInput;
     private JButton mySupportContactButton;
+    private JTextArea mySystemInfoTextArea;
 
     public Info() {
         MyTunesRssEventManager.getInstance().addListener(this);
@@ -45,6 +46,9 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
                 MyTunesRssUtils.setCodewaveLogLevel(Level.toLevel(myLogLevelInput.getSelectedItem().toString()));
             }
         });
+        StringBuilder systemInfo = new StringBuilder();
+        systemInfo.append(MyTunesRssUtils.getBundleString("sysinfo.quicktime." + Boolean.toString(MyTunesRss.QUICKTIME_PLAYER != null))).append(System.getProperty("line.separator"));
+        mySystemInfoTextArea.setText(systemInfo.toString());
     }
 
     public void forceRegistration() {
