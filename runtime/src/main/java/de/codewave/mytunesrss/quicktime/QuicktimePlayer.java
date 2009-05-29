@@ -1,14 +1,12 @@
 package de.codewave.mytunesrss.quicktime;
 
 import de.codewave.mytunesrss.datastore.statement.Track;
-import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quicktime.QTException;
 import quicktime.QTSession;
 import quicktime.app.time.TaskAllMovies;
 import quicktime.app.view.QTFactory;
-import quicktime.app.view.QTComponent;
 import quicktime.io.OpenMovieFile;
 import quicktime.io.QTFile;
 import quicktime.std.StdQTConstants;
@@ -16,14 +14,12 @@ import quicktime.std.StdQTException;
 import quicktime.std.clocks.ExtremesCallBack;
 import quicktime.std.clocks.TimeRecord;
 import quicktime.std.movies.Movie;
-import quicktime.std.movies.MovieController;
 import quicktime.std.movies.FullScreen;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.awt.*;
 
 /**
  * de.codewave.mytunesrss.quicktime.QuicktimePlayer
@@ -33,17 +29,15 @@ public class QuicktimePlayer {
 
     private List<Track> myTracks = Collections.emptyList();
 
-    private int myCurrent;
+    private Movie myMovie;
 
-    private MovieController myMovieController;
+    private int myCurrent;
 
     private boolean myPlaying;
 
     private boolean myInitialized;
 
-    private JFrame myVideoFrame;
-
-    private FullScreen myFullscreen;
+    private JFrame myMovieFrame = new JFrame("MyTunesRSS Video");
 
     public synchronized void init() throws QuicktimePlayerException {
         if (!myInitialized) {
@@ -51,6 +45,11 @@ public class QuicktimePlayer {
             try {
                 QTSession.open();
                 myInitialized = true;
+                myMovieFrame.getContentPane().removeAll();
+                myMovieFrame.getContentPane().add(new JLabel("init"));
+                myMovieFrame.pack();
+                myMovieFrame.setVisible(true);
+                myMovieFrame.setVisible(false);
             } catch (QTException e) {
                 throw new QuicktimePlayerException(e);
             }
@@ -68,7 +67,7 @@ public class QuicktimePlayer {
     }
 
     public synchronized void shuffle() throws QuicktimePlayerException {
-        if (myMovieController != null) {
+        if (myMovie != null) {
             stop();
         }
         Collections.shuffle(myTracks);
@@ -91,10 +90,10 @@ public class QuicktimePlayer {
         if (volume < 0 || volume > 100) {
             throw new IllegalArgumentException("Volume must be a value from 0 to 100 but was " + volume);
         }
-        if (myMovieController != null) {
+        if (myMovie != null) {
             LOGGER.debug("Setting volume to " + volume + "%.");
             try {
-                myMovieController.setVolume((float)((float) volume / 100.0));
+                myMovie.setVolume((float) ((float) volume / 100.0));
             } catch (StdQTException e) {
                 throw new QuicktimePlayerException(e);
             }
@@ -102,9 +101,9 @@ public class QuicktimePlayer {
     }
 
     public synchronized int getVolume() throws QuicktimePlayerException {
-        if (myMovieController != null) {
+        if (myMovie != null) {
             try {
-                return (int) (myMovieController.getVolume() * 100.0);
+                return (int) (myMovie.getVolume() * 100.0);
             } catch (StdQTException e) {
                 throw new QuicktimePlayerException(e);
             }
@@ -114,11 +113,13 @@ public class QuicktimePlayer {
 
     public synchronized void stop() throws QuicktimePlayerException {
         try {
-            if (myMovieController != null && myMovieController.getMovie() != null) {
+            if (myMovie != null) {
                 LOGGER.debug("Stopping playback.");
-                myMovieController.play(0);
-                myMovieController.removeMovie();
-                myMovieController = null;
+                myMovie.stop();
+                myMovieFrame.getContentPane().removeAll();
+                myMovieFrame.setVisible(false);
+                myMovie.setActive(false);
+                myMovie = null;
                 myPlaying = false;
                 myCurrent = -1;
             }
@@ -128,10 +129,10 @@ public class QuicktimePlayer {
     }
 
     public synchronized void pause() throws QuicktimePlayerException {
-        if (myMovieController != null && isPlaying()) {
+        if (myMovie != null && isPlaying()) {
             try {
                 LOGGER.debug("Pausing playback.");
-                myMovieController.play(0);
+                myMovie.stop();
                 myPlaying = false;
             } catch (StdQTException e) {
                 throw new QuicktimePlayerException(e);
@@ -145,10 +146,10 @@ public class QuicktimePlayer {
         }
         LOGGER.debug("Jumping to position " + percentage + "% of current track.");
         try {
-            if (myMovieController != null && myMovieController.getMovie() != null) {
-                int maxTime = myMovieController.getMovie().getDuration();
+            if (myMovie != null) {
+                int maxTime = myMovie.getDuration();
                 long targetTime = (long) (((float) percentage * (float) maxTime) / 100.0);
-                myMovieController.goToTime(new TimeRecord(myMovieController.getMovie().getTimeScale(), targetTime));
+                myMovie.setTime(new TimeRecord(myMovie.getTimeScale(), targetTime));
             }
         } catch (QTException e) {
             throw new QuicktimePlayerException(e);
@@ -168,9 +169,9 @@ public class QuicktimePlayer {
     }
 
     public synchronized int getCurrentTime() throws QuicktimePlayerException {
-        if (myMovieController != null) {
+        if (myMovie != null) {
             try {
-                return myMovieController.getCurrentTime();
+                return myMovie.getTime();
             } catch (StdQTException e) {
                 throw new QuicktimePlayerException(e);
             }
@@ -180,8 +181,8 @@ public class QuicktimePlayer {
 
     public synchronized int getCurrentTrackLength() throws QuicktimePlayerException {
         try {
-            if (myMovieController != null && myMovieController.getMovie() != null) {
-                return myMovieController.getMovie().getDuration();
+            if (myMovie != null) {
+                return myMovie.getDuration();
             }
         } catch (StdQTException e) {
             throw new QuicktimePlayerException(e);
@@ -193,21 +194,34 @@ public class QuicktimePlayer {
         LOGGER.debug("Playback of track " + index + " requested.");
         try {
             if (index >= 0 && index < myTracks.size()) {
-                Track track = myTracks.get(index);
                 stop();
+                Track track = myTracks.get(index);
+                while (!track.getFile().isFile()) {
+                    index++;
+                    if (index >= myTracks.size()) {
+                        return; // no more tracks
+                    }
+                    track = myTracks.get(index);
+                }
                 LOGGER.debug("Starting playback of track \"" + track.getName() + "\".");
-                Movie movie = Movie.fromFile(OpenMovieFile.asRead(new QTFile(track.getFile())));
-                new QuicktimePlayerExtremesCallback(movie);
-                myMovieController = new MovieController(movie);
-                TaskAllMovies.addMovieAndStart();
-                myMovieController.play(1);
+                myMovie = Movie.fromFile(OpenMovieFile.asRead(new QTFile(track.getFile())));
                 myCurrent = index;
-                myPlaying = true;
-            } else if (index == -1 && myMovieController != null && myMovieController.getMovie() != null) {
+                int width = myMovie.getBounds().getWidth();
+                int height = myMovie.getBounds().getHeight();
+                LOGGER.debug("Video dimension is " + width + " x " + height + ".");
+                if (width != 0 && height != 0) {
+                    myMovieFrame.getContentPane().removeAll();
+                    myMovieFrame.getContentPane().add(QTFactory.makeQTComponent(myMovie).asComponent());
+                    myMovieFrame.pack();
+                    myMovieFrame.setVisible(true);
+                }
+                new QuicktimePlayerExtremesCallback(myMovie);
+                TaskAllMovies.addMovieAndStart();
+            } else if (index == -1 && myMovie != null) {
                 LOGGER.debug("Continue playback of track \"" + myTracks.get(myCurrent).getName() + "\".");
-                myMovieController.play(1);
-                myPlaying = true;
             }
+            myMovie.start();
+            myPlaying = true;
         } catch (QTException
                 e) {
             throw new QuicktimePlayerException(e);
