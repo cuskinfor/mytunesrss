@@ -91,9 +91,9 @@ public class QuicktimePlayerRemoteController implements RemoteController {
         MyTunesRss.QUICKTIME_PLAYER.setVolume(percentage);
     }
 
-    public void setFullscreen(boolean fullscreen) {
+    public void showVideo(boolean show, boolean fullscreen) throws QuicktimePlayerException {
         // todo: implement method
-        throw new UnsupportedOperationException("method setFullscreen of class QuicktimePlayerRemoteController is not yet implemented!");
+        throw new UnsupportedOperationException("method showVideo of class QuicktimePlayerRemoteController is not yet implemented!");
     }
 
     public void shuffle() throws QuicktimePlayerException {

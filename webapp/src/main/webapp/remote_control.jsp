@@ -168,13 +168,6 @@
             self.document.location.href = '${servletUrl}/showRemoteControl/${auth}/shuffle=true/backUrl=${param.backUrl}';
         }
 
-        var fullscreen = false;
-
-        function toggleFullscreen() {
-            fullscreen = !fullscreen;
-            execJsonRpc('RemoteControlService.setFullscreen', [fullscreen]);
-        }
-
         function registerObserver() {
             Event.observe("progressBackground", "click", function(event) {
                 if (event.isLeftClick()) {
@@ -282,7 +275,7 @@
             <img id="rc_pause" src="${appUrl}/images/rc_pause.png" alt="prev" onclick="pause()" style="cursor:pointer"/>
             <img src="${appUrl}/images/rc_stop.png" alt="stop" onclick="stop()" style="cursor:pointer"/>
             <img src="${appUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
-            <img src="${appUrl}/images/fullscreen.png" alt="toggle fullscreen" onclick="shuffle() //toggleFullscreen()" style="cursor:pointer"/>
+            <img src="${appUrl}/images/fullscreen.png" alt="shuffle" onclick="shuffle() //toggleFullscreen()" style="cursor:pointer"/>
         </div>
 
         <img src="${appUrl}/images/volume.png" style="padding-right:10px"/>

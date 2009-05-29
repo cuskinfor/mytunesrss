@@ -65,7 +65,7 @@ public class NoopRemoteController implements RemoteController {
         // intentionally left blank
     }
 
-    public void setFullscreen(boolean fullscreen) {
+    public void showVideo(boolean show, boolean fullscreen) {
         // intentionally left blank
     }
 

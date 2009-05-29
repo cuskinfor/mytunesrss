@@ -172,12 +172,9 @@ public class QuicktimeRemoteController implements RemoteController {
         new AppleScriptClient("QuickTime Player").executeAppleScript("set sound volume of document 1 to " + (int) (((256.0 * (float) normalizedPercentage) / 100.0)));
     }
 
-    public void setFullscreen(boolean fullscreen) throws Exception {
-        if (fullscreen) {
-            new AppleScriptClient("QuickTime Player").executeAppleScript("stop document 1", "present document 1 scale screen", "play document 1");
-        } else {
-            new AppleScriptClient("QuickTime Player").executeAppleScript("stop document 1", "play document 1");
-        }
+    public void showVideo(boolean show, boolean fullscreen) {
+        // todo: implement method
+        throw new UnsupportedOperationException("method showVideo of class QuicktimeRemoteController is not yet implemented!");
     }
 
     public void shuffle() throws Exception {

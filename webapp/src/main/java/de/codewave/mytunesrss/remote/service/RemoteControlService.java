@@ -103,9 +103,9 @@ public class RemoteControlService implements RemoteController {
         getController().setVolume(percentage);
     }
 
-    public void setFullscreen(boolean fullscreen) throws Exception {
+    public void showVideo(boolean show, boolean fullscreen) throws Exception {
         assertAuthenticated();
-        getController().setFullscreen(fullscreen);
+        getController().showVideo(show, fullscreen);
     }
 
     public void shuffle() throws Exception {

@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import quicktime.QTException;
 import quicktime.QTSession;
 import quicktime.app.time.TaskAllMovies;
+import quicktime.app.view.QTFactory;
+import quicktime.app.view.QTComponent;
 import quicktime.io.OpenMovieFile;
 import quicktime.io.QTFile;
 import quicktime.std.StdQTConstants;
@@ -15,10 +17,13 @@ import quicktime.std.clocks.ExtremesCallBack;
 import quicktime.std.clocks.TimeRecord;
 import quicktime.std.movies.Movie;
 import quicktime.std.movies.MovieController;
+import quicktime.std.movies.FullScreen;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.awt.*;
 
 /**
  * de.codewave.mytunesrss.quicktime.QuicktimePlayer
@@ -36,6 +41,10 @@ public class QuicktimePlayer {
 
     private boolean myInitialized;
 
+    private JFrame myVideoFrame;
+
+    private FullScreen myFullscreen;
+
     public synchronized void init() throws QuicktimePlayerException {
         if (!myInitialized) {
             LOGGER.debug("Initializing quicktime player.");
@@ -52,11 +61,8 @@ public class QuicktimePlayer {
         if (myInitialized) {
             stop();
             LOGGER.debug("Destroying quicktime player.");
-            if (SystemUtils.IS_OS_WINDOWS) {
-                QTSession.exitMovies();
-            } else {
-                QTSession.close();
-            }
+            QTSession.exitMovies();
+            QTSession.close();
             myInitialized = false;
         }
     }

@@ -192,13 +192,9 @@ public class VideoLanClientRemoteController implements RemoteController {
         }
     }
 
-    public void setFullscreen(boolean fullscreen) throws Exception {
-        VideoLanClient videoLanClient = getVideoLanClient();
-        try {
-            videoLanClient.sendCommands("f " + (fullscreen ? "on" : "off"));
-        } finally {
-            videoLanClient.disconnect();
-        }
+    public void showVideo(boolean show, boolean fullscreen) {
+        // todo: implement method
+        throw new UnsupportedOperationException("method showVideo of class VideoLanClientRemoteController is not yet implemented!");
     }
 
     public void shuffle() {
