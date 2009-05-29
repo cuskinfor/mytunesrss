@@ -20,6 +20,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.awt.*;
 
 /**
  * de.codewave.mytunesrss.quicktime.QuicktimePlayer
