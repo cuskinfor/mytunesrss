@@ -1,6 +1,8 @@
 package de.codewave.mytunesrss.quicktime;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quicktime.QTException;
@@ -14,13 +16,12 @@ import quicktime.std.StdQTException;
 import quicktime.std.clocks.ExtremesCallBack;
 import quicktime.std.clocks.TimeRecord;
 import quicktime.std.movies.Movie;
-import quicktime.std.movies.FullScreen;
+import quicktime.std.movies.media.DataRef;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.awt.*;
 
 /**
  * de.codewave.mytunesrss.quicktime.QuicktimePlayer
@@ -205,7 +206,7 @@ public class QuicktimePlayer {
                     track = myTracks.get(index);
                 }
                 LOGGER.debug("Starting playback of track \"" + track.getName() + "\".");
-                myMovie = Movie.fromFile(OpenMovieFile.asRead(new QTFile(track.getFile())));
+                myMovie = getMovie(track);
                 myCurrent = index;
                 int width = myMovie.getBounds().getWidth();
                 int height = myMovie.getBounds().getHeight();
@@ -226,6 +227,22 @@ public class QuicktimePlayer {
         } catch (QTException
                 e) {
             throw new QuicktimePlayerException(e);
+        }
+    }
+
+    /**
+     * Get a new movie instance from either the track's file or (for a you tube remote file) from the external
+     * url.
+     *
+     * @param track The track.
+     * @return The corresponding movie.
+     * @throws QTException Any exception.
+     */
+    private Movie getMovie(Track track) throws QTException {
+        if (track.getSource() == TrackSource.YouTube) {
+            return Movie.fromDataRef(new DataRef(MyTunesRssUtils.getYouTubeUrl(track.getId())), StdQTConstants.newMovieActive);
+        } else {
+            return Movie.fromFile(OpenMovieFile.asRead(new QTFile(track.getFile())));
         }
     }
 
