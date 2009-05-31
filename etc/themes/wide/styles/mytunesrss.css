@@ -96,7 +96,7 @@ tr.odd td {
     background: #edf3fe;
 }
 
-tr.qtplayback td {
+tr.remoteplayback td {
     background: #ffaaaa;
 }
 
@@ -286,13 +286,13 @@ td.artist {
 }
 
 td.albumthumb {
-    padding: 3px;
+    padding: 3px 0 3px 3px;
     height: 38px;
 }
 
 tr.odd td.albumthumb {
     background-color: #edf3fe;
-    padding: 3px 0 3px 3px;
+    padding: 3px;
     height: 38px;
 }
 
@@ -790,10 +790,6 @@ div.tooltip {
     background-color:#FFFFCC;
     padding: 2px;
     max-width: 500px;
-}
-
-table.displayfilter td.wide {
-    width:100%;
 }
 
 div.glasspane {
