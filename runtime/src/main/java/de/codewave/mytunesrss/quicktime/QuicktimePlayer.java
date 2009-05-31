@@ -197,16 +197,13 @@ public class QuicktimePlayer {
         try {
             if (index >= 0 && index < myTracks.size()) {
                 stop();
-                Track track = myTracks.get(index);
-                while (!track.getFile().isFile()) {
-                    index++;
-                    if (index >= myTracks.size()) {
-                        return; // no more tracks
-                    }
-                    track = myTracks.get(index);
+                Track track;
+                for (track = myTracks.get(index), myMovie = getMovie(track); myMovie == null && index + 1 < myTracks.size(); index++, track = myTracks.get(index), myMovie = getMovie(track))
+                    ;
+                if (myMovie == null) {
+                    return; // no more tracks to play
                 }
                 LOGGER.debug("Starting playback of track \"" + track.getName() + "\".");
-                myMovie = getMovie(track);
                 myCurrent = index;
                 int width = myMovie.getBounds().getWidth();
                 int height = myMovie.getBounds().getHeight();
@@ -238,12 +235,19 @@ public class QuicktimePlayer {
      * @return The corresponding movie.
      * @throws QTException Any exception.
      */
-    private Movie getMovie(Track track) throws QTException {
-        if (track.getSource() == TrackSource.YouTube) {
-            return Movie.fromDataRef(new DataRef(MyTunesRssUtils.getYouTubeUrl(track.getId())), StdQTConstants.newMovieActive);
-        } else {
-            return Movie.fromFile(OpenMovieFile.asRead(new QTFile(track.getFile())));
+    private Movie getMovie(Track track) {
+        try {
+            if (track.getSource() == TrackSource.YouTube) {
+                return Movie.fromDataRef(new DataRef(MyTunesRssUtils.getYouTubeUrl(track.getId())), StdQTConstants.newMovieActive);
+            } else {
+                if (track.getFile().isFile()) {
+                    return Movie.fromFile(OpenMovieFile.asRead(new QTFile(track.getFile())));
+                }
+            }
+        } catch (QTException e) {
+            LOGGER.error("Could not create movie from track \"" + track.getName() + "\".", e);
         }
+        return null;
     }
 
     class QuicktimePlayerExtremesCallback extends ExtremesCallBack {

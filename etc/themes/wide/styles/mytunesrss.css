@@ -97,6 +97,10 @@ tr.odd td {
 }
 
 tr.remoteplayback td {
+    background: #ffcccc;
+}
+
+tr.remoteplaybackplaying td {
     background: #ffaaaa;
 }
 

@@ -91,11 +91,11 @@
 
         function startPlayback(index) {
             unhighlightAllTracks();
-            execJsonRpc('RemoteControlService.play', [currentPage * itemsPerPage + index + 1]);
+            execJsonRpc('RemoteControlService.play', [currentPage * itemsPerPage + index]);
         }
 
-        function highlightTrack(index) {
-            document.getElementById("trackrow" + index).className = "remoteplayback";
+        function highlightTrack(index, className) {
+            document.getElementById("trackrow" + index).className = className;
         }
 
         function unhighlightAllTracks() {
@@ -114,8 +114,8 @@
 
             unhighlightAllTracks();
 
-            if (trackInfo.playing && highlightIndex >= 0 && highlightIndex < itemsPerPage) {
-                highlightTrack(highlightIndex);
+            if (highlightIndex >= 0 && highlightIndex < itemsPerPage) {
+                highlightTrack(highlightIndex, trackInfo.playing ? "remoteplaybackplaying" : "remoteplayback");
             }
 
             if (trackInfo.playing) {
@@ -126,7 +126,7 @@
                 $("rc_pause").style.display = "none";
             }
 
-            var percentage = trackInfo.currentTime * 100 / trackInfo.length;
+            var percentage = trackInfo.currentTime != -1 && trackInfo.length > -1 ? trackInfo.currentTime * 100 / trackInfo.length : 0;
             if (percentage > 0 && percentage <= 100) {
                 document.getElementById("progressBar").style.width = (percentage) + "%";
             } else {
@@ -290,13 +290,13 @@
         <img src="${appUrl}/images/volume.png" style="padding-right:10px"/>
         <div id="volumeDiv">
             <div id="volumeBackground">
-                <div id="volumeBar">&nbsp;</div>
+                <div id="volumeBar" style="width:0">&nbsp;</div>
             </div>
         </div>
 
         <div id="progressDiv" style="display:block">
             <div id="progressBackground">
-                <div id="progressBar">&nbsp;</div>
+                <div id="progressBar" style="width:0">&nbsp;</div>
             </div>
         </div>
 

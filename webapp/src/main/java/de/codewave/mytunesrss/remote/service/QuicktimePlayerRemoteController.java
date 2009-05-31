@@ -54,7 +54,7 @@ public class QuicktimePlayerRemoteController implements RemoteController {
     }
 
     public void play(int index) throws QuicktimePlayerException {
-        MyTunesRss.QUICKTIME_PLAYER.play(index - 1);
+        MyTunesRss.QUICKTIME_PLAYER.play(index);
     }
 
     public void pause() throws QuicktimePlayerException {
