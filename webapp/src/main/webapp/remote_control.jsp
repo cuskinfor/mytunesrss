@@ -240,7 +240,16 @@
 
     <div class="body">
 
-        <h1 class="search" style="cursor:pointer" onclick="self.document.location.href='${mtfn:decode64(param.backUrl)}'"><span><fmt:message key="myTunesRss" /></span></h1>
+        <h1 class="search" onclick="window.open('http://www.codewave.de')" style="cursor: pointer"><span><fmt:message key="myTunesRss" /></span></h1>
+
+        <ul class="links">
+            <li><a style="cursor:pointer" onclick="self.document.location.href='${mtfn:decode64(param.backUrl)}'">
+                <fmt:message key="back" />
+            </a></li>
+            <li style="float:right"><a href="${servletUrl}/showPortal/${auth}">
+                <fmt:message key="portal" />
+            </a></li>
+        </ul>
 
         <table cellspacing="0">
 
