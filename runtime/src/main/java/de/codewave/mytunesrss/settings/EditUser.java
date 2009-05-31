@@ -269,7 +269,7 @@ public class EditUser implements MyTunesRssEventListener {
 
     private void createParentUserList() {
         myParentUserInput.removeAllItems();
-        myParentUserInput.addItem("--- none ---"); // TODO!
+        myParentUserInput.addItem(MyTunesRssUtils.getBundleString("settings.noParentUser"));
         List<String> usernames = new ArrayList<String>();
         for (User user : MyTunesRss.CONFIG.getUsers()) {
             if (user != myUser) {

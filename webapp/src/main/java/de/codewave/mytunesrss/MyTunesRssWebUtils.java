@@ -3,6 +3,7 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.servlet.WebConfig;
+import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.utils.servlet.ServletUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -66,12 +67,12 @@ public class MyTunesRssWebUtils {
                 webConfig.clearWithDefaults(httpServletRequest);
                 webConfig.load(httpServletRequest);
                 httpServletRequest.getSession().setAttribute("config", webConfig);
-                LOG.debug("Created session configuration: " + webConfig.getMap().toString());
+                LOG.debug("Created session configuration.");
             }
-            MyTunesRssWebUtils.setTranscodingFromRequest(webConfig, httpServletRequest);
             httpServletRequest.setAttribute("config", webConfig);
             LOG.debug("Created request configuration: " + webConfig.getMap().toString());
         }
+        MyTunesRssWebUtils.setTranscodingFromRequest(webConfig, httpServletRequest);
         return webConfig;
     }
 
@@ -125,6 +126,11 @@ public class MyTunesRssWebUtils {
             return UserAgent.NintendoWii;
         }
         return UserAgent.Unknown;
+    }
+
+    public static String getCommandCall(HttpServletRequest request, MyTunesRssCommand command) {
+        String servletUrl = getServletUrl(request);
+        return ServletUtils.getApplicationUrl(request) + servletUrl.substring(servletUrl.lastIndexOf("/")) + "/" + command.getName();
     }
 
     public static String createTranscodingPathInfo(WebConfig config) {

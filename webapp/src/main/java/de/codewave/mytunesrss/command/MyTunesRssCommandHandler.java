@@ -313,7 +313,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 LOG.error("Unhandled exception: ", e);
             }
             getSession().removeAttribute("errors");
-            redirect(ServletUtils.getApplicationUrl(getRequest()) + "/mytunesrss" + "/" + MyTunesRssCommand.ShowFatalError.getName());
+            redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.ShowFatalError));
         }
     }
 

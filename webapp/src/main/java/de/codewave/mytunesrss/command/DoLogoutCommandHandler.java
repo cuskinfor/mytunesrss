@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.WebConfig;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 
 /**
  * de.codewave.mytunesrss.command.DoLogoutCommandHandler
@@ -23,7 +24,7 @@ public class DoLogoutCommandHandler extends MyTunesRssCommandHandler {
             getSession().invalidate();
         } else {
             getSession().invalidate();
-            forward(MyTunesRssResource.Login);
+            redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.Login));
         }
     }
 }
