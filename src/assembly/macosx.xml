@@ -44,6 +44,14 @@
     </dependencySets>
     <fileSets>
         <fileSet>
+            <outputDirectory>MyTunesRSS.app/Contents/Resources/Java</outputDirectory>
+            <directory>etc</directory>
+            <includes>
+                <include>themes/**</include>
+                <include>languages/**</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <outputDirectory>.</outputDirectory>
             <directory>etc/MacOS-Bundle</directory>
             <includes>

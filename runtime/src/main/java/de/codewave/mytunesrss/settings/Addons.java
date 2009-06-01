@@ -134,11 +134,11 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
 
     private void initListModels() {
         myThemesListModel.clear();
-        for (AddonsUtils.ThemeDefinition theme : AddonsUtils.getThemes()) {
+        for (AddonsUtils.ThemeDefinition theme : AddonsUtils.getThemes(false)) {
             myThemesListModel.addElement(theme);
         }
         myLanguagesListModel.clear();
-        for (AddonsUtils.LanguageDefinition language : AddonsUtils.getLanguages()) {
+        for (AddonsUtils.LanguageDefinition language : AddonsUtils.getLanguages(false)) {
             myLanguagesListModel.addElement(language);
         }
     }

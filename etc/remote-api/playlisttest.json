@@ -1,6 +1,0 @@
-{
-    "version": "1.1",
-    "method": "PlaylistService.getPlaylists",
-    "id": "12345",
-    "params": []
-}

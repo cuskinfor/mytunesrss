@@ -418,4 +418,8 @@ public class MyTunesRssUtils {
         String videoId = StringUtils.substringAfter(trackId, "youtube_");
         return "http://youtube.com/get_video?video_id=" + videoId + "&t=" + YouTubeLoader.retrieveAdditionalParam(videoId) + "&fmt=18";
     }
+
+    public static String getBuiltinAddonsPath() {
+        return System.getProperty("de.codewave.mytunesrss.addons.builtin", ".");
+    }
 }

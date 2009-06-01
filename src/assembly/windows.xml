@@ -44,16 +44,12 @@
     </dependencySets>
     <fileSets>
         <fileSet>
-            <outputDirectory>data/conf</outputDirectory>
-            <directory>etc/conf</directory>
-            <includes>
-                <include>**</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <outputDirectory>data</outputDirectory>
             <directory>etc</directory>
             <includes>
+                <include>conf/**</include>
+                <include>themes/**</include>
+                <include>languages/**</include>
                 <include>systray4j.dll</include>
             </includes>
         </fileSet>

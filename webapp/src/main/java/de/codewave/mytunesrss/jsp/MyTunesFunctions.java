@@ -190,9 +190,7 @@ public class MyTunesFunctions {
 
     public static List<String[]> availableLanguages(Locale displayLocale) {
         Set<String> codes = new HashSet<String>();
-        codes.add("de");
-        codes.add("en");
-        for (AddonsUtils.LanguageDefinition definition : AddonsUtils.getLanguages()) {
+        for (AddonsUtils.LanguageDefinition definition : AddonsUtils.getLanguages(true)) {
             codes.add(definition.getCode());
         }
         List<String[]> langs = new ArrayList<String[]>(codes.size());

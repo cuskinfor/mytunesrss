@@ -24,32 +24,27 @@ import java.util.zip.ZipEntry;
 public class AddonsUtils {
     private static final Logger LOG = LoggerFactory.getLogger(AddonsUtils.class);
 
-    public static Collection<ThemeDefinition> getThemes() {
-        List<ThemeDefinition> themes = new ArrayList<ThemeDefinition>();
+    public static Collection<ThemeDefinition> getThemes(boolean builtinThemes) {
+        Set<ThemeDefinition> themeSet = new HashSet<ThemeDefinition>();
         try {
-            File themesDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes");
+            File themesDir = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/themes");
+            if (!themesDir.exists() && builtinThemes) {
+                themesDir.mkdirs();
+            }
+            if (builtinThemes) {
+                themeSet.addAll(getThemesFromDir(themesDir));
+            }
+            themesDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes");
             if (!themesDir.exists()) {
                 themesDir.mkdirs();
             }
-            if (themesDir.isDirectory()) {
-                for (String theme : themesDir.list(new FilenameFilter() {
-                    public boolean accept(File dir, String name) {
-                        return new File(dir, name + "/images").isDirectory() && new File(dir, name + "/styles").isDirectory();
-                    }
-                })) {
-                    File readme = new File(themesDir + "/" + theme, "readme.txt");
-                    if (readme.isFile()) {
-                        themes.add(new ThemeDefinition(theme, FileUtils.readFileToString(readme, "UTF-8")));
-                    } else {
-                        themes.add(new ThemeDefinition(theme, null));
-                    }
-                }
-            }
+            themeSet.addAll(getThemesFromDir(themesDir));
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Problem reading existing themes.", e);
             }
         }
+        List<ThemeDefinition> themes = new ArrayList<ThemeDefinition>(themeSet);
         Collections.sort(themes, new Comparator<ThemeDefinition>() {
             public int compare(ThemeDefinition o1, ThemeDefinition o2) {
                 return o1.getName().compareTo(o2.getName());
@@ -58,40 +53,75 @@ public class AddonsUtils {
         return themes;
     }
 
-    public static Collection<LanguageDefinition> getLanguages() {
-        List<LanguageDefinition> languages = new ArrayList<LanguageDefinition>();
+    private static Collection<ThemeDefinition> getThemesFromDir(File themesDir) throws IOException {
+        Collection<ThemeDefinition> themes = new HashSet<ThemeDefinition>();
+        if (themesDir.isDirectory()) {
+            for (String theme : themesDir.list(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return new File(dir, name + "/images").isDirectory() && new File(dir, name + "/styles").isDirectory();
+                }
+            })) {
+                File readme = new File(themesDir + "/" + theme, "readme.txt");
+                if (readme.isFile()) {
+                    themes.add(new ThemeDefinition(theme, FileUtils.readFileToString(readme, "UTF-8")));
+                } else {
+                    themes.add(new ThemeDefinition(theme, null));
+                }
+            }
+        }
+        return themes;
+    }
+
+    public static Collection<LanguageDefinition> getLanguages(boolean builtinLanguages) {
+        Set<LanguageDefinition> languageSet = new HashSet<LanguageDefinition>();
         try {
-            File languagesDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages");
+            File languagesDir = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/languages");
+            if (!languagesDir.exists() && builtinLanguages) {
+                languagesDir.mkdirs();
+            }
+            if (builtinLanguages) {
+                languageSet.add(new LanguageDefinition("de", null));
+                languageSet.add(new LanguageDefinition("en", null));
+                languageSet.addAll(getLanguagesFromDir(languagesDir));
+            }
+            languagesDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages");
             if (!languagesDir.exists()) {
                 languagesDir.mkdirs();
             }
-            if (languagesDir.isDirectory()) {
-                for (String language : languagesDir.list(new FilenameFilter() {
-                    public boolean accept(File dir, String name) {
-                        return name.startsWith("MyTunesRssWeb_") && name.endsWith(".properties");
-                    }
-                })) {
-                    String languageCode = getLanguageCode(language);
-                    if (languageCode != null) {
-                        File readme = new File(languagesDir, language + ".readme.txt");
-                        if (readme.isFile()) {
-                            languages.add(new LanguageDefinition(languageCode, FileUtils.readFileToString(readme, "UTF-8")));
-                        } else {
-                            languages.add(new LanguageDefinition(languageCode, null));
-                        }
-                    }
-                }
-            }
+            languageSet.addAll(getLanguagesFromDir(languagesDir));
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Problem reading existing themes and languages.", e);
             }
         }
+        List<LanguageDefinition> languages = new ArrayList<LanguageDefinition>(languageSet);
         Collections.sort(languages, new Comparator<LanguageDefinition>() {
             public int compare(LanguageDefinition o1, LanguageDefinition o2) {
                 return o1.getCode().compareTo(o2.getCode());
             }
         });
+        return languages;
+    }
+
+    private static Collection<LanguageDefinition> getLanguagesFromDir(File languagesDir) throws IOException {
+        Collection<LanguageDefinition> languages = new HashSet<LanguageDefinition>();
+        if (languagesDir.isDirectory()) {
+            for (String language : languagesDir.list(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.startsWith("MyTunesRssWeb_") && name.endsWith(".properties");
+                }
+            })) {
+                String languageCode = getLanguageCode(language);
+                if (languageCode != null) {
+                    File readme = new File(languagesDir, language + ".readme.txt");
+                    if (readme.isFile()) {
+                        languages.add(new LanguageDefinition(languageCode, FileUtils.readFileToString(readme, "UTF-8")));
+                    } else {
+                        languages.add(new LanguageDefinition(languageCode, null));
+                    }
+                }
+            }
+        }
         return languages;
     }
 
@@ -112,7 +142,7 @@ public class AddonsUtils {
                 for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
                     themeDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes/" + FilenameUtils.getBaseName(
                             theme.getName()));
-                    saveFile(themeDir, entry.getName(), (InputStream)zipInputStream);
+                    saveFile(themeDir, entry.getName(), (InputStream) zipInputStream);
                 }
             } catch (IOException e) {
                 if (themeDir != null && themeDir.exists()) {
@@ -215,12 +245,12 @@ public class AddonsUtils {
                 for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
                     languageDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages");
                     if (entry.getName().startsWith("MyTunesRssWeb_") && entry.getName().endsWith(".properties")) {
-                        saveFile(languageDir, entry.getName(), (InputStream)zipInputStream);
+                        saveFile(languageDir, entry.getName(), (InputStream) zipInputStream);
                         languageCode = getLanguageCode(entry.getName());
                     }
                     if (entry.getName().equals("readme.txt")) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        IOUtils.copy((InputStream)zipInputStream, baos);
+                        IOUtils.copy((InputStream) zipInputStream, baos);
                         readme = baos.toByteArray();
                     }
                 }
@@ -303,8 +333,7 @@ public class AddonsUtils {
     public static String deleteLanguage(String languageCode) {
         try {
             File languageFile = new File(
-                    PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/MyTunesRssWeb_" + languageCode + ".properties")
-                    ;
+                    PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/MyTunesRssWeb_" + languageCode + ".properties");
             if (languageFile.isFile()) {
                 languageFile.delete();
                 File readmeFile = new File(
@@ -338,6 +367,10 @@ public class AddonsUtils {
         for (String fileName : fileNames) {
             try {
                 File languageFile = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/" + fileName);
+                if (languageFile.isFile()) {
+                    return languageFile;
+                }
+                languageFile = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/languages/" + fileName);
                 if (languageFile.isFile()) {
                     return languageFile;
                 }
@@ -379,6 +412,19 @@ public class AddonsUtils {
         public String toString() {
             return myCode;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null || !(obj instanceof LanguageDefinition)) {
+                return false;
+            }
+            return StringUtils.equals(myCode, ((LanguageDefinition) obj).myCode);
+        }
+
+        @Override
+        public int hashCode() {
+            return myCode != null ? myCode.hashCode() : 0;
+        }
     }
 
     public static class ThemeDefinition {
@@ -409,6 +455,19 @@ public class AddonsUtils {
         @Override
         public String toString() {
             return myName;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null || !(obj instanceof ThemeDefinition)) {
+                return false;
+            }
+            return StringUtils.equals(myName, ((ThemeDefinition) obj).myName);
+        }
+
+        @Override
+        public int hashCode() {
+            return myName != null ? myName.hashCode() : 0;
         }
     }
 }

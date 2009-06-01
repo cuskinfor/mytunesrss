@@ -35,7 +35,7 @@ public class AddonsConfig extends MyTunesRssMBean implements AddonsConfigMBean {
     }
 
     public String[] getLanguages() {
-        Collection<AddonsUtils.LanguageDefinition> collection = AddonsUtils.getLanguages();
+        Collection<AddonsUtils.LanguageDefinition> collection = AddonsUtils.getLanguages(false);
         String[] result = new String[collection.size()];
         Iterator<AddonsUtils.LanguageDefinition> iter = collection.iterator();
         for (int i = 0; i < collection.size(); i++) {
@@ -45,7 +45,7 @@ public class AddonsConfig extends MyTunesRssMBean implements AddonsConfigMBean {
     }
 
     public String[] getThemes() {
-        Collection<AddonsUtils.ThemeDefinition> collection = AddonsUtils.getThemes();
+        Collection<AddonsUtils.ThemeDefinition> collection = AddonsUtils.getThemes(false);
         String[] result = new String[collection.size()];
         Iterator<AddonsUtils.ThemeDefinition> iter = collection.iterator();
         for (int i = 0; i < collection.size(); i++) {

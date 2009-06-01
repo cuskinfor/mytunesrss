@@ -76,7 +76,6 @@
                                 <descriptor>src/assembly/macosx.xml</descriptor>
                                 <descriptor>src/assembly/web-language.xml</descriptor>
                                 <descriptor>src/assembly/default-theme.xml</descriptor>
-                                <descriptor>src/assembly/wide-theme.xml</descriptor>
                             </descriptors>
                         </configuration>
                         <goals>

@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.servlet;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.PrefsUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -32,12 +33,17 @@ public abstract class ThemeServlet extends HttpServlet {
                 File file = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes/" + theme + resourceBasePath +
                         httpServletRequest.getPathInfo());
                 if (file.exists()) {
+                    // addon theme found
                     return file;
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Could not find file \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + theme +
-                                "\". Using default resource.");
-                    }
+                }
+                file = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/themes/" + theme + resourceBasePath + httpServletRequest.getPathInfo());
+                if (file.exists()) {
+                    // built-in theme found
+                    return file;
+                }
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Could not find file \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + theme +
+                            "\". Using default resource.");
                 }
             }
         } catch (IOException e) {
