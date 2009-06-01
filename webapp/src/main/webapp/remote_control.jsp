@@ -284,10 +284,11 @@
             <img id="rc_pause" src="${appUrl}/images/rc_pause.png" alt="prev" onclick="pause()" style="cursor:pointer"/>
             <img src="${appUrl}/images/rc_stop.png" alt="stop" onclick="stop()" style="cursor:pointer"/>
             <img src="${appUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
-            <img src="${appUrl}/images/fullscreen.png" alt="shuffle" onclick="shuffle() //toggleFullscreen()" style="cursor:pointer"/>
+            <img src="${appUrl}/images/rc_shuffle.png" alt="shuffle" onclick="shuffle()" style="cursor:pointer"/>
+            <img src="${appUrl}/images/rc_fullscreen.png" alt="shuffle" onclick="toggleFullscreen()" style="cursor:pointer"/>
         </div>
 
-        <img src="${appUrl}/images/volume.png" style="padding-right:10px"/>
+        <img src="${appUrl}/images/rc_volume.png" style="padding-right:10px" alt="volume"/>
         <div id="volumeDiv">
             <div id="volumeBackground">
                 <div id="volumeBar" style="width:0">&nbsp;</div>
