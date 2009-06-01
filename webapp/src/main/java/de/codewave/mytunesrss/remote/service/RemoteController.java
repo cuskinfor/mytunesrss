@@ -40,7 +40,7 @@ public interface RemoteController {
 
     void setVolume(int percentage) throws Exception;
 
-    void showVideo(boolean show, boolean fullscreen) throws Exception;
+    boolean setFullScreen(boolean fullscreen) throws Exception;
 
     void shuffle() throws Exception;
 }

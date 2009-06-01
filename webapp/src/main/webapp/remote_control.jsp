@@ -145,7 +145,7 @@
         }
 
         function play() {
-            execJsonRpc('RemoteControlService.play', [0], getStateAndUpdateInterface);
+            execJsonRpc('RemoteControlService.play', [-1], getStateAndUpdateInterface);
         }
 
         function pause() {
@@ -168,6 +168,14 @@
             self.document.location.href = '${servletUrl}/showRemoteControl/${auth}/shuffle=true/backUrl=${param.backUrl}';
         }
 
+        var fullScreen = false;
+
+        function toggleFullScreen() {
+            execJsonRpc('RemoteControlService.setFullScreen', [!fullScreen], function(result) {
+                fullScreen = result;
+            });
+        }
+
         function registerObserver() {
             Event.observe("progressBackground", "click", function(event) {
                 if (event.isLeftClick()) {
@@ -181,8 +189,7 @@
                     var height = containerDimensions.height;
                     var width = containerDimensions.width;
                     if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
-                        execJsonRpc('RemoteControlService.jumpTo', [Math.round(horizontalPosition * 100 / width)]);
-                        getStateAndUpdateInterface();
+                        execJsonRpc('RemoteControlService.jumpTo', [Math.round(horizontalPosition * 100 / width)], getStateAndUpdateInterface);
                     }
                 }
             });
@@ -198,8 +205,7 @@
                     var height = containerDimensions.height;
                     var width = containerDimensions.width;
                     if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
-                        execJsonRpc('RemoteControlService.setVolume', [Math.round(horizontalPosition * 100 / width)]);
-                        getStateAndUpdateInterface();
+                        execJsonRpc('RemoteControlService.setVolume', [Math.round(horizontalPosition * 100 / width)], getStateAndUpdateInterface);
                     }
                 }
             });
@@ -285,7 +291,7 @@
             <img src="${appUrl}/images/rc_stop.png" alt="stop" onclick="stop()" style="cursor:pointer"/>
             <img src="${appUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
             <img src="${appUrl}/images/rc_shuffle.png" alt="shuffle" onclick="shuffle()" style="cursor:pointer"/>
-            <img src="${appUrl}/images/rc_fullscreen.png" alt="shuffle" onclick="toggleFullscreen()" style="cursor:pointer"/>
+            <img src="${appUrl}/images/rc_fullscreen.png" alt="fullscreen" onclick="toggleFullScreen()" style="cursor:pointer"/>
         </div>
 
         <img src="${appUrl}/images/rc_volume.png" style="padding-right:10px" alt="volume"/>

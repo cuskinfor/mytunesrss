@@ -19,6 +19,7 @@ import quicktime.std.movies.Movie;
 import quicktime.std.movies.media.DataRef;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +40,7 @@ public class QuicktimePlayer {
 
     private boolean myInitialized;
 
-    private JFrame myMovieFrame = new JFrame("MyTunesRSS Video");
+    private JFrame myMovieFrame;
 
     public synchronized void init() throws QuicktimePlayerException {
         if (!myInitialized) {
@@ -47,20 +48,31 @@ public class QuicktimePlayer {
             try {
                 QTSession.open();
                 myInitialized = true;
-                myMovieFrame.getContentPane().removeAll();
-                myMovieFrame.getContentPane().add(new JLabel("init"));
-                myMovieFrame.pack();
-                myMovieFrame.setVisible(true);
-                myMovieFrame.setVisible(false);
+                createMovieFrame(false);
             } catch (QTException e) {
                 throw new QuicktimePlayerException(e);
             }
         }
     }
 
+    private synchronized void createMovieFrame(boolean undecorated) {
+        if (myMovieFrame != null) {
+            myMovieFrame.dispose();
+        }
+        myMovieFrame = new JFrame("MyTunesRSS Video");
+        myMovieFrame.setUndecorated(undecorated);
+        myMovieFrame.setResizable(false);
+        myMovieFrame.getContentPane().removeAll();
+        myMovieFrame.getContentPane().add(new JLabel("init"));
+        myMovieFrame.pack();
+        myMovieFrame.setVisible(true);
+        myMovieFrame.setVisible(false);
+    }
+
     public synchronized void destroy() throws QuicktimePlayerException {
         if (myInitialized) {
             stop();
+            myMovieFrame.dispose();
             LOGGER.debug("Destroying quicktime player.");
             QTSession.exitMovies();
             QTSession.close();
@@ -116,6 +128,7 @@ public class QuicktimePlayer {
     public synchronized void stop() throws QuicktimePlayerException {
         try {
             if (myMovie != null) {
+                setFullScreen(false);
                 LOGGER.debug("Stopping playback.");
                 myMovie.stop();
                 myMovieFrame.getContentPane().removeAll();
@@ -192,9 +205,50 @@ public class QuicktimePlayer {
         return -1;
     }
 
+    public synchronized boolean setFullScreen(boolean fullScreen) throws QuicktimePlayerException {
+        LOGGER.debug("Switching to " + (fullScreen ? "fullscreen" : "window") + " mode.");
+        try {
+            int width = myMovie.getNaturalBoundsRect().getWidth();
+            int height = myMovie.getNaturalBoundsRect().getHeight();
+            LOGGER.debug("Video dimension is " + width + " x " + height + ".");
+            if (width != 0 & height != 0) {
+                if (fullScreen && myMovie != null) {
+                    float rate = myMovie.getRate();
+                    myMovie.stop();
+                    createMovieFrame(true);
+                    myMovieFrame.getContentPane().removeAll();
+                    myMovieFrame.getContentPane().add(QTFactory.makeQTComponent(myMovie).asComponent());
+                    myMovieFrame.pack();
+                    myMovieFrame.setVisible(true);
+                    GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(myMovieFrame);
+                    myMovie.setRate(rate);
+                    return true;
+                } else {
+                    float rate = myMovie.getRate();
+                    myMovie.stop();
+                    GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(null);
+                    createMovieFrame(false);
+                    myMovieFrame.getContentPane().removeAll();
+                    myMovie.setBounds(myMovie.getNaturalBoundsRect());
+                    myMovieFrame.getContentPane().add(QTFactory.makeQTComponent(myMovie).asComponent());
+                    myMovieFrame.pack();
+                    myMovieFrame.setVisible(true);
+                    myMovie.setRate(rate);
+                }
+            }
+        } catch (QTException e) {
+            throw new QuicktimePlayerException(e);
+        }
+        return false;
+    }
+
     public synchronized void play(int index) throws QuicktimePlayerException {
         LOGGER.debug("Playback of track " + index + " requested.");
         try {
+            if (index == -1 && myMovie == null) {
+                // if continue playback is requested and no current movie, start playback of first track
+                index = 0;
+            }
             if (index >= 0 && index < myTracks.size()) {
                 stop();
                 Track track;
@@ -205,8 +259,8 @@ public class QuicktimePlayer {
                 }
                 LOGGER.debug("Starting playback of track \"" + track.getName() + "\".");
                 myCurrent = index;
-                int width = myMovie.getBounds().getWidth();
-                int height = myMovie.getBounds().getHeight();
+                int width = myMovie.getNaturalBoundsRect().getWidth();
+                int height = myMovie.getNaturalBoundsRect().getHeight();
                 LOGGER.debug("Video dimension is " + width + " x " + height + ".");
                 if (width != 0 && height != 0) {
                     myMovieFrame.getContentPane().removeAll();
