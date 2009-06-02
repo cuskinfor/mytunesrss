@@ -89,9 +89,9 @@
             }
         }
 
-        function startPlayback(index) {
+        function startPlayback(index, callback) {
             unhighlightAllTracks();
-            execJsonRpc('RemoteControlService.play', [currentPage * itemsPerPage + index]);
+            execJsonRpc('RemoteControlService.play', [currentPage * itemsPerPage + index], callback);
         }
 
         function highlightTrack(index, className) {
@@ -165,7 +165,7 @@
         }
 
         function shuffle() {
-            self.document.location.href = '${servletUrl}/showRemoteControl/${auth}/shuffle=true/backUrl=${param.backUrl}';
+            self.document.location.href = '${servletUrl}/showRemoteControl/${auth}/shuffle=true/backUrl=${param.backUrl}/fullScreen=' + fullScreen;
         }
 
         var fullScreen = false;
@@ -224,7 +224,16 @@
                 getStateAndUpdateInterface();
             }, 2);
             if (!trackInfo.playing) {
-                startPlayback(0);
+                <c:choose>
+                    <c:when test="${param.fullScreen == 'true'}">
+                        startPlayback(0, function() {
+                            toggleFullScreen();
+                        })
+                    </c:when>
+                    <c:otherwise>
+                        startPlayback(0);
+                    </c:otherwise>
+                </c:choose>
             }
         }
 

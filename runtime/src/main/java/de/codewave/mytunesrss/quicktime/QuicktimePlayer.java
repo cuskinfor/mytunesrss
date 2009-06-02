@@ -112,14 +112,14 @@ public class QuicktimePlayer {
 
     public synchronized void stop() throws QuicktimePlayerException {
         try {
-            SwingUtils.invokeAndWait(new Runnable() {
-                public void run() {
-                    myMovieFrame.dispose();
-                }
-            });
             if (myMovie != null) {
-                setFullScreen(false);
                 LOGGER.debug("Stopping playback.");
+                setFullScreen(false);
+                SwingUtils.invokeAndWait(new Runnable() {
+                    public void run() {
+                        myMovieFrame.dispose();
+                    }
+                });
                 myCallback.cancelAndCleanup();
                 myCallback = null;
                 myMovie.stop();
