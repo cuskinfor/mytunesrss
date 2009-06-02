@@ -43,20 +43,7 @@ public class QuicktimePlayer {
 
     private boolean myInitialized;
 
-    private JFrame myMovieFrame;
-
-    private synchronized void setMovieFrame(JFrame frame) {
-        if (myMovieFrame != null) {
-            LOGGER.debug("Disposing movie frame.");
-            SwingUtils.invokeAndWait(new Runnable() {
-                public void run() {
-                    myMovieFrame.dispose();
-                }
-            });
-        }
-        LOGGER.debug(frame != null ? "Setting new movie frame." : "Clearing movie frame.");
-        myMovieFrame = frame;
-    }
+    private JFrame myMovieFrame = new JFrame();
 
     public synchronized void init() throws QuicktimePlayerException {
         if (!myInitialized) {
@@ -68,20 +55,6 @@ public class QuicktimePlayer {
                 throw new QuicktimePlayerException(e);
             }
         }
-    }
-
-    private synchronized JFrame createWindowMovieFrame() throws QTException {
-        LOGGER.debug("Creating window movie frame.");
-        JFrame frame = new JFrame("MyTunesRSS Video");
-        frame.getContentPane().removeAll();
-        frame.getContentPane().add(new JLabel(""));
-        frame.pack();
-        frame.setVisible(true);
-        frame.setVisible(false);
-        frame.getContentPane().removeAll();
-        frame.getContentPane().add(QTFactory.makeQTComponent(myMovie).asComponent());
-        frame.pack();
-        return frame;
     }
 
     public synchronized void destroy() throws QuicktimePlayerException {
@@ -139,6 +112,11 @@ public class QuicktimePlayer {
 
     public synchronized void stop() throws QuicktimePlayerException {
         try {
+            SwingUtils.invokeAndWait(new Runnable() {
+                public void run() {
+                    myMovieFrame.dispose();
+                }
+            });
             if (myMovie != null) {
                 setFullScreen(false);
                 LOGGER.debug("Stopping playback.");
@@ -150,7 +128,6 @@ public class QuicktimePlayer {
                 myPlaying = false;
                 myCurrent = -1;
             }
-            setMovieFrame(null);
         } catch (StdQTException e) {
             throw new QuicktimePlayerException(e);
         }
@@ -230,24 +207,12 @@ public class QuicktimePlayer {
                     myMovie.stop();
                     if (fullScreen) {
                         myMovie.setBounds(myMovie.getNaturalBoundsRect());
-                        setMovieFrame(createFullscreenMovieFrame(getOptimalDisplayMode(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice())));
-                        SwingUtils.invokeAndWait(new Runnable() {
-                            public void run() {
-                                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(myMovieFrame);
-                            }
-                        });
-                        myMovieFrame.setVisible(true);
+                        makeFullscreenMovieFrame(getOptimalDisplayMode(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()));
                         myMovie.setRate(rate);
                         return true;
                     } else {
-                        SwingUtils.invokeAndWait(new Runnable() {
-                            public void run() {
-                                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(null);
-                            }
-                        });
                         myMovie.setBounds(myMovie.getNaturalBoundsRect());
-                        setMovieFrame(createWindowMovieFrame());
-                        myMovieFrame.setVisible(true);
+                        makeWindowMovieFrame();
                         myMovie.setRate(rate);
                     }
                 }
@@ -330,8 +295,8 @@ public class QuicktimePlayer {
         return overflowMinX < overflowMinY ? modeMinX : modeMinY;
     }
 
-    private synchronized JFrame createFullscreenMovieFrame(DisplayMode displayMode) throws QTException {
-        LOGGER.debug("Creating fullscreen movie frame.");
+    private synchronized void makeFullscreenMovieFrame(DisplayMode displayMode) throws QTException {
+        LOGGER.debug("Making fullscreen movie frame.");
         int movieWidth = myMovie.getNaturalBoundsRect().getWidth();
         int movieHeight = myMovie.getNaturalBoundsRect().getHeight();
         float xFactor = (float) displayMode.getWidth() / (float) movieWidth;
@@ -343,37 +308,63 @@ public class QuicktimePlayer {
             movieWidth *= xFactor;
             movieHeight *= xFactor;
         }
-        JFrame frame = new JFrame();
-        frame.setUndecorated(true);
-        frame.getContentPane().removeAll();
-        frame.getContentPane().add(new JLabel());
-        frame.setUndecorated(true);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setVisible(false);
-        frame.getContentPane().removeAll();
         Dimension topBottomDim = new Dimension(displayMode.getWidth(), (displayMode.getHeight() - movieHeight) / 2);
         Dimension leftRightDim = new Dimension((displayMode.getWidth() - movieWidth) / 2, displayMode.getHeight());
-        JPanel northPanel = new JPanel();
+        final JPanel northPanel = new JPanel();
         northPanel.setPreferredSize(topBottomDim);
         northPanel.setBackground(Color.BLACK);
-        JPanel southPanel = new JPanel();
+        final JPanel southPanel = new JPanel();
         southPanel.setPreferredSize(topBottomDim);
         southPanel.setBackground(Color.BLACK);
-        JPanel westPanel = new JPanel();
+        final JPanel westPanel = new JPanel();
         westPanel.setPreferredSize(leftRightDim);
         westPanel.setBackground(Color.BLACK);
-        JPanel eastPanel = new JPanel();
+        final JPanel eastPanel = new JPanel();
         eastPanel.setPreferredSize(leftRightDim);
         eastPanel.setBackground(Color.BLACK);
-        Component videoComponent = QTFactory.makeQTComponent(myMovie).asComponent();
-        frame.getContentPane().add(BorderLayout.NORTH, northPanel);
-        frame.getContentPane().add(BorderLayout.SOUTH, southPanel);
-        frame.getContentPane().add(BorderLayout.WEST, westPanel);
-        frame.getContentPane().add(BorderLayout.EAST, eastPanel);
-        frame.getContentPane().add(BorderLayout.CENTER, videoComponent);
-        frame.pack();
-        return frame;
+        final Component videoComponent = QTFactory.makeQTComponent(myMovie).asComponent();
+        SwingUtils.invokeAndWait(new Runnable() {
+            public void run() {
+                myMovieFrame.dispose();
+                myMovieFrame.setUndecorated(true);
+                myMovieFrame.setResizable(false);
+                myMovieFrame.getContentPane().removeAll();
+                myMovieFrame.getContentPane().add(new JLabel());
+                myMovieFrame.pack();
+                myMovieFrame.setVisible(true);
+                myMovieFrame.setVisible(false);
+                myMovieFrame.getContentPane().removeAll();
+                myMovieFrame.getContentPane().add(BorderLayout.NORTH, northPanel);
+                myMovieFrame.getContentPane().add(BorderLayout.SOUTH, southPanel);
+                myMovieFrame.getContentPane().add(BorderLayout.WEST, westPanel);
+                myMovieFrame.getContentPane().add(BorderLayout.EAST, eastPanel);
+                myMovieFrame.getContentPane().add(BorderLayout.CENTER, videoComponent);
+                myMovieFrame.pack();
+                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(myMovieFrame);
+                myMovieFrame.setVisible(true);
+            }
+        });
+    }
+
+    private synchronized void makeWindowMovieFrame() throws QTException {
+        LOGGER.debug("Making window movie frame.");
+        final Component videoComponent = QTFactory.makeQTComponent(myMovie).asComponent();
+        SwingUtils.invokeAndWait(new Runnable() {
+            public void run() {
+                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(null);
+                myMovieFrame.dispose();
+                myMovieFrame.setTitle("MyTunesRSS Video");
+                myMovieFrame.getContentPane().removeAll();
+                myMovieFrame.getContentPane().add(new JLabel(""));
+                myMovieFrame.pack();
+                myMovieFrame.setVisible(true);
+                myMovieFrame.setVisible(false);
+                myMovieFrame.getContentPane().removeAll();
+                myMovieFrame.getContentPane().add(videoComponent);
+                myMovieFrame.pack();
+                myMovieFrame.setVisible(true);
+            }
+        });
     }
 
     /**
@@ -421,7 +412,11 @@ public class QuicktimePlayer {
         }
 
         public void execute() {
-            onFinishPlayback();
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    onFinishPlayback();
+                }
+            });
         }
     }
 }
