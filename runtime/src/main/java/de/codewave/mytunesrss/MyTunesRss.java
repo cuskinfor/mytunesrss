@@ -140,7 +140,7 @@ public class MyTunesRss {
     public static ImageIcon PLEASE_WAIT_ICON;
     public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
     public static int OPTION_PANE_MAX_MESSAGE_LENGTH = 100;
-    public static boolean HEADLESS;
+    public static boolean HEADLESS = GraphicsEnvironment.isHeadless();
     private static Settings SETTINGS;
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
     public static final ErrorQueue ERROR_QUEUE = new ErrorQueue();
@@ -269,13 +269,15 @@ public class MyTunesRss {
     }
 
     private static void initializeQuicktimePlayer() {
-        try {
-            // try to find class
-            Class.forName("quicktime.util.QTBuild");
-            QUICKTIME_PLAYER = new QuicktimePlayer();
-            LOGGER.info("Quicktime player created successfully.");
-        } catch (ClassNotFoundException e) {
-            LOGGER.info("No quicktime environment found, quicktime player disabled.");
+        if (!GraphicsEnvironment.isHeadless()) {
+            try {
+                // try to find class
+                Class.forName("quicktime.util.QTBuild");
+                QUICKTIME_PLAYER = new QuicktimePlayer();
+                LOGGER.info("Quicktime player created successfully.");
+            } catch (ClassNotFoundException e) {
+                LOGGER.info("No quicktime environment found, quicktime player disabled.");
+            }
         }
     }
 

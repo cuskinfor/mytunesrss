@@ -71,4 +71,8 @@ public class ApplicationConfig extends MyTunesRssMBean implements ApplicationCon
             return MyTunesRssUtils.getBundleString("error.illegalProxySettings");
         }
     }
+
+    public String getSystemInfo() {
+        return MyTunesRssUtils.getSystemInfo();
+    }
 }

@@ -422,4 +422,10 @@ public class MyTunesRssUtils {
     public static String getBuiltinAddonsPath() {
         return System.getProperty("de.codewave.mytunesrss.addons.builtin", ".");
     }
+
+    public static String getSystemInfo() {
+        StringBuilder systemInfo = new StringBuilder();
+        systemInfo.append(MyTunesRssUtils.getBundleString("sysinfo.quicktime." + Boolean.toString(MyTunesRss.QUICKTIME_PLAYER != null))).append(System.getProperty("line.separator"));
+        return systemInfo.toString();
+    }
 }

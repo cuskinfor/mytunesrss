@@ -16,8 +16,6 @@ import java.awt.event.ActionListener;
  * de.codewave.mytunesrss.settings.SupportContact
  */
 public class SupportContact {
-    private static final Logger LOG = LoggerFactory.getLogger(SupportContact.class);
-
     private JPanel myRootPanel;
     private JButton mySendButton;
     private JButton myCancelButton;

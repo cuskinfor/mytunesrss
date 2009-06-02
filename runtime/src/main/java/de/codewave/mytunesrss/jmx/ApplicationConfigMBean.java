@@ -15,4 +15,6 @@ public interface ApplicationConfigMBean {
     void setCodewaveLogLevel(String level);
 
     String sendSupportRequest(String name, String email, String comment, boolean includeItunesXml);
+
+    String getSystemInfo();
 }

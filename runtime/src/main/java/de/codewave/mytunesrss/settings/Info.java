@@ -19,8 +19,6 @@ import java.io.File;
  * de.codewave.mytunesrss.settings.Info
  */
 public class Info implements MyTunesRssEventListener, SettingsForm {
-    private static final Logger LOG = LoggerFactory.getLogger(Info.class);
-
     private JPanel myRootPanel;
     private JLabel myRegistrationNameInput;
     private JLabel myExpirationInput;
@@ -46,9 +44,7 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
                 MyTunesRssUtils.setCodewaveLogLevel(Level.toLevel(myLogLevelInput.getSelectedItem().toString()));
             }
         });
-        StringBuilder systemInfo = new StringBuilder();
-        systemInfo.append(MyTunesRssUtils.getBundleString("sysinfo.quicktime." + Boolean.toString(MyTunesRss.QUICKTIME_PLAYER != null))).append(System.getProperty("line.separator"));
-        mySystemInfoTextArea.setText(systemInfo.toString());
+        mySystemInfoTextArea.setText(MyTunesRssUtils.getSystemInfo());
     }
 
     public void forceRegistration() {
