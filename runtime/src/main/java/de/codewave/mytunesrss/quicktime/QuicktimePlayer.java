@@ -266,6 +266,7 @@ public class QuicktimePlayer {
                 index = 0;
             }
             if (index >= 0 && index < myTracks.size()) {
+                boolean fullScreen = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getFullScreenWindow() != null;
                 stop();
                 Track track;
                 for (track = myTracks.get(index), myMovie = getMovie(track); myMovie == null && index + 1 < myTracks.size(); index++, track = myTracks.get(index), myMovie = getMovie(track))
@@ -277,7 +278,7 @@ public class QuicktimePlayer {
                 myCurrent = index;
                 myCallback = new QuicktimePlayerExtremesCallback(myMovie);
                 TaskAllMovies.addMovieAndStart();
-                setFullScreen(false);
+                setFullScreen(fullScreen);
             } else if (index == -1 && myMovie != null) {
                 LOGGER.debug("Continue playback of track \"" + myTracks.get(myCurrent).getName() + "\".");
             }
