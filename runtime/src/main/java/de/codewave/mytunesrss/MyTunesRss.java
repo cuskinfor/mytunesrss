@@ -543,14 +543,10 @@ public class MyTunesRss {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // intentionally left blank
-
+                QUIT_REQUEST = true;
             }
         }
-        MyTunesRssJmxUtils.stopJmxServer();
-        CONFIG.save();
-        SERVER_RUNNING_TIMER.cancel();
-        STORE.destroy();
+        MyTunesRssUtils.shutdownGracefully();
     }
 
     public static void startWebserver() {

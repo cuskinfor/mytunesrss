@@ -177,8 +177,10 @@ public class MyTunesRssUtils {
         }
         if (MyTunesRss.WEBSERVER == null || !MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRssJmxUtils.stopJmxServer();
-            MyTunesRss.CONFIG.setWindowX(MyTunesRss.ROOT_FRAME.getLocation().x);
-            MyTunesRss.CONFIG.setWindowY(MyTunesRss.ROOT_FRAME.getLocation().y);
+            if (!MyTunesRss.HEADLESS) {
+                MyTunesRss.CONFIG.setWindowX(MyTunesRss.ROOT_FRAME.getLocation().x);
+                MyTunesRss.CONFIG.setWindowY(MyTunesRss.ROOT_FRAME.getLocation().y);
+            }
             MyTunesRss.CONFIG.save();
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             if (DatabaseBuilderTask.isRunning()) {
@@ -228,7 +230,9 @@ public class MyTunesRssUtils {
                     MyTunesRss.STORE.destroy();
                 }
             });
-            MyTunesRss.ROOT_FRAME.dispose();
+            if (!MyTunesRss.HEADLESS) {
+                MyTunesRss.ROOT_FRAME.dispose();
+            }
         }
         shutdown();
     }
