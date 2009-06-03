@@ -34,6 +34,8 @@
         var itemsPerPage = 10;
         var pagesPerPager = 10;
         var currentPage = 0;
+        var myFullScreen = false;
+        var sessionId;
 
         function createPlaylist() {
             unhighlightAllTracks();
@@ -165,14 +167,12 @@
         }
 
         function shuffle() {
-            self.document.location.href = '${servletUrl}/showRemoteControl/${auth}/shuffle=true/backUrl=${param.backUrl}/fullScreen=' + fullScreen;
+            self.document.location.href = '${servletUrl}/showRemoteControl/${auth}/shuffle=true/backUrl=${param.backUrl}/fullScreen=' + myFullScreen;
         }
 
-        var fullScreen = false;
-
         function toggleFullScreen() {
-            execJsonRpc('RemoteControlService.setFullScreen', [!fullScreen], function(result) {
-                fullScreen = result;
+            execJsonRpc('RemoteControlService.setFullScreen', [!myFullScreen], function(result) {
+                myFullScreen = result;
             });
         }
 
@@ -210,8 +210,6 @@
                 }
             });
         }
-
-        var sessionId;
 
         function init() {
             createPlaylist();
@@ -303,7 +301,7 @@
             <img src="${appUrl}/images/rc_fullscreen.png" alt="fullscreen" onclick="toggleFullScreen()" style="cursor:pointer"/>
         </div>
 
-        <img src="${appUrl}/images/rc_volume.png" style="padding-right:10px" alt="volume"/>
+        <!--img src="${appUrl}/images/rc_volume.png" style="padding-right:10px" alt="volume"/-->
         <div id="volumeDiv">
             <div id="volumeBackground">
                 <div id="volumeBar" style="width:0">&nbsp;</div>

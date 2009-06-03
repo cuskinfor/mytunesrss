@@ -129,12 +129,12 @@
                         <c:choose>
                             <c:when test="${empty track.sectionPlaylistId}">
                                 <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${track.sectionIds}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                    <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                    <img src="${appUrl}/images/remote_control_th.gif"
                                          alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                             </c:when>
                             <c:otherwise>
                                 <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${track.sectionPlaylistId}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                    <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                    <img src="${appUrl}/images/remote_control_th.gif"
                                          alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                             </c:otherwise>
                         </c:choose>

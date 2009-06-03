@@ -97,6 +97,10 @@ tr.odd td {
 }
 
 tr.remoteplayback td {
+    background: #ffcccc;
+}
+
+tr.remoteplaybackplaying td {
     background: #ffaaaa;
 }
 
@@ -745,7 +749,11 @@ h1.serverbrowser span {
 }
 
 #volumeDiv {
-    padding: 20px;
+    padding-top: 20px;
+    padding-left: 50px;
+    padding-right: 20px;
+    padding-bottom: 0;
+    background: url("../images/rc_volume.png") 20px 20px no-repeat;
 }
 
 #volumeBackground {
