@@ -9,6 +9,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.*;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,17 +48,17 @@ public class SendSupportRequestTask extends MyTunesRssTask {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             zipOutput = new ZipOutputStream(baos);
-            ZipUtils.addToZip("MyTunesRSS_Support/MyTunesRSS-" + MyTunesRss.VERSION + ".log", new File(
-                    PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.log"), zipOutput);
+            String archiveName = "MyTunesRSS_" + MyTunesRss.VERSION + "_Support" + (StringUtils.isNotBlank(myName) ? "_" + StringUtils.trim(myName) : "");
+            ZipUtils.addToZip(archiveName + "/MyTunesRSS.log", new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.log"), zipOutput);
             if (myIncludeItunesXml) {
                 int index = 0;
                 for (String dataSource : MyTunesRss.CONFIG.getDatasources()) {
                     File file = new File(dataSource);
                     if (file.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(dataSource))) {
                         if (index == 0) {
-                            ZipUtils.addToZip("MyTunesRSS_Support/iTunes Music Library.xml", file, zipOutput);
+                            ZipUtils.addToZip(archiveName + "/iTunes Music Library.xml", file, zipOutput);
                         } else {
-                            ZipUtils.addToZip("MyTunesRSS_Support/iTunes Music Library (" + index + ").xml", file, zipOutput);
+                            ZipUtils.addToZip(archiveName + "/iTunes Music Library (" + index + ").xml", file, zipOutput);
                         }
                         index++;
                     }
@@ -65,10 +66,10 @@ public class SendSupportRequestTask extends MyTunesRssTask {
             }
             zipOutput.close();
             postMethod = new PostMethod(System.getProperty("MyTunesRSS.supportUrl", SUPPORT_URL));
-            PartSource partSource = new ByteArrayPartSource("MyTunesRSS-" + MyTunesRss.VERSION + "-Support.zip", baos.toByteArray());
-            Part[] part = new Part[] {new StringPart("mailSubject", "MyTunesRSS v" + MyTunesRss.VERSION + " Support Request"), new StringPart("name",
-                                                                                                                                              myName),
-                                      new StringPart("email", myEmail), new StringPart("comment", myComment), new FilePart("archive", partSource)};
+            PartSource partSource = new ByteArrayPartSource(archiveName + ".zip", baos.toByteArray());
+            Part[] part = new Part[]{new StringPart("mailSubject", "MyTunesRSS v" + MyTunesRss.VERSION + " Support Request"), new StringPart("name",
+                    myName),
+                    new StringPart("email", myEmail), new StringPart("comment", myComment), new FilePart("archive", partSource)};
             MultipartRequestEntity multipartRequestEntity = new MultipartRequestEntity(part, postMethod.getParams());
             postMethod.setRequestEntity(multipartRequestEntity);
             HttpClient httpClient = MyTunesRssUtils.createHttpClient();
