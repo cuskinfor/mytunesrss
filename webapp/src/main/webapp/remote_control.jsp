@@ -42,7 +42,11 @@
             var start = currentPage * itemsPerPage;
             for (var i = 0; i < itemsPerPage; i++) {
                 if (start + i < trackNames.length) {
-                    document.getElementById("trackrow" + i).style.display = "table-row";
+                    try {
+                        document.getElementById("trackrow" + i).style.display = "table-row";
+                    } catch (e) {
+                        document.getElementById("trackrow" + i).style.display = "block";
+                    }
                     document.getElementById("track" + i).innerHTML = trackNames[start + i];
                     if (imageUrls[start + i] != "") {
                         document.getElementById("cover" + i).innerHTML = "<img src=\"" + imageUrls[start + i] + "\"/>";
@@ -176,37 +180,45 @@
             });
         }
 
-        function registerObserver() {
-            Event.observe("progressBackground", "click", function(event) {
+        function handleProgressBar(event) {
+            var containerLeft = Position.page($("progressBackground"))[0];
+            var containerTop = Position.page($("progressBackground"))[1];
+            var mouseX = event.pointerX();
+            var mouseY = event.pointerY();
+            var horizontalPosition = mouseX - containerLeft;
+            var verticalPosition = mouseY - containerTop;
+            var containerDimensions = $('progressBackground').getDimensions();
+            var height = containerDimensions.height;
+            var width = containerDimensions.width;
+            if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
+                execJsonRpc('RemoteControlService.jumpTo', [Math.round(horizontalPosition * 100 / width)], getStateAndUpdateInterface);
+            }
+        }
+
+        function handleVolumeBar(event) {
+            var containerLeft = Position.page($("volumeBackground"))[0];
+            var containerTop = Position.page($("volumeBackground"))[1];
+            var mouseX = event.pointerX();
+            var mouseY = event.pointerY();
+            var horizontalPosition = mouseX - containerLeft;
+            var verticalPosition = mouseY - containerTop;
+            var containerDimensions = $('volumeBackground').getDimensions();
+            var height = containerDimensions.height;
+            var width = containerDimensions.width;
+            if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
+                execJsonRpc('RemoteControlService.setVolume', [Math.round(horizontalPosition * 100 / width)], getStateAndUpdateInterface);
+            }
+        }
+
+        function registerObservers() {
+            Event.observe("progressBackground", "mousedown", function(event) {
                 if (event.isLeftClick()) {
-                    var containerLeft = Position.page($("progressBackground"))[0];
-                    var containerTop = Position.page($("progressBackground"))[1];
-                    var mouseX = event.pointerX();
-                    var mouseY = event.pointerY();
-                    var horizontalPosition = mouseX - containerLeft;
-                    var verticalPosition = mouseY - containerTop;
-                    var containerDimensions = $('progressBackground').getDimensions();
-                    var height = containerDimensions.height;
-                    var width = containerDimensions.width;
-                    if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
-                        execJsonRpc('RemoteControlService.jumpTo', [Math.round(horizontalPosition * 100 / width)], getStateAndUpdateInterface);
-                    }
+                    handleProgressBar(event);
                 }
             });
-            Event.observe("volumeBackground", "click", function(event) {
+            Event.observe("volumeBackground", "mousedown", function(event) {
                 if (event.isLeftClick()) {
-                    var containerLeft = Position.page($("volumeBackground"))[0];
-                    var containerTop = Position.page($("volumeBackground"))[1];
-                    var mouseX = event.pointerX();
-                    var mouseY = event.pointerY();
-                    var horizontalPosition = mouseX - containerLeft;
-                    var verticalPosition = mouseY - containerTop;
-                    var containerDimensions = $('volumeBackground').getDimensions();
-                    var height = containerDimensions.height;
-                    var width = containerDimensions.width;
-                    if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
-                        execJsonRpc('RemoteControlService.setVolume', [Math.round(horizontalPosition * 100 / width)], getStateAndUpdateInterface);
-                    }
+                    handleVolumeBar(event);
                 }
             });
         }
@@ -217,7 +229,7 @@
         }
 
         function init2(trackInfo) {
-            registerObserver();
+            registerObservers();
             new PeriodicalExecuter(function() {
                 getStateAndUpdateInterface();
             }, 2);
@@ -251,7 +263,7 @@
 
 <body onload="init()">
 
-    <div class="body">
+    <div id="body" class="body">
 
         <h1 class="search" onclick="window.open('http://www.codewave.de')" style="cursor: pointer"><span><fmt:message key="myTunesRss" /></span></h1>
 
@@ -301,16 +313,15 @@
             <img src="${appUrl}/images/rc_fullscreen.png" alt="fullscreen" onclick="toggleFullScreen()" style="cursor:pointer"/>
         </div>
 
-        <!--img src="${appUrl}/images/rc_volume.png" style="padding-right:10px" alt="volume"/-->
         <div id="volumeDiv">
-            <div id="volumeBackground">
-                <div id="volumeBar" style="width:0">&nbsp;</div>
+            <div id="volumeBackground" style="cursor:pointer">
+                <div id="volumeBar" style="width:0;cursor:pointer">&nbsp;</div>
             </div>
         </div>
 
         <div id="progressDiv" style="display:block">
-            <div id="progressBackground">
-                <div id="progressBar" style="width:0">&nbsp;</div>
+            <div id="progressBackground" style="cursor:pointer">
+                <div id="progressBar" style="width:0;cursor:pointer">&nbsp;</div>
             </div>
         </div>
 
