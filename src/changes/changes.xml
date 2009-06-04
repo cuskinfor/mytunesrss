@@ -7,9 +7,12 @@
 
     <body>
 
-        <release version="3.7-RC-1" date="2009-xx-xx" description="3.7 RC 1">
+        <release version="3.7-RC-1" date="2009-06-04" description="3.7 RC 1">
+            <action dev="mdescher" type="add">
+                Leopard theme, wide theme and french translation bundled.
+            </action>
             <action dev="mdescher" type="update">
-                Only quicktime player remote control. Improvements in remote control. Shuffle button added. 
+                Only quicktime player remote control. Improvements in remote control. Shuffle button added.
             </action>
             <action dev="mdescher" type="update">
                 Volume control for remote control. Fullscreen toggle for remote control. Automatically go back from
