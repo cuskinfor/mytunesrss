@@ -83,9 +83,5 @@
                 <include>readme.*</include>
             </includes>
         </fileSet>
-        <fileSet>
-            <outputDirectory>jsonrpc_sample</outputDirectory>
-            <directory>jsonrpc_sample</directory>
-        </fileSet>
     </fileSets>
 </assembly>

@@ -428,6 +428,7 @@ div.login {
     background: #E7EDF6;
     border-bottom: 1px solid #666;
     text-align: center;
+    padding: 20px 0 20px 0;
 }
 
 td.mytunes {
@@ -641,7 +642,7 @@ div.pager a img {
 table.login {
     border: none;
     width: auto;
-    margin: 20px auto;
+    margin: 0 auto;
     font-size: 12px;
 }
 
