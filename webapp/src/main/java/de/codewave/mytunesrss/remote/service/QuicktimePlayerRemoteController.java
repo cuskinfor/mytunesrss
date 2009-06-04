@@ -98,4 +98,16 @@ public class QuicktimePlayerRemoteController implements RemoteController {
     public void shuffle() throws QuicktimePlayerException {
         MyTunesRss.QUICKTIME_PLAYER.shuffle();
     }
+
+    public List<Track> getPlaylist() {
+        return MyTunesRss.QUICKTIME_PLAYER.getPlaylist();
+    }
+
+    public Track getTrack(int index) throws Exception {
+        List<Track> tracks = MyTunesRss.QUICKTIME_PLAYER.getPlaylist();
+        if (index < 0 || index >= tracks.size()) {
+            return null;
+        }
+        return tracks.get(index);
+    }
 }

@@ -1,5 +1,9 @@
 package de.codewave.mytunesrss.remote.service;
 
+import de.codewave.mytunesrss.datastore.statement.Track;
+
+import java.util.List;
+
 /**
  * de.codewave.mytunesrss.remote.service.RemoteControlService
  */
@@ -43,4 +47,8 @@ public interface RemoteController {
     boolean setFullScreen(boolean fullscreen) throws Exception;
 
     void shuffle() throws Exception;
+
+    List<Track> getPlaylist() throws Exception;
+
+    Track getTrack(int index) throws Exception;
 }

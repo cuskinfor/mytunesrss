@@ -2,7 +2,10 @@ package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.remote.service.RemoteControlService
@@ -18,14 +21,6 @@ public class RemoteControlService implements RemoteController {
 
     private RemoteController getController() {
         return MyTunesRss.QUICKTIME_PLAYER != null ? new QuicktimePlayerRemoteController() : new NoopRemoteController();
-//        switch (MyTunesRss.CONFIG.getRemoteControlType()) {
-//            case Vlc:
-//                return new VideoLanClientRemoteController();
-//            case Quicktime:
-//                return new QuicktimePlayerRemoteController();
-//            default:
-//                return new NoopRemoteController();
-//        }
     }
 
     public void loadPlaylist(String playlistId) throws Exception {
@@ -111,5 +106,15 @@ public class RemoteControlService implements RemoteController {
     public void shuffle() throws Exception {
         assertAuthenticated();
         getController().shuffle();
+    }
+
+    public List<Track> getPlaylist() throws Exception {
+        assertAuthenticated();
+        return getController().getPlaylist();
+    }
+
+    public Track getTrack(int index) throws Exception {
+        assertAuthenticated();
+        return getController().getTrack(index);
     }
 }

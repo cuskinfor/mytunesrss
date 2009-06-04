@@ -1,5 +1,10 @@
 package de.codewave.mytunesrss.remote.service;
 
+import de.codewave.mytunesrss.datastore.statement.Track;
+
+import java.util.List;
+import java.util.Collections;
+
 /**
  * de.codewave.mytunesrss.remote.service.NoopRemoteController
  */
@@ -57,7 +62,6 @@ public class NoopRemoteController implements RemoteController {
     }
 
     public RemoteTrackInfo getCurrentTrackInfo() {
-        // intentionally left blank
         return null;
     }
 
@@ -71,5 +75,13 @@ public class NoopRemoteController implements RemoteController {
 
     public void shuffle() {
         // intentionally left blank
+    }
+
+    public List<Track> getPlaylist() {
+        return Collections.emptyList();
+    }
+
+    public Track getTrack(int index) {
+        return null;
     }
 }
