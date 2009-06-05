@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.7-RC-1" date="2009-06-05" description="3.7 RC 2">
+            <action dev="mdescher" type="fix">
+                Fixed creation of smart info table in migration script.
+            </action>
+        </release>
+
         <release version="3.7-RC-1" date="2009-06-04" description="3.7 RC 1">
             <action dev="mdescher" type="add">
                 Leopard theme, wide theme and french translation bundled.
