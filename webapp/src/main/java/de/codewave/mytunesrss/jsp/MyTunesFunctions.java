@@ -228,13 +228,14 @@ public class MyTunesFunctions {
         }
         builder.append("/").append(command.getName()).append("/").append(auth);
         StringBuilder pathInfo = new StringBuilder("track=");
+        try {
+            pathInfo.append(URLEncoder.encode(track.getId(), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not found!");
+        }
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (command != MyTunesRssCommand.YouTubeRedirect) {
-            try {
-                pathInfo.append(URLEncoder.encode(track.getId(), "UTF-8")).append("/tc=").append(tcParamValue(request, user, track));
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("UTF-8 not found!");
-            }
+            pathInfo.append("/tc=").append(tcParamValue(request, user, track));
             pathInfo.append("/playerRequest=").append(request.getParameter("playerRequest"));
             if (StringUtils.isNotBlank(extraPathInfo)) {
                 pathInfo.append("/").append(extraPathInfo);
@@ -262,6 +263,11 @@ public class MyTunesFunctions {
         }
         builder.append("/").append(command.getName()).append("/").append(auth);
         StringBuilder pathInfo = new StringBuilder("track=");
+        try {
+            pathInfo.append(URLEncoder.encode(track.getId(), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not found!");
+        }
         if (StringUtils.isNotBlank(extraPathInfo) && command != MyTunesRssCommand.YouTubeRedirect) {
             pathInfo.append("/").append(extraPathInfo);
         }
