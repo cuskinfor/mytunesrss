@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Set;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement
@@ -177,23 +176,17 @@ public class MigrationStatement implements DataStoreStatement {
                     if (databaseVersion.compareTo(new Version("3.8-EAP-1")) < 0) {
                         LOG.info("Migrating database to 3.8 EAP 1.");
                         MyTunesRssUtils.createStatement(connection, "migrate_3.8_eap_1").execute();
-                        DataStoreQuery.QueryResult<Track> tracks = new DataStoreQuery<DataStoreQuery.QueryResult<Track>>() {
-                            public QueryResult<Track> execute(Connection connection) throws SQLException {
-                                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAllTracks");
-                                return execute(statement, new TrackResultBuilder());
-                            }
-                        }.execute(connection);
+                        DataStoreQuery.QueryResult<Track> tracks = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, FindPlaylistTracksQuery.SortOrder.KeepOrder).execute(connection);
                         connection.setAutoCommit(false);
                         int count = 0;
                         for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
-                            Set<String> soundexCodes = track.createAllSoundex();
-                            if (!soundexCodes.isEmpty()) {
-                                InsertSoundexForTrackStatement statement = new InsertSoundexForTrackStatement(track.getId(), soundexCodes);
-                                statement.execute(connection);
-                                count++;
-                                if (count % 100 == 0) {
-                                    connection.commit();
-                                }
+                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateSoundexForTrack");
+                            statement.setString("id", track.getId());
+                            statement.setString("soundex", MyTunesRssUtils.getTrackSoundex(track));
+                            statement.execute();
+                            count++;
+                            if (count % 100 == 0) {
+                                connection.commit();
                             }
                         }
                         connection.commit();

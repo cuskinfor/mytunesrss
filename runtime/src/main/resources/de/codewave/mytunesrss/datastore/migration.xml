@@ -146,14 +146,15 @@
 
     <statement name="migrate_3.8_eap_1">
         <sql>
-            {create_table_prefix} soundex (
-                track_id VARCHAR(100) NOT NULL,
-                code VARCHAR(5) NOT NULL,
-                UNIQUE (track_id, code),
-                CONSTRAINT fk_soundex_track_id FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE
-            )
+            ALTER TABLE track ADD COLUMN soundex VARCHAR(400)
         </sql>
-        <sql>CREATE INDEX idx_soundex_code ON soundex (code)</sql>
+        <sql>CREATE INDEX idx_track_soundex ON track (soundex)</sql>
+    </statement>
+
+    <statement name="updateSoundexForTrack">
+        <sql>
+            UPDATE track SET soundex = :soundex WHERE id = :id
+        </sql>
     </statement>
 
 </statements>

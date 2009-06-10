@@ -28,6 +28,7 @@
                 pos_size INTEGER,
                 image_hash CHAR(24),
                 sticky BOOLEAN,
+                soundex VARCHAR(400),
                 UNIQUE (id)
             )
         </sql>
@@ -133,6 +134,7 @@
         <sql>CREATE INDEX idx_track_album ON track (album)</sql>
         <sql>CREATE INDEX idx_track_genre ON track (genre)</sql>
         <sql>CREATE INDEX idx_track_id ON track (id)</sql>
+        <sql>CREATE INDEX idx_track_soundex ON track (soundex)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (idx)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_track_id ON link_track_playlist (track_id)</sql>
@@ -143,12 +145,10 @@
         <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
         <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
-        <sql>CREATE INDEX idx_soundex_code ON soundex (code)</sql>
         <sql>{create_playlist_id_sequence}</sql>
     </statement>
 
     <statement name="dropAllTables">
-        <sql>DROP TABLE soundex</sql>
         <sql>DROP TABLE statistics</sql>
         <sql>DROP TABLE smart_info</sql>
         <sql>DROP TABLE link_track_playlist</sql>

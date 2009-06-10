@@ -4,6 +4,7 @@ import com.ibm.icu.text.Normalizer;
 import com.ibm.icu.text.Transliterator;
 import de.codewave.mytunesrss.datastore.external.YouTubeLoader;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
@@ -36,6 +37,8 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -433,6 +436,22 @@ public class MyTunesRssUtils {
         StringBuilder systemInfo = new StringBuilder();
         systemInfo.append(MyTunesRssUtils.getBundleString("sysinfo.quicktime." + Boolean.toString(MyTunesRss.QUICKTIME_PLAYER != null))).append(System.getProperty("line.separator"));
         return systemInfo.toString();
+    }
+
+    public static String getTrackSoundex(Track track) {
+        Set<String> soundex = new HashSet<String>();
+        for (String word : StringUtils.split(track.getName() + " " + track.getAlbum() + " " + track.getArtist())) {
+            if (StringUtils.isAlpha(word)) {
+                String code = MyTunesRssUtils.getSoundexCode(word);
+                if (code != null) {
+                    soundex.add(code);
+                    if (soundex.size() == 100) {
+                        break;
+                    }
+                }
+            }
+        }
+        return StringUtils.join(soundex, null);
     }
 
     private static Soundex SOUNDEX = new Soundex(Soundex.US_ENGLISH_MAPPING);

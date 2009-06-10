@@ -241,25 +241,4 @@ public class Track {
     public int hashCode() {
         return getId() != null ? 0 : getId().hashCode();
     }
-
-    /**
-     * Create all soundex codes for this track. All words in the track title, album and artist name
-     * are converted to soundex codes.
-     *
-     * @return Set of all soundex codes for this track.
-     */
-    public Set<String> createAllSoundex() {
-        Set<String> codes = new HashSet<String>();
-        for (String word : StringUtils.split(myName + " " + myAlbum + " " + myArtist)) {
-            if (StringUtils.isAlpha(word)) {
-                String code = MyTunesRssUtils.getSoundexCode(word);
-                if (code != null) {
-                    codes.add(code);
-                } else {
-                    LOGGER.debug("Code for word \"" + word + "\" is NULL!");
-                }
-            }
-        }
-        return codes;
-    }
 }

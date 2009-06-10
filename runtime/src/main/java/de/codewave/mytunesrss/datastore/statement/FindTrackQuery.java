@@ -10,6 +10,7 @@ import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.SQLUtils;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,6 +19,7 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
  */
 public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Track>> {
+
     public static FindTrackQuery getForId(String[] trackIds) {
         FindTrackQuery query = new FindTrackQuery();
         query.myIds = trackIds;
@@ -29,24 +31,23 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         FindTrackQuery query = new FindTrackQuery();
         query.myArtistSort = sortByArtistFirst;
         String[] searchTerms = StringUtils.split(searchTerm, " ");
+        String[] soundexCodes = new String[searchTerms.length];
         if (searchTerms == null) {
             searchTerms = new String[]{searchTerm};
         }
         for (int i = 0; i < searchTerms.length; i++) {
             if (StringUtils.isNotEmpty(searchTerms[i])) {
                 if (soundex) {
-                    searchTerms[i] = MyTunesRssUtils.getSoundexCode(searchTerms[i]);
-                } else {
-                    searchTerms[i] = "%" + SQLUtils.escapeLikeString(searchTerms[i].toLowerCase(), "\\") + "%";
+                    soundexCodes[i] = "%" + StringUtils.defaultString(MyTunesRssUtils.getSoundexCode(searchTerms[i]), "XXXX") + "%";
                 }
+                searchTerms[i] = "%" + SQLUtils.escapeLikeString(searchTerms[i].toLowerCase(), "\\") + "%";
             } else {
-                if (soundex) {
-                    throw new IllegalArgumentException("Soundex search cannot handle empty search terms.");
-                }
+                soundexCodes[i] = "%";
                 searchTerms[i] = "%";
             }
         }
         query.mySearchTerms = searchTerms;
+        query.mySoundexCodes = soundexCodes;
         query.mySoundex = soundex;
         query.myRestrictedPlaylistId = user.getPlaylistId();
         return query;
@@ -93,6 +94,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private boolean myArtistSort;
     private String myRestrictedPlaylistId;
     private boolean mySoundex;
+    private String[] mySoundexCodes;
 
     private FindTrackQuery() {
         // intentionally left blank
@@ -112,6 +114,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         statement.setItems("artist", myArtists);
         statement.setItems("genre", myGenres);
         statement.setItems("search", mySearchTerms);
+        statement.setItems("soundex", mySoundexCodes);
         statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
         return execute(statement, new TrackResultBuilder());
     }

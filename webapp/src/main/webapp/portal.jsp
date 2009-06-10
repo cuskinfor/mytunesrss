@@ -52,11 +52,14 @@
         <table class="portal" cellspacing="0">
             <tr>
                 <td class="search">
-                    <input class="text" type="text" name="searchTerm" value="<c:out value="${param.searchTerm}"/>" />
-                    <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" /> <input class="button"
-                                                                                     type="submit"
-                                                                                     value="<fmt:message key="doSearch"/>" />
-                    <input type="checkbox" name="exactOnly" value="true" />&nbsp;<fmt:message key="exactMatchesOnly" />
+                    <div>
+                        <input class="text" type="text" name="searchTerm" value="<c:out value="${param.searchTerm}"/>" />
+                        <input class="button" type="submit" value="<fmt:message key="doSearch"/>" />
+                    </div>
+                    <div>
+                        <input type="checkbox" name="exactOnly" value="true" style="vertical-align:middle"/> <fmt:message key="exactMatchesOnly" />
+                        <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
+                    </div>
                 </td>
                 <td class="links">
                     <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>" style="background-image:url('${appUrl}/images/library_small.gif');">
