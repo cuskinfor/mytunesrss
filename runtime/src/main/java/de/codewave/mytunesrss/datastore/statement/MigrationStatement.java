@@ -186,11 +186,14 @@ public class MigrationStatement implements DataStoreStatement {
                         connection.setAutoCommit(false);
                         int count = 0;
                         for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
-                            InsertSoundexForTrackStatement statement = new InsertSoundexForTrackStatement(track.getId(), track.createAllSoundex());
-                            statement.execute(connection);
-                            count++;
-                            if (count % 100 == 0) {
-                                connection.commit();
+                            Set<String> soundexCodes = track.createAllSoundex();
+                            if (!soundexCodes.isEmpty()) {
+                                InsertSoundexForTrackStatement statement = new InsertSoundexForTrackStatement(track.getId(), soundexCodes);
+                                statement.execute(connection);
+                                count++;
+                                if (count % 100 == 0) {
+                                    connection.commit();
+                                }
                             }
                         }
                         connection.commit();
