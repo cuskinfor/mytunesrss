@@ -55,6 +55,8 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.Timer;
 
+import com.ibm.icu.text.Transliterator;
+
 /**
  * de.codewave.mytunesrss.MyTunesRss
  */

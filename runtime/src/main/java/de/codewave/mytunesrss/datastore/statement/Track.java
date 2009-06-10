@@ -6,14 +6,21 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.servlet.jsp.PageContext;
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.Track
  */
 public class Track {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Track.class);
+
     private String myId;
     private String myName;
     private String myAlbum;
@@ -225,13 +232,34 @@ public class Track {
     @Override
     public boolean equals(Object other) {
         if (getId() == null) {
-            return ((Track)other).getId() == null;
+            return ((Track) other).getId() == null;
         }
-        return getId().equals(((Track)other).getId());
+        return getId().equals(((Track) other).getId());
     }
 
     @Override
     public int hashCode() {
         return getId() != null ? 0 : getId().hashCode();
+    }
+
+    /**
+     * Create all soundex codes for this track. All words in the track title, album and artist name
+     * are converted to soundex codes.
+     *
+     * @return Set of all soundex codes for this track.
+     */
+    public Set<String> createAllSoundex() {
+        Set<String> codes = new HashSet<String>();
+        for (String word : StringUtils.split(myName + " " + myAlbum + " " + myArtist)) {
+            if (StringUtils.isAlpha(word)) {
+                String code = MyTunesRssUtils.getSoundexCode(word);
+                if (code != null) {
+                    codes.add(code);
+                } else {
+                    LOGGER.debug("Code for word \"" + word + "\" is NULL!");
+                }
+            }
+        }
+        return codes;
     }
 }

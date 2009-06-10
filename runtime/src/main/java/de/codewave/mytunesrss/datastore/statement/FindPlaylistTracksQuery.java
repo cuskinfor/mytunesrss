@@ -97,37 +97,4 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
         statement.setString("restrictedPlaylistId", myRestrictionPlaylistId);
         return execute(statement, new TrackResultBuilder());
     }
-
-    public static class TrackResultBuilder implements ResultBuilder<Track> {
-        private TrackResultBuilder() {
-            // intentionally left blank
-        }
-
-        public Track create(ResultSet resultSet) throws SQLException {
-            Track track = new Track();
-            track.setId(resultSet.getString("ID"));
-            track.setSource(TrackSource.valueOf(resultSet.getString("SOURCE")));
-            track.setName(resultSet.getString("NAME"));
-            track.setArtist(resultSet.getString("ARTIST"));
-            track.setOriginalArtist(resultSet.getString("ORIGINAL_ARTIST"));
-            track.setAlbum(resultSet.getString("ALBUM"));
-            track.setTime(resultSet.getInt("TIME"));
-            track.setTrackNumber(resultSet.getInt("TRACK_NUMBER"));
-            track.setFilename(resultSet.getString("FILE"));
-            track.setFile(new File(resultSet.getString("FILE")));
-            track.setProtected(resultSet.getBoolean("PROTECTED"));
-            track.setMediaType(MediaType.valueOf(resultSet.getString("MEDIATYPE")));
-            track.setGenre(resultSet.getString("GENRE"));
-            track.setMp4Codec(resultSet.getString("MP4CODEC"));
-            track.setTsPlayed(resultSet.getLong("TS_PLAYED"));
-            track.setTsUpdated(resultSet.getLong("TS_UPDATED"));
-            track.setLastImageUpdate(resultSet.getLong("LAST_IMAGE_UPDATE"));
-            track.setPlayCount(resultSet.getLong("PLAYCOUNT"));
-            track.setImageCount(resultSet.getInt("IMAGECOUNT"));
-            track.setComment(resultSet.getString("COMMENT"));
-            track.setPosNumber(resultSet.getInt("POS_NUMBER"));
-            track.setPosSize(resultSet.getInt("POS_SIZE"));
-            return track;
-        }
-    }
 }

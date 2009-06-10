@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.Version;
+import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Set;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement
@@ -169,6 +171,31 @@ public class MigrationStatement implements DataStoreStatement {
                         LOG.info("Migrating database to 3.7 EAP 4.");
                         MyTunesRssUtils.createStatement(connection, "migrate_3.7_eap_4").execute();
                         databaseVersion = new Version("3.7-EAP-4");
+                        new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
+                    }
+                    // migration for 3.8-EAP-1
+                    if (databaseVersion.compareTo(new Version("3.8-EAP-1")) < 0) {
+                        LOG.info("Migrating database to 3.8 EAP 1.");
+                        MyTunesRssUtils.createStatement(connection, "migrate_3.8_eap_1").execute();
+                        DataStoreQuery.QueryResult<Track> tracks = new DataStoreQuery<DataStoreQuery.QueryResult<Track>>() {
+                            public QueryResult<Track> execute(Connection connection) throws SQLException {
+                                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAllTracks");
+                                return execute(statement, new TrackResultBuilder());
+                            }
+                        }.execute(connection);
+                        connection.setAutoCommit(false);
+                        int count = 0;
+                        for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
+                            InsertSoundexForTrackStatement statement = new InsertSoundexForTrackStatement(track.getId(), track.createAllSoundex());
+                            statement.execute(connection);
+                            count++;
+                            if (count % 100 == 0) {
+                                connection.commit();
+                            }
+                        }
+                        connection.commit();
+                        connection.setAutoCommit(true);
+                        databaseVersion = new Version("3.8-EAP-1");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                     }
                 } finally {

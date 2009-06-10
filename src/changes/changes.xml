@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.8-EAP-1" date="2009-xx-xx" description="3.8 EAP 1">
+            <action dev="mdescher" type="add">
+                Soundex migration and search.
+            </action>
+        </release>
+
         <release version="3.7-RC-3" date="2009-06-07" description="3.7 RC 3">
             <action dev="mdescher" type="fix">
                 Fixed problem with original file download link and youtube video links.

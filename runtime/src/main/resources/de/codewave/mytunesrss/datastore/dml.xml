@@ -355,6 +355,13 @@
       </sql>
     </statement>
 
+    <statement name="findTracksSoundex">
+      <sql>
+        {findTracksQuerySoundex}
+        ORDER BY album, pos_number, track_number, name
+      </sql>
+    </statement>
+
     <statement name="findAllTracksForImageUpdate">
         <sql>
             SELECT id AS id, source AS source, file AS file, last_image_update AS last_image_update FROM track WHERE last_image_update IS NULL OR last_image_update &lt; :timeUpdateStart
@@ -368,6 +375,13 @@
       </sql>
     </statement>
 
+    <statement name="findTracksSoundexRestricted">
+      <sql>
+        {findTracksQuerySoundexRestricted}
+        ORDER BY album, pos_number, track_number, name
+      </sql>
+    </statement>
+
     <statement name="findTracksWithArtistOrder">
       <sql>
         {findTracksQuery}
@@ -375,9 +389,23 @@
       </sql>
     </statement>
 
+    <statement name="findTracksSoundexWithArtistOrder">
+      <sql>
+        {findTracksQuerySoundex}
+        ORDER BY artist, album, pos_number, track_number, name
+      </sql>
+    </statement>
+
     <statement name="findTracksWithArtistOrderRestricted">
       <sql>
         {findTracksQueryRestricted}
+        ORDER BY artist, album, pos_number, track_number, name
+      </sql>
+    </statement>
+
+    <statement name="findTracksWithArtistOrderSoundexRestricted">
+      <sql>
+        {findTracksQuerySoundexRestricted}
         ORDER BY artist, album, pos_number, track_number, name
       </sql>
     </statement>
@@ -668,6 +696,30 @@
         </sql>
     </statement>
 
+    <statement name="findAllTracks">
+        <sql>
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+            FROM track t
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
+            GROUP BY {groupByTrackColumns}
+        </sql>
+    </statement>
+
+    <statement name="insertSoundexForTrack">
+        <sql loop="code">
+            INSERT INTO soundex (track_id, code) VALUES (:track_id, :loopitem_code)
+        </sql>
+    </statement>
+
+    <statement name="updateSoundexForTrack">
+        <sql>
+            DELETE FROM soundex WHERE track_id = :track_id
+        </sql>
+        <sql loop="code">
+            INSERT INTO soundex (track_id, code) VALUES (:track_id, :loopitem_code)
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
@@ -727,6 +779,17 @@
         ]]>
     </fragment>
 
+    <fragment name="findTracksQuerySoundex">
+        <![CDATA[
+        SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+        FROM soundex se, track t
+        LEFT OUTER JOIN image i ON i.hash = t.image_hash
+        WHERE t.id = se.track_id
+        AND se.code IN (:search[])
+        GROUP BY {groupByTrackColumns}
+        ]]>
+    </fragment>
+
     <fragment name="findTracksQueryRestricted">
         <![CDATA[
         SELECT {trackColumns}, COUNT(i.hash) AS imagecount
@@ -748,6 +811,19 @@
         AND (:size_of_search < 8 OR (LOWER(t.name) LIKE :search[7] {likeEscape}) OR (LOWER(album) LIKE :search[7] {likeEscape}) OR (LOWER(artist) LIKE :search[7] {likeEscape}))
         AND (:size_of_search < 9 OR (LOWER(t.name) LIKE :search[8] {likeEscape}) OR (LOWER(album) LIKE :search[8] {likeEscape}) OR (LOWER(artist) LIKE :search[8] {likeEscape}))
         AND (:size_of_search < 10 OR (LOWER(t.name) LIKE :search[9] {likeEscape}) OR (LOWER(album) LIKE :search[9] {likeEscape}) OR (LOWER(artist) LIKE :search[9] {likeEscape}))
+        GROUP BY {groupByTrackColumns}
+        ]]>
+    </fragment>
+
+    <fragment name="findTracksQuerySoundexRestricted">
+        <![CDATA[
+        SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+        FROM link_track_playlist rltp, soundex se, track t
+        LEFT OUTER JOIN image i ON i.hash = t.image_hash
+        WHERE rltp.playlist_id = :restrictedPlaylistId
+        AND rltp.track_id = t.id
+        AND se.track_id = t.id
+        AND se.code IN (:search[])
         GROUP BY {groupByTrackColumns}
         ]]>
     </fragment>

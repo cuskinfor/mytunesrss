@@ -56,6 +56,7 @@
                     <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" /> <input class="button"
                                                                                      type="submit"
                                                                                      value="<fmt:message key="doSearch"/>" />
+                    <input type="checkbox" name="exactOnly" value="true" />&nbsp;<fmt:message key="exactMatchesOnly" />
                 </td>
                 <td class="links">
                     <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>" style="background-image:url('${appUrl}/images/library_small.gif');">

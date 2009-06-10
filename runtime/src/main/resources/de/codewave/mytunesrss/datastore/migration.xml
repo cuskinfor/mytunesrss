@@ -144,4 +144,16 @@
         </sql>
     </statement>
 
+    <statement name="migrate_3.8_eap_1">
+        <sql>
+            {create_table_prefix} soundex (
+                track_id VARCHAR(100) NOT NULL,
+                code VARCHAR(5) NOT NULL,
+                UNIQUE (track_id, code),
+                CONSTRAINT fk_soundex_track_id FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE
+            )
+        </sql>
+        <sql>CREATE INDEX idx_soundex_code ON soundex (code)</sql>
+    </statement>
+
 </statements>

@@ -73,7 +73,7 @@ public class TrackService {
         throw new IllegalAccessException("Unauthorized");
     }
 
-    public Object search(String searchTerm, boolean sortByArtistFirst, int firstItem, int maxItems) throws IllegalAccessException, SQLException {
+    public Object search(String searchTerm, boolean sortByArtistFirst, boolean soundex, int firstItem, int maxItems) throws IllegalAccessException, SQLException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             if (StringUtils.isNotBlank(searchTerm)) {
@@ -84,7 +84,7 @@ public class TrackService {
                     }
                 }
                 if (maxTermSize >= 3) {
-                    FindTrackQuery query = FindTrackQuery.getForSearchTerm(user, searchTerm, sortByArtistFirst);
+                    FindTrackQuery query = FindTrackQuery.getForSearchTerm(user, searchTerm, sortByArtistFirst, soundex);
                     DataStoreSession transaction = TransactionFilter.getTransaction();
                     DataStoreQuery.QueryResult<Track> result = transaction.executeQuery(query);
                     List<Track> tracks = maxItems > 0 ? result.getResults(firstItem, maxItems) : result.getResults();

@@ -6,16 +6,12 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
-import de.codewave.mytunesrss.MediaType;
 import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SQLUtils;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.File;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -29,21 +25,29 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     }
 
 
-    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, boolean sortByArtistFirst) {
+    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, boolean sortByArtistFirst, boolean soundex) {
         FindTrackQuery query = new FindTrackQuery();
         query.myArtistSort = sortByArtistFirst;
         String[] searchTerms = StringUtils.split(searchTerm, " ");
         if (searchTerms == null) {
-            searchTerms = new String[] {searchTerm};
+            searchTerms = new String[]{searchTerm};
         }
         for (int i = 0; i < searchTerms.length; i++) {
             if (StringUtils.isNotEmpty(searchTerms[i])) {
-                searchTerms[i] = "%" + SQLUtils.escapeLikeString(searchTerms[i].toLowerCase(), "\\") + "%";
+                if (soundex) {
+                    searchTerms[i] = MyTunesRssUtils.getSoundexCode(searchTerms[i]);
+                } else {
+                    searchTerms[i] = "%" + SQLUtils.escapeLikeString(searchTerms[i].toLowerCase(), "\\") + "%";
+                }
             } else {
+                if (soundex) {
+                    throw new IllegalArgumentException("Soundex search cannot handle empty search terms.");
+                }
                 searchTerms[i] = "%";
             }
         }
         query.mySearchTerms = searchTerms;
+        query.mySoundex = soundex;
         query.myRestrictedPlaylistId = user.getPlaylistId();
         return query;
     }
@@ -88,6 +92,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private String[] mySearchTerms;
     private boolean myArtistSort;
     private String myRestrictedPlaylistId;
+    private boolean mySoundex;
 
     private FindTrackQuery() {
         // intentionally left blank
@@ -95,7 +100,8 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
 
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
-        String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
+        String suffix = mySoundex ? "Soundex" : "";
+        suffix += StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
         if (myArtistSort) {
             statement = MyTunesRssUtils.createStatement(connection, "findTracksWithArtistOrder" + suffix);
         } else {
@@ -108,50 +114,5 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         statement.setItems("search", mySearchTerms);
         statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
         return execute(statement, new TrackResultBuilder());
-        //        if (myIds != null && myIds.length > 1) {
-        //            Map<String, Track> idToTrack = new HashMap<String, Track>(tracks.size());
-        //            for (Track track : tracks) {
-        //                idToTrack.put(track.getId(), track);
-        //            }
-        //            tracks.clear();
-        //            for (int i = 0; i < myIds.length; i++) {
-        //                tracks.add(idToTrack.get(myIds[i]));
-        //            }
-        //        }
-        //        return tracks;
-    }
-
-    public static class TrackResultBuilder implements ResultBuilder<Track> {
-        private TrackResultBuilder() {
-            // intentionally left blank
-        }
-
-        public Track create(ResultSet resultSet) throws SQLException {
-            Track track = new Track();
-            track.setSource(TrackSource.valueOf(resultSet.getString("SOURCE")));
-            track.setId(resultSet.getString("ID"));
-            track.setName(resultSet.getString("NAME"));
-            track.setArtist(resultSet.getString("ARTIST"));
-            track.setOriginalArtist(resultSet.getString("ORIGINAL_ARTIST"));
-            track.setAlbum(resultSet.getString("ALBUM"));
-            track.setTime(resultSet.getInt("TIME"));
-            track.setTrackNumber(resultSet.getInt("TRACK_NUMBER"));
-            String pathname = resultSet.getString("FILE");
-            track.setFilename(pathname);
-            track.setFile(StringUtils.isNotEmpty(pathname) ? new File(pathname) : null);
-            track.setProtected(resultSet.getBoolean("PROTECTED"));
-            track.setMediaType(MediaType.valueOf(resultSet.getString("MEDIATYPE")));
-            track.setGenre(resultSet.getString("GENRE"));
-            track.setMp4Codec(resultSet.getString("MP4CODEC"));
-            track.setTsPlayed(resultSet.getLong("TS_PLAYED"));
-            track.setTsUpdated(resultSet.getLong("TS_UPDATED"));
-            track.setLastImageUpdate(resultSet.getLong("LAST_IMAGE_UPDATE"));
-            track.setPlayCount(resultSet.getLong("PLAYCOUNT"));
-            track.setImageCount(resultSet.getInt("IMAGECOUNT"));
-            track.setComment(resultSet.getString("COMMENT"));
-            track.setPosNumber(resultSet.getInt("POS_NUMBER"));
-            track.setPosSize(resultSet.getInt("POS_SIZE"));
-            return track;
-        }
     }
 }
