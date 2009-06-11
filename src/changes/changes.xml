@@ -11,6 +11,9 @@
             <action dev="mdescher" type="add">
                 Soundex migration and search.
             </action>
+            <action dev="mdescher" type="add">
+                Option for disabling album cover images.
+            </action>
         </release>
 
         <release version="3.7-RC-3" date="2009-06-07" description="3.7 RC 3">

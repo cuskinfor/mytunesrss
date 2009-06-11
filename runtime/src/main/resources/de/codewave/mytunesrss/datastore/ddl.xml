@@ -121,14 +121,6 @@
                 CONSTRAINT fk_smart_info_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
             )
         </sql>
-        <sql>
-            {create_table_prefix} soundex (
-                track_id VARCHAR(100) NOT NULL,
-                code VARCHAR(5) NOT NULL,
-                UNIQUE (track_id, code),
-                CONSTRAINT fk_soundex_track_id FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE
-            )
-        </sql>
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>
         <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
         <sql>CREATE INDEX idx_track_album ON track (album)</sql>

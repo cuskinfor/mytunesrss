@@ -228,6 +228,15 @@
                 </td>
             </tr>
             <tr <mt:flipFlop/>>
+                <td><fmt:message key="settings.searchDefault" /></td>
+                <td>
+                    <select name="searchDefault">
+                        <option value="Soundex" <c:if test="${config.searchDefault == 'Soundex'}">selected="selected"</c:if>><fmt:message key="settings.searchDefault.soundex"/></option>
+                        <option value="Exact" <c:if test="${config.searchDefault == 'Exact'}">selected="selected"</c:if>><fmt:message key="settings.searchDefault.exact"/></option>
+                    </select>
+                </td>
+            </tr>
+            <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.myTunesRssComAddress" /></td>
                 <td>
                     <input type="checkbox"
@@ -243,6 +252,12 @@
                         <option value="0" <c:if test="${config.browserStartIndex == '0'}">selected="selected"</c:if>>0 - 9</option>
                         <option value="1" <c:if test="${config.browserStartIndex == '1'}">selected="selected"</c:if>>A - C</option>
                     </select>
+                </td>
+            </tr>
+            <tr <mt:flipFlop/>>
+                <td><fmt:message key="settings.showAlbumArt" /></td>
+                <td>
+                    <input type="checkbox" name="showAlbumArt" value="true" <c:if test="${config.showAlbumArt}">checked="checked"</c:if> />
                 </td>
             </tr>
             <tr <mt:flipFlop/>>

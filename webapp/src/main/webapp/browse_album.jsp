@@ -110,7 +110,7 @@
                 </c:if>
                 <td class="albumthumb">
                     <c:choose>
-                        <c:when test="${album.image}">
+                        <c:when test="${config.showAlbumArt && album.image}">
                             <img id="albumthumb_${loopStatus.index}" src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
                             <div class="tooltip" id="tooltip_albumthumb_${loopStatus.index}"><img src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
                         </c:when>

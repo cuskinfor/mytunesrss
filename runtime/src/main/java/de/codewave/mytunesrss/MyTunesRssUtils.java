@@ -441,7 +441,7 @@ public class MyTunesRssUtils {
     public static String getTrackSoundex(Track track) {
         Set<String> soundex = new HashSet<String>();
         for (String word : StringUtils.split(track.getName() + " " + track.getAlbum() + " " + track.getArtist())) {
-            if (StringUtils.isAlpha(word)) {
+            if (StringUtils.length(word) > 3) {
                 String code = MyTunesRssUtils.getSoundexCode(word);
                 if (code != null) {
                     soundex.add(code);

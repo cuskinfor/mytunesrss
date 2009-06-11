@@ -57,7 +57,7 @@
                         <input class="button" type="submit" value="<fmt:message key="doSearch"/>" />
                     </div>
                     <div>
-                        <input type="checkbox" name="exactOnly" value="true" style="vertical-align:middle"/> <fmt:message key="exactMatchesOnly" />
+                        <input type="checkbox" name="exactOnly" value="true" <c:if test="${config.searchDefault == 'Exact'}">checked="checked"</c:if>> <fmt:message key="exactMatchesOnly" />
                         <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
                     </div>
                 </td>
