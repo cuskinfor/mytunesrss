@@ -3,8 +3,11 @@ package de.codewave.mytunesrss;
 import com.ibm.icu.text.Normalizer;
 import com.ibm.icu.text.Transliterator;
 import de.codewave.mytunesrss.datastore.external.YouTubeLoader;
+import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
+import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery.SortOrder;
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
@@ -22,6 +25,18 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -204,6 +219,11 @@ public class MyTunesRssUtils {
                     }
                 });
             }
+            try {
+                luceneTest();
+            } catch (Exception e) {
+                LOGGER.error("Lucene test failed!", e);
+            }
             MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
                 public void execute() {
                     DataStoreSession session = MyTunesRss.STORE.getTransaction();
@@ -240,6 +260,42 @@ public class MyTunesRssUtils {
             }
         }
         shutdown();
+    }
+
+    private static void luceneTest() throws SQLException, CorruptIndexException, IOException, org.apache.lucene.queryParser.ParseException {
+        Analyzer analyzer = new StandardAnalyzer();
+        Directory directory = FSDirectory.getDirectory("/tmp/mytunesrss-testindex");
+
+        if (Boolean.getBoolean("lucene.write")) {
+            IndexWriter iwriter = new IndexWriter(directory, analyzer, true);
+            iwriter.setMaxFieldLength(25000);
+            FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
+            DataStoreSession session = MyTunesRss.STORE.getTransaction();
+            for (Track track : session.executeQuery(query).getResults()) {
+                Document doc = new Document();
+                doc.add(new Field("id", track.getId(), Field.Store.YES, Field.Index.NO));
+                doc.add(new Field("name", track.getName(), Field.Store.YES, Field.Index.ANALYZED));
+                doc.add(new Field("album", track.getAlbum(), Field.Store.YES, Field.Index.ANALYZED));
+                doc.add(new Field("artist", track.getArtist(), Field.Store.YES, Field.Index.ANALYZED));
+                iwriter.addDocument(doc);
+            }
+            iwriter.optimize();
+            iwriter.close();
+        }
+
+        if (StringUtils.isNotBlank(System.getProperty("lucene.query"))) {
+            IndexSearcher isearcher = new IndexSearcher(directory);
+            QueryParser parser = new QueryParser("name", analyzer);
+            Query luceneQuery = parser.parse(System.getProperty("lucene.query"));
+            Hits hits = isearcher.search(luceneQuery);
+            for (int i = 0; i < hits.length(); i++) {
+              Document hitDoc = hits.doc(i);
+              LOGGER.error(hitDoc.get("id") + ": " + hitDoc.get("name") + " -- " + hitDoc.get("album") + " -- " + hitDoc.get("artist"));
+            }
+            isearcher.close();
+        }
+        
+        directory.close();
     }
 
     private static final double KBYTE = 1024;
