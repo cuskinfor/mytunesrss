@@ -103,7 +103,7 @@ public class WebConfig {
     }
 
     public static enum SearchDefault {
-        Soundex(), Exact();
+        Fuzzy(), Exact();
     }
 
     private Map<String, String> myConfigValues = new HashMap<String, String>();
@@ -157,7 +157,7 @@ public class WebConfig {
         myConfigValues.put(CFG_RANDOM_PROTECTED, "true");
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "128");
         myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "true");
-        myConfigValues.put(CFG_SEARCH_DEFAULT, SearchDefault.Soundex.name());
+        myConfigValues.put(CFG_SEARCH_DEFAULT, SearchDefault.Fuzzy.name());
         myConfigValues.put(CFG_SHOW_ALBUM_ART, "true");
     }
 

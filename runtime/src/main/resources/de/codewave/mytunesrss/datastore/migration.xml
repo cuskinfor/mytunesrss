@@ -144,17 +144,4 @@
         </sql>
     </statement>
 
-    <statement name="migrate_3.8_eap_1">
-        <sql>
-            ALTER TABLE track ADD COLUMN soundex VARCHAR(400)
-        </sql>
-        <sql>CREATE INDEX idx_track_soundex ON track (soundex)</sql>
-    </statement>
-
-    <statement name="updateSoundexForTrack">
-        <sql>
-            UPDATE track SET soundex = :soundex WHERE id = :id
-        </sql>
-    </statement>
-
 </statements>

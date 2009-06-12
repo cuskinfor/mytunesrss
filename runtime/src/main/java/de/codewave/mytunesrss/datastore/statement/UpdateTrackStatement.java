@@ -139,17 +139,6 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setInt("pos_number", myPosNumber);
             myStatement.setInt("pos_size", myPosSize);
             myStatement.setBoolean("sticky", mySticky);
-            myStatement.setString("soundex", MyTunesRssUtils.getTrackSoundex(new Track() {
-                public String getName() {
-                    return myName;
-                }
-                public String getAlbum() {
-                    return myAlbum;
-                }
-                public String getArtist() {
-                    return myArtist;
-                }
-            }));
             myStatement.execute();
         } catch (SQLException e) {
             if (UpdateTrackStatement.LOG.isErrorEnabled()) {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <statements>
+
     <statement name="findAlbums">
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
@@ -355,13 +356,6 @@
       </sql>
     </statement>
 
-    <statement name="findTracksSoundex">
-      <sql>
-        {findTracksQuerySoundex}
-        ORDER BY album, pos_number, track_number, name
-      </sql>
-    </statement>
-
     <statement name="findAllTracksForImageUpdate">
         <sql>
             SELECT id AS id, source AS source, file AS file, last_image_update AS last_image_update FROM track WHERE last_image_update IS NULL OR last_image_update &lt; :timeUpdateStart
@@ -375,13 +369,6 @@
       </sql>
     </statement>
 
-    <statement name="findTracksSoundexRestricted">
-      <sql>
-        {findTracksQuerySoundexRestricted}
-        ORDER BY album, pos_number, track_number, name
-      </sql>
-    </statement>
-
     <statement name="findTracksWithArtistOrder">
       <sql>
         {findTracksQuery}
@@ -389,23 +376,9 @@
       </sql>
     </statement>
 
-    <statement name="findTracksSoundexWithArtistOrder">
-      <sql>
-        {findTracksQuerySoundex}
-        ORDER BY artist, album, pos_number, track_number, name
-      </sql>
-    </statement>
-
     <statement name="findTracksWithArtistOrderRestricted">
       <sql>
         {findTracksQueryRestricted}
-        ORDER BY artist, album, pos_number, track_number, name
-      </sql>
-    </statement>
-
-    <statement name="findTracksWithArtistOrderSoundexRestricted">
-      <sql>
-        {findTracksQuerySoundexRestricted}
         ORDER BY artist, album, pos_number, track_number, name
       </sql>
     </statement>
@@ -462,7 +435,7 @@
     </statement>
 
     <statement name="removeTrack">
-        <sql>DELETE FROM track WHERE id = :track_id AND (sticky IS NULL OR sticky = FALSE)</sql>
+        <sql loop="track_id" loopbatch="10000" loopcommit="10000">DELETE FROM track WHERE id = :loopitem_track_id AND (sticky IS NULL OR sticky = FALSE)</sql>
     </statement>
 
     <statement name="findImage">
@@ -483,8 +456,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="mediatype" type="java.lang.String"/>
         <sql>
-            INSERT INTO track (id, name, artist, original_artist, album, time, track_number, file, protected, mediatype, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, soundex)
-            VALUES (:id, :name, :artist, :original_artist, :album, :time, :track_number, :file, :protected, :mediatype, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :soundex)
+            INSERT INTO track (id, name, artist, original_artist, album, time, track_number, file, protected, mediatype, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
+            VALUES (:id, :name, :artist, :original_artist, :album, :time, :track_number, :file, :protected, :mediatype, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size)
         </sql>
     </statement>
 
@@ -507,7 +480,7 @@
         <sql>
             UPDATE track SET name = :name, album = :album, artist = :artist, original_artist = :original_artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
-                             ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size, soundex = :soundex
+                             ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size
             WHERE id = :id
         </sql>
     </statement>
@@ -534,14 +507,14 @@
 
     <statement name="insertPlaylist">
         <sql>INSERT INTO playlist (id, name, type, track_count, hidden, user_private, user_owner, ts_create, container_id) VALUES (:id, :name, :type, 0, FALSE, :user_private, :user_name, :ts, :container_id)</sql>
-        <sql loop="track_id" loopcommit="500">{createPlaylistTrackLinks}</sql>
+        <sql loop="track_id" loopbatch="10000" loopcommit="10000">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>
     </statement>
 
     <statement name="updatePlaylist">
         <sql>UPDATE playlist SET name = :name, user_private = :user_private, container_id = :container_id WHERE id = :id</sql>
         <sql>DELETE FROM link_track_playlist WHERE playlist_id = :id</sql>
-        <sql loop="track_id" loopcommit="500">{createPlaylistTrackLinks}</sql>
+        <sql loop="track_id" loopbatch="10000" loopcommit="10000">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>
     </statement>
 
@@ -755,25 +728,6 @@
         ]]>
     </fragment>
 
-    <fragment name="findTracksQuerySoundex">
-        <![CDATA[
-        SELECT {trackColumns}, COUNT(i.hash) AS imagecount
-        FROM track t
-        LEFT OUTER JOIN image i ON i.hash = t.image_hash
-        WHERE (:size_of_search < 1 OR (LOWER(t.name) LIKE :search[0] {likeEscape}) OR (LOWER(album) LIKE :search[0] {likeEscape}) OR (LOWER(artist) LIKE :search[0] {likeEscape}) OR t.soundex LIKE :soundex[0])
-        AND (:size_of_search < 2 OR (LOWER(t.name) LIKE :search[1] {likeEscape}) OR (LOWER(album) LIKE :search[1] {likeEscape}) OR (LOWER(artist) LIKE :search[1] {likeEscape}) OR t.soundex LIKE :soundex[1])
-        AND (:size_of_search < 3 OR (LOWER(t.name) LIKE :search[2] {likeEscape}) OR (LOWER(album) LIKE :search[2] {likeEscape}) OR (LOWER(artist) LIKE :search[2] {likeEscape}) OR t.soundex LIKE :soundex[2])
-        AND (:size_of_search < 4 OR (LOWER(t.name) LIKE :search[3] {likeEscape}) OR (LOWER(album) LIKE :search[3] {likeEscape}) OR (LOWER(artist) LIKE :search[3] {likeEscape}) OR t.soundex LIKE :soundex[3])
-        AND (:size_of_search < 5 OR (LOWER(t.name) LIKE :search[4] {likeEscape}) OR (LOWER(album) LIKE :search[4] {likeEscape}) OR (LOWER(artist) LIKE :search[4] {likeEscape}) OR t.soundex LIKE :soundex[4])
-        AND (:size_of_search < 6 OR (LOWER(t.name) LIKE :search[5] {likeEscape}) OR (LOWER(album) LIKE :search[5] {likeEscape}) OR (LOWER(artist) LIKE :search[5] {likeEscape}) OR t.soundex LIKE :soundex[5])
-        AND (:size_of_search < 7 OR (LOWER(t.name) LIKE :search[6] {likeEscape}) OR (LOWER(album) LIKE :search[6] {likeEscape}) OR (LOWER(artist) LIKE :search[6] {likeEscape}) OR t.soundex LIKE :soundex[6])
-        AND (:size_of_search < 8 OR (LOWER(t.name) LIKE :search[7] {likeEscape}) OR (LOWER(album) LIKE :search[7] {likeEscape}) OR (LOWER(artist) LIKE :search[7] {likeEscape}) OR t.soundex LIKE :soundex[7])
-        AND (:size_of_search < 9 OR (LOWER(t.name) LIKE :search[8] {likeEscape}) OR (LOWER(album) LIKE :search[8] {likeEscape}) OR (LOWER(artist) LIKE :search[8] {likeEscape}) OR t.soundex LIKE :soundex[8])
-        AND (:size_of_search < 10 OR (LOWER(t.name) LIKE :search[9] {likeEscape}) OR (LOWER(album) LIKE :search[9] {likeEscape}) OR (LOWER(artist) LIKE :search[9] {likeEscape}) OR t.soundex LIKE :soundex[9])
-        GROUP BY {groupByTrackColumns}
-        ]]>
-    </fragment>
-
     <fragment name="findTracksQueryRestricted">
         <![CDATA[
         SELECT {trackColumns}, COUNT(i.hash) AS imagecount
@@ -795,26 +749,6 @@
         AND (:size_of_search < 8 OR (LOWER(t.name) LIKE :search[7] {likeEscape}) OR (LOWER(album) LIKE :search[7] {likeEscape}) OR (LOWER(artist) LIKE :search[7] {likeEscape}))
         AND (:size_of_search < 9 OR (LOWER(t.name) LIKE :search[8] {likeEscape}) OR (LOWER(album) LIKE :search[8] {likeEscape}) OR (LOWER(artist) LIKE :search[8] {likeEscape}))
         AND (:size_of_search < 10 OR (LOWER(t.name) LIKE :search[9] {likeEscape}) OR (LOWER(album) LIKE :search[9] {likeEscape}) OR (LOWER(artist) LIKE :search[9] {likeEscape}))
-        GROUP BY {groupByTrackColumns}
-        ]]>
-    </fragment>
-
-    <fragment name="findTracksQuerySoundexRestricted">
-        <![CDATA[
-        SELECT {trackColumns}, COUNT(i.hash) AS imagecount
-        FROM link_track_playlist rltp, soundex se, track t
-        LEFT OUTER JOIN image i ON i.hash = t.image_hash
-        WHERE rltp.playlist_id = :restrictedPlaylistId
-        AND (:size_of_search < 1 OR (LOWER(t.name) LIKE :search[0] {likeEscape}) OR (LOWER(album) LIKE :search[0] {likeEscape}) OR (LOWER(artist) LIKE :search[0] {likeEscape}) OR t.soundex LIKE :soundex[0])
-        AND (:size_of_search < 2 OR (LOWER(t.name) LIKE :search[1] {likeEscape}) OR (LOWER(album) LIKE :search[1] {likeEscape}) OR (LOWER(artist) LIKE :search[1] {likeEscape}) OR t.soundex LIKE :soundex[1])
-        AND (:size_of_search < 3 OR (LOWER(t.name) LIKE :search[2] {likeEscape}) OR (LOWER(album) LIKE :search[2] {likeEscape}) OR (LOWER(artist) LIKE :search[2] {likeEscape}) OR t.soundex LIKE :soundex[2])
-        AND (:size_of_search < 4 OR (LOWER(t.name) LIKE :search[3] {likeEscape}) OR (LOWER(album) LIKE :search[3] {likeEscape}) OR (LOWER(artist) LIKE :search[3] {likeEscape}) OR t.soundex LIKE :soundex[3])
-        AND (:size_of_search < 5 OR (LOWER(t.name) LIKE :search[4] {likeEscape}) OR (LOWER(album) LIKE :search[4] {likeEscape}) OR (LOWER(artist) LIKE :search[4] {likeEscape}) OR t.soundex LIKE :soundex[4])
-        AND (:size_of_search < 6 OR (LOWER(t.name) LIKE :search[5] {likeEscape}) OR (LOWER(album) LIKE :search[5] {likeEscape}) OR (LOWER(artist) LIKE :search[5] {likeEscape}) OR t.soundex LIKE :soundex[5])
-        AND (:size_of_search < 7 OR (LOWER(t.name) LIKE :search[6] {likeEscape}) OR (LOWER(album) LIKE :search[6] {likeEscape}) OR (LOWER(artist) LIKE :search[6] {likeEscape}) OR t.soundex LIKE :soundex[6])
-        AND (:size_of_search < 8 OR (LOWER(t.name) LIKE :search[7] {likeEscape}) OR (LOWER(album) LIKE :search[7] {likeEscape}) OR (LOWER(artist) LIKE :search[7] {likeEscape}) OR t.soundex LIKE :soundex[7])
-        AND (:size_of_search < 9 OR (LOWER(t.name) LIKE :search[8] {likeEscape}) OR (LOWER(album) LIKE :search[8] {likeEscape}) OR (LOWER(artist) LIKE :search[8] {likeEscape}) OR t.soundex LIKE :soundex[8])
-        AND (:size_of_search < 10 OR (LOWER(t.name) LIKE :search[9] {likeEscape}) OR (LOWER(album) LIKE :search[9] {likeEscape}) OR (LOWER(artist) LIKE :search[9] {likeEscape}) OR t.soundex LIKE :soundex[9])
         GROUP BY {groupByTrackColumns}
         ]]>
     </fragment>

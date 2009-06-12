@@ -17,7 +17,6 @@ import de.codewave.utils.sql.SmartStatement;
 import de.codewave.utils.swing.SwingUtils;
 import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
 import de.codewave.utils.swing.pleasewait.PleaseWaitUtils;
-import org.apache.commons.codec.language.Soundex;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -294,7 +293,7 @@ public class MyTunesRssUtils {
             }
             isearcher.close();
         }
-        
+
         directory.close();
     }
 
@@ -492,38 +491,5 @@ public class MyTunesRssUtils {
         StringBuilder systemInfo = new StringBuilder();
         systemInfo.append(MyTunesRssUtils.getBundleString("sysinfo.quicktime." + Boolean.toString(MyTunesRss.QUICKTIME_PLAYER != null))).append(System.getProperty("line.separator"));
         return systemInfo.toString();
-    }
-
-    public static String getTrackSoundex(Track track) {
-        Set<String> soundex = new HashSet<String>();
-        for (String word : StringUtils.split(track.getName() + " " + track.getAlbum() + " " + track.getArtist())) {
-            if (StringUtils.length(word) > 3) {
-                String code = MyTunesRssUtils.getSoundexCode(word);
-                if (code != null) {
-                    soundex.add(code);
-                    if (soundex.size() == 100) {
-                        break;
-                    }
-                }
-            }
-        }
-        return StringUtils.join(soundex, null);
-    }
-
-    private static Soundex SOUNDEX = new Soundex(Soundex.US_ENGLISH_MAPPING);
-
-    public static String getSoundexCode(String text) {
-        try {
-            return SOUNDEX.encode(text);
-        } catch (Exception e) {
-            try {
-                String transliterated = StringUtils.trim(Transliterator.getInstance("NFD;[:M:]Remove;NFC").transliterate(text));
-                LOGGER.debug("Could not create soundex code for \"" + text + "\". Trying transliterated version \"" + transliterated + "\".");
-                return SOUNDEX.encode(transliterated);
-            } catch (Exception e1) {
-                LOGGER.debug("Could not create soundex code for \"" + text + "\".", e);
-            }
-        }
-        return null;
     }
 }

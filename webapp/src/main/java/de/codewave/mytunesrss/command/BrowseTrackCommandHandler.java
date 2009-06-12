@@ -23,7 +23,6 @@ import java.util.List;
  * de.codewave.mytunesrss.command.BrowseTrackCommandHandler
  */
 public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(BrowseTrackCommandHandler.class);
 
     @Override
     public void executeAuthorized() throws Exception {
@@ -32,7 +31,6 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         }
         if (isSessionAuthorized()) {
             String searchTerm = getRequestParameter("searchTerm", null);
-            boolean soundex = !getBooleanRequestParameter("exactOnly", false);
             String sortOrderName = getRequestParameter("sortOrder", FindPlaylistTracksQuery.SortOrder.Album.name());
             FindPlaylistTracksQuery.SortOrder sortOrderValue = FindPlaylistTracksQuery.SortOrder.valueOf(sortOrderName);
 
@@ -45,7 +43,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
                 if (maxTermSize >= 3) {
-                    query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist, soundex);
+                    query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
                 } else {
                     addError(new BundleError("error.searchTermMinSize", 3));
                     forward(MyTunesRssCommand.ShowPortal);

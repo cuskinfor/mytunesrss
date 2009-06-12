@@ -28,7 +28,6 @@
                 pos_size INTEGER,
                 image_hash CHAR(24),
                 sticky BOOLEAN,
-                soundex VARCHAR(400),
                 UNIQUE (id)
             )
         </sql>
@@ -126,7 +125,6 @@
         <sql>CREATE INDEX idx_track_album ON track (album)</sql>
         <sql>CREATE INDEX idx_track_genre ON track (genre)</sql>
         <sql>CREATE INDEX idx_track_id ON track (id)</sql>
-        <sql>CREATE INDEX idx_track_soundex ON track (soundex)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (idx)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_track_id ON link_track_playlist (track_id)</sql>

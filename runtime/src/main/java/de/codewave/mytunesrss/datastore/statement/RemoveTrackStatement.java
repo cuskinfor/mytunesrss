@@ -25,22 +25,12 @@ public class RemoveTrackStatement implements DataStoreStatement {
     }
 
     public void execute(Connection connection) throws SQLException {
+        MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+        event.setMessageKey("settings.databaseUpdateRemovingTracks");
+        event.setMessageParams(myTrackIds.size());
+        MyTunesRssEventManager.getInstance().fireEvent(event);
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeTrack");
-        int count = 0;
-        long lastEventTime = 0;
-        for (String trackId : myTrackIds) {
-            if (System.currentTimeMillis() - lastEventTime >= 2500) {
-                MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
-                event.setMessageKey("settings.databaseUpdateRemovingTracks");
-                event.setMessageParams(myTrackIds.size() - count);
-                MyTunesRssEventManager.getInstance().fireEvent(event);
-                lastEventTime = System.currentTimeMillis();
-            }
-            statement.setString("track_id", trackId);
-            statement.execute();
-            if (count++ % 500 == 0) {
-                connection.commit();
-            }
-        }
+        statement.setObject("track_id", myTrackIds);
+        statement.execute();
     }
 }

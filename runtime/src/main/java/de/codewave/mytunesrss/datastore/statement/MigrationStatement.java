@@ -172,28 +172,6 @@ public class MigrationStatement implements DataStoreStatement {
                         databaseVersion = new Version("3.7-EAP-4");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                     }
-                    // migration for 3.8-EAP-1
-                    if (databaseVersion.compareTo(new Version("3.8-EAP-1")) < 0) {
-                        LOG.info("Migrating database to 3.8 EAP 1.");
-                        MyTunesRssUtils.createStatement(connection, "migrate_3.8_eap_1").execute();
-                        DataStoreQuery.QueryResult<Track> tracks = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, FindPlaylistTracksQuery.SortOrder.KeepOrder).execute(connection);
-                        connection.setAutoCommit(false);
-                        int count = 0;
-                        for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
-                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateSoundexForTrack");
-                            statement.setString("id", track.getId());
-                            statement.setString("soundex", MyTunesRssUtils.getTrackSoundex(track));
-                            statement.execute();
-                            count++;
-                            if (count % 100 == 0) {
-                                connection.commit();
-                            }
-                        }
-                        connection.commit();
-                        connection.setAutoCommit(true);
-                        databaseVersion = new Version("3.8-EAP-1");
-                        new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
-                    }
                 } finally {
                     connection.setAutoCommit(autoCommit);
                 }

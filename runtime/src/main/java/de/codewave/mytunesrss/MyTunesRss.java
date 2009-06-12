@@ -20,6 +20,9 @@ import de.codewave.mytunesrss.task.InitializeDatabaseTask;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
+import de.codewave.utils.sql.DataStoreStatement;
+import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.SmartStatement;
 import de.codewave.utils.io.FileCache;
 import de.codewave.utils.maven.MavenUtils;
 import de.codewave.utils.swing.SwingUtils;
@@ -54,6 +57,7 @@ import java.sql.*;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.Timer;
+import java.util.List;
 
 import com.ibm.icu.text.Transliterator;
 

@@ -27,28 +27,21 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     }
 
 
-    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, boolean sortByArtistFirst, boolean soundex) {
+    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, boolean sortByArtistFirst) {
         FindTrackQuery query = new FindTrackQuery();
         query.myArtistSort = sortByArtistFirst;
         String[] searchTerms = StringUtils.split(searchTerm, " ");
-        String[] soundexCodes = new String[searchTerms.length];
         if (searchTerms == null) {
             searchTerms = new String[]{searchTerm};
         }
         for (int i = 0; i < searchTerms.length; i++) {
             if (StringUtils.isNotEmpty(searchTerms[i])) {
-                if (soundex) {
-                    soundexCodes[i] = "%" + StringUtils.defaultString(MyTunesRssUtils.getSoundexCode(searchTerms[i]), "XXXX") + "%";
-                }
                 searchTerms[i] = "%" + SQLUtils.escapeLikeString(searchTerms[i].toLowerCase(), "\\") + "%";
             } else {
-                soundexCodes[i] = "%";
                 searchTerms[i] = "%";
             }
         }
         query.mySearchTerms = searchTerms;
-        query.mySoundexCodes = soundexCodes;
-        query.mySoundex = soundex;
         query.myRestrictedPlaylistId = user.getPlaylistId();
         return query;
     }
@@ -93,8 +86,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private String[] mySearchTerms;
     private boolean myArtistSort;
     private String myRestrictedPlaylistId;
-    private boolean mySoundex;
-    private String[] mySoundexCodes;
 
     private FindTrackQuery() {
         // intentionally left blank
@@ -102,8 +93,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
 
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
-        String suffix = mySoundex ? "Soundex" : "";
-        suffix += StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
+        String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
         if (myArtistSort) {
             statement = MyTunesRssUtils.createStatement(connection, "findTracksWithArtistOrder" + suffix);
         } else {
@@ -114,7 +104,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         statement.setItems("artist", myArtists);
         statement.setItems("genre", myGenres);
         statement.setItems("search", mySearchTerms);
-        statement.setItems("soundex", mySoundexCodes);
         statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
         return execute(statement, new TrackResultBuilder());
     }
