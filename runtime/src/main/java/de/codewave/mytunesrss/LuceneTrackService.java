@@ -114,7 +114,7 @@ public class LuceneTrackService {
         for (String field : new String[]{"name", "album", "artist"}) {
             queryString.append("(");
             for (int i = 0; i < searchTerms.length; i++) {
-                queryString.append(field).append(":").append(searchTerms[i]).append(fuzzy ? "~" : "");
+                queryString.append(field).append(":").append(QueryParser.escape(searchTerms[i])).append(fuzzy ? "~" : "");
                 if (i + 1 < searchTerms.length) {
                     queryString.append(" AND ");
                 }
