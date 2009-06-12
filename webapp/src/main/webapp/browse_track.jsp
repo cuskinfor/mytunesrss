@@ -61,6 +61,7 @@
 
 <input type="hidden" name="sortOrder" value="${sortOrder}" />
 <input type="hidden" name="searchTerm" value="${param.searchTerm}" />
+<input type="hidden" name="fuzzy" value="${param.fuzzy}" />
 <input type="hidden" name="album" value="${param.album}" />
 <input type="hidden" name="artist" value="${param.artist}" />
 <input type="hidden" name="genre" value="${param.genre}" />
@@ -277,7 +278,7 @@
 
 <c:if test="${!empty pager}">
     <c:set var="pagerCommand"
-           scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/sortOrder=${sortOrder}</mt:encrypt>/index={index}/backUrl=${param.backUrl}</c:set>
+           scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/sortOrder=${sortOrder}</mt:encrypt>/index={index}/backUrl=${param.backUrl}</c:set>
     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
     <jsp:include page="incl_bottomPager.jsp" />
 </c:if>
