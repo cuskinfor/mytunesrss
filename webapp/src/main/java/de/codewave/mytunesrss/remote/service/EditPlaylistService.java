@@ -85,7 +85,7 @@ public class EditPlaylistService {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return addTracks(FindTrackQuery.getForId(trackIds));
+            return addTracks(FindTrackQuery.getForIds(trackIds));
         }
         throw new IllegalAccessException("Unauthorized");
     }

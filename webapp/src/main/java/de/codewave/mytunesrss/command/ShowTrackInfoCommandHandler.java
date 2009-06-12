@@ -22,7 +22,7 @@ public class ShowTrackInfoCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         String trackId = getRequest().getParameter("track");
-        Collection<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForId(new String[] {trackId})).getResults();
+        Collection<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {trackId})).getResults();
         if (!tracks.isEmpty()) {
             Track track = tracks.iterator().next();
             getRequest().setAttribute("track", track);

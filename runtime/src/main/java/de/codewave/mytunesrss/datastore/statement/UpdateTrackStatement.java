@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
+import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackStatement
@@ -141,8 +142,8 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setBoolean("sticky", mySticky);
             myStatement.execute();
         } catch (SQLException e) {
-            if (UpdateTrackStatement.LOG.isErrorEnabled()) {
-                UpdateTrackStatement.LOG.error(String.format("Could not update track with ID \"%s\" in database.", myId), e);
+            if (LOG.isErrorEnabled()) {
+                LOG.error(String.format("Could not update track with ID \"%s\" in database.", myId), e);
             }
         }
     }

@@ -53,11 +53,11 @@
             <tr>
                 <td class="search">
                     <div>
-                        <input class="text" type="text" name="searchTerm" value="<c:out value="${param.searchTerm}"/>" />
-                        <input class="button" type="submit" value="<fmt:message key="doSearch"/>" />
+                        <input class="text" type="text" name="searchTerm" value="<c:out value="${lastSearchTerm}"/>" />
+                        <input class="button" type="submit" value="<fmt:message key="doSearch"/>"/>
                     </div>
                     <div>
-                        <input type="checkbox" name="exactOnly" value="true" <c:if test="${config.searchDefault == 'Exact'}">checked="checked"</c:if>> <fmt:message key="exactMatchesOnly" />
+                        <input type="checkbox" name="fuzzy" value="true" <c:if test="${lastSearchFuzzy == true || (empty lastSearchFuzzy && config.searchDefault == 'Fuzzy')}">checked="checked"</c:if>> <fmt:message key="search.fuzzy" />
                         <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
                     </div>
                 </td>

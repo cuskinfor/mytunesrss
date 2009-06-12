@@ -40,12 +40,12 @@ public class QuicktimePlayerRemoteController implements RemoteController {
     }
 
     public void loadTrack(String trackId) throws SQLException, QuicktimePlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForId(new String[]{trackId});
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForIds(new String[]{trackId});
         loadItems(query);
     }
 
     public void loadTracks(String[] trackIds) throws SQLException, QuicktimePlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForId(trackIds);
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
         loadItems(query);
     }
 

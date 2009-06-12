@@ -120,6 +120,13 @@
                 CONSTRAINT fk_smart_info_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
             )
         </sql>
+        <sql>
+            {create_table_prefix} search_helper (
+                search_id INTEGER,
+                track_id VARCHAR(100) NOT NULL,
+                UNIQUE (search_id, track_id)
+            )
+        </sql>
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>
         <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
         <sql>CREATE INDEX idx_track_album ON track (album)</sql>
@@ -135,10 +142,12 @@
         <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
         <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
+        <sql>CREATE INDEX idx_search_helper_search_id ON search_helper (search_id)</sql>
         <sql>{create_playlist_id_sequence}</sql>
     </statement>
 
     <statement name="dropAllTables">
+        <sql>DROP TABLE search_helper</sql>
         <sql>DROP TABLE statistics</sql>
         <sql>DROP TABLE smart_info</sql>
         <sql>DROP TABLE link_track_playlist</sql>

@@ -9,7 +9,6 @@ import de.codewave.camel.mp3.Id3v2Tag;
 import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.camel.mp3.exception.IllegalHeaderException;
 import de.codewave.mytunesrss.FileSupportUtils;
-import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssSendCounter;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
@@ -46,7 +45,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
         } else {
             String trackId = getRequest().getParameter("track");
-            DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
+            DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {trackId}));
             if (tracks.getResultSize() > 0) {
                 track = tracks.nextResult();
                 if (!getAuthUser().isQuotaExceeded()) {

@@ -25,7 +25,7 @@ public class CreatePlaylistBaseCommandHandler extends MyTunesRssCommandHandler {
         }
         DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
         if (trackIds != null && trackIds.length > 0) {
-            query = FindTrackQuery.getForId(trackIds);
+            query = FindTrackQuery.getForIds(trackIds);
         } else {
             query = TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true);
         }

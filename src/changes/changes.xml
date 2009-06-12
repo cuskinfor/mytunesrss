@@ -8,8 +8,11 @@
     <body>
 
         <release version="3.8-EAP-1" date="2009-xx-xx" description="3.8 EAP 1">
+            <action dev="mdescher" type="add">
+                Lucene index for tracks. Used for searching (fuzzy search supported).
+            </action>
             <action dev="mdescher" type="update">
-                Major performance improvements with sql batch executions.
+                Performance improvements with sql batch executions.
             </action>
             <action dev="mdescher" type="add">
                 Option for disabling album cover images.

@@ -34,7 +34,7 @@ public class ShowTrackImageCommandHandler extends ShowImageCommandHandler {
             int size = getIntegerRequestParameter("size", 256);
             if (StringUtils.isNotEmpty(trackId)) {
                 if (size == 0) {
-                    DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForId(new String[] {trackId}));
+                    DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {trackId}));
                     if (tracks.getResultSize() > 0) {
                         Track track = tracks.nextResult();
                         if (FileSupportUtils.isMp3(track.getFile())) {

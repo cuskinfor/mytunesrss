@@ -50,7 +50,7 @@ public class AddToPlaylistCommandHandler extends MyTunesRssCommandHandler {
         }
         DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
         if (trackIds != null && trackIds.length > 0) {
-            return FindTrackQuery.getForId(trackIds);
+            return FindTrackQuery.getForIds(trackIds);
         }
         return TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true);
     }

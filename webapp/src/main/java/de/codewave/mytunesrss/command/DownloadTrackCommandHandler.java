@@ -18,7 +18,7 @@ public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         } else {
             String trackId = getRequest().getParameter("track");
-            DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForId(new String[]{trackId}));
+            DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId}));
             if (tracks.getResultSize() > 0) {
                 Track track = tracks.nextResult();
                 getResponse().setHeader("Content-Disposition", "attachment; filename=" + track.getFilename());

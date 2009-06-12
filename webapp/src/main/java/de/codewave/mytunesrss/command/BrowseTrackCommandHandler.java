@@ -4,9 +4,7 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.Pager;
-import de.codewave.mytunesrss.TrackUtils;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
@@ -31,6 +29,9 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         }
         if (isSessionAuthorized()) {
             String searchTerm = getRequestParameter("searchTerm", null);
+            getRequest().getSession().setAttribute("lastSearchTerm", searchTerm);
+            boolean fuzzy = getBooleanRequestParameter("fuzzy", false);
+            getRequest().getSession().setAttribute("lastSearchFuzzy", fuzzy);
             String sortOrderName = getRequestParameter("sortOrder", FindPlaylistTracksQuery.SortOrder.Album.name());
             FindPlaylistTracksQuery.SortOrder sortOrderValue = FindPlaylistTracksQuery.SortOrder.valueOf(sortOrderName);
 
@@ -43,7 +44,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
                 if (maxTermSize >= 3) {
-                    query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
+                    query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, fuzzy, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
                 } else {
                     addError(new BundleError("error.searchTermMinSize", 3));
                     forward(MyTunesRssCommand.ShowPortal);

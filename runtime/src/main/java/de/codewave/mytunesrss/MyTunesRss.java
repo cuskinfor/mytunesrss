@@ -158,6 +158,7 @@ public class MyTunesRss {
     public static String JMX_HOST;
     public static int JMX_PORT = -1;
     public static QuicktimePlayer QUICKTIME_PLAYER;
+    public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
 
     public static void main(final String[] args)
             throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException,

@@ -349,17 +349,18 @@
         </sql>
     </statement>
 
+    <statement name="findAllTracksForImageUpdate">
+        <sql>
+            SELECT id AS id, source AS source, file AS file, last_image_update AS last_image_update FROM track WHERE
+            last_image_update IS NULL OR last_image_update &lt; :timeUpdateStart
+        </sql>
+    </statement>
+
     <statement name="findTracks">
       <sql>
         {findTracksQuery}
         ORDER BY album, pos_number, track_number, name
       </sql>
-    </statement>
-
-    <statement name="findAllTracksForImageUpdate">
-        <sql>
-            SELECT id AS id, source AS source, file AS file, last_image_update AS last_image_update FROM track WHERE last_image_update IS NULL OR last_image_update &lt; :timeUpdateStart
-        </sql>
     </statement>
 
     <statement name="findTracksRestricted">
@@ -381,6 +382,34 @@
         {findTracksQueryRestricted}
         ORDER BY artist, album, pos_number, track_number, name
       </sql>
+    </statement>
+
+    <statement name="findTracksByIds">
+        <sql>
+            {findTracksByIdsQuery}
+            ORDER BY album, pos_number, track_number, name
+        </sql>
+    </statement>
+
+    <statement name="findTracksByIdsRestricted">
+        <sql>
+            {findTracksByIdsQueryRestricted}
+            ORDER BY album, pos_number, track_number, name
+        </sql>
+    </statement>
+
+    <statement name="findTracksByIdsWithArtistOrder">
+        <sql>
+            {findTracksByIdsQuery}
+            ORDER BY artist, album, pos_number, track_number, name
+        </sql>
+    </statement>
+
+    <statement name="findTracksByIdsWithArtistOrderRestricted">
+        <sql>
+            {findTracksByIdsQueryRestricted}
+            ORDER BY artist, album, pos_number, track_number, name
+        </sql>
     </statement>
 
     <statement name="deletePlaylistById">
@@ -669,6 +698,16 @@
         </sql>
     </statement>
 
+    <statement name="insertSearchTrackIds">
+        <sql loop="track_id" loopbatch="10000" loopcommit="10000">
+            INSERT INTO search_helper (search_id, track_id) VALUES (:search_id, :loopitem_track_id)
+        </sql>
+    </statement>
+
+    <statement name="removeSearchTrackIds">
+        <sql>DELETE FROM search_helper WHERE search_id = :search_id</sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
@@ -710,20 +749,20 @@
         SELECT {trackColumns}, COUNT(i.hash) AS imagecount
         FROM track t
         LEFT OUTER JOIN image i ON i.hash = t.image_hash
-        WHERE (:size_of_id = 0 OR t.id IN (:id[]))
-        AND (:size_of_genre = 0 OR LOWER(t.genre) IN (:genre[]))
+        WHERE (:size_of_genre = 0 OR LOWER(t.genre) IN (:genre[]))
         AND (:size_of_artist = 0 OR LOWER(t.artist) IN (:artist[]))
         AND (:size_of_album = 0 OR LOWER(t.album) IN (:album[]))
-        AND (:size_of_search < 1 OR (LOWER(t.name) LIKE :search[0] {likeEscape}) OR (LOWER(album) LIKE :search[0] {likeEscape}) OR (LOWER(artist) LIKE :search[0] {likeEscape}))
-        AND (:size_of_search < 2 OR (LOWER(t.name) LIKE :search[1] {likeEscape}) OR (LOWER(album) LIKE :search[1] {likeEscape}) OR (LOWER(artist) LIKE :search[1] {likeEscape}))
-        AND (:size_of_search < 3 OR (LOWER(t.name) LIKE :search[2] {likeEscape}) OR (LOWER(album) LIKE :search[2] {likeEscape}) OR (LOWER(artist) LIKE :search[2] {likeEscape}))
-        AND (:size_of_search < 4 OR (LOWER(t.name) LIKE :search[3] {likeEscape}) OR (LOWER(album) LIKE :search[3] {likeEscape}) OR (LOWER(artist) LIKE :search[3] {likeEscape}))
-        AND (:size_of_search < 5 OR (LOWER(t.name) LIKE :search[4] {likeEscape}) OR (LOWER(album) LIKE :search[4] {likeEscape}) OR (LOWER(artist) LIKE :search[4] {likeEscape}))
-        AND (:size_of_search < 6 OR (LOWER(t.name) LIKE :search[5] {likeEscape}) OR (LOWER(album) LIKE :search[5] {likeEscape}) OR (LOWER(artist) LIKE :search[5] {likeEscape}))
-        AND (:size_of_search < 7 OR (LOWER(t.name) LIKE :search[6] {likeEscape}) OR (LOWER(album) LIKE :search[6] {likeEscape}) OR (LOWER(artist) LIKE :search[6] {likeEscape}))
-        AND (:size_of_search < 8 OR (LOWER(t.name) LIKE :search[7] {likeEscape}) OR (LOWER(album) LIKE :search[7] {likeEscape}) OR (LOWER(artist) LIKE :search[7] {likeEscape}))
-        AND (:size_of_search < 9 OR (LOWER(t.name) LIKE :search[8] {likeEscape}) OR (LOWER(album) LIKE :search[8] {likeEscape}) OR (LOWER(artist) LIKE :search[8] {likeEscape}))
-        AND (:size_of_search < 10 OR (LOWER(t.name) LIKE :search[9] {likeEscape}) OR (LOWER(album) LIKE :search[9] {likeEscape}) OR (LOWER(artist) LIKE :search[9] {likeEscape}))
+        GROUP BY {groupByTrackColumns}
+        ]]>
+    </fragment>
+
+    <fragment name="findTracksByIdsQuery">
+        <![CDATA[
+        SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+        FROM search_helper sh, track t
+        LEFT OUTER JOIN image i ON i.hash = t.image_hash
+        WHERE sh.search_id = :search_id
+        AND sh.track_id = t.id
         GROUP BY {groupByTrackColumns}
         ]]>
     </fragment>
@@ -735,20 +774,22 @@
         LEFT OUTER JOIN image i ON i.hash = t.image_hash
         WHERE rltp.playlist_id = :restrictedPlaylistId
         AND rltp.track_id = t.id
-        AND (:size_of_id = 0 OR t.id IN (:id[]))
         AND (:size_of_genre = 0 OR LOWER(t.genre) IN (:genre[]))
         AND (:size_of_artist = 0 OR LOWER(t.artist) IN (:artist[]))
         AND (:size_of_album = 0 OR LOWER(t.album) IN (:album[]))
-        AND (:size_of_search < 1 OR (LOWER(t.name) LIKE :search[0] {likeEscape}) OR (LOWER(album) LIKE :search[0] {likeEscape}) OR (LOWER(artist) LIKE :search[0] {likeEscape}))
-        AND (:size_of_search < 2 OR (LOWER(t.name) LIKE :search[1] {likeEscape}) OR (LOWER(album) LIKE :search[1] {likeEscape}) OR (LOWER(artist) LIKE :search[1] {likeEscape}))
-        AND (:size_of_search < 3 OR (LOWER(t.name) LIKE :search[2] {likeEscape}) OR (LOWER(album) LIKE :search[2] {likeEscape}) OR (LOWER(artist) LIKE :search[2] {likeEscape}))
-        AND (:size_of_search < 4 OR (LOWER(t.name) LIKE :search[3] {likeEscape}) OR (LOWER(album) LIKE :search[3] {likeEscape}) OR (LOWER(artist) LIKE :search[3] {likeEscape}))
-        AND (:size_of_search < 5 OR (LOWER(t.name) LIKE :search[4] {likeEscape}) OR (LOWER(album) LIKE :search[4] {likeEscape}) OR (LOWER(artist) LIKE :search[4] {likeEscape}))
-        AND (:size_of_search < 6 OR (LOWER(t.name) LIKE :search[5] {likeEscape}) OR (LOWER(album) LIKE :search[5] {likeEscape}) OR (LOWER(artist) LIKE :search[5] {likeEscape}))
-        AND (:size_of_search < 7 OR (LOWER(t.name) LIKE :search[6] {likeEscape}) OR (LOWER(album) LIKE :search[6] {likeEscape}) OR (LOWER(artist) LIKE :search[6] {likeEscape}))
-        AND (:size_of_search < 8 OR (LOWER(t.name) LIKE :search[7] {likeEscape}) OR (LOWER(album) LIKE :search[7] {likeEscape}) OR (LOWER(artist) LIKE :search[7] {likeEscape}))
-        AND (:size_of_search < 9 OR (LOWER(t.name) LIKE :search[8] {likeEscape}) OR (LOWER(album) LIKE :search[8] {likeEscape}) OR (LOWER(artist) LIKE :search[8] {likeEscape}))
-        AND (:size_of_search < 10 OR (LOWER(t.name) LIKE :search[9] {likeEscape}) OR (LOWER(album) LIKE :search[9] {likeEscape}) OR (LOWER(artist) LIKE :search[9] {likeEscape}))
+        GROUP BY {groupByTrackColumns}
+        ]]>
+    </fragment>
+
+    <fragment name="findTracksByIdsQueryRestricted">
+        <![CDATA[
+        SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+        FROM link_track_playlist rltp, search_helper sh, track t
+        LEFT OUTER JOIN image i ON i.hash = t.image_hash
+        WHERE rltp.playlist_id = :restrictedPlaylistId
+        AND rltp.track_id = t.id
+        AND sh.search_id = :search_id
+        AND sh.track_id = t.id
         GROUP BY {groupByTrackColumns}
         ]]>
     </fragment>

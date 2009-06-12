@@ -36,7 +36,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 String tracklist = getRequestParameter("tracklist", null);
                 DataStoreQuery.QueryResult<Track> tracks;
                 if (StringUtils.isNotEmpty(tracklist)) {
-                    tracks = getTransaction().executeQuery(FindTrackQuery.getForId(StringUtils.split(tracklist, ",")));
+                    tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(StringUtils.split(tracklist, ",")));
                 } else {
                     tracks = getTransaction().executeQuery(TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true));
                 }
