@@ -94,6 +94,10 @@
         <sql>SELECT TOP 1 NEXT VALUE FOR playlist_id_sequence AS id FROM system_information</sql>
     </statement>
 
+    <statement name="nextSearchId">
+        <sql>SELECT TOP 1 NEXT VALUE FOR search_id_sequence AS id FROM system_information</sql>
+    </statement>
+
     <statement name="tuneDatabase">
         <sql>ANALYZE SAMPLE_SIZE 0</sql>
     </statement>

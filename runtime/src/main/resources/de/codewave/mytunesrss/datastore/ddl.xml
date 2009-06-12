@@ -144,6 +144,7 @@
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
         <sql>CREATE INDEX idx_search_helper_search_id ON search_helper (search_id)</sql>
         <sql>{create_playlist_id_sequence}</sql>
+        <sql>{create_search_id_sequence}</sql>
     </statement>
 
     <statement name="dropAllTables">
@@ -158,6 +159,7 @@
         <sql>DROP TABLE track</sql>
         <sql>DROP TABLE system_information</sql>
         <sql>{drop_playlist_id_sequence}</sql>
+        <sql>{drop_search_id_sequence}</sql>
         <sql>DROP TABLE image</sql>
     </statement>
 
@@ -170,6 +172,7 @@
         <sql>DROP TABLE track</sql>
         <sql>DROP TABLE system_information</sql>
         <sql>{drop_playlist_id_sequence}</sql>
+        <sql>{drop_search_id_sequence}</sql>
         <sql>DROP TABLE pager</sql>
     </statement>
 

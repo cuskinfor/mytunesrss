@@ -91,6 +91,12 @@
         <sql>SELECT LAST_INSERT_ID() AS id FROM playlist_id_sequence LIMIT 1</sql>
     </statement>
 
+    <statement name="nextSearchId">
+        <sql>DELETE FROM search_id_sequence</sql>
+        <sql>INSERT INTO search_id_sequence VALUES (0)</sql>
+        <sql>SELECT LAST_INSERT_ID() AS id FROM search_id_sequence LIMIT 1</sql>
+    </statement>
+
     <statement name="tuneDatabase">
         <sql>ANALYZE TABLE track, artist, album, genre</sql>
     </statement>

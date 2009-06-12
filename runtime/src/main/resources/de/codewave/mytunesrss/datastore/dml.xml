@@ -708,6 +708,10 @@
         <sql>DELETE FROM search_helper WHERE search_id = :search_id</sql>
     </statement>
 
+    <statement name="truncateSearchHelper">
+        <sql>TRUNCATE table search_helper</sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[

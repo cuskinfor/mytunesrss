@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement
@@ -171,6 +172,18 @@ public class MigrationStatement implements DataStoreStatement {
                         MyTunesRssUtils.createStatement(connection, "migrate_3.7_eap_4").execute();
                         databaseVersion = new Version("3.7-EAP-4");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
+                    }
+                    // migration for 3.8-EAP-1
+                    if (databaseVersion.compareTo(new Version("3.8-EAP-1")) < 0) {
+                        LOG.info("Migrating database to 3.8 EAP 1.");
+                        MyTunesRssUtils.createStatement(connection, "migrate_3.8_eap_1").execute();
+                        databaseVersion = new Version("3.8-EAP-1");
+                        new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
+                        try {
+                            MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
+                        } catch (IOException e) {
+                            LOG.error("Could not create track index.", e);
+                        }
                     }
                 } finally {
                     connection.setAutoCommit(autoCommit);

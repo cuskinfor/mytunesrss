@@ -12,10 +12,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
@@ -42,7 +39,7 @@ public class LuceneTrackService {
         LOGGER.debug("Indexing all tracks.");
         long start = System.currentTimeMillis();
         Directory directory = getDirectory();
-        IndexWriter iwriter = new IndexWriter(directory, new StandardAnalyzer(), new IndexWriter.MaxFieldLength(2000));
+        IndexWriter iwriter = new IndexWriter(directory, new StandardAnalyzer(), true, new IndexWriter.MaxFieldLength(2000));
         FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, FindPlaylistTracksQuery.SortOrder.KeepOrder);
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
@@ -52,12 +49,13 @@ public class LuceneTrackService {
             document.add(new Field("name", track.getName(), Field.Store.NO, Field.Index.ANALYZED));
             document.add(new Field("album", track.getAlbum(), Field.Store.NO, Field.Index.ANALYZED));
             document.add(new Field("artist", track.getArtist(), Field.Store.NO, Field.Index.ANALYZED));
-            iwriter.updateDocument(new Term("id", track.getId()), document);
+            iwriter.addDocument(document);
         }
         iwriter.optimize();
         iwriter.close();
         directory.close();
-        LOGGER.debug("Finished indexing all tracks (duration: " + (System.currentTimeMillis() - start) + " ms.");
+        session.commit();
+        LOGGER.debug("Finished indexing all tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
     }
 
 /*
@@ -89,16 +87,23 @@ public class LuceneTrackService {
     }
 */
 
-    public List<String> searchTrackIds(String[] searchTerms, boolean fuzzy, int maxResults) throws IOException, ParseException {
+    public List<String> searchTrackIds(String[] searchTerms, boolean fuzzy) throws IOException, ParseException {
         Directory directory = getDirectory();
-        IndexSearcher isearcher = new IndexSearcher(directory);
+        final IndexSearcher isearcher = new IndexSearcher(directory);
         QueryParser parser = new QueryParser("name", new StandardAnalyzer());
         Query luceneQuery = parser.parse(createQueryString(searchTerms, fuzzy));
-        TopDocs topDocs = isearcher.search(luceneQuery, null, maxResults);
-        Collection<String> trackIds = new HashSet<String>();
-        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-            trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
-        }
+        final Collection<String> trackIds = new HashSet<String>();
+        isearcher.search(luceneQuery, new HitCollector() {
+            @Override
+            public void collect(int i, float v) {
+                try {
+                    trackIds.add(isearcher.doc(i).get("id"));
+                } catch (IOException e) {
+                    LOGGER.error("Could not get document at index " + i + ".", e);
+
+                }
+            }
+        });
         isearcher.close();
         directory.close();
         return new ArrayList<String>(trackIds);

@@ -38,7 +38,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.myArtistSort = sortByArtistFirst;
         query.myRestrictedPlaylistId = user.getPlaylistId();
         String[] searchTerms = StringUtils.split(StringUtils.defaultString(searchTerm), " ");
-        query.myIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzzy, 5000); // TODO max search results configuration
+        query.myIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzzy);
         return CollectionUtils.isEmpty(query.myIds) ? null : query;
     }
 
@@ -106,7 +106,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     }
 
     private QueryResult<Track> executeForIds(Connection connection) throws SQLException {
-        ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "nextPlaylistId").executeQuery();
+        ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "nextSearchId").executeQuery();
         if (resultSet.next()) {
             int searchId = resultSet.getInt("ID");
             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "insertSearchTrackIds");

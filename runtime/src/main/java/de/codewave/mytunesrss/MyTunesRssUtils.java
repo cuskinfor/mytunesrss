@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.SmartStatement;
+import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.swing.SwingUtils;
 import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
 import de.codewave.utils.swing.pleasewait.PleaseWaitUtils;
@@ -218,15 +219,18 @@ public class MyTunesRssUtils {
                     }
                 });
             }
-            try {
-                luceneTest();
-            } catch (Exception e) {
-                LOGGER.error("Lucene test failed!", e);
-            }
+
             MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
                 public void execute() {
                     DataStoreSession session = MyTunesRss.STORE.getTransaction();
                     try {
+                        LOGGER.debug("Truncating search helper.");
+                        session.executeStatement(new DataStoreStatement() {
+                            public void execute(Connection connection) throws SQLException {
+                                MyTunesRssUtils.createStatement(connection, "truncateSearchHelper").execute();
+                            }
+                        });
+                        session.commit();
                         LOGGER.debug("Removing old temporary playlists.");
                         session.executeStatement(new RemoveOldTempPlaylistsStatement());
                         session.commit();
@@ -259,42 +263,6 @@ public class MyTunesRssUtils {
             }
         }
         shutdown();
-    }
-
-    private static void luceneTest() throws SQLException, CorruptIndexException, IOException, org.apache.lucene.queryParser.ParseException {
-        Analyzer analyzer = new StandardAnalyzer();
-        Directory directory = FSDirectory.getDirectory("/tmp/mytunesrss-testindex");
-
-        if (Boolean.getBoolean("lucene.write")) {
-            IndexWriter iwriter = new IndexWriter(directory, analyzer, true);
-            iwriter.setMaxFieldLength(25000);
-            FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
-            DataStoreSession session = MyTunesRss.STORE.getTransaction();
-            for (Track track : session.executeQuery(query).getResults()) {
-                Document doc = new Document();
-                doc.add(new Field("id", track.getId(), Field.Store.YES, Field.Index.NO));
-                doc.add(new Field("name", track.getName(), Field.Store.YES, Field.Index.ANALYZED));
-                doc.add(new Field("album", track.getAlbum(), Field.Store.YES, Field.Index.ANALYZED));
-                doc.add(new Field("artist", track.getArtist(), Field.Store.YES, Field.Index.ANALYZED));
-                iwriter.addDocument(doc);
-            }
-            iwriter.optimize();
-            iwriter.close();
-        }
-
-        if (StringUtils.isNotBlank(System.getProperty("lucene.query"))) {
-            IndexSearcher isearcher = new IndexSearcher(directory);
-            QueryParser parser = new QueryParser("name", analyzer);
-            Query luceneQuery = parser.parse(System.getProperty("lucene.query"));
-            Hits hits = isearcher.search(luceneQuery);
-            for (int i = 0; i < hits.length(); i++) {
-              Document hitDoc = hits.doc(i);
-              LOGGER.error(hitDoc.get("id") + ": " + hitDoc.get("name") + " -- " + hitDoc.get("album") + " -- " + hitDoc.get("artist"));
-            }
-            isearcher.close();
-        }
-
-        directory.close();
     }
 
     private static final double KBYTE = 1024;

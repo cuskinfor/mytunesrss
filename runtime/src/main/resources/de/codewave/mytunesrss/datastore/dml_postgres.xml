@@ -91,6 +91,10 @@
         <sql>SELECT nextval('playlist_id_sequence') AS id FROM system_information</sql>
     </statement>
 
+    <statement name="nextSearchId">
+        <sql>SELECT nextval('search_id_sequence') AS id FROM system_information</sql>
+    </statement>
+
     <statement name="tuneDatabase">
         <sql>ANALYZE</sql>
     </statement>

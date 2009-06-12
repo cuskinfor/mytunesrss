@@ -144,4 +144,16 @@
         </sql>
     </statement>
 
+    <statement name="migrate_3.8_eap_1">
+        <sql>
+            {create_table_prefix} search_helper (
+                search_id INTEGER,
+                track_id VARCHAR(100) NOT NULL,
+                UNIQUE (search_id, track_id)
+            )
+        </sql>
+        <sql>CREATE INDEX idx_search_helper_search_id ON search_helper (search_id)</sql>
+        <sql>{create_search_id_sequence}</sql>
+    </statement>
+
 </statements>

@@ -170,7 +170,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 MyTunesRssEventManager.getInstance().fireEvent(event);
                 internalExecute();
                 myExecuted = true;
-                MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks(); // TODO status line and singleton service?
+                event.setMessageKey("settings.buildingTrackIndex");
+                MyTunesRssEventManager.getInstance().fireEvent(event);
+                MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
                 MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED);
             } catch (Exception e) {
                 MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN);
