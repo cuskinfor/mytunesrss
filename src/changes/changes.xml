@@ -19,6 +19,15 @@
             </action>
         </release>
 
+        <release version="3.7" date="2009-06-13" description="3.7 Final">
+            <action dev="mdescher" type="update">
+                Correct license key for final release.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed bug with Yahoo media player links.
+            </action>
+        </release>
+
         <release version="3.7-RC-3" date="2009-06-07" description="3.7 RC 3">
             <action dev="mdescher" type="fix">
                 Fixed problem with original file download link and youtube video links.
