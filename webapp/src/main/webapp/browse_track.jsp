@@ -250,7 +250,7 @@
                             </c:when>
                             <c:otherwise>
                                 <c:set var="yahoo" value="true"/>
-                                <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>"/>
+                                <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="<c:out value="${track.name}"/>">
                                     <img src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=64</mt:encrypt>" style="display:none" alt=""/>
                                 </a>
                             </c:otherwise>
