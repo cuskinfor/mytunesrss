@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>webapp</artifactId>
     <packaging>war</packaging>
-    <version>3.7.1-SNAPSHOT</version>
+    <version>3.7-RC-4-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Web Application</name>
     <distributionManagement>
         <site>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>runtime</artifactId>
-            <version>3.7.1-SNAPSHOT</version>
+            <version>3.7-RC-4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
