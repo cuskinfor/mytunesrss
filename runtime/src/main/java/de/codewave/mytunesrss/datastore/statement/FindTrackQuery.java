@@ -4,10 +4,7 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.LuceneTrackService;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.User;
-import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
@@ -106,29 +104,15 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     }
 
     private QueryResult<Track> executeForIds(Connection connection) throws SQLException {
-        ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "nextSearchId").executeQuery();
-        if (resultSet.next()) {
-            int searchId = resultSet.getInt("ID");
-            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "insertSearchTrackIds");
-            statement.setInt("search_id", searchId);
+            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "preFindTracksByIds");
             statement.setObject("track_id", myIds);
             statement.execute();
-            try {
-                String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
-                if (myArtistSort) {
-                    statement = MyTunesRssUtils.createStatement(connection, "findTracksByIdsWithArtistOrder" + suffix);
-                } else {
-                    statement = MyTunesRssUtils.createStatement(connection, "findTracksByIds" + suffix);
-                }
-                statement.setInt("search_id", searchId);
-                return execute(statement, new TrackResultBuilder());
-            } finally {
-                statement = MyTunesRssUtils.createStatement(connection, "removeSearchTrackIds");
-                statement.setInt("search_id", searchId);
-                statement.execute();
+            String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
+            if (myArtistSort) {
+                statement = MyTunesRssUtils.createStatement(connection, "findTracksByIdsWithArtistOrder" + suffix);
+            } else {
+                statement = MyTunesRssUtils.createStatement(connection, "findTracksByIds" + suffix);
             }
-        } else {
-            throw new RuntimeException("Could not create search id.");
-        }
+            return execute(statement, new TrackResultBuilder());
     }
 }

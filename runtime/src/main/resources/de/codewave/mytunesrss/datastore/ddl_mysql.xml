@@ -15,14 +15,7 @@
             UNIQUE (id)
         )
     </fragment>
-    <fragment name="create_search_id_sequence">
-        CREATE TABLE search_id_sequence (
-            id INTEGER NOT NULL AUTO_INCREMENT,
-            UNIQUE (id)
-        )
-    </fragment>
     <fragment name="drop_playlist_id_sequence">DROP TABLE playlist_id_sequence</fragment>
-    <fragment name="drop_search_id_sequence">DROP TABLE search_id_sequence</fragment>
     <fragment name="image_datatype">BLOB(100000)</fragment>
     <fragment name="statistics_datatype">BLOB(1024)</fragment>
 

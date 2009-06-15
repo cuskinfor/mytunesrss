@@ -20,10 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.LuceneTrackService
@@ -92,7 +89,7 @@ public class LuceneTrackService {
         final IndexSearcher isearcher = new IndexSearcher(directory);
         QueryParser parser = new QueryParser("name", new StandardAnalyzer());
         Query luceneQuery = parser.parse(createQueryString(searchTerms, fuzzy));
-        final Collection<String> trackIds = new HashSet<String>();
+        final List<String> trackIds = new ArrayList<String>();
         isearcher.search(luceneQuery, new HitCollector() {
             @Override
             public void collect(int i, float v) {
@@ -106,7 +103,7 @@ public class LuceneTrackService {
         });
         isearcher.close();
         directory.close();
-        return new ArrayList<String>(trackIds);
+        return trackIds;
     }
 
     private String createQueryString(String[] searchTerms, boolean fuzzy) {

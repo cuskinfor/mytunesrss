@@ -224,13 +224,6 @@ public class MyTunesRssUtils {
                 public void execute() {
                     DataStoreSession session = MyTunesRss.STORE.getTransaction();
                     try {
-                        LOGGER.debug("Truncating search helper.");
-                        session.executeStatement(new DataStoreStatement() {
-                            public void execute(Connection connection) throws SQLException {
-                                MyTunesRssUtils.createStatement(connection, "truncateSearchHelper").execute();
-                            }
-                        });
-                        session.commit();
                         LOGGER.debug("Removing old temporary playlists.");
                         session.executeStatement(new RemoveOldTempPlaylistsStatement());
                         session.commit();

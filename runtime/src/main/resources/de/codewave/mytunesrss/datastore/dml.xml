@@ -698,20 +698,6 @@
         </sql>
     </statement>
 
-    <statement name="insertSearchTrackIds">
-        <sql loop="track_id" loopbatch="10000" loopcommit="10000">
-            INSERT INTO search_helper (search_id, track_id) VALUES (:search_id, :loopitem_track_id)
-        </sql>
-    </statement>
-
-    <statement name="removeSearchTrackIds">
-        <sql>DELETE FROM search_helper WHERE search_id = :search_id</sql>
-    </statement>
-
-    <statement name="truncateSearchHelper">
-        <sql>TRUNCATE table search_helper</sql>
-    </statement>
-
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
@@ -763,10 +749,9 @@
     <fragment name="findTracksByIdsQuery">
         <![CDATA[
         SELECT {trackColumns}, COUNT(i.hash) AS imagecount
-        FROM search_helper sh, track t
+        FROM temp_track_ids tti, track t
         LEFT OUTER JOIN image i ON i.hash = t.image_hash
-        WHERE sh.search_id = :search_id
-        AND sh.track_id = t.id
+        WHERE tti.track_id = t.id
         GROUP BY {groupByTrackColumns}
         ]]>
     </fragment>
@@ -788,12 +773,11 @@
     <fragment name="findTracksByIdsQueryRestricted">
         <![CDATA[
         SELECT {trackColumns}, COUNT(i.hash) AS imagecount
-        FROM link_track_playlist rltp, search_helper sh, track t
+        FROM link_track_playlist rltp, temp_track_ids tti, track t
         LEFT OUTER JOIN image i ON i.hash = t.image_hash
         WHERE rltp.playlist_id = :restrictedPlaylistId
         AND rltp.track_id = t.id
-        AND sh.search_id = :search_id
-        AND sh.track_id = t.id
+        AND tti.track_id = t.id
         GROUP BY {groupByTrackColumns}
         ]]>
     </fragment>

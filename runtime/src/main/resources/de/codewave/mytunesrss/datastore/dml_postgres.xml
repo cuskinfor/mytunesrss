@@ -99,6 +99,19 @@
         <sql>ANALYZE</sql>
     </statement>
 
+    <statement name="preFindTracksByIds">
+        <sql>
+            CREATE TEMPORARY TABLE temp_track_ids (
+                track_id VARCHAR(100),
+                UNIQUE(track_id)
+            ) ON COMMIT DROP
+        </sql>
+        <sql>TRUNCATE TABLE temp_track_ids</sql>
+        <sql loop="track_id" loopbatch="10000">
+            INSERT INTO temp_track_ids (track_id) VALUES (:loopitem_track_id)
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="likeEscape">ESCAPE '\\'</fragment>
 
