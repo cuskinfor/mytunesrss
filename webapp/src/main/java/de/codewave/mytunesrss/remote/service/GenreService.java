@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.remote.service;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.FindGenreQuery;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
+import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -28,7 +29,7 @@ public class GenreService {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter
-                    .getTransaction().executeQuery(FindTrackQuery.getForGenre(user, genres, false)), 0, -1));
+                    .getTransaction().executeQuery(FindTrackQuery.getForGenre(user, genres, SortOrder.Album)), 0, -1));
         }
         throw new IllegalAccessException("Unauthorized");
     }

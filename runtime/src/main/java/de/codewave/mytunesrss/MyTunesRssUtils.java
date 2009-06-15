@@ -7,7 +7,7 @@ import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery.SortOrder;
+import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;

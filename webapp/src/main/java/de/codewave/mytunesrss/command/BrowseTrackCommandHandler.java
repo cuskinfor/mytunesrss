@@ -30,8 +30,8 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         if (isSessionAuthorized()) {
             String searchTerm = getRequestParameter("searchTerm", null);
             boolean fuzzy = getBooleanRequestParameter("fuzzy", false);
-            String sortOrderName = getRequestParameter("sortOrder", FindPlaylistTracksQuery.SortOrder.Album.name());
-            FindPlaylistTracksQuery.SortOrder sortOrderValue = FindPlaylistTracksQuery.SortOrder.valueOf(sortOrderName);
+            String sortOrderName = getRequestParameter("sortOrder", SortOrder.Album.name());
+            SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);
 
             DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
             if (StringUtils.isNotEmpty(searchTerm)) {
@@ -42,7 +42,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
                 if (maxTermSize >= 3) {
-                    query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, fuzzy, sortOrderValue == FindPlaylistTracksQuery.SortOrder.Artist);
+                    query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, fuzzy, sortOrderValue);
                 } else {
                     addError(new BundleError("error.searchTermMinSize", 3));
                     forward(MyTunesRssCommand.ShowPortal);
@@ -58,7 +58,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                 int pageSize = getWebConfig().getEffectivePageSize();
                 TrackUtils.EnhancedTracks enhancedTracks;
                 if (query instanceof FindPlaylistTracksQuery) {// keep sort order for playlists
-                    sortOrderValue = FindPlaylistTracksQuery.SortOrder.KeepOrder;
+                    sortOrderValue = SortOrder.KeepOrder;
                 }
                 if (pageSize > 0 && result.getResultSize() > pageSize) {
                     int current = getSafeIntegerRequestParameter("index", 0);
@@ -69,7 +69,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                     enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), result.getResults(), sortOrderValue);
                 }
                 getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()) &&
-                        sortOrderValue != FindPlaylistTracksQuery.SortOrder.KeepOrder);
+                        sortOrderValue != SortOrder.KeepOrder);
                 tracks = (List<TrackUtils.EnhancedTrack>)enhancedTracks.getTracks();
                 if (pageSize > 0 && tracks.size() > pageSize) {
                     tracks.get(0).setContinuation(!tracks.get(0).isNewSection());

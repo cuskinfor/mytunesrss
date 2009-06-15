@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.remote.service;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
+import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -62,10 +63,10 @@ public class PlaylistService {
     public Object getTracks(String playlistId, String sortOrder) throws SQLException, IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-            FindPlaylistTracksQuery.SortOrder sortOrderEnum = null;
+            SortOrder sortOrderEnum = null;
             if (StringUtils.isNotBlank(sortOrder)) {
                 try {
-                    sortOrderEnum = FindPlaylistTracksQuery.SortOrder.valueOf(sortOrder);
+                    sortOrderEnum = SortOrder.valueOf(sortOrder);
                 } catch (IllegalArgumentException e) {
                     throw new IllegalArgumentException("Invalid sort order \"" + sortOrder + "\" specified.");
                 }

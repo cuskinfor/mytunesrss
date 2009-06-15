@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.quicktime.QuicktimePlayerException;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -15,7 +16,7 @@ import java.util.List;
 public class QuicktimePlayerRemoteController implements RemoteController {
 
     public void loadPlaylist(String playlistId) throws SQLException, QuicktimePlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = new FindPlaylistTracksQuery(playlistId, FindPlaylistTracksQuery.SortOrder.KeepOrder);
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = new FindPlaylistTracksQuery(playlistId, SortOrder.KeepOrder);
         loadItems(query);
     }
 
@@ -25,17 +26,17 @@ public class QuicktimePlayerRemoteController implements RemoteController {
     }
 
     public void loadAlbum(String albumName) throws SQLException, QuicktimePlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForAlbum(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{albumName}, false);
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForAlbum(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{albumName}, SortOrder.Album);
         loadItems(query);
     }
 
     public void loadArtist(String artistName, boolean fullAlbums) throws SQLException, QuicktimePlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForArtist(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{artistName}, false);
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForArtist(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{artistName}, SortOrder.Album);
         loadItems(query);
     }
 
     public void loadGenre(String genreName) throws SQLException, QuicktimePlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForGenre(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{genreName}, false);
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForGenre(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{genreName}, SortOrder.Album);
         loadItems(query);
     }
 

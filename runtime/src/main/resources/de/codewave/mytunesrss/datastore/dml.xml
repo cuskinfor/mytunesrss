@@ -359,11 +359,23 @@
     <statement name="findTracks">
       <sql>
         {findTracksQuery}
-        ORDER BY album, pos_number, track_number, name
       </sql>
     </statement>
 
     <statement name="findTracksRestricted">
+      <sql>
+        {findTracksQueryRestricted}
+      </sql>
+    </statement>
+
+    <statement name="findTracksWithAlbumOrder">
+      <sql>
+        {findTracksQuery}
+        ORDER BY album, pos_number, track_number, name
+      </sql>
+    </statement>
+
+    <statement name="findTracksWithAlbumOrderRestricted">
       <sql>
         {findTracksQueryRestricted}
         ORDER BY album, pos_number, track_number, name
@@ -387,11 +399,23 @@
     <statement name="findTracksByIds">
         <sql>
             {findTracksByIdsQuery}
-            ORDER BY album, pos_number, track_number, name
         </sql>
     </statement>
 
     <statement name="findTracksByIdsRestricted">
+        <sql>
+            {findTracksByIdsQueryRestricted}
+        </sql>
+    </statement>
+
+    <statement name="findTracksByIdsWithAlbumOrder">
+        <sql>
+            {findTracksByIdsQuery}
+            ORDER BY album, pos_number, track_number, name
+        </sql>
+    </statement>
+
+    <statement name="findTracksByIdsWithAlbumOrderRestricted">
         <sql>
             {findTracksByIdsQueryRestricted}
             ORDER BY album, pos_number, track_number, name

@@ -7,6 +7,7 @@ import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -72,7 +73,7 @@ public class TrackService {
         throw new IllegalAccessException("Unauthorized");
     }
 
-    public Object search(String searchTerm, boolean fuzzy, boolean sortByArtistFirst, int firstItem, int maxItems) throws IllegalAccessException, SQLException, IOException, ParseException {
+    public Object search(String searchTerm, boolean fuzzy, SortOrder sortOrder, int firstItem, int maxItems) throws IllegalAccessException, SQLException, IOException, ParseException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             if (StringUtils.isNotBlank(searchTerm)) {
@@ -83,18 +84,14 @@ public class TrackService {
                     }
                 }
                 if (maxTermSize >= 3) {
-                    FindTrackQuery query = FindTrackQuery.getForSearchTerm(user, searchTerm, fuzzy, sortByArtistFirst);
+                    FindTrackQuery query = FindTrackQuery.getForSearchTerm(user, searchTerm, fuzzy, SortOrder.KeepOrder);
                     DataStoreSession transaction = TransactionFilter.getTransaction();
                     List<Track> tracks = new ArrayList<Track>();
                     if (query != null) {
                     DataStoreQuery.QueryResult<Track> result = transaction.executeQuery(query);
                         tracks = maxItems > 0 ? result.getResults(firstItem, maxItems) : result.getResults();
                     }
-                    return RenderMachine.getInstance().render(TrackUtils.getEnhancedTracks(transaction,
-                                                                                           tracks,
-                                                                                           sortByArtistFirst ?
-                                                                                                   FindPlaylistTracksQuery.SortOrder.Artist :
-                                                                                                   FindPlaylistTracksQuery.SortOrder.Album));
+                    return RenderMachine.getInstance().render(TrackUtils.getEnhancedTracks(transaction, tracks, sortOrder));
                 } else {
                     throw new IllegalArgumentException("At least one of the search terms must be longer than 3 characters!");
                 }

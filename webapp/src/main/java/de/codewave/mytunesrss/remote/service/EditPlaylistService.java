@@ -132,7 +132,7 @@ public class EditPlaylistService {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return addTracks(FindTrackQuery.getForAlbum(user, albums, false));
+            return addTracks(FindTrackQuery.getForAlbum(user, albums, SortOrder.Album));
         }
         throw new IllegalAccessException("Unauthorized");
     }
@@ -151,7 +151,7 @@ public class EditPlaylistService {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return addTracks(FindTrackQuery.getForArtist(user, artists, false));
+            return addTracks(FindTrackQuery.getForArtist(user, artists, SortOrder.Album));
         }
         throw new IllegalAccessException("Unauthorized");
     }
@@ -170,7 +170,7 @@ public class EditPlaylistService {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return addTracks(FindTrackQuery.getForGenre(user, genres, false));
+            return addTracks(FindTrackQuery.getForGenre(user, genres, SortOrder.Album));
         }
         throw new IllegalAccessException("Unauthorized");
     }
@@ -221,7 +221,7 @@ public class EditPlaylistService {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return removeTracks(FindTrackQuery.getForAlbum(user, albums, false));
+            return removeTracks(FindTrackQuery.getForAlbum(user, albums, SortOrder.Album));
         }
         throw new IllegalAccessException("Unauthorized");
     }
@@ -240,7 +240,7 @@ public class EditPlaylistService {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return removeTracks(FindTrackQuery.getForArtist(user, artists, false));
+            return removeTracks(FindTrackQuery.getForArtist(user, artists, SortOrder.Album));
         }
         throw new IllegalAccessException("Unauthorized");
     }
@@ -259,7 +259,7 @@ public class EditPlaylistService {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return removeTracks(FindTrackQuery.getForGenre(user, genres, false));
+            return removeTracks(FindTrackQuery.getForGenre(user, genres, SortOrder.Album));
         }
         throw new IllegalAccessException("Unauthorized");
     }

@@ -2,6 +2,7 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
@@ -37,7 +38,7 @@ public class LuceneTrackService {
         long start = System.currentTimeMillis();
         Directory directory = getDirectory();
         IndexWriter iwriter = new IndexWriter(directory, new StandardAnalyzer(Collections.emptySet()), true, new IndexWriter.MaxFieldLength(300));
-        FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, FindPlaylistTracksQuery.SortOrder.KeepOrder);
+        FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
         for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {

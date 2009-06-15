@@ -4,7 +4,9 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.User;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
@@ -13,11 +15,9 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
@@ -30,19 +30,18 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         return query;
     }
 
-
-    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, boolean fuzzy, boolean sortByArtistFirst) throws IOException, ParseException {
+    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, boolean fuzzy, SortOrder sortOrder) throws IOException, ParseException {
         FindTrackQuery query = new FindTrackQuery();
-        query.myArtistSort = sortByArtistFirst;
+        query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistId = user.getPlaylistId();
         String[] searchTerms = StringUtils.split(StringUtils.defaultString(searchTerm), " ");
         query.myIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzzy);
         return CollectionUtils.isEmpty(query.myIds) ? null : query;
     }
 
-    public static FindTrackQuery getForAlbum(User user, String[] albums, boolean sortByArtistFirst) {
+    public static FindTrackQuery getForAlbum(User user, String[] albums, SortOrder sortOrder) {
         FindTrackQuery query = new FindTrackQuery();
-        query.myArtistSort = sortByArtistFirst;
+        query.mySortOrder = sortOrder;
         query.myAlbums = new String[albums.length];
         for (int i = 0; i < albums.length; i++) {
             query.myAlbums[i] = albums[i].toLowerCase();
@@ -51,9 +50,9 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         return query;
     }
 
-    public static FindTrackQuery getForArtist(User user, String[] artists, boolean sortByArtistFirst) {
+    public static FindTrackQuery getForArtist(User user, String[] artists, SortOrder sortOrder) {
         FindTrackQuery query = new FindTrackQuery();
-        query.myArtistSort = sortByArtistFirst;
+        query.mySortOrder = sortOrder;
         query.myArtists = new String[artists.length];
         for (int i = 0; i < artists.length; i++) {
             query.myArtists[i] = artists[i].toLowerCase();
@@ -62,9 +61,9 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         return query;
     }
 
-    public static FindTrackQuery getForGenre(User user, String[] genres, boolean sortByArtistFirst) {
+    public static FindTrackQuery getForGenre(User user, String[] genres, SortOrder sortOrder) {
         FindTrackQuery query = new FindTrackQuery();
-        query.myArtistSort = sortByArtistFirst;
+        query.mySortOrder = sortOrder;
         query.myGenres = new String[genres.length];
         for (int i = 0; i < genres.length; i++) {
             query.myGenres[i] = genres[i].toLowerCase();
@@ -77,7 +76,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private String[] myAlbums;
     private String[] myGenres;
     private String[] myArtists;
-    private boolean myArtistSort;
+    private SortOrder mySortOrder;
     private String myRestrictedPlaylistId;
 
     private FindTrackQuery() {
@@ -90,8 +89,10 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         } else {
             SmartStatement statement;
             String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
-            if (myArtistSort) {
+            if (mySortOrder == SortOrder.Artist) {
                 statement = MyTunesRssUtils.createStatement(connection, "findTracksWithArtistOrder" + suffix);
+            } else if (mySortOrder == SortOrder.Album) {
+                statement = MyTunesRssUtils.createStatement(connection, "findTracksWithAlbumOrder" + suffix);
             } else {
                 statement = MyTunesRssUtils.createStatement(connection, "findTracks" + suffix);
             }
@@ -104,15 +105,17 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     }
 
     private QueryResult<Track> executeForIds(Connection connection) throws SQLException {
-            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "preFindTracksByIds");
-            statement.setObject("track_id", myIds);
-            statement.execute();
-            String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
-            if (myArtistSort) {
-                statement = MyTunesRssUtils.createStatement(connection, "findTracksByIdsWithArtistOrder" + suffix);
-            } else {
-                statement = MyTunesRssUtils.createStatement(connection, "findTracksByIds" + suffix);
-            }
-            return execute(statement, new TrackResultBuilder());
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "preFindTracksByIds");
+        statement.setObject("track_id", myIds);
+        statement.execute();
+        String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
+        if (mySortOrder == SortOrder.Artist) {
+            statement = MyTunesRssUtils.createStatement(connection, "findTracksByIdsWithArtistOrder" + suffix);
+        } else if (mySortOrder == SortOrder.Album) {
+            statement = MyTunesRssUtils.createStatement(connection, "findTracksByIdsWithAlbumOrder" + suffix);
+        } else {
+            statement = MyTunesRssUtils.createStatement(connection, "findTracksByIds" + suffix);
+        }
+        return execute(statement, new TrackResultBuilder());
     }
 }

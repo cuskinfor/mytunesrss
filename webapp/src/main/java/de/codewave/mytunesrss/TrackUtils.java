@@ -3,6 +3,7 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.SaveTempPlaylistStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.SmartStatement;
@@ -23,7 +24,7 @@ public class TrackUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackUtils.class);
 
     public static EnhancedTracks getEnhancedTracks(DataStoreSession transaction, Collection<Track> tracks,
-            FindPlaylistTracksQuery.SortOrder sortOrder) {
+            SortOrder sortOrder) {
         EnhancedTracks enhancedTracks = new EnhancedTracks();
         enhancedTracks.setTracks(new ArrayList<EnhancedTrack>(tracks.size()));
         String lastAlbum = TrackUtils.class.getName();// we need some dummy name
@@ -35,16 +36,16 @@ public class TrackUtils {
             EnhancedTrack enhancedTrack = new EnhancedTrack(track);
             boolean newAlbum = !lastAlbum.equalsIgnoreCase(track.getAlbum());
             boolean newArtist = !lastArtist.equalsIgnoreCase(track.getArtist());
-            if ((sortOrder == FindPlaylistTracksQuery.SortOrder.Album && newAlbum) ||
-                    (sortOrder == FindPlaylistTracksQuery.SortOrder.Artist && newArtist)) {// new section begins
+            if ((sortOrder == SortOrder.Album && newAlbum) ||
+                    (sortOrder == SortOrder.Artist && newArtist)) {// new section begins
                 sectionCount++;
                 enhancedTrack.setNewSection(true);
                 finishSection(transaction, sectionTracks, variousPerSection);
                 sectionTracks.clear();
                 variousPerSection = false;
             } else {
-                if ((sortOrder == FindPlaylistTracksQuery.SortOrder.Album && newArtist) ||
-                        (sortOrder == FindPlaylistTracksQuery.SortOrder.Artist && newAlbum)) {
+                if ((sortOrder == SortOrder.Album && newArtist) ||
+                        (sortOrder == SortOrder.Artist && newAlbum)) {
                     variousPerSection = true;
                 }
             }
