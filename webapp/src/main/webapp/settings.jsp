@@ -255,9 +255,9 @@
                 </td>
             </tr>
             <tr <mt:flipFlop/>>
-                <td><fmt:message key="settings.showAlbumArt" /></td>
+                <td><fmt:message key="settings.showThumbnails" /></td>
                 <td>
-                    <input type="checkbox" name="showAlbumArt" value="true" <c:if test="${config.showAlbumArt}">checked="checked"</c:if> />
+                    <input type="checkbox" name="showThumbnails" value="true" <c:if test="${config.showThumbnails}">checked="checked"</c:if> />
                 </td>
             </tr>
             <tr <mt:flipFlop/>>

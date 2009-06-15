@@ -13,12 +13,9 @@ import de.codewave.mytunesrss.servlet.WebConfig;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
 
 /**
  * de.codewave.mytunesrss.command.SaveSettingsCommandHandler
@@ -72,7 +69,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setAlbumImageSize(getIntegerRequestParameter("albImgSize", 128));
         webConfig.setRemoteControl(getBooleanRequestParameter("remoteControl", false));
         webConfig.setSearchDefault(getRequestParameter("searchDefault", WebConfig.SearchDefault.Fuzzy.name()));
-        webConfig.setShowAlbumArt(getBooleanRequestParameter("showAlbumArt", false));
+        webConfig.setShowThumbnails(getBooleanRequestParameter("showThumbnails", false));
         transferTranscoders(webConfig);
         boolean error = false;
         error |= transferAndValidatePageSize(webConfig);
