@@ -36,7 +36,7 @@ public class LuceneTrackService {
         LOGGER.debug("Indexing all tracks.");
         long start = System.currentTimeMillis();
         Directory directory = getDirectory();
-        IndexWriter iwriter = new IndexWriter(directory, new StandardAnalyzer(), true, new IndexWriter.MaxFieldLength(2000));
+        IndexWriter iwriter = new IndexWriter(directory, new StandardAnalyzer(Collections.emptySet()), true, new IndexWriter.MaxFieldLength(300));
         FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, FindPlaylistTracksQuery.SortOrder.KeepOrder);
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
@@ -87,20 +87,19 @@ public class LuceneTrackService {
     public List<String> searchTrackIds(String[] searchTerms, boolean fuzzy) throws IOException, ParseException {
         Directory directory = getDirectory();
         final IndexSearcher isearcher = new IndexSearcher(directory);
-        QueryParser parser = new QueryParser("name", new StandardAnalyzer());
+        QueryParser parser = new QueryParser("name", new StandardAnalyzer(Collections.emptySet()));
         Query luceneQuery = parser.parse(createQueryString(searchTerms, fuzzy));
-        final List<String> trackIds = new ArrayList<String>();
+        final BitSet bits = new BitSet();
         isearcher.search(luceneQuery, new HitCollector() {
             @Override
             public void collect(int i, float v) {
-                try {
-                    trackIds.add(isearcher.doc(i).get("id"));
-                } catch (IOException e) {
-                    LOGGER.error("Could not get document at index " + i + ".", e);
-
-                }
+                    bits.set(i);
             }
         });
+        final List<String> trackIds = new ArrayList<String>();
+        for (int i = bits.nextSetBit(0); i > 0; i = bits.nextSetBit(i + 1)) {
+            trackIds.add(isearcher.doc(i).get("id"));
+        }
         isearcher.close();
         directory.close();
         return trackIds;
