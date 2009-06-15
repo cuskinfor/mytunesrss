@@ -50,6 +50,7 @@ public enum MyTunesRssCommand implements Command {
     SaveSmartPlaylist("saveSmartPlaylist", SaveSmartPlaylistCommandHandler.class),
     YouTubeRedirect("youTubeRedirect", YouTubeRedirectCommandHandler.class),
     ShowRemoteControl("showRemoteControl", ShowRemoteControlHandler.class),
+    SearchTracks("searchTracks", SearchTracksCommandHandler.class),
     Upload("upload", UploadCommandHandler.class);
 
     private String myName;

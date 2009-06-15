@@ -29,9 +29,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         }
         if (isSessionAuthorized()) {
             String searchTerm = getRequestParameter("searchTerm", null);
-            getRequest().getSession().setAttribute("lastSearchTerm", searchTerm);
             boolean fuzzy = getBooleanRequestParameter("fuzzy", false);
-            getRequest().getSession().setAttribute("lastSearchFuzzy", fuzzy);
             String sortOrderName = getRequestParameter("sortOrder", FindPlaylistTracksQuery.SortOrder.Album.name());
             FindPlaylistTracksQuery.SortOrder sortOrderValue = FindPlaylistTracksQuery.SortOrder.valueOf(sortOrderName);
 

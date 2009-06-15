@@ -47,7 +47,7 @@
 
     <jsp:include page="/incl_error.jsp" />
 
-    <form id="search" action="${servletUrl}/browseTrack/${auth}" method="post">
+    <form id="search" action="${servletUrl}/searchTracks/${auth}" method="post">
 
         <table class="portal" cellspacing="0">
             <tr>
