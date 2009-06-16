@@ -283,4 +283,8 @@ public class MyTunesFunctions {
     public static String rssDate(long timestamp) {
         return PUBLISH_DATE_FORMAT.format(new Date(timestamp));
     }
+
+    public static List<String> availableExternalSiteNames(boolean album, boolean artist, boolean title) {
+        return MyTunesRss.CONFIG.getAvailableExternalSiteNames(album, artist, title);
+    }
 }

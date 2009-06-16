@@ -65,10 +65,18 @@ function updateTooltipPosition(e) {
     var scrTop = (document.documentElement && document.documentElement.scrollTop) ? document.documentElement.scrollTop : document.body.scrollTop;
     mouseX = (document.all) ? window.event.x + scrLeft : e.pageX;
     mouseY = (document.all) ? window.event.y + scrTop : e.pageY;
+
     if (tooltipElement != null) {
         tooltipElement.style.position = "absolute";
+
         tooltipElement.style.left = (mouseX + 20) + "px";
-        tooltipElement.style.top = (mouseY + 20) + "px";
+
+        var bottomPos = mouseY + 20 + tooltipElement.scrollHeight;
+        if (bottomPos > scrTop + (window.innerHeight ? window.innerHeight : document.documentElement.clientHeight)) {
+            tooltipElement.style.top = (mouseY + 20 - (bottomPos - scrTop - (window.innerHeight ? window.innerHeight : document.documentElement.clientHeight))) + "px";
+        } else {
+            tooltipElement.style.top = (mouseY + 20) + "px";
+        }
     }
 }
 

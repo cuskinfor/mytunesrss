@@ -51,6 +51,7 @@ public enum MyTunesRssCommand implements Command {
     YouTubeRedirect("youTubeRedirect", YouTubeRedirectCommandHandler.class),
     ShowRemoteControl("showRemoteControl", ShowRemoteControlHandler.class),
     SearchTracks("searchTracks", SearchTracksCommandHandler.class),
+    RedirectToExternalSite("redirectToExternalSite", RedirectToExternalSiteCommandHandler.class),
     Upload("upload", UploadCommandHandler.class);
 
     private String myName;

@@ -340,4 +340,13 @@
         <function-signature>java.lang.String rssDate(long)</function-signature>
     </function>
 
+    <function>
+        <description>
+            Get available external site names.
+        </description>
+        <name>availableExternalSiteNames</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.util.List availableExternalSiteNames(boolean,boolean,boolean)</function-signature>
+    </function>
+
 </taglib>

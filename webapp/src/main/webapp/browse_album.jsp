@@ -183,6 +183,10 @@
                                     </c:otherwise>
                                 </c:choose>
                             </c:if>
+                            <c:if test="${!mtfn:unknown(album.artist)}">
+                                <a target="_blank" href="${servletUrl}/redirectToExternalSite/${auth}/<mt:encrypt key="${encryptionKey}">site=${cwfn:encodeUrl(mtfn:encode64('musicline.de'))}/album=${cwfn:encodeUrl(mtfn:encode64(album.name))}<c:if test="${!mtfn:unknown(album.artist) && album.artistCount == 1}">/artist=${cwfn:encodeUrl(mtfn:encode64(album.artist))}</c:if></mt:encrypt>">
+                                    <img src="${appUrl}/images/finish.gif" alt="musicline.de" title="musicline.de" /></a>
+                            </c:if>
                         </c:when>
                         <c:otherwise>
                             <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">

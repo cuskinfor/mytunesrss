@@ -51,7 +51,6 @@ public class MyTunesRssJmxUtils {
             CONTENT_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Content");
             ADMIN_NOTIFY_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=AdminNotification");
             STATISTIC_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=Statistic");
-            //REMOTE_CONTROL_CONFIG_NAME = new ObjectName("MyTunesRSS:type=config,name=RemoteControl");
             INITIALIZED = true;
         } catch (MalformedObjectNameException e) {
             if (LOG.isErrorEnabled()) {
@@ -76,7 +75,6 @@ public class MyTunesRssJmxUtils {
                 server.registerMBean(new ContentConfig(), CONTENT_CONFIG_NAME);
                 server.registerMBean(new AdminNotifyConfig(), ADMIN_NOTIFY_CONFIG_NAME);
                 server.registerMBean(new StatisticConfig(), STATISTIC_CONFIG_NAME);
-                //server.registerMBean(new RemoteControlConfig(), REMOTE_CONTROL_CONFIG_NAME);
                 registerUsers();
                 HttpAdaptor adaptor = new HttpAdaptor();
                 ObjectName name = HTTP_ADAPTOR_NAME;

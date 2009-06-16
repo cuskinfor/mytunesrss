@@ -29,7 +29,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -131,6 +133,7 @@ public class MyTunesRssConfig {
     private RemoteControlType myRemoteControlType;
     private String myDisabledMp4Codecs;
     private List<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
+    private Map<String, List<String>> myExternalSites = Collections.emptyMap();
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -896,34 +899,6 @@ public class MyTunesRssConfig {
         myStatisticKeepTime = statisticKeepTime;
     }
 
-    public String getVideoLanClientHost() {
-        return myVideoLanClientHost;
-    }
-
-    public void setVideoLanClientHost(String videoLanClientHost) {
-        myVideoLanClientHost = videoLanClientHost;
-    }
-
-    public int getVideoLanClientPort() {
-        return myVideoLanClientPort;
-    }
-
-    public void setVideoLanClientPort(int videoLanClientPort) {
-        myVideoLanClientPort = videoLanClientPort;
-    }
-
-    public RemoteControlType getRemoteControlType() {
-        return myRemoteControlType;
-    }
-
-    public void setRemoteControlType(RemoteControlType remoteControlType) {
-        myRemoteControlType = remoteControlType;
-    }
-
-    public boolean isRemoteControl() {
-        return MyTunesRss.QUICKTIME_PLAYER != null; // myRemoteControlType != RemoteControlType.None;
-    }
-
     public String getDisabledMp4Codecs() {
         return myDisabledMp4Codecs;
     }
@@ -1128,15 +1103,25 @@ public class MyTunesRssConfig {
                 LOGGER.warn("Could not read/parse statistics keep time, keeping default.");
                 // intentionally left blank; keep default
             }
-            setVideoLanClientHost(JXPathUtils.getStringValue(settings, "remote-control/vlc/host", null));
-            setVideoLanClientPort(JXPathUtils.getIntValue(settings, "remote-control/vlc/port", 0));
-            setRemoteControlType(RemoteControlType.valueOf(JXPathUtils.getStringValue(settings, "remote-control/type", RemoteControlType.None.name())));
             setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", null));
             Iterator<JXPathContext> transcoderConfigIterator = JXPathUtils.getContextIterator(settings, "transcoders/config");
             myTranscoderConfigs = new ArrayList<TranscoderConfig>();
             while (transcoderConfigIterator.hasNext()) {
                 JXPathContext transcoderConfigContext = transcoderConfigIterator.next();
                 myTranscoderConfigs.add(new TranscoderConfig(transcoderConfigContext));
+            }
+            Iterator<JXPathContext> externalSitesIterator = JXPathUtils.getContextIterator(settings, "external-sites/site");
+            myExternalSites = new HashMap<String, List<String>>();
+            myExternalSites.put("musicline.de", Collections.singletonList("http://www.musicline.de/de/prosearch?artist={artist}&title={album}&track={title}&doprosearch=true"));
+            while (externalSitesIterator.hasNext()) {
+                JXPathContext externalSiteContext = externalSitesIterator.next();
+                Iterator<JXPathContext> externalUrlIterator = JXPathUtils.getContextIterator(externalSiteContext, "urls/url");
+                List<String> externalUrls = new ArrayList<String>();
+                while (externalUrlIterator.hasNext()) {
+                    JXPathContext externalUrlContext = externalUrlIterator.next();
+                    externalUrls.add(JXPathUtils.getStringValue(externalUrlContext, ".", null));
+                }
+                myExternalSites.put(JXPathUtils.getStringValue(externalSiteContext, "name", null), externalUrls);
             }
         } catch (IOException e) {
             LOGGER.error("Could not read configuration file.", e);
@@ -1354,13 +1339,6 @@ public class MyTunesRssConfig {
             notify.appendChild(DOMUtils.createBooleanElement(settings, "web-upload", isNotifyOnWebUpload()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "missing-file", isNotifyOnMissingFile()));
             root.appendChild(DOMUtils.createIntElement(settings, "statistics-keep-time", getStatisticKeepTime()));
-            Element remoteControl = settings.createElement("remote-control");
-            root.appendChild(remoteControl);
-            remoteControl.appendChild(DOMUtils.createTextElement(settings, "type", getRemoteControlType().name()));
-            Element remoteControlVlc = settings.createElement("vlc");
-            remoteControl.appendChild(remoteControlVlc);
-            remoteControlVlc.appendChild(DOMUtils.createTextElement(settings, "host", getVideoLanClientHost()));
-            remoteControlVlc.appendChild(DOMUtils.createIntElement(settings, "port", getVideoLanClientPort()));
             root.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", getDisabledMp4Codecs()));
             Element transcoderConfigs = settings.createElement("transcoders");
             root.appendChild(transcoderConfigs);
@@ -1408,5 +1386,39 @@ public class MyTunesRssConfig {
 
     public boolean isTomcatSslProxy() {
         return StringUtils.isNotBlank(myTomcatSslProxyHost) && myTomcatSslProxyPort > 0 && myTomcatSslProxyPort < 65536;
+    }
+
+    public String getExternalSiteUrl(String siteName, String album, String artist, String title) {
+        for (String url : myExternalSites.get(siteName)) {
+            if (StringUtils.isNotBlank(album) && !StringUtils.contains(url, "{album}")) {
+                continue;
+            }
+            if (StringUtils.isNotBlank(artist) && !StringUtils.contains(url, "{artist}")) {
+                continue;
+            }
+            if (StringUtils.isNotBlank(title) && !StringUtils.contains(url, "{title}")) {
+                continue;
+            }
+            try {
+                return url.replace("{album}", URLEncoder.encode(StringUtils.trimToEmpty(album), "UTF-8")).replace("{artist}", URLEncoder.encode(StringUtils.trimToEmpty(artist), "UTF-8")).replace("{title}", URLEncoder.encode(StringUtils.trimToEmpty(title), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException("UTF-8 not found!");
+            }
+        }
+        return null;
+    }
+
+    public List<String> getAvailableExternalSiteNames(boolean album, boolean artist, boolean title) {
+        List<String> availableSiteNames = new ArrayList<String>();
+        for (String siteName : myExternalSites.keySet()) {
+            if (getExternalSiteUrl(siteName, album ? "x" : null, artist ? "x" : null, title ? "x" : null) != null) {
+                availableSiteNames.add(siteName);
+            }
+        }
+        return availableSiteNames;
+    }
+
+    public boolean isRemoteControl() {
+        return MyTunesRss.QUICKTIME_PLAYER != null;
     }
 }
