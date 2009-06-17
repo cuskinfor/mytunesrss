@@ -67,7 +67,7 @@ public class LuceneTrackService {
     public List<String> searchTrackIds(String[] searchTerms, boolean fuzzy) throws IOException, ParseException {
         Directory directory = getDirectory();
         final IndexSearcher isearcher = new IndexSearcher(directory);
-        Query luceneQuery = createQuery(searchTerms);
+        Query luceneQuery = createQuery(searchTerms, fuzzy);
         final BitSet bits = new BitSet();
         isearcher.search(luceneQuery, new HitCollector() {
             @Override
@@ -84,13 +84,15 @@ public class LuceneTrackService {
         return trackIds;
     }
 
-    private Query createQuery(String[] searchTerms) {
+    private Query createQuery(String[] searchTerms, boolean fuzzy) {
         BooleanQuery andQuery = new BooleanQuery();
         for (String searchTerm : searchTerms) {
             if (!STOP_WORDS.contains(searchTerm)) {
                 BooleanQuery orQuery = new BooleanQuery();
                 for (String field : new String[]{"name", "album", "artist"}) {
-                    orQuery.add(new FuzzyQuery(new Term(field, searchTerm), 0.5f), BooleanClause.Occur.SHOULD);
+                    Term term = new Term(field, searchTerm);
+                    Query termQuery = fuzzy ? new FuzzyQuery(term) : new TermQuery(term);
+                    orQuery.add(termQuery, BooleanClause.Occur.SHOULD);
                 }
                 andQuery.add(orQuery, BooleanClause.Occur.MUST);
             }
