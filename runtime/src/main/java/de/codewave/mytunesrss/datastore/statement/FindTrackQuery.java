@@ -110,10 +110,17 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     }
 
     private QueryResult<Track> executeForIds(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "preFindTracksByIds");
-        statement.setObject("track_id", myIds);
-        statement.setObject("search_term", Arrays.asList(mySearchTerms));
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "createSearchTempTables");
         statement.execute();
+        statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
+        statement.setObject("track_id", myIds);
+        statement.execute();
+        if (mySearchTerms != null && mySearchTerms.length > 0) {
+            statement = MyTunesRssUtils.createStatement(connection, "fillLikeSearchTempTable");
+            statement.setObject("search_term", Arrays.asList(mySearchTerms));
+            statement.setObject("first_search_term", mySearchTerms[0]);
+            statement.execute();
+        }
         String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
         if (mySortOrder == SortOrder.Artist) {
             statement = MyTunesRssUtils.createStatement(connection, "findTracksByIdsWithArtistOrder" + suffix);

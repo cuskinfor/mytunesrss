@@ -102,24 +102,21 @@
         <sql>ANALYZE SAMPLE_SIZE 0</sql>
     </statement>
 
-    <statement name="preFindTracksByIds">
+    <statement name="createSearchTempTables">
         <sql>
-            CREATE TEMPORARY TABLE IF NOT EXISTS temp_track_ids (
+            CREATE TEMPORARY TABLE IF NOT EXISTS temp_lucene_tracks (
                 track_id VARCHAR(100),
                 UNIQUE(track_id)
             )
         </sql>
-        <sql>TRUNCATE TABLE temp_track_ids</sql>
-        <sql loop="track_id" loopbatch="10000">
-            INSERT INTO temp_track_ids (track_id) VALUES (:loopitem_track_id)
+        <sql>TRUNCATE TABLE temp_lucene_tracks</sql>
+        <sql>
+            CREATE TEMPORARY TABLE IF NOT EXISTS temp_like_tracks (
+                track_id VARCHAR(100),
+                UNIQUE(track_id)
+            )
         </sql>
-        <sql loop="search_term" loopbatch="100">
-            INSERT INTO temp_track_ids (track_id)
-            SELECT t.id FROM track t
-            WHERE NOT EXISTS (SELECT tti.track_id FROM temp_track_ids tti WHERE tti.track_id = t.id)
-            AND (LOWER(t.name) LIKE :loopitem_search_term {likeEscape} OR LOWER(t.album) LIKE :loopitem_search_term
-            {likeEscape} OR LOWER(t.artist) LIKE :loopitem_search_term {likeEscape})
-        </sql>
+        <sql>TRUNCATE TABLE temp_like_tracks</sql>
     </statement>
 
     <!-- reusable sql fragments -->

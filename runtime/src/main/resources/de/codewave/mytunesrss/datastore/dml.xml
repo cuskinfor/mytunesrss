@@ -722,6 +722,36 @@
         </sql>
     </statement>
 
+    <statement name="fillLuceneSearchTempTable">
+        <sql loop="track_id" loopbatch="10000">
+            INSERT INTO temp_lucene_tracks (track_id) VALUES (:loopitem_track_id)
+        </sql>
+    </statement>
+
+    <statement name="fillLikeSearchTempTable">
+        <sql>
+            INSERT INTO temp_like_tracks (track_id)
+                SELECT t.id FROM track t
+                WHERE (
+                    LOWER(t.name) LIKE :first_search_term {likeEscape}
+                    OR LOWER(t.album) LIKE :first_search_term {likeEscape}
+                    OR LOWER(t.artist) LIKE :first_search_term {likeEscape}
+                )
+        </sql>
+        <sql loop="search_term" loopbatch="100">
+            DELETE FROM temp_like_tracks tsh
+            WHERE NOT EXISTS (
+                SELECT t.id FROM track t
+                WHERE t.id = tsh.track_id
+                AND (
+                    LOWER(t.name) LIKE :loopitem_search_term {likeEscape}
+                    OR LOWER(t.album) LIKE :loopitem_search_term {likeEscape}
+                    OR LOWER(t.artist) LIKE :loopitem_search_term {likeEscape}
+                )
+            )
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
@@ -772,11 +802,17 @@
 
     <fragment name="findTracksByIdsQuery">
         <![CDATA[
-        SELECT {trackColumns}, COUNT(i.hash) AS imagecount
-        FROM temp_track_ids tti, track t
-        LEFT OUTER JOIN image i ON i.hash = t.image_hash
-        WHERE tti.track_id = t.id
-        GROUP BY {groupByTrackColumns}
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+            FROM temp_lucene_tracks tt, track t
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
+            WHERE tt.track_id = t.id
+            GROUP BY {groupByTrackColumns}
+        UNION
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+            FROM temp_like_tracks tt, track t
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
+            WHERE tt.track_id = t.id
+            GROUP BY {groupByTrackColumns}
         ]]>
     </fragment>
 
@@ -796,13 +832,21 @@
 
     <fragment name="findTracksByIdsQueryRestricted">
         <![CDATA[
-        SELECT {trackColumns}, COUNT(i.hash) AS imagecount
-        FROM link_track_playlist rltp, temp_track_ids tti, track t
-        LEFT OUTER JOIN image i ON i.hash = t.image_hash
-        WHERE rltp.playlist_id = :restrictedPlaylistId
-        AND rltp.track_id = t.id
-        AND tti.track_id = t.id
-        GROUP BY {groupByTrackColumns}
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+            FROM link_track_playlist rltp, temp_lucene_tracks tt, track t
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
+            WHERE rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.track_id = t.id
+            AND tt.track_id = t.id
+            GROUP BY {groupByTrackColumns}
+        UNION
+            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+            FROM link_track_playlist rltp, temp_like_tracks tt, track t
+            LEFT OUTER JOIN image i ON i.hash = t.image_hash
+            WHERE rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.track_id = t.id
+            AND tt.track_id = t.id
+            GROUP BY {groupByTrackColumns}
         ]]>
     </fragment>
 
