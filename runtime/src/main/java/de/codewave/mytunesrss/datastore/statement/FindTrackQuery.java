@@ -35,6 +35,10 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistId = user.getPlaylistId();
         String[] searchTerms = StringUtils.split(StringUtils.defaultString(searchTerm), " ");
+        query.mySearchTerms = new String[searchTerms.length];
+        for (int i = 0; i < searchTerms.length; i++) {
+            query.mySearchTerms[i] = "%" + StringUtils.lowerCase(searchTerms[i]) + "%";
+        }
         query.myIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzzy);
         return CollectionUtils.isEmpty(query.myIds) ? null : query;
     }
@@ -78,6 +82,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private String[] myArtists;
     private SortOrder mySortOrder;
     private String myRestrictedPlaylistId;
+    private String[] mySearchTerms = new String[0];
 
     private FindTrackQuery() {
         // intentionally left blank
@@ -107,6 +112,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private QueryResult<Track> executeForIds(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "preFindTracksByIds");
         statement.setObject("track_id", myIds);
+        statement.setObject("search_term", Arrays.asList(mySearchTerms));
         statement.execute();
         String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
         if (mySortOrder == SortOrder.Artist) {
