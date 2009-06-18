@@ -184,8 +184,13 @@
                                 </c:choose>
                             </c:if>
                             <c:if test="${!mtfn:unknown(album.artist)}">
-                                <a target="_blank" href="${servletUrl}/redirectToExternalSite/${auth}/<mt:encrypt key="${encryptionKey}">site=${cwfn:encodeUrl(mtfn:encode64('musicline.de'))}/album=${cwfn:encodeUrl(mtfn:encode64(album.name))}<c:if test="${!mtfn:unknown(album.artist) && album.artistCount == 1}">/artist=${cwfn:encodeUrl(mtfn:encode64(album.artist))}</c:if></mt:encrypt>">
-                                    <img src="${appUrl}/images/finish.gif" alt="musicline.de" title="musicline.de" /></a>
+                                <img src="${appUrl}/images/http.gif" alt="external site" title="external site" style="cursor:pointer" onclick="$jQ('#externalSite_${loopStatus.index}').dialog('open')"/>
+                                <div id="externalSite_${loopStatus.index}" title="Choose target site">
+                                    <c:forEach items="${mtfn:availableExternalSiteNames(true, true, false)}" var="externalSiteName">
+                                        <a href="${servletUrl}/redirectToExternalSite/${auth}/<mt:encrypt key="${encryptionKey}">site=${cwfn:encodeUrl(mtfn:encode64(externalSiteName))}/album=${cwfn:encodeUrl(mtfn:encode64(album.name))}<c:if test="${!mtfn:unknown(album.artist) && album.artistCount == 1}">/artist=${cwfn:encodeUrl(mtfn:encode64(album.artist))}</c:if></mt:encrypt>" target="_blank" onclick="$jQ('#externalSite_${loopStatus.index}').dialog('close')"><c:out value="${externalSiteName}"/></a><br />
+                                    </c:forEach>
+                                </div>
+                                <script type="text/javascript">$jQ('#externalSite_${loopStatus.index}').dialog({autoOpen:false,modal:true})</script>
                             </c:if>
                         </c:when>
                         <c:otherwise>
