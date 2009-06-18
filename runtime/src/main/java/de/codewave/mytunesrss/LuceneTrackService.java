@@ -64,10 +64,10 @@ public class LuceneTrackService {
         LOGGER.debug("Finished indexing all tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
     }
 
-    public List<String> searchTrackIds(String[] searchTerms, boolean fuzzy) throws IOException, ParseException {
+    public List<String> searchTrackIds(String[] searchTerms, int fuzziness) throws IOException, ParseException {
         Directory directory = getDirectory();
         final IndexSearcher isearcher = new IndexSearcher(directory);
-        Query luceneQuery = createQuery(searchTerms, fuzzy);
+        Query luceneQuery = createQuery(searchTerms, fuzziness);
         final BitSet bits = new BitSet();
         isearcher.search(luceneQuery, new HitCollector() {
             @Override
@@ -84,14 +84,14 @@ public class LuceneTrackService {
         return trackIds;
     }
 
-    private Query createQuery(String[] searchTerms, boolean fuzzy) {
+    private Query createQuery(String[] searchTerms, int fuzziness) {
         BooleanQuery andQuery = new BooleanQuery();
         for (String searchTerm : searchTerms) {
             if (!STOP_WORDS.contains(searchTerm)) {
                 BooleanQuery orQuery = new BooleanQuery();
                 for (String field : new String[]{"name", "album", "artist"}) {
                     Term term = new Term(field, searchTerm);
-                    Query termQuery = fuzzy ? new FuzzyQuery(term) : new TermQuery(term);
+                    Query termQuery = fuzziness > 0 ? new FuzzyQuery(term, ((float)(100 - fuzziness)) / 100f) : new TermQuery(term);
                     orQuery.add(termQuery, BooleanClause.Occur.SHOULD);
                 }
                 andQuery.add(orQuery, BooleanClause.Occur.MUST);

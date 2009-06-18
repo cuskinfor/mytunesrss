@@ -9,6 +9,9 @@
 
         <release version="3.8-EAP-1" date="2009-xx-xx" description="3.8 EAP 1">
             <action dev="mdescher" type="add">
+                Added jQuery javascript library for sliders (fuzziness in search and volume/progress in remote control).
+            </action>
+            <action dev="mdescher" type="add">
                 Lucene index for tracks. Used for searching (fuzzy search supported).
             </action>
             <action dev="mdescher" type="update">

@@ -134,15 +134,15 @@
 
             var percentage = trackInfo.currentTime != -1 && trackInfo.length > -1 ? trackInfo.currentTime * 100 / trackInfo.length : 0;
             if (percentage > 0 && percentage <= 100) {
-                document.getElementById("progressBar").style.width = (percentage) + "%";
+                $jQ("#progress").slider("value", percentage);
             } else {
-                document.getElementById("progressBar").style.width = 0;
+                $jQ("#progress").slider("value", 0);
             }
 
             if (trackInfo.volume > 0 && trackInfo.volume <= 100) {
-                document.getElementById("volumeBar").style.width = (trackInfo.volume) + "%";
+                $jQ("#volume").slider("value", trackInfo.volume);
             } else {
-                document.getElementById("volumeBar").style.width = 0;
+                $jQ("#volume").slider("value", 0);
             }
         }
 
@@ -180,56 +180,12 @@
             });
         }
 
-        function handleProgressBar(event) {
-            var containerLeft = Position.page($("progressBackground"))[0];
-            var containerTop = Position.page($("progressBackground"))[1];
-            var mouseX = event.pointerX();
-            var mouseY = event.pointerY();
-            var horizontalPosition = mouseX - containerLeft;
-            var verticalPosition = mouseY - containerTop;
-            var containerDimensions = $('progressBackground').getDimensions();
-            var height = containerDimensions.height;
-            var width = containerDimensions.width;
-            if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
-                execJsonRpc('RemoteControlService.jumpTo', [Math.round(horizontalPosition * 100 / width)], getStateAndUpdateInterface);
-            }
-        }
-
-        function handleVolumeBar(event) {
-            var containerLeft = Position.page($("volumeBackground"))[0];
-            var containerTop = Position.page($("volumeBackground"))[1];
-            var mouseX = event.pointerX();
-            var mouseY = event.pointerY();
-            var horizontalPosition = mouseX - containerLeft;
-            var verticalPosition = mouseY - containerTop;
-            var containerDimensions = $('volumeBackground').getDimensions();
-            var height = containerDimensions.height;
-            var width = containerDimensions.width;
-            if (horizontalPosition >= 0 && verticalPosition >= 0 && mouseX <= (width + containerLeft) && mouseY <= (height + containerTop) ) {
-                execJsonRpc('RemoteControlService.setVolume', [Math.round(horizontalPosition * 100 / width)], getStateAndUpdateInterface);
-            }
-        }
-
-        function registerObservers() {
-            Event.observe("progressBackground", "mousedown", function(event) {
-                if (event.isLeftClick()) {
-                    handleProgressBar(event);
-                }
-            });
-            Event.observe("volumeBackground", "mousedown", function(event) {
-                if (event.isLeftClick()) {
-                    handleVolumeBar(event);
-                }
-            });
-        }
-
         function init() {
             createPlaylist();
             execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], init2);
         }
 
         function init2(trackInfo) {
-            registerObservers();
             new PeriodicalExecuter(function() {
                 getStateAndUpdateInterface();
             }, 2);
@@ -256,6 +212,21 @@
             }
             jsonRpc('${servletUrl}', method, params, callback, sessionId);
         }
+
+      $jQ(document).ready(function(){
+        $jQ("#volume").slider({
+            value:0,
+            slide:function(event, ui) {
+                execJsonRpc('RemoteControlService.setVolume', [ui.value], getStateAndUpdateInterface);
+            }
+        });
+        $jQ("#progress").slider({
+            value:0,
+            slide:function(event, ui) {
+                execJsonRpc('RemoteControlService.jumpTo', [ui.value], getStateAndUpdateInterface);
+            }
+        });
+      });
 
     </script>
 
@@ -313,17 +284,9 @@
             <img src="${appUrl}/images/rc_fullscreen.png" alt="fullscreen" onclick="toggleFullScreen()" style="cursor:pointer"/>
         </div>
 
-        <div id="volumeDiv">
-            <div id="volumeBackground" style="cursor:pointer">
-                <div id="volumeBar" style="width:0;cursor:pointer">&nbsp;</div>
-            </div>
-        </div>
+        <div id="volume" style="margin:15px 20px 0 20px"/>
 
-        <div id="progressDiv" style="display:block">
-            <div id="progressBackground" style="cursor:pointer">
-                <div id="progressBar" style="width:0;cursor:pointer">&nbsp;</div>
-            </div>
-        </div>
+        <div id="progress" style="margin:30px 0 30px 0"/>
 
     </div>
 

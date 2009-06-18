@@ -30,7 +30,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         return query;
     }
 
-    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, boolean fuzzy, SortOrder sortOrder) throws IOException, ParseException {
+    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, int fuzziness, SortOrder sortOrder) throws IOException, ParseException {
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistId = user.getPlaylistId();
@@ -39,7 +39,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         for (int i = 0; i < searchTerms.length; i++) {
             query.mySearchTerms[i] = "%" + StringUtils.lowerCase(searchTerms[i]) + "%";
         }
-        query.myIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzzy);
+        query.myIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness);
         return CollectionUtils.isEmpty(query.myIds) ? null : query;
     }
 

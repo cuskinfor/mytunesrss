@@ -749,25 +749,6 @@ h1.serverbrowser span {
     text-align: center;
 }
 
-#volumeDiv {
-    padding-top: 20px;
-    padding-left: 50px;
-    padding-right: 20px;
-    padding-bottom: 0;
-    background: url("../images/rc_volume.png") 20px 20px no-repeat;
-}
-
-#volumeBackground {
-    background: url("../images/volume_background.gif") repeat-x;
-    border: 1px solid #666;
-}
-
-#volumeBar {
-    background: url("../images/volume_bar.gif") top right repeat-x;
-    font-weight: bold;
-    text-align: center;
-}
-
 a.albumthumb {
     position:relative;
     left:0;

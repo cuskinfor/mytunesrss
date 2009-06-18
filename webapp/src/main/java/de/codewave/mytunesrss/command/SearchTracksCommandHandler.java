@@ -14,7 +14,8 @@ public class SearchTracksCommandHandler extends BrowseTrackCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         getRequest().getSession().setAttribute("lastSearchTerm", getRequestParameter("searchTerm", null));
-        getRequest().getSession().setAttribute("lastSearchFuzzy", getBooleanRequestParameter("fuzzy", false));
+        getWebConfig().setSearchFuzziness(getIntegerRequestParameter("searchFuzziness", 0));
+        getWebConfig().save(getRequest(), getResponse());
         super.executeAuthorized();
     }
 }

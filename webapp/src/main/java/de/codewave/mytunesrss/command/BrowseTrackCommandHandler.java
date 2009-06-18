@@ -29,7 +29,6 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
         }
         if (isSessionAuthorized()) {
             String searchTerm = getRequestParameter("searchTerm", null);
-            boolean fuzzy = getBooleanRequestParameter("fuzzy", false);
             String sortOrderName = getRequestParameter("sortOrder", SortOrder.Album.name());
             SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);
 
@@ -42,7 +41,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
                 if (maxTermSize >= 3) {
-                    query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, fuzzy, sortOrderValue);
+                    query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, getWebConfig().getSearchFuzziness(), sortOrderValue);
                 } else {
                     addError(new BundleError("error.searchTermMinSize", 3));
                     forward(MyTunesRssCommand.ShowPortal);

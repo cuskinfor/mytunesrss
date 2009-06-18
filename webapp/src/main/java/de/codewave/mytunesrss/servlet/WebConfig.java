@@ -55,7 +55,7 @@ public class WebConfig {
     private static final String CFG_LANGUAGE = "lc";
     private static final String CFG_SHOW_REMOTE_CONTROL = "rmCtrl";
     private static final String CFG_ACTIVE_TRANSCODERS = "actTra";
-    private static final String CFG_SEARCH_DEFAULT = "srchDef";
+    private static final String CFG_SEARCH_FUZZINESS = "searchFuzziness";
     private static final String CFG_SHOW_THUMBNAILS = "showThumbs";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
@@ -63,7 +63,7 @@ public class WebConfig {
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
             CFG_PLAYLIST_TYPE, CFG_LAME_TARGET_BITRATE, CFG_LAME_TARGET_SAMPLE_RATE, CFG_THEME, CFG_TRANSCODE_OTF_IF_POSSIBLE, CFG_RANDOM_SOURCE,
             CFG_FLASH_PLAYER_TYPE, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
-            CFG_ALBUM_IMAGE_SIZE, CFG_LANGUAGE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_DEFAULT, CFG_SHOW_THUMBNAILS};
+            CFG_ALBUM_IMAGE_SIZE, CFG_LANGUAGE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS};
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
     public static final String MYTUNESRSS_COM_COOKIE = "mytunesrss_com_cookie";
@@ -100,10 +100,6 @@ public class WebConfig {
                     throw new IllegalArgumentException("illegal playlist type: " + this.name());
             }
         }
-    }
-
-    public static enum SearchDefault {
-        Fuzzy(), Exact();
     }
 
     private Map<String, String> myConfigValues = new HashMap<String, String>();
@@ -157,7 +153,7 @@ public class WebConfig {
         myConfigValues.put(CFG_RANDOM_PROTECTED, "true");
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "128");
         myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "true");
-        myConfigValues.put(CFG_SEARCH_DEFAULT, SearchDefault.Fuzzy.name());
+        myConfigValues.put(CFG_SEARCH_FUZZINESS, "50");
         myConfigValues.put(CFG_SHOW_THUMBNAILS, "true");
     }
 
@@ -565,12 +561,12 @@ public class WebConfig {
         return null;
     }
 
-    public String getSearchDefault() {
-        return myConfigValues.get(CFG_SEARCH_DEFAULT);
+    public int getSearchFuzziness() {
+        return Integer.parseInt(myConfigValues.get(CFG_SEARCH_FUZZINESS));
     }
 
-    public void setSearchDefault(String searchDefault) {
-        myConfigValues.put(CFG_SEARCH_DEFAULT, searchDefault);
+    public void setSearchFuzziness(int searchFuzziness) {
+        myConfigValues.put(CFG_SEARCH_FUZZINESS, Integer.toString(searchFuzziness));
     }
 
     public boolean isShowThumbnails() {

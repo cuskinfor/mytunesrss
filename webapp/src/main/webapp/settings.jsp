@@ -228,15 +228,6 @@
                 </td>
             </tr>
             <tr <mt:flipFlop/>>
-                <td><fmt:message key="settings.searchDefault" /></td>
-                <td>
-                    <select name="searchDefault">
-                        <option value="Fuzzy" <c:if test="${config.searchDefault == 'Fuzzy'}">selected="selected"</c:if>><fmt:message key="settings.searchDefault.fuzzy"/></option>
-                        <option value="Exact" <c:if test="${config.searchDefault == 'Exact'}">selected="selected"</c:if>><fmt:message key="settings.searchDefault.exact"/></option>
-                    </select>
-                </td>
-            </tr>
-            <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.myTunesRssComAddress" /></td>
                 <td>
                     <input type="checkbox"
