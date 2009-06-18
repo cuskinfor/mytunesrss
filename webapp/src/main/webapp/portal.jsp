@@ -58,13 +58,9 @@
         <table class="portal" cellspacing="0">
             <tr>
                 <td class="search">
+                    <table border="0" cellspacing="0" cellpadding="0" style="border-bottom:0"><tr><td width="100%" style="background:transparent;padding:0 0"><input class="text" type="text" name="searchTerm" value="<c:out value="${lastSearchTerm}"/>" style="width:90%"/></td><td style="background:transparent;padding:0 0"><input class="button" type="submit" value="<fmt:message key="doSearch"/>"/></td></tr></table>
+                    <table border="0" cellspacing="0" cellpadding="0" style="border-bottom:0"><tr><td style="background:transparent;padding:0 0"><div class="searchFuzzinessLabel">Unschärfe:</div></td><td width="100%" style="background:transparent;padding:0 0"><div class="searchFuzzinessSlider" id="fuzziness" /></td></tr></table>
                     <div>
-                        <input class="text" type="text" name="searchTerm" value="<c:out value="${lastSearchTerm}"/>" style="100%"/>
-                        <input class="button" type="submit" value="<fmt:message key="doSearch"/>"/>
-                    </div>
-                    <div style="float:left;margin-top:10px">Unschärfe:</div><div id="fuzziness" style="margin-left:20px;margin-right:20px;margin-top:10px;float:left;width:200px"/>
-                    <div>
-                        <%-- input type="checkbox" name="fuzzy" value="true" <c:if test="${lastSearchFuzzy == true || (empty lastSearchFuzzy && config.searchDefault == 'Fuzzy')}">checked="checked"</c:if>> <fmt:message key="search.fuzzy" / --%>
                         <input id="inputFuzziness" type="hidden" name="searchFuzziness" />
                         <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
                     </div>

@@ -831,3 +831,11 @@ td.remotecontrolTrackImage {
     width: 36px;
     height: 36px;
 }
+
+div.searchFuzzinessLabel {
+    margin: 10px 0 0 10px;
+}
+
+div.searchFuzzinessSlider {
+    margin: 10px 0 0 5px;
+}
