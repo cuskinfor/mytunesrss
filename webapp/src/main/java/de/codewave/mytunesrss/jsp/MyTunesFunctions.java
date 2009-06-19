@@ -284,7 +284,15 @@ public class MyTunesFunctions {
         return PUBLISH_DATE_FORMAT.format(new Date(timestamp));
     }
 
-    public static List<String> availableExternalSiteNames(boolean album, boolean artist, boolean title) {
-        return MyTunesRss.CONFIG.getAvailableExternalSiteNames(album, artist, title);
+    public static boolean isExternalSites(String type) {
+        return !MyTunesRss.CONFIG.getExternalSites(type).isEmpty();
+    }
+
+    public static Map<String, String> getExternalSiteDefinitions(String type, String keyword) {
+        Map<String, String> result = new TreeMap<String, String>();
+        for (Map.Entry<String, String> site : MyTunesRss.CONFIG.getExternalSites(type).entrySet()) {
+            result.put(site.getKey(), site.getValue().replace("{" + type + "}", keyword));
+        }
+        return result;
     }
 }

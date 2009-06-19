@@ -342,11 +342,20 @@
 
     <function>
         <description>
-            Get available external site names.
+            Get available external sites.
         </description>
-        <name>availableExternalSiteNames</name>
+        <name>externalSites</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.util.List availableExternalSiteNames(boolean,boolean,boolean)</function-signature>
+        <function-signature>boolean isExternalSites(java.lang.String)</function-signature>
+    </function>
+
+    <function>
+        <description>
+            Get available external sites.
+        </description>
+        <name>externalSiteDefinitions</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.util.Map getExternalSiteDefinitions(java.lang.String, java.lang.String)</function-signature>
     </function>
 
 </taglib>

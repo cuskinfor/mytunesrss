@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.settings.DialogLayout;
-import de.codewave.mytunesrss.settings.RemoteControlType;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.io.IOUtils;
@@ -29,9 +28,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -128,12 +125,9 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnMissingFile;
     private int myStatisticKeepTime = 60;
     private String myCryptedCreationTime;
-    private String myVideoLanClientHost = "";
-    private int myVideoLanClientPort = 0;
-    private RemoteControlType myRemoteControlType;
     private String myDisabledMp4Codecs;
     private List<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
-    private Map<String, List<String>> myExternalSites = Collections.emptyMap();
+    private Map<String, Map<String, String>> myExternalSites = new HashMap<String, Map<String, String>>();
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -915,6 +909,15 @@ public class MyTunesRssConfig {
         myTranscoderConfigs = configs;
     }
 
+    public Map<String, String> getExternalSites(String type) {
+        Map<String, String> sites = myExternalSites.get(type);
+        return sites != null ? new HashMap<String, String>(sites) : new HashMap<String, String>();
+    }
+
+    public void setExternalSites(String type, Map<String, String> externalSites) {
+        myExternalSites.put(type, new HashMap<String, String>(externalSites));
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1111,17 +1114,18 @@ public class MyTunesRssConfig {
                 myTranscoderConfigs.add(new TranscoderConfig(transcoderConfigContext));
             }
             Iterator<JXPathContext> externalSitesIterator = JXPathUtils.getContextIterator(settings, "external-sites/site");
-            myExternalSites = new HashMap<String, List<String>>();
-            myExternalSites.put("musicline.de", Collections.singletonList("http://www.musicline.de/de/prosearch?artist={artist}&title={album}&track={title}&doprosearch=true"));
+            myExternalSites = new HashMap<String, Map<String, String>>();
             while (externalSitesIterator.hasNext()) {
                 JXPathContext externalSiteContext = externalSitesIterator.next();
-                Iterator<JXPathContext> externalUrlIterator = JXPathUtils.getContextIterator(externalSiteContext, "urls/url");
-                List<String> externalUrls = new ArrayList<String>();
-                while (externalUrlIterator.hasNext()) {
-                    JXPathContext externalUrlContext = externalUrlIterator.next();
-                    externalUrls.add(JXPathUtils.getStringValue(externalUrlContext, ".", null));
+                String name = JXPathUtils.getStringValue(externalSiteContext, "name", null);
+                String url = JXPathUtils.getStringValue(externalSiteContext, "url", null);
+                String type = StringUtils.substringBetween(url, "{", "}");
+                Map<String, String> sitesForType = myExternalSites.get(type);
+                if (sitesForType == null) {
+                    sitesForType = new HashMap<String, String>();
+                    myExternalSites.put(type, sitesForType);
                 }
-                myExternalSites.put(JXPathUtils.getStringValue(externalSiteContext, "name", null), externalUrls);
+                sitesForType.put(name, url);
             }
         } catch (IOException e) {
             LOGGER.error("Could not read configuration file.", e);
@@ -1347,6 +1351,18 @@ public class MyTunesRssConfig {
                 transcoderConfigs.appendChild(config);
                 transcoderConfig.writeTo(settings, config);
             }
+            if (myExternalSites != null && !myExternalSites.isEmpty()) {
+                Element externalSites = settings.createElement("external-sites");
+                root.appendChild(externalSites);
+                for (Map<String, String> sites : myExternalSites.values()) {
+                    for (Map.Entry<String, String> site : sites.entrySet()) {
+                        Element xmlSite = settings.createElement("site");
+                        externalSites.appendChild(xmlSite);
+                        xmlSite.appendChild(DOMUtils.createTextElement(settings, "name", site.getKey()));
+                        xmlSite.appendChild(DOMUtils.createTextElement(settings, "url", site.getValue()));
+                    }
+                }
+            }
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
@@ -1386,36 +1402,6 @@ public class MyTunesRssConfig {
 
     public boolean isTomcatSslProxy() {
         return StringUtils.isNotBlank(myTomcatSslProxyHost) && myTomcatSslProxyPort > 0 && myTomcatSslProxyPort < 65536;
-    }
-
-    public String getExternalSiteUrl(String siteName, String album, String artist, String title) {
-        for (String url : myExternalSites.get(siteName)) {
-            if (StringUtils.isNotBlank(album) && !StringUtils.contains(url, "{album}")) {
-                continue;
-            }
-            if (StringUtils.isNotBlank(artist) && !StringUtils.contains(url, "{artist}")) {
-                continue;
-            }
-            if (StringUtils.isNotBlank(title) && !StringUtils.contains(url, "{title}")) {
-                continue;
-            }
-            try {
-                return url.replace("{album}", URLEncoder.encode(StringUtils.trimToEmpty(album), "UTF-8")).replace("{artist}", URLEncoder.encode(StringUtils.trimToEmpty(artist), "UTF-8")).replace("{title}", URLEncoder.encode(StringUtils.trimToEmpty(title), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("UTF-8 not found!");
-            }
-        }
-        return null;
-    }
-
-    public List<String> getAvailableExternalSiteNames(boolean album, boolean artist, boolean title) {
-        List<String> availableSiteNames = new ArrayList<String>();
-        for (String siteName : myExternalSites.keySet()) {
-            if (getExternalSiteUrl(siteName, album ? "x" : null, artist ? "x" : null, title ? "x" : null) != null) {
-                availableSiteNames.add(siteName);
-            }
-        }
-        return availableSiteNames;
     }
 
     public boolean isRemoteControl() {

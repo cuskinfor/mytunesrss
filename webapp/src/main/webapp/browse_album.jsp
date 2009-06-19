@@ -183,14 +183,25 @@
                                     </c:otherwise>
                                 </c:choose>
                             </c:if>
-                            <c:if test="${!mtfn:unknown(album.artist)}">
+                            <c:if test="${mtfn:externalSites('album')}">
                                 <img src="${appUrl}/images/http.gif" alt="external site" title="external site" style="cursor:pointer" onclick="$jQ('#externalSite_${loopStatus.index}').dialog('open')"/>
-                                <div id="externalSite_${loopStatus.index}" title="Choose target site">
-                                    <c:forEach items="${mtfn:availableExternalSiteNames(true, true, false)}" var="externalSiteName">
-                                        <a href="${servletUrl}/redirectToExternalSite/${auth}/<mt:encrypt key="${encryptionKey}">site=${cwfn:encodeUrl(mtfn:encode64(externalSiteName))}/album=${cwfn:encodeUrl(mtfn:encode64(album.name))}<c:if test="${!mtfn:unknown(album.artist) && album.artistCount == 1}">/artist=${cwfn:encodeUrl(mtfn:encode64(album.artist))}</c:if></mt:encrypt>" target="_blank" onclick="$jQ('#externalSite_${loopStatus.index}').dialog('close')"><c:out value="${externalSiteName}"/></a><br />
+                                <div id="externalSite_${loopStatus.index}" title="<fmt:message key="dialog.externalSite.title"/>">
+                                    <c:forEach items="${mtfn:externalSiteDefinitions('album', album.name)}" var="externalSite" varStatus="siteLoopStatus">
+                                        <a href="${externalSite.value}" target="_blank" onclick="$jQ('#externalSite_${loopStatus.index}').dialog('close')"><c:out value="${externalSite.key}"/></a>
+                                        <c:if test="${!siteLoopStatus.last}"><br /></c:if>
                                     </c:forEach>
                                 </div>
-                                <script type="text/javascript">$jQ('#externalSite_${loopStatus.index}').dialog({autoOpen:false,modal:true})</script>
+                                <script type="text/javascript">
+                                    $jQ('#externalSite_${loopStatus.index}').dialog({
+                                        autoOpen:false,
+                                        modal:true,
+                                        buttons:{
+                                            '<fmt:message key="dialog.button.close"/>':function() {
+                                                $jQ('#externalSite_${loopStatus.index}').dialog('close');
+                                            }
+                                        }
+                                    })
+                                </script>
                             </c:if>
                         </c:when>
                         <c:otherwise>
