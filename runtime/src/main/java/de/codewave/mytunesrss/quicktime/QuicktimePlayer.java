@@ -39,6 +39,8 @@ public class QuicktimePlayer {
 
     private int myCurrent;
 
+    private int myCurrentVolume;
+
     private boolean myPlaying;
 
     private boolean myInitialized;
@@ -89,6 +91,7 @@ public class QuicktimePlayer {
         if (volume < 0 || volume > 100) {
             throw new IllegalArgumentException("Volume must be a value from 0 to 100 but was " + volume);
         }
+        myCurrentVolume = volume;
         if (myMovie != null) {
             LOGGER.debug("Setting volume to " + volume + "%.");
             try {
@@ -247,6 +250,7 @@ public class QuicktimePlayer {
             } else if (index == -1 && myMovie != null) {
                 LOGGER.debug("Continue playback of track \"" + myTracks.get(myCurrent).getName() + "\".");
             }
+            setVolume(myCurrentVolume);
             myMovie.start();
             myPlaying = true;
         } catch (QTException

@@ -289,16 +289,16 @@
 
         <div id="pager" class="pager">
 
-            <img id="pager_first" src="${appUrl}/images/pager_first.gif" alt="first" style="cursor:pointer" onclick="currentPage = 0;createPlaylist()"/>
-            <img id="pager_previous" src="${appUrl}/images/pager_previous.gif" alt="previous" style="cursor:pointer" onclick="currentPage--;createPlaylist()"/>
+            <a onclick="currentPage = 0;createPlaylist()"><img id="pager_first" src="${appUrl}/images/pager_first.gif" alt="first" /></a>
+            <a onclick="currentPage--;createPlaylist()"><img id="pager_previous" src="${appUrl}/images/pager_previous.gif" alt="previous" /></a>
 
             <c:forEach begin="0" end="9" varStatus="status">
                 <a id="pager_active_${status.index}" class="active">&nbsp;</a>
                 <a id="pager_inactive_${status.index}" style="cursor:pointer" onclick="currentPage = (Math.floor(currentPage / pagesPerPager) * pagesPerPager) + ${status.index};createPlaylist()">&nbsp;</a>
             </c:forEach>
 
-            <img id="pager_next" src="${appUrl}/images/pager_next.gif" alt="next" style="cursor:pointer" onclick="currentPage++;createPlaylist()"/>
-            <img id="pager_last" src="${appUrl}/images/pager_last.gif" alt="last" style="cursor:pointer" onclick="currentPage = Math.floor(trackNames.length / itemsPerPage);createPlaylist()"/>
+            <a onclick="currentPage++;createPlaylist()"><img id="pager_next" src="${appUrl}/images/pager_next.gif" alt="next" /></a>
+            <a onclick="currentPage = Math.floor(trackNames.length / itemsPerPage);createPlaylist()"><img id="pager_last" src="${appUrl}/images/pager_last.gif" alt="last" /></a>
 
         </div>
 
