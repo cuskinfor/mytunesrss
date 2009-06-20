@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
-    <version>3.8-EAP-1-SNAPSHOT</version>
+    <version>3.8.0-EAP-1-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Runtime</name>
     <distributionManagement>
         <site>
@@ -406,7 +406,7 @@
 		    <groupId>org.apache.lucene</groupId>
 		    <artifactId>lucene-core</artifactId>
 		    <version>2.4.1</version>
-        </dependency> 
+        </dependency>
     </dependencies>
     <build>
         <plugins>
