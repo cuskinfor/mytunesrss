@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.7.0" date="2009-06-13" description="3.7 Final">
+        <release version="3.7.1" date="2009-xx-xx" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 Bugfix: Remote control player pager did not show back/forward button.
             </action>
