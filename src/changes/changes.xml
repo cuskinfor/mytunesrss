@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.8-EAP-1" date="2009-xx-xx" description="3.8 EAP 1">
+        <release version="3.8.0-EAP-1" date="2009-xx-xx" description="3.8.0 EAP 1">
             <action dev="mdescher" type="add">
                 Added jQuery javascript library for sliders (fuzziness in search and volume/progress in remote control).
             </action>
@@ -22,7 +22,16 @@
             </action>
         </release>
 
-        <release version="3.7" date="2009-06-13" description="3.7 Final">
+        <release version="3.7.1" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Bugfix: Remote control player pager did not show back/forward button.
+            </action>
+            <action dev="mdescher" type="fix">
+                Bugfix: Remote control player always set volume to 100% on playback of new track.
+            </action>
+        </release>
+
+        <release version="3.7.0" date="2009-06-13" description="3.7 Final">
             <action dev="mdescher" type="update">
                 Correct license key for final release.
             </action>
