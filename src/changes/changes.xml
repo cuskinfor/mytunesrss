@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.8.0-EAP-1" date="2009-xx-xx" description="3.8.0 EAP 1">
+            <action dev="mdescher" type="update">
+                Use remote API to add tracks to a playlist.
+            </action>
             <action dev="mdescher" type="add">
                 Added jQuery javascript library for sliders (fuzziness in search and volume/progress in remote control).
             </action>
