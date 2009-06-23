@@ -50,7 +50,7 @@
         <li>
             <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}</mt:encrypt>"><fmt:message key="browseAlbums"/></a>
         </li>
-        <c:if test="${empty sessionScope.playlist && authUser.createPlaylists}">
+        <c:if test="${!states.addToPlaylistMode && authUser.createPlaylists}">
             <li>
                 <c:choose>
                     <c:when test="${empty editablePlaylists || simpleNewPlaylist}">
@@ -102,7 +102,7 @@
                     </td>
                     <td class="icon">
                         <c:choose>
-                            <c:when test="${empty sessionScope.playlist}">
+                            <c:when test="${!states.addToPlaylistMode}">
                                 <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                                     <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                         <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
@@ -137,7 +137,7 @@
                                 </c:if>
                             </c:when>
                             <c:otherwise>
-                                <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                                <a style="cursor:pointer" onclick="addGenresToPlaylist($A(['${mtfn:escapeJs(genre.name)}']), false)">
                                     <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                                 <a href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/name=${cwfn:encodeUrl(genre.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                     <img src="${appUrl}/images/one_click_playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>

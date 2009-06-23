@@ -5,6 +5,8 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.remote.service.EditPlaylistService;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.StringUtils;
 
@@ -16,8 +18,8 @@ public class CancelCreatePlaylistCommandHandler extends MyTunesRssCommandHandler
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized()) {
             getStates().put("addToPlaylistMode", Boolean.FALSE);
-            getSession().removeAttribute("playlist");
-            getSession().removeAttribute("playlistContent");
+            MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).removeAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS);
+            MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).removeAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
             String backUrl = MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null));
             if (StringUtils.isNotEmpty(backUrl)) {
                 redirect(backUrl);

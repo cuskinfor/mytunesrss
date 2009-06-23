@@ -36,7 +36,7 @@
             <c:if test="${sortOrder != 'Artist'}"><a style="cursor:pointer" onclick="sort('${servletUrl}', '${auth}', 'Artist'); return false"><fmt:message key="groupByArtist" /></a></c:if>
         </li>
     </c:if>
-    <c:if test="${empty sessionScope.playlist && authUser.createPlaylists}">
+    <c:if test="${!states.addToPlaylistMode && authUser.createPlaylists}">
         <li>
             <c:choose>
                 <c:when test="${empty editablePlaylists || simpleNewPlaylist}">
@@ -55,31 +55,12 @@
 
 <jsp:include page="incl_playlist.jsp" />
 
-<form id="browse" action="${servletUrl}/addToPlaylist/${auth}" method="post">
-
-<fieldset>
-
-<input type="hidden" name="sortOrder" value="${sortOrder}" />
-<input type="hidden" name="searchTerm" value="${param.searchTerm}" />
-<input type="hidden" name="fuzzy" value="${param.fuzzy}" />
-<input type="hidden" name="album" value="${param.album}" />
-<input type="hidden" name="artist" value="${param.artist}" />
-<input type="hidden" name="genre" value="${param.genre}" />
-<input type="hidden" name="playlist" value="${param.playlist}" />
-<input type="hidden" name="backUrl" value="${param.backUrl}" />
-<input type="hidden" name="fullAlbums" value="${param.fullAlbums}" />
-
-</fieldset>
-
 <table cellspacing="0">
 <c:forEach items="${tracks}" var="track" varStatus="loopStatus">
 <c:if test="${track.newSection}">
     <c:set var="sectionFileName" value=""/>
     <c:set var="count" value="0" />
     <tr>
-        <c:if test="${!empty sessionScope.playlist}">
-            <th class="check"><input type="checkbox" name="none" value="none" onclick="selectAll('item', '${track.sectionIds}', this)" /></th>
-        </c:if>
         <th class="active" colspan="2">
             <c:choose>
                 <c:when test="${sortOrder == 'Album'}">
@@ -125,7 +106,7 @@
         <c:set var="sectionArguments"><c:choose><c:when test="${empty track.sectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.sectionPlaylistId)}</c:otherwise></c:choose></c:set>
         <th class="icon">
             <c:choose>
-                <c:when test="${empty sessionScope.playlist}">
+                <c:when test="${!states.addToPlaylistMode}">
                     <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                         <c:choose>
                             <c:when test="${empty track.sectionPlaylistId}">
@@ -166,19 +147,14 @@
                     </c:if>
                 </c:when>
                 <c:otherwise>
-                    <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${sectionArguments}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                        <img src="${appUrl}/images/add_th.gif" alt="add" /> </a>
+                    tracklist=${cwfn:encodeUrl(track.sectionIds)}
+                    <a style="cursor:pointer" onclick="addTracksToPlaylist($A(${mtfn:jsArray(fn:split(track.sectionIds, ","))}))"><img src="${appUrl}/images/add_th.gif" alt="add" /></a>
                 </c:otherwise>
             </c:choose>
         </th>
     </tr>
 </c:if>
 <tr class="${cwfn:choose(count % 2 == 0, 'even', 'odd')}">
-    <c:if test="${!empty sessionScope.playlist}">
-        <td class="check">
-            <input type="checkbox" id="item${track.id}" name="track" value="${track.id}" />
-        </td>
-    </c:if>
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
         <c:if test="${config.showThumbnails && track.imageCount > 0}">
             <img id="trackthumb_${loopStatus.index}" src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
@@ -224,7 +200,7 @@
     </c:if>
     <td class="icon">
         <c:choose>
-            <c:when test="${empty sessionScope.playlist}">
+            <c:when test="${!states.addToPlaylistMode}">
                 <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                     <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                         <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
@@ -266,7 +242,7 @@
                         <img src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=64</mt:encrypt>" style="display:none" alt=""/>
                     </a>
                 </c:if>
-                <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                <a style="cursor:pointer" onclick="addTracksToPlaylist($A(['${mtfn:escapeJs(track.id)}']))">
                     <img src="${appUrl}/images/add${cwfn:choose(count % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
             </c:otherwise>
         </c:choose>
@@ -282,16 +258,6 @@
     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
     <jsp:include page="incl_bottomPager.jsp" />
 </c:if>
-
-<c:if test="${!empty sessionScope.playlist}">
-    <div class="buttons">
-        <input type="submit"
-               onclick="document.forms['browse'].action = '${servletUrl}/addToPlaylist/${auth}';document.forms['browse'].elements['backUrl'].value = '${mtfn:encode64(backUrl)}'"
-               value="<fmt:message key="addSelected"/>" />
-    </div>
-</c:if>
-
-</form>
 
 </div>
 

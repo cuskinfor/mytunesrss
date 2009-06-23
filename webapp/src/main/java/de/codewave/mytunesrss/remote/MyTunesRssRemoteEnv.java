@@ -1,14 +1,18 @@
 package de.codewave.mytunesrss.remote;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.util.UUID;
 
 public class MyTunesRssRemoteEnv {
     private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssRemoteEnv.class);
@@ -69,8 +73,33 @@ public class MyTunesRssRemoteEnv {
         return null;
     }
 
-    public static void addSession(Session session) {
+    public static void addSession(HttpServletRequest request, Session session) {
         LOG.debug("Adding remote API session with user \"" + session.getUser().getName() + "\" and \"" + session.getId() + "\".");
-        RemoteApiSessionManager.getInstance(getRequest()).addSession(session.getId(), session);
+        RemoteApiSessionManager.getInstance(request).addSession(session.getId(), session);
+    }
+
+    public static void addOrTouchSessionForRegularSession(HttpServletRequest request, User user) {
+        String sid = (String) request.getSession().getAttribute("remoteApiSessionId");
+        if (StringUtils.isBlank(sid)) {
+            sid = createSessionId();
+            LOG.debug("Adding remote API session with user \"" + user.getName() + "\" and \"" + sid + "\"");
+            addSession(request, new Session(sid, user, user.getSessionTimeout() * 60000));
+            request.getSession().setAttribute("remoteApiSessionId", sid);
+        } else {
+            RemoteApiSessionManager.getInstance(request).getSession(sid);
+        }
+    }
+
+    public static Session getSessionForRegularSession(HttpServletRequest request) {
+        String sid = (String) request.getSession().getAttribute("remoteApiSessionId");
+        return RemoteApiSessionManager.getInstance(request).getSession(sid);
+    }
+
+    public static String createSessionId() {
+        try {
+            return new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest((UUID.randomUUID().toString() + System.currentTimeMillis()).getBytes("UTF-8"))));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not found!");
+        }
     }
 }

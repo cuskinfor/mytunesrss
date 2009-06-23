@@ -6,6 +6,8 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.remote.service.EditPlaylistService;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
@@ -22,7 +24,7 @@ public class EditPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized()) {
-            Collection<Track> playlist = (Collection<Track>)getSession().getAttribute("playlistContent");
+            Collection<Track> playlist = (Collection<Track>) MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS);
             if ((playlist != null && !playlist.isEmpty()) || getBooleanRequestParameter("allowEditEmpty", false)) {
                 if (!Boolean.TRUE.equals(getStates().get("addToPlaylistMode"))) {
                     playlist = filterTracks(playlist);

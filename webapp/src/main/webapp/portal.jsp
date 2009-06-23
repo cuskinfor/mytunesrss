@@ -71,7 +71,7 @@
                     </a>
                     <c:if test="${authUser.createPlaylists}">
                         <c:choose>
-                            <c:when test="${empty sessionScope.playlist}">
+                            <c:when test="${!states.addToPlaylistMode}">
                                 <a href="${servletUrl}/showPlaylistManager/${auth}" style="background-image:url('${appUrl}/images/feeds_small.gif');">
                                     <fmt:message key="managePlaylists" />
                                 </a>

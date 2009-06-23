@@ -50,7 +50,7 @@
     <li>
         <a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}</mt:encrypt>"><fmt:message key="browseGenres"/></a>
     </li>
-    <c:if test="${empty sessionScope.playlist && authUser.createPlaylists}">
+    <c:if test="${!states.addToPlaylistMode && authUser.createPlaylists}">
         <li>
             <c:choose>
                 <c:when test="${empty editablePlaylists || simpleNewPlaylist}">
@@ -76,23 +76,14 @@
 <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.artist || !empty param.genre, '*', param.page)}" />
 <jsp:include page="incl_pager.jsp" />
 
-<form id="browse" action="" method="post">
-
-	<fieldset>
-    <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
-	</fieldset>
-
     <table class="select" cellspacing="0">
         <tr>
-            <td colspan="${5 + cwfn:choose(!empty sessionScope.playlist, 1, 0)}" style="padding:0">
+            <td colspan="5" style="padding:0">
                 <c:set var="displayFilterUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}</c:set>
                 <jsp:include page="/incl_display_filter.jsp"/>
             </td>
         </tr>
         <tr>
-            <c:if test="${!empty sessionScope.playlist}">
-                <th class="check"><input type="checkbox" name="none" value="none" onclick="selectAllByLoop('album', 1, ${fn:length(albums)}, this)" /></th>
-            </c:if>
             <th colspan="2" class="active">
                 <c:if test="${!empty param.genre}">${mtfn:capitalize(mtfn:decode64(param.genre))}</c:if>
                 <fmt:message key="albums"/>
@@ -103,11 +94,6 @@
         </tr>
         <c:forEach items="${albums}" var="album" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-                <c:if test="${!empty sessionScope.playlist}">
-                    <td class="check">
-                        <input type="checkbox" name="album" id="album${loopStatus.count}" value="${mtfn:encode64(album.name)}" />
-                    </td>
-                </c:if>
                 <td class="albumthumb">
                     <c:choose>
                         <c:when test="${config.showThumbnails && album.image}">
@@ -150,7 +136,7 @@
                 </td>
                 <td class="icon">
                     <c:choose>
-                        <c:when test="${empty sessionScope.playlist}">
+                        <c:when test="${!states.addToPlaylistMode}">
                             <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                                 <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                     <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
@@ -205,7 +191,7 @@
                             </c:if>
                         </c:when>
                         <c:otherwise>
-                            <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                            <a style="cursor:pointer" onclick="addAlbumsToPlaylist($A(['${mtfn:escapeJs(album.name)}']))">
                                 <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add"/> </a>
                             <a href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}/name=${cwfn:encodeUrl(album.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                 <img src="${appUrl}/images/one_click_playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="oneClickPlaylist" /> </a>
@@ -216,9 +202,6 @@
         </c:forEach>
         <c:if test="${(singleArtist || singleGenre) && fn:length(albums) > 1}">
             <tr class="${cwfn:choose(fn:length(albums) % 2 == 0, 'even', 'odd')}">
-                <c:if test="${!empty sessionScope.playlist}">
-                    <td class="check">&nbsp;</td>
-                </c:if>
                 <td>
                     &nbsp;
                 </td>
@@ -230,7 +213,7 @@
                 </td>
                 <td class="icon">
                     <c:choose>
-                        <c:when test="${empty sessionScope.playlist}">
+                        <c:when test="${!states.addToPlaylistMode}">
                             <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                                 <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/fullAlbums=true</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                     <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
@@ -265,7 +248,7 @@
                             </c:if>
                         </c:when>
                         <c:otherwise>
-                            <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                            <a style="cursor:pointer" onclick="addToPlaylist(null, $A(['${mtfn:escapeJs(cwfn:decode64(param.artist))}']), $A(['${mtfn:escapeJs(cwfn:decode64(param.genre))}']), null, true)">
                                 <img src="${appUrl}/images/add${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
                             <a href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/name=${cwfn:encodeUrl(param.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                 <img src="${appUrl}/images/one_click_playlist${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="oneClickPlaylist" /> </a>
@@ -274,9 +257,6 @@
                 </td>
             </tr>
             <tr class="${cwfn:choose(fn:length(albums) % 2 == 0, 'odd', 'even')}">
-                <c:if test="${!empty sessionScope.playlist}">
-                    <td class="check">&nbsp;</td>
-                </c:if>
                 <td>
                     &nbsp;
                 </td>
@@ -302,7 +282,7 @@
                 </td>
                 <td class="icon">
                     <c:choose>
-                        <c:when test="${empty sessionScope.playlist}">
+                        <c:when test="${!states.addToPlaylistMode}">
                             <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                                 <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/fullAlbums=false</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                     <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
@@ -337,7 +317,7 @@
                             </c:if>
                         </c:when>
                         <c:otherwise>
-                            <a href="${servletUrl}/addToPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                            <a style="cursor:pointer" onclick="addToPlaylist(null, $A(['${mtfn:escapeJs(cwfn:decode64(param.artist))}']), $A(['${mtfn:escapeJs(cwfn:decode64(param.genre))}']), null, false)">
                                 <img src="${appUrl}/images/add${cwfn:choose(fn:length(albums) % 2 == 0, '_odd', '')}.gif" alt="add" /> </a>
                             <a href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/name=${cwfn:encodeUrl(param.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                 <img src="${appUrl}/images/one_click_playlist${cwfn:choose(fn:length(albums) % 2 == 0, '_odd', '')}.gif" alt="oneClickPlaylist" /> </a>
@@ -354,14 +334,6 @@
         <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
         <jsp:include page="incl_bottomPager.jsp" />
     </c:if>
-
-    <c:if test="${!empty sessionScope.playlist}">
-        <div class="buttons">
-            <input type="submit" onclick="document.forms['browse'].action = '${servletUrl}/addToPlaylist/${auth}'" value="<fmt:message key="addSelected"/>" />
-        </div>
-    </c:if>
-
-</form>
 
 </div>
 

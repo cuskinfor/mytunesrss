@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.Error;
@@ -306,6 +307,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 forward(MyTunesRssResource.Login);
             } else {
                 handleDisplayFilter();
+                if (isSessionAuthorized()) {
+                    MyTunesRssRemoteEnv.addOrTouchSessionForRegularSession(getRequest(), getAuthUser());
+                }
                 executeAuthorized();
             }
         } catch (Exception e) {

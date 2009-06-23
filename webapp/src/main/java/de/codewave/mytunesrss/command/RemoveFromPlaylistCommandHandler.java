@@ -8,6 +8,8 @@ import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.remote.service.EditPlaylistService;
 
 import java.util.Collection;
 
@@ -19,7 +21,7 @@ public class RemoveFromPlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized()) {
-            Collection<Track> playlistContent = (Collection<Track>)getSession().getAttribute("playlistContent");
+            Collection<Track> playlistContent = (Collection<Track>) MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS);
             String[] trackIds = getNonEmptyParameterValues("track");
             if (trackIds != null && trackIds.length > 0) {
                 Track dummyTrack = new Track();
@@ -27,7 +29,7 @@ public class RemoveFromPlaylistCommandHandler extends MyTunesRssCommandHandler {
                     dummyTrack.setId(trackId);
                     playlistContent.remove(dummyTrack);
                 }
-                Playlist playlist = (Playlist)getSession().getAttribute("playlist");
+                Playlist playlist = (Playlist) MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
                 playlist.setTrackCount(playlistContent.size());
             } else {
                 addError(new BundleError("error.deleteFromPlaylistNoTrack"));

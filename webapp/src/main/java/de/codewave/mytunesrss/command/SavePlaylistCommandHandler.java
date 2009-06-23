@@ -5,6 +5,8 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.remote.service.EditPlaylistService;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.SaveMyTunesPlaylistStatement;
 import de.codewave.mytunesrss.datastore.statement.SavePlaylistStatement;
@@ -26,8 +28,8 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized() && getAuthUser().isCreatePlaylists()) {
             String name = getRequestParameter("name", "");
-            Playlist playlist = (Playlist)getSession().getAttribute("playlist");
-            Collection<Track> playlistContent = (Collection<Track>)getSession().getAttribute("playlistContent");
+            Playlist playlist = (Playlist) MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
+            Collection<Track> playlistContent = (Collection<Track>) MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS);
             if (StringUtils.isNotEmpty(name)) {
                 playlist.setName(name);
                 SavePlaylistStatement statement = new SaveMyTunesPlaylistStatement(getAuthUser().getName(), getBooleanRequestParameter("user_private",
@@ -36,8 +38,8 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
                 statement.setName(name);
                 statement.setTrackIds(getTrackIds(playlistContent));
                 getTransaction().executeStatement(statement);
-                getSession().removeAttribute("playlist");
-                getSession().removeAttribute("playlistContent");
+                MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).removeAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
+                MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).removeAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS);
                 getStates().put("addToPlaylistMode", Boolean.FALSE);
                 forward(MyTunesRssCommand.ShowPortal);
             } else {

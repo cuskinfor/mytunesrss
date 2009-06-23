@@ -7,6 +7,9 @@ package de.codewave.mytunesrss.jsp;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.UserAgent;
+import de.codewave.mytunesrss.datastore.statement.Playlist;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.remote.service.EditPlaylistService;
 import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,8 +55,12 @@ public enum MyTunesRssResource {
     public void beforeForward(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Boolean> states = (Map<String, Boolean>)request.getSession().getAttribute("states");
         if (this != EditPlaylist && (states == null || !Boolean.TRUE.equals(states.get("addToPlaylistMode")))) {
-            request.getSession().removeAttribute("playlist");
-            request.getSession().removeAttribute("playlistContent");
+            MyTunesRssRemoteEnv.getSessionForRegularSession(request).removeAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
+            MyTunesRssRemoteEnv.getSessionForRegularSession(request).removeAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS);
+        } else {
+            Playlist playlist = (Playlist) MyTunesRssRemoteEnv.getSessionForRegularSession(request).getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
+            request.setAttribute("editPlaylistName", playlist.getName());
+            request.setAttribute("editPlaylistTrackCount", playlist.getTrackCount());
         }
         if (this != BrowseServers) {
             request.getSession().removeAttribute("remoteServers");

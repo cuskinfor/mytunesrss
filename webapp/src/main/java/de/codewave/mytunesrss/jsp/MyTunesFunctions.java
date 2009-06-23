@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.MiscUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -294,5 +295,18 @@ public class MyTunesFunctions {
             result.put(site.getKey(), site.getValue().replace("{" + type + "}", keyword));
         }
         return result;
+    }
+
+    public static String jsArray(Collection items) {
+        StringBuilder builder = new StringBuilder();
+        for (Object item : items) {
+            if (item instanceof String) {
+                builder.append("'").append(StringEscapeUtils.escapeJavaScript((String)item)).append("'");
+            } else {
+                builder.append(item.toString());
+            }
+            builder.append(",");
+        }
+        return builder.substring(0, builder.length() - 1);
     }
 }

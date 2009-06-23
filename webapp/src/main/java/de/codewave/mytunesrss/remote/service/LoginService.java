@@ -36,9 +36,8 @@ public class LoginService {
             }
             if ((Arrays.equals(user.getPasswordHash(), passwordHash1) || Arrays.equals(user.getPasswordHash(), passwordHash2)) && user.isActive()) {
                 MyTunesRssRemoteEnv.getRequest().getSession().setAttribute("remoteApiUser", user);
-                String sid = new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest((MyTunesRssRemoteEnv.getRequest().getSession().getId() +
-                        System.currentTimeMillis()).getBytes("UTF-8"))));
-                MyTunesRssRemoteEnv.addSession(new Session(sid, user, sessionTimeoutMinutes * 60000));
+                String sid = MyTunesRssRemoteEnv.createSessionId();
+                MyTunesRssRemoteEnv.addSession(MyTunesRssRemoteEnv.getRequest(), new Session(sid, user, sessionTimeoutMinutes * 60000));
                 return sid;
             }
         }

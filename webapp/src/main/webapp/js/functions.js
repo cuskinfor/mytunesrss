@@ -10,15 +10,6 @@ function sort(servletUrl, auth, sortOrder) {
     document.forms["browse"].submit();
 }
 
-function selectAllByLoop(prefix, first, last, checkbox) {
-    for (var i = first; i <= last; i++) {
-        var element = document.getElementById(prefix + i);
-        if (element) {
-            element.checked = checkbox.checked;
-        }
-    }
-}
-
 function selectAll(prefix, ids, checkbox) {
     var idArray = ids.split(",");
     for (var i = 0; i < idArray.length; i++) {

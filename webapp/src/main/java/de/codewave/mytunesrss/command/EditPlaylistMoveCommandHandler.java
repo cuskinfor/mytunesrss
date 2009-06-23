@@ -2,6 +2,8 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.remote.service.EditPlaylistService;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.BundleError;
 
@@ -16,7 +18,7 @@ public class EditPlaylistMoveCommandHandler extends MyTunesRssCommandHandler {
         int offset = getIntegerRequestParameter("index", 0);
         int index = getIntegerRequestParameter("pageIndex", 0);
         int move = getIntegerRequestParameter("move", 0);
-        List<Track> playlist = (List<Track>)getSession().getAttribute("playlistContent");
+        List<Track> playlist = (List<Track>) MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS);
         if (playlist != null && !playlist.isEmpty()) {
             MyTunesRssWebUtils.movePlaylistTracks(playlist, getWebConfig().getEffectivePageSize() * offset + index, 1, move);
             forward(MyTunesRssCommand.EditPlaylist);
