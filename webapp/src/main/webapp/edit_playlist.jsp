@@ -18,6 +18,42 @@
 
     <jsp:include page="incl_head.jsp" />
 
+    <script type="text/javascript">
+        $jQ(document).ready(function() {
+            $jQ("#trackTable").sortable({
+                axis:'y',
+                items:'tr',
+                update:function(event, ui) {
+                    var first = ui.item.attr("id").split("_")[1];
+                    var offset = ui.item.prevAll().length - first;
+                    jsonRpc('${servletUrl}', 'EditPlaylistService.moveTracks', [${config.effectivePageSize * param.index} + first, 1, offset], fixTableRows, '${remoteApiSessionId}');
+                }
+            });
+        });
+
+        function fixTableRows() {
+            var rows = $jQ("#trackTable").find("tr").attr("class", function(i) {
+                return i % 2 == 0 ? "even" : "odd";
+            });
+            var rows = $jQ("#trackTable").find("tr").attr("id", function(i) {
+                return "trackTableItem_" + i;
+            });
+        }
+
+        function removeTrack(trackId, index) {
+            jsonRpc('${servletUrl}', 'EditPlaylistService.removeTracks', [$A([trackId])], function() {
+                var rowToDelete = $jQ("#trackTable").find("tr")[index].remove();
+                jsonRpc('${servletUrl}', 'EditPlaylistService.getPlaylist', [${config.effectivePageSize * (param.index + 1)}, 1], function(result) {
+                    if (result.tracks != undefined) {
+                        alert(result.tracks[0]);
+                    }
+                    fixTableRows();
+                }, '${remoteApiSessionId}');
+            }, '${remoteApiSessionId}');
+
+        }
+    </script>
+
 </head>
 
 <body>
@@ -42,7 +78,7 @@
         <table class="portal" cellspacing="0">
             <tr>
                 <td class="playlistManager">
-                    <fmt:message key="playlistName" /> <input type="text" name="name" value="<c:out value="${playlist.name}"/>" />
+                    <fmt:message key="playlistName" /> <input type="text" name="name" value="<c:out value="${editPlaylistName}"/>" />
                 </td>
                 <td class="links">
                     <a class="add"
@@ -54,10 +90,10 @@
         <input type="hidden" name="backUrl" value="${param.backUrl}" /> <input type="hidden" name="allowEditEmpty" value="${param.allowEditEmpty}" />
         <table cellspacing="0">
             <tr>
-                <th class="active" colspan="6"><fmt:message key="playlistSettings" /></th>
+                <th class="active" colspan="3"><fmt:message key="playlistSettings" /></th>
             </tr>
             <tr>
-                <td class="even" colspan="6">
+                <td class="even" colspan="3">
                     <input type="checkbox"
                            name="user_private"
                            value="true"
@@ -66,7 +102,7 @@
             </tr>
             <c:if test="${!states.addToPlaylistMode}">
                 <tr>
-                    <td colspan="6" style="padding:0">
+                    <td colspan="3" style="padding:0">
                         <c:set var="displayFilterUrl"
                                scope="request">${servletUrl}/editPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}
                         </c:set> <c:set var="filterTypeActive" scope="request" value="true" /> <c:set var="filterProtectionActive"
@@ -77,25 +113,12 @@
                 </tr>
             </c:if>
             <tr>
-                <c:choose> <c:when test="${!empty tracks}">
-                    <th class="check"><input type="checkbox" name="none" value="none" onclick="selectAll('item', '${trackIds}', this)" /></th>
-                    <th class="active" colspan="2">&nbsp;</th>
-                    <th class="active" colspan="3"><fmt:message key="playlistContent" /></th>
-                </c:when> <c:otherwise>
-                    <th class="active" colspan="6"><fmt:message key="playlistContent" /></th>
-                </c:otherwise> </c:choose>
+                <th class="active" colspan="3"><fmt:message key="playlistContent" /></th>
             </tr>
+        </table>
+        <table cellspacing="0" id="trackTable">
             <c:forEach items="${tracks}" var="track" varStatus="trackLoop">
-                <tr class="${cwfn:choose(trackLoop.index % 2 == 0, 'even', 'odd')}">
-                    <td class="check">
-                        <input type="checkbox" id="item${track.id}" name="track" value="${track.id}" />
-                    </td>
-                    <td class="editPlaylistMoveUp">
-                        <a href="${servletUrl}/editPlaylistMove/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}/move=-1/pageIndex=${trackLoop.index}/allowEditEmpty=${param.allowEditEmpty}/backUrl=${param.backUrl}</mt:encrypt>"><img src="${appUrl}/images/move_up${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="U"/></a>
-                    </td>
-                    <td class="editPlaylistMoveDown">
-                        <a href="${servletUrl}/editPlaylistMove/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}/move=1/pageIndex=${trackLoop.index}/allowEditEmpty=${param.allowEditEmpty}/backUrl=${param.backUrl}</mt:encrypt>"><img src="${appUrl}/images/move_down${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="D"/></a>
-                    </td>
+                <tr id="trackTableItem_${trackLoop.index}" class="${cwfn:choose(trackLoop.index % 2 == 0, 'even', 'odd')}">
                     <td>
                         <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif"
                                                              alt="<fmt:message key="protected"/>"
@@ -109,26 +132,24 @@
                         <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
                     </td>
                     <td class="icon">
-                        <a href="${servletUrl}/removeFromPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/track=${track.id}</mt:encrypt>/backUrl=${param.backUrl}">
-                            <img src="${appUrl}/images/delete${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
+                        <a onclick="removeTrack('${track.id}', ${trackLoop.index})"><img src="${appUrl}/images/delete${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="delete" /></a>
                     </td>
                 </tr>
             </c:forEach>
         </table>
-        <c:if test="${!empty pager}"> <c:set var="pagerCommand"
-                                             scope="request">${servletUrl}/editPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/backUrl=${param.backUrl}</mt:encrypt>/index={index}
-        </c:set> <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
+        <c:if test="${!empty pager}">
+            <c:set var="pagerCommand" scope="request">${servletUrl}/editPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/backUrl=${param.backUrl}</mt:encrypt>/index={index}</c:set>
+            <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
             <jsp:include page="incl_bottomPager.jsp" />
         </c:if>
 
         <div class="buttons">
+            <input type="submit"
+                   onclick="document.forms['playlist'].action = '${servletUrl}/savePlaylist/${auth}';document.forms['playlist'].elements['backUrl'].value = '${mtfn:encode64(backUrl)}'"
+                   value="<fmt:message key="savePlaylist"/>"/>
             <input type="button"
-                   onclick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist/${auth}';document.forms['playlist'].submit()"
-                   value="<fmt:message key="removeSelected"/>" /> <input type="submit"
-                                                                         onclick="document.forms['playlist'].action = '${servletUrl}/savePlaylist/${auth}';document.forms['playlist'].elements['backUrl'].value = '${mtfn:encode64(backUrl)}'"
-                                                                         value="<fmt:message key="savePlaylist"/>" /> <input type="button"
-                                                                                                                             onclick="document.location.href = '${servletUrl}/cancelEditPlaylist/${auth}/backUrl=${param.backUrl}'"
-                                                                                                                             value="<fmt:message key="doCancel"/>" />
+                   onclick="document.location.href = '${servletUrl}/cancelEditPlaylist/${auth}/backUrl=${param.backUrl}'"
+                   value="<fmt:message key="doCancel"/>"/>
         </div>
     </form>
 

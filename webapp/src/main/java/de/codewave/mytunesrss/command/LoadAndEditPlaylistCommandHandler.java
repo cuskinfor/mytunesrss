@@ -14,6 +14,7 @@ public class LoadAndEditPlaylistCommandHandler extends LoadPlaylistCommandHandle
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized()) {
             loadPlaylist();
+            getStates().put("addToPlaylistMode", Boolean.TRUE);
             forward(MyTunesRssCommand.EditPlaylist);
         } else {
             forward(MyTunesRssResource.Login);

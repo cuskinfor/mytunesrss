@@ -354,16 +354,18 @@ public class EditPlaylistService {
      * @return The playlist and the list of tracks.
      * @throws IllegalAccessException Unauthorized access.
      */
-    public Object getPlaylist() throws IllegalAccessException {
+    public Object getPlaylist(int first, int count) throws IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
             Playlist playlist = (Playlist) session.getAttribute(KEY_EDIT_PLAYLIST);
             if (playlist != null) {
-                Collection<Track> playlistTracks = (Collection<Track>) session.getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
+                List<Track> playlistTracks = (List<Track>) session.getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("playlist", playlist);
-                map.put("tracks", playlistTracks);
+                if (first < playlistTracks.size() - 1 && count != 0) {
+                    map.put("tracks", playlistTracks.subList(first, count > 0 ? Math.min(first + count, playlistTracks.size()) : playlistTracks.size()));
+                }
                 return RenderMachine.getInstance().render(map);
             } else {
                 throw new IllegalStateException("Not currently editing a playlist.");

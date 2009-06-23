@@ -9,6 +9,13 @@
 
         <release version="3.8.0-EAP-1" date="2009-xx-xx" description="3.8.0 EAP 1">
             <action dev="mdescher" type="update">
+                Remote API EditPlaylistService.getPlaylist with parameters "index" and "offset" for getting
+                only part of the tracks (or none).
+            </action>
+            <action dev="mdescher" type="update">
+                Use remote API to sort playlist tracks and to remove tracks from a playlist.
+            </action>
+            <action dev="mdescher" type="update">
                 Use remote API to add tracks to a playlist.
             </action>
             <action dev="mdescher" type="add">
