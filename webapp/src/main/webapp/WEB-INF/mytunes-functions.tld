@@ -369,11 +369,11 @@
 
     <function>
         <description>
-            Write a javascript array of the specified collection.
+            Write a javascript array of the specified array.
         </description>
         <name>jsArray</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String jsArray(java.util.Collection)</function-signature>
+        <function-signature>java.lang.String jsArray(java.lang.Object)</function-signature>
     </function>
 
 </taglib>

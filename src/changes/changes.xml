@@ -9,6 +9,9 @@
 
         <release version="3.8.0-EAP-1" date="2009-xx-xx" description="3.8.0 EAP 1">
             <action dev="mdescher" type="update">
+                Playlist sorting through ajax calls.
+            </action>
+            <action dev="mdescher" type="update">
                 Remote API EditPlaylistService.getPlaylist with parameters "index" and "offset" for getting
                 only part of the tracks (or none).
             </action>

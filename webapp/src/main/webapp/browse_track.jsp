@@ -110,7 +110,7 @@
                     <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                         <c:choose>
                             <c:when test="${empty track.sectionPlaylistId}">
-                                <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${track.sectionIds}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                                <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                     <img src="${appUrl}/images/remote_control_th.gif"
                                          alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
                             </c:when>
@@ -147,7 +147,6 @@
                     </c:if>
                 </c:when>
                 <c:otherwise>
-                    tracklist=${cwfn:encodeUrl(track.sectionIds)}
                     <a style="cursor:pointer" onclick="addTracksToPlaylist($A(${mtfn:jsArray(fn:split(track.sectionIds, ","))}))"><img src="${appUrl}/images/add_th.gif" alt="add" /></a>
                 </c:otherwise>
             </c:choose>

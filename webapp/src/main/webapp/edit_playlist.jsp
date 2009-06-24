@@ -18,6 +18,42 @@
 
     <jsp:include page="incl_head.jsp" />
 
+    <script type="text/javascript">
+        $jQ(document).ready(function() {
+            $jQ("td.editPlaylistMoveUp > a").click(function() {
+                swapRows($jQ(this).closest("tr").prev(), $jQ(this).closest("tr"));
+            });
+            $jQ("td.editPlaylistMoveDown > a").click(function() {
+                swapRows($jQ(this).closest("tr"), $jQ(this).closest("tr").next());
+            });
+        });
+
+        function swapRows(first, second) {
+            jsonRpc('${servletUrl}', "EditPlaylistService.moveTracks", [first.prevAll("tr.even,tr.odd").length, 1, 1], undefined, "${remoteApiSessionId}");
+            first.insertAfter(second);
+            switchOddEven(first);
+            switchOddEven(second);
+        }
+
+        function switchOddEven(element) {
+            if (element.hasClass("even")) {
+                element.removeClass("even");
+                element.addClass("odd");
+            } else {
+                element.removeClass("odd");
+                element.addClass("even");
+            }
+            element.find("img").attr("src", function(i) {
+                var url = element.find("img:eq(" + i + ")").attr("src");
+                if (url.endsWith("_odd.gif")) {
+                    return url.truncate(url.length - 4, ".gif");
+                } else {
+                    return url.truncate(url.length - 4, "") + "_odd.gif";
+                }
+            });
+        }
+    </script>
+
 </head>
 
 <body>
@@ -91,10 +127,10 @@
                         <input type="checkbox" id="item${track.id}" name="track" value="${track.id}" />
                     </td>
                     <td class="editPlaylistMoveUp">
-                        <a href="${servletUrl}/editPlaylistMove/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}/move=-1/pageIndex=${trackLoop.index}/allowEditEmpty=${param.allowEditEmpty}/backUrl=${param.backUrl}</mt:encrypt>"><img src="${appUrl}/images/move_up${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="U"/></a>
+                        <a style="cursor:pointer"><img src="${appUrl}/images/move_up${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="U"/></a>
                     </td>
                     <td class="editPlaylistMoveDown">
-                        <a href="${servletUrl}/editPlaylistMove/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}/move=1/pageIndex=${trackLoop.index}/allowEditEmpty=${param.allowEditEmpty}/backUrl=${param.backUrl}</mt:encrypt>"><img src="${appUrl}/images/move_down${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="D"/></a>
+                        <a style="cursor:pointer"><img src="${appUrl}/images/move_down${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="D"/></a>
                     </td>
                     <td>
                         <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif"

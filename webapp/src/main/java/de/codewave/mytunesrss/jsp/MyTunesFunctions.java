@@ -10,8 +10,8 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.MiscUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.lang.reflect.Array;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
@@ -297,15 +298,28 @@ public class MyTunesFunctions {
         return result;
     }
 
-    public static String jsArray(Collection items) {
+    public static String jsArray(Object items) {
         StringBuilder builder = new StringBuilder();
-        for (Object item : items) {
-            if (item instanceof String) {
-                builder.append("'").append(StringEscapeUtils.escapeJavaScript((String)item)).append("'");
-            } else {
-                builder.append(item.toString());
+        if (items instanceof Iterable) {
+            for (Object item : (Iterable)items) {
+                if (item instanceof String) {
+                    builder.append("'").append(StringEscapeUtils.escapeJavaScript((String) item)).append("'");
+                } else {
+                    builder.append(item.toString());
+                }
+                builder.append(",");
             }
-            builder.append(",");
+        } else if (items.getClass().isArray()) {
+            for (Object item : (Object[])items) {
+                if (item instanceof String) {
+                    builder.append("'").append(StringEscapeUtils.escapeJavaScript((String) item)).append("'");
+                } else {
+                    builder.append(item.toString());
+                }
+                builder.append(",");
+            }
+        } else {
+            throw new IllegalArgumentException("Not an iterable or an array: " + items.getClass());
         }
         return builder.substring(0, builder.length() - 1);
     }
