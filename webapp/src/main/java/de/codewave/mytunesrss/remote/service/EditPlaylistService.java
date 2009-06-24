@@ -88,7 +88,7 @@ public class EditPlaylistService {
                 List<Track> tracks = query != null ? TransactionFilter.getTransaction().executeQuery(query).getResults() : Collections.<Track>emptyList();
                 if (tracks != null && !tracks.isEmpty()) {
                     playlistTracks.addAll(tracks);
-                    session.setAttribute(KEY_EDIT_PLAYLIST_TRACKS, playlistTracks);
+                    session.setAttribute(KEY_EDIT_PLAYLIST_TRACKS, new ArrayList<Track>(playlistTracks));
                     playlist.setTrackCount(playlistTracks.size());
                 }
             }

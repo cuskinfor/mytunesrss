@@ -21,6 +21,7 @@ public class TrackRenderer implements Renderer<Map<String, Object>, Track> {
         result.put("imageCount", track.getImageCount());
         result.put("lastImageUpdate", track.getLastImageUpdate());
         result.put("mp4Codec", track.getMp4Codec());
+        result.put("mediaType", track.getMediaType().name());
         result.put("name", track.getName());
         result.put("playCount", track.getPlayCount());
         result.put("posNumber", track.getPosNumber());

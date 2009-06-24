@@ -13,9 +13,6 @@
                 only part of the tracks (or none).
             </action>
             <action dev="mdescher" type="update">
-                Use remote API to sort playlist tracks and to remove tracks from a playlist.
-            </action>
-            <action dev="mdescher" type="update">
                 Use remote API to add tracks to a playlist.
             </action>
             <action dev="mdescher" type="add">

@@ -15,8 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Collection;
-import java.util.LinkedHashSet;
 
 /**
  * de.codewave.mytunesrss.command.LoadPlaylistCommandHandler

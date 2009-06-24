@@ -13,7 +13,6 @@ import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 
 /**
  * de.codewave.mytunesrss.command.StartNewPlaylistCommandHandler
