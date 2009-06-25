@@ -19,20 +19,109 @@
     <jsp:include page="incl_head.jsp" />
 
     <script type="text/javascript">
+        var firstItem = 0;
+        var itemsPerPage = ${config.effectivePageSize};
+        var pagesPerPager = 10;
+        var totalCount = 0;
+        function pagerGetIndexFirst() {
+            return 0;
+        }
+        function pagerGetIndexPrevious() {
+            return (pagerGetFirstPage() - 1) * itemsPerPage;
+        }
+        function pagerGetIndexNext() {
+            return (pagerGetFirstPage() + pagesPerPager) * itemsPerPage;
+        }
+        function pagerGetIndexLast() {
+            return Math.floor((totalCount - 1) / itemsPerPage) * itemsPerPage;
+        }
+        function pagerGetFirstPage() {
+            return Math.floor(pagerGetCurrentPage() / pagesPerPager) * pagesPerPager;
+        }
+        function pagerGetCurrentPage() {
+            return Math.floor(firstItem / itemsPerPage);
+        }
+
         $jQ(document).ready(function() {
-            $jQ("td.editPlaylistMoveUp > a").click(function() {
-                swapRows($jQ(this).closest("tr").prev(), $jQ(this).closest("tr"));
-            });
-            $jQ("td.editPlaylistMoveDown > a").click(function() {
-                swapRows($jQ(this).closest("tr"), $jQ(this).closest("tr").next());
-            });
+            loadPlaylist();
         });
 
+        function loadPlaylist() {
+            $jQ("#pager").empty();
+            jsonRpc('${servletUrl}', "EditPlaylistService.getPlaylist", [firstItem, ${config.effectivePageSize}], function(result) {
+                $jQ("#trackTable > tbody > tr:has(td.editPlaylistMoveUp)").remove();
+                totalCount = result.playlist.count;
+                for (var i = 0; i < result.tracks.length; i++) {
+                    $jQ("#trackTable > tbody").append(createTableRow(i, result.tracks[i]));
+                }
+                setClickHandlers();
+                $jQ("#pager").append(createPager());
+            }, "${remoteApiSessionId}");
+        }
+
+        function createTableRow(i, track) {
+            var template = new Template($jQ("#templatePlaylistRow").text());
+            return template.evaluate({
+                trackId : track.id,
+                rowClass : (i % 2 == 0 ? "even" : "odd"),
+                oddSuffix : (i % 2 == 0 ? "" : "_odd"),
+                displayProtected : (track.protected ? "inline" : "none"),
+                displayVideo : (track.mediaType == "Video" ? "inline" : "none"),
+                trackName : track.name,
+                trackArtist : track.artist,
+                displayMoveUp : firstItem + i > 0 ? "inline" : "none",
+                displayMoveDown : firstItem + i + 1 < totalCount ? "inline" : "none"
+            });
+        }
+
+        function setClickHandlers() {
+            $jQ("td.editPlaylistMoveUp > a").unbind("click");
+            $jQ("td.editPlaylistMoveDown > a").unbind("click");
+            $jQ("td.editPlaylistMoveUp:not(:first) > a").click(function() {
+                swapRows($jQ(this).closest("tr").prev(), $jQ(this).closest("tr"));
+            });
+            $jQ("td.editPlaylistMoveUp:first > a").click(function() {
+                swapRemoteCall($jQ(this).closest("tr").prev(), $jQ(this).closest("tr"));
+                replaceRow($jQ(this).closest("tr"), firstItem - 1, 0);
+            });
+            $jQ("td.editPlaylistMoveDown:not(:last) > a").click(function() {
+                swapRows($jQ(this).closest("tr"), $jQ(this).closest("tr").next());
+            });
+            $jQ("td.editPlaylistMoveDown:last > a").click(function() {
+                swapRemoteCall($jQ(this).closest("tr"), $jQ(this).closest("tr").next());
+                replaceRow($jQ(this).closest("tr"), firstItem + itemsPerPage, ${config.effectivePageSize - 1});
+            });
+        }
+
+        function swapRemoteCall(first, second, callback) {
+            jsonRpc('${servletUrl}', "EditPlaylistService.moveTracks", [first.prevAll("tr.even,tr.odd").length, 1, 1], callback, "${remoteApiSessionId}");
+        }
+
+        function replaceRow(row, indexToLoad, indexInList) {
+            jsonRpc('${servletUrl}', "EditPlaylistService.getPlaylist", [indexToLoad, 1], function(result) {
+                row.replaceWith(createTableRow(indexInList, result.tracks[0]));
+                setClickHandlers();
+            }, "${remoteApiSessionId}");
+        }
+
         function swapRows(first, second) {
-            jsonRpc('${servletUrl}', "EditPlaylistService.moveTracks", [first.prevAll("tr.even,tr.odd").length, 1, 1], undefined, "${remoteApiSessionId}");
+            swapRemoteCall(first, second)
             first.insertAfter(second);
             switchOddEven(first);
             switchOddEven(second);
+            var firstUpLink = first.find(".editPlaylistMoveUp > a");
+            var firstDownLink = first.find(".editPlaylistMoveDown > a");
+            var secondUpLink = second.find(".editPlaylistMoveUp > a");
+            var secondDownLink = second.find(".editPlaylistMoveDown > a");
+            if (firstUpLink.css("display") == "none") {
+                firstUpLink.css("display", "inline");
+                secondUpLink.css("display", "none");
+            }
+            if (secondDownLink.css("display") == "none") {
+                secondDownLink.css("display", "inline");
+                firstDownLink.css("display", "none");
+            }
+            setClickHandlers();
         }
 
         function switchOddEven(element) {
@@ -50,6 +139,27 @@
                 } else {
                     return url.truncate(url.length - 4, "") + "_odd.gif";
                 }
+            });
+        }
+
+        function createPager() {
+            var templatePager = new Template($jQ("#templatePager").text());
+            var templatePagerCommand = new Template($jQ("#templatePagerCommand").text());
+            var templatePagerPage = new Template($jQ("#templatePagerPage").text());
+            var currentPage = Math.floor(firstItem / itemsPerPage);
+            var firstPage = Math.floor(currentPage / pagesPerPager) * pagesPerPager;
+            var pageList = "";
+            for (var i = firstPage; i < firstPage + pagesPerPager && i * itemsPerPage < totalCount; i++) {
+                pageList += templatePagerPage.evaluate({
+                    index : (i * itemsPerPage),
+                    classActive : (i == currentPage ? "class=\"active\"" : ""),
+                    pageName : i + 1
+                });
+            }
+            return templatePager.evaluate({
+                displayPreviousControls : (firstPage > 0 ? "inline" : "none"),
+                displayNextControls : ((firstPage + pagesPerPager) * itemsPerPage < totalCount ? "inline" : "none"),
+                pagerPages : pageList
             });
         }
     </script>
@@ -88,7 +198,7 @@
         </table>
 
         <input type="hidden" name="backUrl" value="${param.backUrl}" /> <input type="hidden" name="allowEditEmpty" value="${param.allowEditEmpty}" />
-        <table cellspacing="0">
+        <table id="trackTable" cellspacing="0">
             <tr>
                 <th class="active" colspan="6"><fmt:message key="playlistSettings" /></th>
             </tr>
@@ -121,41 +231,9 @@
                     <th class="active" colspan="6"><fmt:message key="playlistContent" /></th>
                 </c:otherwise> </c:choose>
             </tr>
-            <c:forEach items="${tracks}" var="track" varStatus="trackLoop">
-                <tr class="${cwfn:choose(trackLoop.index % 2 == 0, 'even', 'odd')}">
-                    <td class="check">
-                        <input type="checkbox" id="item${track.id}" name="track" value="${track.id}" />
-                    </td>
-                    <td class="editPlaylistMoveUp">
-                        <a style="cursor:pointer"><img src="${appUrl}/images/move_up${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="U"/></a>
-                    </td>
-                    <td class="editPlaylistMoveDown">
-                        <a style="cursor:pointer"><img src="${appUrl}/images/move_down${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="D"/></a>
-                    </td>
-                    <td>
-                        <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif"
-                                                             alt="<fmt:message key="protected"/>"
-                                                             style="vertical-align:middle" /></c:if>
-                        <c:if test="${track.mediaType.jspName == 'Video'}"><img src="${appUrl}/images/movie${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif"
-                                                         alt="<fmt:message key="video"/>"
-                                                         style="vertical-align:middle" /></c:if>
-                        <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />
-                    </td>
-                    <td>
-                        <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
-                    </td>
-                    <td class="icon">
-                        <a href="${servletUrl}/removeFromPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/track=${track.id}</mt:encrypt>/backUrl=${param.backUrl}">
-                            <img src="${appUrl}/images/delete${cwfn:choose(trackLoop.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
-                    </td>
-                </tr>
-            </c:forEach>
         </table>
-        <c:if test="${!empty pager}"> <c:set var="pagerCommand"
-                                             scope="request">${servletUrl}/editPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/backUrl=${param.backUrl}</mt:encrypt>/index={index}
-        </c:set> <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
-            <jsp:include page="incl_bottomPager.jsp" />
-        </c:if>
+
+        <div id="pager" class="pager"></div>
 
         <div class="buttons">
             <input type="button"
@@ -170,6 +248,41 @@
 
 </div>
 
+<textarea id="templatePlaylistRow" style="display:none">
+    <tr class="#{rowClass}">
+        <td class="check">
+            <input type="checkbox" id="item#{trackId}" name="track" value="#{trackId}" />
+        </td>
+        <td class="editPlaylistMoveUp">
+            <a style="cursor:pointer;display:#{displayMoveUp}"><img src="${appUrl}/images/move_up#{oddSuffix}.gif" alt="U"/></a>
+        </td>
+        <td class="editPlaylistMoveDown">
+            <a style="cursor:pointer;display:#{displayMoveDown}"><img src="${appUrl}/images/move_down#{oddSuffix}.gif" alt="D"/></a>
+        </td>
+        <td width="99%">
+            <img src="${appUrl}/images/protected#{oddSuffix}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle;display:#{displayProtected}" />
+            <img src="${appUrl}/images/movie#{oddSuffix}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle;display:#{displayVideo}" />
+            #{trackName}
+        </td>
+        <td>#{trackArtist}</td>
+        <td class="icon">
+            <a href="${servletUrl}/removeFromPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/track=${track.id}</mt:encrypt>/backUrl=${param.backUrl}">
+                <img src="${appUrl}/images/delete#{oddSuffix}.gif" alt="delete" /> </a>
+        </td>
+    </tr>
+</textarea>
+
+<textarea id="templatePager" style="display:none">
+    <a style="cursor:pointer;display:#{displayPreviousControls}" onclick="firstItem=pagerGetIndexFirst();loadPlaylist()"><img src="${appUrl}/images/pager_first.gif" alt="first"/></a>
+    <a style="cursor:pointer;display:#{displayPreviousControls}" onclick="firstItem=pagerGetIndexPrevious();loadPlaylist()"><img src="${appUrl}/images/pager_previous.gif" alt="previous"/></a>
+    #{pagerPages}
+    <a style="cursor:pointer;display:#{displayNextControls}" onclick="firstItem=pagerGetIndexNext();loadPlaylist()"><img src="${appUrl}/images/pager_next.gif" alt="next"/></a>
+    <a style="cursor:pointer;display:#{displayNextControls}" onclick="firstItem=pagerGetIndexLast();loadPlaylist()"><img src="${appUrl}/images/pager_last.gif" alt="last"/></a>
+</textarea>
+
+<textarea id="templatePagerPage" style="display:none">
+    <a style="cursor:pointer" onclick="firstItem=#{index};loadPlaylist()" #{classActive}>#{pageName}</a>
+</textarea>
 </body>
 
 </html>
