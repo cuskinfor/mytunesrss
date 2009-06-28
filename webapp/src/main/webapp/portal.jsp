@@ -53,7 +53,7 @@
 
     <jsp:include page="/incl_error.jsp" />
 
-    <form id="search" action="${servletUrl}/searchTracks/${auth}" method="post" onsubmit="$('inputFuzziness').value=$jQ('#fuzziness').slider('option', 'value')">
+    <form id="search" action="${servletUrl}/searchTracks/${auth}" method="post" onsubmit="$jQ('#inputFuzziness').val($jQ('#fuzziness').slider('option', 'value'))">
 
         <table class="portal" cellspacing="0">
             <tr>

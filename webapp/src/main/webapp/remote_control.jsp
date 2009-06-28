@@ -124,11 +124,11 @@
             }
 
             if (trackInfo.playing) {
-                $("rc_play").style.display = "none";
-                $("rc_pause").style.display = "inline";
+                $jQ("#rc_play").css("display", "none");
+                $jQ("#rc_pause").css("display", "inline");
             } else if (!trackInfo.playing) {
-                $("rc_play").style.display = "inline";
-                $("rc_pause").style.display = "none";
+                $jQ("rc_play").css("display", "inline");
+                $jQ("rc_pause").css("display", "none");
             }
 
             var percentage = trackInfo.currentTime != -1 && trackInfo.length > -1 ? trackInfo.currentTime * 100 / trackInfo.length : 0;

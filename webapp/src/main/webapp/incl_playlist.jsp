@@ -46,9 +46,6 @@
         jsonRpc('${servletUrl}', 'EditPlaylistService.addTracks', [tracks], updateEditPlaylistCount, '${remoteApiSessionId}');
     }
     function updateEditPlaylistCount(result) {
-        var currentCount = $('editPlaylistTrackCount').innerHTML;
-        if (result.count > currentCount) {
-            $('editPlaylistTrackCount').innerHTML = result.count;
-        }
+        $jQ("#editPlaylistTrackCount").html(result.count);
     }
 </script>
