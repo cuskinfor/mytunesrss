@@ -21,7 +21,9 @@ public class MyTunesRssRemoteEnv {
 
     private static final ThreadLocal<Session> THREAD_SESSIONS = new ThreadLocal<Session>();
 
-    private static final Session DUMMY_SESSION = new Session(null, null, 0);
+    private static Session getDummySession() {
+        return new Session(null, null, 0);
+    }
 
     public static HttpServletRequest getRequest() {
         return THREAD_REQUESTS.get();
@@ -51,7 +53,7 @@ public class MyTunesRssRemoteEnv {
 
     public static Session getSession() {
         Session session = THREAD_SESSIONS.get();
-        return session != null ? session : DUMMY_SESSION;
+        return session != null ? session : getDummySession();
     }
 
     public static String getServerCall(MyTunesRssCommand command, String pathInfo) {
@@ -93,7 +95,7 @@ public class MyTunesRssRemoteEnv {
     public static Session getSessionForRegularSession(HttpServletRequest request) {
         String sid = (String) request.getSession().getAttribute("remoteApiSessionId");
         Session session = RemoteApiSessionManager.getInstance(request).getSession(sid);
-        return session != null ? session : DUMMY_SESSION;
+        return session != null ? session : getDummySession();
     }
 
     public static String createSessionId() {
