@@ -40,7 +40,6 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
                 getTransaction().executeStatement(statement);
                 MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).removeAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
                 MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).removeAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS);
-                getStates().put("addToPlaylistMode", Boolean.FALSE);
                 forward(MyTunesRssCommand.ShowPortal);
             } else {
                 addError(new BundleError("error.needPlaylistNameForSave"));

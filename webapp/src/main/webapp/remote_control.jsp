@@ -35,7 +35,6 @@
         var pagesPerPager = 10;
         var currentPage = 0;
         var myFullScreen = false;
-        var sessionId;
 
         function createPlaylist() {
             unhighlightAllTracks();
@@ -204,13 +203,7 @@
         }
 
         function execJsonRpc(method, params, callback) {
-            if (sessionId == null || sessionId == undefined) {
-                jsonRpc('${servletUrl}', 'LoginService.login', ['${authUser.name}', '${authUser.hexEncodedPasswordHash}', 1], function(loginResult) {
-                    sessionId = loginResult;
-                    jsonRpc('${servletUrl}', method, params, callback, sessionId);
-                })
-            }
-            jsonRpc('${servletUrl}', method, params, callback, sessionId);
+            jsonRpc("${servletUrl}", method, params, callback, "${remoteApiSessionId}");
         }
 
       $jQ(document).ready(function(){

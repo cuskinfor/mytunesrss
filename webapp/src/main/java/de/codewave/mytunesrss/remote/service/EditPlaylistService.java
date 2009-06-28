@@ -29,7 +29,7 @@ public class EditPlaylistService {
      * @throws java.sql.SQLException    Could not execute SQL to find playlist.
      * @throws IllegalArgumentException Playlist with specified ID not found.
      */
-    public Object startEditPlaylist(String playlistId) throws IllegalAccessException, SQLException {
+    public void startEditPlaylist(String playlistId) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
@@ -49,9 +49,9 @@ public class EditPlaylistService {
             }
             session.setAttribute(KEY_EDIT_PLAYLIST, playlist);
             session.setAttribute(KEY_EDIT_PLAYLIST_TRACKS, tracks);
-            return RenderMachine.getInstance().render(playlist);
+        } else {
+            throw new IllegalAccessException("Unauthorized");
         }
-        throw new IllegalAccessException("Unauthorized");
     }
 
     /**
@@ -344,8 +344,9 @@ public class EditPlaylistService {
             } else {
                 throw new IllegalStateException("Not currently editing a playlist.");
             }
+        } else {
+            throw new IllegalAccessException("Unauthorized");
         }
-        throw new IllegalAccessException("Unauthorized");
     }
 
     /**
@@ -363,7 +364,7 @@ public class EditPlaylistService {
                 List<Track> playlistTracks = (List<Track>) session.getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("playlist", playlist);
-                if (first < playlistTracks.size() - 1 && count != 0) {
+                if (first < playlistTracks.size()) {
                     map.put("tracks", playlistTracks.subList(first, count > 0 ? Math.min(first + count, playlistTracks.size()) : playlistTracks.size()));
                 }
                 return RenderMachine.getInstance().render(map);

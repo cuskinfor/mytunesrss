@@ -17,6 +17,7 @@ public class PlaylistRenderer implements Renderer<Map<String, Object>, Playlist>
         result.put("id", StringUtils.trimToEmpty(playlist.getId()));
         result.put("name", StringUtils.trimToEmpty(playlist.getName()));
         result.put("count", playlist.getTrackCount());
+        result.put("userPrivate", playlist.isUserPrivate());
         result.put("downloadUrl", MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.GetZipArchive, "playlist=" + playlist.getId()));
         result.put("m3uUrl", MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, "playlist=" + playlist.getId() + "/type=M3u"));
         result.put("xspfUrl", MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.CreatePlaylist, "playlist=" + playlist.getId() + "/type=Xspf"));

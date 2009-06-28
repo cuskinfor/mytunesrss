@@ -7,9 +7,6 @@
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
-<c:set var="backUrl">${servletUrl}/editPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}/index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}
-</c:set>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -43,12 +40,21 @@
         }
 
         $jQ(document).ready(function() {
+            $jQ("#errordialog").dialog({
+                autoOpen:false,
+                modal:true,
+                buttons:{
+                    '<fmt:message key="dialog.button.close"/>':function() {
+                        $jQ('#errordialog').dialog('close');
+                    }
+                }
+            });
             loadView();
         });
 
         function loadView() {
-            refreshPager();
             loadRows(0, itemsPerPage);
+            refreshPager();
         }
 
         function refreshPager() {
@@ -97,6 +103,11 @@
                 } else {
                     totalCount = result.playlist.count;
                 }
+                if (result.playlist.userPrivate) {
+                    $jQ("#privatePlaylist").attr("checked",  "checked");
+                } else {
+                    $jQ("#privatePlaylist").removeAttr("checked");
+                }
                 for (var i = from; i < from + count; i++) {
                     if (i >= 0 && i < itemsPerPage) {
                         if (firstItem + i >= totalCount) {
@@ -138,6 +149,23 @@
                 pagerPages : pageList
             });
         }
+
+        function savePlaylist() {
+            jsonRpc('${servletUrl}', "EditPlaylistService.savePlaylist", [$jQ("#playlistName").val(), $jQ("#privatePlaylist:checked").size() == 1], function(result, error) {
+                if (error) {
+                    $jQ("#errordialog").empty().append(error.msg);
+                    $jQ("#errordialog").dialog("open");
+                } else {
+                    document.location.href = "${servletUrl}/showPlaylistManager/${auth}";
+                }
+            }, "${remoteApiSessionId}");
+        }
+
+        function cancelEditPlaylist() {
+            jsonRpc('${servletUrl}', "EditPlaylistService.cancelEditPlaylist", [], function() {
+                document.location.href = "${servletUrl}/showPlaylistManager/${auth}";
+            }, "${remoteApiSessionId}");
+        }
     </script>
 
 </head>
@@ -150,89 +178,61 @@
         <a class="portal" href="${servletUrl}/showPortal/${auth}"><fmt:message key="portal" /></a> <span><fmt:message key="myTunesRss" /></span>
     </h1>
 
-    <c:if test="${states.addToPlaylistMode}">
-        <ul class="links">
-            <li style="float:right;">
-                <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back" /></a>
-            </li>
-        </ul>
-    </c:if>
+    <ul class="links">
+        <li style="float:right;">
+            <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back" /></a>
+        </li>
+    </ul>
 
     <jsp:include page="/incl_error.jsp" />
 
-    <form id="playlist" action="${servletUrl}/savePlaylist/${auth}" method="post">
-        <table class="portal" cellspacing="0">
-            <tr>
-                <td class="playlistManager">
-                    <fmt:message key="playlistName" /> <input type="text" name="name" value="<c:out value="${editPlaylistName}"/>" />
-                </td>
-                <td class="links">
-                    <a class="add"
-                       href="${servletUrl}/continuePlaylist/${auth}"
-                       style="background-image:url('${appUrl}/images/add_more.gif');"><fmt:message key="addMoreSongs" /></a>
-                </td>
-        </table>
+    <table class="portal" cellspacing="0">
+        <tr>
+            <td class="playlistManager">
+                <fmt:message key="playlistName" /> <input id="playlistName" name="name" value="<c:out value="${editPlaylistName}"/>" />
+            </td>
+            <td class="links">
+                <a class="add"
+                   href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>"
+                   style="background-image:url('${appUrl}/images/add_more.gif');"><fmt:message key="addMoreSongs" /></a>
+            </td>
+    </table>
 
-        <input type="hidden" name="backUrl" value="${param.backUrl}" /> <input type="hidden" name="allowEditEmpty" value="${param.allowEditEmpty}" />
-        <table id="trackTable" cellspacing="0">
-            <tr>
-                <th class="active" colspan="6"><fmt:message key="playlistSettings" /></th>
-            </tr>
-            <tr>
-                <td class="even" colspan="6">
-                    <input type="checkbox"
-                           name="user_private"
-                           value="true"
-                           <c:if test="${playlist.userPrivate}">checked="checked"</c:if> /> <fmt:message key="playlistUserPrivate" />
-                </td>
-            </tr>
-            <c:if test="${!states.addToPlaylistMode}">
-                <tr>
-                    <td colspan="6" style="padding:0">
-                        <c:set var="displayFilterUrl"
-                               scope="request">${servletUrl}/editPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=${param.allowEditEmpty}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}
-                        </c:set> <c:set var="filterTypeActive" scope="request" value="true" /> <c:set var="filterProtectionActive"
-                                                                                                      scope="request"
-                                                                                                      value="true" />
-                        <jsp:include page="/incl_display_filter.jsp" />
-                    </td>
-                </tr>
-            </c:if>
-            <tr>
-                <c:choose> <c:when test="${!empty tracks}">
-                    <th class="check"><input type="checkbox" name="none" value="none" onclick="selectAll('item', '${trackIds}', this)" /></th>
-                    <th class="active" colspan="2">&nbsp;</th>
-                    <th class="active" colspan="3"><fmt:message key="playlistContent" /></th>
-                </c:when> <c:otherwise>
-                    <th class="active" colspan="6"><fmt:message key="playlistContent" /></th>
-                </c:otherwise> </c:choose>
-            </tr>
-        </table>
+    <table id="trackTable" cellspacing="0">
+        <tr>
+            <th class="active" colspan="4"><fmt:message key="playlistSettings" /></th>
+        </tr>
+        <tr>
+            <td class="even" colspan="4">
+                <input type="checkbox"
+                       id="privatePlaylist"
+                       value="true"
+                       <c:if test="${playlist.userPrivate}">checked="checked"</c:if> /> <fmt:message key="playlistUserPrivate" />
+            </td>
+        </tr>
+        <tr>
+            <c:choose> <c:when test="${!empty tracks}">
+                <th class="active">&nbsp;</th>
+                <th class="active" colspan="3"><fmt:message key="playlistContent" /></th>
+            </c:when> <c:otherwise>
+                <th class="active" colspan="4"><fmt:message key="playlistContent" /></th>
+            </c:otherwise> </c:choose>
+        </tr>
+    </table>
 
-        <div id="pager" class="pager"></div>
+    <div id="pager" class="pager"></div>
 
-        <div class="buttons">
-            <input type="button"
-                   onclick="document.forms['playlist'].action = '${servletUrl}/removeFromPlaylist/${auth}';document.forms['playlist'].submit()"
-                   value="<fmt:message key="removeSelected"/>" /> <input type="submit"
-                                                                         onclick="document.forms['playlist'].action = '${servletUrl}/savePlaylist/${auth}';document.forms['playlist'].elements['backUrl'].value = '${mtfn:encode64(backUrl)}'"
-                                                                         value="<fmt:message key="savePlaylist"/>" /> <input type="button"
-                                                                                                                             onclick="document.location.href = '${servletUrl}/cancelEditPlaylist/${auth}/backUrl=${param.backUrl}'"
-                                                                                                                             value="<fmt:message key="doCancel"/>" />
-        </div>
-    </form>
+    <div class="buttons">
+        <input type="button" onclick="savePlaylist()" value="<fmt:message key="savePlaylist"/>" />
+        <input type="button" onclick="cancelEditPlaylist()" value="<fmt:message key="doCancel"/>" />
+    </div>
 
 </div>
 
 <textarea id="templatePlaylistRow" style="display:none">
     <tr id="trackTableRow#{index}" class="#{rowClass}">
-        <td class="check">
-            <input type="checkbox" id="item#{trackId}" name="track" value="#{trackId}" />
-        </td>
-        <td class="editPlaylistMoveUp">
+        <td class="iconleft">
             <a style="cursor:pointer;display:#{displayMoveUp}" onclick="swapTracks(#{indexBefore})"><img src="${appUrl}/images/move_up#{oddSuffix}.gif" alt="U"/></a>
-        </td>
-        <td class="editPlaylistMoveDown">
             <a style="cursor:pointer;display:#{displayMoveDown}" onclick="swapTracks(#{index})"><img src="${appUrl}/images/move_down#{oddSuffix}.gif" alt="D"/></a>
         </td>
         <td width="99%">
@@ -258,6 +258,9 @@
 <textarea id="templatePagerPage" style="display:none">
     <a style="cursor:pointer" onclick="firstItem=#{index};loadView()" #{classActive}>#{pageName}</a>
 </textarea>
+
+<div id="errordialog" style="display:none" title="MyTunesRSS"/>
+
 </body>
 
 </html>

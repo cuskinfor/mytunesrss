@@ -18,6 +18,16 @@
 
     <jsp:include page="incl_head.jsp"/>
 
+    <script type="text/javascript">
+
+        function loadAndEditPlaylist(id) {
+            jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [id], function() {
+                document.location.href = "${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}";
+            }, "${remoteApiSessionId}");
+        }
+
+    </script>
+
 </head>
 
 <body>
@@ -49,14 +59,11 @@
                 <td class="icon">
                     <c:choose>
                         <c:when test="${playlist.type == 'MyTunesSmart'}">
-                            <c:set var="link">${servletUrl}/editSmartPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlistId=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}</c:set>
-                        </c:when>
+                            <a href="${servletUrl}/editSmartPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlistId=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="edit" /></a>                        </c:when>
                         <c:otherwise>
-                            <c:set var="link">${servletUrl}/loadAndEditPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=true/playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}</c:set>
+                            <a style="cursor:pointer" onclick="loadAndEditPlaylist('${playlist.id}')"><img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="edit" /></a>
                         </c:otherwise>
                     </c:choose>
-                    <a href="${link}">
-                        <img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="edit" /> </a>
                     <c:choose>
                         <c:when test="${deleteConfirmation}">
                             <a style="cursor:pointer" onclick="showDialog('confirmDeletePlaylist', [function() {document.location.href='${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}'}, null])">

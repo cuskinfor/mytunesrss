@@ -36,7 +36,7 @@
             <c:if test="${sortOrder != 'Artist'}"><a style="cursor:pointer" onclick="sort('${servletUrl}', '${auth}', 'Artist'); return false"><fmt:message key="groupByArtist" /></a></c:if>
         </li>
     </c:if>
-    <c:if test="${!states.addToPlaylistMode && authUser.createPlaylists}">
+    <c:if test="${!stateEditPlaylist && authUser.createPlaylists}">
         <li>
             <c:choose>
                 <c:when test="${empty editablePlaylists || simpleNewPlaylist}">
@@ -106,7 +106,7 @@
         <c:set var="sectionArguments"><c:choose><c:when test="${empty track.sectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.sectionPlaylistId)}</c:otherwise></c:choose></c:set>
         <th class="icon">
             <c:choose>
-                <c:when test="${!states.addToPlaylistMode}">
+                <c:when test="${!stateEditPlaylist}">
                     <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                         <c:choose>
                             <c:when test="${empty track.sectionPlaylistId}">
@@ -199,7 +199,7 @@
     </c:if>
     <td class="icon">
         <c:choose>
-            <c:when test="${!states.addToPlaylistMode}">
+            <c:when test="${!stateEditPlaylist}">
                 <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                     <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                         <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"

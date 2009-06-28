@@ -134,11 +134,6 @@ function clickDialog(functionIndex) {
     }
 }
 
-function editExistingPlaylist() {
-    var element = document.getElementById("playlistSelection");
-    document.location.href = element.options[element.selectedIndex].value;
-}
-
 function cancelEvent(event) {
     event = event ? event : window.event;
     if (event.stopPropagation) {
@@ -187,7 +182,7 @@ function jsonRpc(serverUrl, func, parameterArray, resultCallback, sessionId) {
         }).toJSON(),
         onSuccess : function(result) {
             if (resultCallback != undefined) {
-                resultCallback(result.responseJSON.result);
+                resultCallback(result.responseJSON.result, result.responseJSON.error);
             }
         }
     });

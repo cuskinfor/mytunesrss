@@ -71,13 +71,13 @@
                     </a>
                     <c:if test="${authUser.createPlaylists}">
                         <c:choose>
-                            <c:when test="${!states.addToPlaylistMode}">
+                            <c:when test="${!stateEditPlaylist}">
                                 <a href="${servletUrl}/showPlaylistManager/${auth}" style="background-image:url('${appUrl}/images/feeds_small.gif');">
                                     <fmt:message key="managePlaylists" />
                                 </a>
                             </c:when>
                             <c:otherwise>
-                                <a href="${servletUrl}/editPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"
+                                <a href="${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist/backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>"
                                    style="background-image:url('${appUrl}/images/feeds_small.gif');">
                                     <fmt:message key="finishPlaylist" />
                                 </a>

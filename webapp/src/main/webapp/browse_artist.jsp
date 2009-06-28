@@ -50,7 +50,7 @@
         <li>
             <a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}</mt:encrypt>"><fmt:message key="browseGenres"/></a>
         </li>
-        <c:if test="${!states.addToPlaylistMode && authUser.createPlaylists}">
+        <c:if test="${!stateEditPlaylist && authUser.createPlaylists}">
             <li>
                 <c:choose>
                     <c:when test="${empty editablePlaylists || simpleNewPlaylist}">
@@ -112,7 +112,7 @@
                 </td>
                 <td class="icon">
                     <c:choose>
-                        <c:when test="${!states.addToPlaylistMode}">
+                        <c:when test="${!stateEditPlaylist}">
                             <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                                 <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/fullAlbums=false</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                     <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"

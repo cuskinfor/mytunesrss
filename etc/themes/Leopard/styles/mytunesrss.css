@@ -367,6 +367,13 @@ td.icon {
     white-space: nowrap;
 }
 
+td.iconleft {
+    padding: 0 0 0 10px;
+    border-right: none;
+    text-align: left;
+    white-space: nowrap;
+}
+
 a.rss {
     display: block;
     height: 18px;
@@ -810,10 +817,6 @@ div.dialogButton {
     float:right;
     margin-top:20px;
     margin-left:10px;
-}
-
-td.editPlaylistMoveUp {
-    padding-right:0;
 }
 
 em.ymp-skin {

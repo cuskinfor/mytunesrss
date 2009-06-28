@@ -16,7 +16,6 @@ public class ContinueExistingPlaylistCommandHandler extends LoadPlaylistCommandH
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized() && getAuthUser().isCreatePlaylists()) {
             loadPlaylist();
-            getStates().put("addToPlaylistMode", Boolean.TRUE);
             String backUrl = MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null));
             if (StringUtils.isNotEmpty(backUrl)) {
                 redirect(backUrl);

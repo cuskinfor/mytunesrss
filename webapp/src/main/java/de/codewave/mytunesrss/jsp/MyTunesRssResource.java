@@ -53,12 +53,9 @@ public enum MyTunesRssResource {
     }
 
     public void beforeForward(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Boolean> states = (Map<String, Boolean>)request.getSession().getAttribute("states");
-        if (this != EditPlaylist && (states == null || !Boolean.TRUE.equals(states.get("addToPlaylistMode")))) {
-            MyTunesRssRemoteEnv.getSessionForRegularSession(request).removeAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
-            MyTunesRssRemoteEnv.getSessionForRegularSession(request).removeAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS);
-        } else {
-            Playlist playlist = (Playlist) MyTunesRssRemoteEnv.getSessionForRegularSession(request).getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
+        Playlist playlist = (Playlist) MyTunesRssRemoteEnv.getSessionForRegularSession(request).getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
+        if (playlist != null) {
+            request.setAttribute("stateEditPlaylist", true);
             request.setAttribute("editPlaylistName", playlist.getName());
             request.setAttribute("editPlaylistTrackCount", playlist.getTrackCount());
         }

@@ -12,7 +12,7 @@
         <div class="dialogMessage">
             <select id="playlistSelection" style="width:100%">
                 <c:forEach items="${editablePlaylists}" var="playlist">
-                    <option value='${servletUrl}/continueExistingPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">allowEditEmpty=true/playlist=${playlist.id}/useBackUrl=true/backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>'><c:out value="${playlist.name}"/></option>
+                    <option value='${playlist.id}'><c:out value="${playlist.name}"/></option>
                 </c:forEach>
             </select>
         </div>
@@ -20,10 +20,17 @@
             <input type="button" onclick="clickDialog(2)" value="<fmt:message key="doCancel" />" />
         </div>
         <div class="dialogButton">
-            <input type="button" onclick="clickDialog(1)" value="<fmt:message key="edit" />" />
+            <input type="button" onclick="editExistingPlaylist()" value="<fmt:message key="edit" />" />
         </div>
         <div class="dialogButton">
             <input type="button" onclick="clickDialog(0)" value="<fmt:message key="new" />" />
         </div>
     </div>
+    <script type="text/javascript">
+        function editExistingPlaylist() {
+            jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [$jQ("#playlistSelection option:selected").val()], function() {
+                document.location.href = "${backUrl}"
+            }, "${remoteApiSessionId}");
+        }
+    </script>
 </c:if>
