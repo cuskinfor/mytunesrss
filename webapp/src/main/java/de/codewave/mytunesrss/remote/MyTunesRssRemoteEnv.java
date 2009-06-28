@@ -92,7 +92,8 @@ public class MyTunesRssRemoteEnv {
 
     public static Session getSessionForRegularSession(HttpServletRequest request) {
         String sid = (String) request.getSession().getAttribute("remoteApiSessionId");
-        return RemoteApiSessionManager.getInstance(request).getSession(sid);
+        Session session = RemoteApiSessionManager.getInstance(request).getSession(sid);
+        return session != null ? session : DUMMY_SESSION;
     }
 
     public static String createSessionId() {
