@@ -5,7 +5,7 @@
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
 <c:if test="${!empty editablePlaylists}">
-    <div id="editPlaylistDialog" title="TODO: playlist editor" style="display:none">
+    <div id="editPlaylistDialog" title="<fmt:message key="editPlaylistDialogTitle"/>" style="display:none">
         <p>
             <fmt:message key="dialog.editPlaylist"/>
         </p>

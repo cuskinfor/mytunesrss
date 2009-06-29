@@ -83,7 +83,7 @@
                     </c:choose>
                     <c:choose>
                         <c:when test="${deleteConfirmation}">
-                            <a style="cursor:pointer" onclick="$jQ('#confirmDeletePlaylist').dialog('option', 'serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}');openDialog('confirmDeletePlaylist')">
+                            <a style="cursor:pointer" onclick="$jQ('#confirmDeletePlaylist').dialog('option', 'serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');openDialog('confirmDeletePlaylist')">
                                 <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                         </c:when>
                         <c:otherwise>
@@ -110,8 +110,8 @@
 <div id="glasspane" class="glasspane">
 </div>
 
-<div id="confirmDeletePlaylist" title="TODO: delete confirmation" style="display:none">
-    <fmt:message key="dialog.confirmDeletePlaylist"/>
+<div id="confirmDeletePlaylist" title="<fmt:message key="confirmDeletePlaylistTitle"/>" style="display:none">
+    <fmt:message key="dialog.confirmDeletePlaylist"><fmt:param><span id="playlistName"></span></fmt:param></fmt:message>
 </div>
 
 </body>
