@@ -21,7 +21,8 @@ function getElementParams(elements, separator) {
     var elementNames = elements.split(",");
     var buffer = '';
     for (var i = 0; i < elementNames.length; i++) {
-        buffer += elementNames[i] + "=" + getElementValue(self.document.getElementById(elementNames[i]));
+        var val = $jQ("#" + elementNames[i]).val();
+        buffer += elementNames[i] + "=" + (val ? val : "");
         if (i + 1 < elementNames.length) {
             buffer += separator;
         }
