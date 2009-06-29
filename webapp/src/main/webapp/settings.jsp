@@ -332,6 +332,15 @@
                     </td>
                 </tr>
             </c:if>
+            <c:if test="${authUser.externalSites}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.showExternalSites" /></td>
+                    <td>
+                        <input type="checkbox" name="showExternalSites" value="true" <c:if test="${config.showExternalSites}">checked="checked"</c:if> />
+                        <img src="${appUrl}/images/http.gif" alt="external links" style="vertical-align:text-top;" />
+                    </td>
+                </tr>
+            </c:if>
             <c:if test="${authUser.transcoder && globalConfig.validLameBinary && !empty globalConfig.transcoderConfigs}">
                 <c:forEach var="tc" items="${globalConfig.transcoderConfigs}">
                     <tr <mt:flipFlop/>>

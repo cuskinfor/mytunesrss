@@ -16,6 +16,7 @@
     <jsp:include page="incl_head.jsp" />
 
     <script type="text/javascript">
+        var unknownName = "<fmt:message key="unknown"/>";
         var firstItem = 0;
         var itemsPerPage = ${config.effectivePageSize};
         var pagesPerPager = 10;
@@ -72,7 +73,7 @@
                 displayProtected : (track.protected ? "inline" : "none"),
                 displayVideo : (track.mediaType == "Video" ? "inline" : "none"),
                 trackName : track.name,
-                trackArtist : track.artist,
+                trackArtist : track.artist != "!" ? track.artist : unknownName,
                 displayMoveUp : firstItem + i > 0 ? "inline" : "none",
                 displayMoveDown : firstItem + i + 1 < totalCount ? "inline" : "none"
             });

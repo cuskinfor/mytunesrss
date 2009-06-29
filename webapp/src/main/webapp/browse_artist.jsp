@@ -145,6 +145,26 @@
                                     </c:otherwise>
                                 </c:choose>
                             </c:if>
+                            <c:if test="${mtfn:externalSites('artist') && !mtfn:unknown(artist.name)}">
+                                <img src="${appUrl}/images/http.gif" alt="external site" title="external site" style="cursor:pointer" onclick="$jQ('#externalSite_${loopStatus.index}').dialog('open')"/>
+                                <div id="externalSite_${loopStatus.index}" title="<fmt:message key="dialog.externalSite.title"/>">
+                                    <c:forEach items="${mtfn:externalSiteDefinitions('artist', artist.name)}" var="externalSite" varStatus="siteLoopStatus">
+                                        <a href="${externalSite.value}" target="_blank" onclick="$jQ('#externalSite_${loopStatus.index}').dialog('close')"><c:out value="${externalSite.key}"/></a>
+                                        <c:if test="${!siteLoopStatus.last}"><br /></c:if>
+                                    </c:forEach>
+                                </div>
+                                <script type="text/javascript">
+                                    $jQ('#externalSite_${loopStatus.index}').dialog({
+                                        autoOpen:false,
+                                        modal:true,
+                                        buttons:{
+                                            '<fmt:message key="dialog.button.close"/>':function() {
+                                                $jQ('#externalSite_${loopStatus.index}').dialog('close');
+                                            }
+                                        }
+                                    })
+                                </script>
+                            </c:if>
                         </c:when>
                         <c:otherwise>
                             <a style="cursor:pointer" onclick="addArtistsToPlaylist($A(['${mtfn:escapeJs(artist.name)}']), false)">

@@ -136,4 +136,8 @@ public interface EditUserConfigMBean {
     String setParentUser(String username);
 
     void removeParentUser();
+
+    boolean isPermissionExternalSites();
+
+    void setPermissionExternalSites(boolean permissionExternalSites);
 }

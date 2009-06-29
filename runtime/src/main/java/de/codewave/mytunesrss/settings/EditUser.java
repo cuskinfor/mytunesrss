@@ -72,6 +72,7 @@ public class EditUser implements MyTunesRssEventListener {
     private JButton myRemoveUserSettingFromProfileButton;
     private JCheckBox myPermRemoteControlnput;
     private JComboBox myParentUserInput;
+    private JCheckBox myPermExternalSitesInput;
     private User myUser;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
 
@@ -229,6 +230,7 @@ public class EditUser implements MyTunesRssEventListener {
         myPermChangeEmail.setSelected(parent.isChangeEmail());
         myPermRemoteControlnput.setSelected(parent.isRemoteControl());
         mySaveUserSettingsInput.setSelected(parent.isSaveWebSettings());
+        myPermExternalSitesInput.setSelected(parent.isExternalSites());
         if (parent.getPlaylistId() == null) {
             myRestrictionPlaylistInput.setSelectedIndex(0);
         } else {
@@ -265,6 +267,7 @@ public class EditUser implements MyTunesRssEventListener {
         SwingUtils.enableElementAndLabel(myPermRemoteControlnput, !parentUser);
         SwingUtils.enableElementAndLabel(mySaveUserSettingsInput, !parentUser);
         SwingUtils.enableElementAndLabel(myRestrictionPlaylistInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermExternalSitesInput, !parentUser);
     }
 
     private void createParentUserList() {
@@ -313,6 +316,7 @@ public class EditUser implements MyTunesRssEventListener {
             myEmailInput.setText(myUser.getEmail());
             myPermChangeEmail.setSelected(myUser.isChangeEmail());
             myPermRemoteControlnput.setSelected(myUser.isRemoteControl());
+            myPermExternalSitesInput.setSelected(myUser.isExternalSites());
             if (StringUtils.isNotEmpty(myUser.getParentUserName())) {
                 myParentUserInput.setSelectedItem(myUser.getParentUserName());
                 initFromParent();
@@ -461,6 +465,7 @@ public class EditUser implements MyTunesRssEventListener {
                     myUser.setUrlEncryption(myUrlEncryptionInput.isSelected());
                     myUser.setRemoteControl(myPermRemoteControlnput.isSelected());
                     myUser.setParentUserName(myParentUserInput.getSelectedIndex() == 0 ? null : myParentUserInput.getSelectedItem().toString());
+                    myUser.setExternalSites(myPermExternalSitesInput.isSelected());
                     MyTunesRss.CONFIG.addUser(myUser);
                     if (myClose) {
                         myDialog.dispose();

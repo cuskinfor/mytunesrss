@@ -82,6 +82,7 @@ public class User implements MyTunesRssEventListener {
     private boolean myChangeEmail;
     private boolean myRemoteControl;
     private String myParentUserName;
+    private boolean myExternalSites;
 
     public User(String name) {
         myName = name;
@@ -358,6 +359,14 @@ public class User implements MyTunesRssEventListener {
         myRemoteControl = remoteControl;
     }
 
+    public boolean isExternalSites() {
+        return myExternalSites;
+    }
+
+    public void setExternalSites(boolean externalSites) {
+        myExternalSites = externalSites;
+    }
+
     @Override
     public boolean equals(Object object) {
         return object != null && object instanceof User && getName().equals(((User)object).getName());
@@ -478,6 +487,7 @@ public class User implements MyTunesRssEventListener {
         setEmail(JXPathUtils.getStringValue(settings, "email", null));
         setRemoteControl(JXPathUtils.getBooleanValue(settings, "remoteControl", false));
         setParentUserName(JXPathUtils.getStringValue(settings, "parent", null));
+        setExternalSites(JXPathUtils.getBooleanValue(settings, "externalSites", false));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -527,6 +537,7 @@ public class User implements MyTunesRssEventListener {
         users.appendChild(DOMUtils.createBooleanElement(settings, "urlEncryption", isUrlEncryption()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "remoteControl", isRemoteControl()));
         users.appendChild(DOMUtils.createTextElement(settings, "parent", getParentUserName()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "externalSites", isExternalSites()));
     }
 
     public synchronized void playLastFmTrack(final Track track) {

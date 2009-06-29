@@ -9,6 +9,9 @@
 
         <release version="3.8.0-EAP-1" date="2009-xx-xx" description="3.8.0 EAP 1">
             <action dev="mdescher" type="update">
+                External sites user permission and web configuration.
+            </action>
+            <action dev="mdescher" type="update">
                 Playlist editing through ajax calls.
             </action>
             <action dev="mdescher" type="update">

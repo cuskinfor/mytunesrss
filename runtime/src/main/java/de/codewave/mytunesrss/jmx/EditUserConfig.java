@@ -414,4 +414,13 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         MyTunesRss.CONFIG.getUser(myUsername).setParentUserName(null);
         onChange();
     }
+
+    public boolean isPermissionExternalSites() {
+        return MyTunesRss.CONFIG.getUser(myUsername).isExternalSites();
+    }
+
+    public void setPermissionExternalSites(boolean permissionExternalSites) {
+        MyTunesRss.CONFIG.getUser(myUsername).setExternalSites(permissionExternalSites);
+        onChange();
+    }
 }

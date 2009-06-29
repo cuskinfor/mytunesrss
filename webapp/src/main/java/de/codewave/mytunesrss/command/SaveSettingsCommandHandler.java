@@ -69,6 +69,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setAlbumImageSize(getIntegerRequestParameter("albImgSize", 128));
         webConfig.setRemoteControl(getBooleanRequestParameter("remoteControl", false));
         webConfig.setShowThumbnails(getBooleanRequestParameter("showThumbnails", false));
+        webConfig.setShowExternalSites(getBooleanRequestParameter("showExternalSites", false));
         transferTranscoders(webConfig);
         boolean error = false;
         error |= transferAndValidatePageSize(webConfig);

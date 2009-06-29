@@ -169,7 +169,7 @@
                                     </c:otherwise>
                                 </c:choose>
                             </c:if>
-                            <c:if test="${mtfn:externalSites('album')}">
+                            <c:if test="${mtfn:externalSites('album') && !mtfn:unknown(album.name) && authUser.externalSites && config.showExternalSites}">
                                 <img src="${appUrl}/images/http.gif" alt="external site" title="external site" style="cursor:pointer" onclick="$jQ('#externalSite_${loopStatus.index}').dialog('open')"/>
                                 <div id="externalSite_${loopStatus.index}" title="<fmt:message key="dialog.externalSite.title"/>">
                                     <c:forEach items="${mtfn:externalSiteDefinitions('album', album.name)}" var="externalSite" varStatus="siteLoopStatus">
