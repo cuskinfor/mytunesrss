@@ -10,16 +10,6 @@ function sort(servletUrl, auth, sortOrder) {
     document.forms["browse"].submit();
 }
 
-function selectAll(prefix, ids, checkbox) {
-    var idArray = ids.split(",");
-    for (var i = 0; i < idArray.length; i++) {
-        var element = document.getElementById(prefix + idArray[i]);
-        if (element) {
-            element.checked = checkbox.checked;
-        }
-    }
-}
-
 function openPlayer(url) {
     var flashPlayer = window.open(url, "MyTunesRssFlashPlayer", "width=600,height=276,resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no");
     flashPlayer.onload=function() {
@@ -37,18 +27,6 @@ function getElementParams(elements, separator) {
         }
     }
     return buffer;
-}
-
-function getElementValue(element) {
-    if (element != undefined) {
-        if (element.type == 'text') {
-            return element.value;
-        }
-        if (element.type == 'select-one') {
-            return element.options[element.options.selectedIndex].value;
-        }
-    }
-    return '';
 }
 
 function updateTooltipPosition(e) {

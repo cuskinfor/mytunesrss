@@ -20,6 +20,23 @@
 
     <script type="text/javascript">
 
+        $jQ(document).ready(function() {
+            $jQ("#confirmDeletePlaylist").dialog({
+                autoOpen:false,
+                modal:true,
+                buttons:{
+                    "<fmt:message key="no"/>" : function() {
+                        $jQ("#confirmDeletePlaylist").dialog('close');
+                    },
+                    "<fmt:message key="yes"/>" : function() {
+                        var serverCall = $jQ("#confirmDeletePlaylist").dialog("option", "serverCall");
+                        $jQ("#confirmDeletePlaylist").dialog('close');
+                        document.location.href = serverCall;
+                    }
+                }
+            });
+        });
+
         function loadAndEditPlaylist(id) {
             jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [id], function() {
                 document.location.href = "${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}";
@@ -66,7 +83,7 @@
                     </c:choose>
                     <c:choose>
                         <c:when test="${deleteConfirmation}">
-                            <a style="cursor:pointer" onclick="showDialog('confirmDeletePlaylist', [function() {document.location.href='${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}'}, null])">
+                            <a style="cursor:pointer" onclick="$jQ('#confirmDeletePlaylist').dialog('option', 'serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}');$jQ('#confirmDeletePlaylist').dialog('open')">
                                 <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                         </c:when>
                         <c:otherwise>
@@ -93,16 +110,8 @@
 <div id="glasspane" class="glasspane">
 </div>
 
-<div id="confirmDeletePlaylist" class="dialogbox">
-    <div class="dialogMessage">
-        <fmt:message key="dialog.confirmDeletePlaylist"/>
-    </div>
-    <div class="dialogButton">
-        <input type="button" onclick="clickDialog(1)" value="<fmt:message key="no" />" />
-    </div>
-    <div class="dialogButton">
-        <input type="button" onclick="clickDialog(0)" value="<fmt:message key="yes" />" />
-    </div>
+<div id="confirmDeletePlaylist" title="TODO: delete confirmation" style="display:none">
+    <fmt:message key="dialog.confirmDeletePlaylist"/>
 </div>
 
 </body>
