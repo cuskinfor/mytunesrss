@@ -8,10 +8,10 @@
 <![endif]-->
 <link rel="stylesheet" type="text/css" href="${appUrl}/styles/jquery-ui/jquery-ui.css?ts=${sessionCreationTime}" />
 <link rel="shortcut icon" href="${appUrl}/images/favicon.ico" type="image/x-icon" />
-<script src="${appUrl}/js/functions.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/prototype.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/jquery.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/jquery-ui.js?ts=${sessionCreationTime}" type="text/javascript"></script>
+<script src="${appUrl}/js/functions.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script type="text/javascript">
     var $jQ=jQuery.noConflict();
 </script>
