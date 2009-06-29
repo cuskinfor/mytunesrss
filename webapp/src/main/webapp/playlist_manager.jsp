@@ -26,11 +26,11 @@
                 modal:true,
                 buttons:{
                     "<fmt:message key="no"/>" : function() {
-                        $jQ("#confirmDeletePlaylist").dialog('close');
+                        closeDialog("confirmDeletePlaylist");
                     },
                     "<fmt:message key="yes"/>" : function() {
                         var serverCall = $jQ("#confirmDeletePlaylist").dialog("option", "serverCall");
-                        $jQ("#confirmDeletePlaylist").dialog('close');
+                        closeDialog("confirmDeletePlaylist");
                         document.location.href = serverCall;
                     }
                 }
@@ -83,7 +83,7 @@
                     </c:choose>
                     <c:choose>
                         <c:when test="${deleteConfirmation}">
-                            <a style="cursor:pointer" onclick="$jQ('#confirmDeletePlaylist').dialog('option', 'serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}');$jQ('#confirmDeletePlaylist').dialog('open')">
+                            <a style="cursor:pointer" onclick="$jQ('#confirmDeletePlaylist').dialog('option', 'serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}');openDialog('confirmDeletePlaylist')">
                                 <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                         </c:when>
                         <c:otherwise>
