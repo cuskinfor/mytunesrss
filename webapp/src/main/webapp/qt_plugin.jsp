@@ -21,7 +21,7 @@
 
         <embed src="${appUrl}/images/movie_poster.png" href="<c:out value="${mtfn:playbackLink(pageContext, tracks[0], null)}"/>" type="${mtfn:contentType(config, authUser, tracks[0])}" target="myself"
             <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus" begin="1">
-                qtnext${trackLoopStatus.index}="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>> T<myself>"
+                qtnext${trackLoopStatus.index}="<<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>> T<myself>"
             </c:forEach>
             qtnext${fn:length(tracks)}="GOTO0"
         />
