@@ -26,11 +26,11 @@
                 modal:true,
                 buttons:{
                     "<fmt:message key="no"/>" : function() {
-                        closeDialog("confirmDeletePlaylist");
+                        $jQ("#confirmDeletePlaylist").dialog("close");
                     },
                     "<fmt:message key="yes"/>" : function() {
                         var serverCall = $jQ("#confirmDeletePlaylist").dialog("option", "serverCall");
-                        closeDialog("confirmDeletePlaylist");
+                        $jQ("#confirmDeletePlaylist").dialog("close");
                         document.location.href = serverCall;
                     }
                 }
@@ -83,7 +83,7 @@
                     </c:choose>
                     <c:choose>
                         <c:when test="${deleteConfirmation}">
-                            <a style="cursor:pointer" onclick="$jQ('#confirmDeletePlaylist').dialog('option', 'serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');openDialog('confirmDeletePlaylist')">
+                            <a style="cursor:pointer" onclick="$jQ('#confirmDeletePlaylist').dialog('option', 'serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>}');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');$jQ('#confirmDeletePlaylist').dialog('open')">
                                 <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
                         </c:when>
                         <c:otherwise>

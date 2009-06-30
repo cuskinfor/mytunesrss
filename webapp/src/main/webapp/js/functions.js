@@ -67,14 +67,6 @@ function hideTooltip(element) {
     }
 }
 
-function openDialog(id) {
-    $jQ("#" + id).dialog("open");
-}
-
-function closeDialog(id) {
-    $jQ("#" + id).dialog("close");
-}
-
 function jsonRpc(serverUrl, func, parameterArray, resultCallback, sessionId) {
     var headers;
     if (sessionId != undefined) {

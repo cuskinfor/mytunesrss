@@ -46,7 +46,7 @@
                 modal:true,
                 buttons:{
                     '<fmt:message key="dialog.button.close"/>':function() {
-                        closeDialog("errordialog");
+                        $jQ("#errordialog").dialog("close");
                     }
                 }
             });
@@ -155,7 +155,7 @@
             jsonRpc('${servletUrl}', "EditPlaylistService.savePlaylist", [$jQ("#playlistName").val(), $jQ("#privatePlaylist:checked").size() == 1], function(result, error) {
                 if (error) {
                     $jQ("#errordialog").empty().append(error.msg);
-                    openDialog("errordialog");
+                    $jQ("#errordialog").dialog("open");
                 } else {
                     document.location.href = "${servletUrl}/showPlaylistManager/${auth}";
                 }

@@ -24,16 +24,16 @@
                 modal:true,
                 buttons:{
                     "<fmt:message key="doCancel"/>" : function() {
-                        closeDialog("editPlaylistDialog");
+                        $jQ("#editPlaylistDialog").dialog("close");
                     },
                     "<fmt:message key="edit"/>" : function() {
-                        closeDialog("editPlaylistDialog");
+                        $jQ("#editPlaylistDialog").dialog("close");
                         jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [$jQ("#playlistSelection option:selected").val()], function() {
                             document.location.href = "${backUrl}";
                         }, "${remoteApiSessionId}");
                     },
                     "<fmt:message key="new"/>" : function() {
-                        closeDialog("editPlaylistDialog");
+                        $jQ("#editPlaylistDialog").dialog("close");
                         jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [null], function() {
                             document.location.href = "${backUrl}";
                         }, "${remoteApiSessionId}");
