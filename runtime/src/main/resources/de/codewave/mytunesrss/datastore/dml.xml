@@ -739,10 +739,10 @@
                 )
         </sql>
         <sql loop="search_term" loopbatch="100">
-            DELETE FROM temp_like_tracks tsh
+            DELETE FROM temp_like_tracks
             WHERE NOT EXISTS (
                 SELECT t.id FROM track t
-                WHERE t.id = tsh.track_id
+                WHERE t.id = temp_like_tracks.track_id
                 AND (
                     LOWER(t.name) LIKE :loopitem_search_term {likeEscape}
                     OR LOWER(t.album) LIKE :loopitem_search_term {likeEscape}
