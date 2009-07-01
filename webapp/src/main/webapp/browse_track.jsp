@@ -155,7 +155,7 @@
 </c:if>
 <tr class="${cwfn:choose(count % 2 == 0, 'even', 'odd')}">
     <td class="artist" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
-        <c:if test="${config.showThumbnails && track.imageCount > 0}">
+        <c:if test="${config.showThumbnailsForTracks && track.imageCount > 0}">
             <img id="trackthumb_${loopStatus.index}" src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
             <div class="tooltip" id="tooltip_trackthumb_${loopStatus.index}"><img src="${servletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
         </c:if>
