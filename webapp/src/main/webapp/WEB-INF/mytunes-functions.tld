@@ -355,7 +355,7 @@
         </description>
         <name>externalSiteDefinitions</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.util.Map getExternalSiteDefinitions(java.lang.String, java.lang.String)</function-signature>
+        <function-signature>java.util.Map getExternalSiteDefinitions(java.lang.String)</function-signature>
     </function>
 
     <function>

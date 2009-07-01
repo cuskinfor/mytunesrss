@@ -31,20 +31,6 @@
         </c:forEach>
     </c:if>
 
-    <script type="text/javascript">
-        $jQ(document).ready(function() {
-            $jQ(".externalSite").dialog({
-                autoOpen:false,
-                modal:true,
-                buttons:{
-                    '<fmt:message key="dialog.button.close"/>':function() {
-                        $jQ(this).dialog("close");
-                    }
-                }
-            })
-        });
-    </script>
-
 </head>
 
 <body>
@@ -152,12 +138,7 @@
                     <c:choose>
                         <c:when test="${!stateEditPlaylist}">
                             <c:if test="${mtfn:externalSites('album') && !mtfn:unknown(album.name) && authUser.externalSites && config.showExternalSites}">
-                                <img src="${appUrl}/images/http.gif" alt="external site" title="external site" style="cursor:pointer" onclick="$jQ('#extSite${loopStatus.index}').dialog('open')"/>
-                                <div id="extSite${loopStatus.index}" class="externalSite" style="display:none" title="<fmt:message key="dialog.externalSite.title"/>">
-                                    <c:forEach items="${mtfn:externalSiteDefinitions('album', album.name)}" var="externalSite" varStatus="siteLoopStatus">
-                                        <p><a href="${externalSite.value}" target="_blank" onclick="$jQ(this).closest('div').dialog('close')"><c:out value="${externalSite.key}"/></a></p>
-                                    </c:forEach>
-                                </div>
+                                <img src="${appUrl}/images/http.gif" alt="external site" title="external site" style="cursor:pointer" onclick="openExternalSitesDialog('${mtfn:escapeJs(album.name)}')"/>
                             </c:if>
                             <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                                 <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
@@ -340,6 +321,9 @@
 </div>
 
 <jsp:include page="incl_edit_playlist_dialog.jsp"/>
+
+<c:set var="externalSiteDefinitions" scope="request" value="${mtfn:externalSiteDefinitions('album')}"/>
+<jsp:include page="incl_external_sites_dialog.jsp"/>
 
 </body>
 

@@ -17,20 +17,6 @@
 
     <jsp:include page="incl_head.jsp"/>
 
-    <script type="text/javascript">
-        $jQ(document).ready(function() {
-            $jQ(".externalSite").dialog({
-                autoOpen:false,
-                modal:true,
-                buttons:{
-                    '<fmt:message key="dialog.button.close"/>':function() {
-                        $jQ(this).dialog("close");
-                    }
-                }
-            })
-        });
-    </script>
-
 </head>
 
 <body>
@@ -215,13 +201,7 @@
         <c:choose>
             <c:when test="${!stateEditPlaylist}">
                 <c:if test="${mtfn:externalSites('title')}">
-                    <img src="${appUrl}/images/http.gif" alt="external site" title="external site" style="cursor:pointer" onclick="$jQ('#extSite${loopStatus.index}').dialog('open')"/>
-                    <div id="extSite${loopStatus.index}" class="externalSite" style="display:none" title="<fmt:message key="dialog.externalSite.title"/>">
-                        <c:forEach items="${mtfn:externalSiteDefinitions('title', track.name)}" var="externalSite" varStatus="siteLoopStatus">
-                            <a href="${externalSite.value}" target="_blank" onclick="$jQ(this).closest('div').dialog('close')"><c:out value="${externalSite.key}"/></a>
-                            <c:if test="${!siteLoopStatus.last}"><br /></c:if>
-                        </c:forEach>
-                    </div>
+                    <img src="${appUrl}/images/http.gif" alt="external site" title="external site" style="cursor:pointer" onclick="openExternalSitesDialog('${mtfn:escapeJs(track.name)}')"/>
                 </c:if>
                 <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
                     <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
@@ -284,6 +264,9 @@
 </div>
 
 <jsp:include page="incl_edit_playlist_dialog.jsp"/>
+
+<c:set var="externalSiteDefinitions" scope="request" value="${mtfn:externalSiteDefinitions('title')}"/>
+<jsp:include page="incl_external_sites_dialog.jsp"/>
 
 <c:if test="${yahoo}"><script type="text/javascript" src="http://mediaplayer.yahoo.com/js"></script></c:if>
 

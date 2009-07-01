@@ -290,10 +290,10 @@ public class MyTunesFunctions {
         return !MyTunesRss.CONFIG.getExternalSites(type).isEmpty();
     }
 
-    public static Map<String, String> getExternalSiteDefinitions(String type, String keyword) {
+    public static Map<String, String> getExternalSiteDefinitions(String type) {
         Map<String, String> result = new TreeMap<String, String>();
         for (Map.Entry<String, String> site : MyTunesRss.CONFIG.getExternalSites(type).entrySet()) {
-            result.put(site.getKey(), site.getValue().replace("{" + type + "}", keyword));
+            result.put(site.getKey(), site.getValue().replace("{" + type + "}", "{KEYWORD}"));
         }
         return result;
     }
