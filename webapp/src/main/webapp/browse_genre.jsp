@@ -159,9 +159,6 @@
 
 </div>
 
-<div id="glasspane" class="glasspane">
-</div>
-
 <jsp:include page="incl_edit_playlist_dialog.jsp"/>
 
 </body>

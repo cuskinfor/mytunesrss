@@ -153,7 +153,7 @@
                         <c:when test="${!stateEditPlaylist}">
                             <c:if test="${mtfn:externalSites('album') && !mtfn:unknown(album.name) && authUser.externalSites && config.showExternalSites}">
                                 <img src="${appUrl}/images/http.gif" alt="external site" title="external site" style="cursor:pointer" onclick="$jQ('#extSite${loopStatus.index}').dialog('open')"/>
-                                <div id="extSite${loopStatus.index}" class="externalSite" title="<fmt:message key="dialog.externalSite.title"/>">
+                                <div id="extSite${loopStatus.index}" class="externalSite" style="display:none" title="<fmt:message key="dialog.externalSite.title"/>">
                                     <c:forEach items="${mtfn:externalSiteDefinitions('album', album.name)}" var="externalSite" varStatus="siteLoopStatus">
                                         <p><a href="${externalSite.value}" target="_blank" onclick="$jQ(this).closest('div').dialog('close')"><c:out value="${externalSite.key}"/></a></p>
                                     </c:forEach>
@@ -337,9 +337,6 @@
         <jsp:include page="incl_bottomPager.jsp" />
     </c:if>
 
-</div>
-
-<div id="glasspane" class="glasspane">
 </div>
 
 <jsp:include page="incl_edit_playlist_dialog.jsp"/>

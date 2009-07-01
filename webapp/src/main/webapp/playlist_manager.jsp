@@ -107,9 +107,6 @@
 
 </div>
 
-<div id="glasspane" class="glasspane">
-</div>
-
 <div id="confirmDeletePlaylist" title="<fmt:message key="confirmDeletePlaylistTitle"/>" style="display:none">
     <fmt:message key="dialog.confirmDeletePlaylist"><fmt:param><span id="playlistName"></span></fmt:param></fmt:message>
 </div>
