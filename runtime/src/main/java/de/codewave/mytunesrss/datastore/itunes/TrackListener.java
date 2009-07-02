@@ -44,7 +44,7 @@ public class TrackListener implements PListHandlerListener {
         myLibraryListener = libraryListener;
         myTrackIdToPersId = trackIdToPersId;
         myTrackIds = trackIds;
-        myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(MyTunesRss.CONFIG.getDisabledMp4Codecs()), ",");
+        myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDisabledMp4Codecs())), ",");
     }
 
     public int getUpdatedCount() {

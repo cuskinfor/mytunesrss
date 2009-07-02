@@ -54,7 +54,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         myStoreSession = storeSession;
         myLastUpdateTime = lastUpdateTime;
         myTrackIds = trackIds;
-        myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(MyTunesRss.CONFIG.getDisabledMp4Codecs()), ",");
+        myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDisabledMp4Codecs())), ",");
     }
 
     public Set<String> getExistingIds() {
