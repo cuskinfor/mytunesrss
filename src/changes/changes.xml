@@ -37,6 +37,12 @@
 
         <release version="3.7.1" date="2009-xx-xx" description="Bugfix release">
             <action dev="mdescher" type="fix">
+                Bugfix: Unset (NULL) disabledMp4Codecs resulted in NPE during DB update.
+            </action>
+            <action dev="mdescher" type="fix">
+                Bugfix: Permission for changing email was not stored.
+            </action>
+            <action dev="mdescher" type="fix">
                 Bugfix: iPhone playlist type page was broken.
             </action>
             <action dev="mdescher" type="fix">
