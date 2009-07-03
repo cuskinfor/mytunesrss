@@ -98,14 +98,16 @@
                 UNIQUE(track_id)
             )
         </sql>
-        <sql>TRUNCATE TABLE temp_lucene_tracks</sql>
         <sql>
             CREATE TEMPORARY TABLE IF NOT EXISTS temp_like_tracks (
                 track_id VARCHAR(100),
                 UNIQUE(track_id)
             )
         </sql>
-        <sql>TRUNCATE TABLE temp_like_tracks</sql>
+    </statement>
+
+    <statement name="migrate_3.8.0_eap_1_part_3">
+        <sql>ALTER TABLE track MODIFY COLUMN lower_artist VARCHAR(255) NOT NULL</sql>
     </statement>
 
     <!-- reusable sql fragments -->

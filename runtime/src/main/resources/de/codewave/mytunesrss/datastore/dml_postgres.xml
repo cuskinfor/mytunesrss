@@ -84,7 +84,14 @@
     </statement>
 
     <statement name="tuneDatabase">
-        <sql>ANALYZE</sql>
+        <sql>ANALYZE track</sql>
+        <sql>ANALYZE artist</sql>
+        <sql>ANALYZE album</sql>
+        <sql>ANALYZE genre</sql>
+        <sql>ANALYZE link_track_playlist</sql>
+        <sql>ANALYZE statistics</sql>
+        <sql>ANALYZE playlist</sql>
+        <sql>ANALYZE image</sql>
     </statement>
 
     <statement name="createSearchTempTables">

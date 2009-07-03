@@ -2,6 +2,39 @@
 
 <statements>
 
+    <statement name="findAlbums">
+        <parameter name="index" type="java.lang.Integer"/>
+        <sql>
+            <![CDATA[
+            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash
+            FROM album a
+            WHERE ((:artist IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE lower_artist = LOWER(:artist)))
+            OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE lower_genre = LOWER(:genre))))
+            AND (:filter IS NULL OR LOWER(a.name) LIKE :filter)
+            GROUP BY albumname, track_count, artist_count, artist, image_hash
+            ORDER BY albumname
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findAlbumsRestricted">
+        <parameter name="index" type="java.lang.Integer"/>
+        <sql>
+            <![CDATA[
+            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash
+            FROM album a, link_track_playlist rltp, track t
+            WHERE ((:artist IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE lower_artist = LOWER(:artist)))
+            OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE lower_genre = LOWER(:genre))))
+            AND (:filter IS NULL OR LOWER(a.name) LIKE :filter)
+            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.track_id = t.id
+            AND t.album = a.name
+            GROUP BY albumname, track_count, artist_count, artist, image_hash
+            ORDER BY albumname
+            ]]>
+        </sql>
+    </statement>
+
     <statement name="findRandomTracks">
         <sql>
             SELECT LIMIT 0 :maxCount {trackColumns}
@@ -92,19 +125,17 @@
 
     <statement name="createSearchTempTables">
         <sql>
-            CREATE TEMPORARY TABLE IF NOT EXISTS temp_lucene_tracks (
+            CREATE LOCAL TEMPORARY TABLE IF NOT EXISTS temp_lucene_tracks (
                 track_id VARCHAR(100),
                 UNIQUE(track_id)
             )
         </sql>
-        <sql>TRUNCATE TABLE temp_lucene_tracks</sql>
         <sql>
-            CREATE TEMPORARY TABLE IF NOT EXISTS temp_like_tracks (
+            CREATE LOCAL TEMPORARY TABLE IF NOT EXISTS temp_like_tracks (
                 track_id VARCHAR(100),
                 UNIQUE(track_id)
             )
         </sql>
-        <sql>TRUNCATE TABLE temp_like_tracks</sql>
     </statement>
 
     <!-- reusable sql fragments -->

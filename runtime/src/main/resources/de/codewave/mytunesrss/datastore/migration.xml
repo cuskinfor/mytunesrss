@@ -146,7 +146,18 @@
 
     <statement name="migrate_3.8.0_eap_1">
         <sql>ALTER TABLE album ADD COLUMN image_hash CHAR(24)</sql>
+        <sql>ALTER TABLE track ADD COLUMN lower_genre VARCHAR(255)</sql>
+        <sql>ALTER TABLE track ADD COLUMN lower_artist VARCHAR(255)</sql>
         <sql>CREATE INDEX idx_album_name ON album (name)</sql>
+        <sql>CREATE INDEX idx_track_lower_genre ON track (lower_genre)</sql>
+        <sql>CREATE INDEX idx_track_lower_artist ON track (lower_artist)</sql>
+    </statement>
+    <statement name="migrate_3.8.0_eap_1_part_2">
+        <sql>UPDATE track SET lower_artist = LOWER(artist)</sql>
+        <sql>UPDATE track SET lower_genre = LOWER(genre)</sql>
+    </statement>
+    <statement name="migrate_3.8.0_eap_1_part_3">
+        <sql>ALTER TABLE track ALTER COLUMN lower_artist SET NOT NULL</sql>
     </statement>
 
 </statements>

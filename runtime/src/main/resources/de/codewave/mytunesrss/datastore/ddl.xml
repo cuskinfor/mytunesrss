@@ -9,6 +9,7 @@
                 name VARCHAR(255) NOT NULL,
                 artist VARCHAR(255) NOT NULL,
                 original_artist VARCHAR(255) NOT NULL,
+                lower_artist VARCHAR(255) NOT NULL,
                 album VARCHAR(255) NOT NULL,
                 time INTEGER,
                 track_number INTEGER,
@@ -18,6 +19,7 @@
                 mediatype VARCHAR(20),
                 source VARCHAR(20),
                 genre VARCHAR(255),
+                lower_genre VARCHAR(255),
                 mp4codec VARCHAR(4),
                 ts_played NUMERIC(19),
                 ts_updated NUMERIC(19),
@@ -124,10 +126,12 @@
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>
         <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
         <sql>CREATE INDEX idx_track_album ON track (album)</sql>
+        <sql>CREATE INDEX idx_track_lower_genre ON track (lower_genre)</sql>
+        <sql>CREATE INDEX idx_track_lower_artist ON track (lower_artist)</sql>
         <sql>CREATE INDEX idx_track_genre ON track (genre)</sql>
         <sql>CREATE INDEX idx_track_id ON track (id)</sql>
-            <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
-            <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
+        <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
+        <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (idx)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_track_id ON link_track_playlist (track_id)</sql>
         <sql>CREATE INDEX idx_album_name ON album (name)</sql>

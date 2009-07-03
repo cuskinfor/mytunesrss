@@ -8,12 +8,10 @@
             <![CDATA[
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash
             FROM album a, track t
-            WHERE ((:artist IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
-            OR (:artist IS NOT NULL AND t.artist = :artist AND t.album = a.name)
-            OR (:genre IS NOT NULL AND t.genre = :genre AND t.album = a.name)
-            OR {letterRegionByIndex})
+            WHERE ((:artist IS NOT NULL AND t.lower_artist = LOWER(:artist) AND t.album = a.name)
+            OR (:genre IS NOT NULL AND t.lower_genre = LOWER(:genre) AND t.album = a.name))
             AND (:filter IS NULL OR LOWER(a.name) LIKE :filter)
-            GROUP BY albumname, track_count, artist_count, artist, image_hash
+            GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash
             ORDER BY albumname
             ]]>
         </sql>
@@ -25,10 +23,41 @@
             <![CDATA[
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash
             FROM album a, link_track_playlist rltp, track t
-            WHERE ((:artist IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
-            OR (:artist IS NOT NULL AND t.artist = :artist AND t.album = a.name)
-            OR (:genre IS NOT NULL AND t.genre = :genre AND t.album = a.name)
-            OR {letterRegionByIndex})
+            WHERE ((:artist IS NOT NULL AND t.lower_artist = LOWER(:artist) AND t.album = a.name)
+            OR (:genre IS NOT NULL AND t.lower_genre = LOWER(:genre) AND t.album = a.name))
+            AND (:filter IS NULL OR LOWER(a.name) LIKE :filter)
+            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.track_id = t.id
+            AND t.album = a.name
+            GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash
+            ORDER BY albumname
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findAlbumsWithLetterRegion">
+        <parameter name="index" type="java.lang.Integer"/>
+        <sql>
+            <![CDATA[
+            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash
+            FROM album a
+            WHERE ((:index < 0 OR :index > 8)
+            OR ({letterRegionByIndex}))
+            AND (:filter IS NULL OR LOWER(a.name) LIKE :filter)
+            GROUP BY albumname, track_count, artist_count, artist, image_hash
+            ORDER BY albumname
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findAlbumsRestrictedWithLetterRegion">
+        <parameter name="index" type="java.lang.Integer"/>
+        <sql>
+            <![CDATA[
+            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash
+            FROM album a, link_track_playlist rltp, track t
+            WHERE ((:index < 0 OR :index > 8)
+            OR ({letterRegionByIndex}))
             AND (:filter IS NULL OR LOWER(a.name) LIKE :filter)
             AND rltp.playlist_id = :restrictedPlaylistId
             AND rltp.track_id = t.id
@@ -486,8 +515,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="mediatype" type="java.lang.String"/>
         <sql>
-            INSERT INTO track (id, name, artist, original_artist, album, time, track_number, file, protected, mediatype, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
-            VALUES (:id, :name, :artist, :original_artist, :album, :time, :track_number, :file, :protected, :mediatype, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size)
+            INSERT INTO track (id, name, artist, lower_artist, original_artist, album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
+            VALUES (:id, :name, :artist, LOWER(:artist), :original_artist, :album, :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size)
         </sql>
     </statement>
 
@@ -497,8 +526,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="mediatype" type="java.lang.String"/>
         <sql>
-            INSERT INTO track (id, name, artist, original_artist, album, time, track_number, file, protected, mediatype, source, genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
-            VALUES (:id, :name, :artist, :original_artist, :album, :time, :track_number, :file, :protected, :mediatype, :source, :genre, :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size)
+            INSERT INTO track (id, name, artist, lower_artist, original_artist, album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
+            VALUES (:id, :name, :artist, LOWER(:artist), :original_artist, :album, :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size)
         </sql>
     </statement>
 
@@ -510,7 +539,7 @@
         <sql>
             UPDATE track SET name = :name, album = :album, artist = :artist, original_artist = :original_artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
-                             ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size
+                             ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size, lower_genre = :LOWER(genre), lower_artist = LOWER(:artist)
             WHERE id = :id
         </sql>
     </statement>
@@ -530,7 +559,7 @@
             UPDATE track SET name = :name, album = :album, artist = :artist, original_artist = :original_artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated, pos_number = :pos_number,
-                             pos_size = :pos_size
+                             pos_size = :pos_size, lower_genre = :LOWER(genre), lower_artist = LOWER(:artist)
             WHERE id = :id
         </sql>
     </statement>
@@ -700,12 +729,14 @@
     </statement>
 
     <statement name="fillLuceneSearchTempTable">
+        <sql>TRUNCATE TABLE temp_lucene_tracks</sql>
         <sql loop="track_id" loopbatch="10000">
             INSERT INTO temp_lucene_tracks (track_id) VALUES (:loopitem_track_id)
         </sql>
     </statement>
 
     <statement name="fillLikeSearchTempTable">
+        <sql>TRUNCATE TABLE temp_like_tracks</sql>
         <sql>
             INSERT INTO temp_like_tracks (track_id)
                 SELECT t.id FROM track t
