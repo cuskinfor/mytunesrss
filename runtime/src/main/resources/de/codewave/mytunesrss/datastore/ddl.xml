@@ -135,6 +135,7 @@
         <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
         <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
+        <sql>CREATE INDEX idx_image_hash ON image (hash)</sql>
         <sql>{create_playlist_id_sequence}</sql>
     </statement>
 

@@ -98,7 +98,7 @@
     </statement>
 
     <statement name="tuneDatabase">
-        <sql>ANALYZE TABLE track, artist, album, genre</sql>
+        <sql>ANALYZE TABLE track, artist, album, genre, link_track_playlist, statistics, playlist, image</sql>
     </statement>
 
     <statement name="createSearchTempTables">

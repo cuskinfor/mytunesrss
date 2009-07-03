@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.MyTunesRssTask;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement;
 import de.codewave.mytunesrss.datastore.statement.MigrationStatement;
+import de.codewave.mytunesrss.datastore.statement.TuneDatabaseStatement;
 import de.codewave.utils.Version;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
@@ -47,6 +48,7 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
                 session.executeStatement(new MigrationStatement());
                 DatabaseBuilderTask.doCheckpoint(session, true);
             }
+            session.executeStatement(new TuneDatabaseStatement());
         }
         LOGGER.debug("Database now has version \"" + myVersion + "\".");
     }
