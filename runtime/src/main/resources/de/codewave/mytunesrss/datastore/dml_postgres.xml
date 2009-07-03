@@ -4,79 +4,67 @@
 
     <statement name="findRandomTracks">
         <sql>
-            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+            SELECT {trackColumns}
             FROM track t
-            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId))
             AND (:mediatype IS NULL OR t.mediatype = :mediatype)
             AND (NOT t.protected OR t.protected = :protected)
-            GROUP BY {groupByTrackColumns}
             ORDER BY random() LIMIT :maxCount OFFSET 0
         </sql>
     </statement>
 
     <statement name="findLastUpdatedTracks">
         <sql>
-            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+            SELECT {trackColumns}
             FROM track t
-            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId)
-            GROUP BY {groupByTrackColumns}
             ORDER BY ts_updated DESC LIMIT :maxCount OFFSET 0
         </sql>
     </statement>
 
     <statement name="findMostPlayedTracks">
         <sql>
-            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+            SELECT {trackColumns}
             FROM track t
-            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId)
-            GROUP BY {groupByTrackColumns}
             ORDER BY playcount DESC LIMIT :maxCount OFFSET 0
         </sql>
     </statement>
 
     <statement name="findRandomTracksRestricted">
         <sql>
-            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+            SELECT {trackColumns}
             FROM link_track_playlist rltp, track t
-            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
                 ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
             AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
             AND (:mediatype IS NULL OR t.mediatype = :mediatype)
             AND (NOT t.protected OR t.protected = :protected)
-            GROUP BY {groupByTrackColumns}
             ORDER BY random() LIMIT :maxCount OFFSET 0
         </sql>
     </statement>
 
     <statement name="findLastUpdatedTracksRestricted">
         <sql>
-            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+            SELECT {trackColumns}
             FROM tlink_track_playlist rltp, rack t
-            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId)
             AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
-            GROUP BY {groupByTrackColumns}
             ORDER BY ts_updated DESC LIMIT :maxCount OFFSET 0
         </sql>
     </statement>
 
     <statement name="findMostPlayedTracksRestricted">
         <sql>
-            SELECT {trackColumns}, COUNT(i.hash) AS imagecount
+            SELECT {trackColumns}
             FROM link_track_playlist rltp, track t
-            LEFT OUTER JOIN image i ON i.hash = t.image_hash
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId)
             AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
-            GROUP BY {groupByTrackColumns}
             ORDER BY playcount DESC LIMIT :maxCount OFFSET 0
         </sql>
     </statement>

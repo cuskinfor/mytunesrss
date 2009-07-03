@@ -11,7 +11,7 @@
                 <title><c:out value="${item.name}"/></title>
                 <c:if test="${!empty item.genre}"><annotation><c:out value="${item.genre}"/></annotation></c:if>
                 <duration>${cwfn:choose(param.jwplayer == true, item.time, item.time * 1000)}</duration>
-                <c:if test="${item.imageCount > 0}"><image>${permServletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt></image></c:if>
+                <c:if test="${!empty(item.imageHash)}"><image>${permServletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(item.imageHash)}/size=256</mt:encrypt></image></c:if>
                 <info>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt></info>
             </track>
         </c:forEach>

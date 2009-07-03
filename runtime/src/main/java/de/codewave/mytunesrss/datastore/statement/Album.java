@@ -12,7 +12,7 @@ public class Album {
     private int myArtistCount;
     private int myTrackCount;
     private String myArtist;
-    private boolean myImage;
+    private String myImageHash;
 
     public String getName() {
         return myName;
@@ -46,11 +46,11 @@ public class Album {
         myArtist = artist;
     }
 
-    public boolean isImage() {
-        return myImage;
+    public String getImageHash() {
+        return myImageHash;
     }
 
-    public void setImage(boolean image) {
-        myImage = image;
+    public void setImageHash(String imageHash) {
+        myImageHash = imageHash;
     }
 }

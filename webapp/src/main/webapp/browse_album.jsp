@@ -96,9 +96,9 @@
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                 <td class="albumthumb">
                     <c:choose>
-                        <c:when test="${config.showThumbnailsForAlbums && album.image}">
-                            <img id="albumthumb_${loopStatus.index}" src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
-                            <div class="tooltip" id="tooltip_albumthumb_${loopStatus.index}"><img src="${servletUrl}/showAlbumImage/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(album.name)}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
+                        <c:when test="${config.showThumbnailsForAlbums && !empty(album.imageHash)}">
+                            <img id="albumthumb_${loopStatus.index}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(album.imageHash)}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
+                            <div class="tooltip" id="tooltip_albumthumb_${loopStatus.index}"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(album.imageHash)}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
                         </c:when>
                         <c:otherwise>
                             &nbsp;

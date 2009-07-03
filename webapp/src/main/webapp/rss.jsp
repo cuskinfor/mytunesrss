@@ -6,7 +6,7 @@
         <c:if test="${userAgent != 'Psp'}"><atom:link href="${feedUrl}" rel="self" type="application/rss+xml" /></c:if>
         <c:if test="${!empty imageTrackId}">
             <image>
-                <url>${permServletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(imageTrackId)}</mt:encrypt></url>
+                <url>${permServletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(imageHash)}</mt:encrypt></url>
                 <title><c:out value="${channel}"/></title>
                 <c:if test="${userAgent != 'Psp'}"><link>${feedUrl}</link></c:if>
             </image>
@@ -23,7 +23,7 @@
                            type="${mtfn:contentType(config, authUser, track)}"
                            <c:if test="${!mtfn:transcoding(pageContext, authUser, track)}">length="${track.contentLength}"</c:if>
                         />
-                <c:if test="${track.imageCount > 0}"><media:thumbnail url="${permServletUrl}/showTrackImage/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>"/></c:if>
+                <c:if test="${!empty(track.imageHash)}"><media:thumbnail url="${permServletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=256</mt:encrypt>"/></c:if>
             </item></c:forEach>
     </channel>
 </rss>

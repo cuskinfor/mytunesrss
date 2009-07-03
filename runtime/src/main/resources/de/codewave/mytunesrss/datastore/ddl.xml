@@ -70,7 +70,8 @@
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 artist_count INTEGER,
-                artist VARCHAR(255)
+                artist VARCHAR(255),
+                image_hash CHAR(24)
             )
         </sql>
         <sql>
@@ -125,15 +126,16 @@
         <sql>CREATE INDEX idx_track_album ON track (album)</sql>
         <sql>CREATE INDEX idx_track_genre ON track (genre)</sql>
         <sql>CREATE INDEX idx_track_id ON track (id)</sql>
-        <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
+            <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
+            <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (idx)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_track_id ON link_track_playlist (track_id)</sql>
+        <sql>CREATE INDEX idx_album_name ON album (name)</sql>
         <sql>CREATE INDEX idx_album_first ON album (first_char)</sql>
         <sql>CREATE INDEX idx_album_artist ON album (artist)</sql>
         <sql>CREATE INDEX idx_artist_first ON artist (first_char)</sql>
         <sql>CREATE INDEX idx_genre_first ON genre (first_char)</sql>
         <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
-        <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
         <sql>CREATE INDEX idx_image_hash ON image (hash)</sql>
         <sql>{create_playlist_id_sequence}</sql>

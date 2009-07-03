@@ -153,7 +153,7 @@ public class TrackUtils {
             setTsUpdated(track.getTsUpdated());
             setLastImageUpdate(track.getLastImageUpdate());
             setPlayCount(track.getPlayCount());
-            setImageCount(track.getImageCount());
+            setImageHash(track.getImageHash());
             setComment(track.getComment());
             setPosNumber(track.getPosNumber());
             setPosSize(track.getPosSize());

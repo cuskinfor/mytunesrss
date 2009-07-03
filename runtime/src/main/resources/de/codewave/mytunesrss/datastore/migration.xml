@@ -144,4 +144,9 @@
         </sql>
     </statement>
 
+    <statement name="migrate_3.8.0_eap_1">
+        <sql>ALTER TABLE album ADD COLUMN image_hash CHAR(24)</sql>
+        <sql>CREATE INDEX idx_album_name ON album (name)</sql>
+    </statement>
+
 </statements>

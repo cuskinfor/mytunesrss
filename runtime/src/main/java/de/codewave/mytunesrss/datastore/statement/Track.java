@@ -33,7 +33,7 @@ public class Track {
     private MediaType myMediaType;
     private String myGenre;
     private String myMp4Codec;
-    private int myImageCount;
+    private String myImageHash;
     private long myTsPlayed;
     private long myTsUpdated;
     private long myPlayCount;
@@ -140,12 +140,12 @@ public class Track {
         myMp4Codec = mp4Codec;
     }
 
-    public int getImageCount() {
-        return myImageCount;
+    public String getImageHash() {
+        return myImageHash;
     }
 
-    public void setImageCount(int imageCount) {
-        myImageCount = imageCount;
+    public void setImageHash(String imageHash) {
+        myImageHash = imageHash;
     }
 
     public String getComment() {

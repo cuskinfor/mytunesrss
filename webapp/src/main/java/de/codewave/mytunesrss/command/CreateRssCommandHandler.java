@@ -35,8 +35,8 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
             Collection<Track> tracks = getTracks().getResults();
             if (tracks != null && !tracks.isEmpty()) {
                 for (Track track : tracks) {
-                    if (track.getImageCount() > 0) {
-                        getRequest().setAttribute("imageTrackId", track.getId());
+                    if (track.getImageHash() != null) {
+                        getRequest().setAttribute("imageHash", track.getImageHash());
                         break;// use first available image
                     }
                 }

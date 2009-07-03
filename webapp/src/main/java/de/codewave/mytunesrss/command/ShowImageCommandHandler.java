@@ -1,23 +1,26 @@
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.datastore.statement.FindImageQuery;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.graphics.ImageUtils;
 import de.codewave.utils.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.HashMap;
+import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.command.ShowTrackImageCommandHandler
  */
 public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ShowImageCommandHandler.class);
+
     private Map<Integer, byte[]> myDefaultImages = new HashMap<Integer, byte[]>();
 
     private byte[] getDefaultImage(int size) {
@@ -64,5 +67,30 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
         getResponse().setContentType(image.getMimeType());
         getResponse().setContentLength(image.getData().length);
         getResponse().getOutputStream().write(image.getData());
+    }
+
+    @Override
+    public void executeAuthorized() throws Exception {
+        Image image = null;
+        String hash = getRequest().getParameter("hash");
+        int size = getIntegerRequestParameter("size", 256);
+        if (!isRequestAuthorized()) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Not authorized to request image, sending default MyTunesRSS image.");
+            }
+        } else {
+            if (StringUtils.isNotEmpty(hash)) {
+                byte[] data = getTransaction().executeQuery(new FindImageQuery(hash, size));
+                image = data != null ? new Image("image/jpeg", data) : null;
+            }
+        }
+        if (image == null) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("No tracks recognized in request or no images found in recognized tracks, sending default MyTunesRSS image.");
+            }
+            sendDefaultImage(size);
+        } else {
+            sendImage(image);
+        }
     }
 }

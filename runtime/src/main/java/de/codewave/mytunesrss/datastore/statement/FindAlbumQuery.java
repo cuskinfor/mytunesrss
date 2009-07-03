@@ -56,7 +56,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
             album.setTrackCount(resultSet.getInt("TRACK_COUNT"));
             album.setArtistCount(resultSet.getInt("ARTIST_COUNT"));
             album.setArtist(resultSet.getString("ARTIST"));
-            album.setImage(resultSet.getInt("IMAGECOUNT") > 0);
+            album.setImageHash(resultSet.getString("IMAGE_HASH"));
             return album;
         }
     }

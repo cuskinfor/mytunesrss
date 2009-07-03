@@ -18,7 +18,7 @@ public class TrackRenderer implements Renderer<Map<String, Object>, Track> {
         result.put("contentType", track.getContentType());
         result.put("genre", track.getGenre());
         result.put("id", track.getId());
-        result.put("imageCount", track.getImageCount());
+        result.put("imageHash", track.getImageHash());
         result.put("lastImageUpdate", track.getLastImageUpdate());
         result.put("mp4Codec", track.getMp4Codec());
         result.put("mediaType", track.getMediaType().name());
@@ -33,8 +33,8 @@ public class TrackRenderer implements Renderer<Map<String, Object>, Track> {
         result.put("tsUpdated", track.getTsUpdated());
         result.put("playbackUrl", MyTunesFunctions.playbackUrl(MyTunesRssRemoteEnv.getRequest(), track, null));
         result.put("downloadUrl", MyTunesFunctions.downloadUrl(MyTunesRssRemoteEnv.getRequest(), track, null));
-        result.put("imageUrl", track.getImageCount() > 0 ? MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.ShowTrackImage,
-                                                                                             "track=" + track.getId()) : null);
+        result.put("imageUrl", track.getImageHash() != null ? MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.ShowImage,
+                                                                                             "hash=" + track.getImageHash()) : null);
         return result;
     }
 }
