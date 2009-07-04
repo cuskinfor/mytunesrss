@@ -586,7 +586,7 @@
         <sql>DELETE FROM album</sql>
         <sql>
             INSERT INTO album (name, lower_name, first_char, artist, track_count, artist_count, image_hash)
-            #
+            SELECT MAX(album), MAX(lower_album), SUBSTRING(MAX(lower_album) FROM 1 FOR 1), MAX(artist), COUNT(id), COUNT(DISTINCT(lower_artist)), MAX(image_hash) FROM track GROUP BY lower_album
         </sql>
     </statement>
 
