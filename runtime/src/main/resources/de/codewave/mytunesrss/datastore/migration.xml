@@ -146,18 +146,36 @@
 
     <statement name="migrate_3.8.0_eap_1">
         <sql>ALTER TABLE album ADD COLUMN image_hash CHAR(24)</sql>
-        <sql>ALTER TABLE track ADD COLUMN lower_genre VARCHAR(255)</sql>
+        <sql>ALTER TABLE track ADD COLUMN lower_name VARCHAR(255)</sql>
         <sql>ALTER TABLE track ADD COLUMN lower_artist VARCHAR(255)</sql>
-        <sql>CREATE INDEX idx_album_name ON album (name)</sql>
-        <sql>CREATE INDEX idx_track_lower_genre ON track (lower_genre)</sql>
+        <sql>ALTER TABLE track ADD COLUMN lower_album VARCHAR(255)</sql>
+        <sql>ALTER TABLE track ADD COLUMN lower_genre VARCHAR(255)</sql>
+        <sql>ALTER TABLE album ADD COLUMN lower_name VARCHAR(255)</sql>
+        <sql>ALTER TABLE artist ADD COLUMN lower_name VARCHAR(255)</sql>
+        <sql>ALTER TABLE genre ADD COLUMN lower_name VARCHAR(255)</sql>
+        <sql>CREATE INDEX idx_track_lower_name ON track (lower_name)</sql>
         <sql>CREATE INDEX idx_track_lower_artist ON track (lower_artist)</sql>
+        <sql>CREATE INDEX idx_track_lower_album ON track (lower_album)</sql>
+        <sql>CREATE INDEX idx_track_lower_genre ON track (lower_genre)</sql>
+        <sql>CREATE INDEX idx_album_lower_name ON album (lower_name)</sql>
+        <sql>CREATE INDEX idx_artist_name ON artist (name)</sql>
+        <sql>CREATE INDEX idx_artist_lower_name ON artist (lower_name)</sql>
+        <sql>CREATE INDEX idx_genre_name ON genre (name)</sql>
+        <sql>CREATE INDEX idx_genre_lower_name ON genre (lower_name)</sql>
     </statement>
     <statement name="migrate_3.8.0_eap_1_part_2">
-        <sql>UPDATE track SET lower_artist = LOWER(artist)</sql>
-        <sql>UPDATE track SET lower_genre = LOWER(genre)</sql>
+        <sql>UPDATE track SET lower_artist = LOWER(artist), lower_genre = LOWER(genre), lower_album = LOWER(album), lower_name = LOWER(name)</sql>
+        <sql>UPDATE album SET lower_name = LOWER(name)</sql>
+        <sql>UPDATE artist SET lower_name = LOWER(name)</sql>
+        <sql>UPDATE genre SET lower_name = LOWER(name)</sql>
     </statement>
     <statement name="migrate_3.8.0_eap_1_part_3">
+        <sql>ALTER TABLE track ALTER COLUMN lower_name SET NOT NULL</sql>
         <sql>ALTER TABLE track ALTER COLUMN lower_artist SET NOT NULL</sql>
+        <sql>ALTER TABLE track ALTER COLUMN lower_album SET NOT NULL</sql>
+        <sql>ALTER TABLE album ALTER COLUMN lower_name SET NOT NULL</sql>
+        <sql>ALTER TABLE artist ALTER COLUMN lower_name SET NOT NULL</sql>
+        <sql>ALTER TABLE genre ALTER COLUMN lower_name SET NOT NULL</sql>
     </statement>
 
 </statements>

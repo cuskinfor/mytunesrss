@@ -229,6 +229,8 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                     missingItunesFiles,
                     storeSession.executeQuery(new GetSystemInformationQuery()));
             storeSession.commit();
+            storeSession.executeStatement(new TuneDatabaseStatement());
+            storeSession.commit();
         } catch (Exception e) {
             storeSession.rollback();
             throw e;

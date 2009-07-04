@@ -10,7 +10,7 @@
             FROM album a
             WHERE ((:artist IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE lower_artist = LOWER(:artist)))
             OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE lower_genre = LOWER(:genre))))
-            AND (:filter IS NULL OR LOWER(a.name) LIKE :filter)
+            AND (:filter IS NULL OR a.lower_name LIKE :filter)
             GROUP BY albumname, track_count, artist_count, artist, image_hash
             ORDER BY albumname
             ]]>
@@ -25,7 +25,7 @@
             FROM album a, link_track_playlist rltp, track t
             WHERE ((:artist IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE lower_artist = LOWER(:artist)))
             OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE lower_genre = LOWER(:genre))))
-            AND (:filter IS NULL OR LOWER(a.name) LIKE :filter)
+            AND (:filter IS NULL OR a.lower_name LIKE :filter)
             AND rltp.playlist_id = :restrictedPlaylistId
             AND rltp.track_id = t.id
             AND t.album = a.name

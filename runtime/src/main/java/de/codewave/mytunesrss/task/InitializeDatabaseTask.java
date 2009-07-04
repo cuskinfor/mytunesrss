@@ -49,6 +49,7 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
                 DatabaseBuilderTask.doCheckpoint(session, true);
             }
             session.executeStatement(new TuneDatabaseStatement());
+            MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
         }
         LOGGER.debug("Database now has version \"" + myVersion + "\".");
     }

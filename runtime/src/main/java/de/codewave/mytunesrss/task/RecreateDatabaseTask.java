@@ -22,7 +22,6 @@ public class RecreateDatabaseTask extends MyTunesRssTask {
         LOGGER.debug("Destroying store for recreation.");
         MyTunesRss.STORE.destroy();
         myInitializeDatabaseTask.execute();
-        MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
         MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED);
     }
 }

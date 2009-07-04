@@ -7,10 +7,12 @@
             {create_table_prefix} track (
                 id VARCHAR(100) NOT NULL,
                 name VARCHAR(255) NOT NULL,
+                lower_name VARCHAR(255) NOT NULL,
                 artist VARCHAR(255) NOT NULL,
                 original_artist VARCHAR(255) NOT NULL,
                 lower_artist VARCHAR(255) NOT NULL,
                 album VARCHAR(255) NOT NULL,
+                lower_album VARCHAR(255) NOT NULL,
                 time INTEGER,
                 track_number INTEGER,
                 file VARCHAR(1024) NOT NULL,
@@ -69,6 +71,7 @@
         <sql>
             {create_table_prefix} album (
                 name VARCHAR(255) NOT NULL,
+                lower_name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 artist_count INTEGER,
@@ -79,6 +82,7 @@
         <sql>
             {create_table_prefix} artist (
                 name VARCHAR(255) NOT NULL,
+                lower_name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 album_count INTEGER
@@ -87,6 +91,7 @@
         <sql>
             {create_table_prefix} genre (
                 name VARCHAR(255) NOT NULL,
+                lower_name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 album_count INTEGER,
@@ -124,20 +129,27 @@
             )
         </sql>
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>
+        <sql>CREATE INDEX idx_track_lower_name ON track (lower_name)</sql>
         <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
-        <sql>CREATE INDEX idx_track_album ON track (album)</sql>
-        <sql>CREATE INDEX idx_track_lower_genre ON track (lower_genre)</sql>
         <sql>CREATE INDEX idx_track_lower_artist ON track (lower_artist)</sql>
+        <sql>CREATE INDEX idx_track_album ON track (album)</sql>
+        <sql>CREATE INDEX idx_track_lower_album ON track (lower_album)</sql>
         <sql>CREATE INDEX idx_track_genre ON track (genre)</sql>
+        <sql>CREATE INDEX idx_track_lower_genre ON track (lower_genre)</sql>
         <sql>CREATE INDEX idx_track_id ON track (id)</sql>
         <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (idx)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_track_id ON link_track_playlist (track_id)</sql>
         <sql>CREATE INDEX idx_album_name ON album (name)</sql>
+        <sql>CREATE INDEX idx_album_lower_name ON album (lower_name)</sql>
         <sql>CREATE INDEX idx_album_first ON album (first_char)</sql>
         <sql>CREATE INDEX idx_album_artist ON album (artist)</sql>
+        <sql>CREATE INDEX idx_artist_name ON artist (name)</sql>
+        <sql>CREATE INDEX idx_artist_lower_name ON artist (lower_name)</sql>
         <sql>CREATE INDEX idx_artist_first ON artist (first_char)</sql>
+        <sql>CREATE INDEX idx_genre_name ON genre (name)</sql>
+        <sql>CREATE INDEX idx_genre_lower_name ON genre (lower_name)</sql>
         <sql>CREATE INDEX idx_genre_first ON genre (first_char)</sql>
         <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
