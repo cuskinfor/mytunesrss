@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
+ * de.codewave.mytunesrss.datastore.statement.FindTrackQuery
  */
 public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Track>> {
 
@@ -40,7 +40,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             query.mySearchTerms[i] = "%" + StringUtils.lowerCase(searchTerms[i]) + "%";
         }
         query.myIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness);
-        return CollectionUtils.isEmpty(query.myIds) ? null : query;
+        return query;
     }
 
     public static FindTrackQuery getForAlbum(User user, String[] albums, SortOrder sortOrder) {
@@ -89,7 +89,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     }
 
     public QueryResult<Track> execute(Connection connection) throws SQLException {
-        if (!CollectionUtils.isEmpty(myIds)) {
+        if (!CollectionUtils.isEmpty(myIds) || (mySearchTerms != null && mySearchTerms.length > 0)) {
             return executeForIds(connection);
         } else {
             SmartStatement statement;
