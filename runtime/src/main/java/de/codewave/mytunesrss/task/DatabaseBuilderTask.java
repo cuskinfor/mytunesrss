@@ -228,8 +228,8 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart),
                     missingItunesFiles,
                     storeSession.executeQuery(new GetSystemInformationQuery()));
-            storeSession.commit();
-            storeSession.executeStatement(new TuneDatabaseStatement());
+//            storeSession.commit();
+//            storeSession.executeStatement(new TuneDatabaseStatement());
             storeSession.commit();
         } catch (Exception e) {
             storeSession.rollback();
