@@ -76,7 +76,7 @@ public class LuceneTrackService {
             }
         });
         final List<String> trackIds = new ArrayList<String>();
-        for (int i = bits.nextSetBit(0); i > 0; i = bits.nextSetBit(i + 1)) {
+        for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
             trackIds.add(isearcher.doc(i).get("id"));
         }
         isearcher.close();
