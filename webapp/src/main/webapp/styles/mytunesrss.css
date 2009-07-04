@@ -289,21 +289,6 @@ table.portal input {
 td.artist {
 }
 
-td.albumthumb {
-    padding: 3px 0 3px 3px;
-    height: 38px;
-}
-
-tr.odd td.albumthumb {
-    background-color: #edf3fe;
-    padding: 3px;
-    height: 38px;
-}
-
-td.albumname {
-    padding-left: 3px;
-}
-
 td.artist a {
   display: inline;
   color: #000;
@@ -756,24 +741,6 @@ h1.serverbrowser span {
     text-align: center;
 }
 
-a.albumthumb {
-    position:relative;
-    left:0;
-    margin-right:3px;
-    width:32px;
-    height:32px;
-    text-align:center;
-    display:block;
-    float:left;
-    cursor:default;
-}
-
-a.albumthumb img {
-    float:left;
-    padding-right:3px;
-    z-index:10;
-}
-
 table.displayfilter td.wide {
     width:100%;
 }
@@ -841,4 +808,14 @@ div.searchFuzzinessLabel {
 
 div.searchFuzzinessSlider {
     margin: 10px 0 0 5px;
+}
+
+td.coverThumbnailColumn {
+    padding-left: 47px;
+}
+
+img.coverThumbnail {
+    margin-left: -37px;
+    vertical-align: top;
+    float: left;
 }

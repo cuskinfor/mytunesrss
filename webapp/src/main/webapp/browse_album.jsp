@@ -21,13 +21,13 @@
         <c:forEach items="${albums}" var="album">
             <c:choose>
                 <c:when test="${mtfn:unknown(album.name)}">
-                    <c:set var="albumname"><fmt:message key="unknown"/></c:set>
+                    <c:set var="albumName"><fmt:message key="unknown"/></c:set>
                 </c:when>
                 <c:otherwise>
-                    <c:set var="albumname" value="${album.name}"/>
+                    <c:set var="albumName" value="${album.name}"/>
                 </c:otherwise>
             </c:choose>
-            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/${mtfn:virtualAlbumName(album)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${albumname}" />" />
+            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/${mtfn:virtualAlbumName(album)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${albumName}" />" />
         </c:forEach>
     </c:if>
 
@@ -78,13 +78,13 @@
 
     <table class="select" cellspacing="0">
         <tr>
-            <td colspan="5" style="padding:0">
+            <td colspan="4" style="padding:0">
                 <c:set var="displayFilterUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}</c:set>
                 <jsp:include page="/incl_display_filter.jsp"/>
             </td>
         </tr>
         <tr>
-            <th colspan="2" class="active">
+            <th class="active">
                 <c:if test="${!empty param.genre}">${mtfn:capitalize(mtfn:decode64(param.genre))}</c:if>
                 <fmt:message key="albums"/>
                 <c:if test="${!empty param.artist}"> <fmt:message key="with"/> "${cwfn:choose(mtfn:unknown(mtfn:decode64(param.artist)), msgUnknown, mtfn:decode64(param.artist))}"</c:if>
@@ -94,18 +94,11 @@
         </tr>
         <c:forEach items="${albums}" var="album" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-                <td class="albumthumb">
-                    <c:choose>
-                        <c:when test="${config.showThumbnailsForAlbums && !empty(album.imageHash)}">
-                            <img id="albumthumb_${loopStatus.index}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(album.imageHash)}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
-                            <div class="tooltip" id="tooltip_albumthumb_${loopStatus.index}"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(album.imageHash)}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
-                        </c:when>
-                        <c:otherwise>
-                            &nbsp;
-                        </c:otherwise>
-                    </c:choose>
-                </td>
-                <td class="albumname">
+                <td <c:if test="${config.showThumbnailsForAlbums && !empty(album.imageHash)}">class="coverThumbnailColumn"</c:if>">
+                    <c:if test="${config.showThumbnailsForAlbums && !empty(album.imageHash)}">
+                        <img class="coverThumbnail" id="albumthumb_${loopStatus.index}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(album.imageHash)}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
+                        <div class="tooltip" id="tooltip_albumthumb_${loopStatus.index}"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(album.imageHash)}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
+                    </c:if>
                     <c:choose>
                         <c:when test="${mtfn:unknown(album.name)}">
                             <fmt:message key="unknown"/>
@@ -185,9 +178,6 @@
         </c:forEach>
         <c:if test="${(singleArtist || singleGenre) && fn:length(albums) > 1}">
             <tr class="${cwfn:choose(fn:length(albums) % 2 == 0, 'even', 'odd')}">
-                <td>
-                    &nbsp;
-                </td>
                 <td colspan="2"><em>
                     <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><fmt:message key="allTracksOfAboveAlbums"/></a>
                 </em></td>
@@ -240,9 +230,6 @@
                 </td>
             </tr>
             <tr class="${cwfn:choose(fn:length(albums) % 2 == 0, 'odd', 'even')}">
-                <td>
-                    &nbsp;
-                </td>
                 <td colspan="2"><em>
                     <c:choose>
                         <c:when test="${singleArtist}">

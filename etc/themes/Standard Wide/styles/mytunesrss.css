@@ -300,10 +300,6 @@ tr.odd td.albumthumb {
     height: 38px;
 }
 
-td.albumname {
-    padding-left: 3px;
-}
-
 td.artist a {
   display: inline;
   color: #000;
@@ -841,4 +837,14 @@ div.searchFuzzinessLabel {
 
 div.searchFuzzinessSlider {
     margin: 10px 0 0 5px;
+}
+
+td.coverThumbnailColumn {
+    padding-left: 47px;
+}
+
+img.coverThumbnail {
+    margin-left: -37px;
+    vertical-align: top;
+    float: left;
 }
