@@ -24,7 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.lang.reflect.Array;
 
 /**
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
@@ -292,8 +291,8 @@ public class MyTunesFunctions {
 
     public static Map<String, String> getExternalSiteDefinitions(String type) {
         Map<String, String> result = new TreeMap<String, String>();
-        for (Map.Entry<String, String> site : MyTunesRss.CONFIG.getExternalSites(type).entrySet()) {
-            result.put(site.getKey(), site.getValue().replace("{" + type + "}", "{KEYWORD}"));
+        for (ExternalSiteDefinition def : MyTunesRss.CONFIG.getExternalSites(type)) {
+            result.put(def.getName(), def.getUrl());
         }
         return result;
     }
@@ -301,7 +300,7 @@ public class MyTunesFunctions {
     public static String jsArray(Object items) {
         StringBuilder builder = new StringBuilder();
         if (items instanceof Iterable) {
-            for (Object item : (Iterable)items) {
+            for (Object item : (Iterable) items) {
                 if (item instanceof String) {
                     builder.append("'").append(StringEscapeUtils.escapeJavaScript((String) item)).append("'");
                 } else {
@@ -310,7 +309,7 @@ public class MyTunesFunctions {
                 builder.append(",");
             }
         } else if (items.getClass().isArray()) {
-            for (Object item : (Object[])items) {
+            for (Object item : (Object[]) items) {
                 if (item instanceof String) {
                     builder.append("'").append(StringEscapeUtils.escapeJavaScript((String) item)).append("'");
                 } else {

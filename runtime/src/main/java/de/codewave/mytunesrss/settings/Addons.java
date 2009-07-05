@@ -25,8 +25,13 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
     private JButton myDeleteLanguageButton;
     private JScrollPane myLanguagesScrollPane;
     private JList myLanguagesList;
+    private JButton myAddExternalSiteButton;
+    private JButton myRemoveExternalSiteButton;
+    private JList myExternalSitesList;
+    private JScrollPane myExternalSitesScrollPane;
     private DefaultListModel myThemesListModel = new DefaultListModel();
     private DefaultListModel myLanguagesListModel = new DefaultListModel();
+    private DefaultListModel myExternalSitesListModel = new DefaultListModel();
 
     private void createUIComponents() {
         myThemesList = new JList() {
@@ -41,6 +46,12 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
                 return new Dimension(0, 0);
             }
         };
+        myExternalSitesList = new JList() {
+            @Override
+            public Dimension getPreferredScrollableViewportSize() {
+                return new Dimension(0, 0);
+            }
+        };
     }
 
     public Addons() {
@@ -48,12 +59,14 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
         myThemesScrollPane.getViewport().setOpaque(false);
         myLanguagesScrollPane.setMaximumSize(myLanguagesScrollPane.getPreferredSize());
         myLanguagesScrollPane.getViewport().setOpaque(false);
+        myExternalSitesScrollPane.setMaximumSize(myExternalSitesScrollPane.getPreferredSize());
+        myExternalSitesScrollPane.getViewport().setOpaque(false);
         myThemesList.setModel(myThemesListModel);
         myThemesList.setCellRenderer(new DefaultListCellRenderer() {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                label.setText(((AddonsUtils.ThemeDefinition)value).getName());
-                String info = StringUtils.trimToNull(((AddonsUtils.ThemeDefinition)value).getInfo());
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                label.setText(((AddonsUtils.ThemeDefinition) value).getName());
+                String info = StringUtils.trimToNull(((AddonsUtils.ThemeDefinition) value).getInfo());
                 label.setToolTipText(info != null ? "<html>" + info.replace("\n", "<br>") + "</html>" : null);
                 return label;
             }
@@ -61,10 +74,20 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
         myLanguagesList.setModel(myLanguagesListModel);
         myLanguagesList.setCellRenderer(new DefaultListCellRenderer() {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                label.setText(((AddonsUtils.LanguageDefinition)value).getCode());
-                String info = StringUtils.trimToNull(((AddonsUtils.LanguageDefinition)value).getInfo());
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                label.setText(((AddonsUtils.LanguageDefinition) value).getCode());
+                String info = StringUtils.trimToNull(((AddonsUtils.LanguageDefinition) value).getInfo());
                 label.setToolTipText(info != null ? "<html>" + info.replace("\n", "<br>") + "</html>" : null);
+                return label;
+            }
+        });
+        myExternalSitesList.setModel(myExternalSitesListModel);
+        myExternalSitesList.setCellRenderer(new DefaultListCellRenderer() {
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                ExternalSiteDefinition def = (ExternalSiteDefinition) value;
+                label.setText(def.getType() + " - " + def.getName());
+                label.setToolTipText(def.getUrl());
                 return label;
             }
         });
@@ -78,8 +101,13 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
                 myDeleteLanguageButton.setEnabled(myLanguagesList.getSelectedIndex() > -1);
             }
         });
+        myExternalSitesList.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                myRemoveExternalSiteButton.setEnabled(myExternalSitesList.getSelectedIndex() > -1);
+            }
+        });
         myAddThemeButton.addActionListener(new AddButtonListener(MyTunesRssUtils.getBundleString("dialog.lookupTheme"),
-                                                                 MyTunesRssUtils.getBundleString("pleaseWait.addingTheme")) {
+                MyTunesRssUtils.getBundleString("pleaseWait.addingTheme")) {
             protected String add(File theme) {
                 return AddonsUtils.addTheme(theme);
             }
@@ -90,7 +118,7 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
             }
         });
         myAddLanguageButton.addActionListener(new AddButtonListener(MyTunesRssUtils.getBundleString("dialog.lookupLanguage"),
-                                                                    MyTunesRssUtils.getBundleString("pleaseWait.addingLanguage")) {
+                MyTunesRssUtils.getBundleString("pleaseWait.addingLanguage")) {
             protected String add(File language) {
                 return AddonsUtils.addLanguage(language);
             }
@@ -100,6 +128,8 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
                 return AddonsUtils.deleteLanguage(language);
             }
         });
+        myAddExternalSiteButton.addActionListener(new AddExternalSiteButtonListener());
+        myRemoveExternalSiteButton.addActionListener(new RemoveExternalSiteButtonListener());
         MyTunesRssEventManager.getInstance().addListener(this);
     }
 
@@ -141,12 +171,17 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
         for (AddonsUtils.LanguageDefinition language : AddonsUtils.getLanguages(false)) {
             myLanguagesListModel.addElement(language);
         }
+        myExternalSitesListModel.clear();
+        for (ExternalSiteDefinition def : MyTunesRss.CONFIG.getExternalSites()) {
+            myExternalSitesListModel.addElement(def);
+        }
     }
 
     public void setGuiMode(GuiMode mode) {
         boolean serverActive = MyTunesRss.WEBSERVER.isRunning() || mode == GuiMode.ServerRunning;
         myDeleteThemeButton.setEnabled(!serverActive);
         myDeleteLanguageButton.setEnabled(!serverActive);
+        myRemoveExternalSiteButton.setEnabled(!serverActive);
     }
 
     public String updateConfigFromGui() {
@@ -230,5 +265,15 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
         }
 
         protected abstract String delete(String item);
+    }
+
+    public class AddExternalSiteButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+        }
+    }
+
+    public class RemoveExternalSiteButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+        }
     }
 }

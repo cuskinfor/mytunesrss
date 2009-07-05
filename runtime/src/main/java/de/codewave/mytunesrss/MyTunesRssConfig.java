@@ -127,7 +127,7 @@ public class MyTunesRssConfig {
     private String myCryptedCreationTime;
     private String myDisabledMp4Codecs;
     private List<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
-    private Map<String, Map<String, String>> myExternalSites = new HashMap<String, Map<String, String>>();
+    private List<ExternalSiteDefinition> myExternalSites = new ArrayList<ExternalSiteDefinition>();
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -909,13 +909,18 @@ public class MyTunesRssConfig {
         myTranscoderConfigs = configs;
     }
 
-    public Map<String, String> getExternalSites(String type) {
-        Map<String, String> sites = myExternalSites.get(type);
-        return sites != null ? new HashMap<String, String>(sites) : new HashMap<String, String>();
+    public List<ExternalSiteDefinition> getExternalSites() {
+        return new ArrayList<ExternalSiteDefinition>(myExternalSites);
     }
 
-    public void setExternalSites(String type, Map<String, String> externalSites) {
-        myExternalSites.put(type, new HashMap<String, String>(externalSites));
+    public List<ExternalSiteDefinition> getExternalSites(String type) {
+        List<ExternalSiteDefinition> result = new ArrayList<ExternalSiteDefinition>();
+        for (ExternalSiteDefinition def : myExternalSites) {
+            if (StringUtils.equals(type, def.getType())) {
+                result.add(def);
+            }
+        }
+        return result;
     }
 
     private String encryptCreationTime(long creationTime) {
@@ -1114,18 +1119,13 @@ public class MyTunesRssConfig {
                 myTranscoderConfigs.add(new TranscoderConfig(transcoderConfigContext));
             }
             Iterator<JXPathContext> externalSitesIterator = JXPathUtils.getContextIterator(settings, "external-sites/site");
-            myExternalSites = new HashMap<String, Map<String, String>>();
+            myExternalSites = new ArrayList<ExternalSiteDefinition>();
             while (externalSitesIterator.hasNext()) {
                 JXPathContext externalSiteContext = externalSitesIterator.next();
                 String name = JXPathUtils.getStringValue(externalSiteContext, "name", null);
                 String url = JXPathUtils.getStringValue(externalSiteContext, "url", null);
-                String type = StringUtils.substringBetween(url, "{", "}");
-                Map<String, String> sitesForType = myExternalSites.get(type);
-                if (sitesForType == null) {
-                    sitesForType = new HashMap<String, String>();
-                    myExternalSites.put(type, sitesForType);
-                }
-                sitesForType.put(name, url);
+                String type = JXPathUtils.getStringValue(externalSiteContext, "type", null);
+                myExternalSites.add(new ExternalSiteDefinition(type, name, url));
             }
         } catch (IOException e) {
             LOGGER.error("Could not read configuration file.", e);
@@ -1354,13 +1354,12 @@ public class MyTunesRssConfig {
             if (myExternalSites != null && !myExternalSites.isEmpty()) {
                 Element externalSites = settings.createElement("external-sites");
                 root.appendChild(externalSites);
-                for (Map<String, String> sites : myExternalSites.values()) {
-                    for (Map.Entry<String, String> site : sites.entrySet()) {
-                        Element xmlSite = settings.createElement("site");
-                        externalSites.appendChild(xmlSite);
-                        xmlSite.appendChild(DOMUtils.createTextElement(settings, "name", site.getKey()));
-                        xmlSite.appendChild(DOMUtils.createTextElement(settings, "url", site.getValue()));
-                    }
+                for (ExternalSiteDefinition def : myExternalSites) {
+                    Element xmlSite = settings.createElement("site");
+                    externalSites.appendChild(xmlSite);
+                    xmlSite.appendChild(DOMUtils.createTextElement(settings, "type", def.getType()));
+                    xmlSite.appendChild(DOMUtils.createTextElement(settings, "name", def.getName()));
+                    xmlSite.appendChild(DOMUtils.createTextElement(settings, "url", def.getUrl()));
                 }
             }
             FileOutputStream outputStream = null;
