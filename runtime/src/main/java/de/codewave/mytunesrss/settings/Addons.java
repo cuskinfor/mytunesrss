@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.settings;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.utils.swing.SwingUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -10,6 +11,8 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 
 /**
@@ -86,9 +89,20 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 ExternalSiteDefinition def = (ExternalSiteDefinition) value;
-                label.setText(def.getType() + " - " + def.getName());
+                label.setText(MyTunesRssUtils.getBundleString("settings.editExternalSites.type." + def.getType()) + " - " + def.getName());
                 label.setToolTipText(def.getUrl());
                 return label;
+            }
+        });
+        myExternalSitesList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int index = myExternalSitesList.locationToIndex(e.getPoint());
+                    if (index >= 0 && index < myExternalSitesList.getModel().getSize()) {
+                        new AddExternalSiteActionListener((ExternalSiteDefinition) myExternalSitesList.getSelectedValue()).actionPerformed(null);
+                    }
+                }
             }
         });
         myThemesList.addListSelectionListener(new ListSelectionListener() {
@@ -128,7 +142,7 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
                 return AddonsUtils.deleteLanguage(language);
             }
         });
-        myAddExternalSiteButton.addActionListener(new AddExternalSiteButtonListener());
+        myAddExternalSiteButton.addActionListener(new AddExternalSiteActionListener());
         myRemoveExternalSiteButton.addActionListener(new RemoveExternalSiteButtonListener());
         MyTunesRssEventManager.getInstance().addListener(this);
     }
@@ -267,13 +281,52 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
         protected abstract String delete(String item);
     }
 
-    public class AddExternalSiteButtonListener implements ActionListener {
+    public class AddExternalSiteActionListener implements ActionListener {
+        private ExternalSiteDefinition myDefintion;
+
+        public AddExternalSiteActionListener() {
+            myDefintion = null;
+        }
+
+        public AddExternalSiteActionListener(ExternalSiteDefinition definition) {
+            myDefintion = definition;
+        }
+
         public void actionPerformed(ActionEvent e) {
+            EditExternalSiteDialog dialog = new EditExternalSiteDialog();
+            dialog.setResizable(false);
+            dialog.setTitle(MyTunesRssUtils.getBundleString("dialog.title.addExternalSite"));
+            if (myDefintion != null) {
+                dialog.setExternalSiteDefinition(myDefintion);
+            }
+            while (true) {
+                SwingUtils.packAndShowRelativeTo(dialog, myRootPanel.getParent());
+                if (dialog.isCancelled()) {
+                    return;
+                }
+                ExternalSiteDefinition definition = dialog.getDefinition();
+                if (!StringUtils.contains(definition.getUrl(), "{KEYWORD}")) {
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.invalidExtSiteUrl"));
+                } else if (StringUtils.isBlank(definition.getName())) {
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.emptyExtSiteName"));
+                } else if (MyTunesRss.CONFIG.hasExternalSite(definition, myDefintion)) {
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.duplicateExtSiteName"));
+                } else {
+                    break;
+                }
+            }
+            if (myDefintion != null) {
+                MyTunesRss.CONFIG.removeExternalSite(myDefintion);
+            }
+            MyTunesRss.CONFIG.addExternalSite(dialog.getDefinition());
+            initListModels();
         }
     }
 
     public class RemoveExternalSiteButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+            MyTunesRss.CONFIG.removeExternalSite((ExternalSiteDefinition) myExternalSitesList.getSelectedValue());
+            initListModels();
         }
     }
 }

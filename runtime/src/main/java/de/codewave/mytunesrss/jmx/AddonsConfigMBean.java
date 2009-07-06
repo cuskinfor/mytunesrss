@@ -12,6 +12,8 @@ public interface AddonsConfigMBean {
 
     String[] getLanguages();
 
+    String[] getExternalSites();
+
     String addTheme(String themePath);
 
     String addLanguage(String languagePath);
@@ -19,4 +21,8 @@ public interface AddonsConfigMBean {
     String removeTheme(String themeName);
 
     String removeLanguage(String languageCode);
+
+    String addExternalSite(String type, String name, String url);
+
+    String removeExternalSite(String type, String name);
 }

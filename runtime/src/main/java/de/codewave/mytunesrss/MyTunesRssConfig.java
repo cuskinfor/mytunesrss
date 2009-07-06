@@ -923,6 +923,28 @@ public class MyTunesRssConfig {
         return result;
     }
 
+    public void addExternalSite(ExternalSiteDefinition definition) {
+        myExternalSites.add(definition);
+    }
+
+    public boolean hasExternalSite(ExternalSiteDefinition definitionToCheck, ExternalSiteDefinition excludeFromCheck) {
+        for (ExternalSiteDefinition definition : getExternalSites(definitionToCheck.getType())) {
+            if ((excludeFromCheck == null || definition != excludeFromCheck) && definition.getName().equals(definitionToCheck.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeExternalSite(ExternalSiteDefinition definition) {
+        for (Iterator<ExternalSiteDefinition> iter = myExternalSites.iterator(); iter.hasNext(); ) {
+            if (definition.equals(iter.next())) {
+                iter.remove();
+                break;
+            }
+        }
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
