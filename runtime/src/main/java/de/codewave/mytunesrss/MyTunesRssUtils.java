@@ -18,6 +18,7 @@ import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.swing.SwingUtils;
 import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
 import de.codewave.utils.swing.pleasewait.PleaseWaitUtils;
+import de.codewave.systray.SystrayUtils;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -181,9 +182,7 @@ public class MyTunesRssUtils {
                 }
             }
         }
-        if (MyTunesRss.SYSTRAYMENU != null) {
-        	MyTunesRss.SYSTRAYMENU.remove();
-        }
+        SystrayUtils.remove(MyTunesRss.SYSTRAY.getUUID());
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Very last log message before shutdown.");
         }

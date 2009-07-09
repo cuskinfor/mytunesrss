@@ -20,9 +20,6 @@ import de.codewave.mytunesrss.task.InitializeDatabaseTask;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
-import de.codewave.utils.sql.DataStoreStatement;
-import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.SmartStatement;
 import de.codewave.utils.io.FileCache;
 import de.codewave.utils.maven.MavenUtils;
 import de.codewave.utils.swing.SwingUtils;
@@ -56,9 +53,6 @@ import java.sql.*;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.Timer;
-import java.util.List;
-
-import com.ibm.icu.text.Transliterator;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -137,7 +131,7 @@ public class MyTunesRss {
     public static ResourceBundle JMX_BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.jmx.MyTunesRssJmx");
     public static WebServer WEBSERVER = new WebServer();
     public static Timer SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
-    public static MyTunesRssSysTray SYSTRAYMENU;
+    public static MyTunesRssSystray SYSTRAY;
     public static MessageDigest SHA1_DIGEST;
     public static MessageDigest MD5_DIGEST;
     public static JFrame ROOT_FRAME;
@@ -412,13 +406,13 @@ public class MyTunesRss {
 
     private static void executeGuiMode()
             throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException, IOException,
-            InterruptedException {
+            InterruptedException, AWTException {
         showNewVersionInfo();
         SETTINGS = new Settings();
         //DATABASE_FORM = SETTINGS.getDatabaseForm();
         MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(SETTINGS);
         executeApple(SETTINGS);
-        executeSysTray(SETTINGS);
+        SYSTRAY = new MyTunesRssSystray(SETTINGS);
         ROOT_FRAME.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         ROOT_FRAME.addWindowListener(mainWindowListener);
         ROOT_FRAME.getContentPane().add(SETTINGS.getRootPanel());
@@ -594,16 +588,6 @@ public class MyTunesRss {
         }
     }
 
-    private static void executeSysTray(Settings settingsForm) {
-        if (!SystemUtils.IS_JAVA_1_5) {
-            try {
-				SYSTRAYMENU = MyTunesRssSysTray.newInstance(settingsForm);
-			} catch (AWTException e) {
-				LOGGER.warn("Could not correctly initialize system tray menu.", e);
-			}
-        }
-    }
-
     private static void executeApple(Settings settings) {
         LOGGER.debug("Trying to execute apple specific code.");
         if (SystemUtils.IS_OS_MAC_OSX) {
@@ -664,7 +648,7 @@ public class MyTunesRss {
 
         @Override
         public void windowIconified(WindowEvent e) {
-            if (SYSTRAYMENU != null) {
+            if (SYSTRAY.getUUID() != null) {
                 ROOT_FRAME.setVisible(false);
             }
         }

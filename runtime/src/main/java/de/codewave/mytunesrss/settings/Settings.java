@@ -118,18 +118,14 @@ public class Settings implements MyTunesRssEventListener {
     public void handleEvent(MyTunesRssEvent event) {
         switch (event) {
             case SERVER_STARTED:
-                if (MyTunesRss.SYSTRAYMENU != null) {
-                    MyTunesRss.SYSTRAYMENU.setServerRunning();
-                }
+                MyTunesRss.SYSTRAY.setServerRunning();
                 myStartServerButton.setEnabled(false);
                 myStopServerButton.setEnabled(true);
                 setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.running"), null);
                 myRootPanel.validate();
                 break;
             case SERVER_STOPPED:
-                if (MyTunesRss.SYSTRAYMENU != null) {
-                    MyTunesRss.SYSTRAYMENU.setServerStopped();
-                }
+                MyTunesRss.SYSTRAY.setServerStopped();
                 myStartServerButton.setEnabled(true);
                 myStopServerButton.setEnabled(false);
                 setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
