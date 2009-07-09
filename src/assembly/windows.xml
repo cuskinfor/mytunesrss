@@ -50,7 +50,6 @@
                 <include>conf/**</include>
                 <include>themes/**</include>
                 <include>languages/**</include>
-                <include>systray4j.dll</include>
             </includes>
         </fileSet>
         <fileSet>

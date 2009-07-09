@@ -36,7 +36,6 @@ import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import snoozesoft.systray4j.SysTrayMenu;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -138,7 +137,7 @@ public class MyTunesRss {
     public static ResourceBundle JMX_BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.jmx.MyTunesRssJmx");
     public static WebServer WEBSERVER = new WebServer();
     public static Timer SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
-    public static SysTray SYSTRAYMENU;
+    public static MyTunesRssSysTray SYSTRAYMENU;
     public static MessageDigest SHA1_DIGEST;
     public static MessageDigest MD5_DIGEST;
     public static JFrame ROOT_FRAME;
@@ -419,7 +418,7 @@ public class MyTunesRss {
         //DATABASE_FORM = SETTINGS.getDatabaseForm();
         MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(SETTINGS);
         executeApple(SETTINGS);
-        executeWindows(SETTINGS);
+        executeSysTray(SETTINGS);
         ROOT_FRAME.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         ROOT_FRAME.addWindowListener(mainWindowListener);
         ROOT_FRAME.getContentPane().add(SETTINGS.getRootPanel());
@@ -595,9 +594,13 @@ public class MyTunesRss {
         }
     }
 
-    private static void executeWindows(Settings settingsForm) {
-        if (SystemUtils.IS_OS_WINDOWS && SysTrayMenu.isAvailable()) {
-            SYSTRAYMENU = new SysTray(settingsForm);
+    private static void executeSysTray(Settings settingsForm) {
+        if (!SystemUtils.IS_JAVA_1_5) {
+            try {
+				SYSTRAYMENU = MyTunesRssSysTray.newInstance(settingsForm);
+			} catch (AWTException e) {
+				LOGGER.warn("Could not correctly initialize system tray menu.", e);
+			}
         }
     }
 
@@ -663,7 +666,6 @@ public class MyTunesRss {
         public void windowIconified(WindowEvent e) {
             if (SYSTRAYMENU != null) {
                 ROOT_FRAME.setVisible(false);
-                SYSTRAYMENU.show();
             }
         }
     }

@@ -181,6 +181,9 @@ public class MyTunesRssUtils {
                 }
             }
         }
+        if (MyTunesRss.SYSTRAYMENU != null) {
+        	MyTunesRss.SYSTRAYMENU.remove();
+        }
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Very last log message before shutdown.");
         }

@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.8.0-EAP-2" date="2009-xx-xx" description="3.8.0 EAP 2">
+            <action dev="mdescher" type="update">
+                Use Java 6 systray instead of systray4j.
+            </action>
+        </release>
+
         <release version="3.8.0-EAP-1" date="2009-07-08" description="3.8.0 EAP 1">
             <action dev="mdescher" type="update">
                 External sites.
