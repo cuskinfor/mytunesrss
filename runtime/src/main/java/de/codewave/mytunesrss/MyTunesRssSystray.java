@@ -7,6 +7,8 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.settings.Settings;
 import de.codewave.systray.SystrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +20,8 @@ import java.util.UUID;
 /**
  * de.codewave.mytunesrss.SysTray
  */
-public class MyTunesRssSystray {
+public class MyTunesRssSystray implements MyTunesRssEventListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssSystray.class);
 
     private UUID myUUID;
     private MenuItem myQuit;
@@ -70,28 +73,40 @@ public class MyTunesRssSystray {
         return myUUID;
     }
 
-    public void disableAll() {
-        myQuit.setEnabled(false);
-        myShow.setEnabled(false);
-        myUpdate.setEnabled(false);
-        myStartServer.setEnabled(false);
-        myStopServer.setEnabled(false);
-    }
-
     public void setServerRunning() {
-        myQuit.setEnabled(true);
-        myShow.setEnabled(true);
-        myUpdate.setEnabled(true);
         myStartServer.setEnabled(false);
         myStopServer.setEnabled(true);
     }
 
     public void setServerStopped() {
-        myQuit.setEnabled(true);
-        myShow.setEnabled(true);
-        myUpdate.setEnabled(true);
         myStartServer.setEnabled(true);
         myStopServer.setEnabled(false);
+    }
+
+    public void setDatabaseUpdateRunning() {
+        myUpdate.setEnabled(false);
+    }
+
+    public void setDatabaseUpdateFinished() {
+        myUpdate.setEnabled(false);
+    }
+
+    public void handleEvent(MyTunesRssEvent event) {
+        switch (event) {
+            case SERVER_STARTED:
+                setServerRunning();
+                break;
+            case SERVER_STOPPED:
+                setServerStopped();
+                break;
+            case DATABASE_UPDATE_FINISHED:
+            case DATABASE_UPDATE_FINISHED_NOT_RUN:
+                setDatabaseUpdateFinished();
+                break;
+            case DATABASE_UPDATE_STATE_CHANGED:
+                setDatabaseUpdateRunning();
+                break;
+        }
     }
 
     public static class Listener implements ActionListener {
@@ -116,8 +131,14 @@ public class MyTunesRssSystray {
         }
 
         private void showFrame() {
+            LOGGER.debug("Showing root frame from system tray.");
+            if (MyTunesRss.ROOT_FRAME.getExtendedState() == JFrame.ICONIFIED) {
+                MyTunesRss.ROOT_FRAME.setExtendedState(JFrame.NORMAL);
+            } else {
+                MyTunesRss.ROOT_FRAME.setExtendedState(MyTunesRss.ROOT_FRAME.getExtendedState() & ~JFrame.ICONIFIED);
+            }
             MyTunesRss.ROOT_FRAME.setVisible(true);
-            MyTunesRss.ROOT_FRAME.setExtendedState(JFrame.NORMAL);
+            MyTunesRss.ROOT_FRAME.toFront();
         }
 
         private void updateDatabase() {

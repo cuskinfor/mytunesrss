@@ -413,6 +413,8 @@ public class MyTunesRss {
         MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(SETTINGS);
         executeApple(SETTINGS);
         SYSTRAY = new MyTunesRssSystray(SETTINGS);
+        SYSTRAY.setServerStopped();
+        MyTunesRssEventManager.getInstance().addListener(SYSTRAY);
         ROOT_FRAME.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         ROOT_FRAME.addWindowListener(mainWindowListener);
         ROOT_FRAME.getContentPane().add(SETTINGS.getRootPanel());
@@ -623,9 +625,12 @@ public class MyTunesRss {
         @Override
         public void windowClosing(WindowEvent e) {
             if (SystemUtils.IS_OS_MAC_OSX) {
+                LOGGER.debug("Window is being closed on Mac OS X, so the window is hidden now.");
                 ROOT_FRAME.setVisible(false);
             } else {
+                LOGGER.debug("Window is being closed, so the application is shut down now.");
                 if (CONFIG.isQuitConfirmation()) {
+                    LOGGER.debug("Shutdown confirmation enabled.");
                     int result = JOptionPane.showOptionDialog(ROOT_FRAME,
                             MyTunesRssUtils.getBundleString("confirmation.quitMyTunesRss"),
                             MyTunesRssUtils.getBundleString("pleaseWait.defaultTitle"),
@@ -636,12 +641,15 @@ public class MyTunesRss {
                                     QuitConfirmOption.Yes},
                             QuitConfirmOption.No);
                     if (result == 1) {
+                        LOGGER.debug("Shutdown cancelled by user.");
                         return;
                     } else if (result == 0) {
+                        LOGGER.debug("Shutdown cancelled by user and window will be iconified.");
                         ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
                         return;
                     }
                 }
+                LOGGER.debug("Shutdown will be executed.");
                 mySettingsForm.doQuitApplication();
             }
         }
@@ -649,6 +657,7 @@ public class MyTunesRss {
         @Override
         public void windowIconified(WindowEvent e) {
             if (SYSTRAY.getUUID() != null) {
+                LOGGER.debug("Window has been iconified (state is " + ROOT_FRAME.getExtendedState() + ") and systray is available, so we hide the window now!");
                 ROOT_FRAME.setVisible(false);
             }
         }
