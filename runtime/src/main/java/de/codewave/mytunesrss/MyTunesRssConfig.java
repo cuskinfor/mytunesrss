@@ -128,6 +128,7 @@ public class MyTunesRssConfig {
     private String myDisabledMp4Codecs;
     private List<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
     private List<ExternalSiteDefinition> myExternalSites = new ArrayList<ExternalSiteDefinition>();
+    private boolean myMinimizeToSystray;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -945,6 +946,14 @@ public class MyTunesRssConfig {
         }
     }
 
+    public boolean isMinimizeToSystray() {
+        return myMinimizeToSystray;
+    }
+
+    public void setMinimizeToSystray(boolean minimizeToSystray) {
+        myMinimizeToSystray = minimizeToSystray;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1149,6 +1158,7 @@ public class MyTunesRssConfig {
                 String type = JXPathUtils.getStringValue(externalSiteContext, "type", null);
                 myExternalSites.add(new ExternalSiteDefinition(type, name, url));
             }
+            setMinimizeToSystray(JXPathUtils.getBooleanValue(settings, "minimizeToSystray", false));
         } catch (IOException e) {
             LOGGER.error("Could not read configuration file.", e);
         }
@@ -1384,6 +1394,7 @@ public class MyTunesRssConfig {
                     xmlSite.appendChild(DOMUtils.createTextElement(settings, "url", def.getUrl()));
                 }
             }
+            root.appendChild(DOMUtils.createBooleanElement(settings, "minimizeToSystray", isMinimizeToSystray()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

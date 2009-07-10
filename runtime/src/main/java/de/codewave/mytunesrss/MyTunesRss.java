@@ -460,7 +460,8 @@ public class MyTunesRss {
             if (SystemUtils.IS_OS_MAC_OSX) {
                 ROOT_FRAME.setVisible(false);
             } else {
-                ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
+                ROOT_FRAME.setExtendedState(ROOT_FRAME.getExtendedState() | JFrame.ICONIFIED);
+                SYSTRAY.setMinimized();
             }
         }
     }
@@ -645,7 +646,8 @@ public class MyTunesRss {
                         return;
                     } else if (result == 0) {
                         LOGGER.debug("Shutdown cancelled by user and window will be iconified.");
-                        ROOT_FRAME.setExtendedState(JFrame.ICONIFIED);
+                        ROOT_FRAME.setExtendedState(ROOT_FRAME.getExtendedState() | JFrame.ICONIFIED);
+                        SYSTRAY.setMinimized();
                         return;
                     }
                 }
@@ -656,9 +658,10 @@ public class MyTunesRss {
 
         @Override
         public void windowIconified(WindowEvent e) {
-            if (SYSTRAY.getUUID() != null) {
+            if (SYSTRAY.isAvailable() && CONFIG.isMinimizeToSystray()) {
                 LOGGER.debug("Window has been iconified (state is " + ROOT_FRAME.getExtendedState() + ") and systray is available, so we hide the window now!");
                 ROOT_FRAME.setVisible(false);
+                SYSTRAY.setMinimized();
             }
         }
     }

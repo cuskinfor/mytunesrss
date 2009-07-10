@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.8.0-EAP-2" date="2009-xx-xx" description="3.8.0 EAP 2">
+            <action dev="mdescher" type="add">
+                Option to enable/disable minimizing to system tray.
+            </action>
             <action dev="mdescher" type="update">
                 Use Java 6 systray instead of systray4j.
             </action>

@@ -130,6 +130,15 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
         MyTunesRss.CONFIG.setMailTls(mailTls);
         onChange();
     }
+
+    public boolean isMinimizeToSystray() {
+        return MyTunesRss.CONFIG.isMinimizeToSystray();
+    }
+
+    public void setMinimizeToSystray(boolean minimizeToSystray) {
+        MyTunesRss.CONFIG.setMinimizeToSystray(minimizeToSystray);
+        onChange();
+    }
 }
 
 

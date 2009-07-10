@@ -47,6 +47,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
     private JPasswordField myJmxPasswordInput;
     private JCheckBox myMyTunesRssComSsl;
     private JCheckBox mySmtpTlsInput;
+    private JCheckBox myMinimizeToSystrayInput;
     private boolean myUpdateOnStartInputCache;
     private boolean myAutoStartServer;
 
@@ -60,6 +61,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
                 "error.illegalProxyPort")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myJmxPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
                 "error.illegalJmxPort")));
+        myMinimizeToSystrayInput.setVisible(MyTunesRss.SYSTRAY.isAvailable());
     }
 
     public void initValues() {
@@ -87,6 +89,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         myJmxPasswordInput.setText(MyTunesRss.CONFIG.getJmxPassword());
         myMyTunesRssComSsl.setSelected(MyTunesRss.CONFIG.isMyTunesRssComSsl());
         mySmtpTlsInput.setSelected(MyTunesRss.CONFIG.isMailTls());
+        myMinimizeToSystrayInput.setSelected(MyTunesRss.CONFIG.isMinimizeToSystray());
     }
 
     private void createUIComponents() {
@@ -132,6 +135,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
                 MyTunesRssJmxUtils.stopJmxServer();
                 MyTunesRssJmxUtils.startJmxServer();
             }
+            MyTunesRss.CONFIG.setMinimizeToSystray(myMinimizeToSystrayInput.isSelected());
         }
         return null;
     }

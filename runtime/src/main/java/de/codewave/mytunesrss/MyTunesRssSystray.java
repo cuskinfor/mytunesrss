@@ -48,25 +48,28 @@ public class MyTunesRssSystray implements MyTunesRssEventListener {
         myShow = new MenuItem(MyTunesRssUtils.getBundleString("systray.show"));
         myShow.setActionCommand("show");
         myShow.addActionListener(menuListener);
+        myShow.setEnabled(false);
         menu.add(myShow);
         menu.addSeparator();
-        myUpdate = new MenuItem(MyTunesRssUtils
-                .getBundleString("systray.updateDatabase"));
+        myUpdate = new MenuItem(MyTunesRssUtils.getBundleString("systray.updateDatabase"));
         myUpdate.setActionCommand("update");
         myUpdate.addActionListener(menuListener);
         menu.add(myUpdate);
         menu.addSeparator();
-        myStopServer = new MenuItem(MyTunesRssUtils
-                .getBundleString("systray.stopServer"));
+        myStopServer = new MenuItem(MyTunesRssUtils.getBundleString("systray.stopServer"));
         myStopServer.setActionCommand("stop_server");
         myStopServer.addActionListener(menuListener);
+        myStopServer.setEnabled(false);
         menu.add(myStopServer);
-        myStartServer = new MenuItem(MyTunesRssUtils
-                .getBundleString("systray.startServer"));
+        myStartServer = new MenuItem(MyTunesRssUtils.getBundleString("systray.startServer"));
         myStartServer.setActionCommand("start_server");
         myStartServer.addActionListener(menuListener);
         menu.add(myStartServer);
         return menu;
+    }
+
+    public boolean isAvailable() {
+        return myUUID != null;
     }
 
     public UUID getUUID() {
@@ -91,6 +94,10 @@ public class MyTunesRssSystray implements MyTunesRssEventListener {
         myUpdate.setEnabled(false);
     }
 
+    public void setMinimized() {
+        myShow.setEnabled(true);
+    }
+
     public void handleEvent(MyTunesRssEvent event) {
         switch (event) {
             case SERVER_STARTED:
@@ -109,7 +116,7 @@ public class MyTunesRssSystray implements MyTunesRssEventListener {
         }
     }
 
-    public static class Listener implements ActionListener {
+    public class Listener implements ActionListener {
         private Settings mySettingsForm;
 
         public Listener(Settings settingsForm) {
@@ -139,6 +146,7 @@ public class MyTunesRssSystray implements MyTunesRssEventListener {
             }
             MyTunesRss.ROOT_FRAME.setVisible(true);
             MyTunesRss.ROOT_FRAME.toFront();
+            myShow.setEnabled(false);
         }
 
         private void updateDatabase() {

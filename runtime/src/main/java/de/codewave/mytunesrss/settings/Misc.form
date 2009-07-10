@@ -97,7 +97,7 @@
               </component>
             </children>
           </grid>
-          <grid id="74d51" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="74d51" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="5" left="5" bottom="5" right="5"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -138,6 +138,15 @@
                   <opaque value="false"/>
                   <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.checkForUpdate"/>
                   <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.checkForUpdateTooltip"/>
+                </properties>
+              </component>
+              <component id="90236" class="javax.swing.JCheckBox" binding="myMinimizeToSystrayInput">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.minimizeToSystray"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.minimizeToSystrayTooltip"/>
                 </properties>
               </component>
             </children>

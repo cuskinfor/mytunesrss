@@ -57,6 +57,10 @@ public interface MiscConfigMBean {
     boolean isMailTls();
 
     void setMailTls(boolean mailTls);
+
+    boolean isMinimizeToSystray();
+
+    void setMinimizeToSystray(boolean minimizeToSystray);
 }
 
 
