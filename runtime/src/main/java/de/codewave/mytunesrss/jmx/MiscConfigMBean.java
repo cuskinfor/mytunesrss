@@ -61,6 +61,10 @@ public interface MiscConfigMBean {
     boolean isMinimizeToSystray();
 
     void setMinimizeToSystray(boolean minimizeToSystray);
+
+    boolean isServerBrowserActive();
+
+    void setServerBrowserActive(boolean serverBrowserActive);
 }
 
 

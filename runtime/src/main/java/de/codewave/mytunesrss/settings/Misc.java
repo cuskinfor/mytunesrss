@@ -48,8 +48,8 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
     private JCheckBox myMyTunesRssComSsl;
     private JCheckBox mySmtpTlsInput;
     private JCheckBox myMinimizeToSystrayInput;
+    private JCheckBox myServerBrowserActiveInput;
     private boolean myUpdateOnStartInputCache;
-    private boolean myAutoStartServer;
 
     public Misc() {
         MyTunesRssEventManager.getInstance().addListener(this);
@@ -90,6 +90,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         myMyTunesRssComSsl.setSelected(MyTunesRss.CONFIG.isMyTunesRssComSsl());
         mySmtpTlsInput.setSelected(MyTunesRss.CONFIG.isMailTls());
         myMinimizeToSystrayInput.setSelected(MyTunesRss.CONFIG.isMinimizeToSystray());
+        myServerBrowserActiveInput.setSelected(MyTunesRss.CONFIG.isServerBrowserActive());
     }
 
     private void createUIComponents() {
@@ -136,6 +137,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
                 MyTunesRssJmxUtils.startJmxServer();
             }
             MyTunesRss.CONFIG.setMinimizeToSystray(myMinimizeToSystrayInput.isSelected());
+            MyTunesRss.CONFIG.setServerBrowserActive(myServerBrowserActiveInput.isSelected());
         }
         return null;
     }
@@ -152,12 +154,10 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
                         myUpdateOnStartInputCache = myUpdateOnStartInput.isSelected();
                         myUpdateOnStartInput.setSelected(false);
                         myUpdateOnStartInput.setEnabled(false);
-                        myAutoStartServer = true;
                         break;
                     case DISABLE_AUTO_START_SERVER:
                         myUpdateOnStartInput.setSelected(myUpdateOnStartInputCache);
                         myUpdateOnStartInput.setEnabled(true);
-                        myAutoStartServer = false;
                         break;
                     case MYTUNESRSS_COM_UPDATED:
                         myMyTunesRssComStatus.setText(MyTunesRssUtils.getBundleString(event.getMessageKey(), event.getMessageParams()));

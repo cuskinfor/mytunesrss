@@ -129,6 +129,7 @@ public class MyTunesRssConfig {
     private List<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
     private List<ExternalSiteDefinition> myExternalSites = new ArrayList<ExternalSiteDefinition>();
     private boolean myMinimizeToSystray;
+    private boolean myServerBrowserActive;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -954,6 +955,14 @@ public class MyTunesRssConfig {
         myMinimizeToSystray = minimizeToSystray;
     }
 
+    public boolean isServerBrowserActive() {
+        return myServerBrowserActive;
+    }
+
+    public void setServerBrowserActive(boolean serverBrowserActive) {
+        myServerBrowserActive = serverBrowserActive;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1159,6 +1168,7 @@ public class MyTunesRssConfig {
                 myExternalSites.add(new ExternalSiteDefinition(type, name, url));
             }
             setMinimizeToSystray(JXPathUtils.getBooleanValue(settings, "minimizeToSystray", false));
+            setServerBrowserActive(JXPathUtils.getBooleanValue(settings, "serverBrowserActive", true));
         } catch (IOException e) {
             LOGGER.error("Could not read configuration file.", e);
         }
@@ -1395,6 +1405,7 @@ public class MyTunesRssConfig {
                 }
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "minimizeToSystray", isMinimizeToSystray()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "serverBrowserActive", isServerBrowserActive()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

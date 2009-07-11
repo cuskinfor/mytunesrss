@@ -43,9 +43,11 @@
                 <fmt:message key="doSettings" />
             </a></li>
         </c:if>
-        <li><a href="${servletUrl}/browseServers/${auth}">
-            <fmt:message key="browseServers" />
-        </a></li>
+        <c:if test="${globalConfig.serverBrowserActive}">
+            <li><a href="${servletUrl}/browseServers/${auth}">
+                <fmt:message key="browseServers" />
+            </a></li>
+        </c:if>        
         <li style="float:right"><a href="${servletUrl}/logout">
             <fmt:message key="doLogout" />
         </a></li>

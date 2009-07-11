@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="20" y="20" width="683" height="4499"/>
+      <xy x="20" y="20" width="704" height="4499"/>
     </constraints>
     <properties>
       <opaque value="false"/>
@@ -420,7 +420,7 @@
               </component>
             </children>
           </grid>
-          <grid id="b2683" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+          <grid id="b2683" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
             <margin top="5" left="5" bottom="5" right="5"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -428,16 +428,33 @@
             <properties>
               <opaque value="false"/>
             </properties>
-            <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.welcomeMessageTitle"/>
+            <border type="etched" title-resource-bundle="de/codewave/mytunesrss/MyTunesRss" title-key="settings.webSettingsTitle"/>
             <children>
               <component id="a5b3a" class="javax.swing.JTextField" binding="myWelcomeMessageInput">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
                   <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.welcomeMessageTooltip"/>
+                </properties>
+              </component>
+              <component id="43f81" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.webintf.welcomeMessage"/>
+                </properties>
+              </component>
+              <component id="93256" class="javax.swing.JCheckBox" binding="myServerBrowserActiveInput" default-binding="true">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.webintf.serverBrowserActive"/>
+                  <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.webintf.serverBrowserActiveTooltip"/>
                 </properties>
               </component>
             </children>

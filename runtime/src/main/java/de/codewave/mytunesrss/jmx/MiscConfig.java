@@ -139,6 +139,15 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
         MyTunesRss.CONFIG.setMinimizeToSystray(minimizeToSystray);
         onChange();
     }
+
+    public boolean isServerBrowserActive() {
+        return MyTunesRss.CONFIG.isServerBrowserActive();
+    }
+
+    public void setServerBrowserActive(boolean serverBrowserActive) {
+        MyTunesRss.CONFIG.setServerBrowserActive(serverBrowserActive);
+        onChange();
+    }
 }
 
 
