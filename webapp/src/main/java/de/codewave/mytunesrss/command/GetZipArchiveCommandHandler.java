@@ -74,6 +74,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
     private void createZipArchive(OutputStream outputStream, DataStoreQuery.QueryResult<Track> tracks, String baseName,
             FileSender.ByteSentCounter counter) throws IOException {
         ZipOutputStream zipStream = new ZipOutputStream(outputStream);
+        zipStream.setLevel(ZipOutputStream.STORED);
         zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.codewave.de)");
         byte[] buffer = new byte[102400];
         Set<String> entryNames = new HashSet<String>();
