@@ -372,7 +372,10 @@ public class WebServer {
             session = mySessionManager.findSession(sessionId);
             if (session != null) {
                 LOGGER.debug("Accessing session with ID \"" + sessionId + "\".");
+                session.access(); // two times to get last access time correct
                 session.access();
+                session.endAccess();
+                session.endAccess();
             }
         } catch (IOException e) {
             LOGGER.error("Could not find session for ID \"" + sessionId + "\".", e);
