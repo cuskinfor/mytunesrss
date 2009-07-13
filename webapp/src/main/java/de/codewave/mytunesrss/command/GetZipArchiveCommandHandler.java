@@ -80,7 +80,6 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
         int trackCount = 0;
         boolean quotaExceeded = false;
         for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
-            MyTunesRssWebUtils.accessSession(getRequest());
             if (track.getFile().exists() && !getAuthUser().isQuotaExceeded()) {
                 String trackArtist = track.getArtist();
                 if (trackArtist.equals(InsertTrackStatement.UNKNOWN)) {
@@ -108,6 +107,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 zipStream.putNextEntry(entry);
                 InputStream file = new FileInputStream(track.getFile());
                 for (int length = file.read(buffer); length >= 0; length = file.read(buffer)) {
+                    MyTunesRssWebUtils.accessSession(getRequest(), 10);
                     if (length > 0) {
                         zipStream.write(buffer, 0, length);
                     }

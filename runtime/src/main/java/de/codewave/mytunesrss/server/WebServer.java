@@ -11,10 +11,7 @@ import de.codewave.mytunesrss.quicktime.QuicktimePlayerException;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.servlet.SessionManager;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
-import org.apache.catalina.LifecycleException;
+import org.apache.catalina.*;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.session.StandardManager;
@@ -37,13 +34,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * de.codewave.mytunesrss.server.WebServer
  */
 public class WebServer {
-    private static final Logger LOG = LoggerFactory.getLogger(WebServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebServer.class);
     private static final int MIN_PORT = 1;
     private static final int MAX_PORT = 65535;
 
     private Embedded myEmbeddedTomcat;
     private AtomicBoolean myRunning = new AtomicBoolean(false);
     private Context myContext;
+    private StandardManager mySessionManager;
 
     public synchronized boolean start() {
         if (!myRunning.get()) {
@@ -57,8 +55,8 @@ public class WebServer {
                     contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
                     contextEntries.put(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
                     String catalinaBase = getCatalinaBase();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Using catalina base: \"" + catalinaBase + "\".");
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Using catalina base: \"" + catalinaBase + "\".");
                     }
                     myEmbeddedTomcat = createServer("mytunesrss",
                                                     null,
@@ -149,13 +147,13 @@ public class WebServer {
         HttpURLConnection connection = null;
         try {
             URL targetUrl = new URL("http://127.0.0.1:" + port + MyTunesRss.CONFIG.getWebappContext() + "/mytunesrss/checkHealth?ignoreSession=true");
-            if (LOG.isInfoEnabled() && logging) {
-                LOG.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
+            if (LOGGER.isInfoEnabled() && logging) {
+                LOGGER.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             }
             connection = (HttpURLConnection)targetUrl.openConnection();
             int responseCode = connection.getResponseCode();
-            if (LOG.isInfoEnabled() && logging) {
-                LOG.info("HTTP response code is " + responseCode);
+            if (LOGGER.isInfoEnabled() && logging) {
+                LOGGER.info("HTTP response code is " + responseCode);
             }
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
@@ -172,16 +170,16 @@ public class WebServer {
                         }
                     }
                 }
-                if (LOG.isInfoEnabled() && logging) {
-                    LOG.info("Health servlet response code is " + result + " after " + trial + " trials.");
+                if (LOGGER.isInfoEnabled() && logging) {
+                    LOGGER.info("Health servlet response code is " + result + " after " + trial + " trials.");
                 }
                 return result != -1 ? (byte)result : CheckHealthResult.EOF;
             } else {
                 return CheckHealthResult.INVALID_HTTP_RESPONSE;
             }
         } catch (IOException e) {
-            if (LOG.isErrorEnabled() && logging) {
-                LOG.error("Could not get a proper server health status.", e);
+            if (LOGGER.isErrorEnabled() && logging) {
+                LOGGER.error("Could not get a proper server health status.", e);
             }
             return CheckHealthResult.SERVER_COMMUNICATION_FAILURE;
         } finally {
@@ -207,9 +205,9 @@ public class WebServer {
         ((StandardHost)host).setWorkDir(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/tomcat-work");
         engine.addChild(host);
         myContext = server.createContext(webAppContext, webAppName);
-        StandardManager sessionManager = new StandardManager();
-        sessionManager.setPathname("");
-        myContext.setManager(sessionManager);
+        mySessionManager = new StandardManager();
+        mySessionManager.setPathname("");
+        myContext.setManager(mySessionManager);
         host.addChild(myContext);
         for (String contextInfo : MyTunesRss.CONFIG.getAdditionalContexts()) {
             Context context = server.createContext(contextInfo.split(":", 2)[0], contextInfo.split(":", 2)[1]);
@@ -222,15 +220,15 @@ public class WebServer {
         Connector httpConnector = createConnector(server, listenAddress, listenPort, "http");
         if (httpConnector != null) {
             httpConnector.setAttribute("maxThreads", MyTunesRss.CONFIG.getTomcatMaxThreads());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Setting tomcat HTTP connector maximum threads to " + MyTunesRss.CONFIG.getTomcatMaxThreads() + ".");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Setting tomcat HTTP connector maximum threads to " + MyTunesRss.CONFIG.getTomcatMaxThreads() + ".");
             }
             if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getTomcatProxyHost())) {
-                LOG.debug("Setting proxy host to \"" + MyTunesRss.CONFIG.getTomcatProxyHost() + "\".");
+                LOGGER.debug("Setting proxy host to \"" + MyTunesRss.CONFIG.getTomcatProxyHost() + "\".");
                 httpConnector.setProxyName(MyTunesRss.CONFIG.getTomcatProxyHost());
             }
             if (MyTunesRss.CONFIG.getTomcatProxyPort() > 0 && MyTunesRss.CONFIG.getTomcatProxyPort() < 65536) {
-                LOG.debug("Setting proxy port to \"" + MyTunesRss.CONFIG.getTomcatProxyPort() + "\".");
+                LOGGER.debug("Setting proxy port to \"" + MyTunesRss.CONFIG.getTomcatProxyPort() + "\".");
                 httpConnector.setProxyPort(MyTunesRss.CONFIG.getTomcatProxyPort());
             }
             httpConnector.setURIEncoding("UTF-8");
@@ -243,31 +241,31 @@ public class WebServer {
                         server.addConnector(ajpConnector);
                     }
                 } catch (Exception e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
+                    if (LOGGER.isErrorEnabled()) {
+                        LOGGER.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
                     }
                 }
             }
             if (MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536) {
                 Connector sslConnector = null;
                 try {
-                    LOG.debug("Adding SSL connector.");
+                    LOGGER.debug("Adding SSL connector.");
                     sslConnector = createConnector(server, listenAddress, MyTunesRss.CONFIG.getSslPort(), "https");
                     if (sslConnector != null) {
-                        LOG.debug("Configuring SSL connector.");
+                        LOGGER.debug("Configuring SSL connector.");
                         if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getTomcatSslProxyHost())) {
-                            LOG.debug("Setting SSL proxy host to \"" + MyTunesRss.CONFIG.getTomcatSslProxyHost() + "\".");
+                            LOGGER.debug("Setting SSL proxy host to \"" + MyTunesRss.CONFIG.getTomcatSslProxyHost() + "\".");
                             sslConnector.setProxyName(MyTunesRss.CONFIG.getTomcatSslProxyHost());
                         }
                         if (MyTunesRss.CONFIG.getTomcatSslProxyPort() > 0 && MyTunesRss.CONFIG.getTomcatSslProxyPort() < 65536) {
-                            LOG.debug("Setting SSL proxy port to \"" + MyTunesRss.CONFIG.getTomcatSslProxyPort() + "\".");
+                            LOGGER.debug("Setting SSL proxy port to \"" + MyTunesRss.CONFIG.getTomcatSslProxyPort() + "\".");
                             sslConnector.setProxyPort(MyTunesRss.CONFIG.getTomcatSslProxyPort());
                         }
                         sslConnector.setURIEncoding("UTF-8");
                         if (StringUtils.isEmpty(MyTunesRss.CONFIG.getSslKeystoreFile()) ||
                                 !new File(MyTunesRss.CONFIG.getSslKeystoreFile()).isFile()) {
                             // copy default keystore to configured location
-                            LOG.warn("Using default keystore because configured one does not exist but SSL is enabled.");
+                            LOGGER.warn("Using default keystore because configured one does not exist but SSL is enabled.");
                             File tempFile = File.createTempFile("mytunesrss-", ".keystore");
                             tempFile.deleteOnExit();
                             IOUtils.copy(getClass().getResourceAsStream("/keystore"), new FileOutputStream(tempFile));
@@ -284,7 +282,7 @@ public class WebServer {
                         server.addConnector(sslConnector);
                     }
                 } catch (Exception e) {
-                    LOG.error("Could not add/configure SSL connector.", e);
+                    LOGGER.error("Could not add/configure SSL connector.", e);
                 }
             }
             for (Map.Entry<String, Object> contextEntry : contextEntries.entrySet()) {
@@ -310,8 +308,8 @@ public class WebServer {
                 }
                 IntrospectionUtils.setProperty(connector, "port", Integer.toString(listenPort));
             } catch (Exception e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not create connector for \"" + protocol + "\", \"" + listenAddress + "\", \"" + listenPort + "\".", e);
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not create connector for \"" + protocol + "\", \"" + listenAddress + "\", \"" + listenPort + "\".", e);
                 }
             }
         }
@@ -339,7 +337,7 @@ public class WebServer {
                 MyTunesRss.QUICKTIME_PLAYER.destroy();
             }
         } catch (QuicktimePlayerException e) {
-            LOG.error("Could not destroy quicktime player.", e);
+            LOGGER.error("Could not destroy quicktime player.", e);
         }
         return true;
     }
@@ -360,5 +358,24 @@ public class WebServer {
             return sessionInfos;
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * Access the session with the specified id. This is catalina specific code to keep
+     * a session alive during long running requests.
+     *
+     * @param sessionId A session id.
+     */
+    public void accessSession(String sessionId) {
+        Session session = null;
+        try {
+            session = mySessionManager.findSession(sessionId);
+            if (session != null) {
+                LOGGER.debug("Accessing session with ID \"" + sessionId + "\".");
+                session.access();
+            }
+        } catch (IOException e) {
+            LOGGER.error("Could not find session for ID \"" + sessionId + "\".", e);
+        }
     }
 }
