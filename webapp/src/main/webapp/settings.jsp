@@ -147,6 +147,14 @@
                 </tr>
             </c:if>
             <tr <mt:flipFlop/>>
+                <td><fmt:message key="settings.keepAlive" /></td>
+                <td>
+                    <input type="checkbox"
+                           name="keepAlive"
+                           value="true" <c:if test="${config.keepAlive}">checked="checked"</c:if>/>
+                </td>
+            </tr>
+            <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.itemsPerPage" /></td>
                 <td><input type="text"
                            name="pageSize"
