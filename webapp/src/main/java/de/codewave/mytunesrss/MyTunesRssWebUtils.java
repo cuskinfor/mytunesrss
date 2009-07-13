@@ -257,24 +257,6 @@ public class MyTunesRssWebUtils {
             }
         }
     }
-
-    /**
-     * Access the session of the specified request. This is catalina specific code to keep
-     * a session alive during long running requests.
-     *
-     * @param request An http servlet request.
-     * @param minSecsLifeTimeLeft Minimum life time left before session is accessed.
-     */
-    public static void accessSession(HttpServletRequest request, long minSecsLifeTimeLeft) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            long remainingLifeTimeMillis = session.getMaxInactiveInterval() - ((System.currentTimeMillis() - session.getLastAccessedTime()) / 1000);
-            if (remainingLifeTimeMillis < minSecsLifeTimeLeft) {
-                LOGGER.debug("Only " + remainingLifeTimeMillis + " seconds life time left for session with ID \"" + session.getId() + "\".");
-                MyTunesRss.WEBSERVER.accessSession(session.getId());
-            }
-        }
-    }
 }
 
 
