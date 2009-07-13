@@ -44,6 +44,7 @@ public enum MyTunesRssCommand implements Command {
     ShowRemoteControl("showRemoteControl", ShowRemoteControlHandler.class),
     SearchTracks("searchTracks", SearchTracksCommandHandler.class),
     ShowResource("showResource", ShowResourceCommandHandler.class),
+    KeepSessionAlive("keepSessionAlive", KeepSessionAliveCommandHandler.class),
     Upload("upload", UploadCommandHandler.class);
 
     private String myName;

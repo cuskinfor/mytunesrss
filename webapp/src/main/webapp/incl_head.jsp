@@ -14,5 +14,12 @@
 <script src="${appUrl}/js/functions.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script type="text/javascript">
     var $jQ=jQuery.noConflict();
+
+    function sendKeepAlive() {
+        $jQ.get("${servletUrl}/keepSessionAlive");
+        window.setTimeout(sendKeepAlive, ${(authUser.sessionTimeout * 60 * 1000) - 20000});
+    }
+
+    window.setTimeout(sendKeepAlive, ${(authUser.sessionTimeout * 60 * 1000) - 20000});
 </script>
 <meta name="viewport" content="width=480" />

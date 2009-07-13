@@ -359,26 +359,4 @@ public class WebServer {
         }
         return Collections.emptyList();
     }
-
-    /**
-     * Access the session with the specified id. This is catalina specific code to keep
-     * a session alive during long running requests.
-     *
-     * @param sessionId A session id.
-     */
-    public void accessSession(String sessionId) {
-        Session session = null;
-        try {
-            session = mySessionManager.findSession(sessionId);
-            if (session != null) {
-                LOGGER.debug("Accessing session with ID \"" + sessionId + "\".");
-                session.access(); // two times to get last access time correct
-                session.access();
-                session.endAccess();
-                session.endAccess();
-            }
-        } catch (IOException e) {
-            LOGGER.error("Could not find session for ID \"" + sessionId + "\".", e);
-        }
-    }
 }
