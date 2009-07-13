@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <title><fmt:message key="applicationTitle" /> v${mytunesrssVersion}</title>
@@ -15,11 +16,13 @@
 <script type="text/javascript">
     var $jQ=jQuery.noConflict();
 
-    function sendKeepAlive() {
-        $jQ.get("${servletUrl}/keepSessionAlive");
-        window.setTimeout(sendKeepAlive, ${(authUser.sessionTimeout * 60 * 1000) - 20000});
-    }
+    <c:if test="${config.keepAlive}">
+        function sendKeepAlive() {
+            $jQ.get("${servletUrl}/keepSessionAlive");
+            window.setTimeout(sendKeepAlive, ${(authUser.sessionTimeout * 60 * 1000) - 20000});
+        }
 
-    window.setTimeout(sendKeepAlive, ${(authUser.sessionTimeout * 60 * 1000) - 20000});
+        window.setTimeout(sendKeepAlive, ${(authUser.sessionTimeout * 60 * 1000) - 20000});
+    </c:if>
 </script>
 <meta name="viewport" content="width=480" />
