@@ -1,9 +1,10 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.servlet.WebConfig;
-import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.utils.servlet.ServletUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
@@ -23,7 +25,7 @@ import java.util.*;
  * @version $Id:$
  */
 public class MyTunesRssWebUtils {
-    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssWebUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssWebUtils.class);
 
     public static String getServletUrl(HttpServletRequest request) {
         return ServletUtils.getApplicationUrl(request) + "/mytunesrss";
@@ -46,8 +48,8 @@ public class MyTunesRssWebUtils {
                 result = "{" + MyTunesRssBase64Utils.encode(cipher.doFinal(pathInfo.getBytes("UTF-8"))) + "}";
             }
         } catch (Exception e) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Could not encrypt path info.", e);
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Could not encrypt path info.", e);
             }
         }
         try {
@@ -67,10 +69,10 @@ public class MyTunesRssWebUtils {
                 webConfig.clearWithDefaults(httpServletRequest);
                 webConfig.load(httpServletRequest);
                 httpServletRequest.getSession().setAttribute("config", webConfig);
-                LOG.debug("Created session configuration.");
+                LOGGER.debug("Created session configuration.");
             }
             httpServletRequest.setAttribute("config", webConfig);
-            LOG.debug("Created request configuration: " + webConfig.getMap().toString());
+            LOGGER.debug("Created request configuration: " + webConfig.getMap().toString());
         }
         MyTunesRssWebUtils.setTranscodingFromRequest(webConfig, httpServletRequest);
         return webConfig;
@@ -171,7 +173,7 @@ public class MyTunesRssWebUtils {
                         config.setTranscodeOnTheFlyIfPossible("1".equals(value));
                         break;
                     default:
-                        LOG.warn("Illegal transcodig parameter \"" + tc + "\" ignored.");
+                        LOGGER.warn("Illegal transcodig parameter \"" + tc + "\" ignored.");
                 }
             }
             if (names.length() > 1) {
@@ -252,6 +254,24 @@ public class MyTunesRssWebUtils {
                         map.put(parts[i], request.getParameter(parameterName));
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Access the session of the specified request. This is catalina specific code to keep
+     * a session alive during long running requests.
+     *
+     * @param request An http servlet request.
+     * @param minSecsLifeTimeLeft Minimum life time left before session is accessed.
+     */
+    public static void accessSession(HttpServletRequest request, long minSecsLifeTimeLeft) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            long remainingLifeTimeMillis = session.getMaxInactiveInterval() - ((System.currentTimeMillis() - session.getLastAccessedTime()) / 1000);
+            if (remainingLifeTimeMillis < minSecsLifeTimeLeft) {
+                LOGGER.debug("Only " + remainingLifeTimeMillis + " seconds life time left for session with ID \"" + session.getId() + "\".");
+                MyTunesRss.WEBSERVER.accessSession(session.getId());
             }
         }
     }
