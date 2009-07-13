@@ -287,11 +287,15 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                     getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getRequestURI() + "\").");
             LOG.debug("Request parameters:");
             for (Map.Entry entry : (Iterable<? extends Map.Entry>)getRequest().getParameterMap().entrySet()) {
-                StringBuilder msg = new StringBuilder("\"").append(entry.getKey()).append("\"=");
-                for (String value : (String[])entry.getValue()) {
-                    msg.append("\"").append(value).append("\",");
+                if (StringUtils.equals(entry.getKey().toString(), "password")) {
+                    LOG.debug("\"password\"=\"********\"");
+                } else {
+                    StringBuilder msg = new StringBuilder("\"").append(entry.getKey()).append("\"=");
+                    for (String value : (String[])entry.getValue()) {
+                        msg.append("\"").append(value).append("\",");
+                    }
+                    LOG.debug(msg.substring(0, msg.length() - 1));
                 }
-                LOG.debug(msg.substring(0, msg.length() - 1));
             }
         }
         if (SCHEDULE_DATABASE_UPDATE) {
