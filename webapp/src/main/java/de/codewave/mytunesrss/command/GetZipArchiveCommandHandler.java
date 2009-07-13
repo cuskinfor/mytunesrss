@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssSendCounter;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -30,7 +31,6 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         if (isRequestAuthorized() && getAuthUser().isDownload() && !getAuthUser().isQuotaExceeded()) {
-            try {
                 String baseName = getRequest().getPathInfo();
                 baseName = baseName.substring(baseName.lastIndexOf("/") + 1, baseName.lastIndexOf("."));
                 String tracklist = getRequestParameter("tracklist", null);
@@ -60,9 +60,6 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     createZipArchive(outputStream, tracks, baseName, new MyTunesRssSendCounter(getAuthUser(),
                                                                                                SessionManager.getSessionInfo(getRequest())));
                 }
-            } finally {
-                getSession().setMaxInactiveInterval(getAuthUser().getSessionTimeout() * 60); // reset correct session timeout
-            }
         } else {
             if (getAuthUser().isQuotaExceeded()) {
                 MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(getAuthUser());
@@ -83,7 +80,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
         int trackCount = 0;
         boolean quotaExceeded = false;
         for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
-            getSession().setMaxInactiveInterval(-1); // keep unlimited session until finished
+            MyTunesRssWebUtils.accessSession(getRequest());
             if (track.getFile().exists() && !getAuthUser().isQuotaExceeded()) {
                 String trackArtist = track.getArtist();
                 if (trackArtist.equals(InsertTrackStatement.UNKNOWN)) {

@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7.2" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Keep session alive by directly calling catalina session methods.
+            </action>
             <action dev="mdescher" type="update">
                 No compression for zip archives. Just storing.
             </action>

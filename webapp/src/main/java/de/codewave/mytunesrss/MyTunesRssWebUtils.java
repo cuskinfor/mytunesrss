@@ -6,6 +6,7 @@ import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.utils.servlet.ServletUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.catalina.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -253,6 +254,19 @@ public class MyTunesRssWebUtils {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Access the session of the specified request. This is catalina specific code to keep
+     * a session alive during long running requests.
+     *
+     * @param request An http servlet request.
+     */
+    public static void accessSession(HttpServletRequest request) {
+        Session session = (Session)request.getSession(false);
+        if (session != null) {
+            session.access();
         }
     }
 }
