@@ -6,13 +6,14 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssSendCounter;
-import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
+import de.codewave.utils.servlet.SessionManager.SessionInfo;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -30,7 +31,8 @@ import java.util.zip.ZipOutputStream;
 public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        if (isRequestAuthorized() && getAuthUser().isDownload() && !getAuthUser().isQuotaExceeded()) {
+        User user = getAuthUser();
+        if (isRequestAuthorized() && user.isDownload() && !user.isQuotaExceeded()) {
                 String baseName = getRequest().getPathInfo();
                 baseName = baseName.substring(baseName.lastIndexOf("/") + 1, baseName.lastIndexOf("."));
                 String tracklist = getRequestParameter("tracklist", null);
@@ -38,16 +40,17 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 if (StringUtils.isNotEmpty(tracklist)) {
                     tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(StringUtils.split(tracklist, ",")));
                 } else {
-                    tracks = getTransaction().executeQuery(TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true));
+                    tracks = getTransaction().executeQuery(TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), user, true));
                 }
+                SessionInfo sessionInfo = SessionManager.getSessionInfo(getRequest());
                 if (MyTunesRss.CONFIG.isLocalTempArchive()) {
                     File tempFile = File.createTempFile("MyTunesRSS_", null);
                     tempFile.deleteOnExit();
                     try {
-                        createZipArchive(new FileOutputStream(tempFile), tracks, baseName, null);
+                        createZipArchive(user, new FileOutputStream(tempFile), tracks, baseName, null);
                         FileSender fileSender = new FileSender(tempFile, "application/zip", (int)tempFile.length());
-                        fileSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
-                        fileSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper(0));
+                        fileSender.setCounter(new MyTunesRssSendCounter(user, sessionInfo));
+                        fileSender.setOutputStreamWrapper(user.getOutputStreamWrapper(0));
                         fileSender.sendGetResponse(getRequest(), getResponse(), false);
                     } finally {
                         if (tempFile.exists()) {
@@ -56,19 +59,18 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     }
                 } else {
                     getResponse().setContentType("application/zip");
-                    OutputStream outputStream = getAuthUser().getOutputStreamWrapper(0).wrapStream(getResponse().getOutputStream());
-                    createZipArchive(outputStream, tracks, baseName, new MyTunesRssSendCounter(getAuthUser(),
-                                                                                               SessionManager.getSessionInfo(getRequest())));
+                    OutputStream outputStream = user.getOutputStreamWrapper(0).wrapStream(getResponse().getOutputStream());
+                    createZipArchive(user, outputStream, tracks, baseName, new MyTunesRssSendCounter(user, sessionInfo));
                 }
         } else {
-            if (getAuthUser().isQuotaExceeded()) {
-                MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(getAuthUser());
+            if (user.isQuotaExceeded()) {
+                MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(user);
             }
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
     }
 
-    private void createZipArchive(OutputStream outputStream, DataStoreQuery.QueryResult<Track> tracks, String baseName,
+    private void createZipArchive(User user, OutputStream outputStream, DataStoreQuery.QueryResult<Track> tracks, String baseName,
             FileSender.ByteSentCounter counter) throws IOException {
         ZipOutputStream zipStream = new ZipOutputStream(outputStream);
         zipStream.setLevel(ZipOutputStream.STORED);
@@ -80,7 +82,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
         int trackCount = 0;
         boolean quotaExceeded = false;
         for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
-            if (track.getFile().exists() && !getAuthUser().isQuotaExceeded()) {
+            if (track.getFile().exists() && !user.isQuotaExceeded()) {
                 String trackArtist = track.getArtist();
                 if (trackArtist.equals(InsertTrackStatement.UNKNOWN)) {
                     trackArtist = "unknown";
@@ -120,9 +122,9 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 if (counter != null) {
                     counter.add((int)entry.getCompressedSize());
                 }
-            } else if (getAuthUser().isQuotaExceeded()) {
+            } else if (user.isQuotaExceeded()) {
                 quotaExceeded = true;
-                MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(getAuthUser());
+                MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(user);
             }
         }
         if (trackCount > 0) {
