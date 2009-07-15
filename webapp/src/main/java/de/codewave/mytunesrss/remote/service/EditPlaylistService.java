@@ -325,6 +325,9 @@ public class EditPlaylistService {
         if (user != null) {
             Playlist playlist = (Playlist) session.getAttribute(KEY_EDIT_PLAYLIST);
             if (playlist != null) {
+                if (StringUtils.isBlank(playlistName)) {
+                    throw new IllegalArgumentException("service.EditPlaylist.savePlaylist.blankName");
+                }
                 Collection<Track> playlistTracks = (Collection<Track>) session.getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
                 playlist.setName(playlistName);
                 playlist.setUserPrivate(userPrivate);
@@ -342,10 +345,10 @@ public class EditPlaylistService {
                 session.removeAttribute(KEY_EDIT_PLAYLIST);
                 session.removeAttribute(KEY_EDIT_PLAYLIST_TRACKS);
             } else {
-                throw new IllegalStateException("Not currently editing a playlist.");
+                throw new IllegalStateException("service.EditPlaylist.savePlaylist.noPlaylist");
             }
         } else {
-            throw new IllegalAccessException("Unauthorized");
+            throw new IllegalAccessException("service.unauthorized");
         }
     }
 

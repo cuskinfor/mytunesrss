@@ -147,7 +147,7 @@
                     </c:if>
                 </c:when>
                 <c:otherwise>
-                    <a style="cursor:pointer" onclick="addTracksToPlaylist($A(${mtfn:jsArray(fn:split(track.sectionIds, ","))}))"><img src="${appUrl}/images/add_th.gif" alt="add" /></a>
+                    <a style="cursor:pointer" onclick="addTracksToPlaylist($A([${mtfn:jsArray(fn:split(track.sectionIds, ","))}]))"><img src="${appUrl}/images/add_th.gif" alt="add" /></a>
                 </c:otherwise>
             </c:choose>
         </th>

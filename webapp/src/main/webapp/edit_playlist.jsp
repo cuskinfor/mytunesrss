@@ -15,6 +15,8 @@
 
     <jsp:include page="incl_head.jsp" />
 
+    <jsp:include page="incl_service_messages.jsp" />
+
     <script type="text/javascript">
         var unknownName = "<fmt:message key="unknown"/>";
         var firstItem = 0;
@@ -154,7 +156,7 @@
         function savePlaylist() {
             jsonRpc('${servletUrl}', "EditPlaylistService.savePlaylist", [$jQ("#playlistName").val(), $jQ("#privatePlaylist:checked").size() == 1], function(result, error) {
                 if (error) {
-                    $jQ("#errordialog").empty().append(error.msg);
+                    $jQ("#errordialog").empty().append(serviceMessages[error.msg]);
                     $jQ("#errordialog").dialog("open");
                 } else {
                     document.location.href = "${servletUrl}/showPlaylistManager/${auth}";
@@ -243,7 +245,7 @@
         </td>
         <td>#{trackArtist}</td>
         <td class="icon">
-            <a onclick="removeTrack(#{index}, '#{trackId}')"><img src="${appUrl}/images/delete#{oddSuffix}.gif" alt="delete" /></a>
+            <a style="cursor:pointer" onclick="removeTrack(#{index}, '#{trackId}')"><img src="${appUrl}/images/delete#{oddSuffix}.gif" alt="delete" /></a>
         </td>
     </tr>
 </textarea>
