@@ -34,7 +34,11 @@ public class MyTunesRssSystray implements MyTunesRssEventListener {
         Image image = Toolkit.getDefaultToolkit().createImage(MyTunesRss.class.getResource("/de/codewave/mytunesrss/SysTray.gif"));
         String tooltip = MyTunesRssUtils.getBundleString("systray.menuLabel");
         PopupMenu menu = createPopupMenu(settingsForm);
-        myUUID = SystrayUtils.add(image, tooltip, menu);
+        myUUID = SystrayUtils.add(image, tooltip, menu, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showFrame();
+            }
+        });
     }
 
     private PopupMenu createPopupMenu(Settings settingsForm) throws AWTException {
@@ -116,6 +120,18 @@ public class MyTunesRssSystray implements MyTunesRssEventListener {
         }
     }
 
+    private void showFrame() {
+        LOGGER.debug("Showing root frame from system tray.");
+        if (MyTunesRss.ROOT_FRAME.getExtendedState() == JFrame.ICONIFIED) {
+            MyTunesRss.ROOT_FRAME.setExtendedState(JFrame.NORMAL);
+        } else {
+            MyTunesRss.ROOT_FRAME.setExtendedState(MyTunesRss.ROOT_FRAME.getExtendedState() & ~JFrame.ICONIFIED);
+        }
+        MyTunesRss.ROOT_FRAME.setVisible(true);
+        MyTunesRss.ROOT_FRAME.toFront();
+        myShow.setEnabled(false);
+    }
+
     public class Listener implements ActionListener {
         private Settings mySettingsForm;
 
@@ -135,18 +151,6 @@ public class MyTunesRssSystray implements MyTunesRssEventListener {
             } else if (StringUtils.equals(e.getActionCommand(), "stop_server")) {
                 mySettingsForm.doStopServer();
             }
-        }
-
-        private void showFrame() {
-            LOGGER.debug("Showing root frame from system tray.");
-            if (MyTunesRss.ROOT_FRAME.getExtendedState() == JFrame.ICONIFIED) {
-                MyTunesRss.ROOT_FRAME.setExtendedState(JFrame.NORMAL);
-            } else {
-                MyTunesRss.ROOT_FRAME.setExtendedState(MyTunesRss.ROOT_FRAME.getExtendedState() & ~JFrame.ICONIFIED);
-            }
-            MyTunesRss.ROOT_FRAME.setVisible(true);
-            MyTunesRss.ROOT_FRAME.toFront();
-            myShow.setEnabled(false);
         }
 
         private void updateDatabase() {

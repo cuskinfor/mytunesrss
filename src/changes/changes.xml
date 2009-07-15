@@ -9,6 +9,9 @@
 
         <release version="3.8.0-EAP-2" date="2009-xx-xx" description="3.8.0 EAP 2">
             <action dev="mdescher" type="add">
+                Support double click on system tray icon to show frame.
+            </action>
+            <action dev="mdescher" type="add">
                 Support for [a ...]...[/a] links in welcome message.
             </action>
             <action dev="mdescher" type="add">
