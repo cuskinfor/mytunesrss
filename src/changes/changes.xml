@@ -12,7 +12,7 @@
                 Support double click on system tray icon to show frame.
             </action>
             <action dev="mdescher" type="add">
-                Support for [a ...]...[/a] links in welcome message.
+                Support for html in welcome message.
             </action>
             <action dev="mdescher" type="add">
                 Option to enable/disable server browser link on portal page.

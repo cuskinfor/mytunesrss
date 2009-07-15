@@ -87,7 +87,9 @@ public enum MyTunesRssResource {
                     }
                 }
                 message = message.replace("'", "''").replace("{", "'{'");
-                MyTunesRssWebUtils.addError(request, new LocalizedError(message), "messages");
+                LocalizedError error = new LocalizedError(message);
+                error.setEscapeXml(false);
+                MyTunesRssWebUtils.addError(request, error, "messages");
             }
             request.getSession().setAttribute("welcomeMessageDone", Boolean.TRUE);
         }

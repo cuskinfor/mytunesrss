@@ -16,7 +16,7 @@
                     <fmt:message var="localizedMessage" key="${error.key}" />
                 </c:otherwise>
             </c:choose>
-            <c:out value="${cwfn:message(localizedMessage, error.parameters)}" />
+            <c:out value="${cwfn:message(localizedMessage, error.parameters)}" escapeXml="${error.escapeXml}"/>
         </c:forEach>
     </div>
     <c:remove var="errors" scope="session" />
@@ -33,7 +33,7 @@
                     <fmt:message var="localizedMessage" key="${message.key}" />
                 </c:otherwise>
             </c:choose>
-            <mt:expandLinks><c:out value="${cwfn:message(localizedMessage, message.parameters)}" /></mt:expandLinks>
+            <c:out value="${cwfn:message(localizedMessage, message.parameters)}" escapeXml="${message.escapeXml}"/>
         </c:forEach>
     </div>
     <c:remove var="messages" scope="session" />

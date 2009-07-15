@@ -9,6 +9,7 @@ package de.codewave.mytunesrss.jsp;
  */
 public abstract class Error {
     private Object[] myParameters;
+    private boolean escapeXml = true;
 
     protected Error(Object... parameters) {
         myParameters = parameters;
@@ -16,6 +17,14 @@ public abstract class Error {
 
     public Object[] getParameters() {
         return myParameters;
+    }
+
+    public boolean isEscapeXml() {
+        return escapeXml;
+    }
+
+    public void setEscapeXml(boolean escapeXml) {
+        this.escapeXml = escapeXml;
     }
 
     public abstract boolean isLocalized();
