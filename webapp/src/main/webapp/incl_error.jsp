@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 
 <c:if test="${!empty errors}">
     <div class="error">
@@ -32,7 +33,7 @@
                     <fmt:message var="localizedMessage" key="${message.key}" />
                 </c:otherwise>
             </c:choose>
-            <c:out value="${cwfn:message(localizedMessage, message.parameters)}" />
+            <mt:expandLinks><c:out value="${cwfn:message(localizedMessage, message.parameters)}" /></mt:expandLinks>
         </c:forEach>
     </div>
     <c:remove var="messages" scope="session" />
