@@ -169,6 +169,11 @@ public class MyTunesRss {
         }
         MyTunesRss.CONFIG.load();
         REGISTRATION.init(null, true);
+        if (REGISTRATION.getSettings() != null) {
+            LOGGER.info("Loading configuration from license.");
+            MyTunesRss.CONFIG = new MyTunesRssConfig();
+            MyTunesRss.CONFIG.loadFromContext(REGISTRATION.getSettings());
+        }
         HEADLESS = arguments.containsKey("headless") || REGISTRATION.isDisableGui();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
         registerDatabaseDriver();
