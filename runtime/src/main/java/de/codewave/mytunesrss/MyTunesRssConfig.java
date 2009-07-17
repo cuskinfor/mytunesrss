@@ -324,6 +324,10 @@ public class MyTunesRssConfig {
         return myPathInfoKey;
     }
 
+    public void setPathInfoKey(SecretKey pathInfoKey) {
+        myPathInfoKey = pathInfoKey;
+    }
+
     public String getLameBinary() {
         return myLameBinary;
     }
@@ -988,9 +992,9 @@ public class MyTunesRssConfig {
     }
 
     public void load() {
-        LOGGER.info("Loading configuration.");
         try {
             File file = getSettingsFile();
+            LOGGER.info("Loading configuration from \"" + file.getAbsolutePath() + "\".");
             String freshCryptedCreationTime = encryptCreationTime(System.currentTimeMillis());
             if (!file.isFile()) {
                 FileUtils.writeStringToFile(file,
@@ -1016,162 +1020,176 @@ public class MyTunesRssConfig {
             if (currentConfigVersion.compareTo(currentAppVersion) < 0) {
                 migrate();
             }
-            setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
-            setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
-            setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
-            setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
-            setAutoStartServer(JXPathUtils.getBooleanValue(settings, "autoStartServer", isAutoStartServer()));
-            setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
-            setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
-            List<String> dataSources = new ArrayList<String>();
-            Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
-            while (contextIterator.hasNext()) {
-                dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
-            }
-            setDatasources(dataSources.toArray(new String[dataSources.size()]));
-            setAlbumFallback(JXPathUtils.getStringValue(settings, "albumFallback", "[dir:0]"));
-            setArtistFallback(JXPathUtils.getStringValue(settings, "artistFallback", "[dir:1]"));
-            setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(settings, "iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
-            setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
-            setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
-            setLocalTempArchive(JXPathUtils.getBooleanValue(settings, "localTempArchive", isLocalTempArchive()));
-            Iterator<JXPathContext> users = JXPathUtils.getContextIterator(settings, "users/user");
-            while (users != null && users.hasNext()) {
-                JXPathContext userContext = users.next();
-                User user = new User(JXPathUtils.getStringValue(userContext, "name", null));
-                user.loadFromPreferences(userContext);
-                addUser(user);
-            }
-            setSupportName(JXPathUtils.getStringValue(settings, "supportName", getSupportName()));
-            setSupportEmail(JXPathUtils.getStringValue(settings, "supportEmail", getSupportEmail()));
-            setProxyServer(JXPathUtils.getBooleanValue(settings, "proxyServer", isProxyServer()));
-            setProxyHost(JXPathUtils.getStringValue(settings, "proxyHost", getProxyHost()));
-            setProxyPort(JXPathUtils.getIntValue(settings, "proxyPort", getProxyPort()));
-            setMyTunesRssComSsl(JXPathUtils.getBooleanValue(settings, "myTunesRssComSsl", isMyTunesRssComSsl()));
-            setMyTunesRssComUser(JXPathUtils.getStringValue(settings, "myTunesRssComUser", getMyTunesRssComUser()));
-            setMyTunesRssComPasswordHash(JXPathUtils.getByteArray(settings, "myTunesRssComPassword", getMyTunesRssComPasswordHash()));
-            myFileTypes = new ArrayList<FileType>();
-            Iterator<JXPathContext> fileTypes = JXPathUtils.getContextIterator(settings, "file-types/type");
-            while (fileTypes != null && fileTypes.hasNext()) {
-                JXPathContext fileTypeContext = fileTypes.next();
-                FileType fileType = new FileType();
-                fileType.setMimeType(JXPathUtils.getStringValue(fileTypeContext, "mime-type", "audio/mp3"));
-                fileType.setSuffix(JXPathUtils.getStringValue(fileTypeContext, "suffix", "mp3"));
-                // Loading the element "video" is for migration purposes from older versions
-                String mediaTypeFromOldVideoElement = JXPathUtils.getBooleanValue(fileTypeContext, "video", false) ? MediaType.Video.name() : MediaType.Audio.name();
-                fileType.setMediaType(MediaType.valueOf(JXPathUtils.getStringValue(fileTypeContext, "mediatype", mediaTypeFromOldVideoElement)));
-                fileType.setProtected(JXPathUtils.getBooleanValue(fileTypeContext, "protected", false));
-                fileType.setActive(JXPathUtils.getBooleanValue(fileTypeContext, "active", true));
-                myFileTypes.add(fileType);
-            }
-            setArtistDropWords(JXPathUtils.getStringValue(settings, "artistDropWords", getArtistDropWords()));
-            setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
-            setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
-            readPathInfoEncryptionKey(settings);
-            setLameBinary(JXPathUtils.getStringValue(settings, "lameBinary", getLameBinary()));
-            setLameTargetOptions(JXPathUtils.getStringValue(settings, "lameTargetOptions", getLameTargetOptions()));
-            setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
-            setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
-            setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
-            setBandwidthLimitFactor(new BigDecimal(JXPathUtils.getStringValue(settings, "bandwidthLimitFactor", "0")));
-            setIgnoreArtwork(JXPathUtils.getBooleanValue(settings, "ignoreArtwork", false));
-            setCodewaveLogLevel(Level.toLevel(JXPathUtils.getStringValue(settings, "codewaveLogLevel", Level.INFO.toString()).toUpperCase()));
-            setWindowX(JXPathUtils.getIntValue(settings, "window/x", Integer.MAX_VALUE));
-            setWindowY(JXPathUtils.getIntValue(settings, "window/y", Integer.MAX_VALUE));
-            setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
-            setDeleteDatabaseOnNextStartOnError(JXPathUtils.getBooleanValue(settings, "deleteDatabaseOnNextStartOnError", false));
-            setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
-            Iterator<JXPathContext> cronTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database");
-            myDatabaseCronTriggers = new ArrayList<String>();
-            while (cronTriggerIterator.hasNext()) {
-                myDatabaseCronTriggers.add(JXPathUtils.getStringValue(cronTriggerIterator.next(), ".", ""));
-            }
-            loadDatabaseSettings(settings);
-            setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
-            setJmxHost(JXPathUtils.getStringValue(settings, "jmx/host", "0.0.0.0"));
-            setJmxPort(JXPathUtils.getIntValue(settings, "jmx/port", 8500));
-            setJmxUser(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/user", null)));
-            setJmxPassword(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/password", null)));
-            setTomcatMaxThreads(JXPathUtils.getStringValue(settings, "tomcat/max-threads", "200"));
-            setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/ajp-port", 0));
-            String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
-            setWebappContext(context != null ? "/" + context : "");
-            setTomcatProxyHost(JXPathUtils.getStringValue(settings, "tomcat/proxy-host", null));
-            setTomcatProxyScheme(JXPathUtils.getStringValue(settings, "tomcat/proxy-scheme", null));
-            setTomcatProxyPort(JXPathUtils.getIntValue(settings, "tomcat/proxy-port", 0));
-            setSslKeystoreFile(JXPathUtils.getStringValue(settings, "ssl/keystore/file", null));
-            setSslKeystoreKeyAlias(JXPathUtils.getStringValue(settings, "ssl/keystore/keyalias", null));
-            setSslKeystorePass(JXPathUtils.getStringValue(settings, "ssl/keystore/pass", null));
-            setSslPort(JXPathUtils.getIntValue(settings, "ssl/port", 0));
-            setTomcatSslProxyScheme(JXPathUtils.getStringValue(settings, "ssl/proxy-scheme", null));
-            setTomcatSslProxyHost(JXPathUtils.getStringValue(settings, "ssl/proxy-host", null));
-            setTomcatSslProxyPort(JXPathUtils.getIntValue(settings, "ssl/proxy-port", 0));
-            myAdditionalContexts = new ArrayList<String>();
-            Iterator<JXPathContext> additionalContextsIterator = JXPathUtils.getContextIterator(settings, "tomcat/additionalContexts/context");
-            while (additionalContextsIterator.hasNext()) {
-                JXPathContext additionalContext = additionalContextsIterator.next();
-                myAdditionalContexts.add(JXPathUtils.getStringValue(additionalContext, "name", "").trim() + ":" + JXPathUtils.getStringValue(
-                        additionalContext,
-                        "docbase",
-                        "").trim());
-            }
-            myDialogLayouts = new HashMap<String, DialogLayout>();
-            Iterator<JXPathContext> dialogLayoutsIterator = JXPathUtils.getContextIterator(settings, "dialogs/layout");
-            while (dialogLayoutsIterator.hasNext()) {
-                JXPathContext dialogLayout = dialogLayoutsIterator.next();
-                DialogLayout layout = new DialogLayout();
-                layout.setX(JXPathUtils.getIntValue(dialogLayout, "x", -1));
-                layout.setY(JXPathUtils.getIntValue(dialogLayout, "y", -1));
-                layout.setWidth(JXPathUtils.getIntValue(dialogLayout, "width", -1));
-                layout.setHeight(JXPathUtils.getIntValue(dialogLayout, "height", -1));
-                myDialogLayouts.put(JXPathUtils.getStringValue(dialogLayout, "class", "").trim(), layout);
-            }
-            setMailHost(JXPathUtils.getStringValue(settings, "mail-host", null));
-            setMailPort(JXPathUtils.getIntValue(settings, "mail-port", -1));
-            setMailTls(JXPathUtils.getBooleanValue(settings, "mail-tls", false));
-            setMailLogin(JXPathUtils.getStringValue(settings, "mail-login", null));
-            setMailPassword(JXPathUtils.getStringValue(settings, "mail-password", null));
-            setMailSender(JXPathUtils.getStringValue(settings, "mail-sender", null));
-            setAdminEmail(JXPathUtils.getStringValue(settings, "admin-email", null));
-            setNotifyOnDatabaseUpdate(JXPathUtils.getBooleanValue(settings, "admin-notify/database-update", false));
-            setNotifyOnEmailChange(JXPathUtils.getBooleanValue(settings, "admin-notify/email-change", false));
-            setNotifyOnInternalError(JXPathUtils.getBooleanValue(settings, "admin-notify/internal-error", false));
-            setNotifyOnLoginFailure(JXPathUtils.getBooleanValue(settings, "admin-notify/login-failure", false));
-            setNotifyOnPasswordChange(JXPathUtils.getBooleanValue(settings, "admin-notify/password-change", false));
-            setNotifyOnQuotaExceeded(JXPathUtils.getBooleanValue(settings, "admin-notify/quota-exceeded", false));
-            setNotifyOnTranscodingFailure(JXPathUtils.getBooleanValue(settings, "admin-notify/transcoding-failure", false));
-            setNotifyOnWebUpload(JXPathUtils.getBooleanValue(settings, "admin-notify/web-upload", false));
-            setNotifyOnMissingFile(JXPathUtils.getBooleanValue(settings, "admin-notify/missing-file", false));
-            if (myFileTypes.isEmpty()) {
-                myFileTypes = FileType.getDefaults();
-            }
-            try {
-                setStatisticKeepTime(JXPathUtils.getIntValue(settings, "statistics-keep-time", getStatisticKeepTime()));
-            } catch (Exception e) {
-                LOGGER.warn("Could not read/parse statistics keep time, keeping default.");
-                // intentionally left blank; keep default
-            }
-            setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", null));
-            Iterator<JXPathContext> transcoderConfigIterator = JXPathUtils.getContextIterator(settings, "transcoders/config");
-            myTranscoderConfigs = new ArrayList<TranscoderConfig>();
-            while (transcoderConfigIterator.hasNext()) {
-                JXPathContext transcoderConfigContext = transcoderConfigIterator.next();
-                myTranscoderConfigs.add(new TranscoderConfig(transcoderConfigContext));
-            }
-            Iterator<JXPathContext> externalSitesIterator = JXPathUtils.getContextIterator(settings, "external-sites/site");
-            myExternalSites = new ArrayList<ExternalSiteDefinition>();
-            while (externalSitesIterator.hasNext()) {
-                JXPathContext externalSiteContext = externalSitesIterator.next();
-                String name = JXPathUtils.getStringValue(externalSiteContext, "name", null);
-                String url = JXPathUtils.getStringValue(externalSiteContext, "url", null);
-                String type = JXPathUtils.getStringValue(externalSiteContext, "type", null);
-                myExternalSites.add(new ExternalSiteDefinition(type, name, url));
-            }
-            setMinimizeToSystray(JXPathUtils.getBooleanValue(settings, "minimizeToSystray", false));
-            setServerBrowserActive(JXPathUtils.getBooleanValue(settings, "serverBrowserActive", true));
+            loadFromContext(settings);
         } catch (IOException e) {
             LOGGER.error("Could not read configuration file.", e);
         }
+    }
+
+    public void loadFromContext(JXPathContext settings) {
+        try {
+            setVersion(MyTunesRss.VERSION);
+            load(settings);
+        } catch(IOException e) {
+            LOGGER.error("Could not read configuration file.", e);
+        }
+
+    }
+
+    private void load(JXPathContext settings) throws IOException {
+        setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
+        setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
+        setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
+        setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
+        setAutoStartServer(JXPathUtils.getBooleanValue(settings, "autoStartServer", isAutoStartServer()));
+        setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
+        setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
+        List<String> dataSources = new ArrayList<String>();
+        Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
+        while (contextIterator.hasNext()) {
+            dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
+        }
+        setDatasources(dataSources.toArray(new String[dataSources.size()]));
+        setAlbumFallback(JXPathUtils.getStringValue(settings, "albumFallback", "[dir:0]"));
+        setArtistFallback(JXPathUtils.getStringValue(settings, "artistFallback", "[dir:1]"));
+        setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(settings, "iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
+        setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
+        setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
+        setLocalTempArchive(JXPathUtils.getBooleanValue(settings, "localTempArchive", isLocalTempArchive()));
+        Iterator<JXPathContext> users = JXPathUtils.getContextIterator(settings, "users/user");
+        while (users != null && users.hasNext()) {
+            JXPathContext userContext = users.next();
+            User user = new User(JXPathUtils.getStringValue(userContext, "name", null));
+            user.loadFromPreferences(userContext);
+            addUser(user);
+        }
+        setSupportName(JXPathUtils.getStringValue(settings, "supportName", getSupportName()));
+        setSupportEmail(JXPathUtils.getStringValue(settings, "supportEmail", getSupportEmail()));
+        setProxyServer(JXPathUtils.getBooleanValue(settings, "proxyServer", isProxyServer()));
+        setProxyHost(JXPathUtils.getStringValue(settings, "proxyHost", getProxyHost()));
+        setProxyPort(JXPathUtils.getIntValue(settings, "proxyPort", getProxyPort()));
+        setMyTunesRssComSsl(JXPathUtils.getBooleanValue(settings, "myTunesRssComSsl", isMyTunesRssComSsl()));
+        setMyTunesRssComUser(JXPathUtils.getStringValue(settings, "myTunesRssComUser", getMyTunesRssComUser()));
+        setMyTunesRssComPasswordHash(JXPathUtils.getByteArray(settings, "myTunesRssComPassword", getMyTunesRssComPasswordHash()));
+        myFileTypes = new ArrayList<FileType>();
+        Iterator<JXPathContext> fileTypes = JXPathUtils.getContextIterator(settings, "file-types/type");
+        while (fileTypes != null && fileTypes.hasNext()) {
+            JXPathContext fileTypeContext = fileTypes.next();
+            FileType fileType = new FileType();
+            fileType.setMimeType(JXPathUtils.getStringValue(fileTypeContext, "mime-type", "audio/mp3"));
+            fileType.setSuffix(JXPathUtils.getStringValue(fileTypeContext, "suffix", "mp3"));
+            // Loading the element "video" is for migration purposes from older versions
+            String mediaTypeFromOldVideoElement = JXPathUtils.getBooleanValue(fileTypeContext, "video", false) ? MediaType.Video.name() : MediaType.Audio.name();
+            fileType.setMediaType(MediaType.valueOf(JXPathUtils.getStringValue(fileTypeContext, "mediatype", mediaTypeFromOldVideoElement)));
+            fileType.setProtected(JXPathUtils.getBooleanValue(fileTypeContext, "protected", false));
+            fileType.setActive(JXPathUtils.getBooleanValue(fileTypeContext, "active", true));
+            myFileTypes.add(fileType);
+        }
+        setArtistDropWords(JXPathUtils.getStringValue(settings, "artistDropWords", getArtistDropWords()));
+        setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
+        setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
+        readPathInfoEncryptionKey(settings);
+        setLameBinary(JXPathUtils.getStringValue(settings, "lameBinary", getLameBinary()));
+        setLameTargetOptions(JXPathUtils.getStringValue(settings, "lameTargetOptions", getLameTargetOptions()));
+        setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
+        setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
+        setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
+        setBandwidthLimitFactor(new BigDecimal(JXPathUtils.getStringValue(settings, "bandwidthLimitFactor", "0")));
+        setIgnoreArtwork(JXPathUtils.getBooleanValue(settings, "ignoreArtwork", false));
+        setCodewaveLogLevel(Level.toLevel(JXPathUtils.getStringValue(settings, "codewaveLogLevel", Level.INFO.toString()).toUpperCase()));
+        setWindowX(JXPathUtils.getIntValue(settings, "window/x", Integer.MAX_VALUE));
+        setWindowY(JXPathUtils.getIntValue(settings, "window/y", Integer.MAX_VALUE));
+        setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
+        setDeleteDatabaseOnNextStartOnError(JXPathUtils.getBooleanValue(settings, "deleteDatabaseOnNextStartOnError", false));
+        setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
+        Iterator<JXPathContext> cronTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database");
+        myDatabaseCronTriggers = new ArrayList<String>();
+        while (cronTriggerIterator.hasNext()) {
+            myDatabaseCronTriggers.add(JXPathUtils.getStringValue(cronTriggerIterator.next(), ".", ""));
+        }
+        loadDatabaseSettings(settings);
+        setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
+        setJmxHost(JXPathUtils.getStringValue(settings, "jmx/host", "0.0.0.0"));
+        setJmxPort(JXPathUtils.getIntValue(settings, "jmx/port", 8500));
+        setJmxUser(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/user", null)));
+        setJmxPassword(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/password", null)));
+        setTomcatMaxThreads(JXPathUtils.getStringValue(settings, "tomcat/max-threads", "200"));
+        setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/ajp-port", 0));
+        String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
+        setWebappContext(context != null ? "/" + context : "");
+        setTomcatProxyHost(JXPathUtils.getStringValue(settings, "tomcat/proxy-host", null));
+        setTomcatProxyScheme(JXPathUtils.getStringValue(settings, "tomcat/proxy-scheme", null));
+        setTomcatProxyPort(JXPathUtils.getIntValue(settings, "tomcat/proxy-port", 0));
+        setSslKeystoreFile(JXPathUtils.getStringValue(settings, "ssl/keystore/file", null));
+        setSslKeystoreKeyAlias(JXPathUtils.getStringValue(settings, "ssl/keystore/keyalias", null));
+        setSslKeystorePass(JXPathUtils.getStringValue(settings, "ssl/keystore/pass", null));
+        setSslPort(JXPathUtils.getIntValue(settings, "ssl/port", 0));
+        setTomcatSslProxyScheme(JXPathUtils.getStringValue(settings, "ssl/proxy-scheme", null));
+        setTomcatSslProxyHost(JXPathUtils.getStringValue(settings, "ssl/proxy-host", null));
+        setTomcatSslProxyPort(JXPathUtils.getIntValue(settings, "ssl/proxy-port", 0));
+        myAdditionalContexts = new ArrayList<String>();
+        Iterator<JXPathContext> additionalContextsIterator = JXPathUtils.getContextIterator(settings, "tomcat/additionalContexts/context");
+        while (additionalContextsIterator.hasNext()) {
+            JXPathContext additionalContext = additionalContextsIterator.next();
+            myAdditionalContexts.add(JXPathUtils.getStringValue(additionalContext, "name", "").trim() + ":" + JXPathUtils.getStringValue(
+                    additionalContext,
+                    "docbase",
+                    "").trim());
+        }
+        myDialogLayouts = new HashMap<String, DialogLayout>();
+        Iterator<JXPathContext> dialogLayoutsIterator = JXPathUtils.getContextIterator(settings, "dialogs/layout");
+        while (dialogLayoutsIterator.hasNext()) {
+            JXPathContext dialogLayout = dialogLayoutsIterator.next();
+            DialogLayout layout = new DialogLayout();
+            layout.setX(JXPathUtils.getIntValue(dialogLayout, "x", -1));
+            layout.setY(JXPathUtils.getIntValue(dialogLayout, "y", -1));
+            layout.setWidth(JXPathUtils.getIntValue(dialogLayout, "width", -1));
+            layout.setHeight(JXPathUtils.getIntValue(dialogLayout, "height", -1));
+            myDialogLayouts.put(JXPathUtils.getStringValue(dialogLayout, "class", "").trim(), layout);
+        }
+        setMailHost(JXPathUtils.getStringValue(settings, "mail-host", null));
+        setMailPort(JXPathUtils.getIntValue(settings, "mail-port", -1));
+        setMailTls(JXPathUtils.getBooleanValue(settings, "mail-tls", false));
+        setMailLogin(JXPathUtils.getStringValue(settings, "mail-login", null));
+        setMailPassword(JXPathUtils.getStringValue(settings, "mail-password", null));
+        setMailSender(JXPathUtils.getStringValue(settings, "mail-sender", null));
+        setAdminEmail(JXPathUtils.getStringValue(settings, "admin-email", null));
+        setNotifyOnDatabaseUpdate(JXPathUtils.getBooleanValue(settings, "admin-notify/database-update", false));
+        setNotifyOnEmailChange(JXPathUtils.getBooleanValue(settings, "admin-notify/email-change", false));
+        setNotifyOnInternalError(JXPathUtils.getBooleanValue(settings, "admin-notify/internal-error", false));
+        setNotifyOnLoginFailure(JXPathUtils.getBooleanValue(settings, "admin-notify/login-failure", false));
+        setNotifyOnPasswordChange(JXPathUtils.getBooleanValue(settings, "admin-notify/password-change", false));
+        setNotifyOnQuotaExceeded(JXPathUtils.getBooleanValue(settings, "admin-notify/quota-exceeded", false));
+        setNotifyOnTranscodingFailure(JXPathUtils.getBooleanValue(settings, "admin-notify/transcoding-failure", false));
+        setNotifyOnWebUpload(JXPathUtils.getBooleanValue(settings, "admin-notify/web-upload", false));
+        setNotifyOnMissingFile(JXPathUtils.getBooleanValue(settings, "admin-notify/missing-file", false));
+        if (myFileTypes.isEmpty()) {
+            myFileTypes = FileType.getDefaults();
+        }
+        try {
+            setStatisticKeepTime(JXPathUtils.getIntValue(settings, "statistics-keep-time", getStatisticKeepTime()));
+        } catch (Exception e) {
+            LOGGER.warn("Could not read/parse statistics keep time, keeping default.");
+            // intentionally left blank; keep default
+        }
+        setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", null));
+        Iterator<JXPathContext> transcoderConfigIterator = JXPathUtils.getContextIterator(settings, "transcoders/config");
+        myTranscoderConfigs = new ArrayList<TranscoderConfig>();
+        while (transcoderConfigIterator.hasNext()) {
+            JXPathContext transcoderConfigContext = transcoderConfigIterator.next();
+            myTranscoderConfigs.add(new TranscoderConfig(transcoderConfigContext));
+        }
+        Iterator<JXPathContext> externalSitesIterator = JXPathUtils.getContextIterator(settings, "external-sites/site");
+        myExternalSites = new ArrayList<ExternalSiteDefinition>();
+        while (externalSitesIterator.hasNext()) {
+            JXPathContext externalSiteContext = externalSitesIterator.next();
+            String name = JXPathUtils.getStringValue(externalSiteContext, "name", null);
+            String url = JXPathUtils.getStringValue(externalSiteContext, "url", null);
+            String type = JXPathUtils.getStringValue(externalSiteContext, "type", null);
+            myExternalSites.add(new ExternalSiteDefinition(type, name, url));
+        }
+        setMinimizeToSystray(JXPathUtils.getBooleanValue(settings, "minimizeToSystray", false));
+        setServerBrowserActive(JXPathUtils.getBooleanValue(settings, "serverBrowserActive", true));
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
@@ -1214,8 +1232,8 @@ public class MyTunesRssConfig {
     }
 
     public void save() {
-        LOGGER.info("Saving configuration.");
         try {
+            LOGGER.info("Saving configuration to \"" + getSettingsFile().getAbsolutePath() + "\".");
             Document settings = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             Element root = settings.createElement("settings");
             settings.appendChild(root);
