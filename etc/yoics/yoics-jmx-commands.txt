@@ -1,0 +1,28 @@
+http://mx4j.sourceforge.net/docs/ch05.html
+
+--------------------------------------------------
+
+Show all available MyTunesRSS MBeans:
+http://localhost:8500/serverbydomain?querynames=MyTunesRSS:*
+
+--------------------------------------------------
+
+Create new user:
+http://localhost:8500/invoke?objectname=MyTunesRSS:type=config,name=Users&operation=addUser&type0=java.lang.String&value0=yoics&type1=java.lang.String&value1=yoics
+
+Add iTunes XML:
+http://localhost:8500/invoke?objectname=MyTunesRSS:type=config,name=Directories&operation=addDatasource&type0=java.lang.String&value0=c:/Dokumente und Einstellungen/Administrator/Eigene Dateien/Eigene Musik
+
+Trigger database update:
+http://localhost:8500/invoke?objectname=MyTunesRSS:type=config,name=Database&operation=updateDatabase
+
+Start server:
+http://localhost:8500/invoke?objectname=MyTunesRSS:type=config,name=Server&operation=startServer
+
+--------------------------------------------------
+
+Check update state:
+http://localhost:8500/getattribute?objectname=MyTunesRSS:type=config,name=Database&attribute=DatabaseStatus
+
+Stop server:
+http://localhost:8500/invoke?objectname=MyTunesRSS:type=config,name=Server&operation=stopServer
