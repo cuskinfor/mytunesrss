@@ -174,85 +174,95 @@
                     </td>
                 </tr>
             </c:if>
-            <tr <mt:flipFlop/>>
-                <td><fmt:message key="settings.randomPlaylistSize" /></td>
-                <td>
-                    <input type="text"
-                           name="randomPlaylistSize"
-                           maxlength="3"
-                           value="<c:out value="${cwfn:choose(config.randomPlaylistSize > 0, config.randomPlaylistSize, '')}"/>"
-                           style="width: 50px;" />
-                </td>
-            </tr>
-            <tr <mt:flipFlop/>>
-                <td><fmt:message key="settings.randomSource" /></td>
-                <td>
-                    <select name="randomSource">
-                        <option value=""><fmt:message key="settings.randomSourceAll"/></option>
-                        <c:forEach items="${playlists}" var="playlist">
-                            <option value="${playlist.id}" <c:if test="${config.randomSource eq playlist.id}">selected="selected"</c:if>><c:out value="${playlist.name}"/></option>
-                        </c:forEach>
-                    </select>
-                </td>
-            </tr>
-            <tr <mt:flipFlop/>>
-                <td><fmt:message key="settings.randomType" /></td>
-                <td>
-                    <select name="randomMediaType">
-                        <option value="" <c:if test="${empty config.randomMediaType}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeAll"/></option>
-                        <option value="Audio" <c:if test="${config.randomMediaType == 'Audio'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeAudio"/></option>
-                        <option value="Video" <c:if test="${config.randomMediaType == 'Video'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeVideo"/></option>
-                        <option value="Image" <c:if test="${config.randomMediaType == 'Image'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeImage"/></option>
-                        <option value="Other" <c:if test="${config.randomMediaType == 'Other'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeOther"/></option>
-                    </select>
-                </td>
-            </tr>
-            <tr <mt:flipFlop/>>
-                <td><fmt:message key="settings.randomProtected" /></td>
-                <td>
-                    <input type="checkbox"
-                           name="randomProtected"
-                           value="true" <c:if test="${config.randomProtected}">checked="checked"</c:if>/>
-                </td>
-            </tr>
-            <tr <mt:flipFlop/>>
-                <td><fmt:message key="settings.lastUpdatedPlaylistSize" /></td>
-                <td>
-                    <input type="text"
-                           name="lastUpdatedPlaylistSize"
-                           maxlength="3"
-                           value="<c:out value="${cwfn:choose(config.lastUpdatedPlaylistSize > 0, config.lastUpdatedPlaylistSize, '')}"/>"
-                           style="width: 50px;" />
-                </td>
-            </tr>
-            <tr <mt:flipFlop/>>
-                <td><fmt:message key="settings.mostPlayedPlaylistSize" /></td>
-                <td>
-                    <input type="text"
-                           name="mostPlayedPlaylistSize"
-                           maxlength="3"
-                           value="<c:out value="${cwfn:choose(config.mostPlayedPlaylistSize > 0, config.mostPlayedPlaylistSize, '')}"/>"
-                           style="width: 50px;" />
-                </td>
-            </tr>
-            <tr <mt:flipFlop/>>
-                <td><fmt:message key="settings.myTunesRssComAddress" /></td>
-                <td>
-                    <input type="checkbox"
-                           name="myTunesRssComAddress"
-                           value="true" <c:if test="${config.myTunesRssComAddress}">checked="checked"</c:if>/>
-                </td>
-            </tr>
-            <tr <mt:flipFlop/>>
-                <td><fmt:message key="settings.browserStartIndex" /></td>
-                <td>
-                    <select name="browserStartIndex">
-                        <option value="" <c:if test="${config.browserStartIndex == ''}">selected="selected"</c:if>><fmt:message key="alphabetPagerAll"/></option>
-                        <option value="0" <c:if test="${config.browserStartIndex == '0'}">selected="selected"</c:if>>0 - 9</option>
-                        <option value="1" <c:if test="${config.browserStartIndex == '1'}">selected="selected"</c:if>>A - C</option>
-                    </select>
-                </td>
-            </tr>
+            <c:if test="${authUser.specialPlaylists}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.randomPlaylistSize" /></td>
+                    <td>
+                        <input type="text"
+                               name="randomPlaylistSize"
+                               maxlength="3"
+                               value="<c:out value="${cwfn:choose(config.randomPlaylistSize > 0, config.randomPlaylistSize, '')}"/>"
+                               style="width: 50px;" />
+                    </td>
+                </tr>
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.randomSource" /></td>
+                    <td>
+                        <select name="randomSource">
+                            <option value=""><fmt:message key="settings.randomSourceAll"/></option>
+                            <c:forEach items="${playlists}" var="playlist">
+                                <option value="${playlist.id}" <c:if test="${config.randomSource eq playlist.id}">selected="selected"</c:if>><c:out value="${playlist.name}"/></option>
+                            </c:forEach>
+                        </select>
+                    </td>
+                </tr>
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.randomType" /></td>
+                    <td>
+                        <select name="randomMediaType">
+                            <option value="" <c:if test="${empty config.randomMediaType}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeAll"/></option>
+                            <option value="Audio" <c:if test="${config.randomMediaType == 'Audio'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeAudio"/></option>
+                            <option value="Video" <c:if test="${config.randomMediaType == 'Video'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeVideo"/></option>
+                            <option value="Image" <c:if test="${config.randomMediaType == 'Image'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeImage"/></option>
+                            <option value="Other" <c:if test="${config.randomMediaType == 'Other'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeOther"/></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.randomProtected" /></td>
+                    <td>
+                        <input type="checkbox"
+                               name="randomProtected"
+                               value="true" <c:if test="${config.randomProtected}">checked="checked"</c:if>/>
+                    </td>
+                </tr>
+            </c:if>
+            <c:if test="${authUser.specialPlaylists}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.lastUpdatedPlaylistSize" /></td>
+                    <td>
+                        <input type="text"
+                               name="lastUpdatedPlaylistSize"
+                               maxlength="3"
+                               value="<c:out value="${cwfn:choose(config.lastUpdatedPlaylistSize > 0, config.lastUpdatedPlaylistSize, '')}"/>"
+                               style="width: 50px;" />
+                    </td>
+                </tr>
+            </c:if>
+            <c:if test="${authUser.specialPlaylists}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.mostPlayedPlaylistSize" /></td>
+                    <td>
+                        <input type="text"
+                               name="mostPlayedPlaylistSize"
+                               maxlength="3"
+                               value="<c:out value="${cwfn:choose(config.mostPlayedPlaylistSize > 0, config.mostPlayedPlaylistSize, '')}"/>"
+                               style="width: 50px;" />
+                    </td>
+                </tr>
+            </c:if>
+            <c:if test="${globalConfig.myTunesRssComActive}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.myTunesRssComAddress" /></td>
+                    <td>
+                        <input type="checkbox"
+                               name="myTunesRssComAddress"
+                               value="true" <c:if test="${config.myTunesRssComAddress}">checked="checked"</c:if>/>
+                    </td>
+                </tr>
+            </c:if>
+            <c:if test="${!globalConfig.disableBrowser}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.browserStartIndex" /></td>
+                    <td>
+                        <select name="browserStartIndex">
+                            <option value="" <c:if test="${config.browserStartIndex == ''}">selected="selected"</c:if>><fmt:message key="alphabetPagerAll"/></option>
+                            <option value="0" <c:if test="${config.browserStartIndex == '0'}">selected="selected"</c:if>>0 - 9</option>
+                            <option value="1" <c:if test="${config.browserStartIndex == '1'}">selected="selected"</c:if>>A - C</option>
+                        </select>
+                    </td>
+                </tr>
+            </c:if>
             <tr <mt:flipFlop/>>
                 <td><fmt:message key="settings.showThumbnailsForAlbums" /></td>
                 <td>

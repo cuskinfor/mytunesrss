@@ -571,8 +571,7 @@ public class MyTunesRss {
             }
         });
         if (WEBSERVER.isRunning()) {
-            if (StringUtils.isNotEmpty(CONFIG.getMyTunesRssComUser()) && CONFIG.getMyTunesRssComPasswordHash() != null &&
-                    CONFIG.getMyTunesRssComPasswordHash().length > 0) {
+            if (MyTunesRss.CONFIG.isMyTunesRssComActive()) {
                 MyTunesRssComUpdateTask myTunesRssComUpdater = new MyTunesRssComUpdateTask(SERVER_RUNNING_TIMER,
                         300000,
                         CONFIG.getMyTunesRssComUser(),

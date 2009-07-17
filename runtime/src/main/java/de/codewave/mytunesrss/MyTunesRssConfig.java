@@ -129,6 +129,8 @@ public class MyTunesRssConfig {
     private List<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
     private List<ExternalSiteDefinition> myExternalSites = new ArrayList<ExternalSiteDefinition>();
     private boolean myMinimizeToSystray;
+    private String myAutoLogin;
+    private boolean myDisableBrowser;
     private boolean myServerBrowserActive;
 
     public String[] getDatasources() {
@@ -959,6 +961,22 @@ public class MyTunesRssConfig {
         myMinimizeToSystray = minimizeToSystray;
     }
 
+    public String getAutoLogin() {
+        return myAutoLogin;
+    }
+
+    public void setAutoLogin(String autoLogin) {
+        myAutoLogin = autoLogin;
+    }
+
+    public boolean isDisableBrowser() {
+        return myDisableBrowser;
+    }
+
+    public void setDisableBrowser(boolean disableBrowser) {
+        myDisableBrowser = disableBrowser;
+    }
+
     public boolean isServerBrowserActive() {
         return myServerBrowserActive;
     }
@@ -1190,6 +1208,8 @@ public class MyTunesRssConfig {
         }
         setMinimizeToSystray(JXPathUtils.getBooleanValue(settings, "minimizeToSystray", false));
         setServerBrowserActive(JXPathUtils.getBooleanValue(settings, "serverBrowserActive", true));
+        setAutoLogin(JXPathUtils.getStringValue(settings, "autoLogin", null));
+        setDisableBrowser(JXPathUtils.getBooleanValue(settings, "disableBrowser", false));
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
@@ -1467,5 +1487,9 @@ public class MyTunesRssConfig {
 
     public boolean isRemoteControl() {
         return MyTunesRss.QUICKTIME_PLAYER != null;
+    }
+
+    public boolean isMyTunesRssComActive() {
+        return StringUtils.isNotEmpty(myMyTunesRssComUser) && myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0;
     }
 }
