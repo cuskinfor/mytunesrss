@@ -9,6 +9,9 @@
 
         <release version="3.7.2" date="2009-xx-xx" description="Bugfix release">
             <action dev="mdescher" type="add">
+                Yoics integration related changes and improvements.
+            </action>
+            <action dev="mdescher" type="add">
                 Load settings from license if available.
             </action>
             <action dev="mdescher" type="fix">

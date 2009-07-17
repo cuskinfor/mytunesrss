@@ -131,6 +131,9 @@ public class MyTunesRssConfig {
     private RemoteControlType myRemoteControlType;
     private String myDisabledMp4Codecs;
     private List<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
+    private String myAutoLogin;
+    private boolean myDisableBrowser;
+    private boolean myServerBrowserActive;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -944,6 +947,30 @@ public class MyTunesRssConfig {
         myTranscoderConfigs = configs;
     }
 
+    public String getAutoLogin() {
+        return myAutoLogin;
+    }
+
+    public void setAutoLogin(String autoLogin) {
+        myAutoLogin = autoLogin;
+    }
+
+    public boolean isDisableBrowser() {
+        return myDisableBrowser;
+    }
+
+    public void setDisableBrowser(boolean disableBrowser) {
+        myDisableBrowser = disableBrowser;
+    }
+
+    public boolean isServerBrowserActive() {
+        return myServerBrowserActive;
+    }
+
+    public void setServerBrowserActive(boolean serverBrowserActive) {
+        myServerBrowserActive = serverBrowserActive;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1159,6 +1186,9 @@ public class MyTunesRssConfig {
             JXPathContext transcoderConfigContext = transcoderConfigIterator.next();
             myTranscoderConfigs.add(new TranscoderConfig(transcoderConfigContext));
         }
+        setAutoLogin(JXPathUtils.getStringValue(settings, "autoLogin", null));
+        setDisableBrowser(JXPathUtils.getBooleanValue(settings, "disableBrowser", false));
+        setServerBrowserActive(JXPathUtils.getBooleanValue(settings, "serverBrowserActive", true));
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
@@ -1426,5 +1456,9 @@ public class MyTunesRssConfig {
 
     public boolean isTomcatSslProxy() {
         return StringUtils.isNotBlank(myTomcatSslProxyHost) && myTomcatSslProxyPort > 0 && myTomcatSslProxyPort < 65536;
+    }
+
+    public boolean isMyTunesRssComActive() {
+        return StringUtils.isNotEmpty(myMyTunesRssComUser) && myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0;
     }
 }
