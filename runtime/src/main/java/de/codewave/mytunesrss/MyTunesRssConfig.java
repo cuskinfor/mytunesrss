@@ -325,6 +325,10 @@ public class MyTunesRssConfig {
         return myPathInfoKey;
     }
 
+    public void setPathInfoKey(SecretKey pathInfoKey) {
+        myPathInfoKey = pathInfoKey;
+    }
+
     public String getLameBinary() {
         return myLameBinary;
     }
@@ -1197,10 +1201,6 @@ public class MyTunesRssConfig {
     }
 
     public void save() {
-        if (MyTunesRss.REGISTRATION.getSettings() != null) {
-            LOGGER.info("Not saving configuration since it was read from the license.");
-            return;
-        }
         try {
             LOGGER.info("Saving configuration to \"" + getSettingsFile().getAbsolutePath() + "\".");
             Document settings = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
