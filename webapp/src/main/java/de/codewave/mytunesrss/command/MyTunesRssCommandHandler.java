@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import java.io.File;
@@ -45,14 +44,14 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private static boolean SCHEDULE_DATABASE_UPDATE;
 
     protected MyTunesRssConfig getMyTunesRssConfig() {
-        return (MyTunesRssConfig)getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
+        return (MyTunesRssConfig) getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
     }
 
     protected void runDatabaseUpdate() {
         SCHEDULE_DATABASE_UPDATE = false;
         TaskExecutor.execute(new DatabaseBuilderTask(), new TaskFinishedListener() {
             public void taskFinished(Task task) {
-                if (!((DatabaseBuilderTask)task).isExecuted()) {
+                if (!((DatabaseBuilderTask) task).isExecuted()) {
                     SCHEDULE_DATABASE_UPDATE = true;
                 }
             }
@@ -71,21 +70,21 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             LOG.debug("Authorizing request for user \"" + userName + "\".");
             getRequest().setAttribute("authUser", user);
             getRequest().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(getRequest(),
-                                                                                 "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" +
-                                                                                         MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" +
+                            MyTunesRssBase64Utils.encode(user.getPasswordHash())));
         } else if (scope == WebAppScope.Session) {
             LOG.debug("Authorizing session for user \"" + userName + "\".");
             getSession().setAttribute("authUser", user);
             getSession().setAttribute("auth", MyTunesRssWebUtils.encryptPathInfo(getRequest(),
-                                                                                 "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" +
-                                                                                         MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" +
+                            MyTunesRssBase64Utils.encode(user.getPasswordHash())));
         }
         if (getAuthUser() != null && StringUtils.isNotEmpty(getAuthUser().getWebSettings())) {
             getWebConfig().clearWithDefaults(getRequest());
             getWebConfig().load(getAuthUser());
             getWebConfig().load(getRequest());
         }
-        ((MyTunesRssSessionInfo)SessionManager.getSessionInfo(getRequest())).setUser(user);
+        ((MyTunesRssSessionInfo) SessionManager.getSessionInfo(getRequest())).setUser(user);
         getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);
     }
 
@@ -117,7 +116,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected boolean isSessionAuthorized() {
         if (getSession().getAttribute("auth") != null) {
-            User user = (User)getSession().getAttribute("authUser");
+            User user = (User) getSession().getAttribute("authUser");
             if (user.isActive() && getMyTunesRssConfig().getUser(user.getName()) != null) {
                 return true;
             }
@@ -158,7 +157,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     private void prepareRequestForResource() {
-        String myTunesRssComUsername = (String)getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER);
+        String myTunesRssComUsername = (String) getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER);
         String servletUrl = MyTunesRssWebUtils.getServletUrl(getRequest());
         getRequest().setAttribute("servletUrl", servletUrl);
         WebConfig webConfig = getWebConfig();
@@ -168,8 +167,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         } else {
             String appUrl = ServletUtils.getApplicationUrl(getRequest());
             String url =
-                    MyTunesRss.MYTUNESRSSCOM_URL + "/" + myTunesRssComUsername + getRequest().getContextPath() + servletUrl.substring(appUrl.length())
-                    ;
+                    MyTunesRss.MYTUNESRSSCOM_URL + "/" + myTunesRssComUsername + getRequest().getContextPath() + servletUrl.substring(appUrl.length());
             getRequest().setAttribute("permServletUrl", url);
             getRequest().setAttribute("downloadPlaybackServletUrl", url);
         }
@@ -196,7 +194,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     private void setResourceBundle() {
         Locale locale = StringUtils.isNotBlank(getWebConfig().getLanguage()) ? new Locale(getWebConfig().getLanguage()) : getRequest().getLocale();
-        LocalizationContext context = (LocalizationContext)getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+        LocalizationContext context = (LocalizationContext) getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
         if (context == null || !ObjectUtils.equals(context.getLocale(), locale)) {
             File language = AddonsUtils.getBestLanguageFile(locale);
             ResourceBundle bundle = retrieveBundle(language, locale);
@@ -209,7 +207,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     private ResourceBundle retrieveBundle(File language, Locale locale) {
-        ResourceBundle bundle = (ResourceBundle)getSession().getServletContext().getAttribute("LanguageBundle." + locale.toString());
+        ResourceBundle bundle = (ResourceBundle) getSession().getServletContext().getAttribute("LanguageBundle." + locale.toString());
         if (bundle == null) {
             if (language != null) {
                 try {
@@ -268,10 +266,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected Map<String, Boolean> getStates() {
-        Map<String, Boolean> states = (Map<String, Boolean>)getSession().getAttribute("states");
+        Map<String, Boolean> states = (Map<String, Boolean>) getSession().getAttribute("states");
         if (states == null) {
             synchronized (getSession()) {
-                states = (Map<String, Boolean>)getSession().getAttribute("states");
+                states = (Map<String, Boolean>) getSession().getAttribute("states");
                 if (states == null) {
                     states = new HashMap<String, Boolean>();
                     getSession().setAttribute("states", states);
@@ -286,12 +284,12 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             LOG.debug("Command handler \"" + this.getClass().getName() + "\" called (\"" + getRequest().getScheme() + "://" +
                     getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getRequestURI() + "\").");
             LOG.debug("Request parameters:");
-            for (Map.Entry entry : (Iterable<? extends Map.Entry>)getRequest().getParameterMap().entrySet()) {
+            for (Map.Entry entry : (Iterable<? extends Map.Entry>) getRequest().getParameterMap().entrySet()) {
                 if (StringUtils.equals(entry.getKey().toString(), "password")) {
                     LOG.debug("\"password\"=\"********\"");
                 } else {
                     StringBuilder msg = new StringBuilder("\"").append(entry.getKey()).append("\"=");
-                    for (String value : (String[])entry.getValue()) {
+                    for (String value : (String[]) entry.getValue()) {
                         msg.append("\"").append(value).append("\",");
                     }
                     LOG.debug(msg.substring(0, msg.length() - 1));
@@ -302,8 +300,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             runDatabaseUpdate();
         }
         try {
-            if (!MyTunesRss.REGISTRATION.isDisableWebLogin() && !isSessionAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
-                                                                                         getWebConfig().getPasswordHash())) {
+            if (!isSessionAuthorized() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAutoLogin())) {
+                authorize(WebAppScope.Session, MyTunesRss.CONFIG.getAutoLogin());
+            } else if (!MyTunesRss.REGISTRATION.isDisableWebLogin() && !isSessionAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
+                    getWebConfig().getPasswordHash())) {
                 authorize(WebAppScope.Session, getWebConfig().getUserName());
             }
             if (!isRequestAuthorized()) {
@@ -322,7 +322,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected MyTunesRssDataStore getDataStore() {
-        return ((MyTunesRssDataStore)getContext().getAttribute(MyTunesRssDataStore.class.getName()));
+        return ((MyTunesRssDataStore) getContext().getAttribute(MyTunesRssDataStore.class.getName()));
     }
 
     private void handleDisplayFilter() {
@@ -347,7 +347,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected DisplayFilter getDisplayFilter() {
-        DisplayFilter filter = (DisplayFilter)getSession().getAttribute("displayFilter");
+        DisplayFilter filter = (DisplayFilter) getSession().getAttribute("displayFilter");
         if (filter == null) {
             filter = new DisplayFilter();
             getSession().setAttribute("displayFilter", filter);
@@ -375,9 +375,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected String getBundleString(String key) {
-        LocalizationContext context = (LocalizationContext)getRequest().getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+        LocalizationContext context = (LocalizationContext) getRequest().getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
         ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb",
-                                                                                                         getRequest().getLocale());
+                getRequest().getLocale());
         return bundle.getString(key);
     }
 

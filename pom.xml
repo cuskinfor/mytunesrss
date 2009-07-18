@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>mytunesrss</artifactId>
     <packaging>pom</packaging>
-    <version>3.7.2-SNAPSHOT</version>
+    <version>3.7.2</version>
     <name>Codewave MyTunesRSS</name>
     <distributionManagement>
         <site>
@@ -12,7 +12,7 @@
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>
     <scm>
-        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/trunk</developerConnection>
+        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/tags/mytunesrss-3.7.2</developerConnection>
     </scm>
     <parent>
         <groupId>de.codewave</groupId>
@@ -71,11 +71,12 @@
                         <phase>package</phase>
                         <configuration>
                             <descriptors>
-                                <descriptor>src/assembly/system-independent.xml</descriptor>
+                                <!--descriptor>src/assembly/system-independent.xml</descriptor>
                                 <descriptor>src/assembly/windows.xml</descriptor>
                                 <descriptor>src/assembly/macosx.xml</descriptor>
                                 <descriptor>src/assembly/web-language.xml</descriptor>
-                                <descriptor>src/assembly/default-theme.xml</descriptor>
+                                <descriptor>src/assembly/default-theme.xml</descriptor-->
+                                <descriptor>src/assembly/yoics.xml</descriptor>
                             </descriptors>
                         </configuration>
                         <goals>

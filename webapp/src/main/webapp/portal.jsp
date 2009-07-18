@@ -37,12 +37,16 @@
                 <fmt:message key="doSettings" />
             </a></li>
         </c:if>
-        <li><a href="${servletUrl}/browseServers/${auth}">
-            <fmt:message key="browseServers" />
-        </a></li>
-        <li style="float:right"><a href="${servletUrl}/logout">
-            <fmt:message key="doLogout" />
-        </a></li>
+        <c:if test="${globalConfig.serverBrowserActive}">
+            <li><a href="${servletUrl}/browseServers/${auth}">
+                <fmt:message key="browseServers" />
+            </a></li>
+        </c:if>
+        <c:if test="${empty globalConfig.autoLogin}">
+            <li style="float:right"><a href="${servletUrl}/logout">
+                <fmt:message key="doLogout" />
+            </a></li>
+        </c:if>
     </ul>
 
     <jsp:include page="/incl_error.jsp" />
@@ -58,9 +62,11 @@
                                                                                      value="<fmt:message key="doSearch"/>" />
                 </td>
                 <td class="links">
-                    <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>" style="background-image:url('${appUrl}/images/library_small.gif');">
-                        <fmt:message key="browseLibrary" />
-                    </a>
+                    <c:if test="${!globalConfig.disableBrowser}">
+                        <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>" style="background-image:url('${appUrl}/images/library_small.gif');">
+                            <fmt:message key="browseLibrary" />
+                        </a>
+                    </c:if>
                     <c:if test="${authUser.createPlaylists}">
                         <c:choose>
                             <c:when test="${empty sessionScope.playlist}">
@@ -90,7 +96,7 @@
     <jsp:include page="incl_playlist.jsp" />
 
     <table cellspacing="0">
-        <c:if test="${!empty statistics}">
+        <c:if test="${!empty statistics && !globalConfig.disableBrowser}">
             <tr>
                 <th class="active" colspan="3" align="right">
                     <fmt:message key="statistics" />

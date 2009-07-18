@@ -169,6 +169,15 @@ public class MyTunesRss {
         }
         MyTunesRss.CONFIG.load();
         REGISTRATION.init(null, true);
+        if (REGISTRATION.getSettings() != null) {
+            LOGGER.info("Loading configuration from license.");
+            MyTunesRssConfig configFromFile = MyTunesRss.CONFIG;
+            MyTunesRss.CONFIG = new MyTunesRssConfig();
+            MyTunesRss.CONFIG.loadFromContext(REGISTRATION.getSettings());
+            if (configFromFile.getPathInfoKey() != null) {
+                MyTunesRss.CONFIG.setPathInfoKey(configFromFile.getPathInfoKey());
+            }
+        }
         HEADLESS = arguments.containsKey("headless") || REGISTRATION.isDisableGui();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
         registerDatabaseDriver();
@@ -559,8 +568,7 @@ public class MyTunesRss {
             }
         });
         if (WEBSERVER.isRunning()) {
-            if (StringUtils.isNotEmpty(CONFIG.getMyTunesRssComUser()) && CONFIG.getMyTunesRssComPasswordHash() != null &&
-                    CONFIG.getMyTunesRssComPasswordHash().length > 0) {
+            if (MyTunesRss.CONFIG.isMyTunesRssComActive()) {
                 MyTunesRssComUpdateTask myTunesRssComUpdater = new MyTunesRssComUpdateTask(SERVER_RUNNING_TIMER,
                         300000,
                         CONFIG.getMyTunesRssComUser(),
