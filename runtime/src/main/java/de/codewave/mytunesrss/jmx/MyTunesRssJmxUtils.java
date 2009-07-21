@@ -87,7 +87,7 @@ public class MyTunesRssJmxUtils {
                     adaptor.setAuthenticationMethod("basic");
                     adaptor.addAuthorization(username, password);
                 }
-                if (!MyTunesRss.REGISTRATION.isDisableJmxHtml()) {
+                if (!MyTunesRss.CONFIG.isDisableJmxHtml()) {
                     adaptor.setProcessor(new XSLTProcessor());
                 }
                 adaptor.start();

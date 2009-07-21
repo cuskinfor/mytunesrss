@@ -152,16 +152,14 @@ public class MyTunesRss {
     public static int JMX_PORT = -1;
     public static QuicktimePlayer QUICKTIME_PLAYER;
     public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
+    public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<String, String[]>();
 
     public static void main(final String[] args)
             throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException,
             IOException, SQLException, SchedulerException {
-        final Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
-        JMX_HOST = getFirstTrimmedArgument(arguments, "jmxHost");
-        try {
-            JMX_PORT = Integer.parseInt(getFirstTrimmedArgument(arguments, "jmxPort"));
-        } catch (NumberFormatException e) {
-            // ignore
+        Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
+        if (arguments != null) {
+            COMMAND_LINE_ARGS.putAll(arguments);
         }
         VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
         if (StringUtils.isEmpty(VERSION)) {
@@ -178,7 +176,7 @@ public class MyTunesRss {
                 MyTunesRss.CONFIG.setPathInfoKey(configFromFile.getPathInfoKey());
             }
         }
-        HEADLESS = arguments.containsKey("headless") || REGISTRATION.isDisableGui();
+        HEADLESS = COMMAND_LINE_ARGS.containsKey("headless") || CONFIG.isDisableGui();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
         registerDatabaseDriver();
         initializeQuicktimePlayer();

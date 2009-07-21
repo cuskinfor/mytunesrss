@@ -303,7 +303,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         try {
             if (!isSessionAuthorized() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAutoLogin())) {
                 authorize(WebAppScope.Session, MyTunesRss.CONFIG.getAutoLogin());
-            } else if (!MyTunesRss.REGISTRATION.isDisableWebLogin() && !isSessionAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
+            } else if (!MyTunesRss.CONFIG.isDisableWebLogin() && !isSessionAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
                     getWebConfig().getPasswordHash())) {
                 authorize(WebAppScope.Session, getWebConfig().getUserName());
             }
