@@ -26,9 +26,6 @@ public class MyTunesRssRegistration {
     private long myExpiration;
     private boolean myReleaseVersion;
     private boolean myValid;
-    private boolean myDisableGui;
-    private boolean myDisableWebLogin;
-    private boolean myDisableJmxHtml;
     private JXPathContext mySettings;
 
     public static MyTunesRssRegistration register(File registrationFile) {
@@ -146,11 +143,16 @@ public class MyTunesRssRegistration {
             myReleaseVersion = JXPathUtils.getBooleanValue(registrationContext, "/registration/release-version", true);
             myName = JXPathUtils.getStringValue(registrationContext, "/registration/name", "unregistered");
             String expirationDate = JXPathUtils.getStringValue(registrationContext, "/registration/expiration", null);
-            myDisableGui = JXPathUtils.getBooleanValue(registrationContext, "/registration/disable-gui", false);
-            myDisableWebLogin = JXPathUtils.getBooleanValue(registrationContext, "/registration/disable-web-login", false);
-            myDisableJmxHtml = JXPathUtils.getBooleanValue(registrationContext, "/registration/disable-jmx-html", false);
-            JXPathContext settingsContext = JXPathUtils.getContext(registrationContext, "/registration/settings");
-            mySettings = JXPathUtils.getStringValue(settingsContext, ".", null) != null ? settingsContext : null;
+            String settingsText = JXPathUtils.getStringValue(registrationContext, "/registration/settings", null);
+            if (settingsText != null) {
+                for (String token : StringUtils.substringsBetween(settingsText, "<!--", "-->")) {
+                    String[] values = MyTunesRss.COMMAND_LINE_ARGS.get(StringUtils.trimToEmpty(token));
+                    settingsText = settingsText.replace("<!--" + token + "-->", values != null && values.length > 0 ? values[0] : "");
+                }
+                mySettings = JXPathUtils.getContext(JXPathUtils.getContext(settingsText), "settings");
+            } else{
+                mySettings = null;
+            }
             if (expirationDate != null) {
                 try {
                     myExpiration = DATE_FORMAT.parse(expirationDate).getTime();
@@ -194,18 +196,6 @@ public class MyTunesRssRegistration {
 
     public boolean isExpiredPreReleaseVersion() {
         return !myReleaseVersion && isExpired();
-    }
-
-    public boolean isDisableGui() {
-        return myDisableGui;
-    }
-
-    public boolean isDisableWebLogin() {
-        return myDisableWebLogin;
-    }
-
-    public boolean isDisableJmxHtml() {
-        return myDisableJmxHtml;
     }
 
     public JXPathContext getSettings() {

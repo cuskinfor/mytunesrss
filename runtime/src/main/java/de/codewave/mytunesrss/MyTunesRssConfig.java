@@ -134,6 +134,9 @@ public class MyTunesRssConfig {
     private String myAutoLogin;
     private boolean myDisableBrowser;
     private boolean myServerBrowserActive;
+    private boolean myDisableGui;
+    private boolean myDisableWebLogin;
+    private boolean myDisableJmxHtml;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -971,6 +974,30 @@ public class MyTunesRssConfig {
         myServerBrowserActive = serverBrowserActive;
     }
 
+    public boolean isDisableGui() {
+        return myDisableGui;
+    }
+
+    public void setDisableGui(boolean disableGui) {
+        myDisableGui = disableGui;
+    }
+
+    public boolean isDisableWebLogin() {
+        return myDisableWebLogin;
+    }
+
+    public void setDisableWebLogin(boolean disableWebLogin) {
+        myDisableWebLogin = disableWebLogin;
+    }
+
+    public boolean isDisableJmxHtml() {
+        return myDisableJmxHtml;
+    }
+
+    public void setDisableJmxHtml(boolean disableJmxHtml) {
+        myDisableJmxHtml = disableJmxHtml;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1189,6 +1216,9 @@ public class MyTunesRssConfig {
         setAutoLogin(JXPathUtils.getStringValue(settings, "autoLogin", null));
         setDisableBrowser(JXPathUtils.getBooleanValue(settings, "disableBrowser", false));
         setServerBrowserActive(JXPathUtils.getBooleanValue(settings, "serverBrowserActive", true));
+        setDisableGui(JXPathUtils.getBooleanValue(settings, "disableGui", false));
+        setDisableWebLogin(JXPathUtils.getBooleanValue(settings, "disableWebLogin", false));
+        setDisableJmxHtml(JXPathUtils.getBooleanValue(settings, "disableJmxHtml", false));
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
