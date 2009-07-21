@@ -55,8 +55,6 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.Timer;
 
-import com.sun.corba.se.impl.orb.ParserTable;
-
 /**
  * de.codewave.mytunesrss.MyTunesRss
  */
