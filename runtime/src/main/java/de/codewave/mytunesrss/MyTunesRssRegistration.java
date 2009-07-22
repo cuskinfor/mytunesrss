@@ -39,7 +39,7 @@ public class MyTunesRssRegistration {
                 } else if (!registration.myValid) {
                     MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicense"));
                 } else {
-                    copyFile(registrationFile, new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.key"));
+                    copyFile(registrationFile, new File(MyTunesRssUtils.getPreferencesDataPath() + "/MyTunesRSS.key"));
                     MyTunesRssUtils.showInfoMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("error.loadLicenseOk",
                                                                                                            registration.getName()));
                     return registration;
@@ -107,7 +107,7 @@ public class MyTunesRssRegistration {
             }
         }
 
-        String path = PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
+        String path = MyTunesRssUtils.getPreferencesDataPath();
         String registration = RegistrationUtils.getRegistrationData(file != null ? file.toURL() : new File(path + "/MyTunesRSS.key").toURL(),
                                                                     getPublicKey());
         if (registration != null) {

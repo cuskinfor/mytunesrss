@@ -197,12 +197,12 @@ public class WebServer {
         engine.setName("engine." + name);
         engine.setDefaultHost("host." + name);
         Host host = server.createHost("host." + name, new File(catalinaBasePath, "webapps").getCanonicalPath());
-        File workDir = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/tomcat-work");
+        File workDir = new File(MyTunesRssUtils.getCacheDataPath() + "/tomcat-work");
         if (workDir.exists()) {
             MyTunesRssUtils
                     .deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
         }
-        ((StandardHost)host).setWorkDir(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/tomcat-work");
+        ((StandardHost)host).setWorkDir(MyTunesRssUtils.getCacheDataPath() + "/tomcat-work");
         engine.addChild(host);
         myContext = server.createContext(webAppContext, webAppName);
         mySessionManager = new StandardManager();

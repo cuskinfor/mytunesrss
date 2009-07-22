@@ -140,7 +140,7 @@ public class MyTunesRssUtils {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Cleaning up streamig cache.");
                 }
-                File destinationFile = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder/cache.xml");
+                File destinationFile = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache.xml");
                 FileUtils.writeStringToFile(destinationFile, MyTunesRss.STREAMING_CACHE.getContent());
             } catch (IOException e) {
                 if (LOGGER.isErrorEnabled()) {
@@ -431,5 +431,19 @@ public class MyTunesRssUtils {
         StringBuilder systemInfo = new StringBuilder();
         systemInfo.append(MyTunesRssUtils.getBundleString("sysinfo.quicktime." + Boolean.toString(MyTunesRss.QUICKTIME_PLAYER != null))).append(System.getProperty("line.separator"));
         return systemInfo.toString();
+    }
+    
+    public static String getCacheDataPath() throws IOException {
+        if (MyTunesRss.COMMAND_LINE_ARGS.containsKey("cacheDataPath")) {
+            return MyTunesRss.COMMAND_LINE_ARGS.get("cacheDataPath")[0]; 
+        }
+        return PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
+    }
+
+    public static String getPreferencesDataPath() throws IOException {
+        if (MyTunesRss.COMMAND_LINE_ARGS.containsKey("preferencesDataPath")) {
+            return MyTunesRss.COMMAND_LINE_ARGS.get("preferencesDataPath")[0]; 
+        }
+        return PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
     }
 }

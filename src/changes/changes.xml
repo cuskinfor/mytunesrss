@@ -9,7 +9,7 @@
 
         <release version="3.7.3" date="2009-xx-xx" description="Bugfix release">
             <action dev="mdescher" type="add">
-                Command line option for license file.
+                Command line option for license file, cache data path and preferences data path.
             </action>
         </release>
 

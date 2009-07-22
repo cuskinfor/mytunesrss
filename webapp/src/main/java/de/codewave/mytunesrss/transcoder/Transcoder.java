@@ -46,7 +46,7 @@ public abstract class Transcoder {
     }
 
     public File getTranscodedFile() throws IOException {
-        File cacheDir = new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/transcoder/cache");
+        File cacheDir = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache");
         if (!cacheDir.exists()) {
             cacheDir.mkdirs();
         }

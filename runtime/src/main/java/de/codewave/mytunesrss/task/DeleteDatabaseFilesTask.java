@@ -1,12 +1,12 @@
 package de.codewave.mytunesrss.task;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssTask;
-import de.codewave.utils.PrefsUtils;
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+
+import de.codewave.mytunesrss.MyTunesRssTask;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 
 /**
  * de.codewave.mytunesrss.task.InitializeDatabaseTask
@@ -14,7 +14,7 @@ import java.io.IOException;
 public class DeleteDatabaseFilesTask extends MyTunesRssTask {
     public void execute() throws IOException {
         String filename = "h2/MyTunesRSS";
-        String pathname = PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
+        String pathname = MyTunesRssUtils.getCacheDataPath();
         FileUtils.deleteDirectory(new File(pathname + "/" + filename));
     }
 }
