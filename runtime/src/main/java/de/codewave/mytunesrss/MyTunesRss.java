@@ -59,6 +59,7 @@ import java.util.Timer;
  */
 public class MyTunesRss {
     public static final String APPLICATION_IDENTIFIER = "MyTunesRSS3";
+    public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<String, String[]>();
 
     static {
         try {
@@ -152,7 +153,6 @@ public class MyTunesRss {
     public static int JMX_PORT = -1;
     public static QuicktimePlayer QUICKTIME_PLAYER;
     public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
-    public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<String, String[]>();
 
     public static void main(final String[] args)
             throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException,
