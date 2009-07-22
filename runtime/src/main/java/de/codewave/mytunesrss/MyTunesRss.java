@@ -62,13 +62,13 @@ public class MyTunesRss {
 
     static {
         try {
-            System.setProperty("MyTunesRSS.logDir", PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER));
+            System.setProperty("MyTunesRSS.logDir", MyTunesRssUtils.getCacheDataPath());
         } catch (IOException e) {
             System.setProperty("MyTunesRSS.logDir", ".");
         }
         try {
             for (Iterator<File> iter =
-                    (Iterator<File>) FileUtils.iterateFiles(new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER)),
+                    (Iterator<File>) FileUtils.iterateFiles(new File(MyTunesRssUtils.getCacheDataPath()),
                             new String[]{"log"},
                             false); iter.hasNext();) {
                 iter.next().delete();
@@ -82,7 +82,7 @@ public class MyTunesRss {
 
     static {
         try {
-            File file = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/system.properties");
+            File file = new File(MyTunesRssUtils.getPreferencesDataPath() + "/system.properties");
             if (file.isFile()) {
                 Properties properties = new Properties();
                 properties.load(new FileInputStream(file));
@@ -195,8 +195,8 @@ public class MyTunesRss {
             LOGGER.info("Java: " + SystemUtils.JAVA_VERSION + "(" + SystemUtils.JAVA_HOME + ")");
             LOGGER.info("Maximum heap size: " + MyTunesRssUtils.getMemorySizeForDisplay(Runtime.getRuntime().maxMemory()));
             LOGGER.info("Application version: " + VERSION);
-            LOGGER.info("Cache data path: " + PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER));
-            LOGGER.info("Preferences data path: " + PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER));
+            LOGGER.info("Cache data path: " + MyTunesRssUtils.getCacheDataPath());
+            LOGGER.info("Preferences data path: " + MyTunesRssUtils.getPreferencesDataPath());
             LOGGER.info("--------------------------------------------------------------------------------");
             for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
                 LOGGER.info(entry.getKey() + "=" + entry.getValue());
@@ -254,7 +254,7 @@ public class MyTunesRss {
         }
         QUARTZ_SCHEDULER.start();
         STREAMING_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER, 10000, CONFIG.getStreamingCacheMaxFiles());
-        File streamingCacheFile = new File(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/transcoder/cache.xml");
+        File streamingCacheFile = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache.xml");
         if (streamingCacheFile.isFile()) {
             try {
                 STREAMING_CACHE.setContent(JXPathUtils.getContext(streamingCacheFile.toURL()));
@@ -324,7 +324,7 @@ public class MyTunesRss {
 
     private static void registerDatabaseDriver()
             throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-        File libDir = new File(PrefsUtils.getPreferencesDataPath(APPLICATION_IDENTIFIER) + "/lib");
+        File libDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/lib");
         ClassLoader classLoader = createExtraClassloader(libDir);
         String driverClassName = MyTunesRss.CONFIG.getDatabaseDriver();
         LOGGER.info("Using database driver class \"" + driverClassName + "\".");
@@ -394,7 +394,7 @@ public class MyTunesRss {
     private static boolean isOtherInstanceRunning(long timeoutMillis) {
         RandomAccessFile lockFile;
         try {
-            File file = new File(PrefsUtils.getCacheDataPath(APPLICATION_IDENTIFIER) + "/MyTunesRSS.lck");
+            File file = new File(MyTunesRssUtils.getCacheDataPath() + "/MyTunesRSS.lck");
             file.deleteOnExit();
             lockFile = new RandomAccessFile(file, "rw");
         } catch (IOException e) {

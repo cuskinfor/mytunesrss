@@ -49,7 +49,7 @@ public class SendSupportRequestTask extends MyTunesRssTask {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             zipOutput = new ZipOutputStream(baos);
             String archiveName = "MyTunesRSS_" + MyTunesRss.VERSION + "_Support" + (StringUtils.isNotBlank(myName) ? "_" + StringUtils.trim(myName) : "");
-            ZipUtils.addToZip(archiveName + "/MyTunesRSS.log", new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/MyTunesRSS.log"), zipOutput);
+            ZipUtils.addToZip(archiveName + "/MyTunesRSS.log", new File(MyTunesRssUtils.getCacheDataPath() + "/MyTunesRSS.log"), zipOutput);
             if (myIncludeItunesXml) {
                 int index = 0;
                 for (String dataSource : MyTunesRss.CONFIG.getDatasources()) {

@@ -30,7 +30,7 @@ public abstract class ThemeServlet extends HttpServlet {
         }
         try {
             if (StringUtils.isNotEmpty(theme)) {
-                File file = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes/" + theme + resourceBasePath +
+                File file = new File(MyTunesRssUtils.getPreferencesDataPath() + "/themes/" + theme + resourceBasePath +
                         httpServletRequest.getPathInfo());
                 if (file.exists()) {
                     // addon theme found

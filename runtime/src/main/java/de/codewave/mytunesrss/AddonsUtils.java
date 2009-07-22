@@ -34,7 +34,7 @@ public class AddonsUtils {
             if (builtinThemes) {
                 themeSet.addAll(getThemesFromDir(themesDir));
             }
-            themesDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes");
+            themesDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/themes");
             if (!themesDir.exists()) {
                 themesDir.mkdirs();
             }
@@ -84,7 +84,7 @@ public class AddonsUtils {
                 languageSet.add(new LanguageDefinition("en", null));
                 languageSet.addAll(getLanguagesFromDir(languagesDir));
             }
-            languagesDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages");
+            languagesDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/languages");
             if (!languagesDir.exists()) {
                 languagesDir.mkdirs();
             }
@@ -140,7 +140,7 @@ public class AddonsUtils {
             try {
                 zipInputStream = CodewaveZipInputStreamFactory.newInstance(new FileInputStream(theme));
                 for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
-                    themeDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes/" + FilenameUtils.getBaseName(
+                    themeDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/themes/" + FilenameUtils.getBaseName(
                             theme.getName()));
                     saveFile(themeDir, entry.getName(), (InputStream) zipInputStream);
                 }
@@ -243,7 +243,7 @@ public class AddonsUtils {
                 String languageCode = null;
                 byte[] readme = null;
                 for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
-                    languageDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages");
+                    languageDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/languages");
                     if (entry.getName().startsWith("MyTunesRssWeb_") && entry.getName().endsWith(".properties")) {
                         saveFile(languageDir, entry.getName(), (InputStream) zipInputStream);
                         languageCode = getLanguageCode(entry.getName());
@@ -315,7 +315,7 @@ public class AddonsUtils {
 
     public static String deleteTheme(String themeName) {
         try {
-            File themeDir = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/themes/" + themeName);
+            File themeDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/themes/" + themeName);
             if (themeDir.isDirectory()) {
                 FileUtils.deleteDirectory(themeDir);
             } else {
@@ -333,11 +333,11 @@ public class AddonsUtils {
     public static String deleteLanguage(String languageCode) {
         try {
             File languageFile = new File(
-                    PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/MyTunesRssWeb_" + languageCode + ".properties");
+                    MyTunesRssUtils.getPreferencesDataPath() + "/languages/MyTunesRssWeb_" + languageCode + ".properties");
             if (languageFile.isFile()) {
                 languageFile.delete();
                 File readmeFile = new File(
-                        PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/MyTunesRssWeb_" + languageCode +
+                        MyTunesRssUtils.getPreferencesDataPath() + "/languages/MyTunesRssWeb_" + languageCode +
                                 ".properties.readme.txt");
                 if (readmeFile.isFile()) {
                     readmeFile.delete();
@@ -366,7 +366,7 @@ public class AddonsUtils {
         fileNames.add("MyTunesRssWeb_" + codes[0] + ".properties");
         for (String fileName : fileNames) {
             try {
-                File languageFile = new File(PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/languages/" + fileName);
+                File languageFile = new File(MyTunesRssUtils.getPreferencesDataPath() + "/languages/" + fileName);
                 if (languageFile.isFile()) {
                     return languageFile;
                 }
