@@ -166,7 +166,17 @@ public class MyTunesRss {
             VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");
         }
         MyTunesRss.CONFIG.load();
-        REGISTRATION.init(null, true);
+        File license = null;
+        if (arguments.containsKey("license")) {
+            license = new File(arguments.get("license")[0]);
+            if (!license.isFile()) {
+                LOGGER.error("License file \"" + license.getAbsolutePath() + "\" specified on command line does not exist.");
+                license = null;
+            } else {
+                LOGGER.info("Using license file \"" + license.getAbsolutePath() + "\" specified on command line.");
+            }
+        }
+        REGISTRATION.init(license, true);
         if (REGISTRATION.getSettings() != null) {
             LOGGER.info("Loading configuration from license.");
             MyTunesRssConfig configFromFile = MyTunesRss.CONFIG;
