@@ -28,6 +28,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -61,8 +62,39 @@ import java.util.Timer;
 public class MyTunesRss {
     public static final String APPLICATION_IDENTIFIER = "MyTunesRSS3";
     public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<String, String[]>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRss.class);
+    public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
+    public static final String MYTUNESRSSCOM_TOOLS_URL = MYTUNESRSSCOM_URL + "/tools";
+    public static String VERSION;
+    public static URL UPDATE_URL;
+    public static MyTunesRssDataStore STORE;
+    public static MyTunesRssConfig CONFIG;
+    public static ResourceBundle BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
+    public static ResourceBundle JMX_BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.jmx.MyTunesRssJmx");
+    public static WebServer WEBSERVER;
+    public static Timer SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
+    public static SysTray SYSTRAYMENU;
+    public static MessageDigest SHA1_DIGEST;
+    public static MessageDigest MD5_DIGEST;
+    public static JFrame ROOT_FRAME;
+    public static JFrame DUMMY_FRAME;
+    public static ImageIcon PLEASE_WAIT_ICON;
+    public static MyTunesRssRegistration REGISTRATION;
+    public static int OPTION_PANE_MAX_MESSAGE_LENGTH = 100;
+    public static boolean HEADLESS = GraphicsEnvironment.isHeadless();
+    private static Settings SETTINGS;
+    public static final String THREAD_PREFIX = "MyTunesRSS: ";
+    public static ErrorQueue ERROR_QUEUE;
+    public static boolean QUIT_REQUEST;
+    public static FileCache STREAMING_CACHE;
+    public static Scheduler QUARTZ_SCHEDULER;
+    public static MailSender MAILER;
+    public static AdminNotifier ADMIN_NOTIFY;
+    public static String JMX_HOST;
+    public static int JMX_PORT = -1;
+    public static QuicktimePlayer QUICKTIME_PLAYER;
 
-    static {
+    private static void init() {
         try {
             System.setProperty("MyTunesRSS.logDir", MyTunesRssUtils.getCacheDataPath());
         } catch (IOException e) {
@@ -78,11 +110,14 @@ public class MyTunesRss {
         } catch (Exception e) {
             // ignore exceptions when deleting log files
         }
-    }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRss.class);
-
-    static {
+        DOMConfigurator.configure(MyTunesRss.class.getResource("/mytunesrss-log4j.xml"));
+        STORE = new MyTunesRssDataStore();
+        CONFIG = new MyTunesRssConfig();
+        WEBSERVER = new WebServer();
+        REGISTRATION = new MyTunesRssRegistration();
+        ERROR_QUEUE = new ErrorQueue();
+        MAILER = new MailSender();
+        ADMIN_NOTIFY = new AdminNotifier();
         try {
             File file = new File(MyTunesRssUtils.getPreferencesDataPath() + "/system.properties");
             if (file.isFile()) {
@@ -123,37 +158,6 @@ public class MyTunesRss {
         }
     }
 
-    public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
-    public static final String MYTUNESRSSCOM_TOOLS_URL = MYTUNESRSSCOM_URL + "/tools";
-    public static String VERSION;
-    public static URL UPDATE_URL;
-    public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
-    public static MyTunesRssConfig CONFIG = new MyTunesRssConfig();
-    public static ResourceBundle BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
-    public static ResourceBundle JMX_BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.jmx.MyTunesRssJmx");
-    public static WebServer WEBSERVER = new WebServer();
-    public static Timer SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
-    public static SysTray SYSTRAYMENU;
-    public static MessageDigest SHA1_DIGEST;
-    public static MessageDigest MD5_DIGEST;
-    public static JFrame ROOT_FRAME;
-    public static JFrame DUMMY_FRAME;
-    public static ImageIcon PLEASE_WAIT_ICON;
-    public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
-    public static int OPTION_PANE_MAX_MESSAGE_LENGTH = 100;
-    public static boolean HEADLESS = GraphicsEnvironment.isHeadless();
-    private static Settings SETTINGS;
-    public static final String THREAD_PREFIX = "MyTunesRSS: ";
-    public static final ErrorQueue ERROR_QUEUE = new ErrorQueue();
-    public static boolean QUIT_REQUEST;
-    public static FileCache STREAMING_CACHE;
-    public static Scheduler QUARTZ_SCHEDULER;
-    public static MailSender MAILER = new MailSender();
-    public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
-    public static String JMX_HOST;
-    public static int JMX_PORT = -1;
-    public static QuicktimePlayer QUICKTIME_PLAYER;
-
     public static void main(final String[] args)
             throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException,
             IOException, SQLException, SchedulerException {
@@ -161,6 +165,8 @@ public class MyTunesRss {
         if (arguments != null) {
             COMMAND_LINE_ARGS.putAll(arguments);
         }
+        init();
+        LOGGER.info("Command line: " + StringUtils.join(args, " "));
         VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
         if (StringUtils.isEmpty(VERSION)) {
             VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");
