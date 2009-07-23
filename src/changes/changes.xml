@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7.3" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Fixed URL encoding problem when using non-encrypted links.
+            </action>
             <action dev="mdescher" type="add">
                 Command line option for license file, cache data path and preferences data path.
             </action>

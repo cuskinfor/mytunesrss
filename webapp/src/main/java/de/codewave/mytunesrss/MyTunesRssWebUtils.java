@@ -39,6 +39,15 @@ public class MyTunesRssWebUtils {
         return user;
     }
 
+    /**
+     * Encrypt the path info. The parts of the path info are expected to be url encoded already.
+     * Any %2F and %5C will be url encoded once again since tomcat does not like those characters in the path info.
+     * So the path info decoder will have to decode the parts once since tomcat only decodes once of course.
+     *
+     * @param request
+     * @param pathInfo
+     * @return
+     */
     public static String encryptPathInfo(HttpServletRequest request, String pathInfo) {
         String result = pathInfo;
         try {
@@ -52,12 +61,8 @@ public class MyTunesRssWebUtils {
                 LOGGER.warn("Could not encrypt path info.", e);
             }
         }
-        try {
-            return URLEncoder.encode(result, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 not found!", e);
-
-        }
+        // re-encode %2F and %5C for the reason specified in the java doc
+        return result.replace("%2F", "%252F").replace("%2f", "%252F").replace("%5C", "%255C").replace("%5c", "%255C");
     }
 
     public static WebConfig getWebConfig(HttpServletRequest httpServletRequest) {
