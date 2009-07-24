@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.mytunesrss.MyTunesRssEvent;
 import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.datastore.statement.SaveITunesPlaylistStatement;
@@ -26,8 +27,10 @@ public class PlaylistListener implements PListHandlerListener {
     private Map<Long, String> myTrackIdToPersId;
     private Set<String> myExistingIds = new HashSet<String>();
     private LibraryListener myLibraryListener;
+    private Thread myWatchdogThread;
 
-    public PlaylistListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId) {
+    public PlaylistListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId) {
+        myWatchdogThread = watchdogThread;
         myDataStoreSession = dataStoreSession;
         myTrackIdToPersId = trackIdToPersId;
         myLibraryListener = libraryListener;
@@ -43,6 +46,10 @@ public class PlaylistListener implements PListHandlerListener {
     }
 
     private void insertPlaylist(Map playlist) {
+        if (myWatchdogThread.isInterrupted()) {
+            throw new ShutdownRequestedException();
+        }
+
         boolean master = playlist.get("Master") != null && ((Boolean)playlist.get("Master")).booleanValue();
         boolean purchased = playlist.get("Purchased Music") != null && ((Boolean)playlist.get("Purchased Music")).booleanValue();
         boolean partyShuffle = playlist.get("Party Shuffle") != null && ((Boolean)playlist.get("Party Shuffle")).booleanValue();

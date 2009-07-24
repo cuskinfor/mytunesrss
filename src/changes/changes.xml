@@ -9,6 +9,10 @@
 
         <release version="3.7.3" date="2009-xx-xx" description="Bugfix release">
             <action dev="mdescher" type="add">
+                MyTunesRSS will shutdown immediately (as fast as possible) even if a database update
+                is running.
+            </action>
+            <action dev="mdescher" type="add">
                 Yoics: command line option "-shutdown" which invokes the quit method on the application mbean
                 on a jmx server running on localhost with the jmx port from the configuration.
             </action>

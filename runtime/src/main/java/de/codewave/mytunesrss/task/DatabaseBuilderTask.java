@@ -198,34 +198,38 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             final long timeUpdateStart = System.currentTimeMillis();
             SystemInformation systemInformation = storeSession.executeQuery(new GetSystemInformationQuery());
             Map<String, Long> missingItunesFiles = runUpdate(systemInformation, storeSession);
-            storeSession.executeStatement(new UpdateStatisticsStatement());
-            storeSession.executeStatement(new DataStoreStatement() {
-                public void execute(Connection connection) throws SQLException {
-                    connection.createStatement().execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
-                }
-            });
-            DatabaseBuilderTask.doCheckpoint(storeSession, true);
-            if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
+            if (!getExecutionThread().isInterrupted()) {
+                storeSession.executeStatement(new UpdateStatisticsStatement());
+                storeSession.executeStatement(new DataStoreStatement() {
+                    public void execute(Connection connection) throws SQLException {
+                        connection.createStatement().execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
+                    }
+                });
+                DatabaseBuilderTask.doCheckpoint(storeSession, true);
+            }
+            if (!MyTunesRss.CONFIG.isIgnoreArtwork() && !getExecutionThread().isInterrupted()) {
                 runImageUpdate(storeSession, systemInformation.getLastUpdate(), timeUpdateStart);
             }
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Deleting orphaned images.");
-            }
-            storeSession.executeStatement(new DataStoreStatement() {
-                public void execute(Connection connection) throws SQLException {
-                    MyTunesRssUtils.createStatement(connection, "deleteOrphanedImages").execute();
+            if (!getExecutionThread().isInterrupted()) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Deleting orphaned images.");
                 }
-            });
-            DatabaseBuilderTask.doCheckpoint(storeSession, true);
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Creating database checkpoint.");
-                LOGGER.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
+                storeSession.executeStatement(new DataStoreStatement() {
+                    public void execute(Connection connection) throws SQLException {
+                        MyTunesRssUtils.createStatement(connection, "deleteOrphanedImages").execute();
+                    }
+                });
+                DatabaseBuilderTask.doCheckpoint(storeSession, true);
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Creating database checkpoint.");
+                    LOGGER.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
+                }
+                MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart),
+                        missingItunesFiles,
+                        storeSession.executeQuery(new GetSystemInformationQuery()));
+                storeSession.commit();
             }
-            MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart),
-                    missingItunesFiles,
-                    storeSession.executeQuery(new GetSystemInformationQuery()));
-            storeSession.commit();
         } catch (Exception e) {
             storeSession.rollback();
             throw e;
@@ -322,30 +326,34 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 return ids;
             }
         });
-        if (myFileDatasources != null) {
+        if (myFileDatasources != null && !getExecutionThread().isInterrupted()) {
             for (File datasource : myFileDatasources) {
                 doCheckpoint(storeSession, false);
-                if (datasource.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(datasource.getName()))) {
+                if (datasource.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(datasource.getName())) && !getExecutionThread().isInterrupted()) {
                     myState = State.UpdatingTracksFromItunes;
                     MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
                     event.setMessageKey("settings.databaseUpdateRunningItunes");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
-                    missingItunesFiles.put(datasource.getCanonicalPath(), ItunesLoader.loadFromITunes(datasource.toURL(),
+                    missingItunesFiles.put(datasource.getCanonicalPath(), ItunesLoader.loadFromITunes(getExecutionThread(), datasource.toURL(),
                             storeSession,
                             timeLastUpdate,
                             trackIds,
                             itunesPlaylistIds));
-                } else if (datasource.isDirectory()) {
-                    myState = State.UpdatingTracksFromFolder;
-                    MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
-                    event.setMessageKey("settings.databaseUpdateRunningFolder");
-                    MyTunesRssEventManager.getInstance().fireEvent(event);
-                    FileSystemLoader.loadFromFileSystem(datasource, storeSession, timeLastUpdate, trackIds, m3uPlaylistIds);
+                } else if (datasource.isDirectory() && !getExecutionThread().isInterrupted()) {
+                    try {
+                        myState = State.UpdatingTracksFromFolder;
+                        MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+                        event.setMessageKey("settings.databaseUpdateRunningFolder");
+                        MyTunesRssEventManager.getInstance().fireEvent(event);
+                        FileSystemLoader.loadFromFileSystem(getExecutionThread(), datasource, storeSession, timeLastUpdate, trackIds, m3uPlaylistIds);
+                    } catch (ShutdownRequestedException e) {
+                        // intentionally left blank
+                    }
                 }
             }
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
         }
-        if (myExternalDatasources != null) {
+        if (myExternalDatasources != null && !getExecutionThread().isInterrupted()) {
             for (String external : myExternalDatasources) {
                 doCheckpoint(storeSession, false);
                 MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
@@ -354,28 +362,34 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 ExternalLoader.process(StringUtils.trim(external), storeSession, timeLastUpdate, trackIds);
             }
         }
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Trying to remove up to " + trackIds.size() + " tracks from database.");
+        if (!getExecutionThread().isInterrupted()) {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Trying to remove up to " + trackIds.size() + " tracks from database.");
+            }
+            storeSession.executeStatement(new RemoveTrackStatement(trackIds));
+            DatabaseBuilderTask.doCheckpoint(storeSession, true);
         }
-        storeSession.executeStatement(new RemoveTrackStatement(trackIds));
-        DatabaseBuilderTask.doCheckpoint(storeSession, true);
-        // ensure the help tables are created with all the data
-        storeSession.executeStatement(new RecreateHelpTablesStatement());
-        DatabaseBuilderTask.doCheckpoint(storeSession, true);
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Removing " + (itunesPlaylistIds.size() + m3uPlaylistIds.size()) + " playlists from database.");
+        if (!getExecutionThread().isInterrupted()) {
+            // ensure the help tables are created with all the data
+            storeSession.executeStatement(new RecreateHelpTablesStatement());
+            DatabaseBuilderTask.doCheckpoint(storeSession, true);
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Removing " + (itunesPlaylistIds.size() + m3uPlaylistIds.size()) + " playlists from database.");
+            }
         }
-        if (!itunesPlaylistIds.isEmpty()) {
+        if (!itunesPlaylistIds.isEmpty() && !getExecutionThread().isInterrupted()) {
             removeObsoletePlaylists(storeSession, itunesPlaylistIds);
         }
-        if (!m3uPlaylistIds.isEmpty()) {
+        if (!m3uPlaylistIds.isEmpty() && !getExecutionThread().isInterrupted()) {
             removeObsoletePlaylists(storeSession, m3uPlaylistIds);
         }
         DatabaseBuilderTask.doCheckpoint(storeSession, true);
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Obsolete tracks and playlists removed from database.");
         }
-        storeSession.executeStatement(new RefreshSmartPlaylistsStatement());
+        if (!getExecutionThread().isInterrupted()) {
+            storeSession.executeStatement(new RefreshSmartPlaylistsStatement());
+        }
         return missingItunesFiles;
     }
 
