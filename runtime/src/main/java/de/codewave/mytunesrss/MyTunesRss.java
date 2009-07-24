@@ -112,9 +112,7 @@ public class MyTunesRss {
         }
         DOMConfigurator.configure(MyTunesRss.class.getResource("/mytunesrss-log4j.xml"));
         STORE = new MyTunesRssDataStore();
-        CONFIG = new MyTunesRssConfig();
         WEBSERVER = new WebServer();
-        REGISTRATION = new MyTunesRssRegistration();
         ERROR_QUEUE = new ErrorQueue();
         MAILER = new MailSender();
         ADMIN_NOTIFY = new AdminNotifier();
@@ -165,12 +163,15 @@ public class MyTunesRss {
         if (arguments != null) {
             COMMAND_LINE_ARGS.putAll(arguments);
         }
-        init();
+        if (!COMMAND_LINE_ARGS.containsKey("shutdown")) {
+            init();
+        }
         LOGGER.info("Command line: " + StringUtils.join(args, " "));
         VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
         if (StringUtils.isEmpty(VERSION)) {
             VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");
         }
+        CONFIG = new MyTunesRssConfig();
         MyTunesRss.CONFIG.load();
         File license = null;
         if (arguments.containsKey("license")) {
@@ -182,6 +183,7 @@ public class MyTunesRss {
                 LOGGER.info("Using license file \"" + license.getAbsolutePath() + "\" specified on command line.");
             }
         }
+        REGISTRATION = new MyTunesRssRegistration();
         REGISTRATION.init(license, true);
         if (REGISTRATION.getSettings() != null) {
             LOGGER.info("Loading configuration from license.");
@@ -191,6 +193,10 @@ public class MyTunesRss {
             if (configFromFile.getPathInfoKey() != null) {
                 MyTunesRss.CONFIG.setPathInfoKey(configFromFile.getPathInfoKey());
             }
+        }
+        if (COMMAND_LINE_ARGS.containsKey("shutdown")) {
+            MyTunesRssUtils.shutdownRemoteProcess("http://localhost:" + CONFIG.getJmxPort());
+            System.exit(0);
         }
         HEADLESS = COMMAND_LINE_ARGS.containsKey("headless") || CONFIG.isDisableGui();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());

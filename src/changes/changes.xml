@@ -8,6 +8,10 @@
     <body>
 
         <release version="3.7.3" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="add">
+                Yoics: command line option "-shutdown" which invokes the quit method on the application mbean
+                on a jmx server running on localhost with the jmx port from the configuration.
+            </action>
             <action dev="mdescher" type="fix">
                 Fixed URL encoding problem when using non-encrypted links.
             </action>

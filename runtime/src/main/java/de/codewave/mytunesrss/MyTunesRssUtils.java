@@ -28,6 +28,7 @@ import javax.mail.internet.ParseException;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -432,18 +433,35 @@ public class MyTunesRssUtils {
         systemInfo.append(MyTunesRssUtils.getBundleString("sysinfo.quicktime." + Boolean.toString(MyTunesRss.QUICKTIME_PLAYER != null))).append(System.getProperty("line.separator"));
         return systemInfo.toString();
     }
-    
+
     public static String getCacheDataPath() throws IOException {
         if (MyTunesRss.COMMAND_LINE_ARGS.containsKey("cacheDataPath")) {
-            return MyTunesRss.COMMAND_LINE_ARGS.get("cacheDataPath")[0]; 
+            return MyTunesRss.COMMAND_LINE_ARGS.get("cacheDataPath")[0];
         }
         return PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
     }
 
     public static String getPreferencesDataPath() throws IOException {
         if (MyTunesRss.COMMAND_LINE_ARGS.containsKey("preferencesDataPath")) {
-            return MyTunesRss.COMMAND_LINE_ARGS.get("preferencesDataPath")[0]; 
+            return MyTunesRss.COMMAND_LINE_ARGS.get("preferencesDataPath")[0];
         }
         return PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
+    }
+
+    public static void shutdownRemoteProcess(String baseUrl) {
+        try {
+            HttpClient httpClient = new HttpClient();
+            GetMethod getMethod = new GetMethod(baseUrl + "/invoke?objectname=" + URLEncoder.encode("MyTunesRSS:type=config,name=Application", "UTF-8") + "&operation=quit");
+            try {
+                LOGGER.debug("Response status = " + httpClient.executeMethod(getMethod));
+                LOGGER.debug(getMethod.getResponseBodyAsString());
+            } catch (IOException e) {
+                LOGGER.error("Could not stop remote application.", e);
+            } finally {
+                getMethod.releaseConnection();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not stop remote application.");
+        }
     }
 }
