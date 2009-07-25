@@ -21,6 +21,8 @@
             <action dev="mdescher" type="add">
                 Yoics: special shutdown application using a system property when starting mytunesrss. This invokes the quit
                 method on the application mbean on a jmx server running on localhost with the jmx port from the configuration.
+                Waits for other (main) instance to exit but no longer than 10 seconds. Returns exit code 0 if other instance
+                exited or was not running at all or 1 else.
             </action>
             <action dev="mdescher" type="fix">
                 Fixed URL encoding problem when using non-encrypted links.

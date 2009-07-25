@@ -195,7 +195,12 @@ public class MyTunesRss {
             }
         }
         if (System.getProperty("de.codewave.mytunesrss.shutdown") != null) {
-            MyTunesRssUtils.shutdownRemoteProcess("http://localhost:" + CONFIG.getJmxPort());
+            if (MyTunesRssUtils.isOtherInstanceRunning(1000)) {
+                MyTunesRssUtils.shutdownRemoteProcess("http://localhost:" + CONFIG.getJmxPort());
+                // return code 1 if other instance was not shut down or 0 otherwise
+                System.exit(MyTunesRssUtils.isOtherInstanceRunning(10000) ? 1 : 0);
+            }
+            // return code 0 if other instance was not running on this machine
             System.exit(0);
         }
         HEADLESS = COMMAND_LINE_ARGS.containsKey("headless") || CONFIG.isDisableGui();
@@ -238,7 +243,7 @@ public class MyTunesRss {
             }
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.missingSystemProperty." + type));
         }
-        if (isOtherInstanceRunning(3000)) {
+        if (MyTunesRssUtils.isOtherInstanceRunning(3000)) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
             MyTunesRssUtils.shutdown();
         }
@@ -401,36 +406,6 @@ public class MyTunesRss {
 
     public static DatabaseBuilderTask createDatabaseBuilderTask() {
         return new DatabaseBuilderTask();
-    }
-
-    private static boolean isOtherInstanceRunning(long timeoutMillis) {
-        RandomAccessFile lockFile;
-        try {
-            File file = new File(MyTunesRssUtils.getCacheDataPath() + "/MyTunesRSS.lck");
-            file.deleteOnExit();
-            lockFile = new RandomAccessFile(file, "rw");
-        } catch (IOException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not check for other running instance.", e);
-            }
-            return false;
-        }
-        long endTime = System.currentTimeMillis() + timeoutMillis;
-        do {
-            try {
-                if (lockFile.getChannel().tryLock() != null) {
-                    return false;
-                }
-                Thread.sleep(500);
-            } catch (IOException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not check for other running instance.", e);
-                }
-            } catch (InterruptedException e) {
-                // intentionally left blank
-            }
-        } while (System.currentTimeMillis() < endTime);
-        return true;
     }
 
     private static void executeGuiMode()

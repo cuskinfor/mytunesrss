@@ -1,6 +1,6 @@
 <launch4jConfig>
     <dontWrapJar>true</dontWrapJar>
-    <headerType>gui</headerType>
+    <headerType>console</headerType>
     <jar>data/mytunesrss.jar</jar>
     <outfile>/Users/mdescher/Projekte/mytunesrss-3.7.x/etc/MyTunesRSS-jre-shutdown.exe</outfile>
     <errTitle></errTitle>
@@ -10,7 +10,6 @@
     <downloadUrl>http://java.com/download</downloadUrl>
     <supportUrl></supportUrl>
     <customProcName>false</customProcName>
-    <stayAlive>true</stayAlive>
     <manifest></manifest>
     <icon>/Users/mdescher/Projekte/mytunesrss-3.7.x/etc/MyTunesRSS.ico</icon>
     <jre>

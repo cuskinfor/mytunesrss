@@ -28,6 +28,7 @@ import javax.mail.internet.ParseException;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -463,5 +464,35 @@ public class MyTunesRssUtils {
         } catch (Exception e) {
             throw new RuntimeException("Could not stop remote application.");
         }
+    }
+
+    public static boolean isOtherInstanceRunning(long timeoutMillis) {
+        RandomAccessFile lockFile;
+        try {
+            File file = new File(MyTunesRssUtils.getCacheDataPath() + "/MyTunesRSS.lck");
+            file.deleteOnExit();
+            lockFile = new RandomAccessFile(file, "rw");
+        } catch (IOException e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not check for other running instance.", e);
+            }
+            return false;
+        }
+        long endTime = System.currentTimeMillis() + timeoutMillis;
+        do {
+            try {
+                if (lockFile.getChannel().tryLock() != null) {
+                    return false;
+                }
+                Thread.sleep(500);
+            } catch (IOException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not check for other running instance.", e);
+                }
+            } catch (InterruptedException e) {
+                // intentionally left blank
+            }
+        } while (System.currentTimeMillis() < endTime);
+        return true;
     }
 }
