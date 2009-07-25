@@ -65,7 +65,7 @@ public class ItunesLoader {
      *
      * @throws SQLException
      */
-    public static long loadFromITunes(URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds,
+    public static long loadFromITunes(Thread executionThread, URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds,
             Collection<String> existsingPlaylistIds) throws SQLException {
         TrackListener trackListener = null;
         PlaylistListener playlistListener = null;
@@ -73,8 +73,8 @@ public class ItunesLoader {
             PListHandler handler = new PListHandler();
             Map<Long, String> trackIdToPersId = new HashMap<Long, String>();
             LibraryListener libraryListener = new LibraryListener(timeLastUpdate);
-            trackListener = new TrackListener(storeSession, libraryListener, trackIdToPersId, trackIds);
-            playlistListener = new PlaylistListener(storeSession, libraryListener, trackIdToPersId);
+            trackListener = new TrackListener(executionThread, storeSession, libraryListener, trackIdToPersId, trackIds);
+            playlistListener = new PlaylistListener(executionThread, storeSession, libraryListener, trackIdToPersId);
             handler.addListener("/plist/dict", libraryListener);
             handler.addListener("/plist/dict[Tracks]/dict", trackListener);
             handler.addListener("/plist/dict[Playlists]/array", playlistListener);

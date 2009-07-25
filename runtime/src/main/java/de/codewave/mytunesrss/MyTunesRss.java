@@ -111,9 +111,7 @@ public class MyTunesRss {
         }
         DOMConfigurator.configure(MyTunesRss.class.getResource("/mytunesrss-log4j.xml"));
         STORE = new MyTunesRssDataStore();
-        CONFIG = new MyTunesRssConfig();
         WEBSERVER = new WebServer();
-        REGISTRATION = new MyTunesRssRegistration();
         ERROR_QUEUE = new ErrorQueue();
         MAILER = new MailSender();
         ADMIN_NOTIFY = new AdminNotifier();
@@ -164,12 +162,15 @@ public class MyTunesRss {
         if (arguments != null) {
             COMMAND_LINE_ARGS.putAll(arguments);
         }
-        init();
+        if (System.getProperty("de.codewave.mytunesrss.shutdown") == null) {
+            init();
+        }
         LOGGER.info("Command line: " + StringUtils.join(args, " "));
         VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
         if (StringUtils.isEmpty(VERSION)) {
             VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");
         }
+        CONFIG = new MyTunesRssConfig();
         MyTunesRss.CONFIG.load();
         File license = null;
         if (arguments.containsKey("license")) {
@@ -181,6 +182,7 @@ public class MyTunesRss {
                 LOGGER.info("Using license file \"" + license.getAbsolutePath() + "\" specified on command line.");
             }
         }
+        REGISTRATION = new MyTunesRssRegistration();
         REGISTRATION.init(license, true);
         if (REGISTRATION.getSettings() != null) {
             LOGGER.info("Loading configuration from license.");
@@ -190,6 +192,15 @@ public class MyTunesRss {
             if (configFromFile.getPathInfoKey() != null) {
                 MyTunesRss.CONFIG.setPathInfoKey(configFromFile.getPathInfoKey());
             }
+        }
+        if (System.getProperty("de.codewave.mytunesrss.shutdown") != null) {
+            if (MyTunesRssUtils.isOtherInstanceRunning(1000)) {
+                MyTunesRssUtils.shutdownRemoteProcess("http://localhost:" + CONFIG.getJmxPort());
+                // return code 1 if other instance was not shut down or 0 otherwise
+                System.exit(MyTunesRssUtils.isOtherInstanceRunning(10000) ? 1 : 0);
+            }
+            // return code 0 if other instance was not running on this machine
+            System.exit(0);
         }
         HEADLESS = COMMAND_LINE_ARGS.containsKey("headless") || CONFIG.isDisableGui();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
@@ -231,7 +242,7 @@ public class MyTunesRss {
             }
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.missingSystemProperty." + type));
         }
-        if (isOtherInstanceRunning(3000)) {
+        if (MyTunesRssUtils.isOtherInstanceRunning(3000)) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
             MyTunesRssUtils.shutdown();
         }
@@ -396,36 +407,6 @@ public class MyTunesRss {
         return new DatabaseBuilderTask();
     }
 
-    private static boolean isOtherInstanceRunning(long timeoutMillis) {
-        RandomAccessFile lockFile;
-        try {
-            File file = new File(MyTunesRssUtils.getCacheDataPath() + "/MyTunesRSS.lck");
-            file.deleteOnExit();
-            lockFile = new RandomAccessFile(file, "rw");
-        } catch (IOException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not check for other running instance.", e);
-            }
-            return false;
-        }
-        long endTime = System.currentTimeMillis() + timeoutMillis;
-        do {
-            try {
-                if (lockFile.getChannel().tryLock() != null) {
-                    return false;
-                }
-                Thread.sleep(500);
-            } catch (IOException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not check for other running instance.", e);
-                }
-            } catch (InterruptedException e) {
-                // intentionally left blank
-            }
-        } while (System.currentTimeMillis() < endTime);
-        return true;
-    }
-
     private static void executeGuiMode()
             throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException, IOException,
             InterruptedException, AWTException {
@@ -568,9 +549,11 @@ public class MyTunesRss {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
+                LOGGER.debug("Main thread was interrupted in headless mode.", e);
                 QUIT_REQUEST = true;
             }
         }
+        LOGGER.debug("Quit request was TRUE.");
         MyTunesRssUtils.shutdownGracefully();
     }
 

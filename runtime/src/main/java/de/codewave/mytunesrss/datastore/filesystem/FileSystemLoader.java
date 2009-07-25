@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FilenameUtils;
@@ -19,7 +20,7 @@ import java.util.Collection;
 public class FileSystemLoader {
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds,
+    public static void loadFromFileSystem(final Thread watchdogThread, File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds,
             Collection<String> playlistIds) throws IOException, SQLException {
         MyTunesRssFileProcessor fileProcessor = null;
         if (baseDir != null && baseDir.isDirectory()) {
@@ -29,12 +30,18 @@ public class FileSystemLoader {
             }
             IOUtils.processFiles(baseDir, fileProcessor, new FileFilter() {
                 public boolean accept(File file) {
+                    if (watchdogThread.isInterrupted()) {
+                        throw new ShutdownRequestedException();
+                    }
                     return file.isDirectory() || FileSupportUtils.isSupported(file.getName());
                 }
             });
             PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(storeSession, fileProcessor.getExistingIds());
             IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
                 public boolean accept(File file) {
+                    if (watchdogThread.isInterrupted()) {
+                        throw new ShutdownRequestedException();
+                    }
                     return file.isDirectory() || "m3u".equals(FilenameUtils.getExtension(file.getName().toLowerCase()));
                 }
             });

@@ -37,9 +37,11 @@ public class TrackListener implements PListHandlerListener {
     private long myStartTime;
     private long myMissingFiles;
     private String[] myDisabledMp4Codecs;
+    private Thread myWatchdogThread;
 
-    public TrackListener(DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
+    public TrackListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
                          Collection<String> trackIds) throws SQLException {
+        myWatchdogThread = watchdogThread;
         myDataStoreSession = dataStoreSession;
         myLibraryListener = libraryListener;
         myTrackIdToPersId = trackIdToPersId;
@@ -78,6 +80,9 @@ public class TrackListener implements PListHandlerListener {
     }
 
     private boolean processTrack(Map track, boolean existing) {
+        if (myWatchdogThread.isInterrupted()) {
+            throw new ShutdownRequestedException();
+        }
         myScannedCount++;
         if (myLastEventTime == 0) {
             myLastEventTime = System.currentTimeMillis();
