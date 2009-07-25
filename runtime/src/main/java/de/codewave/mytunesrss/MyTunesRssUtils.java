@@ -178,7 +178,6 @@ public class MyTunesRssUtils {
             MyTunesRss.stopWebserver();
         }
         if (MyTunesRss.WEBSERVER == null || !MyTunesRss.WEBSERVER.isRunning()) {
-            MyTunesRssJmxUtils.stopJmxServer();
             if (!MyTunesRss.HEADLESS) {
                 MyTunesRss.CONFIG.setWindowX(MyTunesRss.ROOT_FRAME.getLocation().x);
                 MyTunesRss.CONFIG.setWindowY(MyTunesRss.ROOT_FRAME.getLocation().y);
@@ -235,6 +234,7 @@ public class MyTunesRssUtils {
             if (!MyTunesRss.HEADLESS) {
                 MyTunesRss.ROOT_FRAME.dispose();
             }
+            MyTunesRssJmxUtils.stopJmxServer();
         }
         shutdown();
     }
