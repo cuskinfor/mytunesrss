@@ -17,4 +17,6 @@ public interface ApplicationConfigMBean {
     String sendSupportRequest(String name, String email, String comment, boolean includeItunesXml);
 
     String getSystemInfo();
+
+    String getApplicationState();
 }

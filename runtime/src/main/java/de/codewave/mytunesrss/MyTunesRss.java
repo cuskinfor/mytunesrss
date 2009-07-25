@@ -163,7 +163,7 @@ public class MyTunesRss {
         if (arguments != null) {
             COMMAND_LINE_ARGS.putAll(arguments);
         }
-        if (!COMMAND_LINE_ARGS.containsKey("shutdown")) {
+        if (System.getProperty("de.codewave.mytunesrss.shutdown") == null) {
             init();
         }
         LOGGER.info("Command line: " + StringUtils.join(args, " "));
@@ -194,7 +194,7 @@ public class MyTunesRss {
                 MyTunesRss.CONFIG.setPathInfoKey(configFromFile.getPathInfoKey());
             }
         }
-        if (COMMAND_LINE_ARGS.containsKey("shutdown")) {
+        if (System.getProperty("de.codewave.mytunesrss.shutdown") != null) {
             MyTunesRssUtils.shutdownRemoteProcess("http://localhost:" + CONFIG.getJmxPort());
             System.exit(0);
         }
@@ -572,9 +572,11 @@ public class MyTunesRss {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
+                LOGGER.debug("Main thread was interrupted in headless mode.", e);
                 QUIT_REQUEST = true;
             }
         }
+        LOGGER.debug("Quit request was TRUE.");
         MyTunesRssUtils.shutdownGracefully();
     }
 

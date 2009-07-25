@@ -5,6 +5,8 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.task.SendSupportRequestTask;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.NotCompliantMBeanException;
 
@@ -12,6 +14,7 @@ import javax.management.NotCompliantMBeanException;
  * de.codewave.mytunesrss.jmx.Application
  */
 public class ApplicationConfig extends MyTunesRssMBean implements ApplicationConfigMBean {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationConfig.class);
 
     ApplicationConfig() throws NotCompliantMBeanException {
         super(ApplicationConfigMBean.class);
@@ -22,6 +25,7 @@ public class ApplicationConfig extends MyTunesRssMBean implements ApplicationCon
     }
 
     public String quit() {
+        LOGGER.debug("JMX call to Application#quit");
         MyTunesRss.ERROR_QUEUE.clear();
         if (MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRss.stopWebserver();
@@ -74,5 +78,11 @@ public class ApplicationConfig extends MyTunesRssMBean implements ApplicationCon
 
     public String getSystemInfo() {
         return MyTunesRssUtils.getSystemInfo();
+    }
+
+    public String getApplicationState() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("webserver=").append(MyTunesRss.WEBSERVER.isRunning() ? "started" : "stopped");
+        return builder.toString();
     }
 }
