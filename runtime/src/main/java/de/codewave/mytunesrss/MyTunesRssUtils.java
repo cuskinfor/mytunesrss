@@ -163,6 +163,7 @@ public class MyTunesRssUtils {
                 }
             }
         }
+        MyTunesRssJmxUtils.stopJmxServer();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Very last log message before shutdown.");
         }
@@ -234,7 +235,6 @@ public class MyTunesRssUtils {
             if (!MyTunesRss.HEADLESS) {
                 MyTunesRss.ROOT_FRAME.dispose();
             }
-            MyTunesRssJmxUtils.stopJmxServer();
         }
         shutdown();
     }
