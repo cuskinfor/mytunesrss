@@ -1481,11 +1481,11 @@ public class MyTunesRssConfig {
     }
 
     public boolean isTomcatProxy() {
-        return StringUtils.isNotBlank(myTomcatProxyHost) && myTomcatProxyPort > 0 && myTomcatProxyPort < 65536;
+        return StringUtils.isNotBlank(myTomcatProxyHost) || (myTomcatProxyPort > 0 && myTomcatProxyPort < 65536);
     }
 
     public boolean isTomcatSslProxy() {
-        return StringUtils.isNotBlank(myTomcatSslProxyHost) && myTomcatSslProxyPort > 0 && myTomcatSslProxyPort < 65536;
+        return StringUtils.isNotBlank(myTomcatSslProxyHost) || (myTomcatSslProxyPort > 0 && myTomcatSslProxyPort < 65536);
     }
 
     public boolean isMyTunesRssComActive() {

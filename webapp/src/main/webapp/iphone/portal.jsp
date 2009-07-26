@@ -1,11 +1,13 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <html>
 <head>
     <script src="${appUrl}/iphone/js/prototype.js" type="text/javascript"></script>
     <script type="text/javascript">
         function loggedOut(json) {
             top.setSessionId("");
-            top.document.cookie = top.mytunesrssUsername + "_username=";
-            top.document.cookie = top.mytunesrssUsername + "_password=";
+            top.document.cookie = "mtr_iphone_username=";
+            top.document.cookie = "mtr_iphone_password=";
             top.init();
         }
     </script>
@@ -37,11 +39,13 @@
         <tr>
             <td height="60px" style="font-size:26px" onclick="top.mytunesrss('TrackService.search', [$(searchTerm).value, false, 0, -1], function(json) {top.json=json;top.loadContent('${appUrl}/iphone/tracklist.jsp?first=0')})"><input type=submit style="font-size:16px" value="Search"></td> <td width="70%"><input style="height:28px; width:100%; font-size:16px" type="text" id="searchTerm" autocorrect="off" autocapitalize="off" size="30" /></td>
         </tr>
-		<TR><TD colspan="2"><img src="${appUrl}/iphone/img/line.png" width="100%" height="1px"></TD></TR>
-        <tr>
-            <td valign="bottom" colspan="2" align="center" onclick="top.mytunesrss('LoginService.logout', null, loggedOut)"> <BR>
-			<input type=submit style="font-size:16px" value="Log off"></td>
-        </tr>
+        <c:if test="${empty globalConfig.autoLogin}">
+            <TR><TD colspan="2"><img src="${appUrl}/iphone/img/line.png" width="100%" height="1px"></TD></TR>
+            <tr>
+                <td valign="bottom" colspan="2" align="center" onclick="top.mytunesrss('LoginService.logout', null, loggedOut)"> <BR>
+                <input type=submit style="font-size:16px" value="Log off"></td>
+            </tr>
+        </c:if>
     </table>
 	&nbsp;<P>&nbsp;<BR>
 </body>

@@ -6,7 +6,7 @@
 var first;
 var pageSize = 10;
 function play(id) {
-    top.mytunesrss("PlaylistService.getTracks", [id, null], function(json) {top.createIphonePlaylist(json, 'top.loadContent(\"${appUrl}/iphone/playlists.jsp?first=' + first + '\")')});
+    top.mytunesrss("PlaylistService.getTracks", [id, null], function(json) {top.createIphonePlaylist('${appUrl}', json, 'top.loadContent(\"${appUrl}/iphone/playlists.jsp?first=' + first + '\")')});
 }
 function showTracklist(id) {
     top.mytunesrss("PlaylistService.getTracks", [id, null], function(json) {top.json=json;top.loadContent("${appUrl}/iphone/tracklist.jsp?first=0")});

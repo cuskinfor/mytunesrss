@@ -7,10 +7,10 @@ var first;
 var pageSize = 10;
 var currentList;
 function playPlaylist(id) {
-    top.mytunesrss("PlaylistService.getTracks", [id, null], function(json) {top.createIphonePlaylist(getTracks(), 0, 'top.loadContent(\"${appUrl}/iphone/tracklist.jsp?first=' + first + '\")')});
+    top.mytunesrss("PlaylistService.getTracks", [id, null], function(json) {top.createIphonePlaylist('${appUrl}', getTracks(), 0, 'top.loadContent(\"${appUrl}/iphone/tracklist.jsp?first=' + first + '\")')});
 }
 function playTracks(startIndex) {
-    top.createIphonePlaylist(getTracks(), startIndex, 'top.loadContent(\"${appUrl}/iphone/tracklist.jsp?first=' + first + '\")');
+    top.createIphonePlaylist('${appUrl}', getTracks(), startIndex, 'top.loadContent(\"${appUrl}/iphone/tracklist.jsp?first=' + first + '\")');
 }
 function getTracks() {
     var currentList = top.json.result.tracks;

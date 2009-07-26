@@ -48,12 +48,12 @@ function loadContent(page) {
     document.getElementById("content").setAttribute("src", page);
 }
 
-function createIphonePlaylist(tracks, startIndex, backCall) {
+function createIphonePlaylist(appUrl, tracks, startIndex, backCall) {
     var targetElement = top.document.getElementById("content").contentDocument;
     var html = "<html><head><meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0' /></head><body>";
     html += "<table border='0' cellspacing='3px' cellpadding='6px' width='100%'>";
     html += "<tr><td align='center' onclick='" + backCall + "'><input type=submit style='font-size:14px; width:64px' value='back'></td></tr></table>";
-    html += "<div style='margin-top:60px;align:center'><embed src='/img/movie_poster.png' autoplay='false' href='" + tracks[startIndex].playbackUrl + "' type='" + tracks[startIndex].contentType + "' target='myself'\n";
+    html += "<div style='margin-top:60px;align:center'><embed src='" + appUrl + "/iphone/img/movie_poster.png' autoplay='false' href='" + tracks[startIndex].playbackUrl + "' type='" + tracks[startIndex].contentType + "' target='myself'\n";
     for (var i = startIndex + 1; i < tracks.length; i++) {
         html += "qtnext" + i + "='<" + tracks[i].playbackUrl + "> T<myself>'\n";
     }

@@ -5,10 +5,9 @@
     <script src="${appUrl}/iphone/js/prototype.js" type="text/javascript"></script>
     <script src="${appUrl}/iphone/js/mytunesrss-remote-api.js" type="text/javascript"></script>
     <script type="text/javascript">
-        var sid = getSessionId("sid");
+        var sid = "/${remoteApiSession}";
         var reqId = 0;
         var mytunesrssServer = "${appUrl}";
-        var mytunesrssUsername = "mytunesrss_iphone";
 
         function init() {
             checkSession();
@@ -25,7 +24,7 @@
         }
 
         function checkSession() {
-            if (sid != "undefined" && sid != null && sid.length > 0) {
+            if (sid != "undefined" && sid != null && sid.length > 1) {
                 mytunesrss("LoginService.ping", null, loadInitialPage);
             } else {
                 document.getElementById("content").setAttribute("src", "${appUrl}/iphone/login.jsp");
