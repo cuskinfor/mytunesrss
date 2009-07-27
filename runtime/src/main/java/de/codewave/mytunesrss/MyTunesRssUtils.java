@@ -513,6 +513,8 @@ public class MyTunesRssUtils {
     public static void shutdownRemoteProcess(String baseUrl) {
         try {
             HttpClient httpClient = new HttpClient();
+            httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(1000);
+            httpClient.getHttpConnectionManager().getParams().setSoTimeout(1000);
             GetMethod getMethod = new GetMethod(baseUrl + "/invoke?objectname=" + URLEncoder.encode("MyTunesRSS:type=config,name=Application", "UTF-8") + "&operation=quit");
             try {
                 LOGGER.debug("Response status = " + httpClient.executeMethod(getMethod));
