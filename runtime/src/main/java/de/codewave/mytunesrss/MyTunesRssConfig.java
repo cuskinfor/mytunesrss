@@ -1507,14 +1507,6 @@ public class MyTunesRssConfig {
         return clone;
     }
 
-    public boolean isTomcatProxy() {
-        return StringUtils.isNotBlank(myTomcatProxyHost) || (myTomcatProxyPort > 0 && myTomcatProxyPort < 65536);
-    }
-
-    public boolean isTomcatSslProxy() {
-        return StringUtils.isNotBlank(myTomcatSslProxyHost) || (myTomcatSslProxyPort > 0 && myTomcatSslProxyPort < 65536);
-    }
-
     public boolean isRemoteControl() {
         return MyTunesRss.QUICKTIME_PLAYER != null;
     }
