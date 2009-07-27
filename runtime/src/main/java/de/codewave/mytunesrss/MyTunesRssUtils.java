@@ -477,13 +477,12 @@ public class MyTunesRssUtils {
         try {
             HttpClient httpClient = new HttpClient();
             httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(1000);
-            httpClient.getHttpConnectionManager().getParams().setSoTimeout(1000);
+            httpClient.getHttpConnectionManager().getParams().setSoTimeout(1);
             GetMethod getMethod = new GetMethod(baseUrl + "/invoke?objectname=" + URLEncoder.encode("MyTunesRSS:type=config,name=Application", "UTF-8") + "&operation=quit");
             try {
-                LOGGER.debug("Response status = " + httpClient.executeMethod(getMethod));
-                LOGGER.debug(getMethod.getResponseBodyAsString());
+                httpClient.executeMethod(getMethod);
             } catch (IOException e) {
-                LOGGER.error("Could not stop remote application.", e);
+                // expected exception
             } finally {
                 getMethod.releaseConnection();
             }
