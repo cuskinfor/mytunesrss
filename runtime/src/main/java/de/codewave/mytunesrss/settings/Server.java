@@ -52,6 +52,10 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
     private File myFileChooserDierctory;
 
     public Server() {
+        myHttpProxySchemeInput.addItem("HTTP");
+        myHttpProxySchemeInput.addItem("HTTPS");
+        myHttpsProxySchemeInput.addItem("HTTPS");
+        myHttpsProxySchemeInput.addItem("HTTP");
         MyTunesRssEventManager.getInstance().addListener(this);
         myAutoStartServerInput.addActionListener(new AutoStartServerInputListener());
         myAvailableOnLocalNetInput.addChangeListener(new ChangeListener() {
@@ -149,10 +153,6 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
         myMaxThreadsInput.setText(MyTunesRss.CONFIG.getTomcatMaxThreads());
         myAjpPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getTomcatAjpPort(), 1, 65535, null));
         myContextInput.setText(MyTunesRss.CONFIG.getWebappContext());
-        myHttpProxySchemeInput.addItem("HTTP");
-        myHttpProxySchemeInput.addItem("HTTPS");
-        myHttpsProxySchemeInput.addItem("HTTPS");
-        myHttpsProxySchemeInput.addItem("HTTP");
         myHttpProxySchemeInput.setSelectedItem(StringUtils.defaultIfEmpty(MyTunesRss.CONFIG.getTomcatProxyScheme(), "HTTP").toUpperCase());
         myHttpsProxySchemeInput.setSelectedItem(StringUtils.defaultIfEmpty(MyTunesRss.CONFIG.getTomcatSslProxyScheme(), "HTTPS").toUpperCase());
     }
