@@ -216,24 +216,6 @@ public class MyTunesRssWebUtils {
         }
     }
 
-    public static String makeHttp(String url) {
-        String schemePrefix = "https://";
-        if (url != null && url.toLowerCase().startsWith(schemePrefix)) {
-            int httpPort = MyTunesRss.CONFIG.isTomcatProxy() ? MyTunesRss.CONFIG.getTomcatProxyPort() : MyTunesRss.CONFIG.getPort();
-            int serverSeparator = url.indexOf("/", schemePrefix.length());
-            if (serverSeparator == -1) {
-                serverSeparator = url.length();
-            }
-            int portSeparator = url.indexOf(':', schemePrefix.length());
-            String oldHost = portSeparator != -1 ? url.substring(schemePrefix.length(), portSeparator) : url.substring(schemePrefix.length(),
-                    serverSeparator);
-            String httpHost = MyTunesRss.CONFIG.isTomcatProxy() ? MyTunesRss.CONFIG.getTomcatProxyHost() : oldHost;
-            String httpScheme = MyTunesRss.CONFIG.isTomcatProxy() ? MyTunesRss.CONFIG.getTomcatProxyScheme() : "http";
-            return httpScheme + "://" + httpHost + ":" + httpPort + (serverSeparator < url.length() ? url.substring(serverSeparator) : "");
-        }
-        return url;
-    }
-
     public static void createParameterModel(HttpServletRequest request, String... parameterNames) {
         for (String parameterName : parameterNames) {
             String[] parts = parameterName.split(".");

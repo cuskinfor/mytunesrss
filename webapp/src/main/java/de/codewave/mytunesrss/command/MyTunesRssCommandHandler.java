@@ -164,7 +164,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         WebConfig webConfig = getWebConfig();
         if (StringUtils.isEmpty(myTunesRssComUsername) || !webConfig.isMyTunesRssComAddress()) {
             getRequest().setAttribute("permServletUrl", servletUrl);
-            getRequest().setAttribute("downloadPlaybackServletUrl", MyTunesRssWebUtils.makeHttp(servletUrl));
+            getRequest().setAttribute("downloadPlaybackServletUrl", servletUrl);
         } else {
             String appUrl = ServletUtils.getApplicationUrl(getRequest());
             String url =

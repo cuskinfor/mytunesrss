@@ -10,7 +10,7 @@ function loadItems(page) {
     top.mytunesrss('AlbumService.getAlbums', [null,null,null,page,-1,-1], function(json){top.json=json;buildList()});
 }
 function play(name) {
-    top.mytunesrss("AlbumService.getTracks", [$A([name])], function(json) {top.createIphonePlaylist(json, 'top.loadContent(\"${appUrl}/iphone/albums.jsp?first=' + first + '\")')});
+    top.mytunesrss("AlbumService.getTracks", [$A([name])], function(json) {top.createIphonePlaylist('${appUrl}', json, 'top.loadContent(\"${appUrl}/iphone/albums.jsp?first=' + first + '\")')});
 }
 function showTracklist(name) {
     top.mytunesrss("AlbumService.getTracks", [$A([name])], function(json) {top.json=json;top.loadContent("${appUrl}/iphone/tracklist.jsp?first=0")});
