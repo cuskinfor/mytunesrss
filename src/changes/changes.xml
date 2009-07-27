@@ -9,6 +9,10 @@
 
         <release version="3.7.3" date="2009-xx-xx" description="Bugfix release">
             <action dev="mdescher" type="add">
+                Database error options: user may choose to recreate default and retry or shutdown. In headless mode
+				a command line options allows for automatic recreate and retry.
+            </action>
+            <action dev="mdescher" type="add">
                 Application state mbean call on Application mbean.
             </action>
             <action dev="mdescher" type="add">
