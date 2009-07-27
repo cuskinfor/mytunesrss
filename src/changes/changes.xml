@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.7.3" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                Test database connection only once instead of multiple times for 10 seconds.
+            </action>
             <action dev="mdescher" type="add">
                 Database error options: user may choose to recreate default and retry or shutdown. In headless mode
 				a command line options allows for automatic recreate and retry.
@@ -26,7 +29,7 @@
                 Yoics: special shutdown application using a system property when starting mytunesrss. This invokes the quit
                 method on the application mbean on a jmx server running on localhost with the jmx port from the configuration.
                 Waits for other (main) instance to exit but no longer than 10 seconds. Returns exit code 0 if other instance
-                exited or was not running at all or 1 else.
+                exited or was not running at all or 1 else. The connection and data timeouts for the JMX call are 1000ms each.
             </action>
             <action dev="mdescher" type="fix">
                 Fixed URL encoding problem when using non-encrypted links.
