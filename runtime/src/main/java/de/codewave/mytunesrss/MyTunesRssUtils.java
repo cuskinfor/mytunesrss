@@ -1,24 +1,19 @@
 package de.codewave.mytunesrss;
 
 import com.ibm.icu.text.Normalizer;
-import com.ibm.icu.text.Transliterator;
 import de.codewave.mytunesrss.datastore.external.YouTubeLoader;
-import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
-import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
-import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.mytunesrss.task.DeleteDatabaseFilesTask;
+import de.codewave.systray.SystrayUtils;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.SmartStatement;
-import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.swing.SwingUtils;
 import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
 import de.codewave.utils.swing.pleasewait.PleaseWaitUtils;
-import de.codewave.systray.SystrayUtils;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -26,18 +21,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,8 +38,6 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -184,7 +165,6 @@ public class MyTunesRssUtils {
                 }
             }
         }
-        SystrayUtils.remove(MyTunesRss.SYSTRAY.getUUID());
         MyTunesRssJmxUtils.stopJmxServer();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Very last log message before shutdown.");
@@ -223,43 +203,101 @@ public class MyTunesRssUtils {
                     }
                 });
             }
-
-            MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
-                public void execute() {
-                    DataStoreSession session = MyTunesRss.STORE.getTransaction();
-                    try {
-                        LOGGER.debug("Removing old temporary playlists.");
-                        session.executeStatement(new RemoveOldTempPlaylistsStatement());
-                        session.commit();
-                    } catch (SQLException e) {
-                        LOGGER.error("Could not remove old temporary playlists.", e);
+            if (MyTunesRss.STORE != null) {
+                MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
+                    public void execute() {
+                        DataStoreSession session = MyTunesRss.STORE.getTransaction();
                         try {
-                            session.rollback();
-                        } catch (SQLException e1) {
-                            LOGGER.error("Could not rollback transaction.", e1);
+                            LOGGER.debug("Removing old temporary playlists.");
+                            session.executeStatement(new RemoveOldTempPlaylistsStatement());
+                            session.commit();
+                        } catch (SQLException e) {
+                            try {
+                                session.rollback();
+                            } catch (SQLException e1) {
+                                LOGGER.error("Could not rollback transaction.", e1);
+                            }
                         }
-                    }
-                    try {
-                        LOGGER.debug("Removing old statistic events.");
-                        session.executeStatement(new RemoveOldEventsStatement());
-                        session.commit();
-                    } catch (SQLException e) {
-                        LOGGER.error("Could not remove old statistic events.", e);
                         try {
-                            session.rollback();
-                        } catch (SQLException e1) {
-                            LOGGER.error("Could not rollback transaction.", e1);
+                            LOGGER.debug("Removing old statistic events.");
+                            session.executeStatement(new RemoveOldEventsStatement());
+                            session.commit();
+                        } catch (SQLException e) {
+                            LOGGER.error("Could not remove old statistic events.", e);
+                            try {
+                                session.rollback();
+                            } catch (SQLException e1) {
+                                LOGGER.error("Could not rollback transaction.", e1);
+                            }
                         }
+                        LOGGER.debug("Destroying store.");
+                        MyTunesRss.STORE.destroy();
                     }
-                    LOGGER.debug("Destroying store.");
-                    MyTunesRss.STORE.destroy();
                 }
-            });
+
+                );
+            }
             if (!MyTunesRss.HEADLESS) {
                 MyTunesRss.ROOT_FRAME.dispose();
             }
         }
-        shutdown();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Shutting down.");
+        }
+        if (MyTunesRss.STREAMING_CACHE != null) {
+            try {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Cleaning up streamig cache.");
+                }
+                File destinationFile = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache.xml");
+                FileUtils.writeStringToFile(destinationFile, MyTunesRss.STREAMING_CACHE.getContent());
+            } catch (IOException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not write streaming cache contents, all files will be lost on next start.", e);
+                }
+                MyTunesRss.STREAMING_CACHE.clearCache();
+            }
+        }
+        if (MyTunesRss.QUARTZ_SCHEDULER != null) {
+            try {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Shutting down quartz scheduler.");
+                }
+                MyTunesRss.QUARTZ_SCHEDULER.shutdown();
+            } catch (SchedulerException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not shutdown quartz scheduler.", e);
+                }
+            }
+        }
+        if (MyTunesRss.CONFIG.isDefaultDatabase() && MyTunesRss.CONFIG.isDeleteDatabaseOnExit()) {
+            try {
+                new DeleteDatabaseFilesTask().execute();
+            } catch (IOException e) {
+                LOGGER.error("Could not delete default database files.");
+            }
+        }
+        SystrayUtils.remove(MyTunesRss.SYSTRAY.getUUID());
+        MyTunesRssJmxUtils.stopJmxServer();
+        if (MyTunesRss.CONFIG.isRestartOnExit()) {
+            new Thread() {
+                public void run() {
+                    try {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Restarting MyTunesRSS.");
+                        }
+                        MyTunesRss.main(MyTunesRss.ORIGINAL_CMD_ARGS);
+                    } catch (Exception e) {
+                        // intentionally left blank
+                    }
+                }
+            }.start();
+        } else {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Very last log message before shutdown.");
+            }
+            System.exit(0);
+        }
     }
 
     private static final double KBYTE = 1024;

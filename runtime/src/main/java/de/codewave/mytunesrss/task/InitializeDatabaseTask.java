@@ -7,21 +7,19 @@ package de.codewave.mytunesrss.task;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssTask;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement;
 import de.codewave.mytunesrss.datastore.statement.MigrationStatement;
-import de.codewave.mytunesrss.datastore.statement.TuneDatabaseStatement;
 import de.codewave.utils.Version;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * de.codewave.mytunesrss.task.InitializeDatabaseTask
@@ -30,28 +28,57 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(InitializeDatabaseTask.class);
 
     private Version myVersion;
+    private Exception myException;
+    private boolean myThrowException;
+
+    public InitializeDatabaseTask() {
+        this(false);
+    }
+
+    public InitializeDatabaseTask(boolean throwException) {
+        myThrowException = throwException;
+    }
 
     public void execute() throws IOException, SQLException {
-        LOGGER.debug("Initializing the database.");
-        MyTunesRss.STORE.init();
-        DataStoreSession session = MyTunesRss.STORE.getTransaction();
-        loadVersion(session);
-        if (myVersion == null) {
-            LOGGER.debug("No version found. Creating all tables.");
-            session.executeStatement(new CreateAllTablesStatement());
-            DatabaseBuilderTask.doCheckpoint(session, true);
+        try {
+            LOGGER.debug("Initializing the database.");
+            MyTunesRss.STORE = new MyTunesRssDataStore();
+            MyTunesRss.STORE.init();
+            DataStoreSession session = MyTunesRss.STORE.getTransaction();
             loadVersion(session);
-        } else {
-            LOGGER.debug("Version found.");
-            if (myVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0) {
-                LOGGER.debug("Migrating database.");
-                session.executeStatement(new MigrationStatement());
+            if (myVersion == null) {
+                LOGGER.debug("No version found. Creating all tables.");
+                session.executeStatement(new CreateAllTablesStatement());
                 DatabaseBuilderTask.doCheckpoint(session, true);
-            }
+                loadVersion(session);
+            } else {
+                LOGGER.debug("Version found.");
+                if (myVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0) {
+                    session.executeStatement(new MigrationStatement());
+                    DatabaseBuilderTask.doCheckpoint(session, true);
+                }
 //            session.executeStatement(new TuneDatabaseStatement());
-            MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
+                MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
+            }
+            LOGGER.debug("Database now has version \"" + myVersion + "\".");
+        } catch (IOException e) {
+            LOGGER.error("Could not initialize database.", e);
+            MyTunesRss.STORE = null;
+            myException = e;
+        } catch (SQLException e) {
+            MyTunesRss.STORE = null;
+            LOGGER.error("Could not initialize database.", e);
+            myException = e;
         }
-        LOGGER.debug("Database now has version \"" + myVersion + "\".");
+    }
+
+    /**
+     * Get the exception that occurred in the initialiazation task.
+     *
+     * @return The initializaton task exception or NULL if no exception occurred.
+     */
+    public Exception getException() {
+        return myException;
     }
 
     private void loadVersion(DataStoreSession session) throws SQLException {

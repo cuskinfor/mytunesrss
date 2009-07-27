@@ -1,21 +1,23 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.command.MyTunesRssCommand;
-import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.jsp.Error;
-import de.codewave.mytunesrss.servlet.WebConfig;
-import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
-import de.codewave.utils.servlet.ServletUtils;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.crypto.Cipher;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.Cipher;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.*;
+import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.jsp.Error;
+import de.codewave.mytunesrss.servlet.WebConfig;
+import de.codewave.utils.servlet.ServletUtils;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
@@ -245,6 +247,3 @@ public class MyTunesRssWebUtils {
         }
     }
 }
-
-
-

@@ -42,7 +42,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -92,6 +91,7 @@ public class MyTunesRss {
     public static int JMX_PORT = -1;
     public static QuicktimePlayer QUICKTIME_PLAYER;
     public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
+    public static String[] ORIGINAL_CMD_ARGS;
 
     private static void init() {
         try {
@@ -110,7 +110,6 @@ public class MyTunesRss {
             // ignore exceptions when deleting log files
         }
         DOMConfigurator.configure(MyTunesRss.class.getResource("/mytunesrss-log4j.xml"));
-        STORE = new MyTunesRssDataStore();
         WEBSERVER = new WebServer();
         ERROR_QUEUE = new ErrorQueue();
         MAILER = new MailSender();
@@ -158,6 +157,7 @@ public class MyTunesRss {
     public static void main(final String[] args)
             throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException,
             IOException, SQLException, SchedulerException {
+        ORIGINAL_CMD_ARGS = args;
         Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
         if (arguments != null) {
             COMMAND_LINE_ARGS.putAll(arguments);
@@ -244,25 +244,22 @@ public class MyTunesRss {
         }
         if (MyTunesRssUtils.isOtherInstanceRunning(3000)) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
-            MyTunesRssUtils.shutdown();
+            MyTunesRssUtils.shutdownGracefully();
         }
         if (new Version(CONFIG.getVersion()).compareTo(new Version(VERSION)) > 0) {
             MyTunesRssUtils.showErrorMessage(MessageFormat.format(BUNDLE.getString("error.configVersionMismatch"), VERSION, CONFIG.getVersion()));
-            MyTunesRssUtils.shutdown();
+            MyTunesRssUtils.shutdownGracefully();
         }
         if (REGISTRATION.isExpiredPreReleaseVersion()) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.preReleaseVersionExpired"));
-            MyTunesRssUtils.shutdown();
+            MyTunesRssUtils.shutdownGracefully();
         } else if (REGISTRATION.isExpired() && HEADLESS) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
-            MyTunesRssUtils.shutdown();
+            MyTunesRssUtils.shutdownGracefully();
         } else if (REGISTRATION.isExpirationDate() && !REGISTRATION.isExpired()) {
             MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.expirationInfo",
                     REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
                             "common.dateFormat"))));
-        }
-        if (MyTunesRss.CONFIG.isDefaultDatabase() && MyTunesRss.CONFIG.isDeleteDatabaseOnNextStartOnError()) {
-            new DeleteDatabaseFilesTask().execute();
         }
         QUARTZ_SCHEDULER = new StdSchedulerFactory().getScheduler();
         if (LOGGER.isInfoEnabled()) {
@@ -381,7 +378,7 @@ public class MyTunesRss {
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.databaseDriverNotFound",
                         driverClassName,
                         libDir.getAbsolutePath()));
-                MyTunesRssUtils.shutdown();
+                MyTunesRssUtils.shutdownGracefully();
             } catch (SQLException e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error(null, e);
@@ -398,7 +395,7 @@ public class MyTunesRss {
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.databaseDriverNotFound",
                         driverClassName,
                         libDir.getAbsolutePath()));
-                MyTunesRssUtils.shutdown();
+                MyTunesRssUtils.shutdownGracefully();
             }
         }
     }
@@ -429,11 +426,33 @@ public class MyTunesRss {
         if (CONFIG.isCheckUpdateOnStart()) {
             UpdateUtils.checkForUpdate(true);
         }
-        InitializeDatabaseTask task = new InitializeDatabaseTask();
-        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, task);
-        if (task.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
-            MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString("error.databaseVersionMismatch"), MyTunesRss.VERSION, task.getDatabaseVersion().toString()));
-            MyTunesRssUtils.shutdownGracefully();
+        while (true) {
+            String retry = MyTunesRssUtils.getBundleString("question.databaseInitError.retry");
+            String shutdown = MyTunesRssUtils.getBundleString("question.databaseInitError.shutdown");
+            String[] options = new String[]{retry, shutdown};
+            InitializeDatabaseTask task = new InitializeDatabaseTask();
+            MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, task);
+            if (task.getException() != null) {
+                String answer = (String) MyTunesRssUtils.showQuestionMessage(MyTunesRssUtils.getBundleString("question.databaseInitError"), options);
+                if (answer == retry) {
+                    MyTunesRss.CONFIG.setDefaultDatabaseSettings();
+                    new DeleteDatabaseFilesTask().execute();
+                    continue; // retry
+                } else {
+                    MyTunesRssUtils.shutdownGracefully();
+                }
+            }
+            if (task.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
+                String answer = (String) MyTunesRssUtils.showQuestionMessage(MyTunesRssUtils.getBundleString("question.databaseVersionMismatch"), options);
+                if (answer == retry) {
+                    MyTunesRss.CONFIG.setDefaultDatabaseSettings();
+                    new DeleteDatabaseFilesTask().execute();
+                    continue; // retry
+                } else {
+                    MyTunesRssUtils.shutdownGracefully();
+                }
+            }
+            break; // ok, continue with main flow
         }
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
@@ -456,7 +475,7 @@ public class MyTunesRss {
         if (REGISTRATION.isExpired()) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
             SETTINGS.forceRegistration();
-            MyTunesRssUtils.shutdown();
+            MyTunesRssUtils.shutdownGracefully();
         }
         if (CONFIG.isAutoStartServer()) {
             SETTINGS.doStartServer();
@@ -534,11 +553,43 @@ public class MyTunesRss {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Headless mode");
         }
-        InitializeDatabaseTask task = new InitializeDatabaseTask();
-        MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, task);
-        if (task.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
-            MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString("error.databaseVersionMismatch"), MyTunesRss.VERSION, task.getDatabaseVersion().toString()));
-            MyTunesRssUtils.shutdownGracefully();
+        while (true) {
+            InitializeDatabaseTask task = new InitializeDatabaseTask();
+            MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, task);
+            if (task.getException() != null) {
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.databaseInitError"));
+                if (isAutoResetDatabaseOnError()) {
+                    LOGGER.info("Recreating default database.");
+                    CONFIG.setDefaultDatabaseSettings();
+                    try {
+                        new DeleteDatabaseFilesTask().execute();
+                        LOGGER.info("Starting retry.");
+                        continue; // retry
+                    } catch (IOException e) {
+                        LOGGER.error("Could not delete database files.");
+                        CONFIG.setDeleteDatabaseOnExit(true);
+                    }
+                }
+                MyTunesRssUtils.shutdownGracefully();
+            }
+            if (task.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
+                MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString("error.databaseVersionMismatch"), MyTunesRss.VERSION, task.getDatabaseVersion().toString()));
+                if (isAutoResetDatabaseOnError()) {
+                    LOGGER.info("Recreating default database.");
+                    CONFIG.setDefaultDatabaseSettings();
+                    try {
+                        STORE.destroy();
+                        new DeleteDatabaseFilesTask().execute();
+                        LOGGER.info("Starting retry.");
+                        continue; // retry
+                    } catch (IOException e) {
+                        LOGGER.error("Could not delete database files.");
+                        CONFIG.setDeleteDatabaseOnExit(true);
+                    }
+                }
+                MyTunesRssUtils.shutdownGracefully();
+            }
+            break; // ok, continue with main flow
         }
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
@@ -555,6 +606,10 @@ public class MyTunesRss {
         }
         LOGGER.debug("Quit request was TRUE.");
         MyTunesRssUtils.shutdownGracefully();
+    }
+
+    private static boolean isAutoResetDatabaseOnError() {
+        return COMMAND_LINE_ARGS.containsKey("autoResetDatabaseOnError");
     }
 
     public static void startWebserver() {

@@ -77,7 +77,7 @@ public class MyTunesRssConfig {
     private int myWindowX;
     private int myWindowY;
     private String myLastNewVersionInfo;
-    private boolean myDeleteDatabaseOnNextStartOnError;
+    private boolean myDeleteDatabaseOnExit;
     private String myUpdateIgnoreVersion;
     private List<String> myDatabaseCronTriggers = new ArrayList<String>();
     private String myDatabaseType;
@@ -135,6 +135,7 @@ public class MyTunesRssConfig {
     private boolean myDisableGui;
     private boolean myDisableWebLogin;
     private boolean myDisableJmxHtml;
+    private boolean myRestartOnExit;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -567,12 +568,12 @@ public class MyTunesRssConfig {
         myLastNewVersionInfo = lastNewVersionInfo;
     }
 
-    public boolean isDeleteDatabaseOnNextStartOnError() {
-        return myDeleteDatabaseOnNextStartOnError;
+    public boolean isDeleteDatabaseOnExit() {
+        return myDeleteDatabaseOnExit;
     }
 
-    public void setDeleteDatabaseOnNextStartOnError(boolean deleteDatabaseOnNextStartOnError) {
-        myDeleteDatabaseOnNextStartOnError = deleteDatabaseOnNextStartOnError;
+    public void setDeleteDatabaseOnExit(boolean deleteDatabaseOnExit) {
+        myDeleteDatabaseOnExit = deleteDatabaseOnExit;
     }
 
     public String getUpdateIgnoreVersion() {
@@ -1012,6 +1013,14 @@ public class MyTunesRssConfig {
         myDisableJmxHtml = disableJmxHtml;
     }
 
+    public boolean isRestartOnExit() {
+        return myRestartOnExit;
+    }
+    
+    public void setRestartOnExit(boolean restartOnExit) {
+        myRestartOnExit = restartOnExit;
+    }
+    
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1145,7 +1154,6 @@ public class MyTunesRssConfig {
         setWindowX(JXPathUtils.getIntValue(settings, "window/x", Integer.MAX_VALUE));
         setWindowY(JXPathUtils.getIntValue(settings, "window/y", Integer.MAX_VALUE));
         setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
-        setDeleteDatabaseOnNextStartOnError(JXPathUtils.getBooleanValue(settings, "deleteDatabaseOnNextStartOnError", false));
         setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
         Iterator<JXPathContext> cronTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database");
         myDatabaseCronTriggers = new ArrayList<String>();
@@ -1355,7 +1363,6 @@ public class MyTunesRssConfig {
             window.appendChild(DOMUtils.createIntElement(settings, "x", myWindowX));
             window.appendChild(DOMUtils.createIntElement(settings, "y", myWindowY));
             root.appendChild(DOMUtils.createTextElement(settings, "lastNewVersionInfo", myLastNewVersionInfo));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "deleteDatabaseOnNextStartOnError", myDeleteDatabaseOnNextStartOnError));
             root.appendChild(DOMUtils.createTextElement(settings, "updateIgnoreVersion", myUpdateIgnoreVersion));
             if (myDatabaseCronTriggers != null && myDatabaseCronTriggers.size() > 0) {
                 Element cronTriggers = settings.createElement("crontriggers");

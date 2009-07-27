@@ -14,7 +14,7 @@ public class RecreateDatabaseTask extends MyTunesRssTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(RecreateDatabaseTask.class);
 
     private DropAllTablesTask myDropAllTablesTask = new DropAllTablesTask();
-    private InitializeDatabaseTask myInitializeDatabaseTask = new InitializeDatabaseTask();
+    private InitializeDatabaseTask myInitializeDatabaseTask = new InitializeDatabaseTask(true);
 
     public void execute() throws Exception {
         LOGGER.debug("Recreating the database.");

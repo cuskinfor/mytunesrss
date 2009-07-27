@@ -30,9 +30,9 @@ public class MyTunesRssDataStore extends DataStore {
     public static final int UPDATE_HELP_TABLES_FREQUENCY = 30000;
 
     private SmartStatementFactory mySmartStatementFactory;
-
+    
     @Override
-    public void init() throws IOException {
+    public void init() throws IOException, SQLException {
         final String databaseConnection = MyTunesRss.CONFIG.getDatabaseConnection();
         final String databaseUser = MyTunesRss.CONFIG.getDatabaseUser();
         final String databasePassword = MyTunesRss.CONFIG.getDatabasePassword();
@@ -41,41 +41,7 @@ public class MyTunesRssDataStore extends DataStore {
         setConnectionPool(new GenericObjectPool(new BasePoolableObjectFactory() {
             @Override
             public Object makeObject() throws Exception {
-                long endTime = System.currentTimeMillis() + 10000;
-                do {
-                    try {
-                        return DriverManager.getConnection(databaseConnection, databaseUser, databasePassword);
-                    } catch (SQLException e) {
-                        if (LOG.isWarnEnabled()) {
-                            LOG.warn("Could not get a database connection.");
-                        }
-                    }
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        // intentionally left blank
-                    }
-                } while (System.currentTimeMillis() < endTime);
-                try {
-                    return DriverManager.getConnection(databaseConnection, databaseUser, databasePassword);
-                } catch (SQLException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not get a database connection.", e);
-                    }
-                }
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.noDatabaseConnection"));
-                if (!MyTunesRss.HEADLESS) {
-                    String yes = MyTunesRssUtils.getBundleString("yes");
-                    String no = MyTunesRssUtils.getBundleString("no");
-                    String[] options = new String[] {no, yes};
-                    String answer = MyTunesRssUtils.showQuestionMessage(MyTunesRssUtils.getBundleString("question.resetToDefaultH2"), options).toString();
-                    if (answer == yes) {
-                        MyTunesRss.CONFIG.setDefaultDatabaseSettings();
-                        MyTunesRss.CONFIG.save();
-                    }
-                }
-                MyTunesRssUtils.shutdown();
-                return null;
+                return DriverManager.getConnection(databaseConnection, databaseUser, databasePassword);
             }
 
             @Override
@@ -85,6 +51,29 @@ public class MyTunesRssDataStore extends DataStore {
                 }
             }
         }, 50, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 30000, 5, 2, false, false, 15000, 10, 300000, false, 60000));
+        testDatabaseConnection(databaseConnection, databaseUser, databasePassword);
+    }
+    
+    private void testDatabaseConnection(String databaseConnection, String databaseUser, String databasePassword) throws SQLException {
+        long endTime = System.currentTimeMillis() + 10000;
+        do {
+            try {
+                Connection conn = DriverManager.getConnection(databaseConnection, databaseUser, databasePassword);
+                conn.close();
+                return; // done testing
+            } catch (SQLException e) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Could not get a database connection.");
+                }
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // intentionally left blank
+            }
+        } while (System.currentTimeMillis() < endTime);
+        Connection conn = DriverManager.getConnection(databaseConnection, databaseUser, databasePassword);
+        conn.close();
     }
 
     @Override
