@@ -33,7 +33,7 @@ public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandle
             }
         });
         if (myTerminate) {
-            MyTunesRssUtils.shutdown();
+            MyTunesRssUtils.shutdownGracefully();
         }
     }
 }

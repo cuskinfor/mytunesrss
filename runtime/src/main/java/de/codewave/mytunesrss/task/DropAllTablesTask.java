@@ -23,8 +23,9 @@ public class DropAllTablesTask extends MyTunesRssTask {
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
         } catch (SQLException e) {
             if (MyTunesRss.CONFIG.isDefaultDatabase()) {
-                MyTunesRss.CONFIG.setDeleteDatabaseOnNextStartOnError(true);
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.deleteDatabaseOnNextStartOnError"));
+                MyTunesRss.CONFIG.setDeleteDatabaseOnExit(true);
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.shutdownAndDeleteDatabase"));
+                MyTunesRssUtils.shutdownGracefully();
             } else {
                 throw e;
             }

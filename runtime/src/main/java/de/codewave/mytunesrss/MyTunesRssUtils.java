@@ -6,12 +6,15 @@ import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatemen
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.mytunesrss.task.DeleteDatabaseFilesTask;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.SmartStatement;
 import de.codewave.utils.swing.SwingUtils;
 import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
 import de.codewave.utils.swing.pleasewait.PleaseWaitUtils;
+
+import org.apache.catalina.LifecycleException;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -26,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import javax.swing.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -133,43 +137,6 @@ public class MyTunesRssUtils {
         return httpClient;
     }
 
-    public static void shutdown() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Shutting down.");
-        }
-        if (MyTunesRss.STREAMING_CACHE != null) {
-            try {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Cleaning up streamig cache.");
-                }
-                File destinationFile = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache.xml");
-                FileUtils.writeStringToFile(destinationFile, MyTunesRss.STREAMING_CACHE.getContent());
-            } catch (IOException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not write streaming cache contents, all files will be lost on next start.", e);
-                }
-                MyTunesRss.STREAMING_CACHE.clearCache();
-            }
-        }
-        if (MyTunesRss.QUARTZ_SCHEDULER != null) {
-            try {
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Shutting down quartz scheduler.");
-                }
-                MyTunesRss.QUARTZ_SCHEDULER.shutdown();
-            } catch (SchedulerException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not shutdown quartz scheduler.", e);
-                }
-            }
-        }
-        MyTunesRssJmxUtils.stopJmxServer();
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Very last log message before shutdown.");
-        }
-        System.exit(0);
-    }
-
     public static void shutdownGracefully() {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Shutting down gracefully.");
@@ -201,42 +168,99 @@ public class MyTunesRssUtils {
                     }
                 });
             }
-            MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
-                public void execute() {
-                    DataStoreSession session = MyTunesRss.STORE.getTransaction();
-                    try {
-                        LOGGER.debug("Removing old temporary playlists.");
-                        session.executeStatement(new RemoveOldTempPlaylistsStatement());
-                        session.commit();
-                    } catch (SQLException e) {
-                        LOGGER.error("Could not remove old temporary playlists.", e);
+            if (MyTunesRss.STORE != null) {
+                MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
+                    public void execute() {
+                        DataStoreSession session = MyTunesRss.STORE.getTransaction();
                         try {
-                            session.rollback();
-                        } catch (SQLException e1) {
-                            LOGGER.error("Could not rollback transaction.", e1);
+                            LOGGER.debug("Removing old temporary playlists.");
+                            session.executeStatement(new RemoveOldTempPlaylistsStatement());
+                            session.commit();
+                        } catch (SQLException e) {
+                            LOGGER.error("Could not remove old temporary playlists.", e);
+                            try {
+                                session.rollback();
+                            } catch (SQLException e1) {
+                                LOGGER.error("Could not rollback transaction.", e1);
+                            }
                         }
-                    }
-                    try {
-                        LOGGER.debug("Removing old statistic events.");
-                        session.executeStatement(new RemoveOldEventsStatement());
-                        session.commit();
-                    } catch (SQLException e) {
-                        LOGGER.error("Could not remove old statistic events.", e);
                         try {
-                            session.rollback();
-                        } catch (SQLException e1) {
-                            LOGGER.error("Could not rollback transaction.", e1);
+                            LOGGER.debug("Removing old statistic events.");
+                            session.executeStatement(new RemoveOldEventsStatement());
+                            session.commit();
+                        } catch (SQLException e) {
+                            LOGGER.error("Could not remove old statistic events.", e);
+                            try {
+                                session.rollback();
+                            } catch (SQLException e1) {
+                                LOGGER.error("Could not rollback transaction.", e1);
+                            }
                         }
+                        LOGGER.debug("Destroying store.");
+                        MyTunesRss.STORE.destroy();
                     }
-                    LOGGER.debug("Destroying store.");
-                    MyTunesRss.STORE.destroy();
-                }
-            });
+                });
+            }
             if (!MyTunesRss.HEADLESS) {
                 MyTunesRss.ROOT_FRAME.dispose();
             }
         }
-        shutdown();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Shutting down.");
+        }
+        if (MyTunesRss.STREAMING_CACHE != null) {
+            try {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Cleaning up streamig cache.");
+                }
+                File destinationFile = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache.xml");
+                FileUtils.writeStringToFile(destinationFile, MyTunesRss.STREAMING_CACHE.getContent());
+            } catch (IOException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not write streaming cache contents, all files will be lost on next start.", e);
+                }
+                MyTunesRss.STREAMING_CACHE.clearCache();
+            }
+        }
+        if (MyTunesRss.QUARTZ_SCHEDULER != null) {
+            try {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Shutting down quartz scheduler.");
+                }
+                MyTunesRss.QUARTZ_SCHEDULER.shutdown();
+            } catch (SchedulerException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not shutdown quartz scheduler.", e);
+                }
+            }
+        }
+        if (MyTunesRss.CONFIG.isDefaultDatabase() && MyTunesRss.CONFIG.isDeleteDatabaseOnExit()) {
+            try {
+                new DeleteDatabaseFilesTask().execute();
+            } catch (IOException e) {
+                LOGGER.error("Could not delete default database files.");
+            }
+        }
+        MyTunesRssJmxUtils.stopJmxServer();
+        if (MyTunesRss.CONFIG.isRestartOnExit()) {
+            new Thread() {
+                public void run() {
+                    try {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Restarting MyTunesRSS.");
+                        }
+                        MyTunesRss.main(MyTunesRss.ORIGINAL_CMD_ARGS);
+                    } catch (Exception e) {
+                        // intentionally left blank
+                    }
+                }
+            }.start();
+        } else {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Very last log message before shutdown.");
+            }
+            System.exit(0);
+        }
     }
 
     private static final double KBYTE = 1024;

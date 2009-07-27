@@ -13,7 +13,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
  */
 public class DeleteDatabaseFilesTask extends MyTunesRssTask {
     public void execute() throws IOException {
-        String filename = "h2/MyTunesRSS";
+        String filename = "h2";
         String pathname = MyTunesRssUtils.getCacheDataPath();
         FileUtils.deleteDirectory(new File(pathname + "/" + filename));
     }

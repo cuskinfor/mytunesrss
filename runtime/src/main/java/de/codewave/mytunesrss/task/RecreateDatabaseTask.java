@@ -9,7 +9,7 @@ import de.codewave.mytunesrss.MyTunesRssTask;
  */
 public class RecreateDatabaseTask extends MyTunesRssTask {
     private DropAllTablesTask myDropAllTablesTask = new DropAllTablesTask();
-    private InitializeDatabaseTask myInitializeDatabaseTask = new InitializeDatabaseTask();
+    private InitializeDatabaseTask myInitializeDatabaseTask = new InitializeDatabaseTask(true);
 
     public void execute() throws Exception {
         myDropAllTablesTask.execute();
