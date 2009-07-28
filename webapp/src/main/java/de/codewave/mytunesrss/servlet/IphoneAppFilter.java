@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.servlet;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.Session;
 import de.codewave.mytunesrss.remote.service.LoginService;
@@ -26,7 +27,7 @@ public class IphoneAppFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) req;
         MyTunesRssRemoteEnv.setRequest(httpServletRequest);
         try {
-            httpServletRequest.setAttribute("appUrl", ServletUtils.getApplicationUrl((HttpServletRequest) req));
+            httpServletRequest.setAttribute("appUrl", MyTunesRssWebUtils.getApplicationUrl((HttpServletRequest) req));
             httpServletRequest.setAttribute("globalConfig", MyTunesRss.CONFIG);
             if (MyTunesRssRemoteEnv.getSession().getId() == null && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAutoLogin())) {
                 User user = MyTunesRss.CONFIG.getUser(MyTunesRss.CONFIG.getAutoLogin());

@@ -166,14 +166,15 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             getRequest().setAttribute("permServletUrl", servletUrl);
             getRequest().setAttribute("downloadPlaybackServletUrl", servletUrl);
         } else {
-            String appUrl = ServletUtils.getApplicationUrl(getRequest());
+            String appUrl = MyTunesRssWebUtils.getApplicationUrl(getRequest());
             String url =
                     MyTunesRss.MYTUNESRSSCOM_URL + "/" + myTunesRssComUsername + getRequest().getContextPath() + servletUrl.substring(appUrl.length());
             getRequest().setAttribute("permServletUrl", url);
             getRequest().setAttribute("downloadPlaybackServletUrl", url);
         }
         getRequest().setAttribute("permFeedServletUrl", getRequest().getAttribute("permServletUrl"));
-        getRequest().setAttribute("appUrl", ServletUtils.getApplicationUrl(getRequest()));
+        getRequest().setAttribute("appUrl", MyTunesRssWebUtils.getApplicationUrl(getRequest()));
+        //getRequest().setAttribute("absoluteAppUrl", ServletUtils.getApplicationUrl(getRequest()));
         getRequest().setAttribute("mytunesrssVersion", MyTunesRss.VERSION);
         getRequest().setAttribute("sessionCreationTime", getSession().getCreationTime());
         if (getAuthUser() != null && getAuthUser().isQuotaExceeded()) {
