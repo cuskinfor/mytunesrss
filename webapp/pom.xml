@@ -72,7 +72,7 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>codewave-utils</artifactId>
-            <version>0.53-SNAPSHOT</version>
+            <version>0.53</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-lang</groupId>
