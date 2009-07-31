@@ -17,10 +17,11 @@ import java.io.IOException;
 public class StartCommandHandler extends MyTunesRssCommandHandler {
     public void execute() throws IOException, ServletException {
         if (MyTunesRssWebUtils.getUserAgent(getRequest()) == UserAgent.Iphone) {
-            forward(MyTunesRssResource.IphoneIndex);
-        } else {
-            forward(MyTunesRssCommand.ShowPortal);
+            redirect(MyTunesRssWebUtils.getServletUrl(getRequest()) + "/" + MyTunesRssCommand.ShowIphoneIndex.getName());
             //forward(MyTunesRssResource.IphoneIndex);
+        } else {
+            redirect(MyTunesRssWebUtils.getServletUrl(getRequest()) + "/" + MyTunesRssCommand.ShowPortal.getName());
+            //forward(MyTunesRssCommand.ShowPortal);
         }
     }
 }

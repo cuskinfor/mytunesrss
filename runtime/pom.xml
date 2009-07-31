@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
-    <version>3.7.3-SNAPSHOT</version>
+    <version>3.7.3</version>
     <name>Codewave MyTunesRSS Runtime</name>
     <distributionManagement>
         <site>
@@ -258,7 +258,7 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>codewave-utils</artifactId>
-            <version>0.53-SNAPSHOT</version>
+            <version>0.53</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -426,6 +426,6 @@
     </build>
 
   <scm>
-    <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/branches/mytunesrss-3.7.x</developerConnection>
+    <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/tags/mytunesrss-3.7.3</developerConnection>
   </scm>
 </project>

@@ -1,23 +1,17 @@
 package de.codewave.mytunesrss;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.crypto.Cipher;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.servlet.ServletUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.crypto.Cipher;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
@@ -29,8 +23,16 @@ import de.codewave.utils.servlet.ServletUtils;
 public class MyTunesRssWebUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssWebUtils.class);
 
+    public static String getApplicationUrl(HttpServletRequest request) {
+        return ServletUtils.getApplicationUrl(request);
+//        String uri = request.getRequestURI();
+//        int levelCount = StringUtils.countMatches(uri, "/");
+//        String appUrl = StringUtils.repeat("../", levelCount - StringUtils.countMatches(request.getContextPath(), "/") - 1);
+//        return appUrl.endsWith("/") ? appUrl.substring(0, appUrl.length() - 1) : appUrl;
+    }
+
     public static String getServletUrl(HttpServletRequest request) {
-        return ServletUtils.getApplicationUrl(request) + "/mytunesrss";
+        return getApplicationUrl(request) + "/mytunesrss";
     }
 
     public static User getAuthUser(HttpServletRequest request) {
@@ -139,7 +141,7 @@ public class MyTunesRssWebUtils {
 
     public static String getCommandCall(HttpServletRequest request, MyTunesRssCommand command) {
         String servletUrl = getServletUrl(request);
-        return ServletUtils.getApplicationUrl(request) + servletUrl.substring(servletUrl.lastIndexOf("/")) + "/" + command.getName();
+        return MyTunesRssWebUtils.getApplicationUrl(request) + servletUrl.substring(servletUrl.lastIndexOf("/")) + "/" + command.getName();
     }
 
     public static String createTranscodingPathInfo(WebConfig config) {
