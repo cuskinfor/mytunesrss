@@ -10,7 +10,7 @@
 
   ;Name and file
   Name "MyTunesRSS 3.7.3"
-  OutFile "MyTunesRSS-3.7.3-Setup.exe"
+  OutFile "..\..\target\MyTunesRSS-3.7.3-JRE-Setup.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\MyTunesRSS"
@@ -26,6 +26,11 @@
 ;--------------------------------
 ;Pages
 
+  !insertmacro MUI_PAGE_WELCOME
+
+  !insertmacro MUI_PAGE_LICENSE "license.txt"
+
+  !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
   
@@ -40,29 +45,53 @@
 ;--------------------------------
 ;Installer Sections
 
-Section "MyTunesRSS" MyTunesRSS
+Section "!MyTunesRSS" MyTunesRSS
 
   SetOutPath "$INSTDIR"
-  File /r /x .svn ..\..\target\mytunesrss-3.7.4-SNAPSHOT-windows.dir\mytunesrss-3.7.4-SNAPSHOT\*
-  File /oname=MyTunesRSS.exe ..\MyTunesRSS-jre.exe
+  File /r /x .svn ..\..\target\mytunesrss-3.7.3-windows.dir\mytunesrss-3.7.3\*
   
+  WriteUninstaller "$INSTDIR\Uninstall.exe"
+
+  CreateDirectory "$SMPROGRAMS\MyTunesRSS"
+  CreateShortCut "$SMPROGRAMS\MyTunesRSS\MyTunesRSS.lnk" "$INSTDIR\MyTunesRSS.exe"
+  CreateShortCut "$SMPROGRAMS\MyTunesRSS\Remove MyTunesRSS.lnk" "$INSTDIR\Uninstall.exe"
+
+SectionEnd
+
+Section "Java Runtime Environment" Jre
+
+  SetOutPath "$INSTDIR"
+  File /oname=MyTunesRSS.exe ..\MyTunesRSS-jre.exe
+
   SetOutPath "$INSTDIR\data\jre"
   File /r /x .svn ..\jre\*
+  
+  ExecWait '"$INSTDIR\data\jre\bin\unpack200.exe" "$INSTDIR\data\jre\lib\rt.jar.gz" "$INSTDIR\data\jre\lib\rt.jar"'
+  Delete "$INSTDIR\data\jre\lib\rt.jar.gz"
+    
+SectionEnd
+
+Section "Computerbild Lizenz" License
 
   SetOutPath "$APPDATA\MyTunesRSS3"
   File MyTunesRSS.key
-  
-  ; UNPACK JRE
-  ExecWait '"$INSTDIR\data\jre\bin\unpack200.exe" "$INSTDIR\data\jre\lib\rt.jar.gz" "$INSTDIR\data\jre\lib\rt.jar"'
-  
-  ; Start Menu shortcut
-  CreateDirectory "$SMPROGRAMS\MyTunesRSS"
-  CreateShortCut "$SMPROGRAMS\MyTunesRSS\MyTunesRSS.lnk" "$INSTDIR\MyTunesRSS.exe"
-  
-  ;Create uninstaller
-  WriteUninstaller "$INSTDIR\Uninstall.exe"
 
 SectionEnd
+
+;--------------------------------
+;Descriptions
+
+  ;Language strings
+  LangString DESC_MyTunesRSS ${LANG_GERMAN} "Die Programmdateien für MyTunesRSS. Sie müssen diese installieren."
+  LangString DESC_Jre ${LANG_GERMAN} "Die Java-Laufzeitumgebung. Wenn Sie bereits eine Java-Umgebung Version 1.5 oder besser haben, so kann MyTunesRSS diese benutzen. Wenn Sie unsicher sind, installieren Sie bitte die Laufzeitumgebung, die dann von MyTunesRSS exklusiv genutzt wird."
+  LangString DESC_License ${LANG_GERMAN} "Die Computerbild-Lizenz. Erst durch Installation der Lizenz wird diese Installation von MyTunesRSS zu einer Vollversion."
+
+  ;Assign language strings to sections
+  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+    !insertmacro MUI_DESCRIPTION_TEXT ${MyTunesRSS} $(DESC_MyTunesRSS)
+    !insertmacro MUI_DESCRIPTION_TEXT ${Jre} $(DESC_Jre)
+    !insertmacro MUI_DESCRIPTION_TEXT ${License} $(DESC_License)
+  !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
 ;Uninstaller Section
