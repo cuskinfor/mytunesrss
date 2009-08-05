@@ -10,7 +10,7 @@
 
   ;Name and file
   Name "MyTunesRSS 3.7.3"
-  OutFile "..\..\target\MyTunesRSS-3.7.3-JRE-Setup.exe"
+  OutFile "..\..\target\MyTunesRSS-3.7.3-Setup.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\MyTunesRSS"
