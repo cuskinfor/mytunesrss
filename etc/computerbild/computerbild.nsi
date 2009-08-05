@@ -82,8 +82,8 @@ SectionEnd
 ;Descriptions
 
   ;Language strings
-  LangString DESC_MyTunesRSS ${LANG_GERMAN} "Die Programmdateien für MyTunesRSS. Sie müssen diese installieren."
-  LangString DESC_Jre ${LANG_GERMAN} "Die Java-Laufzeitumgebung. Wenn Sie bereits eine Java-Umgebung Version 1.5 oder besser haben, so kann MyTunesRSS diese benutzen. Wenn Sie unsicher sind, installieren Sie bitte die Laufzeitumgebung, die dann von MyTunesRSS exklusiv genutzt wird."
+  LangString DESC_MyTunesRSS ${LANG_GERMAN} "Die Programmdateien für MyTunesRSS."
+  LangString DESC_Jre ${LANG_GERMAN} "Java Laufzeitumgebung für MyTunesRSS. Optional, falls sie bereits Java 1.5 auf Ihrem Rechner installiert haben."
   LangString DESC_License ${LANG_GERMAN} "Die Computerbild-Lizenz. Erst durch Installation der Lizenz wird diese Installation von MyTunesRSS zu einer Vollversion."
 
   ;Assign language strings to sections
