@@ -10,7 +10,7 @@
 
   ;Name and file
   Name "MyTunesRSS 3.7.3"
-  OutFile "..\..\target\MyTunesRSS-3.7.3-Setup.exe"
+  OutFile "..\..\target\MyTunesRSS-3.7.3-Computerbild-Setup.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\MyTunesRSS"
@@ -27,8 +27,6 @@
 ;Pages
 
   !insertmacro MUI_PAGE_WELCOME
-
-  ;!insertmacro MUI_PAGE_LICENSE "license.txt"
 
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY

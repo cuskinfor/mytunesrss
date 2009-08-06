@@ -28,8 +28,6 @@
 
   !insertmacro MUI_PAGE_WELCOME
 
-  ;!insertmacro MUI_PAGE_LICENSE "license.txt"
-
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
@@ -84,7 +82,7 @@ SectionEnd
   ;Language strings
   LangString DESC_MyTunesRSS ${LANG_GERMAN} "Die Programmdateien für MyTunesRSS."
   LangString DESC_Jre ${LANG_GERMAN} "Java Laufzeitumgebung für MyTunesRSS. Optional, falls sie bereits Java 1.5 auf Ihrem Rechner installiert haben."
-  LangString DESC_License ${LANG_GERMAN} "Die AVF Bild-Lizenz. Erst durch Installation der Lizenz wird diese Installation von MyTunesRSS zu einer Vollversion."
+  LangString DESC_License ${LANG_GERMAN} "Die Audio Video Foto Bild-Lizenz. Erst durch Installation der Lizenz wird diese Installation von MyTunesRSS zu einer Vollversion."
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
