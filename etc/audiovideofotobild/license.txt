@@ -1,0 +1,7 @@
+Diese Version von MyTunesRSS ist durch Audio Video Foto Bild lizensiert. Sie müssen neben den Programmdateien im nächsten Dialog auch die Lizenz zur Installation auswählen, um die Vollversion freizuschalten.
+
+MyTunesRSS Bugfixes der Version 3.7.x können von der Codewave Website http://www.codewave.de heruntergeladen und mit dieser Lizenz genutzt werden.
+
+Diese Lizenz berechtigt nicht zu kostenfreien oder preisreduzierten Updates auf höhere Versionen.
+
+MyTunesRSS darf mit dieser Lizenz auf beliebig vielen Rechnern installiert werden. Es darf aber zu jedem Zeitpunkt immer nur eine einzige Installation aktiv sein.
