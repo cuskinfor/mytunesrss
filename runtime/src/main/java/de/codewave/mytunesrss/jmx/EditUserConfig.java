@@ -392,7 +392,8 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     }
 
     public String getParentUser() {
-        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUser(myUsername).getParentUserName());
+        User parent = MyTunesRss.CONFIG.getUser(myUsername).getParent();
+        return parent != null ? StringUtils.trimToEmpty(parent.getName()) : "";
     }
 
     public String setParentUser(String username) {
@@ -403,7 +404,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
             if (MyTunesRss.CONFIG.getUser(username) == null) {
                 return MyTunesRssUtils.getBundleString("jmx.parentUserNotFound");
             }
-            MyTunesRss.CONFIG.getUser(myUsername).setParentUserName(username);
+            MyTunesRss.CONFIG.getUser(myUsername).setParent(MyTunesRss.CONFIG.getUser(username));
             onChange();
             return MyTunesRssUtils.getBundleString("jmx.parentUserSet", username);
         }
@@ -411,7 +412,7 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     }
 
     public void removeParentUser() {
-        MyTunesRss.CONFIG.getUser(myUsername).setParentUserName(null);
+        MyTunesRss.CONFIG.getUser(myUsername).setParent(null);
         onChange();
     }
 

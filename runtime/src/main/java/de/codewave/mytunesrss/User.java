@@ -8,9 +8,9 @@ import de.codewave.utils.servlet.RangeHeader;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -24,7 +24,7 @@ import java.util.GregorianCalendar;
 /**
  * de.codewave.mytunesrss.User
  */
-public class User implements MyTunesRssEventListener {
+public class User implements MyTunesRssEventListener, Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(User.class);
 
     public void handleEvent(MyTunesRssEvent event) {
@@ -81,7 +81,7 @@ public class User implements MyTunesRssEventListener {
     private String myEmail;
     private boolean myChangeEmail;
     private boolean myRemoteControl;
-    private String myParentUserName;
+    private User myParent;
     private boolean myExternalSites;
 
     public User(String name) {
@@ -369,7 +369,7 @@ public class User implements MyTunesRssEventListener {
 
     @Override
     public boolean equals(Object object) {
-        return object != null && object instanceof User && getName().equals(((User)object).getName());
+        return object != null && object instanceof User && getName().equals(((User) object).getName());
     }
 
     @Override
@@ -446,14 +446,6 @@ public class User implements MyTunesRssEventListener {
         myWebSettings = webSettings;
     }
 
-    public String getParentUserName() {
-        return myParentUserName;
-    }
-
-    public void setParentUserName(String parentUserName) {
-        myParentUserName = parentUserName;
-    }
-
     public void loadFromPreferences(JXPathContext settings) {
         setActive(JXPathUtils.getBooleanValue(settings, "active", true));
         setPasswordHash(JXPathUtils.getByteArray(settings, "password", null));
@@ -486,7 +478,7 @@ public class User implements MyTunesRssEventListener {
         setUrlEncryption(JXPathUtils.getBooleanValue(settings, "urlEncryption", true));
         setEmail(JXPathUtils.getStringValue(settings, "email", null));
         setRemoteControl(JXPathUtils.getBooleanValue(settings, "remoteControl", false));
-        setParentUserName(JXPathUtils.getStringValue(settings, "parent", null));
+        myParent = new UserProxy(JXPathUtils.getStringValue(settings, "parent", null));
         setExternalSites(JXPathUtils.getBooleanValue(settings, "externalSites", false));
         setChangeEmail(JXPathUtils.getBooleanValue(settings, "changeEmail", false));
         //        try {
@@ -537,7 +529,7 @@ public class User implements MyTunesRssEventListener {
         }
         users.appendChild(DOMUtils.createBooleanElement(settings, "urlEncryption", isUrlEncryption()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "remoteControl", isRemoteControl()));
-        users.appendChild(DOMUtils.createTextElement(settings, "parent", getParentUserName()));
+        users.appendChild(DOMUtils.createTextElement(settings, "parent", getParent() != null ? getParent().getName() : null));
         users.appendChild(DOMUtils.createBooleanElement(settings, "externalSites", isExternalSites()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "changeEmail", isChangeEmail()));
     }
@@ -582,7 +574,24 @@ public class User implements MyTunesRssEventListener {
         }
     }
 
-    private User getParent() {
-        return MyTunesRss.CONFIG.getUser(getParentUserName());
+    public User getParent() {
+        if (myParent instanceof UserProxy) {
+            myParent = ((UserProxy) myParent).resolveUser();
+        }
+        return myParent;
+    }
+
+    public void setParent(User parent) {
+        myParent = parent;
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Cloning user \"" + myName + "\" failed.", e);
+
+        }
     }
 }

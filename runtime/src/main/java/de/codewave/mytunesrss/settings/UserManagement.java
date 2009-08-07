@@ -4,18 +4,17 @@
 
 package de.codewave.mytunesrss.settings;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import de.codewave.mytunesrss.*;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.tree.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -23,20 +22,47 @@ import java.util.List;
  */
 public class UserManagement implements MyTunesRssEventListener, SettingsForm {
     private JPanel myRootPanel;
-    private JButton myCreateButton;
-    private JPanel myUserPanel;
-    private JScrollPane myScrollPane;
-    private EditUserActionListener myEditUserActionListener = new EditUserActionListener();
-    private DeleteUserActionListener myDeleteUserActionListener = new DeleteUserActionListener();
+    private JTree myUserTree;
+    private JScrollPane myTreeScroller;
+    private JScrollPane myEditScroller;
+    private EditUser myEditUserForm;
+    private JPopupMenu myUserPopupMenu = new JPopupMenu();
 
     public UserManagement() {
-        myScrollPane.getViewport().setOpaque(false);
-        myCreateButton.addActionListener(new CreateUserActionListener());
+        myTreeScroller.getViewport().setOpaque(false);
+        myEditScroller.getViewport().setOpaque(false);
         MyTunesRssEventManager.getInstance().addListener(this);
+        myUserTree.setRootVisible(false);
+        DefaultTreeSelectionModel selectionModel = new DefaultTreeSelectionModel();
+        selectionModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        myUserTree.setSelectionModel(selectionModel);
+        myUserTree.setCellRenderer(new UserTreeCellRenderer());
+        myUserTree.addMouseListener(new UserTreeMouseListener());
     }
 
     public void initValues() {
-        refreshUserList();
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+        addUsers(rootNode, MyTunesRss.CONFIG.getUsers(), null);
+        myUserTree.setModel(new DefaultTreeModel(rootNode));
+    }
+
+    private void addUsers(DefaultMutableTreeNode node, Collection<User> users, User parent) {
+        List<User> children = new ArrayList<User>();
+        for (User user : users) {
+            if ((parent == null && user.getParent() == null) || (parent != null && parent.equals(user.getParent()))) {
+                children.add(user);
+            }
+        }
+        Collections.sort(children, new Comparator<User>() {
+            public int compare(User u1, User u2) {
+                return StringUtils.trimToEmpty(u1.getName()).compareTo(StringUtils.trimToEmpty(u2.getName()));
+            }
+        });
+        for (User child : children) {
+            DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(child.clone());
+            addUsers(childNode, users, child);
+            node.add(childNode);
+        }
     }
 
     public void setGuiMode(GuiMode mode) {
@@ -44,7 +70,7 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm {
     }
 
     public String updateConfigFromGui() {
-        // intentionally left blank
+        // TODO validate and save complete user tree
         return null;
     }
 
@@ -60,142 +86,125 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
-                    refreshUserList();
+                    initValues();
                 }
             }
         });
     }
 
-    private void refreshUserList() {
-        myUserPanel.removeAll();
-        List<User> users = new ArrayList<User>(MyTunesRss.CONFIG.getUsers());
-        Collections.sort(users, new Comparator<User>() {
-            public int compare(User o1, User o2) {
-                return o1.getName().compareTo(o2.getName());
+    private class UserTreeCellRenderer extends DefaultTreeCellRenderer {
+        @Override
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+            super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+            Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
+            if (((DefaultMutableTreeNode) value).isRoot()) {
+                setText("TODO: MyTunesRSS Users");
+            } else {
+                setText(((User) userObject).getName());
             }
-        });
-        myUserPanel.setLayout(new GridLayoutManager(users.size() + 1, 4));
-        int row = 0;
-        for (User user : users) {
-            addUser(user, row++);
-        }
-        addPanelComponent(new JLabel(""), new GridConstraints(row,
-                                                              0,
-                                                              1,
-                                                              4,
-                                                              GridConstraints.ANCHOR_WEST,
-                                                              GridConstraints.FILL_BOTH,
-                                                              GridConstraints.SIZEPOLICY_WANT_GROW,
-                                                              GridConstraints.SIZEPOLICY_WANT_GROW,
-                                                              null,
-                                                              null,
-                                                              null));
-        myUserPanel.validate();
-    }
-
-    private void addUser(final User user, int row) {
-        GridConstraints gbcActive = new GridConstraints(row,
-                                                        0,
-                                                        1,
-                                                        1,
-                                                        GridConstraints.ANCHOR_WEST,
-                                                        GridConstraints.FILL_HORIZONTAL,
-                                                        GridConstraints.SIZEPOLICY_FIXED,
-                                                        GridConstraints.SIZEPOLICY_FIXED,
-                                                        null,
-                                                        null,
-                                                        null);
-        GridConstraints gbcName = new GridConstraints(row,
-                                                      1,
-                                                      1,
-                                                      1,
-                                                      GridConstraints.ANCHOR_WEST,
-                                                      GridConstraints.FILL_HORIZONTAL,
-                                                      GridConstraints.SIZEPOLICY_WANT_GROW,
-                                                      GridConstraints.SIZEPOLICY_FIXED,
-                                                      null,
-                                                      null,
-                                                      null);
-        GridConstraints gbcEdit = new GridConstraints(row,
-                                                      2,
-                                                      1,
-                                                      1,
-                                                      GridConstraints.ANCHOR_WEST,
-                                                      GridConstraints.FILL_HORIZONTAL,
-                                                      GridConstraints.SIZEPOLICY_FIXED,
-                                                      GridConstraints.SIZEPOLICY_FIXED,
-                                                      null,
-                                                      null,
-                                                      null);
-        GridConstraints gbcDelete = new GridConstraints(row,
-                                                        3,
-                                                        1,
-                                                        1,
-                                                        GridConstraints.ANCHOR_WEST,
-                                                        GridConstraints.FILL_HORIZONTAL,
-                                                        GridConstraints.SIZEPOLICY_FIXED,
-                                                        GridConstraints.SIZEPOLICY_FIXED,
-                                                        null,
-                                                        null,
-                                                        null);
-        ;
-        final JCheckBox active = new JCheckBox();
-        active.setOpaque(false);
-        active.setSelected(user.isActive());
-        active.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                user.setActive(active.isSelected());
-            }
-        });
-        active.setToolTipText(MyTunesRssUtils.getBundleString("settings.activateUserTooltip", user.getName()));
-        addPanelComponent(active, gbcActive);
-        JLabel name = new JLabel(user.getName());
-        name.setOpaque(false);
-        addPanelComponent(name, gbcName);
-        JButton edit = new JButton(MyTunesRssUtils.getBundleString("settings.editUser"));
-        edit.setToolTipText(MyTunesRssUtils.getBundleString("settings.editUserTooltip", user.getName()));
-        edit.addActionListener(myEditUserActionListener);
-        edit.setActionCommand(user.getName());
-        edit.setOpaque(false);
-        addPanelComponent(edit, gbcEdit);
-        JButton delete = new JButton(MyTunesRssUtils.getBundleString("settings.deleteUser"));
-        delete.setToolTipText(MyTunesRssUtils.getBundleString("settings.deleteUserTooltip", user.getName()));
-        delete.addActionListener(myDeleteUserActionListener);
-        delete.setActionCommand(user.getName());
-        delete.setOpaque(false);
-        addPanelComponent(delete, gbcDelete);
-    }
-
-    private void addPanelComponent(JComponent component, GridConstraints gridConstraints) {
-        myUserPanel.add(component, gridConstraints);
-    }
-
-    public class CreateUserActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            new EditUser().display(MyTunesRss.ROOT_FRAME, null);
-            refreshUserList();
+            return this;
         }
     }
 
-    public class EditUserActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            User user = MyTunesRss.CONFIG.getUser(e.getActionCommand());
-            new EditUser().display(MyTunesRss.ROOT_FRAME, user);
-            refreshUserList();
+    private class UserTreeMouseListener extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            handlePopup(e);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            handlePopup(e);
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            handleSelectUser(e);
+        }
+
+        private void handleSelectUser(MouseEvent e) {
+            TreePath pathForLocation = myUserTree.getPathForLocation(e.getX(), e.getY());
+            String nameBefore = myEditUserForm.getUser() != null ? myEditUserForm.getUser().getName() : null;
+            myEditUserForm.save();
+            String nameAfter = myEditUserForm.getUser() != null ? myEditUserForm.getUser().getName() : null;
+            if (!StringUtils.equals(nameBefore, nameAfter)) {
+                ((DefaultTreeModel) myUserTree.getModel()).nodeChanged(myEditUserForm.getUserNode());
+            }
+            if (pathForLocation != null) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) pathForLocation.getLastPathComponent();
+                myEditUserForm.init(node, (User) node.getUserObject());
+            }
+        }
+
+        private void handlePopup(final MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                handleSelectUser(e);
+                TreePath pathForLocation = myUserTree.getPathForLocation(e.getX(), e.getY());
+                if (pathForLocation != null) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) pathForLocation.getLastPathComponent();
+                    User user = (User) node.getUserObject();
+                    if (user != null) {
+                        myUserTree.setSelectionPath(pathForLocation);
+                        myUserPopupMenu.removeAll();
+                        myUserPopupMenu.add(createMenuItem("add child to " + user.getName(), new AddUserActionListener(node))); // TODO i18n
+                        myUserPopupMenu.add(createMenuItem("remove " + user.getName(), new RemoveUserActionListener(node))); // TODO i18n
+                        myUserPopupMenu.setLocation(myUserTree.getLocationOnScreen().x + e.getX(), myUserTree.getLocationOnScreen().y + e.getY());
+                        myUserPopupMenu.setInvoker(myUserTree);
+                        myUserPopupMenu.setVisible(true);
+                    }
+                } else {
+                    myUserPopupMenu.removeAll();
+                    myUserPopupMenu.add(createMenuItem("add new user", new AddUserActionListener(null))); // TODO i18n
+                    myUserPopupMenu.setLocation(myUserTree.getLocationOnScreen().x + e.getX(), myUserTree.getLocationOnScreen().y + e.getY());
+                    myUserPopupMenu.setInvoker(myUserTree);
+                    myUserPopupMenu.setVisible(true);
+                }
+            }
         }
     }
 
-    public class DeleteUserActionListener implements ActionListener {
+    private JMenuItem createMenuItem(String text, ActionListener actionListener) {
+        JMenuItem menuItem = new JMenuItem(text);
+        menuItem.addActionListener(actionListener);
+        return menuItem;
+    }
+
+    private class AddUserActionListener implements ActionListener {
+        private DefaultMutableTreeNode myParentNode;
+
+        private AddUserActionListener(DefaultMutableTreeNode parentNode) {
+            myParentNode = parentNode != null ? parentNode : (DefaultMutableTreeNode) myUserTree.getModel().getRoot();
+        }
+
         public void actionPerformed(ActionEvent e) {
-            User user = MyTunesRss.CONFIG.getUser(e.getActionCommand());
-            int result = JOptionPane.showConfirmDialog(myRootPanel,
-                                                       MyTunesRssUtils.getBundleString("confirmation.deleteUser", user.getName()),
-                                                       MyTunesRssUtils.getBundleString("confirmation.titleDeleteUser"),
-                                                       JOptionPane.YES_NO_OPTION);
-            if (result == JOptionPane.YES_OPTION) {
-                MyTunesRss.CONFIG.removeUser(user.getName());
+            User user = new User("new user"); // TODO i18n
+            User parentUser = myParentNode != null ? (User) myParentNode.getUserObject() : null;
+            user.setParent(parentUser);
+            DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(user);
+            ((DefaultTreeModel) myUserTree.getModel()).insertNodeInto(newNode, myParentNode, myParentNode.getChildCount());
+            TreePath treePath = new TreePath(newNode.getPath());
+            myUserTree.scrollPathToVisible(treePath);
+            myUserTree.setSelectionPath(treePath);
+            myEditUserForm.init(newNode, user);
+        }
+    }
+
+    private class RemoveUserActionListener implements ActionListener {
+        private DefaultMutableTreeNode myNode;
+
+        private RemoveUserActionListener(DefaultMutableTreeNode node) {
+            myNode = node;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) myNode.getParent();
+            ((DefaultTreeModel) myUserTree.getModel()).removeNodeFromParent(myNode);
+            if (!parentNode.isRoot()) {
+                TreePath treePath = new TreePath(parentNode.getPath());
+                myUserTree.scrollPathToVisible(treePath);
+                myUserTree.setSelectionPath(treePath);
             }
-            refreshUserList();
+            myEditUserForm.init(parentNode, (User) parentNode.getUserObject());
         }
     }
 }
