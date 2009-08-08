@@ -170,7 +170,6 @@ public class EditUser implements MyTunesRssEventListener {
             });
         }
         initValues();
-        myUserNameInput.requestFocusInWindow();
         myRootPanel.setVisible(myUser != null);
     }
 
