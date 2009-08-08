@@ -70,8 +70,53 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm {
     }
 
     public String updateConfigFromGui() {
-        // TODO validate and save complete user tree
-        return null;
+        myEditUserForm.save();
+        List<User> userList = new ArrayList<User>();
+        for (Enumeration<DefaultMutableTreeNode> nodeEnum = ((DefaultMutableTreeNode) myUserTree.getModel().getRoot()).preorderEnumeration(); nodeEnum.hasMoreElements();) {
+            DefaultMutableTreeNode node = nodeEnum.nextElement();
+            if (node.getUserObject() != null) {
+                userList.add((User) node.getUserObject());
+            }
+        }
+        List<User> validUserList = new ArrayList<User>();
+        List<User> invalidUserList = new ArrayList<User>();
+        while (!userList.isEmpty()) {
+            User user = userList.remove(0);
+            if (StringUtils.isBlank(user.getName())) {
+                // missing user name
+                invalidUserList.add(user);
+            } else if (user.getPasswordHash() == null) {
+                // missing password
+                invalidUserList.add(user);
+            } else if (userList.contains(user)) {
+                // duplicate user name
+                invalidUserList.add(user);
+            } else if (StringUtils.length(user.getName()) > 30) {
+                // user name too long
+                invalidUserList.add(user);
+            } else if (!MyTunesRssUtils.isNumberRange(user.getSessionTimeout(), 1, 1440)) {
+                // illegal session timeout
+                invalidUserList.add(user);
+            } else if (user.getBandwidthLimit() != 0 && !MyTunesRssUtils.isNumberRange(user.getBandwidthLimit(), 10, 1024)) {
+                // illegal bandwidth
+                invalidUserList.add(user);
+            } else if (user.getMaximumZipEntries() < 0) {
+                // illegal max zip entries
+                invalidUserList.add(user);
+            } else if (user.getBytesQuota() < 0) {
+                // illegal bytes quota
+                invalidUserList.add(user);
+            } else {
+                // user valid
+                validUserList.add(user);
+            }
+        }
+        if (invalidUserList.isEmpty()) {
+            MyTunesRss.CONFIG.replaceUsers(validUserList);
+            return null;
+        } else {
+            return "TODO: errors"; // TODO
+        }
     }
 
     public JPanel getRootPanel() {

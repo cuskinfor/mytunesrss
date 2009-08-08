@@ -464,6 +464,10 @@ public class MyTunesRssConfig {
         myUsers.remove(new User(userName));
     }
 
+    public void replaceUsers(Collection<User> users) {
+        myUsers = new HashSet<User>(users);
+    }
+
     public String getSupportEmail() {
         return mySupportEmail;
     }
@@ -1016,11 +1020,11 @@ public class MyTunesRssConfig {
     public boolean isRestartOnExit() {
         return myRestartOnExit;
     }
-    
+
     public void setRestartOnExit(boolean restartOnExit) {
         myRestartOnExit = restartOnExit;
     }
-    
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {

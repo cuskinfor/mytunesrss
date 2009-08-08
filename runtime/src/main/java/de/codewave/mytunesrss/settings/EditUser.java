@@ -133,12 +133,16 @@ public class EditUser implements MyTunesRssEventListener {
         myTimer.schedule(new RefreshTask(), 1000);
     }
 
-    public JPanel getRootPanel() {
+    JPanel getRootPanel() {
         return myRootPanel;
     }
 
-    public User getUser() {
+    User getUser() {
         return myUser;
+    }
+
+    JTextField getUserNameInput() {
+        return myUserNameInput;
     }
 
     public DefaultMutableTreeNode getUserNode() {
@@ -166,6 +170,7 @@ public class EditUser implements MyTunesRssEventListener {
             });
         }
         initValues();
+        myUserNameInput.requestFocusInWindow();
         myRootPanel.setVisible(myUser != null);
     }
 

@@ -557,4 +557,8 @@ public class MyTunesRssUtils {
         } while (System.currentTimeMillis() < endTime);
         return true;
     }
+
+    public static boolean isNumberRange(long check, long min, long max) {
+        return check >= min && check <= max;
+    }
 }
