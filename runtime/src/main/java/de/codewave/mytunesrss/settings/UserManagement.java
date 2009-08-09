@@ -60,6 +60,14 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
         addUsers(rootNode, MyTunesRss.CONFIG.getUsers(), null);
         myUserTree.setModel(new DefaultTreeModel(rootNode));
+        DefaultMutableTreeNode root = (((DefaultMutableTreeNode) myUserTree.getModel().getRoot()));
+        if (root.getChildCount() == 0) {
+            myEditUserForm.init(null, null);
+        } else {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) root.getChildAt(0);
+            myEditUserForm.init(node, (User) node.getUserObject());
+            myUserTree.setSelectionPath(new TreePath(node.getPath()));
+        }
     }
 
     private void addUsers(DefaultMutableTreeNode node, Collection<User> users, User parent) {
@@ -96,31 +104,39 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
         }
         List<User> validUserList = new ArrayList<User>();
         List<User> invalidUserList = new ArrayList<User>();
+        Set<String> errors = new HashSet<String>();
         while (!userList.isEmpty()) {
             User user = userList.remove(0);
             if (StringUtils.isBlank(user.getName())) {
-                // missing user name
+                errors.add(MyTunesRssUtils.getBundleString("error.user.emptyName"));
                 invalidUserList.add(user);
             } else if (user.getPasswordHash() == null) {
                 // missing password
+                errors.add(MyTunesRssUtils.getBundleString("error.user.emptyPassword", user.getName()));
                 invalidUserList.add(user);
             } else if (userList.contains(user)) {
                 // duplicate user name
+                errors.add(MyTunesRssUtils.getBundleString("error.user.duplicate", user.getName()));
                 invalidUserList.add(user);
             } else if (StringUtils.length(user.getName()) > 30) {
                 // user name too long
+                errors.add(MyTunesRssUtils.getBundleString("error.user.userNameTooLong", user.getName(), 30));
                 invalidUserList.add(user);
             } else if (!MyTunesRssUtils.isNumberRange(user.getSessionTimeout(), 1, 1440)) {
                 // illegal session timeout
+                errors.add(MyTunesRssUtils.getBundleString("error.user.illegalSessionTimeout", user.getName(), 1, 1440));
                 invalidUserList.add(user);
             } else if (user.getBandwidthLimit() != 0 && !MyTunesRssUtils.isNumberRange(user.getBandwidthLimit(), 10, 1024)) {
                 // illegal bandwidth
+                errors.add(MyTunesRssUtils.getBundleString("error.user.illegalBandwidthLimit", user.getName(), 10, 1024));
                 invalidUserList.add(user);
             } else if (user.getMaximumZipEntries() < 0) {
                 // illegal max zip entries
+                errors.add(MyTunesRssUtils.getBundleString("error.user.illegalMaxZipEntries", user.getName()));
                 invalidUserList.add(user);
             } else if (user.getBytesQuota() < 0) {
                 // illegal bytes quota
+                errors.add(MyTunesRssUtils.getBundleString("error.user.illegalBytesQuota", user.getName()));
                 invalidUserList.add(user);
             } else {
                 // user valid
@@ -131,7 +147,7 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
             MyTunesRss.CONFIG.replaceUsers(validUserList);
             return null;
         } else {
-            return "TODO: errors"; // TODO
+            return StringUtils.join(errors, " ");
         }
     }
 
@@ -221,7 +237,7 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
             TransferableUser transferableUser = (TransferableUser) dtde.getTransferable().getTransferData(TRANSFERABLE_FLAVOR);
             DefaultMutableTreeNode sourceNode = (DefaultMutableTreeNode) transferableUser.getTreePath().getLastPathComponent();
             treeModel.removeNodeFromParent(sourceNode);
-            treeModel.insertNodeInto(sourceNode, targetNode, targetNode.getChildCount());
+            insertNode(sourceNode, targetNode);
             ((User) sourceNode.getUserObject()).setParent((User) targetNode.getUserObject());
             TreePath treePath = new TreePath(sourceNode.getPath());
             myUserTree.scrollPathToVisible(treePath);
@@ -233,6 +249,17 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
             LOGGER.error("Could not drop tree node.", e);
         }
         dtde.getDropTargetContext().dropComplete(true);
+    }
+
+    private void insertNode(DefaultMutableTreeNode nodeToInsert, DefaultMutableTreeNode targetParentNode) {
+        for (int i = 0; i < targetParentNode.getChildCount(); i++) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) targetParentNode.getChildAt(i);
+            if (((User) node.getUserObject()).getName().compareTo(((User) nodeToInsert.getUserObject()).getName()) > 1) {
+                ((DefaultTreeModel) myUserTree.getModel()).insertNodeInto(nodeToInsert, targetParentNode, i);
+                return; // early return
+            }
+        }
+        ((DefaultTreeModel) myUserTree.getModel()).insertNodeInto(nodeToInsert, targetParentNode, targetParentNode.getChildCount());
     }
 
     private class UserTreeCellRenderer extends DefaultTreeCellRenderer {
@@ -273,7 +300,9 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
             myEditUserForm.save();
             String nameAfter = myEditUserForm.getUser() != null ? myEditUserForm.getUser().getName() : null;
             if (!StringUtils.equals(nameBefore, nameAfter)) {
-                ((DefaultTreeModel) myUserTree.getModel()).nodeChanged(myEditUserForm.getUserNode());
+                DefaultMutableTreeNode parent = (DefaultMutableTreeNode) myEditUserForm.getUserNode().getParent();
+                ((DefaultTreeModel) myUserTree.getModel()).removeNodeFromParent(myEditUserForm.getUserNode());
+                insertNode(myEditUserForm.getUserNode(), parent);
             }
             if (pathForLocation != null) {
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) pathForLocation.getLastPathComponent();
@@ -291,15 +320,15 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
                     if (user != null) {
                         myUserTree.setSelectionPath(pathForLocation);
                         myUserPopupMenu.removeAll();
-                        myUserPopupMenu.add(createMenuItem("add child to " + user.getName(), new AddUserActionListener(node))); // TODO i18n
-                        myUserPopupMenu.add(createMenuItem("remove " + user.getName(), new RemoveUserActionListener(node))); // TODO i18n
+                        myUserPopupMenu.add(createMenuItem(MyTunesRssUtils.getBundleString("settings.user.newChildUser", user.getName()), new AddUserActionListener(node)));
+                        myUserPopupMenu.add(createMenuItem(MyTunesRssUtils.getBundleString("settings.user.removeUser", user.getName()), new RemoveUserActionListener(node)));
                         myUserPopupMenu.setLocation(myUserTree.getLocationOnScreen().x + e.getX(), myUserTree.getLocationOnScreen().y + e.getY());
                         myUserPopupMenu.setInvoker(myUserTree);
                         myUserPopupMenu.setVisible(true);
                     }
                 } else {
                     myUserPopupMenu.removeAll();
-                    myUserPopupMenu.add(createMenuItem("add new user", new AddUserActionListener(null))); // TODO i18n
+                    myUserPopupMenu.add(createMenuItem(MyTunesRssUtils.getBundleString("settings.user.newUser"), new AddUserActionListener(null)));
                     myUserPopupMenu.setLocation(myUserTree.getLocationOnScreen().x + e.getX(), myUserTree.getLocationOnScreen().y + e.getY());
                     myUserPopupMenu.setInvoker(myUserTree);
                     myUserPopupMenu.setVisible(true);
@@ -333,11 +362,11 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
         }
 
         public void actionPerformed(ActionEvent e) {
-            User user = new User("new user"); // TODO i18n
+            User user = new User(MyTunesRssUtils.getBundleString("settings.user.newUserName"));
             User parentUser = myParentNode != null ? (User) myParentNode.getUserObject() : null;
             user.setParent(parentUser);
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(user);
-            ((DefaultTreeModel) myUserTree.getModel()).insertNodeInto(newNode, myParentNode, myParentNode.getChildCount());
+            insertNode(newNode, myParentNode);
             TreePath treePath = new TreePath(newNode.getPath());
             myUserTree.scrollPathToVisible(treePath);
             myUserTree.setSelectionPath(treePath);

@@ -30,6 +30,11 @@ public class MyTunesRssDataStore extends DataStore {
     public static final int UPDATE_HELP_TABLES_FREQUENCY = 30000;
 
     private SmartStatementFactory mySmartStatementFactory;
+    private boolean myInitialized;
+
+    public boolean isInitialized() {
+        return myInitialized;
+    }
 
     @Override
     public void init() throws IOException, SQLException {
@@ -52,6 +57,7 @@ public class MyTunesRssDataStore extends DataStore {
             }
         }, 50, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 30000, 5, 2, false, false, 15000, 10, 300000, false, 60000));
         testDatabaseConnection(databaseConnection, databaseUser, databasePassword);
+        myInitialized = true;
     }
 
     private void testDatabaseConnection(String databaseConnection, String databaseUser, String databasePassword) throws SQLException {

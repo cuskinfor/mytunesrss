@@ -29,15 +29,6 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
 
     private Version myVersion;
     private Exception myException;
-    private boolean myThrowException;
-
-    public InitializeDatabaseTask() {
-        this(false);
-    }
-
-    public InitializeDatabaseTask(boolean throwException) {
-        myThrowException = throwException;
-    }
 
     public void execute() throws IOException, SQLException {
         try {
