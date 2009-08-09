@@ -12,7 +12,7 @@
 
   ;Name and file
   Name "MyTunesRSS ${VERSION}"
-  OutFile "..\target\MyTunesRSS-${VERSION}-Setup.exe"
+  OutFile "..\target\mytunesrss-${VERSION}-setup.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\MyTunesRSS"
