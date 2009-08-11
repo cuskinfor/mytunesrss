@@ -549,11 +549,12 @@ public class MyTunesRss {
         }
     }
 
-    private static void executeHeadlessMode() throws IOException, SQLException {
+    private static void executeHeadlessMode() throws IOException, SQLException, IllegalAccessException, InstantiationException, ClassNotFoundException {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Headless mode");
         }
         while (true) {
+            registerDatabaseDriver();
             InitializeDatabaseTask task = new InitializeDatabaseTask();
             MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, task);
             if (task.getException() != null) {
