@@ -204,7 +204,6 @@ public class MyTunesRss {
         }
         HEADLESS = COMMAND_LINE_ARGS.containsKey("headless") || CONFIG.isDisableGui();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
-        registerDatabaseDriver();
         initializeQuicktimePlayer();
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Operating system: " + SystemUtils.OS_NAME + ", " + SystemUtils.OS_VERSION + ", " + SystemUtils.OS_ARCH);
@@ -406,7 +405,7 @@ public class MyTunesRss {
 
     private static void executeGuiMode()
             throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException, IOException,
-            InterruptedException {
+            InterruptedException, SQLException {
         showNewVersionInfo();
         SETTINGS = new Settings();
         //DATABASE_FORM = SETTINGS.getDatabaseForm();
@@ -425,6 +424,7 @@ public class MyTunesRss {
             UpdateUtils.checkForUpdate(true);
         }
         while (true) {
+            registerDatabaseDriver();
             String retry = MyTunesRssUtils.getBundleString("question.databaseInitError.retry");
             String shutdown = MyTunesRssUtils.getBundleString("question.databaseInitError.shutdown");
             String[] options = new String[] {retry, shutdown};
@@ -546,11 +546,12 @@ public class MyTunesRss {
         }
     }
 
-    private static void executeHeadlessMode() throws IOException, SQLException {
+    private static void executeHeadlessMode() throws IOException, SQLException, IllegalAccessException, InstantiationException, ClassNotFoundException {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Headless mode");
         }
         while (true) {
+            registerDatabaseDriver();
             InitializeDatabaseTask task = new InitializeDatabaseTask();
             MyTunesRssUtils.executeTask(null, BUNDLE.getString("pleaseWait.initializingDatabase"), null, false, task);
             if (task.getException() != null) {

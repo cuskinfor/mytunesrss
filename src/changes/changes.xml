@@ -7,6 +7,13 @@
 
     <body>
 
+        <release version="3.7.3" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                load database driver before initializing database, so after switching from anything else to H2 in case
+                of failure the H2 driver will be loaded as well.
+            </action>
+        </release>
+
         <release version="3.7.3" date="2009-07-31" description="Bugfix release">
             <action dev="mdescher" type="update">
                 Test database connection only once instead of multiple times for 10 seconds.
