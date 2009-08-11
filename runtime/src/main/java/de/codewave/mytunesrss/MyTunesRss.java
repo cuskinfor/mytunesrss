@@ -204,7 +204,6 @@ public class MyTunesRss {
         }
         HEADLESS = COMMAND_LINE_ARGS.containsKey("headless") || CONFIG.isDisableGui();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
-        registerDatabaseDriver();
         initializeQuicktimePlayer();
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Operating system: " + SystemUtils.OS_NAME + ", " + SystemUtils.OS_VERSION + ", " + SystemUtils.OS_ARCH);
@@ -406,7 +405,7 @@ public class MyTunesRss {
 
     private static void executeGuiMode()
             throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException, IOException,
-            InterruptedException, AWTException {
+            InterruptedException, AWTException, SQLException {
         showNewVersionInfo();
         SETTINGS = new Settings();
         //DATABASE_FORM = SETTINGS.getDatabaseForm();
@@ -427,6 +426,7 @@ public class MyTunesRss {
             UpdateUtils.checkForUpdate(true);
         }
         while (true) {
+            registerDatabaseDriver();
             String retry = MyTunesRssUtils.getBundleString("question.databaseInitError.retry");
             String shutdown = MyTunesRssUtils.getBundleString("question.databaseInitError.shutdown");
             String[] options = new String[]{retry, shutdown};
