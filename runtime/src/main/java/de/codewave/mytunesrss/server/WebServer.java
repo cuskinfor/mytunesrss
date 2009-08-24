@@ -334,6 +334,7 @@ public class WebServer {
         myRunning.set(false);
         try {
             if (MyTunesRss.QUICKTIME_PLAYER != null) {
+                MyTunesRss.QUICKTIME_PLAYER.stop();
                 MyTunesRss.QUICKTIME_PLAYER.destroy();
             }
         } catch (QuicktimePlayerException e) {

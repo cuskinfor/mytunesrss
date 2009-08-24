@@ -53,6 +53,7 @@ public class QuicktimePlayer {
             try {
                 QTSession.open();
                 myInitialized = true;
+                setVolume(70); // default volume to 70%
             } catch (QTException e) {
                 throw new QuicktimePlayerException(e);
             }
