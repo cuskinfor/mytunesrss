@@ -8,7 +8,7 @@
 ;--------------------------------
 ;General
 
-  !define VERSION 3.7.4-SNAPSHOT
+  !define VERSION 3.7.5-SNAPSHOT
 
   ;Name and file
   Name "MyTunesRSS ${VERSION}"
@@ -16,7 +16,7 @@
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\MyTunesRSS"
-  
+
   ;Request application privileges for Windows Vista
   RequestExecutionLevel user
 
@@ -35,13 +35,13 @@
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
-  
+
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_INSTFILES
-  
+
 ;--------------------------------
 ;Languages
- 
+
   !insertmacro MUI_LANGUAGE "German"
 
 ;--------------------------------
@@ -51,7 +51,7 @@ Section "!MyTunesRSS" MyTunesRSS
 
   SetOutPath "$INSTDIR"
   File /r /x .svn ..\target\mytunesrss-${VERSION}-windows.dir\mytunesrss-${VERSION}\*
-  
+
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
   CreateDirectory "$SMPROGRAMS\MyTunesRSS"
@@ -67,10 +67,10 @@ Section "Java Runtime Environment" Jre
 
   SetOutPath "$INSTDIR\data\jre"
   File /r /x .svn jre\*
-  
+
   ExecWait '"$INSTDIR\data\jre\bin\unpack200.exe" "$INSTDIR\data\jre\lib\rt.jar.gz" "$INSTDIR\data\jre\lib\rt.jar"'
   Delete "$INSTDIR\data\jre\lib\rt.jar.gz"
-    
+
 SectionEnd
 
 ;--------------------------------
@@ -94,5 +94,5 @@ Section "Uninstall"
   RMDir /r "$INSTDIR"
   RMDir /r "$APPDATA\MyTunesRSS3"
   RMDir /r "$SMPROGRAMS\MyTunesRSS"
-  
+
 SectionEnd
