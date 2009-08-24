@@ -91,6 +91,7 @@ public class EditUser implements MyTunesRssEventListener {
                 }
             }
         });
+        myRemoveUserSettingFromProfileButton.setVisible(myUser != null);
         myRemoveUserSettingFromProfileButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 myUser.setWebSettings(null);

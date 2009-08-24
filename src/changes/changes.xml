@@ -62,10 +62,19 @@
             </action>
         </release>
 
-        <release version="3.7.4" date="2009-xx-xx" description="Bugfix release">
-            <action dev="mdescher" type="update">
+        <release version="3.7.4" date="2009-08-24" description="Bugfix release">
+            <action dev="mdescher" type="fix">
                 load database driver before initializing database, so after switching from anything else to H2 in case
                 of failure the H2 driver will be loaded as well.
+            </action>
+            <action dev="mdescher" type="update">
+                Set remote control volume to 70% on quicktime init.
+            </action>
+            <action dev="mdescher" type="fix">
+                Stop quicktime playback before destroying instance. Might fix some crashes.
+            </action>
+            <action dev="mdescher" type="fix">
+                http://bugs.codewave.de/view.php?id=36
             </action>
         </release>
 
