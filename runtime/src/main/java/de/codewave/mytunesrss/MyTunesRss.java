@@ -253,7 +253,7 @@ public class MyTunesRss {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.preReleaseVersionExpired"));
             MyTunesRssUtils.shutdownGracefully();
         } else if (REGISTRATION.isExpired() && HEADLESS) {
-            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpired"));
+            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpiredHeadless"));
             MyTunesRssUtils.shutdownGracefully();
         } else if (REGISTRATION.isExpirationDate() && !REGISTRATION.isExpired()) {
             MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.expirationInfo",
