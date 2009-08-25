@@ -4,26 +4,30 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssSendCounter;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.FindImageQuery;
 import de.codewave.mytunesrss.jsp.MyTunesFunctions;
+import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.SessionManager.SessionInfo;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.command.GetZipArchiveCommandHandler
@@ -33,35 +37,35 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws Exception {
         User user = getAuthUser();
         if (isRequestAuthorized() && user.isDownload() && !user.isQuotaExceeded()) {
-                String baseName = getRequest().getPathInfo();
-                baseName = baseName.substring(baseName.lastIndexOf("/") + 1, baseName.lastIndexOf("."));
-                String tracklist = getRequestParameter("tracklist", null);
-                DataStoreQuery.QueryResult<Track> tracks;
-                if (StringUtils.isNotEmpty(tracklist)) {
-                    tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(StringUtils.split(tracklist, ",")));
-                } else {
-                    tracks = getTransaction().executeQuery(TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), user, true));
-                }
-                SessionInfo sessionInfo = SessionManager.getSessionInfo(getRequest());
-                if (MyTunesRss.CONFIG.isLocalTempArchive()) {
-                    File tempFile = File.createTempFile("MyTunesRSS_", null);
-                    tempFile.deleteOnExit();
-                    try {
-                        createZipArchive(user, new FileOutputStream(tempFile), tracks, baseName, null);
-                        FileSender fileSender = new FileSender(tempFile, "application/zip", (int)tempFile.length());
-                        fileSender.setCounter(new MyTunesRssSendCounter(user, sessionInfo));
-                        fileSender.setOutputStreamWrapper(user.getOutputStreamWrapper(0));
-                        fileSender.sendGetResponse(getRequest(), getResponse(), false);
-                    } finally {
-                        if (tempFile.exists()) {
-                            tempFile.delete();
-                        }
+            String baseName = getRequest().getPathInfo();
+            baseName = baseName.substring(baseName.lastIndexOf("/") + 1, baseName.lastIndexOf("."));
+            String tracklist = getRequestParameter("tracklist", null);
+            DataStoreQuery.QueryResult<Track> tracks;
+            if (StringUtils.isNotEmpty(tracklist)) {
+                tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(StringUtils.split(tracklist, ",")));
+            } else {
+                tracks = getTransaction().executeQuery(TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), user, true));
+            }
+            SessionInfo sessionInfo = SessionManager.getSessionInfo(getRequest());
+            if (MyTunesRss.CONFIG.isLocalTempArchive()) {
+                File tempFile = File.createTempFile("MyTunesRSS_", null);
+                tempFile.deleteOnExit();
+                try {
+                    createZipArchive(user, new FileOutputStream(tempFile), tracks, baseName, null);
+                    FileSender fileSender = new FileSender(tempFile, "application/zip", (int) tempFile.length());
+                    fileSender.setCounter(new MyTunesRssSendCounter(user, sessionInfo));
+                    fileSender.setOutputStreamWrapper(user.getOutputStreamWrapper(0));
+                    fileSender.sendGetResponse(getRequest(), getResponse(), false);
+                } finally {
+                    if (tempFile.exists()) {
+                        tempFile.delete();
                     }
-                } else {
-                    getResponse().setContentType("application/zip");
-                    OutputStream outputStream = user.getOutputStreamWrapper(0).wrapStream(getResponse().getOutputStream());
-                    createZipArchive(user, outputStream, tracks, baseName, new MyTunesRssSendCounter(user, sessionInfo));
                 }
+            } else {
+                getResponse().setContentType("application/zip");
+                OutputStream outputStream = user.getOutputStreamWrapper(0).wrapStream(getResponse().getOutputStream());
+                createZipArchive(user, outputStream, tracks, baseName, new MyTunesRssSendCounter(user, sessionInfo));
+            }
         } else {
             if (user.isQuotaExceeded()) {
                 MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(user);
@@ -71,14 +75,14 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private void createZipArchive(User user, OutputStream outputStream, DataStoreQuery.QueryResult<Track> tracks, String baseName,
-            FileSender.ByteSentCounter counter) throws IOException {
+                                  FileSender.ByteSentCounter counter) throws IOException, SQLException {
         ZipOutputStream zipStream = new ZipOutputStream(outputStream);
         zipStream.setLevel(ZipOutputStream.STORED);
         zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.codewave.de)");
         byte[] buffer = new byte[102400];
         Set<String> entryNames = new HashSet<String>();
-        String lineSeparator = System.getProperty("line.separator");
-        StringBuilder m3uPlaylist = new StringBuilder("#EXTM3U").append(lineSeparator);
+        PlaylistBuilder playlistBuilder = WebConfig.PlaylistType.Xspf.name().equals(getWebConfig().getPlaylistType()) ? new XspfPlaylistsBuilder() : new M3uPlaylistsBuilder();
+
         int trackCount = 0;
         boolean quotaExceeded = false;
         for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
@@ -104,6 +108,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     entryName = entryNameWithoutSuffix + " " + number + "." + FilenameUtils.getExtension(track.getFile().getName());
                     number++;
                 }
+                // media file
                 entryNames.add(entryName);
                 ZipEntry entry = new ZipEntry(baseName + "/" + entryName);
                 zipStream.putNextEntry(entry);
@@ -114,13 +119,21 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
                 file.close();
+                // image
+//                if (track.getMediaType() != MediaType.Image && StringUtils.isNotEmpty(track.getImageHash())) {
+//                    byte[] data = getTransaction().executeQuery(new FindImageQuery(track.getImageHash(), 256));
+//                    if (data != null) {
+//                        entry = new ZipEntry(baseName + "/" + entryName + ".jpg");
+//                        zipStream.putNextEntry(entry);
+//                        zipStream.write(data);
+//                        file.close();
+//                    }
+//                }
                 zipStream.closeEntry();
-                m3uPlaylist.append("#EXTINF:").append(track.getTime()).append(",").append(trackArtist).append(" - ").append(track.getName()).append(
-                        lineSeparator);
-                m3uPlaylist.append(entryName).append(lineSeparator);
+                playlistBuilder.add(track, trackArtist, trackAlbum, entryName);
                 trackCount++;
                 if (counter != null) {
-                    counter.add((int)entry.getCompressedSize());
+                    counter.add((int) entry.getCompressedSize());
                 }
             } else if (user.isQuotaExceeded()) {
                 quotaExceeded = true;
@@ -128,12 +141,12 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             }
         }
         if (trackCount > 0) {
-            ZipEntry m3uPlaylistEntry = new ZipEntry(baseName + "/" + baseName + ".m3u");
+            ZipEntry m3uPlaylistEntry = new ZipEntry(baseName + "/" + baseName + "." + playlistBuilder.getSuffix());
             zipStream.putNextEntry(m3uPlaylistEntry);
-            zipStream.write(m3uPlaylist.toString().getBytes("UTF-8"));
+            zipStream.write(playlistBuilder.toString().getBytes("UTF-8"));
             zipStream.closeEntry();
             if (counter != null) {
-                counter.add((int)m3uPlaylistEntry.getCompressedSize());
+                counter.add((int) m3uPlaylistEntry.getCompressedSize());
             }
         }
         if (quotaExceeded) {
@@ -142,7 +155,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             zipStream.write("This archive is not complete since your download limit has been reached!".getBytes("UTF-8"));
             zipStream.closeEntry();
             if (counter != null) {
-                counter.add((int)quotaExceededInfoEntry.getCompressedSize());
+                counter.add((int) quotaExceededInfoEntry.getCompressedSize());
             }
         } else if (trackCount == 0) {
             ZipEntry noFilesInfoEntry = new ZipEntry(baseName + "/Readme.txt");
@@ -152,10 +165,75 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                             "UTF-8"));
             zipStream.closeEntry();
             if (counter != null) {
-                counter.add((int)noFilesInfoEntry.getCompressedSize());
+                counter.add((int) noFilesInfoEntry.getCompressedSize());
             }
         }
         zipStream.close();
     }
+
+    private static interface PlaylistBuilder {
+        void add(Track track, String trackArtist, String trackAlbum, String entryName);
+        String getSuffix();
+    }
+
+    private static class M3uPlaylistsBuilder implements PlaylistBuilder {
+
+        private String lineSeparator = System.getProperty("line.separator");
+
+        private StringBuilder playlist = new StringBuilder().append("#EXTM3U").append(lineSeparator);
+
+        public void add(Track track, String trackArtist, String trackAlbum, String entryName) {
+            playlist.append("#EXTINF:").append(track.getTime()).append(",").append(trackArtist).append(" - ").append(track.getName()).append(
+                    lineSeparator);
+            playlist.append(entryName).append(lineSeparator);
+        }
+
+        public String toString() {
+            return playlist.toString();
+        }
+
+        public String getSuffix() {
+            return "m3u";
+        }
+    }
+
+    private class XspfPlaylistsBuilder implements PlaylistBuilder {
+
+        private String lineSeparator = System.getProperty("line.separator");
+
+        private StringBuilder playlist = new StringBuilder();
+
+        private XspfPlaylistsBuilder() {
+            playlist.append("<playlist version=\"1\" xmlns=\"http://xspf.org/ns/0/\">").append(lineSeparator);
+            playlist.append("  <creator>Codewave MyTunesRSS</creator>").append(lineSeparator);
+            playlist.append("  <info>http://www.codewave.de</info>").append(lineSeparator);
+            playlist.append("  <trackList>").append(lineSeparator);
+        }
+
+        public void add(Track track, String trackArtist, String trackAlbum, String entryName) {
+            playlist.append("      <track>").append(lineSeparator);
+            playlist.append("        <location>file:").append(StringEscapeUtils.escapeXml(entryName)).append("</location>").append(lineSeparator);
+            playlist.append("        <creator>").append(StringEscapeUtils.escapeXml(trackArtist)).append("</creator>").append(lineSeparator);
+            playlist.append("        <album>").append(StringEscapeUtils.escapeXml(trackAlbum)).append("</album>").append(lineSeparator);
+            playlist.append("        <title>").append(StringEscapeUtils.escapeXml(track.getName())).append("</title>").append(lineSeparator);
+            if (StringUtils.isNotEmpty(track.getGenre())) {
+                playlist.append("        <annotation>").append(StringEscapeUtils.escapeXml(track.getGenre())).append("</annotation>").append(lineSeparator);
+            }
+            playlist.append("        <duration>").append(track.getTime() * 1000).append("</duration>").append(lineSeparator);
+//            if (track.getMediaType() != MediaType.Image && StringUtils.isNotEmpty(track.getImageHash())) {
+//                playlist.append("        <image>").append(StringEscapeUtils.escapeXml(entryName + ".jpg")).append("</image>").append(lineSeparator);
+//            }
+            playlist.append("      </track>").append(lineSeparator);
+        }
+
+        public String toString() {
+            return playlist.toString() + lineSeparator + "  </tracklist>" + lineSeparator + "</playlist>" + lineSeparator;
+        }
+
+        public String getSuffix() {
+            return "xspf";
+        }
+    }
+
 
 }
