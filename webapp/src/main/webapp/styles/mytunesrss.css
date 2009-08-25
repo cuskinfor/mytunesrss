@@ -286,6 +286,11 @@ table.portal input {
     margin: 0 0 0 10px;
 }
 
+table.portal select {
+    vertical-align: middle;
+    margin: 0 0 0 10px;
+}
+
 td.artist {
 }
 
