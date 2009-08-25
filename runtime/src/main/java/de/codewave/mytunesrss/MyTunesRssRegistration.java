@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.utils.PrefsUtils;
+import de.codewave.utils.Version;
 import de.codewave.utils.registration.RegistrationUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
@@ -26,6 +27,7 @@ public class MyTunesRssRegistration {
     private long myExpiration;
     private boolean myReleaseVersion;
     private boolean myValid;
+    private Version myMaxVersion;
     private JXPathContext mySettings;
 
     public static MyTunesRssRegistration register(File registrationFile) {
@@ -94,6 +96,7 @@ public class MyTunesRssRegistration {
     }
 
     public void init(File file, boolean allowDefaultLicense) throws IOException {
+        allowDefaultLicense = false;
         if (allowDefaultLicense) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Checking if default license specifies that this is a pre-release version.");
@@ -142,6 +145,8 @@ public class MyTunesRssRegistration {
             JXPathContext registrationContext = JXPathUtils.getContext(registration);
             myReleaseVersion = JXPathUtils.getBooleanValue(registrationContext, "/registration/release-version", true);
             myName = JXPathUtils.getStringValue(registrationContext, "/registration/name", "unregistered");
+            String versionString = JXPathUtils.getStringValue(registrationContext, "/registration/max-version", Integer.toString(Integer.MAX_VALUE));
+            myMaxVersion = new Version(versionString + "." + Integer.MAX_VALUE + "." + Integer.MAX_VALUE);
             String expirationDate = JXPathUtils.getStringValue(registrationContext, "/registration/expiration", null);
             String settingsText = JXPathUtils.getStringValue(registrationContext, "/registration/settings", null);
             if (settingsText != null) {
@@ -167,6 +172,7 @@ public class MyTunesRssRegistration {
                 LOG.debug("Registration data:");
                 LOG.debug("name=" + getName());
                 LOG.debug("expiration=" + getExpiration(MyTunesRssUtils.getBundleString("common.dateFormat")));
+                LOG.debug("max-version=" + myMaxVersion);
             }
         }
     }
@@ -183,7 +189,7 @@ public class MyTunesRssRegistration {
     }
 
     public boolean isExpired() {
-        return myExpiration > 0 && myExpiration <= System.currentTimeMillis();
+        return isExpiredVersion() || (myExpiration > 0 && myExpiration <= System.currentTimeMillis());
     }
 
     public boolean isExpirationDate() {
@@ -200,5 +206,9 @@ public class MyTunesRssRegistration {
 
     public JXPathContext getSettings() {
         return mySettings;
+    }
+
+    private boolean isExpiredVersion() {
+        return myMaxVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0;
     }
 }
