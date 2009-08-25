@@ -96,7 +96,6 @@ public class MyTunesRssRegistration {
     }
 
     public void init(File file, boolean allowDefaultLicense) throws IOException {
-        allowDefaultLicense = false;
         if (allowDefaultLicense) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Checking if default license specifies that this is a pre-release version.");
