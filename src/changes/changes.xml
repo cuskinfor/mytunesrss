@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.8.0-EAP-4" date="2009-xx-xx" description="3.8.0 EAP 4">
+            <action dev="mdescher" type="add">
+                Use playlist type for playlist in ZIP archives.
+            </action>
             <action dev="mdescher" type="update">
                 Replace fuzziness slider with select box with three choices.
             </action>
