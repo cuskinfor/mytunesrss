@@ -59,7 +59,16 @@
             </includes>
             <excludes>
                 <exclude>**/JavaApplicationStub*</exclude>
+                <exclude>**/Info.plist*</exclude>
             </excludes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>.</outputDirectory>
+            <directory>etc/MacOS-Bundle</directory>
+            <includes>
+                <include>**/Info.plist*</include>
+            </includes>
+            <filtered>true</filtered>
         </fileSet>
         <fileSet>
             <outputDirectory>.</outputDirectory>

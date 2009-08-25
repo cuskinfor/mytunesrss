@@ -443,7 +443,7 @@ public class MyTunesRss {
                 }
             }
             if (task.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
-                String answer = (String) MyTunesRssUtils.showQuestionMessage(MyTunesRssUtils.getBundleString("question.databaseVersionMismatch"), options);
+                String answer = (String)MyTunesRssUtils.showQuestionMessage(MyTunesRssUtils.getBundleString("question.databaseVersionMismatch", MyTunesRss.VERSION, task.getDatabaseVersion()), options);
                 if (answer == retry) {
                     MyTunesRss.CONFIG.setDefaultDatabaseSettings();
                     new DeleteDatabaseFilesTask().execute();
