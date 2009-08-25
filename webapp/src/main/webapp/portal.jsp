@@ -66,9 +66,9 @@
                     <table border="0" cellspacing="0" cellpadding="0" style="border-bottom:0"><tr>
                         <td style="background:transparent;padding:5px 10px 0 0">
                             <select name="searchFuzziness" style="width:99%">
-                                <option value="0">exact matches only</option>
-                                <option value="30" <c:if test="${config.searchFuzziness == 30}">selected="selected"</c:if>>similar matches</option>
-                                <option value="60" <c:if test="${config.searchFuzziness == 60}">selected="selected"</c:if>>somewhat similar matches</option>
+                                <option value="0"><fmt:message key="search.fuzziness.0"/></option>
+                                <option value="30" <c:if test="${config.searchFuzziness == 30}">selected="selected"</c:if>><fmt:message key="search.fuzziness.30"/></option>
+                                <option value="60" <c:if test="${config.searchFuzziness == 60}">selected="selected"</c:if>><fmt:message key="search.fuzziness.60"/></option>
                             </select>
                         </td>
                     </tr></table>
