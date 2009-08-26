@@ -220,6 +220,12 @@ public class MyTunesRssUtils {
                 MyTunesRss.STREAMING_CACHE.clearCache();
             }
         }
+        if (MyTunesRss.ARCHIVE_CACHE != null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Cleaning up archive cache.");
+            }
+            MyTunesRss.ARCHIVE_CACHE.clearCache();
+        }
         if (MyTunesRss.QUARTZ_SCHEDULER != null) {
             try {
                 if (LOGGER.isInfoEnabled()) {

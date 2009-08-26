@@ -84,6 +84,7 @@ public class MyTunesRss {
     public static ErrorQueue ERROR_QUEUE = new ErrorQueue();
     public static boolean QUIT_REQUEST;
     public static FileCache STREAMING_CACHE;
+    public static FileCache ARCHIVE_CACHE;
     public static Scheduler QUARTZ_SCHEDULER;
     public static MailSender MAILER = new MailSender();
     public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
@@ -265,7 +266,7 @@ public class MyTunesRss {
             LOGGER.info("Starting quartz scheduler.");
         }
         QUARTZ_SCHEDULER.start();
-        STREAMING_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER, 10000, CONFIG.getStreamingCacheMaxFiles());
+        STREAMING_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER + "_Streaming", 10000, CONFIG.getStreamingCacheMaxFiles());
         File streamingCacheFile = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache.xml");
         if (streamingCacheFile.isFile()) {
             try {
@@ -277,6 +278,7 @@ public class MyTunesRss {
                 STREAMING_CACHE.clearCache();
             }
         }
+        ARCHIVE_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER + "_Archives", 10000, 50); // TODO max size config?
         MyTunesRssJmxUtils.startJmxServer();
         StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
         if (HEADLESS) {

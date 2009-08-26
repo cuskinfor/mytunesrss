@@ -52,6 +52,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 tempFile.deleteOnExit();
                 try {
                     createZipArchive(user, new FileOutputStream(tempFile), tracks, baseName, null);
+                    MyTunesRss.ARCHIVE_CACHE.add(identifier, tempFile, timeout)
                     FileSender fileSender = new FileSender(tempFile, "application/zip", (int) tempFile.length());
                     fileSender.setCounter(new MyTunesRssSendCounter(user, sessionInfo));
                     fileSender.setOutputStreamWrapper(user.getOutputStreamWrapper(0));
