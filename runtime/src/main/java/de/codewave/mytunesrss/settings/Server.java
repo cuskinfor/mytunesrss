@@ -104,6 +104,10 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
                 "error.illegalHttpProxyPort")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myHttpsProxyPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString(
                 "error.illegalHttpsProxyPort")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myAjpPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString(
+                "error.illegalAjpPort")));
+        JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myMaxThreadsInput, 5, 1000, true, MyTunesRssUtils.getBundleString(
+                "error.illegalMaxThreads")));
         JTextFieldValidation.setValidation(new CompositeTextFieldValidation(myContextInput,
                                                                             new WebAppContextValidValidation(),
                                                                             new DuplicateWebAppContextValidation()));

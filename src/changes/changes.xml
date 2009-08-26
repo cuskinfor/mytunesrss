@@ -74,6 +74,15 @@
             </action>
         </release>
 
+        <release version="3.7.5" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Added missing validation for ajp port and max threads in server config panel.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed missing parameters for database version mismatch error text.
+            </action>
+        </release>
+
         <release version="3.7.4" date="2009-08-24" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 load database driver before initializing database, so after switching from anything else to H2 in case
