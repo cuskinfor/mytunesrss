@@ -59,10 +59,16 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 tracks = getTransaction().executeQuery(TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), user, true));
             }
             SessionInfo sessionInfo = SessionManager.getSessionInfo(getRequest());
-            String fileIdentifier = calculateIdentifier(tracks);
-            LOGGER.debug("Archive file ID is \"" + fileIdentifier + "\".");
-            File cachedFile = MyTunesRss.ARCHIVE_CACHE.getFile(fileIdentifier);
-            if (MyTunesRss.CONFIG.isLocalTempArchive() || (cachedFile != null && cachedFile.isFile())) {
+            if (MyTunesRss.CONFIG.isLocalTempArchive()) {
+                File cachedFile = null;
+                String fileIdentifier = null;
+                if (tracks.getResultSize() < 10000) {
+                    fileIdentifier = calculateIdentifier(tracks);
+                    LOGGER.debug("Archive file ID is \"" + fileIdentifier + "\".");
+                    cachedFile = MyTunesRss.ARCHIVE_CACHE.getFile(fileIdentifier);
+                } else {
+                    LOGGER.debug("Result set has \"" + tracks.getResultSize() + "\" results which is too much for archive file ID generation.");
+                }
                 File tempFile = null;
                 try {
                     if (cachedFile == null || !cachedFile.isFile()) {
@@ -106,7 +112,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
      */
     private String calculateIdentifier(QueryResult<Track> tracks) {
         List<String> trackIds = new ArrayList<String>();
-        for (Track track = tracks.nextResult(); track != null; tracks.nextResult()) {
+        for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
             trackIds.add(track.getId());
         }
         tracks.reset();
