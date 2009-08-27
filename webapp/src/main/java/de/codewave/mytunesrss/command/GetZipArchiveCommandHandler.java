@@ -16,14 +16,21 @@ import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.SessionManager.SessionInfo;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.DataStoreQuery.QueryResult;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -33,6 +40,11 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.command.GetZipArchiveCommandHandler
  */
 public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetZipArchiveCommandHandler.class);
+    
+    private static final long ARCHIVE_CACHE_TIMEOUT = 1000L * 60L * 10L; // timeout = 10 minutes
+    
     @Override
     public void executeAuthorized() throws Exception {
         User user = getAuthUser();
@@ -47,18 +59,28 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 tracks = getTransaction().executeQuery(TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), user, true));
             }
             SessionInfo sessionInfo = SessionManager.getSessionInfo(getRequest());
-            if (MyTunesRss.CONFIG.isLocalTempArchive()) {
-                File tempFile = File.createTempFile("MyTunesRSS_", null);
-                tempFile.deleteOnExit();
+            String fileIdentifier = calculateIdentifier(tracks);
+            LOGGER.debug("Archive file ID is \"" + fileIdentifier + "\".");
+            File cachedFile = MyTunesRss.ARCHIVE_CACHE.getFile(fileIdentifier);
+            if (MyTunesRss.CONFIG.isLocalTempArchive() || (cachedFile != null && cachedFile.isFile())) {
+                File tempFile = null;
                 try {
-                    createZipArchive(user, new FileOutputStream(tempFile), tracks, baseName, null);
-                    MyTunesRss.ARCHIVE_CACHE.add(identifier, tempFile, timeout)
-                    FileSender fileSender = new FileSender(tempFile, "application/zip", (int) tempFile.length());
+                    if (cachedFile == null || !cachedFile.isFile()) {
+                        LOGGER.debug("No archive with ID \"" + fileIdentifier + "\" found in cache.");
+                        tempFile = File.createTempFile("MyTunesRSS_", null);
+                        tempFile.deleteOnExit();
+                        createZipArchive(user, new FileOutputStream(tempFile), tracks, baseName, null);
+                        MyTunesRss.ARCHIVE_CACHE.add(fileIdentifier, tempFile, ARCHIVE_CACHE_TIMEOUT); // TODO timeout from config?
+                    } else {
+                        LOGGER.debug("Using archive with ID \"" + fileIdentifier + "\" from cache.");
+                    }
+                    File sendFile = cachedFile != null && cachedFile.isFile() ? cachedFile : tempFile;  
+                    FileSender fileSender = new FileSender(sendFile, "application/zip", (int) sendFile.length());
                     fileSender.setCounter(new MyTunesRssSendCounter(user, sessionInfo));
                     fileSender.setOutputStreamWrapper(user.getOutputStreamWrapper(0));
                     fileSender.sendGetResponse(getRequest(), getResponse(), false);
                 } finally {
-                    if (tempFile.exists()) {
+                    if (tempFile != null && tempFile.isFile()) {
                         tempFile.delete();
                     }
                 }
@@ -73,6 +95,23 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             }
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
+    }
+
+    /**
+     * Calculate an identifier for a list of tracks.
+     * 
+     * @param tracks A list of tracks.
+     * 
+     * @return Identifier for the list of tracks.
+     */
+    private String calculateIdentifier(QueryResult<Track> tracks) {
+        List<String> trackIds = new ArrayList<String>();
+        for (Track track = tracks.nextResult(); track != null; tracks.nextResult()) {
+            trackIds.add(track.getId());
+        }
+        tracks.reset();
+        Collections.sort(trackIds);
+        return Long.toString(StringUtils.join(trackIds, "").hashCode());
     }
 
     private void createZipArchive(User user, OutputStream outputStream, DataStoreQuery.QueryResult<Track> tracks, String baseName,
