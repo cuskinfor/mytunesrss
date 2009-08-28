@@ -33,7 +33,6 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
     public void execute() throws IOException, SQLException {
         try {
             LOGGER.debug("Initializing the database.");
-            MyTunesRss.STORE = new MyTunesRssDataStore();
             MyTunesRss.STORE.init();
             DataStoreSession session = MyTunesRss.STORE.getTransaction();
             loadVersion(session);

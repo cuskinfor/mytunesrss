@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.datastore;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStore;
 import de.codewave.utils.sql.SmartStatementFactory;
 import de.codewave.utils.xml.JXPathUtils;
@@ -37,7 +36,7 @@ public class MyTunesRssDataStore extends DataStore {
     }
 
     @Override
-    public void init() throws IOException, SQLException {
+    public synchronized void init() throws IOException, SQLException {
         final String databaseConnection = MyTunesRss.CONFIG.getDatabaseConnection();
         final String databaseUser = MyTunesRss.CONFIG.getDatabaseUser();
         final String databasePassword = MyTunesRss.CONFIG.getDatabasePassword();
@@ -114,5 +113,11 @@ public class MyTunesRssDataStore extends DataStore {
 
     public SmartStatementFactory getSmartStatementFactory() {
         return mySmartStatementFactory;
+    }
+
+    @Override
+    public synchronized void destroy() {
+        super.destroy();
+        myInitialized = false;
     }
 }
