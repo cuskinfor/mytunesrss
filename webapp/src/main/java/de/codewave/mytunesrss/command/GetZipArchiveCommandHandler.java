@@ -5,11 +5,9 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.datastore.statement.FindImageQuery;
 import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.servlet.FileSender;
@@ -26,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -86,9 +83,9 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     fileSender.setOutputStreamWrapper(user.getOutputStreamWrapper(0));
                     fileSender.sendGetResponse(getRequest(), getResponse(), false);
                 } finally {
-                    if (tempFile != null && tempFile.isFile()) {
+                    /*if (tempFile != null && tempFile.isFile()) {
                         tempFile.delete();
-                    }
+                    }*/
                 }
             } else {
                 getResponse().setContentType("application/zip");
