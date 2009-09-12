@@ -83,12 +83,14 @@ public class User implements MyTunesRssEventListener, Cloneable {
     private boolean myRemoteControl;
     private User myParent;
     private boolean myExternalSites;
+    private int mySearchFuzziness;
 
     public User(String name) {
         myName = name;
         myResetTime = System.currentTimeMillis();
         myQuotaResetTime = myResetTime;
         myQuotaType = QuotaType.None;
+        mySearchFuzziness = -1;
     }
 
     public boolean isActive() {
@@ -360,11 +362,19 @@ public class User implements MyTunesRssEventListener, Cloneable {
     }
 
     public boolean isExternalSites() {
-        return myExternalSites;
+        return getParent() != null ? getParent().isExternalSites() : myExternalSites;
     }
 
     public void setExternalSites(boolean externalSites) {
         myExternalSites = externalSites;
+    }
+
+    public int getSearchFuzziness() {
+        return getParent() != null ? getParent().getSearchFuzziness() : mySearchFuzziness;
+    }
+
+    public void setSearchFuzziness(int searchFuzziness) {
+        mySearchFuzziness = searchFuzziness;
     }
 
     @Override

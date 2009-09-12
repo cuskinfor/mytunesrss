@@ -140,4 +140,8 @@ public interface EditUserConfigMBean {
     boolean isPermissionExternalSites();
 
     void setPermissionExternalSites(boolean permissionExternalSites);
+
+    int getSearchFuzziness();
+
+    void setSearchFuzziness(int fuziness);
 }

@@ -424,4 +424,13 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         MyTunesRss.CONFIG.getUser(myUsername).setExternalSites(permissionExternalSites);
         onChange();
     }
+
+    public int getSearchFuzziness() {
+        return MyTunesRss.CONFIG.getUser(myUsername).getSearchFuzziness();
+    }
+
+    public void setSearchFuzziness(int fuziness) {
+        MyTunesRss.CONFIG.getUser(myUsername).setSearchFuzziness(fuziness);
+        onChange();
+    }
 }

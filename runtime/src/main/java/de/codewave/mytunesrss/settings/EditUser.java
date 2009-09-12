@@ -72,6 +72,7 @@ public class EditUser implements MyTunesRssEventListener {
     private JButton myRemoveUserSettingFromProfileButton;
     private JCheckBox myPermRemoteControlnput;
     private JCheckBox myPermExternalSitesInput;
+    private JTextField mySearchFuzzinessInput;
     private User myUser;
     private DefaultMutableTreeNode myUserNode;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
@@ -230,6 +231,7 @@ public class EditUser implements MyTunesRssEventListener {
             myPermChangeEmail.setSelected(myUser.isChangeEmail());
             myPermRemoteControlnput.setSelected(myUser.isRemoteControl());
             myPermExternalSitesInput.setSelected(myUser.isExternalSites());
+            mySearchFuzzinessInput.setText(myUser.getSearchFuzziness() > -1 ? Integer.toString(myUser.getSearchFuzziness()) : "");
             setParentUser(myUser.getParent() != null);
             if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
                 SwingUtils.enableElementAndLabel(myBytesQuotaInput, false);
@@ -364,6 +366,7 @@ public class EditUser implements MyTunesRssEventListener {
             myUser.setUrlEncryption(myUrlEncryptionInput.isSelected());
             myUser.setRemoteControl(myPermRemoteControlnput.isSelected());
             myUser.setExternalSites(myPermExternalSitesInput.isSelected());
+            myUser.setSearchFuzziness(MyTunesRssUtils.getTextFieldInteger(mySearchFuzzinessInput, -1));
         }
     }
 

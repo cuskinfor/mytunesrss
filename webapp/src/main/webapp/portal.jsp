@@ -63,15 +63,22 @@
             <tr>
                 <td class="search">
                     <table border="0" cellspacing="0" cellpadding="0" style="border-bottom:0"><tr><td width="99%" style="background:transparent;padding:0 10px 0 0"><input class="text" type="text" name="searchTerm" value="<c:out value="${lastSearchTerm}"/>" style="width:99%"/></td><td style="background:transparent;padding:0 0"><input class="button" type="submit" value="<fmt:message key="doSearch"/>"/></td></tr></table>
-                    <table border="0" cellspacing="0" cellpadding="0" style="border-bottom:0"><tr>
-                        <td style="background:transparent;padding:5px 10px 0 0">
-                            <select name="searchFuzziness" style="width:99%">
-                                <option value="0"><fmt:message key="search.fuzziness.0"/></option>
-                                <option value="30" <c:if test="${config.searchFuzziness == 30}">selected="selected"</c:if>><fmt:message key="search.fuzziness.30"/></option>
-                                <option value="60" <c:if test="${config.searchFuzziness == 60}">selected="selected"</c:if>><fmt:message key="search.fuzziness.60"/></option>
-                            </select>
-                        </td>
-                    </tr></table>
+                    <c:choose>
+                        <c:when test="${authUser.searchFuzziness == -1}">
+                            <table border="0" cellspacing="0" cellpadding="0" style="border-bottom:0"><tr>
+                                <td style="background:transparent;padding:5px 10px 0 0">
+                                    <select name="searchFuzziness" style="width:99%">
+                                        <option value="0"><fmt:message key="search.fuzziness.0"/></option>
+                                        <option value="30" <c:if test="${config.searchFuzziness == 30}">selected="selected"</c:if>><fmt:message key="search.fuzziness.30"/></option>
+                                        <option value="60" <c:if test="${config.searchFuzziness == 60}">selected="selected"</c:if>><fmt:message key="search.fuzziness.60"/></option>
+                                    </select>
+                                </td>
+                            </tr></table>
+                        </c:when>
+                        <c:otherwise>
+                            <input type="hidden" name="searchFuzziness" value="${authUser.searchFuzziness}" />
+                        </c:otherwise>
+                    </c:choose>
                     <div>
                         <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
                     </div>
