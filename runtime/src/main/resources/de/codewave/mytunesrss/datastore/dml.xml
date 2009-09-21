@@ -729,15 +729,18 @@
         </sql>
     </statement>
 
-    <statement name="fillLuceneSearchTempTable">
+    <statement name="truncateSearchTempTables">
         <sql>TRUNCATE TABLE temp_lucene_tracks</sql>
+        <sql>TRUNCATE TABLE temp_like_tracks</sql>
+    </statement>
+
+    <statement name="fillLuceneSearchTempTable">
         <sql loop="track_id" loopbatch="10000">
             INSERT INTO temp_lucene_tracks (track_id) VALUES (:loopitem_track_id)
         </sql>
     </statement>
 
     <statement name="fillLikeSearchTempTable">
-        <sql>TRUNCATE TABLE temp_like_tracks</sql>
         <sql>
             INSERT INTO temp_like_tracks (track_id)
                 SELECT t.id FROM track t

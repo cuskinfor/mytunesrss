@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.8.0-EAP-4" date="2009-xx-xx" description="3.8.0 EAP 4">
+            <action dev="mdescher" type="fix">
+                Fixed bug where old like search results were returned from temp table.
+            </action>
             <action dev="mdescher" type="add">
                 Search fuzziness setting for user.
             </action>

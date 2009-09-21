@@ -110,9 +110,9 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     }
 
     private QueryResult<Track> executeForIds(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "createSearchTempTables");
-        statement.execute();
-        statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
+        MyTunesRssUtils.createStatement(connection, "createSearchTempTables").execute(); // create if not exists
+        MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
         statement.setObject("track_id", myIds);
         statement.execute();
         if (mySearchTerms != null && mySearchTerms.length > 0) {
