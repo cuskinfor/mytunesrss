@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.7.5" date="2009-xx-xx" description="Bugfix release">
+        <release version="3.7.5" date="2009-09-25" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 New version codewave utils to fix bug with smart statements.
             </action>
