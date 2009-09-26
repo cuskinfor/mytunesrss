@@ -29,8 +29,7 @@
                 <include>*:war:*</include>
             </includes>
             <binaries>
-                <outputDirectory>data/webapps</outputDirectory>
-                <outputFileNameMapping>ROOT</outputFileNameMapping>
+                <outputDirectory>data/webapps/ROOT</outputDirectory>
                 <unpack>true</unpack>
                 <includeDependencies>false</includeDependencies>
             </binaries>
