@@ -74,7 +74,7 @@ public class TrackUtils {
                 try {
                     sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.digest(sectionIds.toString().getBytes("UTF-8")));
                     final String hash = sectionHash;
-                    LOGGER.debug("Trying treating temporary playlist with id \"" + hash + "\".");
+                    LOGGER.debug("Trying to create temporary playlist with id \"" + hash + "\".");
                     if (!transaction.executeQuery(new DataStoreQuery<Boolean>() {
                         public Boolean execute(Connection connection) throws SQLException {
                             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "checkTempPlaylistWithId");

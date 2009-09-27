@@ -31,7 +31,7 @@ public class MyTunesRssSystray implements MyTunesRssEventListener {
     private MenuItem myShow;
 
     public MyTunesRssSystray(Settings settingsForm) throws AWTException {
-        Image image = Toolkit.getDefaultToolkit().createImage(MyTunesRss.class.getResource("/de/codewave/mytunesrss/SysTray.gif"));
+        Image image = Toolkit.getDefaultToolkit().createImage(MyTunesRss.class.getResource("/de/codewave/mytunesrss/SysTray.png"));
         String tooltip = MyTunesRssUtils.getBundleString("systray.menuLabel");
         PopupMenu menu = createPopupMenu(settingsForm);
         myUUID = SystrayUtils.add(image, tooltip, menu, new ActionListener() {
