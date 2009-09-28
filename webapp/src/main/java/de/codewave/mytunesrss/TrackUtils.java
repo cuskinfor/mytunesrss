@@ -71,15 +71,14 @@ public class TrackUtils {
         }
         if (!sectionTracks.isEmpty()) {
             String sectionHash = null;
-            if (sectionTracks.size() > 5) {// for more than 5 tracks in a section create or use a temporary section playlist
+            if (sectionTracks.size() > 1) {// for more than 1 track in a section create a temporary section playlist
                 try {
                     sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.digest(sectionIds.toString().getBytes("UTF-8")));
-                    final String hash = sectionHash;
-                    LOGGER.debug("Trying to create temporary playlist with id \"" + hash + "\".");
+                    LOGGER.debug("Trying to create temporary playlist with id \"" + sectionHash + "\".");
                     transaction.executeStatement(new DataStoreStatement() {
                         public void execute(Connection connection) throws SQLException {
                             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeTempPlaylistWithId");
-                            statement.executeQuery();
+                            statement.execute();
                         }
                     });
                     SaveTempPlaylistStatement statement = new SaveTempPlaylistStatement();
