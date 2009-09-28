@@ -617,8 +617,8 @@
         <sql>UPDATE system_information SET genre_count = (SELECT COUNT(name) FROM genre)</sql>
     </statement>
 
-    <statement name="checkTempPlaylistWithId">
-        <sql>SELECT id FROM playlist WHERE id = :id AND type = 'TEMP'</sql>
+    <statement name="removeTempPlaylistWithId">
+        <sql>DELETE FROM playlist WHERE id = :id AND type = 'TEMP'</sql>
     </statement>
 
     <statement name="getTempPlaylistCreationTime">

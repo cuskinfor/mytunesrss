@@ -7,6 +7,7 @@ import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.SmartStatement;
+import de.codewave.utils.sql.DataStoreStatement;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,20 +76,17 @@ public class TrackUtils {
                     sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.digest(sectionIds.toString().getBytes("UTF-8")));
                     final String hash = sectionHash;
                     LOGGER.debug("Trying to create temporary playlist with id \"" + hash + "\".");
-                    if (!transaction.executeQuery(new DataStoreQuery<Boolean>() {
-                        public Boolean execute(Connection connection) throws SQLException {
-                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "checkTempPlaylistWithId");
-                            statement.setString("id", hash);
-                            ResultSet rs = statement.executeQuery();
-                            return Boolean.valueOf(rs.next());
+                    transaction.executeStatement(new DataStoreStatement() {
+                        public void execute(Connection connection) throws SQLException {
+                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeTempPlaylistWithId");
+                            statement.executeQuery();
                         }
-                    })) {
-                        SaveTempPlaylistStatement statement = new SaveTempPlaylistStatement();
-                        statement.setId(sectionHash);
-                        statement.setName(sectionHash);
-                        statement.setTrackIds(Arrays.<String>asList(StringUtils.split(sectionIds.toString(), ',')));
-                        transaction.executeStatement(statement);
-                    }
+                    });
+                    SaveTempPlaylistStatement statement = new SaveTempPlaylistStatement();
+                    statement.setId(sectionHash);
+                    statement.setName(sectionHash);
+                    statement.setTrackIds(Arrays.<String>asList(StringUtils.split(sectionIds.toString(), ',')));
+                    transaction.executeStatement(statement);
                 } catch (SQLException e) {
                     LOGGER.error("Could not check for existing temporary playlist or could not insert missing temporary playlist.", e);
                     sectionHash = null;// do not use calculated section hash in case of an sql exception
