@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.8.0-EAP-4" date="2009-xx-xx" description="3.8.0 EAP 4">
+        <release version="3.8.0-EAP-4" date="2009-09-29" description="3.8.0 EAP 4">
             <action dev="mdescher" type="fix">
                 Always remove existing temp playlist and create new one for sections.
             </action>
