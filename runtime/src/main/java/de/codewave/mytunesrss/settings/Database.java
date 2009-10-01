@@ -182,7 +182,8 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
             if (databaseChanged()) {
                 MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("settings.databaseChangedWarning"));
             }
-            MyTunesRss.CONFIG.setDatabaseType(((DatabaseType)myDbTypeInput.getSelectedItem()).name());
+            DatabaseType databaseType = (DatabaseType) myDbTypeInput.getSelectedItem();
+            MyTunesRss.CONFIG.setDatabaseType(databaseType != null ? databaseType.name() : DatabaseType.h2.name());
             MyTunesRss.CONFIG.setDatabaseDriver(myDbDriverInput.getText());
             MyTunesRss.CONFIG.setDatabaseConnection(myDbConnectInput.getText());
             MyTunesRss.CONFIG.setDatabaseUser(myDbUserInput.getText());
@@ -192,7 +193,8 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
     }
 
     private boolean databaseChanged() {
-        String newType = StringUtils.trimToEmpty(((DatabaseType)myDbTypeInput.getSelectedItem()).name());
+        DatabaseType databaseType = (DatabaseType) myDbTypeInput.getSelectedItem();
+        String newType = StringUtils.trimToEmpty(databaseType != null ? databaseType.name() : DatabaseType.h2.name());
         String newDriver = StringUtils.trimToEmpty(myDbDriverInput.getText());
         String newConnect = StringUtils.trimToEmpty(myDbConnectInput.getText());
         String newUser = StringUtils.trimToEmpty(myDbUserInput.getText());

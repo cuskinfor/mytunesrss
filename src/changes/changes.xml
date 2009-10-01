@@ -9,6 +9,9 @@
 
         <release version="3.7.6" date="2009-xx-xx" description="Bugfix release">
             <action dev="mdescher" type="fix">
+                Fixed possible NullPointerException (Mantis 0000043).
+            </action>
+            <action dev="mdescher" type="fix">
                 Always remove existing temp playlist and create new one for sections.
             </action>
             <action dev="mdescher" type="add">
