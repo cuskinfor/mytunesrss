@@ -177,5 +177,28 @@
         <sql>ALTER TABLE artist ALTER COLUMN lower_name SET NOT NULL</sql>
         <sql>ALTER TABLE genre ALTER COLUMN lower_name SET NOT NULL</sql>
     </statement>
+    <statement name="migrate_3.8.0_eap_5">
+        <sql>
+            {create_table_prefix} tag (
+                id VARCHAR(50) NOT NULL,
+                tag VARCHAR(50) NOT NULL,
+                UNIQUE (id),
+                UNIQUE (tag)
+            )
+        </sql>
+        <sql>
+            {create_table_prefix} link_tag_track (
+                tag_id VARCHAR(50) NOT NULL,
+                track_id VARCHAR(100) NOT NULL,
+                UNIQUE (tag_id, track_id),
+                CONSTRAINT fk_link_tag_track_tag_id FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE,
+                CONSTRAINT fk_link_tag_track_track_id FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE
+            )
+        </sql>
+        <sql>CREATE INDEX idx_tag_tag_id ON tag (id)</sql>
+        <sql>CREATE INDEX idx_tag_tag_tag ON tag (tag)</sql>
+        <sql>CREATE INDEX idx_link_tag_track_tag_id ON link_tag_track (tag_id)</sql>
+        <sql>CREATE INDEX idx_link_tag_track_track_id ON link_tag_track (track_id)</sql>
+    </statement>
 
 </statements>

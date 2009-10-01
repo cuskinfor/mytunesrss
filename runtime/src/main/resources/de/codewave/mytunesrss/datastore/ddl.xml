@@ -128,6 +128,23 @@
                 CONSTRAINT fk_smart_info_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
             )
         </sql>
+        <sql>
+            {create_table_prefix} tag (
+                id VARCHAR(50) NOT NULL,
+                tag VARCHAR(50) NOT NULL,
+                UNIQUE (id),
+                UNIQUE (tag)
+            )
+        </sql>
+        <sql>
+            {create_table_prefix} link_tag_track (
+                tag_id VARCHAR(50) NOT NULL,
+                track_id VARCHAR(100) NOT NULL,
+                UNIQUE (tag_id, track_id),
+                CONSTRAINT fk_link_tag_track_tag_id FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE,
+                CONSTRAINT fk_link_tag_track_track_id FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE
+            )
+        </sql>
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>
         <sql>CREATE INDEX idx_track_lower_name ON track (lower_name)</sql>
         <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
@@ -154,6 +171,10 @@
         <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
         <sql>CREATE INDEX idx_image_hash ON image (hash)</sql>
+        <sql>CREATE INDEX idx_tag_tag_id ON tag (id)</sql>
+        <sql>CREATE INDEX idx_tag_tag_tag ON tag (tag)</sql>
+        <sql>CREATE INDEX idx_link_tag_track_tag_id ON link_tag_track (tag_id)</sql>
+        <sql>CREATE INDEX idx_link_tag_track_track_id ON link_tag_track (track_id)</sql>
         <sql>{create_playlist_id_sequence}</sql>
     </statement>
 

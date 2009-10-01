@@ -556,10 +556,9 @@ th a:HOVER {
 }
 
 th.icon {
-    width: 16px;
     padding: 0 10px 0 0;
     border-left: none;
-    text-align: center;
+    text-align: right;
     white-space: nowrap;
 }
 
