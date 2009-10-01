@@ -89,7 +89,25 @@
             </action>
         </release>
 
-        <release version="3.7.5" date="2009-xx-xx" description="Bugfix release">
+        <release version="3.7.6" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Fixed possible NullPointerException (Mantis 0000043).
+            </action>
+            <action dev="mdescher" type="fix">
+                Always remove existing temp playlist and create new one for sections.
+            </action>
+            <action dev="mdescher" type="add">
+                Norwegian translation for web interface.
+            </action>
+            <action dev="mdescher" type="fix">
+                Better tray icon.
+            </action>
+        </release>
+
+        <release version="3.7.5" date="2009-09-25" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                New version codewave utils to fix bug with smart statements.
+            </action>
             <action dev="mdescher" type="fix">
                 Added missing validation for ajp port and max threads in server config panel.
             </action>
