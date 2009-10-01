@@ -55,7 +55,9 @@ public class ApplicationConfig extends MyTunesRssMBean implements ApplicationCon
     }
 
     public void setCodewaveLogLevel(String level) {
-        MyTunesRssUtils.setCodewaveLogLevel(Level.toLevel(StringUtils.upperCase(level)));
+        Level logLevel = Level.toLevel(StringUtils.upperCase(level));
+        MyTunesRssUtils.setCodewaveLogLevel(logLevel);
+        MyTunesRss.CONFIG.setCodewaveLogLevel(logLevel);
         onChange();
     }
 
