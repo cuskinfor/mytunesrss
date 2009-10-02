@@ -485,6 +485,8 @@ public class MyTunesRss {
                 ROOT_FRAME.setVisible(false);
             } else {
                 ROOT_FRAME.setExtendedState(ROOT_FRAME.getExtendedState() | JFrame.ICONIFIED);
+            }
+            if (SYSTRAY.isAvailable()) {
                 SYSTRAY.setMinimized();
             }
         }

@@ -115,33 +115,37 @@ public class Settings implements MyTunesRssEventListener {
         return returnValue.length() > 0 ? returnValue : null;
     }
 
-    public void handleEvent(MyTunesRssEvent event) {
-        switch (event) {
-            case SERVER_STARTED:
-                MyTunesRss.SYSTRAY.setServerRunning();
-                myStartServerButton.setEnabled(false);
-                myStopServerButton.setEnabled(true);
-                setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.running"), null);
-                myRootPanel.validate();
-                break;
-            case SERVER_STOPPED:
-                MyTunesRss.SYSTRAY.setServerStopped();
-                myStartServerButton.setEnabled(true);
-                myStopServerButton.setEnabled(false);
-                setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
-                myRootPanel.validate();
-                break;
-            case DATABASE_UPDATE_STATE_CHANGED:
-                myUpdateDatabaseButton.setEnabled(false);
-                myDeleteDatabaseButton.setEnabled(false);
-                myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString(event.getMessageKey(), event.getMessageParams()));
-                break;
-            case DATABASE_UPDATE_FINISHED:
-                myUpdateDatabaseButton.setEnabled(true);
-                myDeleteDatabaseButton.setEnabled(true);
-                refreshLastUpdate();
-                break;
-        }
+    public void handleEvent(final MyTunesRssEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                switch (event) {
+                    case SERVER_STARTED:
+                        MyTunesRss.SYSTRAY.setServerRunning();
+                        myStartServerButton.setEnabled(false);
+                        myStopServerButton.setEnabled(true);
+                        setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.running"), null);
+                        myRootPanel.validate();
+                        break;
+                    case SERVER_STOPPED:
+                        MyTunesRss.SYSTRAY.setServerStopped();
+                        myStartServerButton.setEnabled(true);
+                        myStopServerButton.setEnabled(false);
+                        setServerStatus(MyTunesRssUtils.getBundleString("serverStatus.idle"), null);
+                        myRootPanel.validate();
+                        break;
+                    case DATABASE_UPDATE_STATE_CHANGED:
+                        myUpdateDatabaseButton.setEnabled(false);
+                        myDeleteDatabaseButton.setEnabled(false);
+                        myLastUpdatedLabel.setText(MyTunesRssUtils.getBundleString(event.getMessageKey(), event.getMessageParams()));
+                        break;
+                    case DATABASE_UPDATE_FINISHED:
+                        myUpdateDatabaseButton.setEnabled(true);
+                        myDeleteDatabaseButton.setEnabled(true);
+                        refreshLastUpdate();
+                        break;
+                }
+            }
+        });
     }
 
     public void refreshLastUpdate() {
