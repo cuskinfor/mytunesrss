@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.utils.servlet.Command;
 import de.codewave.utils.servlet.CommandHandler;
+import com.sun.tools.javac.model.JavacElements;
 
 public enum MyTunesRssCommand implements Command {
     Login("login", DoLoginCommandHandler.class),
@@ -46,7 +47,8 @@ public enum MyTunesRssCommand implements Command {
     ShowResource("showResource", ShowResourceCommandHandler.class),
     KeepSessionAlive("keepSessionAlive", KeepSessionAliveCommandHandler.class),
     Upload("upload", UploadCommandHandler.class),
-    ShowIphoneIndex("showIphoneIndex", ShowIphoneIndexCommandHandler.class);
+    ShowIphoneIndex("showIphoneIndex", ShowIphoneIndexCommandHandler.class),
+    ShowIphoneStartup("showIphoneStartup", ShowIphoneStartupCommandHandler.class);
 
     private String myName;
     private Class<? extends CommandHandler> myCommandHandlerClass;

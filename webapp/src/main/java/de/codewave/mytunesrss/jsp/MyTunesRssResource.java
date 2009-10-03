@@ -41,7 +41,8 @@ public enum MyTunesRssResource {
     UploadFinished("/upload_finished.jsp"),
     RemoteControl("/remote_control.jsp"),
     EditSmartPlaylist("/edit_smart_playlist.jsp"),
-    IphoneIndex("/iphone/index.jsp");
+    IphoneIndex("/iphone/index.jsp"),
+    IphoneStartup("/iphone/startup.jsp");
 
     private String myValue;
 

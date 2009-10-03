@@ -73,7 +73,8 @@ public class TrackService {
         throw new IllegalAccessException("Unauthorized");
     }
 
-    public Object search(String searchTerm, int fuzziness, SortOrder sortOrder, int firstItem, int maxItems) throws IllegalAccessException, SQLException, IOException, ParseException {
+    public Object search(String searchTerm, int fuzziness, String sortOrderName, int firstItem, int maxItems) throws IllegalAccessException, SQLException, IOException, ParseException {
+        SortOrder sortOrder = SortOrder.valueOf(sortOrderName);
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             if (StringUtils.isNotBlank(searchTerm)) {

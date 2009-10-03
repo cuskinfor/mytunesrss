@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.8.0-EAP-5" date="2009-xx-xx" description="3.8.0 EAP 5">
+            <action dev="mdescher" type="add">
+                Startup page for iphone with choice to start iphone or default interface.
+            </action>
             <action dev="mdescher" type="fix">
                 Fixed search on iphone portal page (added fuzziness parameter with value 30).
             </action>
