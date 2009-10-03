@@ -37,7 +37,7 @@
         </tr>
 		<TR><TD colspan="2"><img src="${appUrl}/iphone/img/line.png" width="100%" height="1px"></TD></TR>
         <tr>
-            <td height="60px" style="font-size:26px" onclick="top.mytunesrss('TrackService.search', [$(searchTerm).value, false, 0, -1], function(json) {top.json=json;top.loadContent('${appUrl}/iphone/tracklist.jsp?first=0')})"><input type=submit style="font-size:16px" value="Search"></td> <td width="70%"><input style="height:28px; width:100%; font-size:16px" type="text" id="searchTerm" autocorrect="off" autocapitalize="off" size="30" /></td>
+            <td height="60px" style="font-size:26px" onclick="top.mytunesrss('TrackService.search', [$(searchTerm).value, 30, false, 0, -1], function(json) {top.json=json;top.loadContent('${appUrl}/iphone/tracklist.jsp?first=0')})"><input type=submit style="font-size:16px" value="Search"></td> <td width="70%"><input style="height:28px; width:100%; font-size:16px" type="text" id="searchTerm" autocorrect="off" autocapitalize="off" size="30" /></td>
         </tr>
         <c:if test="${empty globalConfig.autoLogin}">
             <TR><TD colspan="2"><img src="${appUrl}/iphone/img/line.png" width="100%" height="1px"></TD></TR>
