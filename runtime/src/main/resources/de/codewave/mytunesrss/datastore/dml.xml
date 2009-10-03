@@ -743,22 +743,21 @@
     <statement name="fillLikeSearchTempTable">
         <sql>
             INSERT INTO temp_like_tracks (track_id)
-                SELECT DISTINCT(t.id) FROM track t, link_tag_track ltt, tag tg
+                SELECT DISTINCT(t.id) FROM track t, tag tg
                 WHERE (
                     t.lower_name LIKE :first_search_term {likeEscape}
                     OR t.lower_album LIKE :first_search_term {likeEscape}
                     OR t.lower_artist LIKE :first_search_term {likeEscape}
                     OR (
                         tg.tag LIKE :first_search_term {likeEscape}
-                        AND ltt.tag_id = tg.id
-                        AND ltt.track_id = t.id
+                        AND tg.track_id = t.id
                     )
                 )
         </sql>
         <sql loop="search_term" loopbatch="100">
             DELETE FROM temp_like_tracks
             WHERE NOT EXISTS (
-                SELECT t.id FROM track t, link_tag_track ltt, tag tg
+                SELECT t.id FROM track t, tag tg
                 WHERE t.id = temp_like_tracks.track_id
                 AND (
                     t.lower_name LIKE :loopitem_search_term {likeEscape}
@@ -766,8 +765,7 @@
                     OR t.lower_artist LIKE :loopitem_search_term {likeEscape}
                     OR (
                         tg.tag LIKE :first_search_term {likeEscape}
-                        AND ltt.tag_id = tg.id
-                        AND ltt.track_id = t.id
+                        AND tg.track_id = t.id
                     )
                 )
             )
