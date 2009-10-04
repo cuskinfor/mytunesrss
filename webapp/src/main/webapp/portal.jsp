@@ -202,7 +202,7 @@
                         </c:choose>
                     </c:if>
                     <a style="cursor:pointer" onclick="openFunctionsMenu(${loopStatus.index}, '${mtfn:escapeJs(playlist.name)}')">
-                        <img src="${appUrl}/images/menu${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.png"
+                        <img src="${appUrl}/images/menu.png"
                              alt="TODO: functions menu" title="TODO: functions menu" /> </a>
                 </td>
             </tr>
