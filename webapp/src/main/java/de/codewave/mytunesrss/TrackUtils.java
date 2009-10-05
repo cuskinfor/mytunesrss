@@ -105,6 +105,22 @@ public class TrackUtils {
         }
     }
 
+    /**
+     * Get a list of track ids from a list of tracks.
+     *
+     * @param tracks A list of tracks.
+     *
+     * @return The list of track ids.
+     */
+    public static String[] getTrackIds(List<Track> tracks) {
+        String[] trackIds = new String[tracks.size()];
+        int i = 0;
+        for (Track track : tracks) {
+            trackIds[i++] = track.getId();
+        }
+        return trackIds;
+    }
+
     public static class EnhancedTracks {
         private Collection<EnhancedTrack> myTracks;
         private boolean mySimpleResult;

@@ -772,6 +772,33 @@
         </sql>
     </statement>
 
+    <statement name="findAllTags">
+        <sql>
+            SELECT DISTINCT(tag) FROM tag ORDER BY tag;
+        </sql>
+    </statement>
+
+    <statement name="findAllTagsForTrack">
+        <sql>
+            SELECT DISTINCT(tag) FROM tag WHERE track_id = :track_id ORDER BY tag;
+        </sql>
+    </statement>
+
+    <statement name="setTagToTracks">
+        <sql loop="track_id" loopbatch="1000">
+            DELETE FROM tag WHERE track_id = :loopitem_track_id AND tag = LOWER(:tag)
+        </sql>
+        <sql loop="track_id" loopbatch="1000">
+            INSERT INTO tag (track_id, tag) VALUES (:loopitem_track_id, LOWER(:tag))
+        </sql>
+    </statement>
+
+    <statement name="removeTagFromTracks">
+        <sql loop="track_id" loopbatch="1000">
+            DELETE FROM tag WHERE track_id = :loopitem_track_id AND tag = LOWER(:tag)
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
