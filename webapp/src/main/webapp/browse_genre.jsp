@@ -6,6 +6,23 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="mttag" %>
+
+<%--@elvariable id="appUrl" type="java.lang.String"--%>
+<%--@elvariable id="servletUrl" type="java.lang.String"--%>
+<%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
+<%--@elvariable id="auth" type="java.lang.String"--%>
+<%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
+<%--@elvariable id="authUser" type="de.codewave.mytunesrss.User"--%>
+<%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.MyTunesRssConfig"--%>
+<%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
+
+<%--@elvariable id="genres" type="java.util.List"--%>
+<%--@elvariable id="stateEditPlaylist" type="java.lang.Boolean"--%>
+<%--@elvariable id="editablePlaylists" type="java.util.List"--%>
+<%--@elvariable id="simpleNewPlaylist" type="java.lang.Boolean"--%>
+<%--@elvariable id="genrePager" type="de.codewave.mytunesrss.Pager"--%>
+<%--@elvariable id="indexPager" type="de.codewave.mytunesrss.Pager"--%>
 
 <c:set var="backUrl" scope="request">${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/index=${param.index}</mt:encrypt></c:set>
 
@@ -88,7 +105,7 @@
             </tr>
             <c:forEach items="${genres}" var="genre" varStatus="loopStatus">
                 <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-                    <td class="genre">
+                    <td id="functionsDialogName${loopStatus.index}" class="genre">
                         <c:out value="${genre.name}" />
                     </td>
                     <td class="album">
@@ -103,41 +120,11 @@
                     <td class="icon">
                         <c:choose>
                             <c:when test="${!stateEditPlaylist}">
-                                <c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
-                                    <a id="fn_remotecontrol${loopStatus.index}" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" style="display:${cwfn:choose(config.remoteControl, "inline", "none")}">
-                                        <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                             alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
-                                </c:if>
-                                <c:if test="${authUser.rss}">
-                                    <a id="fn_rss${loopStatus.index}" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.xml" style="display:${cwfn:choose(config.showRss, "inline", "none")}">
-                                        <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                             alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
-                                </c:if>
-                                <c:if test="${authUser.playlist}">
-                                    <a id="fn_playlist${loopStatus.index}" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.${config.playlistFileSuffix}" style="display:${cwfn:choose(config.showPlaylist, "inline", "none")}">
-                                        <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                             alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
-                                </c:if>
-                                <c:if test="${authUser.player}">
-                                    <a id="fn_player${loopStatus.index}" style="cursor:pointer;display:${cwfn:choose(config.showPlayer, "inline", "none")}" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualGenreName(genre)}.xspf</mt:encrypt>'); return false;">
-                                        <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                                             alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
-                                </c:if>
-                                <c:if test="${authUser.download}">
-                                    <c:choose>
-                                        <c:when test="${authUser.maximumZipEntries <= 0 || genre.trackCount <= authUser.maximumZipEntries}">
-                                            <a id="fn_download${loopStatus.index}" href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.zip" style="display:${cwfn:choose(config.showDownload, "inline", "none")}">
-                                                <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <a id="fn_download${loopStatus.index}" style="cursor:pointer;display:${cwfn:choose(config.showDownload, "inline", "none")}" onclick="alert('<fmt:message key="error.zipLimit"/>'); return false;" style="display:${cwfn:choose(config.showDownload, "inline", "none")}">
-                                                <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </c:if>
-                                <a style="cursor:pointer" onclick='openFunctionsMenu(${loopStatus.index}, "${mtfn:escapeJs(genre.name)}")'>
-                                    <img src="${appUrl}/images/menu.png"
-                                         alt="TODO: functions menu" title="TODO: functions menu" /> </a>
+                                <mttag:actions index="${loopStatus.index}"
+                                               backUrl="${mtfn:encode64(backUrl)}"
+                                               linkFragment="genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}"
+                                               filename="${mtfn:virtualGenreName(genre)}"
+                                               zipFileCount="${genre.trackCount}" />
                             </c:when>
                             <c:otherwise>
                                 <a style="cursor:pointer" onclick="addGenresToPlaylist($A(['${mtfn:escapeJs(genre.name)}']), false)">

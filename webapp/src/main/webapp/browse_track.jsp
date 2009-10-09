@@ -6,6 +6,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="mttag" %>
+
+<%--@elvariable id="appUrl" type="java.lang.String"--%>
+<%--@elvariable id="servletUrl" type="java.lang.String"--%>
+<%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
+<%--@elvariable id="auth" type="java.lang.String"--%>
+<%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
+<%--@elvariable id="authUser" type="de.codewave.mytunesrss.User"--%>
+<%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.MyTunesRssConfig"--%>
+<%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 
 <c:set var="backUrl" scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=${sortOrder}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
@@ -61,7 +71,7 @@
 <c:if test="${track.newSection}">
     <c:set var="sectionFileName" value=""/>
     <tr>
-        <th id="fn_titletext${fnCount}" class="active" colspan="2">
+        <th id="functionsDialogName${fnCount}" class="active" colspan="2">
             <c:choose>
                 <c:when test="${sortOrder == 'Album'}">
                     <c:if test="${track.simple}">
@@ -107,7 +117,13 @@
         <th class="icon">
             <c:choose>
                 <c:when test="${!stateEditPlaylist}">
-                    <c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
+                    <mttag:actions index="${fnCount}"
+                                   backUrl="${mtfn:encode64(backUrl)}"
+                                   linkFragment="${sectionArguments}"
+                                   filename="${mtfn:webSafeFileName(sectionFileName)}"
+                                   zipFileCount="${mtfn:sectionTrackCount(track.sectionIds)}" />
+
+                    <%--c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
                         <c:choose>
                             <c:when test="${empty track.sectionPlaylistId}">
                                 <a id="fn_remotecontrol${fnCount}" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" style="display:${cwfn:choose(config.remoteControl, "inline", "none")}">
@@ -147,7 +163,7 @@
                     </c:if>
                     <a style="cursor:pointer" onclick='openFunctionsMenu(${fnCount}, $jQ("#fn_titletext${fnCount}").text())'>
                         <img src="${appUrl}/images/menu.png"
-                             alt="TODO: functions menu" title="TODO: functions menu" /> </a>
+                             alt="TODO: functions menu" title="TODO: functions menu" /> </a--%>
                 </c:when>
                 <c:otherwise>
                     <a style="cursor:pointer" onclick="addTracksToPlaylist($A([${mtfn:jsArray(fn:split(track.sectionIds, ","))}]))"><img src="${appUrl}/images/add_th.gif" alt="add" /></a>
@@ -168,7 +184,7 @@
             <c:when test="${track.source.jspName == 'YouTube'}"><img src="${appUrl}/images/youtube${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.png" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:when>
             <c:when test="${track.mediaType.jspName == 'Video'}"><img src="${appUrl}/images/movie${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:when>
         </c:choose>
-        <a id="tracklink_${track.id}" href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
+        <a id="functionsDialogName${fnCount}" href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
             <c:choose>
                 <c:when test="${!empty param['playlist']}">
                     <c:if test="${!mtfn:unknown(track.artist)}"><c:out value="${track.artist}"/> -</c:if>
@@ -204,7 +220,13 @@
     <td class="icon">
         <c:choose>
             <c:when test="${!stateEditPlaylist}">
-                <c:if test="${mtfn:externalSites('title')}">
+                <mttag:actions index="${fnCount}"
+                               backUrl="${mtfn:encode64(backUrl)}"
+                               linkFragment="track=${track.id}"
+                               filename="${mtfn:virtualTrackName(track)}"
+                               track="${track}" />
+
+                <%--c:if test="${mtfn:externalSites('title')}">
                     <img id="fn_externalsites${fnCount}" src="${appUrl}/images/http.gif" alt="external site" title="external site" style="cursor:pointer;display:${cwfn:choose(config.showExternalSites, "inline", "none")}" onclick="openExternalSitesDialog('${mtfn:escapeJs(track.name)}')"/>
                 </c:if>
                 <c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
@@ -241,7 +263,7 @@
                 </c:if>
                 <a style="cursor:pointer" onclick='openFunctionsMenu(${fnCount}, $jQ("#tracklink_${track.id}").text())'>
                     <img src="${appUrl}/images/menu.png"
-                         alt="TODO: functions menu" title="TODO: functions menu" /> </a>
+                         alt="TODO: functions menu" title="TODO: functions menu" /> </a--%>
             </c:when>
             <c:otherwise>
                 <c:if test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && config.showDownload && authUser.download && config.yahooMediaPlayer}">
