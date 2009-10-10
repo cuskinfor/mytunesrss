@@ -44,7 +44,6 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
                 MyTunesRssUtils.setCodewaveLogLevel(Level.toLevel(myLogLevelInput.getSelectedItem().toString()));
             }
         });
-        mySystemInfoTextArea.setText(MyTunesRssUtils.getSystemInfo());
     }
 
     public void forceRegistration() {
@@ -65,6 +64,7 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
 
     public void initValues() {
         myLogLevelInput.setSelectedItem(MyTunesRss.CONFIG.getCodewaveLogLevel().toString());
+        mySystemInfoTextArea.setText(MyTunesRssUtils.getSystemInfo());
     }
 
     private void refreshRegistration() {

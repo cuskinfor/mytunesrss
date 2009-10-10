@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.quicktime;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.utils.swing.SwingUtils;
@@ -56,6 +57,13 @@ public class QuicktimePlayer {
                 setVolume(70); // default volume to 70%
             } catch (QTException e) {
                 throw new QuicktimePlayerException(e);
+            } catch (UnsatisfiedLinkError e) {
+                MyTunesRss.QUICKTIME_PLAYER = null;
+                if (!MyTunesRss.QUICKTIME_PLAYER_64BIT_PROBLEM && !MyTunesRss.CONFIG.isQuicktime64BitWarned()) {
+                    MyTunesRss.CONFIG.setQuicktime64BitWarned(true);
+                    MyTunesRss.QUICKTIME_PLAYER_64BIT_PROBLEM = true;
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.quicktimeUnsatisfiedLink"));
+                }
             }
         }
     }

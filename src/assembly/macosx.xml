@@ -30,8 +30,7 @@
                 <include>*:war:*</include>
             </includes>
             <binaries>
-                <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/webapps</outputDirectory>
-                <outputFileNameMapping>ROOT</outputFileNameMapping>
+                <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/webapps/ROOT</outputDirectory>
                 <unpack>true</unpack>
                 <includeDependencies>false</includeDependencies>
             </binaries>
