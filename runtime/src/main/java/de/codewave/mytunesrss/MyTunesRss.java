@@ -93,6 +93,7 @@ public class MyTunesRss {
     public static QuicktimePlayer QUICKTIME_PLAYER;
     public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
     public static String[] ORIGINAL_CMD_ARGS;
+    public static boolean QUICKTIME_PLAYER_64BIT_PROBLEM;
 
     private static void init() {
         try {
@@ -225,8 +226,6 @@ public class MyTunesRss {
             ROOT_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
             ROOT_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
             ROOT_FRAME.setLocation(Integer.MAX_VALUE, 0);
-            ROOT_FRAME.setVisible(true);
-            ROOT_FRAME.setVisible(false);
             DUMMY_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
             DUMMY_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
             DUMMY_FRAME.setLocation(Integer.MAX_VALUE, 0);
@@ -460,18 +459,18 @@ public class MyTunesRss {
         MyTunesRssJobUtils.scheduleDatabaseJob();
         SETTINGS.init();
         DUMMY_FRAME.dispose();
+        ROOT_FRAME.setVisible(true);
+        ROOT_FRAME.pack();
         if (x == Integer.MAX_VALUE && y == Integer.MAX_VALUE) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Initial start with no saved window postion, centering on screen.");
             }
-            ROOT_FRAME.setLocation(0, 0);
-            SwingUtils.packAndShowRelativeTo(ROOT_FRAME, null);
+            ROOT_FRAME.setLocationRelativeTo(null);
         } else {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Setting window to (" + x + ", " + y + ")");
             }
             ROOT_FRAME.setLocation(x, y);
-            SwingUtils.packAndShow(ROOT_FRAME);
             ensureCompletelyOnScreen(ROOT_FRAME);
         }
         if (REGISTRATION.isExpired()) {
@@ -508,7 +507,7 @@ public class MyTunesRss {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Frame is completely off-screen, centering it on screen.");
                     }
-                    SwingUtils.packAndShowRelativeTo(frame, null);
+                    frame.setLocationRelativeTo(null);
                 } else {
                     if (location.x < 0) {
                         if (LOGGER.isDebugEnabled()) {
@@ -533,7 +532,6 @@ public class MyTunesRss {
                         location.y = screenSize.height - size.height;
                     }
                     frame.setLocation(location);
-                    frame.pack();
                 }
             }
         });

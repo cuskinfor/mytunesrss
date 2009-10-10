@@ -136,6 +136,7 @@ public class MyTunesRssConfig {
     private boolean myDisableWebLogin;
     private boolean myDisableJmxHtml;
     private boolean myRestartOnExit;
+    private boolean myQuicktime64BitWarned;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -1025,6 +1026,14 @@ public class MyTunesRssConfig {
         myRestartOnExit = restartOnExit;
     }
 
+    public boolean isQuicktime64BitWarned() {
+        return myQuicktime64BitWarned;
+    }
+
+    public void setQuicktime64BitWarned(boolean quicktime64BitWarned) {
+        myQuicktime64BitWarned = quicktime64BitWarned;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1252,6 +1261,7 @@ public class MyTunesRssConfig {
         setDisableGui(JXPathUtils.getBooleanValue(settings, "disableGui", false));
         setDisableWebLogin(JXPathUtils.getBooleanValue(settings, "disableWebLogin", false));
         setDisableJmxHtml(JXPathUtils.getBooleanValue(settings, "disableJmxHtml", false));
+        setQuicktime64BitWarned(JXPathUtils.getBooleanValue(settings, "qt64BitWarned", false));
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
@@ -1485,6 +1495,7 @@ public class MyTunesRssConfig {
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "minimizeToSystray", isMinimizeToSystray()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "serverBrowserActive", isServerBrowserActive()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "qt64BitWarned", isQuicktime64BitWarned()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
