@@ -93,7 +93,6 @@ public class MyTunesRss {
     public static QuicktimePlayer QUICKTIME_PLAYER;
     public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
     public static String[] ORIGINAL_CMD_ARGS;
-    public static boolean QUICKTIME_PLAYER_64BIT_PROBLEM;
 
     private static void init() {
         try {
