@@ -59,9 +59,8 @@ public class QuicktimePlayer {
                 throw new QuicktimePlayerException(e);
             } catch (UnsatisfiedLinkError e) {
                 MyTunesRss.QUICKTIME_PLAYER = null;
-                if (!MyTunesRss.QUICKTIME_PLAYER_64BIT_PROBLEM && !MyTunesRss.CONFIG.isQuicktime64BitWarned()) {
+                if (!MyTunesRss.CONFIG.isQuicktime64BitWarned()) {
                     MyTunesRss.CONFIG.setQuicktime64BitWarned(true);
-                    MyTunesRss.QUICKTIME_PLAYER_64BIT_PROBLEM = true;
                     MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.quicktimeUnsatisfiedLink"));
                 }
             }

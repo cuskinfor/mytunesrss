@@ -92,7 +92,6 @@ public class MyTunesRss {
     public static int JMX_PORT = -1;
     public static QuicktimePlayer QUICKTIME_PLAYER;
     public static String[] ORIGINAL_CMD_ARGS;
-    public static boolean QUICKTIME_PLAYER_64BIT_PROBLEM;
 
     private static void init() {
         try {
