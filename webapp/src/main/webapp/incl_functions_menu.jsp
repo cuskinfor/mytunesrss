@@ -8,6 +8,10 @@
         <img src="${appUrl}/images/http.gif" />&nbsp;TODO: external sites
     </a>
     <br />
+    <a id="functions_edittags" style="cursor:pointer" onclick="functionMenuClick('edittags')">
+        <img src="${appUrl}/images/http.gif" />&nbsp;TODO: edit tags
+    </a>
+    <br />
     <a id="functions_remotecontrol" style="cursor:pointer" onclick="functionMenuClick('remotecontrol')">
         <img src="${appUrl}/images/remote_control.gif" />&nbsp;<fmt:message key="tooltip.remotecontrol"/>
     </a>

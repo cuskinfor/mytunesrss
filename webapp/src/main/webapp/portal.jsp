@@ -210,6 +210,22 @@
 
 <jsp:include page="incl_functions_menu.jsp" />
 
+<div id="editTagsDialog" style="display:none">
+    <input id="editTagsDialog_newTag" />
+</div>
+
+<script type="text/javascript">
+    $jQ("#editTagsDialog_newTag").autocomplete("${servletUrl}/getTagsForAutocomplete");
+    $jQ("#editTagsDialog").dialog({
+        autoOpen:false,
+        modal:true
+    });
+    function openEditTagsDialog() {
+        //$jQ("#editTagsDialog").dialog("option", "keyword", keyword);
+        $jQ("#editTagsDialog").dialog("open");
+    }
+</script>
+
 </body>
 
 </html>

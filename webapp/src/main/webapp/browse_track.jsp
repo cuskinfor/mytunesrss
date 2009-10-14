@@ -123,47 +123,6 @@
                                    filename="${mtfn:webSafeFileName(sectionFileName)}"
                                    zipFileCount="${mtfn:sectionTrackCount(track.sectionIds)}" />
 
-                    <%--c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
-                        <c:choose>
-                            <c:when test="${empty track.sectionPlaylistId}">
-                                <a id="fn_remotecontrol${fnCount}" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" style="display:${cwfn:choose(config.remoteControl, "inline", "none")}">
-                                    <img src="${appUrl}/images/remote_control_th.gif"
-                                         alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
-                            </c:when>
-                            <c:otherwise>
-                                <a id="fn_remotecontrol${fnCount}" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${track.sectionPlaylistId}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" style="display:${cwfn:choose(config.remoteControl, "inline", "none")}">
-                                    <img src="${appUrl}/images/remote_control_th.gif"
-                                         alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:if>
-                    <c:if test="${authUser.rss}">
-                        <a id="fn_rss${fnCount}" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${sectionArguments}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.xml" style="display:${cwfn:choose(config.showRss, "inline", "none")}">
-                            <img src="${appUrl}/images/rss_th.gif" alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
-                    </c:if>
-                    <c:if test="${authUser.playlist}">
-                        <a id="fn_playlist${fnCount}" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${sectionArguments}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.${config.playlistFileSuffix}" style="display:${cwfn:choose(config.showPlaylist, "inline", "none")}">
-                            <img src="${appUrl}/images/playlist_th.gif" alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
-                    </c:if>
-                    <c:if test="${authUser.player}">
-                        <a id="fn_player${fnCount}" style="cursor:pointer;display:${cwfn:choose(config.showPlayer, "inline", "none")}" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${sectionArguments}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:webSafeFileName(sectionFileName)}.xspf</mt:encrypt>'); return false">
-                            <img src="${appUrl}/images/player_th.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
-                    </c:if>
-                    <c:if test="${authUser.download}">
-                        <c:choose>
-                            <c:when test="${authUser.maximumZipEntries <= 0 || mtfn:sectionTrackCount(track.sectionIds) <= authUser.maximumZipEntries}">
-                                <a id="fn_download${fnCount}" href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${sectionArguments}</mt:encrypt>/${mtfn:webSafeFileName(sectionFileName)}.zip" style="display:${cwfn:choose(config.showDownload, "inline", "none")}">
-                                <img src="${appUrl}/images/download_th.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
-                            </c:when>
-                            <c:otherwise>
-                                <a id="fn_download${fnCount}" style="cursor:pointer;display:${cwfn:choose(config.showDownload, "inline", "none")}" onclick="alert('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>'); return false">
-                                <img src="${appUrl}/images/download_th.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:if>
-                    <a style="cursor:pointer" onclick='openFunctionsMenu(${fnCount}, $jQ("#fn_titletext${fnCount}").text())'>
-                        <img src="${appUrl}/images/menu.png"
-                             alt="TODO: functions menu" title="TODO: functions menu" /> </a--%>
                 </c:when>
                 <c:otherwise>
                     <a style="cursor:pointer" onclick="addTracksToPlaylist($A([${mtfn:jsArray(fn:split(track.sectionIds, ","))}]))"><img src="${appUrl}/images/add_th.gif" alt="add" /></a>
@@ -224,46 +183,8 @@
                                backUrl="${mtfn:encode64(backUrl)}"
                                linkFragment="track=${track.id}"
                                filename="${mtfn:virtualTrackName(track)}"
-                               track="${track}" />
-
-                <%--c:if test="${mtfn:externalSites('title')}">
-                    <img id="fn_externalsites${fnCount}" src="${appUrl}/images/http.gif" alt="external site" title="external site" style="cursor:pointer;display:${cwfn:choose(config.showExternalSites, "inline", "none")}" onclick="openExternalSitesDialog('${mtfn:escapeJs(track.name)}')"/>
-                </c:if>
-                <c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
-                    <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" style="display:${cwfn:choose(config.remoteControl, "inline", "none")}">
-                        <img src="${appUrl}/images/remote_control${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
-                             alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
-                </c:if>
-                <c:if test="${authUser.rss}">
-                    <a id="fn_rss${fnCount}" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml" style="display:${cwfn:choose(config.showRss, "inline", "none")}">
-                        <img src="${appUrl}/images/rss${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
-                </c:if>
-                <c:if test="${authUser.playlist}">
-                    <a id="fn_playlist${fnCount}" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}" style="display:${cwfn:choose(config.showPlaylist, "inline", "none")}">
-                        <img src="${appUrl}/images/playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
-                </c:if>
-                <c:if test="${authUser.player}">
-                    <a id="fn_player${fnCount}" style="cursor:pointer;display:${cwfn:choose(config.showPlayer, "inline", "none")}" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=track=${track.id}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false">
-                        <img src="${appUrl}/images/player${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
-                </c:if>
-                <c:if test="${authUser.download}">
-                        <c:choose>
-                            <c:when test="${!config.yahooMediaPlayer || mtfn:lowerSuffix(config, authUser, track) ne 'mp3'}">
-                                <a id="fn_download${fnCount}" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" style="display:${cwfn:choose(config.showDownload, "inline", "none")}">
-                                    <img src="${appUrl}/images/download${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" />
-                                </a>
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="yahoo" value="true"/>
-                                <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="<c:out value="${track.name}"/>">
-                                    <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=128</mt:encrypt>" style="display:none" alt=""/>
-                                </a>
-                            </c:otherwise>
-                        </c:choose>
-                </c:if>
-                <a style="cursor:pointer" onclick='openFunctionsMenu(${fnCount}, $jQ("#tracklink_${track.id}").text())'>
-                    <img src="${appUrl}/images/menu.png"
-                         alt="TODO: functions menu" title="TODO: functions menu" /> </a--%>
+                               track="${track}"
+                               externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}" />
             </c:when>
             <c:otherwise>
                 <c:if test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && config.showDownload && authUser.download && config.yahooMediaPlayer}">

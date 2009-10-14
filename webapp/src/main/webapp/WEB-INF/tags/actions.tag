@@ -10,6 +10,7 @@
 <%@ attribute name="filename" required="true" %>
 <%@ attribute name="zipFileCount" required="false" type="java.lang.Integer" %>
 <%@ attribute name="track" required="false" type="de.codewave.mytunesrss.datastore.statement.Track" %>
+<%@ attribute name="externalSitesFlag" required="false" type="java.lang.Boolean" %>
 
 <%@ variable scope="AT_END" name-given="yahoo" %>
 
@@ -22,6 +23,9 @@
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 
+<c:if test="${externalSitesFlag}">
+    <img id="fn_externalsites${index}" src="${appUrl}/images/http.gif" alt="todo:external site" title="todo:external site" style="cursor:pointer;display:${cwfn:choose(config.showExternalSites, "inline", "none")}" onclick="openExternalSitesDialog($jQ('#functionsDialogName${index}').text())"/>
+</c:if>
 <c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
     <a id="fn_remotecontrol${index}" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/backUrl=${backUrl}" style="display:${cwfn:choose(config.remoteControl, "inline", "none")}">
         <img src="${appUrl}/images/remote_control${cwfn:choose(index % 2 == 0, '', '_odd')}.gif"
@@ -67,6 +71,8 @@
         </c:otherwise>
     </c:choose>
 </c:if>
+<a id="fn_edittags${index}" style="display:none" onclick="openEditTagsDialog(); return false;">
+    <img src="${appUrl}/images/remote_control${cwfn:choose(index % 2 == 0, '', '_odd')}.gif" alt="todo:edittags" title="todo:edittags" /> </a>
 <a style="cursor:pointer" onclick="openFunctionsMenu(${index}, $jQ('#functionsDialogName${index}').text())">
     <img src="${appUrl}/images/menu.png"
          alt="TODO: functions menu" title="TODO: functions menu" /> </a>

@@ -774,7 +774,10 @@
 
     <statement name="findAllTags">
         <sql>
-            SELECT DISTINCT(tag) FROM tag ORDER BY tag;
+            SELECT DISTINCT(tag)
+            FROM tag
+            WHERE :query IS NULL OR tag LIKE :query {likeEscape}
+            ORDER BY tag;
         </sql>
     </statement>
 

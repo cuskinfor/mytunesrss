@@ -156,7 +156,8 @@
                                            backUrl="${mtfn:encode64(backUrl)}"
                                            linkFragment="album=${cwfn:encodeUrl(mtfn:encode64(album.name))}"
                                            filename="${mtfn:virtualAlbumName(album)}"
-                                           zipFileCount="${album.trackCount}" />
+                                           zipFileCount="${album.trackCount}"
+                                           externalSitesFlag="${mtfn:externalSites('album') && !mtfn:unknown(album.name) && authUser.externalSites}" />
                         </c:when>
                         <c:otherwise>
                             <a style="cursor:pointer" onclick="addAlbumsToPlaylist($A(['${mtfn:escapeJs(album.name)}']))">

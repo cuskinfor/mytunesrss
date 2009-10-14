@@ -134,7 +134,8 @@
                                            backUrl="${mtfn:encode64(backUrl)}"
                                            linkFragment="artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/fullAlbums=false"
                                            filename="${mtfn:virtualArtistName(artist)}"
-                                           zipFileCount="${artist.trackCount}" />
+                                           zipFileCount="${artist.trackCount}"
+                                           externalSitesFlag="${mtfn:externalSites('artist') && !mtfn:unknown(artist.name) && authUser.externalSites}" />
                         </c:when>
                         <c:otherwise>
                             <a style="cursor:pointer" onclick="addArtistsToPlaylist($A(['${mtfn:escapeJs(artist.name)}']), false)">
