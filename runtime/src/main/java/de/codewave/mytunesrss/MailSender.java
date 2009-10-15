@@ -46,16 +46,14 @@ public class MailSender {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         Properties mailProperties = new Properties();
         mailSender.setHost(MyTunesRss.CONFIG.getMailHost());
+        mailProperties.setProperty("mail.debug", "true");
         List<Integer> ports = new ArrayList<Integer>();
         if (MyTunesRss.CONFIG.getMailPort() > 0) {
             ports.add(MyTunesRss.CONFIG.getMailPort());
         } else {
-            if (MyTunesRss.CONFIG.isMailTls()) {
-                ports.add(465);
-                ports.add(587);
-            } else {
-                ports.add(25);
-            }
+            ports.add(25);
+            ports.add(465);
+            ports.add(587);
         }
         mailProperties.setProperty("mail.smtp.localhost", "localhost");
         if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getMailLogin()) && StringUtils.isNotEmpty(MyTunesRss.CONFIG.getMailPassword())) {
@@ -65,7 +63,6 @@ public class MailSender {
         }
         if (MyTunesRss.CONFIG.isMailTls()) {
             mailProperties.setProperty("mail.smtp.starttls.enable", "true");
-            mailProperties.setProperty("mail.smtp.socketFactory.class", SSLSocketFactory.class.getName());
         }
         mailProperties.setProperty("mail.smtp.connectiontimeout", "10000");
         mailSender.setJavaMailProperties(mailProperties);
