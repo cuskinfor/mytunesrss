@@ -9,6 +9,9 @@
 
         <release version="3.8.0-EAP-5" date="2009-xx-xx" description="3.8.0 EAP 5">
             <action dev="mdescher" type="update">
+                No SSL connection for SMTP, only use STARTTLS.
+            </action>
+            <action dev="mdescher" type="update">
                 Extracted action buttons (icons) into a reusable tag file.
             </action>
             <action dev="mdescher" type="add">
