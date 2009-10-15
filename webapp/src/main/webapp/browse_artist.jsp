@@ -135,7 +135,9 @@
                                            linkFragment="artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/fullAlbums=false"
                                            filename="${mtfn:virtualArtistName(artist)}"
                                            zipFileCount="${artist.trackCount}"
-                                           externalSitesFlag="${mtfn:externalSites('artist') && !mtfn:unknown(artist.name) && authUser.externalSites}" />
+                                           externalSitesFlag="${mtfn:externalSites('artist') && !mtfn:unknown(artist.name) && authUser.externalSites}"
+                                           editTagsType="Artist"
+                                           editTagsId="${artist.name}" />
                         </c:when>
                         <c:otherwise>
                             <a style="cursor:pointer" onclick="addArtistsToPlaylist($A(['${mtfn:escapeJs(artist.name)}']), false)">
@@ -163,6 +165,7 @@
 <c:set var="externalSiteDefinitions" scope="request" value="${mtfn:externalSiteDefinitions('artist')}"/>
 <jsp:include page="incl_external_sites_dialog.jsp"/>
 <jsp:include page="incl_functions_menu.jsp" />
+<jsp:include page="incl_edit_tags.jsp" />
 
 </body>
 

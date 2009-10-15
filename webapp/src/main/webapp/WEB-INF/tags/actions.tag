@@ -11,6 +11,8 @@
 <%@ attribute name="zipFileCount" required="false" type="java.lang.Integer" %>
 <%@ attribute name="track" required="false" type="de.codewave.mytunesrss.datastore.statement.Track" %>
 <%@ attribute name="externalSitesFlag" required="false" type="java.lang.Boolean" %>
+<%@ attribute name="editTagsType" required="false" type="java.lang.String" %>
+<%@ attribute name="editTagsId" required="false" type="java.lang.String" %>
 
 <%@ variable scope="AT_END" name-given="yahoo" %>
 
@@ -71,8 +73,10 @@
         </c:otherwise>
     </c:choose>
 </c:if>
-<a id="fn_edittags${index}" style="display:none" onclick="openEditTagsDialog(); return false;">
-    <img src="${appUrl}/images/remote_control${cwfn:choose(index % 2 == 0, '', '_odd')}.gif" alt="todo:edittags" title="todo:edittags" /> </a>
+<c:if test="${!empty editTagsType && !empty editTagsId}">
+    <a id="fn_edittags${index}" style="display:none" onclick="jsonRpc('${servletUrl}', 'TagService.getTagsFor${editTagsType}', ['${editTagsId}'], function(json) {openEditTagsDialog(json, '${editTagsType}', '${editTagsId}');}, '${remoteApiSessionId}');return false;">
+        <img src="${appUrl}/images/remote_control${cwfn:choose(index % 2 == 0, '', '_odd')}.gif" alt="todo:edittags" title="todo:edittags" /> </a>
+</c:if>
 <a style="cursor:pointer" onclick="openFunctionsMenu(${index}, $jQ('#functionsDialogName${index}').text())">
     <img src="${appUrl}/images/menu.png"
          alt="TODO: functions menu" title="TODO: functions menu" /> </a>

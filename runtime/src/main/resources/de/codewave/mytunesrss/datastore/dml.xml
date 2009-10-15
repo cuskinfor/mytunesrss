@@ -787,6 +787,30 @@
         </sql>
     </statement>
 
+    <statement name="findAllTagsForPlaylist">
+        <sql>
+            SELECT DISTINCT(t.tag) FROM tag t, link_track_playlist ltp
+            WHERE ltp.playlist_id = :playlist_id
+            AND ltp.track_id = t.track_id
+        </sql>
+    </statement>
+
+    <statement name="findAllTagsForAlbum">
+        <sql>
+            SELECT DISTINCT(t.tag) FROM tag t, track tr
+            WHERE tr.album = :album
+            AND tr.id = t.track_id
+        </sql>
+    </statement>
+
+    <statement name="findAllTagsForArtist">
+        <sql>
+            SELECT DISTINCT(t.tag) FROM tag t, track tr
+            WHERE tr.artist = :artist
+            AND tr.id = t.track_id
+        </sql>
+    </statement>
+
     <statement name="setTagToTracks">
         <sql loop="track_id" loopbatch="1000">
             DELETE FROM tag WHERE track_id = :loopitem_track_id AND tag = LOWER(:tag)

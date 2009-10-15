@@ -37,6 +37,30 @@ public class TagService {
         throw new IllegalAccessException("Unauthorized");
     }
 
+    public Object getTagsForPlaylist(String playlistId) throws IllegalAccessException, SQLException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(new FindAllTagsForPlaylistQuery(playlistId)), 0, 0));
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    public Object getTagsForAlbum(String album) throws IllegalAccessException, SQLException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(new FindAllTagsForAlbumQuery(album)), 0, 0));
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    public Object getTagsForArtist(String artist) throws IllegalAccessException, SQLException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(new FindAllTagsForArtistQuery(artist)), 0, 0));
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
     public void setTagsToTracks(String[] trackIds, String[] tags) throws IllegalAccessException, SQLException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
@@ -54,6 +78,26 @@ public class TagService {
             for (String tag : tags) {
                 TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(trackIds, tag));
             }
+        } else {
+            throw new IllegalAccessException("Unauthorized");
+        }
+    }
+
+    public void setTagsToPlaylist(String playlistId, String[] tags) throws IllegalAccessException, SQLException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            List<Track> tracks = TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(playlistId, SortOrder.KeepOrder)).getResults();
+            setTagsToTracks(TrackUtils.getTrackIds(tracks), tags);
+        } else {
+            throw new IllegalAccessException("Unauthorized");
+        }
+    }
+
+    public void removeTagsFromPlaylist(String playlistId, String[] tags) throws IllegalAccessException, SQLException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            List<Track> tracks = TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(playlistId, SortOrder.KeepOrder)).getResults();
+            removeTagsFromTracks(TrackUtils.getTrackIds(tracks), tags);
         } else {
             throw new IllegalAccessException("Unauthorized");
         }

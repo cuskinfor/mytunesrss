@@ -157,7 +157,10 @@
                                            linkFragment="album=${cwfn:encodeUrl(mtfn:encode64(album.name))}"
                                            filename="${mtfn:virtualAlbumName(album)}"
                                            zipFileCount="${album.trackCount}"
-                                           externalSitesFlag="${mtfn:externalSites('album') && !mtfn:unknown(album.name) && authUser.externalSites}" />
+                                           externalSitesFlag="${mtfn:externalSites('album') && !mtfn:unknown(album.name) && authUser.externalSites}"
+                                           editTagsType="Album"
+                                           editTagsId="${album.name}" />
+
                         </c:when>
                         <c:otherwise>
                             <a style="cursor:pointer" onclick="addAlbumsToPlaylist($A(['${mtfn:escapeJs(album.name)}']))">
@@ -251,6 +254,7 @@
 <c:set var="externalSiteDefinitions" scope="request" value="${mtfn:externalSiteDefinitions('album')}"/>
 <jsp:include page="incl_external_sites_dialog.jsp"/>
 <jsp:include page="incl_functions_menu.jsp" />
+<jsp:include page="incl_edit_tags.jsp" />
 
 </body>
 
