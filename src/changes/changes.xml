@@ -9,9 +9,6 @@
 
         <release version="3.8.0-EAP-5" date="2009-xx-xx" description="3.8.0 EAP 5">
             <action dev="mdescher" type="update">
-                No SSL connection for SMTP, only use STARTTLS.
-            </action>
-            <action dev="mdescher" type="update">
                 Extracted action buttons (icons) into a reusable tag file.
             </action>
             <action dev="mdescher" type="add">
@@ -117,6 +114,9 @@
         </release>
 
         <release version="3.7.6" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                More configuration for SMTP (plaintext, starttls and ssl).
+            </action>
             <action dev="mdescher" type="fix">
                 Fixed fatal error when using 64 bit Java on OS X (Quicktime exception).
             </action>
