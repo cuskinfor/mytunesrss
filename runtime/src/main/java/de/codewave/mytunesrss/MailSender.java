@@ -51,9 +51,13 @@ public class MailSender {
         if (MyTunesRss.CONFIG.getMailPort() > 0) {
             ports.add(MyTunesRss.CONFIG.getMailPort());
         } else {
-            ports.add(25);
-            ports.add(465);
-            ports.add(587);
+            if (MyTunesRss.CONFIG.getSmtpProtocol() != SmtpProtocol.SSL) {
+                ports.add(25);
+            }
+            if (MyTunesRss.CONFIG.getSmtpProtocol() == SmtpProtocol.SSL) {
+                ports.add(465);
+                ports.add(587);
+            }
         }
         mailProperties.setProperty("mail.smtp.localhost", "localhost");
         if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getMailLogin()) && StringUtils.isNotEmpty(MyTunesRss.CONFIG.getMailPassword())) {
@@ -61,8 +65,11 @@ public class MailSender {
             mailSender.setUsername(MyTunesRss.CONFIG.getMailLogin());
             mailSender.setPassword(MyTunesRss.CONFIG.getMailPassword());
         }
-        if (MyTunesRss.CONFIG.isMailTls()) {
+        if (MyTunesRss.CONFIG.getSmtpProtocol() == SmtpProtocol.STARTTLS) {
             mailProperties.setProperty("mail.smtp.starttls.enable", "true");
+        } else if (MyTunesRss.CONFIG.getSmtpProtocol() == SmtpProtocol.SSL) {
+            mailSender.setProtocol("smtps");
+            mailProperties.setProperty("mail.smtp.socketFactory.class", SSLSocketFactory.class.getName());
         }
         mailProperties.setProperty("mail.smtp.connectiontimeout", "10000");
         mailSender.setJavaMailProperties(mailProperties);

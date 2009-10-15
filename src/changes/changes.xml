@@ -9,7 +9,7 @@
 
         <release version="3.7.6" date="2009-xx-xx" description="Bugfix release">
             <action dev="mdescher" type="update">
-                No SSL connection for SMTP, only use STARTTLS.
+                More configuration for SMTP (plaintext, starttls and ssl).
             </action>
             <action dev="mdescher" type="fix">
                 Fixed fatal error when using 64 bit Java on OS X (Quicktime exception).
