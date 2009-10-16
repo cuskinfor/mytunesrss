@@ -3,6 +3,7 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.FindAllTagsForTrackQuery;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
@@ -17,6 +18,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +52,22 @@ public class LuceneTrackService {
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
         for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
+            StringBuilder tagBuilder = new StringBuilder();
+            for (String tag : session.executeQuery(new FindAllTagsForTrackQuery(track.getId())).getResults()) {
+                tagBuilder.append(tag).append(" ");
+            }
             Document document = new Document();
             document.add(new Field("id", track.getId(), Field.Store.YES, Field.Index.NO));
             document.add(new Field("name", track.getName(), Field.Store.NO, Field.Index.ANALYZED));
             document.add(new Field("album", track.getAlbum(), Field.Store.NO, Field.Index.ANALYZED));
             document.add(new Field("artist", track.getArtist(), Field.Store.NO, Field.Index.ANALYZED));
+            if (StringUtils.isNotBlank(track.getComment())) {
+                document.add(new Field("comment", track.getComment(), Field.Store.NO, Field.Index.ANALYZED));
+            }
+            String tags = tagBuilder.toString().trim();
+            if (StringUtils.isNotBlank(tags)) {
+                document.add(new Field("tags", tags, Field.Store.NO, Field.Index.ANALYZED));
+            }
             iwriter.addDocument(document);
         }
         iwriter.optimize();
@@ -89,7 +102,7 @@ public class LuceneTrackService {
         for (String searchTerm : searchTerms) {
             if (!STOP_WORDS.contains(searchTerm)) {
                 BooleanQuery orQuery = new BooleanQuery();
-                for (String field : new String[]{"name", "album", "artist"}) {
+                for (String field : new String[]{"name", "album", "artist", "comment", "tagsdml"}) {
                     Term term = new Term(field, searchTerm);
                     Query termQuery = fuzziness > 0 ? new FuzzyQuery(term, ((float)(100 - fuzziness)) / 100f) : new TermQuery(term);
                     orQuery.add(termQuery, BooleanClause.Occur.SHOULD);

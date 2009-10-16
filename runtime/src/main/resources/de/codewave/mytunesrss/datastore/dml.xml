@@ -540,7 +540,7 @@
             UPDATE track SET name = :name, album = :album, artist = :artist, original_artist = :original_artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist),
-                             lower_name = LOWER(:name), lower_album = LOWER(:album)
+                             lower_name = LOWER(:name), lower_album = LOWER(:album), lower_comment = LOWER(:comment)
             WHERE id = :id
         </sql>
     </statement>
@@ -560,7 +560,8 @@
             UPDATE track SET name = :name, album = :album, artist = :artist, original_artist = :original_artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated, pos_number = :pos_number,
-                             pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist), lower_name = LOWER(:name), lower_album = LOWER(:album)
+                             pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist), lower_name = LOWER(:name), lower_album = LOWER(:album),
+                             lower_comment = LOWER(:comment)
             WHERE id = :id
         </sql>
     </statement>
@@ -748,6 +749,7 @@
                     t.lower_name LIKE :first_search_term {likeEscape}
                     OR t.lower_album LIKE :first_search_term {likeEscape}
                     OR t.lower_artist LIKE :first_search_term {likeEscape}
+                    OR t.lower_comment LIKE :first_search_term {likeEscape}
                     OR (
                         tg.tag LIKE :first_search_term {likeEscape}
                         AND tg.track_id = t.id
@@ -763,6 +765,7 @@
                     t.lower_name LIKE :loopitem_search_term {likeEscape}
                     OR t.lower_album LIKE :loopitem_search_term {likeEscape}
                     OR t.lower_artist LIKE :loopitem_search_term {likeEscape}
+                    OR t.lower_comment LIKE :loopitem_search_term {likeEscape}
                     OR (
                         tg.tag LIKE :first_search_term {likeEscape}
                         AND tg.track_id = t.id

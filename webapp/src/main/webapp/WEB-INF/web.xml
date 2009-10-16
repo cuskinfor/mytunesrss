@@ -170,16 +170,10 @@
         <servlet-class>de.codewave.utils.servlet.CommandServlet</servlet-class>
     </servlet>
     <servlet>
-        <description>Stylesheet retrieval servlet</description>
-        <display-name>StylesServlet</display-name>
-        <servlet-name>StylesServlet</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.StylesServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <description>Image retrieval servlet</description>
-        <display-name>ImageServlet</display-name>
-        <servlet-name>ImageServlet</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.ImageServlet</servlet-class>
+        <description>Theme resource retrieval servlet</description>
+        <display-name>ThemeServlet</display-name>
+        <servlet-name>ThemeServlet</servlet-name>
+        <servlet-class>de.codewave.mytunesrss.servlet.ThemeServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>XmlRpcServlet</servlet-name>
@@ -202,11 +196,11 @@
         <url-pattern>/mytunesrss/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>StylesServlet</servlet-name>
+        <servlet-name>ThemeServlet</servlet-name>
         <url-pattern>/styles/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ImageServlet</servlet-name>
+        <servlet-name>ThemeServlet</servlet-name>
         <url-pattern>/images/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>

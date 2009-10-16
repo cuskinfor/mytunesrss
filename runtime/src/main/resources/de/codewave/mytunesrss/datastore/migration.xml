@@ -186,6 +186,9 @@
         </sql>
         <sql>CREATE INDEX idx_tag_tag ON tag (tag)</sql>
         <sql>CREATE INDEX idx_tag_track_id ON tag (track_id)</sql>
+        <sql>ALTER TABLE track ADD COLUMN lower_comment VARCHAR(2048)</sql>
+        <sql>UPDATE track SET lower_comment = LOWER(comment)</sql>
+        <sql>CREATE INDEX idx_track_lower_comment ON track (lower_comment)</sql>
     </statement>
 
 </statements>

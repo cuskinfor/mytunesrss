@@ -26,7 +26,7 @@
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 
 <c:if test="${externalSitesFlag}">
-    <img id="fn_externalsites${index}" src="${appUrl}/images/http.gif" alt="todo:external site" title="todo:external site" style="cursor:pointer;display:${cwfn:choose(config.showExternalSites, "inline", "none")}" onclick="openExternalSitesDialog($jQ('#functionsDialogName${index}').text())"/>
+    <img id="fn_externalsites${index}" src="${appUrl}/images/http.gif" alt="<fmt:message key="tooltip.externalSites"/>" title="<fmt:message key="tooltip.externalSites"/>" style="cursor:pointer;display:${cwfn:choose(config.showExternalSites, "inline", "none")}" onclick="openExternalSitesDialog($jQ('#functionsDialogName${index}').text())"/>
 </c:if>
 <c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
     <a id="fn_remotecontrol${index}" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/backUrl=${backUrl}" style="display:${cwfn:choose(config.remoteControl, "inline", "none")}">
@@ -75,8 +75,8 @@
 </c:if>
 <c:if test="${!empty editTagsType && !empty editTagsId}">
     <a id="fn_edittags${index}" style="display:none" onclick="jsonRpc('${servletUrl}', 'TagService.getTagsFor${editTagsType}', ['${editTagsId}'], function(json) {openEditTagsDialog(json, '${editTagsType}', '${editTagsId}');}, '${remoteApiSessionId}');return false;">
-        <img src="${appUrl}/images/remote_control${cwfn:choose(index % 2 == 0, '', '_odd')}.gif" alt="todo:edittags" title="todo:edittags" /> </a>
+        <img src="${appUrl}/images/remote_control${cwfn:choose(index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.editTags"/>" title="<fmt:message key="tooltip.editTags"/>" /> </a>
 </c:if>
 <a style="cursor:pointer" onclick="openFunctionsMenu(${index}, $jQ('#functionsDialogName${index}').text())">
     <img src="${appUrl}/images/menu.png"
-         alt="TODO: functions menu" title="TODO: functions menu" /> </a>
+         alt="<fmt:message key="tooltip.functionsMenu"/>" title="<fmt:message key="tooltip.functionsMenu"/>" /> </a>

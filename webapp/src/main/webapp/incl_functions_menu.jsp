@@ -5,11 +5,11 @@
 
 <div id="functions" style="display:none">
     <a id="functions_externalsites" style="cursor:pointer" onclick="functionMenuClick('externalsites')">
-        <img src="${appUrl}/images/http.gif" />&nbsp;TODO: external sites
+        <img src="${appUrl}/images/http.gif" />&nbsp;<fmt:message key="tooltip.externalSites"/>
     </a>
     <br />
     <a id="functions_edittags" style="cursor:pointer" onclick="functionMenuClick('edittags')">
-        <img src="${appUrl}/images/http.gif" />&nbsp;TODO: edit tags
+        <img src="${appUrl}/images/http.gif" />&nbsp;<fmt:message key="tooltip.editTags"/>
     </a>
     <br />
     <a id="functions_remotecontrol" style="cursor:pointer" onclick="functionMenuClick('remotecontrol')">

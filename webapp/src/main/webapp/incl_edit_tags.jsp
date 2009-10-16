@@ -1,11 +1,14 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="remoteApiSessionId" type="java.lang.String"--%>
 
 <div id="editTagsDialog" style="display:none">
-    TODO: existing tags<br />
+    <fmt:message key="existingTags"/><br />
     <select id="editTagsDialog_existingTags" multiple="true" size="10" style="width:100%"></select><br />
-    <input type="button" onclick="removeTags();" value="TODO: remove" /><br />
-    <input id="editTagsDialog_newTag" />&nbsp;<input type="button" onclick="addTag();" value="TODO: add" />
+    <button class="ui-state-default ui-corner-all" style="margin-top:3px" onclick="removeTags();"><fmt:message key="removeTags"/></button><br /><br />
+    <input id="editTagsDialog_newTag" style="width:100%" /><br />
+    <button class="ui-state-default ui-corner-all" style="margin-top:3px" onclick="addTag();"><fmt:message key="addTags"/></button>
 </div>
 
 <script type="text/javascript">
@@ -35,11 +38,14 @@
         } ,'${remoteApiSessionId}');
     }
     function addTag() {
-        jsonRpc('${servletUrl}', 'TagService.setTagsTo' + $jQ("#editTagsDialog").dialog("option", "editTagsType"), [$jQ("#editTagsDialog").dialog("option", "editTagsId"), $jQ("#editTagsDialog_newTag").val().split(" ")], function() {
-            $jQ("#editTagsDialog_newTag").val("");
-            jsonRpc('${servletUrl}', 'TagService.getTagsFor' + $jQ("#editTagsDialog").dialog("option", "editTagsType"), [$jQ("#editTagsDialog").dialog("option", "editTagsId")], function(json) {
-                initExistingTags(json);
+        var tags = jQuery.trim($jQ("#editTagsDialog_newTag").val());
+        if (tags != '') {
+            jsonRpc('${servletUrl}', 'TagService.setTagsTo' + $jQ("#editTagsDialog").dialog("option", "editTagsType"), [$jQ("#editTagsDialog").dialog("option", "editTagsId"), tags.split(" ")], function() {
+                $jQ("#editTagsDialog_newTag").val("");
+                jsonRpc('${servletUrl}', 'TagService.getTagsFor' + $jQ("#editTagsDialog").dialog("option", "editTagsType"), [$jQ("#editTagsDialog").dialog("option", "editTagsId")], function(json) {
+                    initExistingTags(json);
+                } ,'${remoteApiSessionId}');
             } ,'${remoteApiSessionId}');
-        } ,'${remoteApiSessionId}');
+        }
     }
 </script>
