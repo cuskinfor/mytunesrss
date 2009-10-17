@@ -177,7 +177,7 @@
         <sql>ALTER TABLE artist ALTER COLUMN lower_name SET NOT NULL</sql>
         <sql>ALTER TABLE genre ALTER COLUMN lower_name SET NOT NULL</sql>
     </statement>
-    <statement name="migrate_3.8.0_eap_5">
+    <statement name="migrate_3.8.0_eap_5_part_1">
         <sql>
             {create_table_prefix} tag (
                 track_id VARCHAR(100) NOT NULL,
@@ -187,8 +187,10 @@
         <sql>CREATE INDEX idx_tag_tag ON tag (tag)</sql>
         <sql>CREATE INDEX idx_tag_track_id ON tag (track_id)</sql>
         <sql>ALTER TABLE track ADD COLUMN lower_comment VARCHAR(2048)</sql>
-        <sql>UPDATE track SET lower_comment = LOWER(comment)</sql>
         <sql>CREATE INDEX idx_track_lower_comment ON track (lower_comment)</sql>
+    </statement>
+    <statement name="migrate_3.8.0_eap_5_part_2">
+        <sql>UPDATE track SET lower_comment = LOWER(comment)</sql>
     </statement>
 
 </statements>
