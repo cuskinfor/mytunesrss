@@ -365,6 +365,15 @@
                     </td>
                 </tr>
             </c:if>
+            <c:if test="${authUser.editTags}">
+                <tr <mt:flipFlop/>>
+                    <td><fmt:message key="settings.showEditTags" /></td>
+                    <td>
+                        <input type="checkbox" name="showEditTags" value="true" <c:if test="${config.showEditTags}">checked="checked"</c:if> />
+                        <img src="${appUrl}/images/edit_tags.png" alt="edit tags" style="vertical-align:text-top;" />
+                    </td>
+                </tr>
+            </c:if>
             <c:if test="${authUser.transcoder && globalConfig.validLameBinary && !empty globalConfig.transcoderConfigs}">
                 <c:forEach var="tc" items="${globalConfig.transcoderConfigs}">
                     <tr <mt:flipFlop/>>

@@ -433,4 +433,13 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         MyTunesRss.CONFIG.getUser(myUsername).setSearchFuzziness(fuziness);
         onChange();
     }
+
+    public boolean isPermissionEditTags() {
+        return MyTunesRss.CONFIG.getUser(myUsername).isEditTags();
+    }
+
+    public void setPermissionEditTags(boolean permissionEditTags) {
+        MyTunesRss.CONFIG.getUser(myUsername).setEditTags(permissionEditTags);
+        onChange();
+    }
 }

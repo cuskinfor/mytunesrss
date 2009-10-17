@@ -84,6 +84,7 @@ public class User implements MyTunesRssEventListener, Cloneable {
     private User myParent;
     private boolean myExternalSites;
     private int mySearchFuzziness;
+    private boolean myEditTags;
 
     public User(String name) {
         myName = name;
@@ -377,6 +378,14 @@ public class User implements MyTunesRssEventListener, Cloneable {
         mySearchFuzziness = searchFuzziness;
     }
 
+    public boolean isEditTags() {
+        return getParent() != null ? getParent().isEditTags() : myEditTags;
+    }
+
+    public void setEditTags(boolean editTags) {
+        myEditTags = editTags;
+    }
+
     @Override
     public boolean equals(Object object) {
         return object != null && object instanceof User && getName().equals(((User) object).getName());
@@ -491,6 +500,8 @@ public class User implements MyTunesRssEventListener, Cloneable {
         myParent = new UserProxy(JXPathUtils.getStringValue(settings, "parent", null));
         setExternalSites(JXPathUtils.getBooleanValue(settings, "externalSites", false));
         setChangeEmail(JXPathUtils.getBooleanValue(settings, "changeEmail", false));
+        setSearchFuzziness(JXPathUtils.getIntValue(settings, "searchFuzziness", 0));
+        setEditTags(JXPathUtils.getBooleanValue(settings, "editTags", false));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -542,6 +553,8 @@ public class User implements MyTunesRssEventListener, Cloneable {
         users.appendChild(DOMUtils.createTextElement(settings, "parent", getParent() != null ? getParent().getName() : null));
         users.appendChild(DOMUtils.createBooleanElement(settings, "externalSites", isExternalSites()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "changeEmail", isChangeEmail()));
+        users.appendChild(DOMUtils.createIntElement(settings, "searchFuzziness", getSearchFuzziness()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "editTags", isEditTags()));
     }
 
     public synchronized void playLastFmTrack(final Track track) {

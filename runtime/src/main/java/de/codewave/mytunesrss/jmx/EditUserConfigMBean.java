@@ -144,4 +144,8 @@ public interface EditUserConfigMBean {
     int getSearchFuzziness();
 
     void setSearchFuzziness(int fuziness);
+
+    boolean isPermissionEditTags();
+
+    void setPermissionEditTags(boolean permissionEditTags);
 }

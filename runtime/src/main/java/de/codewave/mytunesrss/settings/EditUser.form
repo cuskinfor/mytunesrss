@@ -25,7 +25,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="840d2" layout-manager="GridLayoutManager" row-count="14" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
+              <grid id="840d2" layout-manager="GridLayoutManager" row-count="15" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="5">
                 <margin top="5" left="5" bottom="5" right="5"/>
                 <constraints/>
                 <properties/>
@@ -78,7 +78,7 @@
                   </component>
                   <component id="84472" class="javax.swing.JCheckBox" binding="myPermUploadInput">
                     <constraints>
-                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permUpload"/>
@@ -87,7 +87,7 @@
                   </component>
                   <component id="86d00" class="javax.swing.JCheckBox" binding="myPermChangePasswordInput">
                     <constraints>
-                      <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permChangePassword"/>
@@ -96,7 +96,7 @@
                   </component>
                   <component id="aa4e9" class="javax.swing.JCheckBox" binding="myPermTranscoderInput">
                     <constraints>
-                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <opaque value="false"/>
@@ -106,7 +106,7 @@
                   </component>
                   <component id="e680b" class="javax.swing.JCheckBox" binding="myPermEditSettings">
                     <constraints>
-                      <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permEditSettings"/>
@@ -115,7 +115,7 @@
                   </component>
                   <component id="43aff" class="javax.swing.JCheckBox" binding="myPermCreatePlaylists">
                     <constraints>
-                      <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permCreatePlaylists"/>
@@ -124,7 +124,7 @@
                   </component>
                   <component id="59d4f" class="javax.swing.JCheckBox" binding="myPermEditLastFMAccountInput">
                     <constraints>
-                      <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permLastFmAccount"/>
@@ -133,7 +133,7 @@
                   </component>
                   <component id="5879e" class="javax.swing.JCheckBox" binding="myPermChangeEmail">
                     <constraints>
-                      <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permChangeEmail"/>
@@ -156,6 +156,15 @@
                     <properties>
                       <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permExternalSites"/>
                       <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permExternalSitesTooltip"/>
+                    </properties>
+                  </component>
+                  <component id="a90dc" class="javax.swing.JCheckBox" binding="myPermEditTagsInput">
+                    <constraints>
+                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permEditTags"/>
+                      <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.permEditTagsTooltip"/>
                     </properties>
                   </component>
                 </children>

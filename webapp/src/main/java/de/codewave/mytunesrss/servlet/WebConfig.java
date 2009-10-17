@@ -60,13 +60,14 @@ public class WebConfig {
     private static final String CFG_SHOW_THUMBNAILS_FOR_ALBUMS = "showAlbumThumbs";
     private static final String CFG_SHOW_THUMBNAILS_FOR_TRACKS = "showTrackThumbs";
     private static final String CFG_SHOW_EXTERNAL_SITES = "showExtSites";
+    private static final String CFG_SHOW_EDIT_TAGS = "showEditTags";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     private static final String[] VALID_NAMES = {CFG_USER_NAME, CFG_PASSWORD_HASH, CFG_LOGIN_STORED, CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE,
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
             CFG_PLAYLIST_TYPE, CFG_LAME_TARGET_BITRATE, CFG_LAME_TARGET_SAMPLE_RATE, CFG_THEME, CFG_TRANSCODE_OTF_IF_POSSIBLE, CFG_RANDOM_SOURCE,
             CFG_FLASH_PLAYER_TYPE, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
-            CFG_ALBUM_IMAGE_SIZE, CFG_LANGUAGE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS, CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE};
+            CFG_ALBUM_IMAGE_SIZE, CFG_LANGUAGE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS, CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS};
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
     public static final String MYTUNESRSS_COM_COOKIE = "mytunesrss_com_cookie";
@@ -161,6 +162,7 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_THUMBNAILS_FOR_ALBUMS, "true");
         myConfigValues.put(CFG_SHOW_THUMBNAILS_FOR_TRACKS, "false");
         myConfigValues.put(CFG_SHOW_EXTERNAL_SITES, "false");
+        myConfigValues.put(CFG_SHOW_EDIT_TAGS, "false");
     }
 
     private void initWithIphoneDefaults() {
@@ -605,5 +607,13 @@ public class WebConfig {
 
     public void setShowExternalSites(boolean showExternalSites) {
         myConfigValues.put(CFG_SHOW_EXTERNAL_SITES, Boolean.toString(showExternalSites));
+    }
+
+    public boolean isShowEditTags() {
+        return Boolean.parseBoolean(myConfigValues.get(CFG_SHOW_EDIT_TAGS));
+    }
+
+    public void setShowEditTags(boolean showEditTags) {
+        myConfigValues.put(CFG_SHOW_EDIT_TAGS, Boolean.toString(showEditTags));
     }
 }

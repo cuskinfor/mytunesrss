@@ -73,6 +73,7 @@ public class EditUser implements MyTunesRssEventListener {
     private JCheckBox myPermRemoteControlnput;
     private JCheckBox myPermExternalSitesInput;
     private JTextField mySearchFuzzinessInput;
+    private JCheckBox myPermEditTagsInput;
     private User myUser;
     private DefaultMutableTreeNode myUserNode;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
@@ -199,6 +200,7 @@ public class EditUser implements MyTunesRssEventListener {
         SwingUtils.enableElementAndLabel(mySaveUserSettingsInput, !parentUser);
         SwingUtils.enableElementAndLabel(myRestrictionPlaylistInput, !parentUser);
         SwingUtils.enableElementAndLabel(myPermExternalSitesInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myPermEditTagsInput, !parentUser);
     }
 
     private void initValues() {
@@ -232,6 +234,7 @@ public class EditUser implements MyTunesRssEventListener {
             myPermRemoteControlnput.setSelected(myUser.isRemoteControl());
             myPermExternalSitesInput.setSelected(myUser.isExternalSites());
             mySearchFuzzinessInput.setText(myUser.getSearchFuzziness() > -1 ? Integer.toString(myUser.getSearchFuzziness()) : "");
+            myPermEditTagsInput.setSelected(myUser.isEditTags());
             setParentUser(myUser.getParent() != null);
             if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
                 SwingUtils.enableElementAndLabel(myBytesQuotaInput, false);
@@ -265,6 +268,7 @@ public class EditUser implements MyTunesRssEventListener {
             myPermChangeEmail.setSelected(false);
             myPermRemoteControlnput.setSelected(false);
             myPermExternalSitesInput.setSelected(false);
+            myPermEditTagsInput.setSelected(false);
             setParentUser(false);
         }
     }
@@ -367,66 +371,8 @@ public class EditUser implements MyTunesRssEventListener {
             myUser.setRemoteControl(myPermRemoteControlnput.isSelected());
             myUser.setExternalSites(myPermExternalSitesInput.isSelected());
             myUser.setSearchFuzziness(MyTunesRssUtils.getTextFieldInteger(mySearchFuzzinessInput, -1));
+            myUser.setEditTags(myPermEditTagsInput.isSelected());
         }
-    }
-
-    boolean saveConfig() {
-        String messages = JTextFieldValidation.getAllValidationFailureMessage(myRootPanel);
-        if (messages != null) {
-            MyTunesRssUtils.showErrorMessage(messages);
-            return false;
-        } else {
-            if ((myUser == null || (!myUser.getName().equals(myUserNameInput.getText()))) && MyTunesRss.CONFIG.getUsers().contains(new User(
-                    myUserNameInput.getText()))) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.duplicateUserName", myUserNameInput.getText()));
-            } else {
-                if (myUser != null) {
-                    if (myPasswordInput.getPasswordHash() != null) {
-                        myUser.setPasswordHash(myPasswordInput.getPasswordHash());
-                    }
-                    // name change => remove user with old name
-                    if (!myUser.getName().equals(myUserNameInput.getText())) {
-                        MyTunesRss.CONFIG.removeUser(myUser.getName());
-                    }
-                } else {
-                    myUser = new User("");
-                    myUser.setPasswordHash(myPasswordInput.getPasswordHash());
-                }
-                myUser.setName(myUserNameInput.getText());
-                myUser.setRss(myPermRssInput.isSelected());
-                myUser.setPlaylist(myPermPlaylistInput.isSelected());
-                myUser.setDownload(myPermDownloadInput.isSelected());
-                myUser.setUpload(myPermUploadInput.isSelected());
-                myUser.setPlayer(myPermPlayerInput.isSelected());
-                myUser.setChangePassword(myPermChangePasswordInput.isSelected());
-                myUser.setSpecialPlaylists(myPermSpecialPlaylists.isSelected());
-                myUser.setCreatePlaylists(myPermCreatePlaylists.isSelected());
-                myUser.setEditWebSettings(myPermEditSettings.isSelected());
-                myUser.setQuotaType((User.QuotaType) myQuotaTypeInput.getSelectedItem());
-                myUser.setBytesQuota(MyTunesRssUtils.getTextFieldInteger(myBytesQuotaInput, 0) * MEGABYTE);
-                myUser.setMaximumZipEntries(MyTunesRssUtils.getTextFieldInteger(myMaxZipEntriesInput, 0));
-                myUser.setFileTypes(myFileTypesInput.getText());
-                myUser.setSessionTimeout(MyTunesRssUtils.getTextFieldInteger(mySessionTimeoutInput, 10));
-                myUser.setTranscoder(myPermTranscoderInput.isSelected());
-                myUser.setBandwidthLimit(MyTunesRssUtils.getTextFieldInteger(myBandwidthLimit, 0));
-                myUser.setEmail(myEmailInput.getText());
-                myUser.setChangeEmail(myPermChangeEmail.isSelected());
-                if (myRestrictionPlaylistInput.getSelectedItem() != null) {
-                    myUser.setPlaylistId(((Playlist) myRestrictionPlaylistInput.getSelectedItem()).getId());
-                } else {
-                    myUser.setPlaylistId(null);
-                }
-                myUser.setSaveWebSettings(mySaveUserSettingsInput.isSelected());
-                myUser.setLastFmUsername(myLastFmUsernameInput.getText());
-                myUser.setLastFmPasswordHash(myLastFmPasswordInput.getPasswordHash());
-                myUser.setEditLastFmAccount(myPermEditLastFMAccountInput.isSelected());
-                myUser.setUrlEncryption(myUrlEncryptionInput.isSelected());
-                myUser.setRemoteControl(myPermRemoteControlnput.isSelected());
-                myUser.setExternalSites(myPermExternalSitesInput.isSelected());
-                MyTunesRss.CONFIG.addUser(myUser);
-            }
-        }
-        return true;
     }
 
     public class RefreshTask extends TimerTask {
