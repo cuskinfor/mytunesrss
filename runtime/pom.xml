@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
-    <version>3.8.0-EAP-6-SNAPSHOT</version>
+    <version>3.8.0-EAP-5-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Runtime</name>
     <distributionManagement>
         <site>
