@@ -42,8 +42,8 @@
 <ul class="links">
     <c:if test="${sortOrderLink}">
         <li>
-            <c:if test="${sortOrder != 'Album'}"><a style="cursor:pointer" onclick="sort('${servletUrl}', '${auth}', 'Album'); return false"><fmt:message key="groupByAlbum" /></a></c:if>
-            <c:if test="${sortOrder != 'Artist'}"><a style="cursor:pointer" onclick="sort('${servletUrl}', '${auth}', 'Artist'); return false"><fmt:message key="groupByArtist" /></a></c:if>
+            <c:if test="${sortOrder != 'Album'}"><a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=Album</mt:encrypt>/backUrl=${param.backUrl}"><fmt:message key="groupByAlbum" /></a></c:if>
+            <c:if test="${sortOrder != 'Artist'}"><a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=Artist</mt:encrypt>/backUrl=${param.backUrl}"><fmt:message key="groupByArtist" /></a></c:if>
         </li>
     </c:if>
     <c:if test="${!stateEditPlaylist && authUser.createPlaylists}">

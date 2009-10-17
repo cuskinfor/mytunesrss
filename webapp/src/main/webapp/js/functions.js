@@ -4,12 +4,6 @@ var mouseY;
 
 document.onmousemove = updateTooltipPosition;
 
-function sort(servletUrl, auth, sortOrder) {
-    document.forms["browse"].action = servletUrl + "/browseTrack/" + auth;
-    document.forms["browse"].elements["sortOrder"].value = sortOrder;
-    document.forms["browse"].submit();
-}
-
 function openPlayer(url) {
     var flashPlayer = window.open(url, "MyTunesRssFlashPlayer", "width=600,height=276,resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no");
     flashPlayer.onload=function() {
