@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.*;
+import java.util.Locale;
 
 /**
  * de.codewave.mytunesrss.settings.Misc
@@ -46,7 +48,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
     private JTextField myJmxUserNameInput;
     private JPasswordField myJmxPasswordInput;
     private JCheckBox myMyTunesRssComSsl;
-    private JCheckBox mySmtpTlsInput;
+    private JComboBox mySmtpProtocolInput;
     private boolean myUpdateOnStartInputCache;
     private boolean myAutoStartServer;
 
@@ -54,6 +56,15 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         MyTunesRssEventManager.getInstance().addListener(this);
         myUseProxyInput.addActionListener(new UseProxyActionListener());
         myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
+        mySmtpProtocolInput.addItem(SmtpProtocol.PLAINTEXT);
+        mySmtpProtocolInput.addItem(SmtpProtocol.STARTTLS);
+        mySmtpProtocolInput.addItem(SmtpProtocol.SSL);
+        mySmtpProtocolInput.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                return super.getListCellRendererComponent(list, MyTunesRssUtils.getBundleString("smtp.protocol." + ((SmtpProtocol)value).name().toLowerCase(Locale.ENGLISH)), index, isSelected, cellHasFocus);
+            }
+        });
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput,
                                                                            MyTunesRssUtils.getBundleString("error.emptyProxyHost")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myProxyPortInput, 1, 65535, false, MyTunesRssUtils.getBundleString(
@@ -86,7 +97,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         myJmxUserNameInput.setText(MyTunesRss.CONFIG.getJmxUser());
         myJmxPasswordInput.setText(MyTunesRss.CONFIG.getJmxPassword());
         myMyTunesRssComSsl.setSelected(MyTunesRss.CONFIG.isMyTunesRssComSsl());
-        mySmtpTlsInput.setSelected(MyTunesRss.CONFIG.isMailTls());
+        mySmtpProtocolInput.setSelectedItem(MyTunesRss.CONFIG.getSmtpProtocol());
     }
 
     private void createUIComponents() {
@@ -111,7 +122,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setWebWelcomeMessage(myWelcomeMessageInput.getText());
             MyTunesRss.CONFIG.setMailHost(myMailHostInput.getText());
             MyTunesRss.CONFIG.setMailPort(MyTunesRssUtils.getTextFieldInteger(myMailPortInput, -1));
-            MyTunesRss.CONFIG.setMailTls(mySmtpTlsInput.isSelected());
+            MyTunesRss.CONFIG.setSmtpProtocol((SmtpProtocol) mySmtpProtocolInput.getSelectedItem());
             MyTunesRss.CONFIG.setMailLogin(myMailLoginInput.getText());
             MyTunesRss.CONFIG.setMailPassword(new String(myMailPasswordInput.getPassword()));
             MyTunesRss.CONFIG.setMailSender(new String(myMailSenderInput.getText()));

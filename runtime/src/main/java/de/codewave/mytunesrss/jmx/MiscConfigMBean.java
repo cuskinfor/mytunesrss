@@ -54,9 +54,9 @@ public interface MiscConfigMBean {
 
     void setMailSender(String mailSender);
 
-    boolean isMailTls();
+    String getSmtpProtocol();
 
-    void setMailTls(boolean mailTls);
+    void setSmtpProtocol(String smtpProtocol);
 }
 
 

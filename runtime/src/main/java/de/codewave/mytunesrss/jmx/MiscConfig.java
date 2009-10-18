@@ -1,10 +1,12 @@
 package de.codewave.mytunesrss.jmx;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.SmtpProtocol;
 import org.apache.commons.lang.StringUtils;
 
 import javax.management.NotCompliantMBeanException;
 import java.io.UnsupportedEncodingException;
+import java.util.Locale;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       Cologne Systems GmbH<br> <b>Creation Date:</b>
@@ -122,13 +124,13 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
         onChange();
     }
 
-    public boolean isMailTls() {
-        return MyTunesRss.CONFIG.isMailTls();
+    public void setSmtpProtocol(String smtpProtocol) {
+        MyTunesRss.CONFIG.setSmtpProtocol(SmtpProtocol.valueOf(smtpProtocol.toUpperCase(Locale.ENGLISH)));
+        onChange();
     }
 
-    public void setMailTls(boolean mailTls) {
-        MyTunesRss.CONFIG.setMailTls(mailTls);
-        onChange();
+    public String getSmtpProtocol() {
+        return MyTunesRss.CONFIG.getSmtpProtocol().name().toLowerCase(Locale.ENGLISH);
     }
 }
 

@@ -7,7 +7,10 @@
 
     <body>
 
-        <release version="3.7.6" date="2009-xx-xx" description="Bugfix release">
+        <release version="3.7.6" date="2009-10-18" description="Bugfix release">
+            <action dev="mdescher" type="update">
+                More configuration for SMTP (plaintext, starttls and ssl).
+            </action>
             <action dev="mdescher" type="fix">
                 Fixed fatal error when using 64 bit Java on OS X (Quicktime exception).
             </action>
