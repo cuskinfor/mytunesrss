@@ -133,6 +133,7 @@
             {create_table_prefix} tag (
                 track_id VARCHAR(100) NOT NULL,
                 tag VARCHAR(50) NOT NULL
+                CONSTRAINT fk_tag_track_id FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE
             )
         </sql>
         <sql>CREATE INDEX idx_track_name ON track (name)</sql>
@@ -169,6 +170,7 @@
     </statement>
 
     <statement name="dropAllTables">
+        <sql>DROP TABLE tag</sql>
         <sql>DROP TABLE statistics</sql>
         <sql>DROP TABLE smart_info</sql>
         <sql>DROP TABLE link_track_playlist</sql>

@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="3.8.0-EAP-6" date="2009-xx-xx" description="3.8.0 EAP 6">
+            <action dev="mdescher" type="update">
+                Added missing constraint on "tag.track_id".
+            </action>
+            <action dev="mdescher" type="fix">
+                Added delete tag table statement.
+            </action>
+        </release>
+
         <release version="3.8.0-EAP-5" date="2009-10-17" description="3.8.0 EAP 5">
             <action dev="mdescher" type="update">
                 Include comments in search.
