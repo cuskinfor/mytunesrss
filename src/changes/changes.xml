@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.8.0-EAP-6" date="2009-xx-xx" description="3.8.0 EAP 6">
+            <action dev="mdescher" type="fix">
+                New version codewave-utils to fix update download problem.
+            </action>
             <action dev="mdescher" type="update">
                 Added missing constraint on "tag.track_id".
             </action>
