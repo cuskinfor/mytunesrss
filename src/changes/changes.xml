@@ -7,7 +7,13 @@
 
     <body>
 
-        <release version="3.7.6" date="2009-10-18" description="Bugfix release">
+        <release version="3.7.7" date="2009-10-20" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                New version codewave-utils to fix update download problem.
+            </action>
+		</release>
+
+		<release version="3.7.6" date="2009-10-18" description="Bugfix release">
             <action dev="mdescher" type="update">
                 More configuration for SMTP (plaintext, starttls and ssl).
             </action>
