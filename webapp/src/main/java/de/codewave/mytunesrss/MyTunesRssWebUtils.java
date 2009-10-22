@@ -146,18 +146,15 @@ public class MyTunesRssWebUtils {
 
     public static String createTranscodingPathInfo(WebConfig config) {
         return createTranscodingParamValue(StringUtils.split(StringUtils.trimToEmpty(config.getActiveTranscoders()), ','),
-                config.getLameTargetBitrate(),
-                config.getLameTargetSampleRate(),
                 config.isTranscodeOnTheFlyIfPossible());
     }
 
-    public static String createTranscodingParamValue(String[] transcoderNames, int transcodingBitrate, int transcodingSamplerate, boolean transcodeOnTheFlyIfPossible) {
+    public static String createTranscodingParamValue(String[] transcoderNames, boolean transcodeOnTheFlyIfPossible) {
         StringBuilder tc = new StringBuilder();
         for (String tcName : transcoderNames) {
             tc.append("N").append(tcName).append("_");
         }
-        tc.append("B").append(transcodingBitrate).append("_S").append(transcodingSamplerate).append("_O").append(
-                transcodeOnTheFlyIfPossible ? "1" : "0");
+        tc.append("O").append(transcodeOnTheFlyIfPossible ? "1" : "0");
         return tc.toString();
     }
 
@@ -171,12 +168,6 @@ public class MyTunesRssWebUtils {
                 switch (key) {
                     case 'N':
                         names.append(",").append(tc.substring(1));
-                        break;
-                    case 'B':
-                        config.setLameTargetBitrate(Integer.valueOf(value));
-                        break;
-                    case 'S':
-                        config.setLameTargetSampleRate(Integer.valueOf(value));
                         break;
                     case 'O':
                         config.setTranscodeOnTheFlyIfPossible("1".equals(value));

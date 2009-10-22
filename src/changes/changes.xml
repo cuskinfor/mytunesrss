@@ -9,6 +9,9 @@
 
         <release version="3.8.0-EAP-6" date="2009-xx-xx" description="3.8.0 EAP 6">
             <action dev="mdescher" type="update">
+                Simple transcoder configuration for all media types.
+            </action>
+            <action dev="mdescher" type="update">
                 JW Media Player 4.6 update.
             </action>
             <action dev="mdescher" type="fix">

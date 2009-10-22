@@ -6,10 +6,6 @@ import java.math.BigDecimal;
  * de.codewave.mytunesrss.jmx.AddonsConfigMBean
  */
 public interface StreamingConfigMBean {
-    String getLameBinary();
-
-    void setLameBinary(String lameBinary);
-
     int getCacheTimeout();
 
     void setCacheTimeout(int timeout);
@@ -26,13 +22,9 @@ public interface StreamingConfigMBean {
 
     void setBandwidthLimitFactor(BigDecimal factor);
 
-    String getLameTargetOptions();
-
-    void setLameTargetOptions(String options);
-
     String[] getTranscoders();
 
-    String addTranscoder(String name, String suffixes, String mp4codecs, String binary, String options);
+    String addTranscoder(String name, String suffixes, String mp4codecs, String targetSuffix, String targetContentType, String binary, String options);
 
     String deleteTranscoder(String name);
 }

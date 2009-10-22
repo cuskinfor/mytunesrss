@@ -24,6 +24,8 @@ public class Transcoder {
     private JButton myBinarySelectButton;
     private JPanel myRootPanel;
     private JButton myDeleteButton;
+    private JTextField myTargetSuffixInput;
+    private JTextField myTargetContentTypeInput;
 
     public Transcoder() {
         myBinarySelectButton.addActionListener(new SelectBinaryActionListener());
@@ -32,10 +34,12 @@ public class Transcoder {
         JTextFieldValidation.setValidation(new JTextFieldValidation(myNameInput, MyTunesRssUtils.getBundleString("error.transcoderNameInvalid")) {
             @Override
             protected boolean isValid(String text) {
-                return StringUtils.isNotBlank(text) && StringUtils.isAlphanumeric(text) && text.length() <= 20;
+                return StringUtils.isNotBlank(text) && StringUtils.isAlphanumericSpace(text) && text.length() <= 40;
             }
         });
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(mySuffixesInput, MyTunesRssUtils.getBundleString("error.transcoderSuffixesBlank")));
+        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myTargetSuffixInput, MyTunesRssUtils.getBundleString("error.transcoderTargetSuffixBlank")));
+        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myTargetContentTypeInput, MyTunesRssUtils.getBundleString("error.transcoderTargetContentTypeBlank")));
     }
 
     public JPanel getRootPanel() {
@@ -56,6 +60,8 @@ public class Transcoder {
         myMp4CodecsInput.setText(tc.getMp4Codecs());
         myOptionsInput.setText(tc.getOptions());
         myBinaryInput.setText(tc.getBinary());
+        myTargetSuffixInput.setText(tc.getTargetSuffix());
+        myTargetContentTypeInput.setText(tc.getTargetContentType());
     }
 
     public String updateTranscoderConfig(TranscoderConfig tc) {
@@ -66,6 +72,8 @@ public class Transcoder {
             tc.setMp4Codecs(myMp4CodecsInput.getText());
             tc.setOptions(myOptionsInput.getText());
             tc.setBinary(myBinaryInput.getText());
+            tc.setTargetSuffix(myTargetSuffixInput.getText());
+            tc.setTargetContentType(myTargetContentTypeInput.getText());
         }
         return messages;
     }

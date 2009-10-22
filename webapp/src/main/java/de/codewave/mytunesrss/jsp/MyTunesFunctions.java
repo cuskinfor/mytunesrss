@@ -95,7 +95,7 @@ public class MyTunesFunctions {
 
     public static String suffix(WebConfig config, User user, Track track) {
         if (config != null && user != null && user.isTranscoder() && config.getTranscoder(track) != null) {
-            return "mp3";
+            return config.getTranscoder(track).getTargetSuffix();
         }
         return FilenameUtils.getExtension(track.getFile().getName());
     }
@@ -113,12 +113,12 @@ public class MyTunesFunctions {
         return false;
     }
 
-    public static String tcParamValue(PageContext pageContext, User user, Track track) {
-        return tcParamValue((HttpServletRequest) pageContext.getRequest(), user, track);
+    public static String tcParamValue(PageContext pageContext, User user) {
+        return tcParamValue((HttpServletRequest) pageContext.getRequest(), user);
     }
 
-    public static String tcParamValue(HttpServletRequest request, User user, Track track) {
-        if (user != null && user.isTranscoder() && MyTunesRss.CONFIG.isValidLameBinary()) {
+    public static String tcParamValue(HttpServletRequest request, User user) {
+        if (user != null && user.isTranscoder()) {
             WebConfig config = MyTunesRssWebUtils.getWebConfig(request);
             return MyTunesRssWebUtils.createTranscodingPathInfo(config);
         }
@@ -236,7 +236,7 @@ public class MyTunesFunctions {
         }
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (command != MyTunesRssCommand.YouTubeRedirect) {
-            pathInfo.append("/tc=").append(tcParamValue(request, user, track));
+            pathInfo.append("/tc=").append(tcParamValue(request, user));
             pathInfo.append("/playerRequest=").append(request.getParameter("playerRequest"));
             if (StringUtils.isNotBlank(extraPathInfo)) {
                 pathInfo.append("/").append(extraPathInfo);

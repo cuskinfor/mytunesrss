@@ -24,14 +24,10 @@ import com.intellij.uiDesigner.core.GridConstraints;
  */
 public class Streaming implements MyTunesRssEventListener, SettingsForm {
     private JPanel myRootPanel;
-    private JTextField myLameBinaryInput;
-    private JButton myLameBinaryLookupButton;
     private JTextField myCacheTimeout;
     private JTextField myCacheLimit;
     private JCheckBox myLimitBandwidthCheckBox;
     private JTextField myBandwidthLimitInput;
-    private JLabel myBandwidthLimitLabel;
-    private JTextField myLameTargetOptions;
     private JScrollPane myScrollPane;
     private JPanel myTranscodersPanel;
     private JButton myAddTranscoderButton;
@@ -39,8 +35,6 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
 
     public Streaming() {
         myScrollPane.getViewport().setOpaque(false);
-        myLameBinaryLookupButton.addActionListener(new SelectBinaryActionListener(myLameBinaryInput, MyTunesRssUtils.getBundleString(
-                "dialog.lookupLameBinary")));
         myAddTranscoderButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Transcoder transcoder = new Transcoder();
@@ -50,8 +44,6 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
                 myTranscodersPanel.scrollRectToVisible(new Rectangle(0, myTranscodersPanel.getHeight() - 2, 1, 1));
             }
         });
-        JTextFieldValidation.setValidation(new FileExistsTextFieldValidation(myLameBinaryInput, true, false, MyTunesRssUtils.getBundleString(
-                "error.lameBinaryFileMissing")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myCacheTimeout, 0, 1440, true, MyTunesRssUtils.getBundleString(
                 "error.illegalCacheTimeout")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myCacheLimit, 0, 10000, true, MyTunesRssUtils.getBundleString(
@@ -82,7 +74,6 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
     }
 
     public void initValues() {
-        myLameBinaryInput.setText(MyTunesRss.CONFIG.getLameBinary());
         myCacheTimeout.setText(Integer.toString(MyTunesRss.CONFIG.getStreamingCacheTimeout()));
         myCacheLimit.setText(Integer.toString(MyTunesRss.CONFIG.getStreamingCacheMaxFiles()));
         if (MyTunesRss.CONFIG.getBandwidthLimitFactor().compareTo(BigDecimal.ZERO) > 0) {
@@ -92,7 +83,6 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
         }
         myLimitBandwidthCheckBox.setSelected(MyTunesRss.CONFIG.isBandwidthLimit());
         myBandwidthLimitInput.setEnabled(myLimitBandwidthCheckBox.isSelected());
-        myLameTargetOptions.setText(MyTunesRss.CONFIG.getLameTargetOptions());
         myTranscoders.clear();
         for (TranscoderConfig tc : MyTunesRss.CONFIG.getTranscoderConfigs()) {
             Transcoder transcoder = new Transcoder();
@@ -164,7 +154,6 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
                 return MyTunesRssUtils.getBundleString("error.duplicateTranscoderName");
             }
             MyTunesRss.CONFIG.setTranscoderConfigs(transcoderConfigs);
-            MyTunesRss.CONFIG.setLameBinary(myLameBinaryInput.getText());
             if (StringUtils.isNotEmpty(myCacheTimeout.getText())) {
                 MyTunesRss.CONFIG.setStreamingCacheTimeout(Integer.parseInt(myCacheTimeout.getText()));
             } else {
@@ -181,7 +170,6 @@ public class Streaming implements MyTunesRssEventListener, SettingsForm {
             } else {
                 MyTunesRss.CONFIG.setBandwidthLimitFactor(BigDecimal.ZERO);
             }
-            MyTunesRss.CONFIG.setLameTargetOptions(myLameTargetOptions.getText());
         }
         return null;
     }

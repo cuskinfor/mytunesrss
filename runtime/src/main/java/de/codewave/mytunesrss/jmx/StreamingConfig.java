@@ -30,10 +30,6 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
         return MyTunesRss.CONFIG.getStreamingCacheTimeout();
     }
 
-    public String getLameBinary() {
-        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getLameBinary());
-    }
-
     public void setCacheMaxFiles(int maxFiles) {
         MyTunesRss.CONFIG.setStreamingCacheMaxFiles(maxFiles);
         onChange();
@@ -41,11 +37,6 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
 
     public void setCacheTimeout(int timeout) {
         MyTunesRss.CONFIG.setStreamingCacheTimeout(timeout);
-        onChange();
-    }
-
-    public void setLameBinary(String lameBinary) {
-        MyTunesRss.CONFIG.setLameBinary(StringUtils.trimToNull(lameBinary));
         onChange();
     }
 
@@ -67,15 +58,6 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
         onChange();
     }
 
-    public String getLameTargetOptions() {
-        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getLameTargetOptions());
-    }
-
-    public void setLameTargetOptions(String options) {
-        MyTunesRss.CONFIG.setLameTargetOptions(StringUtils.trimToNull(options));
-        onChange();
-    }
-
     public String[] getTranscoders() {
         List<String> configs = new ArrayList<String>();
         for (TranscoderConfig tc : MyTunesRss.CONFIG.getTranscoderConfigs()) {
@@ -84,12 +66,18 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
         return configs.toArray(new String[configs.size()]);
     }
 
-    public String addTranscoder(String name, String suffixes, String mp4codecs, String binary, String options) {
-        if (StringUtils.isBlank(name) || name.length() > 20 || !StringUtils.isAlphanumeric(name)) {
+    public String addTranscoder(String name, String suffixes, String mp4codecs, String targetSuffix, String targetContentType, String binary, String options) {
+        if (StringUtils.isBlank(name) || name.length() > 40 || !StringUtils.isAlphanumericSpace(name)) {
             return MyTunesRssUtils.getBundleString("error.transcoderNameInvalid");
         }
         if (StringUtils.isBlank(suffixes)) {
             return MyTunesRssUtils.getBundleString("error.transcoderSuffixesBlank");
+        }
+        if (StringUtils.isBlank(targetSuffix)) {
+            return MyTunesRssUtils.getBundleString("error.transcoderTargetSuffixBlank");
+        }
+        if (StringUtils.isBlank(targetContentType)) {
+            return MyTunesRssUtils.getBundleString("error.transcoderTargetContentTypeBlank");
         }
         if (StringUtils.isBlank(binary) || !new File(binary).isFile()) {
             return MyTunesRssUtils.getBundleString("error.transcoderBinaryFileMissing");
@@ -104,6 +92,8 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
         TranscoderConfig tc = new TranscoderConfig();
         tc.setName(name);
         tc.setSuffixes(suffixes);
+        tc.setTargetSuffix(targetSuffix);
+        tc.setTargetContentType(targetContentType);
         tc.setMp4Codecs(mp4codecs);
         tc.setBinary(binary);
         tc.setOptions(options);

@@ -5,7 +5,6 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.servlet.WebConfig;
-import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.StreamSender;
@@ -18,28 +17,28 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * de.codewave.mytunesrss.command.Transcoder
+ * de.codewave.mytunesrss.transcoder.Transcoder
  */
-public abstract class Transcoder {
+public class Transcoder {
     private boolean myTempFile;
     private boolean myPlayerRequest;
-    private int myTargetBitrate;
-    private int myTargetSampleRate;
     private Track myTrack;
+    private boolean myActive;
+    private TranscoderConfig myTranscoderConfig;
 
     public static Transcoder createTranscoder(Track track, WebConfig webConfig, HttpServletRequest request) {
         TranscoderConfig transcoderConfig = webConfig.getTranscoder(track);
-        Transcoder transcoder = transcoderConfig != null ? new AudioTranscoder(transcoderConfig, track, webConfig, request) : null;
+        Transcoder transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, webConfig, request) : null;
         return transcoder != null && transcoder.isAvailable() && transcoder.isActive() ? transcoder : null;
     }
 
-    protected Transcoder(Track track, HttpServletRequest request, WebConfig webConfig) {
+    protected Transcoder(TranscoderConfig transcoderConfig, Track track, WebConfig webConfig, HttpServletRequest request) {
         myTrack = track;
         myPlayerRequest = "true".equalsIgnoreCase(request.getParameter("playerRequest"));
         myTempFile = (ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request) || !webConfig.isTranscodeOnTheFlyIfPossible()) &&
                 !myPlayerRequest;
-        myTargetBitrate = webConfig.getLameTargetBitrate();
-        myTargetSampleRate = webConfig.getLameTargetSampleRate();
+        myTranscoderConfig = transcoderConfig;
+        myActive = webConfig.isActiveTranscoder(transcoderConfig.getName());
     }
 
     protected void setTempFileRequested(boolean tempFile) {
@@ -87,23 +86,23 @@ public abstract class Transcoder {
         myTempFile = tempFile;
     }
 
-    public abstract String getTranscoderId();
-
-    public abstract String getTargetContentType();
-
-    public abstract InputStream getStream() throws IOException;
-
-    protected abstract boolean isActive();
-
     public boolean isAvailable() {
-        return myTargetBitrate > 0 && myTargetSampleRate > 0;
+        return myTranscoderConfig.isValidBinary();
     }
 
-    protected int getTargetBitrate() {
-        return myTargetBitrate;
+    public boolean isActive() {
+        return myActive;
     }
 
-    protected int getTargetSampleRate() {
-        return myTargetSampleRate;
+    public InputStream getStream() throws IOException {
+        return new TranscoderStream(myTranscoderConfig, getTrack());
+    }
+
+    public String getTranscoderId() {
+        return myTranscoderConfig.getName();
+    }
+
+    public String getTargetContentType() {
+        return myTranscoderConfig.getTargetContentType();
     }
 }

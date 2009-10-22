@@ -66,7 +66,6 @@ public class MyTunesRssConfig {
     private boolean myQuitConfirmation;
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
-    private String myLameBinary = "";
     private int myStreamingCacheTimeout = 20;
     private int myStreamingCacheMaxFiles = 300;
     private boolean myBandwidthLimit;
@@ -104,7 +103,6 @@ public class MyTunesRssConfig {
     private int myTomcatSslProxyPort;
     private String myTomcatSslProxyScheme;
     private Map<String, DialogLayout> myDialogLayouts;
-    private String myLameTargetOptions = "--quiet -r -b {bitrate} --resample {samplerate} - -";
     private List<FileType> myFileTypes = new ArrayList<FileType>();
     private String myMailHost;
     private int myMailPort;
@@ -332,18 +330,6 @@ public class MyTunesRssConfig {
 
     public void setPathInfoKey(SecretKey pathInfoKey) {
         myPathInfoKey = pathInfoKey;
-    }
-
-    public String getLameBinary() {
-        return myLameBinary;
-    }
-
-    public boolean isValidLameBinary() {
-        return StringUtils.isNotEmpty(myLameBinary) && new File(myLameBinary).isFile();
-    }
-
-    public void setLameBinary(String lameBinary) {
-        myLameBinary = lameBinary;
     }
 
     public int getStreamingCacheTimeout() {
@@ -750,14 +736,6 @@ public class MyTunesRssConfig {
         return layout;
     }
 
-    public String getLameTargetOptions() {
-        return myLameTargetOptions;
-    }
-
-    public void setLameTargetOptions(String lameTargetOptions) {
-        myLameTargetOptions = lameTargetOptions;
-    }
-
     public FileType getFileType(String suffix) {
         if (suffix != null) {
             for (FileType type : myFileTypes) {
@@ -1155,8 +1133,6 @@ public class MyTunesRssConfig {
         setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
         setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
         readPathInfoEncryptionKey(settings);
-        setLameBinary(JXPathUtils.getStringValue(settings, "lameBinary", getLameBinary()));
-        setLameTargetOptions(JXPathUtils.getStringValue(settings, "lameTargetOptions", getLameTargetOptions()));
         setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
         setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
         setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
@@ -1363,8 +1339,6 @@ public class MyTunesRssConfig {
             if (myPathInfoKey != null) {
                 root.appendChild(DOMUtils.createByteArrayElement(settings, "pathInfoKey", myPathInfoKey.getEncoded()));
             }
-            root.appendChild(DOMUtils.createTextElement(settings, "lameBinary", myLameBinary));
-            root.appendChild(DOMUtils.createTextElement(settings, "lameTargetOptions", myLameTargetOptions));
             root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheTimeout", myStreamingCacheTimeout));
             root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheMaxFiles", myStreamingCacheMaxFiles));
             root.appendChild(DOMUtils.createBooleanElement(settings, "bandwidthLimit", myBandwidthLimit));

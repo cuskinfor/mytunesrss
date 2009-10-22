@@ -6,7 +6,6 @@ import de.codewave.mytunesrss.datastore.statement.FindTrackImageQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.io.LogStreamCopyThread;
-import de.codewave.utils.io.StreamCopyThread;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -22,93 +21,57 @@ import java.io.InputStream;
 import java.sql.SQLException;
 
 /**
- * de.codewave.mytunesrss.command.LameTranscoderStream
+ * de.codewave.mytunesrss.transcoder.TranscoderStream
  */
-public class AudioTranscoderStream extends InputStream {
-    private static final Logger LOG = LoggerFactory.getLogger(AudioTranscoderStream.class);
+public class TranscoderStream extends InputStream {
+    private static final Logger LOG = LoggerFactory.getLogger(TranscoderStream.class);
 
-    private Process myTargetProcess;
-    private Process mySourceProcess;
+    private Process myProcess;
     private TranscoderConfig myTranscoderConfig;
 
-    public AudioTranscoderStream(TranscoderConfig transcoderConfig, Track track, int outputBitRate, int outputSampleRate)
+    public TranscoderStream(TranscoderConfig transcoderConfig, Track track)
             throws IOException {
         myTranscoderConfig = transcoderConfig;
-        final String[] targetCommand = new String[getTargetArguments().split(" ").length + 1];
-        targetCommand[0] = MyTunesRss.CONFIG.getLameBinary();
+        final String[] transcoderCommand = new String[getArguments().split(" ").length + 1];
+        transcoderCommand[0] = transcoderConfig.getBinary();
         int i = 1;
-        for (String part : getTargetArguments().split(" ")) {
-            targetCommand[i++] = part;
+        for (String part : getArguments().split(" ")) {
+            transcoderCommand[i++] = part;
         }
-        replaceTokens(targetCommand, track, outputBitRate, outputSampleRate);
+        //final File tempFile = File.createTempFile("mytunesrss-", "." + FilenameUtils.getExtension(track.getFile().getName()));
+        //tempFile.deleteOnExit();
+        //FileUtils.copyFile(track.getFile(), tempFile);
+        //track.setFile(tempFile);
+        replaceTokens(transcoderCommand, track);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("executing " + getTargetName() + " command \"" + StringUtils.join(targetCommand, " ") + "\".");
+            LOG.debug("executing " + getName() + " command \"" + StringUtils.join(transcoderCommand, " ") + "\".");
         }
-        final String[] sourceCommand = new String[getSourceArguments().split(" ").length + 1];
-        sourceCommand[0] = transcoderConfig.getBinary();
-        i = 1;
-        for (String part : getSourceArguments().split(" ")) {
-            sourceCommand[i++] = part;
-        }
-        final File tempFile = File.createTempFile("mytunesrss-", "." + FilenameUtils.getExtension(track.getFile().getName()));
-        tempFile.deleteOnExit();
-        FileUtils.copyFile(track.getFile(), tempFile);
-        track.setFile(tempFile);
-        replaceTokens(sourceCommand, track, outputBitRate, outputSampleRate);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("executing " + getSourceName() + " command \"" + StringUtils.join(sourceCommand, " ") + "\".");
-        }
-        mySourceProcess = Runtime.getRuntime().exec(sourceCommand);
-        myTargetProcess = Runtime.getRuntime().exec(targetCommand);
-        new StreamCopyThread(mySourceProcess.getInputStream(), false, myTargetProcess.getOutputStream(), true) {
-            @Override
-            protected void afterExecution(Exception e) {
-                tempFile.delete();
-                if (e != null) {
-                    MyTunesRss.ADMIN_NOTIFY.notifyTranscodingFailure(sourceCommand, targetCommand, e);
-                }
-            }
-        }.start();
-        new LogStreamCopyThread(mySourceProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug)
-                .start();
-        new LogStreamCopyThread(myTargetProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug)
+        myProcess = Runtime.getRuntime().exec(transcoderCommand);
+        new LogStreamCopyThread(myProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug)
                 .start();
     }
 
     public int read() throws IOException {
-        return myTargetProcess.getInputStream().read();
+        return myProcess.getInputStream().read();
     }
 
     @Override
     public void close() throws IOException {
-        mySourceProcess.destroy();
-        myTargetProcess.destroy();
+        myProcess.destroy();
         super.close();
     }
 
-    protected String getSourceName() {
+    protected String getName() {
         return myTranscoderConfig.getName();
     }
 
-    protected String getTargetName() {
-        return "lame";
-    }
-
-    protected String getSourceArguments() {
+    protected String getArguments() {
         return myTranscoderConfig.getOptions();
     }
 
-    protected String getTargetArguments() {
-        return MyTunesRss.CONFIG.getLameTargetOptions();
-    }
-    
-    public static void replaceTokens(String[] command, Track track, int outputBitRate, int outputSampleRate) {
+    public static void replaceTokens(String[] command, Track track) {
         for (int i = 0; i < command.length; i++) {
-            if ("{bitrate}".equals(command[i])) {
-                command[i] = Integer.toString(outputBitRate);
-            } else if ("{samplerate}".equals(command[i])) {
-                command[i] = Integer.toString(outputSampleRate);
-            } else if ("{info.album}".equals(command[i])) {
+            if ("{info.album}".equals(command[i])) {
                 command[i] = track.getAlbum();
             } else if ("{info.artist}".equals(command[i])) {
                 command[i] = track.getOriginalArtist();

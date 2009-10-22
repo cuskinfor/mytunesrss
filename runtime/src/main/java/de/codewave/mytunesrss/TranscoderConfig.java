@@ -26,6 +26,10 @@ public class TranscoderConfig {
 
     private String mySuffixes;
 
+    private String myTargetSuffix;
+
+    private String myTargetContentType;
+
     private String[] mySuffixesSplitted;
 
     private String myMp4Codecs;
@@ -42,6 +46,9 @@ public class TranscoderConfig {
         setOptions(JXPathUtils.getStringValue(context, "options", null));
         setSuffixes(JXPathUtils.getStringValue(context, "suffixes", null));
         setMp4Codecs(JXPathUtils.getStringValue(context, "mp4codecs", null));
+        setMp4Codecs(JXPathUtils.getStringValue(context, "mp4codecs", null));
+        setTargetSuffix(JXPathUtils.getStringValue(context, "targetsuffix", null));
+        setTargetContentType(JXPathUtils.getStringValue(context, "targetcontenttype", null));
     }
 
     public void writeTo(Document settings, Element config) {
@@ -50,6 +57,8 @@ public class TranscoderConfig {
         config.appendChild(DOMUtils.createTextElement(settings, "options", getOptions()));
         config.appendChild(DOMUtils.createTextElement(settings, "suffixes", getSuffixes()));
         config.appendChild(DOMUtils.createTextElement(settings, "mp4codecs", getMp4Codecs()));
+        config.appendChild(DOMUtils.createTextElement(settings, "targetsuffix", getTargetSuffix()));
+        config.appendChild(DOMUtils.createTextElement(settings, "targetcontenttype", getTargetContentType()));
     }
 
     public String getName() {
@@ -85,6 +94,22 @@ public class TranscoderConfig {
         mySuffixesSplitted = StringUtils.split(mySuffixes, ',');
     }
 
+    public String getTargetSuffix() {
+        return myTargetSuffix;
+    }
+
+    public void setTargetSuffix(String targetSuffix) {
+        myTargetSuffix = targetSuffix;
+    }
+
+    public String getTargetContentType() {
+        return myTargetContentType;
+    }
+
+    public void setTargetContentType(String targetContentType) {
+        myTargetContentType = targetContentType;
+    }
+
     public String getMp4Codecs() {
         return myMp4Codecs;
     }
@@ -99,9 +124,9 @@ public class TranscoderConfig {
     }
 
     public boolean isValidFor(String suffix, String mp4codec, MediaType mediaType) {
-        if (mediaType != MediaType.Audio) {
-            return false;
-        }
+//        if (mediaType != MediaType.Audio) {
+//            return false;
+//        }
         if (ArrayUtils.contains(mySuffixesSplitted, StringUtils.trim(StringUtils.lowerCase(suffix)))) {
             if (StringUtils.isBlank(myMp4Codecs) || StringUtils.isBlank(mp4codec)) {
                 return true;

@@ -53,8 +53,6 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setPlaylistType(getRequestParameter("playlistType", "m3u"));
         webConfig.setShowPlayer(getBooleanRequestParameter("showPlayer", false));
         webConfig.setTheme(getRequest().getParameter("theme"));
-        webConfig.setLameTargetBitrate(getIntegerRequestParameter("lameTargetBitrate", 96));
-        webConfig.setLameTargetSampleRate(getIntegerRequestParameter("lameTargetSampleRate", 22050));
         webConfig.setTranscodeOnTheFlyIfPossible(getBooleanRequestParameter("transcodeOnTheFlyIfPossible", false));
         webConfig.setRandomSource(getRequestParameter("randomSource", ""));
         webConfig.setFlashplayerType(getRequestParameter("flashplayerType", "jw"));

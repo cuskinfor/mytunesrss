@@ -374,7 +374,7 @@
                     </td>
                 </tr>
             </c:if>
-            <c:if test="${authUser.transcoder && globalConfig.validLameBinary && !empty globalConfig.transcoderConfigs}">
+            <c:if test="${authUser.transcoder && !empty globalConfig.transcoderConfigs}">
                 <c:forEach var="tc" items="${globalConfig.transcoderConfigs}">
                     <tr <mt:flipFlop/>>
                         <td><fmt:message key="settings.transcoder" />: <c:out value="${tc.name}" /></td>
@@ -387,28 +387,6 @@
                     <td><fmt:message key="settings.transcodeOnTheFlyIfPossible" /></td>
                     <td>
                         <input type="checkbox" name="transcodeOnTheFlyIfPossible" value="true" <c:if test="${config.transcodeOnTheFlyIfPossible}">checked="checked"</c:if> />
-                    </td>
-                </tr>
-                <tr <mt:flipFlop/>>
-                    <td><fmt:message key="settings.lameTargetBitrate" /></td>
-                    <td>
-                        <select name="lameTargetBitrate">
-                            <option value="32" <c:if test="${config.lameTargetBitrate eq '32'}">selected="selected"</c:if>>32 kbit</option>
-                            <option value="64" <c:if test="${config.lameTargetBitrate eq '64'}">selected="selected"</c:if>>64 kbit</option>
-                            <option value="96" <c:if test="${config.lameTargetBitrate eq '96'}">selected="selected"</c:if>>96 kbit</option>
-                            <option value="128" <c:if test="${config.lameTargetBitrate eq '128'}">selected="selected"</c:if>>128 kbit</option>
-                            <option value="192" <c:if test="${config.lameTargetBitrate eq '192'}">selected="selected"</c:if>>192 kbit</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr <mt:flipFlop/>>
-                    <td><fmt:message key="settings.lameTargetSampleRate" /></td>
-                    <td>
-                        <select name="lameTargetSampleRate">
-                            <option value="11025" <c:if test="${config.lameTargetSampleRate eq '11025'}">selected="selected"</c:if>>11025 Hz</option>
-                            <option value="22050" <c:if test="${config.lameTargetSampleRate eq '22050'}">selected="selected"</c:if>>22050 Hz</option>
-                            <option value="44100" <c:if test="${config.lameTargetSampleRate eq '44100'}">selected="selected"</c:if>>44100 Hz</option>
-                        </select>
                     </td>
                 </tr>
             </c:if>
