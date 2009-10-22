@@ -10,7 +10,7 @@
 <c:choose>
     <c:when test="${config.flashplayerType eq 'jw'}">
         <embed
-          src="${appUrl}/flashplayer/mediaplayer-4-4.swf"
+          src="${appUrl}/flashplayer/mediaplayer-4-6.swf"
           width="100%"
           height="100%"
           allowscriptaccess="always"
