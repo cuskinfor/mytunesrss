@@ -9,6 +9,9 @@
 
         <release version="3.8.0-EAP-6" date="2009-xx-xx" description="3.8.0 EAP 6">
             <action dev="mdescher" type="update">
+                MYTUNESRSS-28: restricted playlist was not saved correctly.
+            </action>
+            <action dev="mdescher" type="update">
                 Fixed bugs in restricted playlist handling (MYTUNESRSS-4).
             </action>
             <action dev="mdescher" type="update">

@@ -12,9 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -132,7 +132,6 @@ public class EditUser implements MyTunesRssEventListener {
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myBandwidthLimit, 10, 1024, true, MyTunesRssUtils.getBundleString(
                 "error.illegalBandwidthLimit")));
         JTextFieldValidation.validateAll(myRootPanel);
-        fillPlaylistSelect();
         myTimer.schedule(new RefreshTask(), 1000);
     }
 
@@ -172,6 +171,7 @@ public class EditUser implements MyTunesRssEventListener {
                 }
             });
         }
+        fillPlaylistSelect();
         initValues();
         myRootPanel.setVisible(myUser != null);
     }
@@ -235,6 +235,7 @@ public class EditUser implements MyTunesRssEventListener {
             myPermExternalSitesInput.setSelected(myUser.isExternalSites());
             mySearchFuzzinessInput.setText(myUser.getSearchFuzziness() > -1 ? Integer.toString(myUser.getSearchFuzziness()) : "");
             myPermEditTagsInput.setSelected(myUser.isEditTags());
+            selectPlaylist(myUser.getPlaylistId());
             setParentUser(myUser.getParent() != null);
             if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
                 SwingUtils.enableElementAndLabel(myBytesQuotaInput, false);
@@ -285,22 +286,27 @@ public class EditUser implements MyTunesRssEventListener {
                     return MyTunesRssUtils.getBundleString("editUser.noPlaylist");
                 }
             });
-            int index = 1;
             if (playlists != null) {
                 for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
                     myRestrictionPlaylistInput.addItem(playlist);
-                    if (myUser != null && StringUtils.isNotEmpty(myUser.getPlaylistId()) && myUser.getPlaylistId().equals(playlist.getId())) {
-                        myRestrictionPlaylistInput.setSelectedIndex(index);
-                    }
-                    index++;
                 }
             }
+            selectPlaylist(myUser.getPlaylistId());
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not query playlists from database.", e);
             }
         } finally {
             session.commit();
+        }
+    }
+
+    private void selectPlaylist(String playlistId) {
+        for (int i = 0; i < myRestrictionPlaylistInput.getItemCount(); i++) {
+            if (myUser != null && StringUtils.isNotEmpty(myUser.getPlaylistId()) && myUser.getPlaylistId().equals(((Playlist) myRestrictionPlaylistInput.getItemAt(i)).getId())) {
+                myRestrictionPlaylistInput.setSelectedIndex(i);
+                return;
+            }
         }
     }
 
@@ -372,6 +378,7 @@ public class EditUser implements MyTunesRssEventListener {
             myUser.setExternalSites(myPermExternalSitesInput.isSelected());
             myUser.setSearchFuzziness(MyTunesRssUtils.getTextFieldInteger(mySearchFuzzinessInput, -1));
             myUser.setEditTags(myPermEditTagsInput.isSelected());
+            myUser.setPlaylistId(((Playlist) myRestrictionPlaylistInput.getSelectedItem()).getId());
         }
     }
 
