@@ -62,7 +62,7 @@
             AND rltp.playlist_id = :restrictedPlaylistId
             AND rltp.track_id = t.id
             AND t.album = a.name
-            GROUP BY albumname, track_count, artist_count, artist, image_hash
+            GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash
             ORDER BY albumname
             ]]>
         </sql>

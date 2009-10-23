@@ -129,6 +129,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         } else {
             statement = MyTunesRssUtils.createStatement(connection, "findTracksByIds" + suffix);
         }
+        statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
         return execute(statement, new TrackResultBuilder());
     }
 }
