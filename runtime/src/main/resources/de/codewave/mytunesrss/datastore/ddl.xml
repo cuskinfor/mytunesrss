@@ -132,7 +132,7 @@
         <sql>
             {create_table_prefix} tag (
                 track_id VARCHAR(100) NOT NULL,
-                tag VARCHAR(50) NOT NULL
+                tag VARCHAR(50) NOT NULL,
                 CONSTRAINT fk_tag_track_id FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE
             )
         </sql>
