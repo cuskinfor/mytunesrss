@@ -203,6 +203,10 @@ public class MyTunesRssRegistration {
         return !myReleaseVersion && isExpired();
     }
 
+    public boolean isReleaseVersion() {
+        return myReleaseVersion;
+    }
+
     public JXPathContext getSettings() {
         return mySettings;
     }

@@ -91,10 +91,14 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
 
     public class LicenseLookupButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("dialog.loadLicense"), FileDialog.LOAD);
-            fileDialog.setVisible(true);
-            if (fileDialog.getFile() != null) {
-                MyTunesRssRegistration.register(new File(fileDialog.getDirectory(), fileDialog.getFile()));
+            if (MyTunesRss.REGISTRATION.isReleaseVersion()) {
+                FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("dialog.loadLicense"), FileDialog.LOAD);
+                fileDialog.setVisible(true);
+                if (fileDialog.getFile() != null) {
+                    MyTunesRssRegistration.register(new File(fileDialog.getDirectory(), fileDialog.getFile()));
+                }
+            } else {
+                MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.preReleaseNoRegister"));
             }
         }
     }
