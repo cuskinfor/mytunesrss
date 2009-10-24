@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.7.8" date="2009-xx-xx" description="Bugfix release">
+            <action dev="mdescher" type="fix">
+                Use execute instead of executeQuery for deleting temp playlist.
+            </action>
+		</release>
+
         <release version="3.7.7" date="2009-10-20" description="Bugfix release">
             <action dev="mdescher" type="fix">
                 New version codewave-utils to fix update download problem.

@@ -79,7 +79,7 @@ public class TrackUtils {
                         public void execute(Connection connection) throws SQLException {
                             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeTempPlaylistWithId");
                             statement.setString("id", finalSectionHash);
-                            statement.executeQuery();
+                            statement.execute();
                         }
                     });
                     SaveTempPlaylistStatement statement = new SaveTempPlaylistStatement();
