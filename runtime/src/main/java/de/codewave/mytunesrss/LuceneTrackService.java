@@ -102,7 +102,7 @@ public class LuceneTrackService {
         for (String searchTerm : searchTerms) {
             if (!STOP_WORDS.contains(searchTerm)) {
                 BooleanQuery orQuery = new BooleanQuery();
-                for (String field : new String[]{"name", "album", "artist", "comment", "tagsdml"}) {
+                for (String field : new String[]{"name", "album", "artist", "comment", "tags"}) {
                     Term term = new Term(field, searchTerm);
                     Query termQuery = fuzziness > 0 ? new FuzzyQuery(term, ((float)(100 - fuzziness)) / 100f) : new TermQuery(term);
                     orQuery.add(termQuery, BooleanClause.Occur.SHOULD);
