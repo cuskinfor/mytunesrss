@@ -7,6 +7,7 @@ import de.codewave.mytunesrss.datastore.statement.FindAllTagsForTrackQuery;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.ResultBuilder;
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -24,6 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.*;
 
 /**
@@ -50,12 +53,26 @@ public class LuceneTrackService {
         IndexWriter iwriter = new IndexWriter(directory, analyzer, true, new IndexWriter.MaxFieldLength(300));
         FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
+        final Map<String, List<String>> trackTagMap = new HashMap<String, List<String>>();
+        session.executeQuery(new DataStoreQuery<Object>() {
+            @Override
+            public Object execute(Connection connection) throws SQLException {
+                execute(MyTunesRssUtils.createStatement(connection, "getTrackTagMap"), new ResultBuilder<Object>() {
+                    public Object create(ResultSet resultSet) throws SQLException {
+                        List<String> tags = trackTagMap.get(resultSet.getString(1));
+                        if (tags == null) {
+                            tags = new ArrayList<String>();
+                            trackTagMap.put(resultSet.getString(1), tags);
+                        }
+                        tags.add(resultSet.getString(2));
+                        return null;
+                    }
+                });
+                return null;
+            }
+        });
         DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
         for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
-            StringBuilder tagBuilder = new StringBuilder();
-            for (String tag : session.executeQuery(new FindAllTagsForTrackQuery(track.getId())).getResults()) {
-                tagBuilder.append(tag).append(" ");
-            }
             Document document = new Document();
             document.add(new Field("id", track.getId(), Field.Store.YES, Field.Index.NO));
             document.add(new Field("name", track.getName(), Field.Store.NO, Field.Index.ANALYZED));
@@ -64,9 +81,8 @@ public class LuceneTrackService {
             if (StringUtils.isNotBlank(track.getComment())) {
                 document.add(new Field("comment", track.getComment(), Field.Store.NO, Field.Index.ANALYZED));
             }
-            String tags = tagBuilder.toString().trim();
-            if (StringUtils.isNotBlank(tags)) {
-                document.add(new Field("tags", tags, Field.Store.NO, Field.Index.ANALYZED));
+            if (trackTagMap.get(track.getId()) != null) {
+                document.add(new Field("tags", StringUtils.join(trackTagMap.get(track.getId()), " "), Field.Store.NO, Field.Index.ANALYZED));
             }
             iwriter.addDocument(document);
         }

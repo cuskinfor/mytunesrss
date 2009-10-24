@@ -829,6 +829,12 @@
         </sql>
     </statement>
 
+    <statement name="getTrackTagMap">
+        <sql>
+            SELECT t.id, tg.tag FROM track t, tag tg WHERE t.id = tg.track_id
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
