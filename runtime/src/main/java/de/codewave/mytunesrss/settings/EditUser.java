@@ -291,7 +291,9 @@ public class EditUser implements MyTunesRssEventListener {
                     myRestrictionPlaylistInput.addItem(playlist);
                 }
             }
-            selectPlaylist(myUser.getPlaylistId());
+            if (myUser != null) {
+                selectPlaylist(myUser.getPlaylistId());
+            }
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not query playlists from database.", e);
