@@ -148,4 +148,12 @@ public interface EditUserConfigMBean {
     boolean isPermissionEditTags();
 
     void setPermissionEditTags(boolean permissionEditTags);
+
+    String[] getForceTranscoders();
+
+    void addForceTranscoder(String name);
+
+    void removeForceTranscoder(String name);
+
+    void clearForceTranscoders();
 }

@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss.settings;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
@@ -15,13 +17,14 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
+import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2006<br> <b>Company:</b>       daGama Business Travel GmbH<br> <b>Creation Date:</b>
@@ -74,6 +77,8 @@ public class EditUser implements MyTunesRssEventListener {
     private JCheckBox myPermExternalSitesInput;
     private JTextField mySearchFuzzinessInput;
     private JCheckBox myPermEditTagsInput;
+    private JPanel myForceTranscodersPanel;
+    private JLabel myForceTranscodersLabel;
     private User myUser;
     private DefaultMutableTreeNode myUserNode;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
@@ -172,8 +177,39 @@ public class EditUser implements MyTunesRssEventListener {
             });
         }
         fillPlaylistSelect();
+        fillForceTranscoderPanel();
         initValues();
         myRootPanel.setVisible(myUser != null);
+    }
+
+    private void fillForceTranscoderPanel() {
+        myForceTranscodersPanel.removeAll();
+        List<TranscoderConfig> transcoderConfigs = MyTunesRss.CONFIG.getTranscoderConfigs();
+        myForceTranscodersPanel.setVisible(transcoderConfigs != null && !transcoderConfigs.isEmpty());
+        myForceTranscodersLabel.setVisible(transcoderConfigs != null && !transcoderConfigs.isEmpty());
+        if (transcoderConfigs != null && !transcoderConfigs.isEmpty()) {
+            myForceTranscodersPanel.setLayout(new GridLayoutManager(transcoderConfigs.size(), 1));
+            Collections.sort(transcoderConfigs, new Comparator<TranscoderConfig>() {
+                public int compare(TranscoderConfig o1, TranscoderConfig o2) {
+                    return StringUtils.lowerCase(o1.getName()).compareTo(StringUtils.lowerCase(o2.getName()));
+                }
+            });
+            int row = 0;
+            for (TranscoderConfig transcoder : transcoderConfigs) {
+                GridConstraints gc = new GridConstraints(row++,
+                        0,
+                        1,
+                        1,
+                        GridConstraints.ANCHOR_WEST,
+                        GridConstraints.FILL_HORIZONTAL,
+                        GridConstraints.SIZEPOLICY_FIXED,
+                        GridConstraints.SIZEPOLICY_FIXED,
+                        null,
+                        null,
+                        null);
+                myForceTranscodersPanel.add(new JCheckBox(transcoder.getName()), gc);
+            }
+        }
     }
 
     private void setParentUser(boolean parentUser) {
@@ -239,6 +275,12 @@ public class EditUser implements MyTunesRssEventListener {
             setParentUser(myUser.getParent() != null);
             if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
                 SwingUtils.enableElementAndLabel(myBytesQuotaInput, false);
+            }
+            Set<String> forceTranscoders = myUser.getForceTranscoders();
+            for (Component transcoderCheckbox : myForceTranscodersPanel.getComponents()) {
+                if (transcoderCheckbox instanceof JCheckBox) {
+                    ((JCheckBox) transcoderCheckbox).setSelected(forceTranscoders.contains(((JCheckBox) transcoderCheckbox).getText()));
+                }
             }
         } else {
             myUserNameInput.setText(null);
@@ -381,6 +423,14 @@ public class EditUser implements MyTunesRssEventListener {
             myUser.setSearchFuzziness(MyTunesRssUtils.getTextFieldInteger(mySearchFuzzinessInput, -1));
             myUser.setEditTags(myPermEditTagsInput.isSelected());
             myUser.setPlaylistId(((Playlist) myRestrictionPlaylistInput.getSelectedItem()).getId());
+            myUser.clearForceTranscoders();
+            for (Component transcoderCheckbox : myForceTranscodersPanel.getComponents()) {
+                if (transcoderCheckbox instanceof JCheckBox) {
+                    if (((JCheckBox) transcoderCheckbox).isSelected()) {
+                        myUser.addForceTranscoder(((JCheckBox) transcoderCheckbox).getText());
+                    }
+                }
+            }
         }
     }
 

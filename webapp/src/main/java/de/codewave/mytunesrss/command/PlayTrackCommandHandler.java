@@ -58,7 +58,8 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                     } else {
-                        Transcoder transcoder = "false".equals(getRequestParameter("notranscode", "false")) ? Transcoder.createTranscoder(track, getWebConfig(), getRequest()) :
+                        boolean notranscode = "true".equals(getRequestParameter("notranscode", "false"));
+                        Transcoder transcoder = getAuthUser().isForceTranscoders() || !notranscode ? Transcoder.createTranscoder(track, getAuthUser(), getWebConfig(), getRequest()) :
                                 null;
                         if (transcoder != null) {
                             streamSender = transcoder.getStreamSender();

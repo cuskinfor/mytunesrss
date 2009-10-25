@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.lastfm.LastFmSession;
 import de.codewave.mytunesrss.lastfm.LastFmSubmission;
 import de.codewave.mytunesrss.lastfm.LastFmUtils;
+import de.codewave.mytunesrss.settings.DialogLayout;
 import de.codewave.utils.servlet.RangeHeader;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.xml.DOMUtils;
@@ -11,15 +12,14 @@ import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.OutputStream;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.User
@@ -33,6 +33,10 @@ public class User implements MyTunesRssEventListener, Cloneable {
                 LastFmUtils.sendSubmissions(myLastFmSession);
             }
         }
+    }
+
+    public boolean isForceTranscoders() {
+        return myForceTranscoders != null && !myForceTranscoders.isEmpty();
     }
 
     public enum QuotaType {
@@ -85,6 +89,7 @@ public class User implements MyTunesRssEventListener, Cloneable {
     private boolean myExternalSites;
     private int mySearchFuzziness;
     private boolean myEditTags;
+    private Set<String> myForceTranscoders = new HashSet<String>();
 
     public User(String name) {
         myName = name;
@@ -386,6 +391,22 @@ public class User implements MyTunesRssEventListener, Cloneable {
         myEditTags = editTags;
     }
 
+    public Set<String> getForceTranscoders() {
+        return new HashSet<String>(myForceTranscoders);
+    }
+
+    public void clearForceTranscoders() {
+        myForceTranscoders.clear();
+    }
+
+    public void addForceTranscoder(String transcoder) {
+        myForceTranscoders.add(transcoder);
+    }
+
+    public void removeForceTranscoder(String transcoder) {
+        myForceTranscoders.remove(transcoder);
+    }
+
     @Override
     public boolean equals(Object object) {
         return object != null && object instanceof User && getName().equals(((User) object).getName());
@@ -502,6 +523,10 @@ public class User implements MyTunesRssEventListener, Cloneable {
         setChangeEmail(JXPathUtils.getBooleanValue(settings, "changeEmail", false));
         setSearchFuzziness(JXPathUtils.getIntValue(settings, "searchFuzziness", 0));
         setEditTags(JXPathUtils.getBooleanValue(settings, "editTags", false));
+        Iterator<JXPathContext> forceTranscoderIterator = JXPathUtils.getContextIterator(settings, "forcetranscoder/name");
+        while (forceTranscoderIterator.hasNext()) {
+            myForceTranscoders.add(JXPathUtils.getStringValue(forceTranscoderIterator.next(), ".", null));
+        }
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -555,6 +580,13 @@ public class User implements MyTunesRssEventListener, Cloneable {
         users.appendChild(DOMUtils.createBooleanElement(settings, "changeEmail", isChangeEmail()));
         users.appendChild(DOMUtils.createIntElement(settings, "searchFuzziness", getSearchFuzziness()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "editTags", isEditTags()));
+        if (myForceTranscoders != null && myForceTranscoders.size() > 0) {
+            Element forceTranscoders = settings.createElement("forcetranscoder");
+            users.appendChild(forceTranscoders);
+            for (String transcoder : myForceTranscoders) {
+                forceTranscoders.appendChild(DOMUtils.createTextElement(settings, "name", transcoder));
+            }
+        }
     }
 
     public synchronized void playLastFmTrack(final Track track) {
@@ -616,5 +648,18 @@ public class User implements MyTunesRssEventListener, Cloneable {
             throw new RuntimeException("Cloning user \"" + myName + "\" failed.", e);
 
         }
+    }
+
+    public TranscoderConfig getTranscoder(Track track) {
+        for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+            if (isActiveTranscoder(config.getName()) && config.isValidFor(FileSupportUtils.getFileSuffix(track.getFilename()), track.getMp4Codec(), track.getMediaType())) {
+                return config;
+            }
+        }
+        return null;
+    }
+
+    public boolean isActiveTranscoder(String name) {
+        return myForceTranscoders != null && myForceTranscoders.contains(name);
     }
 }

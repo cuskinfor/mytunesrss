@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.transcoder;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.TranscoderConfig;
+import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.servlet.FileSender;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
 /**
  * de.codewave.mytunesrss.transcoder.Transcoder
@@ -26,10 +28,23 @@ public class Transcoder {
     private boolean myActive;
     private TranscoderConfig myTranscoderConfig;
 
-    public static Transcoder createTranscoder(Track track, WebConfig webConfig, HttpServletRequest request) {
-        TranscoderConfig transcoderConfig = webConfig.getTranscoder(track);
-        Transcoder transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, webConfig, request) : null;
+    public static Transcoder createTranscoder(Track track, User user, WebConfig webConfig, HttpServletRequest request) {
+        TranscoderConfig transcoderConfig = user.getTranscoder(track);
+        Transcoder transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, request) : null;
+        if (transcoder == null) {
+            transcoderConfig = webConfig.getTranscoder(track);
+            transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, webConfig, request) : null;
+        }
         return transcoder != null && transcoder.isAvailable() && transcoder.isActive() ? transcoder : null;
+    }
+
+    protected Transcoder(TranscoderConfig transcoderConfig, Track track, HttpServletRequest request) {
+        myTrack = track;
+        myPlayerRequest = "true".equalsIgnoreCase(request.getParameter("playerRequest"));
+        myTempFile = (ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request)) &&
+                !myPlayerRequest;
+        myTranscoderConfig = transcoderConfig;
+        myActive = true;
     }
 
     protected Transcoder(TranscoderConfig transcoderConfig, Track track, WebConfig webConfig, HttpServletRequest request) {

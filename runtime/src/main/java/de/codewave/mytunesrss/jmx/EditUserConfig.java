@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.jmx;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -21,6 +22,7 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * de.codewave.mytunesrss.jmx.EditUserConfig
@@ -440,6 +442,30 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
 
     public void setPermissionEditTags(boolean permissionEditTags) {
         MyTunesRss.CONFIG.getUser(myUsername).setEditTags(permissionEditTags);
+        onChange();
+    }
+
+    public String[] getForceTranscoders() {
+        Set<String> transcoders = MyTunesRss.CONFIG.getUser(myUsername).getForceTranscoders();
+        return transcoders.toArray(new String[transcoders.size()]);
+    }
+
+    public void addForceTranscoder(String name) {
+        for (TranscoderConfig transcoderConfig : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+            if (name.equals(transcoderConfig.getName())) {
+                MyTunesRss.CONFIG.getUser(myUsername).addForceTranscoder(name);
+                onChange();
+            }
+        }
+    }
+
+    public void removeForceTranscoder(String name) {
+        MyTunesRss.CONFIG.getUser(myUsername).removeForceTranscoder(name);
+        onChange();
+    }
+
+    public void clearForceTranscoders() {
+        MyTunesRss.CONFIG.getUser(myUsername).clearForceTranscoders();
         onChange();
     }
 }
