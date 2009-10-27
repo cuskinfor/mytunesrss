@@ -7,6 +7,7 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.settings.Settings;
 import de.codewave.systray.SystrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,8 @@ public class MyTunesRssSystray implements MyTunesRssEventListener {
     private MenuItem myShow;
 
     public MyTunesRssSystray(Settings settingsForm) throws AWTException {
-        Image image = Toolkit.getDefaultToolkit().createImage(MyTunesRss.class.getResource("/de/codewave/mytunesrss/SysTray.png"));
+        String resourceName = SystemUtils.IS_OS_WINDOWS ? "/de/codewave/mytunesrss/SysTrayWindows.png" : "/de/codewave/mytunesrss/SysTray.png";
+        Image image = Toolkit.getDefaultToolkit().createImage(MyTunesRss.class.getResource(resourceName));
         String tooltip = MyTunesRssUtils.getBundleString("systray.menuLabel");
         PopupMenu menu = createPopupMenu(settingsForm);
         myUUID = SystrayUtils.add(image, tooltip, menu, new ActionListener() {

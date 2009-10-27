@@ -74,7 +74,6 @@ public class MyTunesRss {
     public static MessageDigest SHA1_DIGEST;
     public static MessageDigest MD5_DIGEST;
     public static JFrame ROOT_FRAME;
-    public static JFrame DUMMY_FRAME;
     public static ImageIcon PLEASE_WAIT_ICON;
     public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
     public static int OPTION_PANE_MAX_MESSAGE_LENGTH = 100;
@@ -224,11 +223,6 @@ public class MyTunesRss {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             ROOT_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
             ROOT_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
-            ROOT_FRAME.setLocation(Integer.MAX_VALUE, 0);
-            DUMMY_FRAME = new JFrame(BUNDLE.getString("settings.title") + " v" + VERSION);
-            DUMMY_FRAME.setIconImage(ImageIO.read(MyTunesRss.class.getResource("WindowIcon.png")));
-            DUMMY_FRAME.setLocation(Integer.MAX_VALUE, 0);
-            DUMMY_FRAME.setVisible(true);
             PLEASE_WAIT_ICON = new ImageIcon(MyTunesRss.class.getResource("PleaseWait.gif"));
         }
         if (System.getProperty("de.codewave.mytunesrss") == null) {
@@ -457,7 +451,6 @@ public class MyTunesRss {
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
         SETTINGS.init();
-        DUMMY_FRAME.dispose();
         ROOT_FRAME.setVisible(true);
         ROOT_FRAME.pack();
         if (x == Integer.MAX_VALUE && y == Integer.MAX_VALUE) {

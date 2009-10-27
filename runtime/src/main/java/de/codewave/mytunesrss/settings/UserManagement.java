@@ -270,7 +270,7 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
             Object userObject = node.getUserObject();
             if (node.isRoot()) {
                 setText("");
-            } else {
+            } else if (userObject instanceof User) {
                 setIcon(node.isLeaf() ? myUserIcon : myGroupIcon);
                 setText(((User) userObject).getName());
             }
