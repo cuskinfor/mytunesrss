@@ -57,13 +57,20 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         MyTunesRssEventManager.getInstance().addListener(this);
         myUseProxyInput.addActionListener(new UseProxyActionListener());
         myProgramUpdateButton.addActionListener(new ProgramUpdateButtonListener());
+        mySmtpProtocolInput.removeAllItems();
         mySmtpProtocolInput.addItem(SmtpProtocol.PLAINTEXT);
         mySmtpProtocolInput.addItem(SmtpProtocol.STARTTLS);
         mySmtpProtocolInput.addItem(SmtpProtocol.SSL);
         mySmtpProtocolInput.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                return super.getListCellRendererComponent(list, MyTunesRssUtils.getBundleString("smtp.protocol." + ((SmtpProtocol)value).name().toLowerCase(Locale.ENGLISH)), index, isSelected, cellHasFocus);
+                String displayName;
+                if (value != null) {
+                    displayName = MyTunesRssUtils.getBundleString("smtp.protocol." + ((SmtpProtocol)value).name().toLowerCase(Locale.ENGLISH));
+                } else {
+                    displayName = null;
+                }
+                return super.getListCellRendererComponent(list, displayName, index, isSelected, cellHasFocus);
             }
         });
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myProxyHostInput,
