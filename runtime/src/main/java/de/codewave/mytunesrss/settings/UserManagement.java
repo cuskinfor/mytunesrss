@@ -61,13 +61,7 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
         addUsers(rootNode, MyTunesRss.CONFIG.getUsers(), null);
         myUserTree.setModel(new DefaultTreeModel(rootNode));
         DefaultMutableTreeNode root = (((DefaultMutableTreeNode) myUserTree.getModel().getRoot()));
-        if (root.getChildCount() == 0) {
-            myEditUserForm.init(null, null);
-        } else {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) root.getChildAt(0);
-            myEditUserForm.init(node, (User) node.getUserObject());
-            myUserTree.setSelectionPath(new TreePath(node.getPath()));
-        }
+        myEditUserForm.init(null, null);
     }
 
     private void addUsers(DefaultMutableTreeNode node, Collection<User> users, User parent) {

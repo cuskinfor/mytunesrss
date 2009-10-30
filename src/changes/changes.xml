@@ -9,6 +9,9 @@
 
         <release version="3.8.0-EAP-6" date="2009-xx-xx" description="3.8.0 EAP 6">
             <action dev="mdescher" type="add">
+                Help text when opening the user management dialog.
+            </action>
+            <action dev="mdescher" type="add">
                 Optionally configure forced transcoders for a user.
             </action>
             <action dev="mdescher" type="add">
