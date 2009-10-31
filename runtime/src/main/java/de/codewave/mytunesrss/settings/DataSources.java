@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +23,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * de.codewave.mytunesrss.settings.Options
@@ -40,8 +42,13 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
     private JTextField myArtistFallbackInput;
     private JTextField myAlbumFallbackInput;
     private JButton myAddRemoteButton;
+    private JTable myReplacementsTable;
+    private JScrollPane myReplacementsScrollPane;
+    private JButton myAddReplacementButton;
+    private JButton myRemoveReplacementButton;
     private DefaultListModel myListModel;
     private File myFileChooserDierctory;
+    private PathReplacementsTableModel myPathReplacementsTableModel;
 
     private void createUIComponents() {
         myBaseDirsList = new JList() {
@@ -96,7 +103,32 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
             }
         });
         myAddRemoteButton.addActionListener(new AddRemoteActionListener());
+        myAddReplacementButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                myPathReplacementsTableModel.getPathReplacements().add(new PathReplacement("search expression", "replacement")); // TODO i18n
+                myPathReplacementsTableModel.fireTableDataChanged();
+            }
+        });
+        myRemoveReplacementButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int[] rows = myReplacementsTable.getSelectedRows();
+                if (rows.length > 0) {
+                    for (int i = rows.length - 1; i >= 0; i--) {
+                        myPathReplacementsTableModel.getPathReplacements().remove(rows[i]);
+                    }
+                }
+                myPathReplacementsTableModel.fireTableDataChanged();
+            }
+        });
+        myReplacementsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                myRemoveReplacementButton.setEnabled(myReplacementsTable.getSelectedRow() != -1);
+            }
+        });
+        myPathReplacementsTableModel = new PathReplacementsTableModel();
+        myReplacementsTable.setModel(myPathReplacementsTableModel);
         MyTunesRssEventManager.getInstance().addListener(this);
+        // TODO path replacements validation
     }
 
     public void handleEvent(final MyTunesRssEvent event) {
@@ -275,6 +307,80 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
                 addAllToListModel();
             } else {
                 MyTunesRssUtils.showErrorMessage(error);
+            }
+        }
+    }
+
+    public class PathReplacementsTableModel extends AbstractTableModel {
+        private java.util.List<PathReplacement> myPathReplacements;
+
+        public PathReplacementsTableModel() {
+            myPathReplacements = new ArrayList<PathReplacement>();
+        }
+
+        public java.util.List<PathReplacement> getPathReplacements() {
+            return myPathReplacements;
+        }
+
+        public void setPathReplacements(java.util.List<PathReplacement> pathReplacements) {
+            myPathReplacements = pathReplacements;
+            fireTableDataChanged();
+        }
+
+        public int getRowCount() {
+            return myPathReplacements.size();
+        }
+
+        public int getColumnCount() {
+            return 2;
+        }
+
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            PathReplacement replacement = myPathReplacements.get(rowIndex);
+            switch (columnIndex) {
+                case 0:
+                    return replacement.getSearchPattern();
+                case 1:
+                    return replacement.getReplacement();
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return true;
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            switch (columnIndex) {
+                case 0:
+                case 1:
+                    return String.class;
+                default:
+                    return Object.class;
+            }
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            return MyTunesRssUtils.getBundleString("settings.pathReplacements.columnheader." + column);
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            if (rowIndex < myPathReplacements.size()) {
+                switch (columnIndex) {
+                    case 0:
+                        myPathReplacements.get(rowIndex).setSearchPattern((String) aValue);
+                        break;
+                    case 1:
+                        myPathReplacements.get(rowIndex).setReplacement((String) aValue);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("No such column: " + columnIndex + ".");
+                }
             }
         }
     }
