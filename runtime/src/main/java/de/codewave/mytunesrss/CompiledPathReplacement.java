@@ -15,6 +15,10 @@ public class CompiledPathReplacement {
         myReplacement = pathReplacement.getReplacement();
     }
 
+    public boolean matches(String input) {
+        return myPattern.matcher(input).find();
+    }
+
     public String replace(String input) {
         Matcher matcher = myPattern.matcher(input);
         return matcher.replaceAll(myReplacement);

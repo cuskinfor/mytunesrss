@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.regex.Matcher;
 
 /**
  * de.codewave.mytunesrss.datastore.itunes.TrackListenerr
@@ -38,6 +39,7 @@ public class TrackListener implements PListHandlerListener {
     private long myMissingFiles;
     private String[] myDisabledMp4Codecs;
     private Thread myWatchdogThread;
+    private Set<CompiledPathReplacement> myPathReplacements;
 
     public TrackListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
                          Collection<String> trackIds) throws SQLException {
@@ -47,6 +49,10 @@ public class TrackListener implements PListHandlerListener {
         myTrackIdToPersId = trackIdToPersId;
         myTrackIds = trackIds;
         myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDisabledMp4Codecs())), ",");
+        myPathReplacements = new HashSet<CompiledPathReplacement>();
+        for (PathReplacement pathReplacement : MyTunesRss.CONFIG.getPathReplacements()) {
+            myPathReplacements.add(new CompiledPathReplacement(pathReplacement));
+        }
     }
 
     public int getUpdatedCount() {
@@ -121,7 +127,7 @@ public class TrackListener implements PListHandlerListener {
                             statement.setAlbum(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Album"))));
                             statement.setTime((int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0));
                             statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
-                            statement.setFileName(filename);
+                            statement.setFileName(applyReplacements(filename));
                             statement.setProtected(FileSupportUtils.isProtected(filename));
                             statement.setMediaType(track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue() ? MediaType.Video : MediaType.Audio);
                             statement.setGenre(StringUtils.trimToNull((String) track.get("Genre")));
@@ -143,6 +149,15 @@ public class TrackListener implements PListHandlerListener {
         }
         myTrackIdToPersId.remove(track.get("Track ID"));
         return false;
+    }
+
+    private String applyReplacements(String originalFileName) {
+        for (CompiledPathReplacement pathReplacement : myPathReplacements) {
+            if (pathReplacement.matches(originalFileName)) {
+                return pathReplacement.replace(originalFileName);
+            }
+        }
+        return originalFileName;
     }
 
     private boolean isMp4CodecDisabled(String mp4Codec) {
