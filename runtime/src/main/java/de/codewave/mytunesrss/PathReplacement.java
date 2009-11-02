@@ -1,7 +1,5 @@
 package de.codewave.mytunesrss;
 
-import java.util.regex.Pattern;
-
 /**
  * de.codewave.mytunesrss.PathReplacement
  */
@@ -28,5 +26,15 @@ public class PathReplacement {
 
     public void setReplacement(String replacement) {
         myReplacement = replacement;
+    }
+
+    @Override
+    public int hashCode() {
+        return mySearchPattern.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null && obj instanceof PathReplacement && mySearchPattern.equals(((PathReplacement) obj).getSearchPattern());
     }
 }

@@ -29,4 +29,10 @@ public interface DatasourcesConfigMBean {
     String addDatasource(String datasource);
 
     String removeDatasource(String datasource);
+
+    String[] getPathReplacements();
+
+    String addPathReplacement(String searchPattern, String replacement);
+
+    String removePathReplacement(String searchPattern);
 }

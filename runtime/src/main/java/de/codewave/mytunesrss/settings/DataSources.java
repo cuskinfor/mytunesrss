@@ -7,6 +7,8 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.swing.SwingUtils;
+import de.codewave.utils.swing.JTextFieldValidation;
+import de.codewave.utils.swing.CompositeTextFieldValidation;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -24,6 +26,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * de.codewave.mytunesrss.settings.Options
@@ -128,7 +131,6 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
         myPathReplacementsTableModel = new PathReplacementsTableModel();
         myReplacementsTable.setModel(myPathReplacementsTableModel);
         MyTunesRssEventManager.getInstance().addListener(this);
-        // TODO path replacements validation
     }
 
     public void handleEvent(final MyTunesRssEvent event) {
@@ -164,6 +166,7 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
         myArtistFallbackInput.setText(MyTunesRss.CONFIG.getArtistFallback());
         myUploadDirInput.setText(MyTunesRss.CONFIG.getUploadDir());
         myCreateUserDir.setSelected(MyTunesRss.CONFIG.isUploadCreateUserDir());
+        myPathReplacementsTableModel.setPathReplacements(new ArrayList<PathReplacement>(MyTunesRss.CONFIG.getPathReplacements()));
     }
 
     private void addAllToListModel() {
@@ -173,11 +176,25 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
     }
 
     public String updateConfigFromGui() {
-        MyTunesRss.CONFIG.setAlbumFallback(myAlbumFallbackInput.getText());
-        MyTunesRss.CONFIG.setArtistFallback(myArtistFallbackInput.getText());
-        MyTunesRss.CONFIG.setUploadDir(myUploadDirInput.getText());
-        MyTunesRss.CONFIG.setUploadCreateUserDir(myCreateUserDir.isSelected());
-        return null;
+        StringBuilder builder = new StringBuilder();
+        for (PathReplacement pathReplacement : myPathReplacementsTableModel.getPathReplacements()) {
+            try {
+                new CompiledPathReplacement(pathReplacement);
+            } catch (PatternSyntaxException e) {
+                builder.append(MyTunesRssUtils.getBundleString("error.invalidPathReplacementPattern", pathReplacement.getSearchPattern())).append(" ");
+            }
+        }
+        if (builder.length() == 0) {
+            MyTunesRss.CONFIG.setAlbumFallback(myAlbumFallbackInput.getText());
+            MyTunesRss.CONFIG.setArtistFallback(myArtistFallbackInput.getText());
+            MyTunesRss.CONFIG.setUploadDir(myUploadDirInput.getText());
+            MyTunesRss.CONFIG.setUploadCreateUserDir(myCreateUserDir.isSelected());
+            MyTunesRss.CONFIG.clearPathReplacements();
+            for (PathReplacement pathReplacement : myPathReplacementsTableModel.getPathReplacements()) {
+                MyTunesRss.CONFIG.addPathReplacement(pathReplacement);
+            }
+        }
+        return StringUtils.trimToNull(builder.toString());
     }
 
     public JPanel getRootPanel() {

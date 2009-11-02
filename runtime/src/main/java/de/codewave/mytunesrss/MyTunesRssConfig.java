@@ -134,6 +134,7 @@ public class MyTunesRssConfig {
     private boolean myDisableJmxHtml;
     private boolean myRestartOnExit;
     private boolean myQuicktime64BitWarned;
+    private Set<PathReplacement> myPathReplacements = new HashSet<PathReplacement>();
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -1011,6 +1012,22 @@ public class MyTunesRssConfig {
         myQuicktime64BitWarned = quicktime64BitWarned;
     }
 
+    public Set<PathReplacement> getPathReplacements() {
+        return new HashSet<PathReplacement>(myPathReplacements);
+    }
+
+    public void clearPathReplacements() {
+        myPathReplacements.clear();
+    }
+
+    public void addPathReplacement(PathReplacement pathReplacement) {
+        myPathReplacements.add(pathReplacement);
+    }
+
+    public boolean removePathReplacement(PathReplacement pathReplacement) {
+        return myPathReplacements.remove(pathReplacement);
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1237,6 +1254,14 @@ public class MyTunesRssConfig {
         setDisableWebLogin(JXPathUtils.getBooleanValue(settings, "disableWebLogin", false));
         setDisableJmxHtml(JXPathUtils.getBooleanValue(settings, "disableJmxHtml", false));
         setQuicktime64BitWarned(JXPathUtils.getBooleanValue(settings, "qt64BitWarned", false));
+        Iterator<JXPathContext> pathReplacementsIterator = JXPathUtils.getContextIterator(settings, "path-replacements/replacement");
+        myPathReplacements.clear();
+        while (pathReplacementsIterator.hasNext()) {
+            JXPathContext pathReplacementContext = pathReplacementsIterator.next();
+            String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
+            String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
+            myPathReplacements.add(new PathReplacement(search, replacement));
+        }
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
@@ -1469,6 +1494,16 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "minimizeToSystray", isMinimizeToSystray()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "serverBrowserActive", isServerBrowserActive()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "qt64BitWarned", isQuicktime64BitWarned()));
+            if (myPathReplacements != null && !myPathReplacements.isEmpty()) {
+                Element pathReplacementsElement = settings.createElement("path-replacements");
+                root.appendChild(pathReplacementsElement);
+                for (PathReplacement pathReplacement : myPathReplacements) {
+                    Element pathReplacementElement = settings.createElement("replacement");
+                    pathReplacementsElement.appendChild(pathReplacementElement);
+                    pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "search", pathReplacement.getSearchPattern()));
+                    pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "replacement", pathReplacement.getReplacement()));
+                }
+            }
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
