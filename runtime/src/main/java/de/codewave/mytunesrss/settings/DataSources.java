@@ -213,6 +213,9 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
         myCreateUserDir.setEnabled(!databaseOrServerActive);
         SwingUtils.enableElementAndLabel(myAlbumFallbackInput, !databaseOrServerActive);
         SwingUtils.enableElementAndLabel(myArtistFallbackInput, !databaseOrServerActive);
+        myReplacementsScrollPane.setEnabled(!databaseOrServerActive);
+        myAddReplacementButton.setEnabled(!databaseOrServerActive);
+        myRemoveReplacementButton.setEnabled(!databaseOrServerActive && myReplacementsTable.getSelectedRow() != -1);
     }
 
     public String getDialogTitle() {
