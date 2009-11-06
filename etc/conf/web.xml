@@ -564,10 +564,6 @@
         <mime-type>image/bmp</mime-type>
     </mime-mapping>
     <mime-mapping>
-        <extension>doc</extension>
-        <mime-type>application/msword</mime-type>
-    </mime-mapping>
-    <mime-mapping>
         <extension>dtd</extension>
         <mime-type>application/xml-dtd</mime-type>
     </mime-mapping>
@@ -622,10 +618,6 @@
     <mime-mapping>
         <extension>html</extension>
         <mime-type>text/html</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>hqx</extension>
-        <mime-type>application/mac-binhex40</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>ief</extension>
@@ -816,10 +808,6 @@
         <mime-type>image/x-portable-pixmap</mime-type>
     </mime-mapping>
     <mime-mapping>
-        <extension>ppt</extension>
-        <mime-type>application/powerpoint</mime-type>
-    </mime-mapping>
-    <mime-mapping>
         <extension>ps</extension>
         <mime-type>application/postscript</mime-type>
     </mime-mapping>
@@ -1006,10 +994,6 @@
     <mime-mapping>
         <extension>wav</extension>
         <mime-type>audio/x-wav</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>svg</extension>
-        <mime-type>image/svg</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>svgz</extension>
