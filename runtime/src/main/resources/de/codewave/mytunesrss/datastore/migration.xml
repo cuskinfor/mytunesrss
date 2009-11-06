@@ -193,4 +193,10 @@
         <sql>UPDATE track SET lower_comment = LOWER(comment)</sql>
     </statement>
 
+    <statement name="migrate_3.8.0_eap_7">
+        <sql>
+            ALTER TABLE track DROP COLUMN sticky
+        </sql>
+    </statement>
+
 </statements>

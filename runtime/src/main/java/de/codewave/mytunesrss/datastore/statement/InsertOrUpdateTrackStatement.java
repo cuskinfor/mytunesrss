@@ -38,6 +38,4 @@ public interface InsertOrUpdateTrackStatement extends DataStoreStatement {
     void setPos(int number, int size);
 
     void clear();
-
-    void setSticky(boolean b);
 }

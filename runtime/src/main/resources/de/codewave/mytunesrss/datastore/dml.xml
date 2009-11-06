@@ -494,7 +494,7 @@
     </statement>
 
     <statement name="removeTrack">
-        <sql loop="track_id" loopbatch="10000" loopcommit="10000">DELETE FROM track WHERE id = :loopitem_track_id AND (sticky IS NULL OR sticky = FALSE)</sql>
+        <sql loop="track_id" loopbatch="10000" loopcommit="10000">DELETE FROM track WHERE id = :loopitem_track_id</sql>
     </statement>
 
     <statement name="findImage">
