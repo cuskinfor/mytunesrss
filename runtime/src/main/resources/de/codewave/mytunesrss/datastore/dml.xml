@@ -6,12 +6,12 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash
+            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
             FROM album a, track t
             WHERE ((:artist IS NOT NULL AND t.lower_artist = LOWER(:artist) AND t.album = a.name)
             OR (:genre IS NOT NULL AND t.lower_genre = LOWER(:genre) AND t.album = a.name))
             AND (:filter IS NULL OR a.lower_name LIKE :filter)
-            GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash
+            GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash, a.year
             ORDER BY albumname
             ]]>
         </sql>
@@ -21,7 +21,7 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash
+            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
             FROM album a, link_track_playlist rltp, track t
             WHERE ((:artist IS NOT NULL AND t.lower_artist = LOWER(:artist) AND t.album = a.name)
             OR (:genre IS NOT NULL AND t.lower_genre = LOWER(:genre) AND t.album = a.name))
@@ -29,7 +29,7 @@
             AND rltp.playlist_id = :restrictedPlaylistId
             AND rltp.track_id = t.id
             AND t.album = a.name
-            GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash
+            GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash, a.year
             ORDER BY albumname
             ]]>
         </sql>
@@ -39,12 +39,12 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash
+            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
             FROM album a
             WHERE ((:index < 0 OR :index > 8)
             OR ({letterRegionByIndex}))
             AND (:filter IS NULL OR a.lower_name LIKE :filter)
-            GROUP BY albumname, track_count, artist_count, artist, image_hash
+            GROUP BY albumname, track_count, artist_count, artist, image_hash, year
             ORDER BY albumname
             ]]>
         </sql>
@@ -54,7 +54,7 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash
+            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
             FROM album a, link_track_playlist rltp, track t
             WHERE ((:index < 0 OR :index > 8)
             OR ({letterRegionByIndex}))
@@ -62,7 +62,40 @@
             AND rltp.playlist_id = :restrictedPlaylistId
             AND rltp.track_id = t.id
             AND t.album = a.name
-            GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash
+            GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash, a.year
+            ORDER BY albumname
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findAlbumsWithYearRegion">
+        <parameter name="min_year" type="java.lang.Integer"/>
+        <parameter name="max_year" type="java.lang.Integer"/>
+        <sql>
+            <![CDATA[
+            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
+            FROM album a
+            WHERE a.year >= :min_year AND a.year <= :max_year 
+            AND (:filter IS NULL OR a.lower_name LIKE :filter)
+            GROUP BY albumname, track_count, artist_count, artist, image_hash, year
+            ORDER BY albumname
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findAlbumsRestrictedWithYearRegion">
+        <parameter name="min_year" type="java.lang.Integer"/>
+        <parameter name="max_year" type="java.lang.Integer"/>
+        <sql>
+            <![CDATA[
+            SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
+            FROM album a, link_track_playlist rltp, track t
+            WHERE a.year >= :min_year AND a.year <= :max_year 
+            AND (:filter IS NULL OR a.lower_name LIKE :filter)
+            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.track_id = t.id
+            AND t.album = a.name
+            GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash, a.year
             ORDER BY albumname
             ]]>
         </sql>
@@ -586,8 +619,8 @@
     <statement name="recreateHelpTablesAlbum">
         <sql>DELETE FROM album</sql>
         <sql>
-            INSERT INTO album (name, lower_name, first_char, artist, track_count, artist_count, image_hash)
-            SELECT MAX(album), MAX(lower_album), SUBSTRING(MAX(lower_album) FROM 1 FOR 1), MAX(artist), COUNT(id), COUNT(DISTINCT(lower_artist)), MAX(image_hash) FROM track GROUP BY lower_album
+            INSERT INTO album (name, lower_name, first_char, artist, track_count, artist_count, image_hash, year)
+            SELECT MAX(album), MAX(lower_album), SUBSTRING(MAX(lower_album) FROM 1 FOR 1), MAX(artist), COUNT(id), COUNT(DISTINCT(lower_artist)), MAX(image_hash), MAX(year) FROM track GROUP BY lower_album
         </sql>
     </statement>
 

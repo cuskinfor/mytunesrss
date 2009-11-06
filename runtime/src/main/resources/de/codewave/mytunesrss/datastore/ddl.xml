@@ -77,7 +77,8 @@
                 track_count INTEGER,
                 artist_count INTEGER,
                 artist VARCHAR(255),
-                image_hash CHAR(24)
+                image_hash CHAR(24),
+                year INTEGER
             )
         </sql>
         <sql>
@@ -155,6 +156,7 @@
         <sql>CREATE INDEX idx_album_lower_name ON album (lower_name)</sql>
         <sql>CREATE INDEX idx_album_first ON album (first_char)</sql>
         <sql>CREATE INDEX idx_album_artist ON album (artist)</sql>
+        <sql>CREATE INDEX idx_album_year ON album (year)</sql>
         <sql>CREATE INDEX idx_artist_name ON artist (name)</sql>
         <sql>CREATE INDEX idx_artist_lower_name ON artist (lower_name)</sql>
         <sql>CREATE INDEX idx_artist_first ON artist (first_char)</sql>

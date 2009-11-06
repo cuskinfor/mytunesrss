@@ -13,6 +13,7 @@ public class Album {
     private int myTrackCount;
     private String myArtist;
     private String myImageHash;
+    private int myYear;
 
     public String getName() {
         return myName;
@@ -53,4 +54,13 @@ public class Album {
     public void setImageHash(String imageHash) {
         myImageHash = imageHash;
     }
+
+    public int getYear() {
+        return myYear;
+    }
+    
+    public void setYear(int year) {
+        myYear = year;
+    }
+    
 }
