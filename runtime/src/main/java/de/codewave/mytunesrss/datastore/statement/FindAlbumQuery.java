@@ -24,13 +24,17 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     private String myArtist;
     private String myGenre;
     private int myIndex;
+    private int myMinYear;
+    private int myMaxYear;
     private String myRestrictedPlaylistId;
 
-    public FindAlbumQuery(User user, String filter, String artist, String genre, int index) {
+    public FindAlbumQuery(User user, String filter, String artist, String genre, int index, int minYear, int maxYear) {
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + filter + "%" : null;
         myArtist = artist;
         myGenre = genre;
         myIndex = index;
+        myMinYear = minYear >= 0 ? minYear : Integer.MIN_VALUE;
+        myMaxYear = (maxYear >= 0 && maxYear >= minYear) ? maxYear : Integer.MAX_VALUE;
         myRestrictedPlaylistId = user.getPlaylistId();
     }
 
@@ -41,6 +45,8 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         statement.setString("artist", myArtist);
         statement.setString("genre", myGenre);
         statement.setInt("index", myIndex);
+        statement.setInt("min_year", myMinYear);
+        statement.setInt("max_year", myMaxYear);
         statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
         return execute(statement, new AlbumResultBuilder());
     }
