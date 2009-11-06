@@ -37,6 +37,7 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setComment(resultSet.getString("COMMENT"));
         track.setPosNumber(resultSet.getInt("POS_NUMBER"));
         track.setPosSize(resultSet.getInt("POS_SIZE"));
+        track.setYear(resultSet.getInt("YEAR"));
         return track;
     }
 }

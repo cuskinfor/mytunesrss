@@ -515,8 +515,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="mediatype" type="java.lang.String"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year)
         </sql>
     </statement>
 
@@ -526,8 +526,8 @@
         <parameter name="protected" type="java.lang.Boolean"/>
         <parameter name="mediatype" type="java.lang.String"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :year)
         </sql>
     </statement>
 
@@ -540,7 +540,7 @@
             UPDATE track SET name = :name, album = :album, artist = :artist, original_artist = :original_artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist),
-                             lower_name = LOWER(:name), lower_album = LOWER(:album), lower_comment = LOWER(:comment)
+                             lower_name = LOWER(:name), lower_album = LOWER(:album), lower_comment = LOWER(:comment), year = :year
             WHERE id = :id
         </sql>
     </statement>
@@ -561,7 +561,7 @@
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated, pos_number = :pos_number,
                              pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist), lower_name = LOWER(:name), lower_album = LOWER(:album),
-                             lower_comment = LOWER(:comment)
+                             lower_comment = LOWER(:comment), year = :year
             WHERE id = :id
         </sql>
     </statement>
@@ -853,13 +853,9 @@
     <fragment name="trackColumns">
         t.source AS source, t.id AS id, t.name AS name, t.artist AS artist, t.original_artist AS original_artist, t.album AS album, t.time AS time, t.track_number AS track_number,
         t.file AS file, t.protected AS protected, t.mediatype AS mediatype, t.genre AS genre, t.mp4codec AS mp4codec, t.ts_played AS ts_played, t.ts_updated AS ts_updated,
-        t.playcount AS playcount, t.last_image_update AS last_image_update, t.comment AS comment, t.pos_number AS pos_number, t.pos_size AS pos_size, t.image_hash AS image_hash
+        t.playcount AS playcount, t.last_image_update AS last_image_update, t.comment AS comment, t.pos_number AS pos_number, t.pos_size AS pos_size, t.image_hash AS image_hash,
+        t.year AS year
     </fragment>
-
-    <!--fragment name="groupByTrackColumns">
-        source, id, name, artist, original_artist, album, time, track_number, file, protected, mediatype, genre, mp4codec, ts_played, ts_updated, playcount, last_image_update,
-        comment, pos_number, pos_size, image_hash
-    </fragment-->
 
     <fragment name="updatePlaylistCount">
         UPDATE playlist

@@ -37,5 +37,7 @@ public interface InsertOrUpdateTrackStatement extends DataStoreStatement {
 
     void setPos(int number, int size);
 
+    void setYear(int year);
+
     void clear();
 }

@@ -134,6 +134,7 @@ public class TrackListener implements PListHandlerListener {
                             statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Comments"))));
                             statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
                                     (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
+                            statement.setYear(track.get("Year") != null ? ((Integer)track.get("Year")).intValue() : -1);
                             statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, filename, 0) : mp4Codec);
                             myDataStoreSession.executeStatement(statement);
                             return true;

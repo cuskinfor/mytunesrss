@@ -194,9 +194,8 @@
     </statement>
 
     <statement name="migrate_3.8.0_eap_7">
-        <sql>
-            ALTER TABLE track DROP COLUMN sticky
-        </sql>
+        <sql>ALTER TABLE track DROP COLUMN sticky</sql>
+        <sql>ALTER TABLE track ADD COLUMN year INTEGER</sql>
     </statement>
 
 </statements>

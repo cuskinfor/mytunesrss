@@ -172,6 +172,7 @@ public class TrackUtils {
             setComment(track.getComment());
             setPosNumber(track.getPosNumber());
             setPosSize(track.getPosSize());
+            setYear(track.getYear());
         }
 
         public boolean isNewSection() {

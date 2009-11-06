@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MediaType;
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -15,9 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackStatement
@@ -41,6 +37,7 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
     private String myComment;
     private int myPosNumber;
     private int myPosSize;
+    private int myYear;
     private SmartStatement myStatement;
 
     public InsertTrackStatement(TrackSource source) {
@@ -99,6 +96,10 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
         myPosNumber = number;
         myPosSize = size;
     }
+    
+    public void setYear(int year) {
+        myYear = year;
+    }
 
     protected String getStatementName() {
         return "insertTrack";
@@ -131,6 +132,7 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setString("comment", myComment);
             myStatement.setInt("pos_number", myPosNumber);
             myStatement.setInt("pos_size", myPosSize);
+            myStatement.setInt("year", myYear);
             myStatement.execute();
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {

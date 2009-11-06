@@ -6,21 +6,13 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MediaType;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.Track
  */
 public class Track {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Track.class);
-
     private String myId;
     private String myName;
     private String myAlbum;
@@ -41,6 +33,7 @@ public class Track {
     private String myComment;
     private int myPosNumber;
     private int myPosSize;
+    private int myYear;
     private String filename;
     private TrackSource source;
 
@@ -211,6 +204,14 @@ public class Track {
 
     public void setPosSize(int posSize) {
         myPosSize = posSize;
+    }
+
+    public int getYear() {
+        return myYear;
+    }
+    
+    public void setYear(int year) {
+        myYear = year;
     }
 
     public String getFilename() {

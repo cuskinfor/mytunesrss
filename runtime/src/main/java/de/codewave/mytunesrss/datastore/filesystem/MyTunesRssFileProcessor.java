@@ -175,6 +175,18 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (StringUtils.isEmpty(name)) {
                     name = FilenameUtils.getBaseName(file.getName());
                 }
+                String yearString;
+                if (tag.isId3v1()) {
+                    yearString = StringUtils.defaultIfEmpty(((Id3v1Tag)tag).getYear(), "-1");
+                } else {
+                    yearString = StringUtils.defaultIfEmpty(((Id3v2Tag)tag).getFrameBodyToString("TYE", "TYER"), "-1");
+                }
+                try {
+                    statement.setYear(Integer.parseInt(yearString));
+                } catch (NumberFormatException e) {
+                    LOGGER.warn("Illegal YEAR value \"" + yearString + "\" in \"" + file + "\".");
+                    statement.setYear(-1);
+                }
                 statement.setName(MyTunesRssUtils.normalize(name));
                 if (tag.isId3v2()) {
                     Id3v2Tag id3v2Tag = ((Id3v2Tag) tag);

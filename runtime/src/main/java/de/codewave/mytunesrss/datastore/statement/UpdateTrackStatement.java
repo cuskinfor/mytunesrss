@@ -39,6 +39,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
     private String myComment;
     private int myPosNumber;
     private int myPosSize;
+    private int myYear;
     private SmartStatement myStatement;
 
     public UpdateTrackStatement(TrackSource source) {
@@ -97,6 +98,10 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
         myPosNumber = number;
         myPosSize = size;
     }
+    
+    public void setYear(int year) {
+        myYear = year;
+    }
 
     protected String getStatementName() {
         return "updateTrack";
@@ -133,6 +138,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setString("comment", myComment);
             myStatement.setInt("pos_number", myPosNumber);
             myStatement.setInt("pos_size", myPosSize);
+            myStatement.setInt("year", myYear);
             myStatement.execute();
         } catch (SQLException e) {
             if (LOG.isErrorEnabled()) {
