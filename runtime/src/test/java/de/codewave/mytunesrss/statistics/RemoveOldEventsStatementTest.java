@@ -31,7 +31,7 @@ public class RemoveOldEventsStatementTest {
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         assertEquals(21, session.executeQuery(new GetStatisticEventsQuery(0, System.currentTimeMillis(), "yyyy-MM-dd")).size());
         session.commit();
-        // keep 10 events (keep time = 9 days)
+        // keep 11 events (keep time = 10 days)
         session = MyTunesRss.STORE.getTransaction();
         MyTunesRss.CONFIG.setStatisticKeepTime(10);
         session.executeStatement(new RemoveOldEventsStatement());
