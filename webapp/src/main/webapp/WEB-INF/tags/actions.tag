@@ -74,7 +74,7 @@
     </c:choose>
 </c:if>
 <c:if test="${authUser.editTags && !empty editTagsType && !empty editTagsId}">
-    <a id="fn_edittags${index}" style="display:${cwfn:choose(config.showEditTags, "inline", "none")}" onclick="jsonRpc('${servletUrl}', 'TagService.getTagsFor${editTagsType}', ['${editTagsId}'], function(json) {openEditTagsDialog(json, '${editTagsType}', '${editTagsId}');}, '${remoteApiSessionId}');return false;">
+    <a id="fn_edittags${index}" style="display:${cwfn:choose(config.showEditTags, "inline", "none")}" onclick="jsonRpc('${servletUrl}', 'TagService.getTagsFor${editTagsType}', ['${editTagsId}'], function(json) {openEditTagsDialog(json, '${editTagsType}', '${editTagsId}', $jQ('#functionsDialogName${index}').text());}, '${remoteApiSessionId}');return false;">
         <img src="${appUrl}/images/edit_tags.png" alt="<fmt:message key="tooltip.editTags"/>" title="<fmt:message key="tooltip.editTags"/>" /> </a>
 </c:if>
 <a style="cursor:pointer" onclick="openFunctionsMenu(${index}, $jQ('#functionsDialogName${index}').text())">

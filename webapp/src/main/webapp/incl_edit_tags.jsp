@@ -3,8 +3,12 @@
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="remoteApiSessionId" type="java.lang.String"--%>
 
-<div id="editTagsDialog" style="display:none">
-    <fmt:message key="existingTags"/><br />
+<div id="editTagsDialog" style="display:none" title="<fmt:message key="editTagsDialogTitle"/>">
+    <p>
+        <fmt:message key="editTagsDialogInfoPre"/>
+        <span id="editTagsDialog_targetInfo"></span>
+        <fmt:message key="editTagsDialogInfoPost"/>
+    </p>
     <select id="editTagsDialog_existingTags" multiple="true" size="10" style="width:100%"></select><br />
     <button class="ui-state-default ui-corner-all" style="margin-top:3px" onclick="removeTags();"><fmt:message key="removeTags"/></button><br /><br />
     <input id="editTagsDialog_newTag" style="width:100%" /><br />
@@ -23,10 +27,11 @@
             $jQ("#editTagsDialog_existingTags").append("<option value='" + json.results[i] + "'>" + json.results[i] + "</option>");
         }
     }
-    function openEditTagsDialog(json, editTagsType, editTagsId) {
+    function openEditTagsDialog(json, editTagsType, editTagsId, title) {
         initExistingTags(json);
         $jQ("#editTagsDialog").dialog("option", "editTagsType", editTagsType);
         $jQ("#editTagsDialog").dialog("option", "editTagsId", editTagsId);
+        $jQ("#editTagsDialog_targetInfo").text("\"" + title.trim() + "\"");
         $jQ("#editTagsDialog").dialog("open");
     }
     function removeTags() {
