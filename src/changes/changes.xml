@@ -9,6 +9,9 @@
 
         <release version="3.8.0-EAP-7" date="2009-11-xx" description="3.8.0 EAP 7">
             <action dev="mdescher" type="add">
+                Display existing tags as mouse-over tooltip for edit tags button.
+            </action>
+            <action dev="mdescher" type="add">
                 Support for recording year of a track.
             </action>
             <action dev="mdescher" type="add">

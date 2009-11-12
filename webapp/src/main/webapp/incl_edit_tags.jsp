@@ -54,3 +54,24 @@
         }
     }
 </script>
+
+<div class="tooltip" id="tooltip_edittags"></div>
+
+<script type="text/javascript">
+    function showEditTagsTooltip(element, type, id) {
+        $jQ(element).removeAttr('title');
+        $jQ(element).removeAttr('alt');
+        jsonRpc("${servletUrl}", "TagService.getTagsFor" + type, [id], function(json) {
+            if (json.results.length > 0) {
+                $jQ("#tooltip_edittags").empty();
+                for (var i = 0; i < json.results.length; i++) {
+                    $jQ("#tooltip_edittags").append(json.results[i] + "<br />");
+                }
+                showTooltipElement(document.getElementById("tooltip_edittags"));
+            } else {
+                $jQ(element).attr('title', '<fmt:message key="tooltip.editTags"/>');
+                $jQ(element).attr('alt', '<fmt:message key="tooltip.editTags"/>');
+            }
+        }, '${remoteApiSessionId}');
+    }
+</script>

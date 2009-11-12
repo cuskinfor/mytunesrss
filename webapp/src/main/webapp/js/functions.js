@@ -45,19 +45,25 @@ function updateTooltipPosition(e) {
 }
 
 function showTooltip(element) {
-    tooltipElement = document.getElementById("tooltip_" + element.id);
-    if (tooltipElement != null) {
-        tooltipElement.style.position = "absolute";
-        tooltipElement.style.left = (mouseX + 20) + "px";
-        tooltipElement.style.top = (mouseY + 20) + "px";
-        tooltipElement.style.display = "block";
+    showTooltipElement(document.getElementById("tooltip_" + element.id));
+}
+
+function showTooltipElement(element) {
+    if (element != null) {
+        element.style.position = "absolute";
+        element.style.left = (mouseX) + "px";
+        element.style.top = (mouseY + 20) + "px";
+        element.style.display = "block";
     }
 }
 
 function hideTooltip(element) {
-    tooltipElement = document.getElementById("tooltip_" + element.id);
-    if (tooltipElement != null) {
-        tooltipElement.style.display = "none";
+    hideTooltipElement(document.getElementById("tooltip_" + element.id));
+}
+
+function hideTooltipElement(element) {
+    if (element != null) {
+        element.style.display = "none";
     }
 }
 
