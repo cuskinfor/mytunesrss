@@ -26,7 +26,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
         String password = getRequest().getParameter("password");
         if (!MyTunesRss.CONFIG.isDisableWebLogin() && password != null && !isSessionAuthorized()) {
             byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8"));
-            if (isAuthorized(userName, passwordHash)) {
+            if (isAuthorized(userName, password, passwordHash)) {
                 authorize(WebAppScope.Session, userName);
                 WebConfig webConfig = getWebConfig();
                 Boolean rememberLogin = getBooleanRequestParameter("rememberLogin", false);

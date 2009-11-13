@@ -29,6 +29,14 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.AuthenticationException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -59,7 +67,65 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         });
     }
 
+    protected boolean isAuthorized(String userName, String password, byte[] passwordHash) {
+        return isAuthorized(userName, passwordHash) || isAuthorizedLdapUser(userName, password);
+    }
+
+    private boolean isAuthorizedLdapUser(String userName, String password) {
+        LOG.debug("Checking authorization with LDAP server.");
+        LdapConfig ldapConfig = MyTunesRss.CONFIG.getLdapConfig();
+        if (ldapConfig.isValid()) {
+            Hashtable<String, String> env = new Hashtable<String, String>();
+            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+            env.put(Context.PROVIDER_URL, "ldap://" + ldapConfig.getHost() + ":" + ldapConfig.getPort());
+            env.put(Context.SECURITY_AUTHENTICATION, ldapConfig.getAuthMethod());
+            env.put(Context.SECURITY_PRINCIPAL, MessageFormat.format(ldapConfig.getAuthPrincipal(), userName));
+            env.put(Context.SECURITY_CREDENTIALS, password);
+            try {
+                DirContext ctx = new InitialDirContext(env);
+                LOG.debug("Checking authorization with LDAP server: authorized!");
+                User user = MyTunesRss.CONFIG.getUser(userName);
+                if (user == null) {
+                    LOG.debug("Corresponding user for LDAP \"" + userName + "\" not found.");
+                    User template = MyTunesRss.CONFIG.getUser(ldapConfig.getTemplateUser());
+                    if (template != null) {
+                        LOG.debug("Using LDAP template user \"" + template.getName() + "\".");
+                        user = (User) template.clone();
+                        user.setName(userName);
+                        LOG.debug("Storing new user with name \"" + user.getName() + "\".");
+                        MyTunesRss.CONFIG.addUser(user);
+                    }
+                }
+                if (user == null) {
+                    LOG.error("Could not create new user \"" + userName + "\" from template user \"" + ldapConfig.getTemplateUser() + "\".");
+                    return false;
+                }
+                if (ldapConfig.isFetchEmail()) {
+                    LOG.debug("Fetching email for user \"" + userName + "\" from LDAP.");
+                    SearchControls searchControls = new SearchControls(SearchControls.SUBTREE_SCOPE, 1, ldapConfig.getSearchTimeout(), new String[]{ldapConfig.getMailAttributeName()}, false, false);
+                    NamingEnumeration<SearchResult> namingEnum = ctx.search(StringUtils.defaultString(ldapConfig.getSearchRoot()), MessageFormat.format(ldapConfig.getSearchExpression(), userName), searchControls);
+                    if (namingEnum.hasMore()) {
+                        String email = namingEnum.next().getAttributes().get(ldapConfig.getMailAttributeName()).get().toString();
+                        LOG.debug("Setting email \"" + email + "\" for user \"" + user.getName() + "\".");
+                        user.setEmail(email);
+                    }
+                }
+                return true;
+            } catch (AuthenticationException e) {
+                LOG.info("LDAP login failed for \"" + userName + "\".");
+            } catch (Exception e) {
+                LOG.error("Could not validate username/password with LDAP server.", e);
+            }
+        }
+        return false;
+    }
+
     protected boolean isAuthorized(String userName, byte[] passwordHash) {
+        return isAuthorizedLocalUsers(userName, passwordHash);
+    }
+
+    private boolean isAuthorizedLocalUsers(String userName, byte[] passwordHash) {
+        LOG.debug("Checking authorization with local users.");
         MyTunesRssConfig config = getMyTunesRssConfig();
         User user = config.getUser(userName);
         return user != null && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();

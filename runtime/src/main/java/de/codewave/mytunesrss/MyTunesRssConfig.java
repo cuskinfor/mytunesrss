@@ -135,6 +135,7 @@ public class MyTunesRssConfig {
     private boolean myRestartOnExit;
     private boolean myQuicktime64BitWarned;
     private Set<PathReplacement> myPathReplacements = new HashSet<PathReplacement>();
+    private LdapConfig myLdapConfig;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -1028,6 +1029,14 @@ public class MyTunesRssConfig {
         return myPathReplacements.remove(pathReplacement);
     }
 
+    public LdapConfig getLdapConfig() {
+        return myLdapConfig;
+    }
+
+    public void setLdapConfig(LdapConfig ldapConfig) {
+        myLdapConfig = ldapConfig;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1262,6 +1271,7 @@ public class MyTunesRssConfig {
             String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
             myPathReplacements.add(new PathReplacement(search, replacement));
         }
+        myLdapConfig = new LdapConfig(settings);
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
@@ -1504,6 +1514,7 @@ public class MyTunesRssConfig {
                     pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "replacement", pathReplacement.getReplacement()));
                 }
             }
+            root.appendChild(myLdapConfig.createSettingsElement(settings));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
