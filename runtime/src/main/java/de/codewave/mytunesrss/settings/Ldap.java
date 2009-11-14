@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.LdapAuthMethod;
 import de.codewave.utils.swing.JTextFieldValidation;
 import de.codewave.utils.swing.MinMaxValueTextFieldValidation;
 import de.codewave.utils.swing.NotEmptyTextFieldValidation;
@@ -30,7 +31,14 @@ public class Ldap implements SettingsForm {
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myHostInput, MyTunesRssUtils.getBundleString("error.emptyLdapHost")));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myAuthPrincipalInput, MyTunesRssUtils.getBundleString("error.emptyAuthPrincipal")));
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(mySearchTimeoutInput, 1, 10000, true, MyTunesRssUtils.getBundleString("error.illegalLdapSearchTimeout")));
-        myAuthMethodInput.addItem("SIMPLE");
+        List<String> methodNames = new ArrayList<String>();
+        for (LdapAuthMethod method : LdapAuthMethod.values()) {
+            methodNames.add(method.name());
+        }
+        Collections.sort(methodNames);
+        for (String methodName : methodNames) {
+            myAuthMethodInput.addItem(methodName);
+        }
         List<String> userNames = new ArrayList<String>();
         for (User user : MyTunesRss.CONFIG.getUsers()) {
             userNames.add(user.getName());
@@ -57,7 +65,7 @@ public class Ldap implements SettingsForm {
     public String updateConfigFromGui() {
         String messages = JTextFieldValidation.getAllValidationFailureMessage(myRootPanel);
         if (messages == null) {
-            MyTunesRss.CONFIG.getLdapConfig().setAuthMethod(myAuthMethodInput.getSelectedItem().toString());
+            MyTunesRss.CONFIG.getLdapConfig().setAuthMethod(LdapAuthMethod.valueOf(myAuthMethodInput.getSelectedItem().toString()));
             MyTunesRss.CONFIG.getLdapConfig().setAuthPrincipal(myAuthPrincipalInput.getText());
             MyTunesRss.CONFIG.getLdapConfig().setHost(myHostInput.getText());
             MyTunesRss.CONFIG.getLdapConfig().setMailAttributeName(myMailAttributeNameInput.getText());

@@ -7,13 +7,6 @@ import de.codewave.mytunesrss.MyTunesRssEventManager;
 import javax.management.*;
 import java.util.MissingResourceException;
 
-/**
- * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       Cologne Systems GmbH<br> <b>Creation Date:</b>
- * 01.03.2007
- *
- * @author Michael Descher
- * @version 1.0
- */
 public class MyTunesRssMBean extends StandardMBean {
 
     public MyTunesRssMBean(Class mbeanInterface) throws NotCompliantMBeanException {

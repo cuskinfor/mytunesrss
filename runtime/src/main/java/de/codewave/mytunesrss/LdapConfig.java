@@ -13,7 +13,7 @@ import de.codewave.utils.xml.DOMUtils;
 public class LdapConfig {
     private String myHost;
     private int myPort;
-    private String myAuthMethod;
+    private LdapAuthMethod myAuthMethod;
     private String myAuthPrincipal;
     private String mySearchRoot;
     private String mySearchExpression;
@@ -24,7 +24,7 @@ public class LdapConfig {
     public LdapConfig(JXPathContext settings) {
         myHost = JXPathUtils.getStringValue(settings, "ldap/host", null);
         myPort = JXPathUtils.getIntValue(settings, "ldap/port", -1);
-        myAuthMethod = JXPathUtils.getStringValue(settings, "ldap/auth-method", "SIMPLE");
+        myAuthMethod = LdapAuthMethod.valueOf(JXPathUtils.getStringValue(settings, "ldap/auth-method", LdapAuthMethod.SIMPLE.name()));
         myAuthPrincipal = JXPathUtils.getStringValue(settings, "ldap/auth-principal", null);
         mySearchRoot = JXPathUtils.getStringValue(settings, "ldap/search-root", null);
         mySearchExpression = JXPathUtils.getStringValue(settings, "ldap/search-expression", null);
@@ -37,7 +37,7 @@ public class LdapConfig {
         Element element = settings.createElement("ldap");
         element.appendChild(DOMUtils.createTextElement(settings, "host", myHost));
         element.appendChild(DOMUtils.createIntElement(settings, "port", myPort));
-        element.appendChild(DOMUtils.createTextElement(settings, "auth-method", myAuthMethod));
+        element.appendChild(DOMUtils.createTextElement(settings, "auth-method", myAuthMethod.name()));
         element.appendChild(DOMUtils.createTextElement(settings, "auth-principal", myAuthPrincipal));
         element.appendChild(DOMUtils.createTextElement(settings, "search-root", mySearchRoot));
         element.appendChild(DOMUtils.createTextElement(settings, "search-expression", mySearchExpression));
@@ -63,11 +63,11 @@ public class LdapConfig {
         myPort = port;
     }
 
-    public String getAuthMethod() {
+    public LdapAuthMethod getAuthMethod() {
         return myAuthMethod;
     }
 
-    public void setAuthMethod(String authMethod) {
+    public void setAuthMethod(LdapAuthMethod authMethod) {
         myAuthMethod = authMethod;
     }
 
@@ -112,7 +112,7 @@ public class LdapConfig {
     }
 
     public boolean isValid() {
-        return StringUtils.isNotBlank(myHost) && StringUtils.isNotBlank(myAuthMethod) && StringUtils.isNotBlank(myAuthPrincipal) && myPort > 0 && myPort < 65536 && StringUtils.isNotBlank(myTemplateUser);
+        return StringUtils.isNotBlank(myHost) && myAuthMethod != null && StringUtils.isNotBlank(myAuthPrincipal) && myPort > 0 && myPort < 65536 && StringUtils.isNotBlank(myTemplateUser);
     }
 
     public boolean isFetchEmail() {

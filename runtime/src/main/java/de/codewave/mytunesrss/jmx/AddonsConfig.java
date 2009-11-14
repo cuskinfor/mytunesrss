@@ -12,13 +12,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       Cologne Systems GmbH<br> <b>Creation Date:</b>
- * 01.03.2007
- *
- * @author Michael Descher
- * @version 1.0
- */
 public class AddonsConfig extends MyTunesRssMBean implements AddonsConfigMBean {
     public AddonsConfig() throws NotCompliantMBeanException {
         super(AddonsConfigMBean.class);

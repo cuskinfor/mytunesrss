@@ -8,13 +8,6 @@ import javax.management.NotCompliantMBeanException;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
-/**
- * <b>Description:</b>   <br> <b>Copyright:</b>     Copyright (c) 2007<br> <b>Company:</b>       Cologne Systems GmbH<br> <b>Creation Date:</b>
- * 01.03.2007
- *
- * @author Michael Descher
- * @version 1.0
- */
 public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
     MiscConfig() throws NotCompliantMBeanException {
         super(MiscConfigMBean.class);

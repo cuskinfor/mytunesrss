@@ -22,7 +22,9 @@
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="ldap.hostTooltip"/>
+        </properties>
       </component>
       <component id="3249a" class="javax.swing.JLabel">
         <constraints>
@@ -38,7 +40,9 @@
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="ldap.portTooltip"/>
+        </properties>
       </component>
       <component id="81fe7" class="javax.swing.JLabel">
         <constraints>
@@ -70,7 +74,9 @@
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="ldap.authPrincipalTooltip"/>
+        </properties>
       </component>
       <component id="558eb" class="javax.swing.JTextField" binding="mySearchRootInput">
         <constraints>
@@ -78,7 +84,9 @@
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="ldap.searchRootTooltip"/>
+        </properties>
       </component>
       <component id="484e3" class="javax.swing.JLabel">
         <constraints>
@@ -110,7 +118,9 @@
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="ldap.searchExpressionTooltip"/>
+        </properties>
       </component>
       <component id="70eb8" class="javax.swing.JTextField" binding="mySearchTimeoutInput">
         <constraints>
@@ -118,7 +128,9 @@
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="ldap.searchTimeoutTooltip"/>
+        </properties>
       </component>
       <component id="4fc8e" class="javax.swing.JTextField" binding="myMailAttributeNameInput">
         <constraints>
@@ -126,7 +138,9 @@
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="ldap.searchMailAttrNameTooltip"/>
+        </properties>
       </component>
       <component id="17f57" class="javax.swing.JLabel">
         <constraints>
@@ -140,7 +154,9 @@
         <constraints>
           <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="ldap.templateUserTooltip"/>
+        </properties>
       </component>
       <vspacer id="cda41">
         <constraints>
@@ -151,7 +167,9 @@
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="ldap.authMethodTooltip"/>
+        </properties>
       </component>
     </children>
   </grid>
