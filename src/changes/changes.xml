@@ -9,7 +9,7 @@
 
         <release version="3.8.0-EAP-7" date="2009-11-xx" description="3.8.0 EAP 7">
             <action dev="mdescher" type="add">
-                LDAP authentication (template user). No configuration yet (except for xml editing).
+                LDAP authentication (template user). JMX configuration still missing.
             </action>
             <action dev="mdescher" type="add">
                 Display existing tags as mouse-over tooltip for edit tags button.

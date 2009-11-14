@@ -199,65 +199,8 @@ public class Settings implements MyTunesRssEventListener {
         myInfoForm.forceRegistration();
     }
 
-    protected void showSettings(final SettingsForm form) {
-        form.initValues();
-        String dialogTitle = MyTunesRssUtils.getBundleString("dialog.settings.commonTitle", form.getDialogTitle());
-        final JDialog dialog = new JDialog(MyTunesRss.ROOT_FRAME, dialogTitle, true);
-        dialog.getRootPane().registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
-        dialog.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent windowEvent) {
-                DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
-                if (layout == null) {
-                    layout = MyTunesRss.CONFIG.createDialogLayout(form.getClass());
-                }
-                layout.setX((int) dialog.getLocation().getX());
-                layout.setY((int) dialog.getLocation().getY());
-                layout.setWidth((int) dialog.getSize().getWidth());
-                layout.setHeight((int) dialog.getSize().getHeight());
-                String messages = form.updateConfigFromGui();
-                if (messages != null) {
-                    MyTunesRssUtils.showErrorMessage(messages);
-                } else {
-                    dialog.dispose();
-                }
-            }
-        });
-        dialog.add(form.getRootPanel());
-        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
-        dialog.pack();
-        final Dimension minimalDimension = dialog.getSize();
-        dialog.setMinimumSize(minimalDimension);
-        dialog.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(final ComponentEvent e) {
-                Dimension d = e.getComponent().getSize();
-                boolean changed = false;
-                if (d.width < minimalDimension.width) {
-                    d.width = minimalDimension.width;
-                    changed = true;
-                }
-                if (d.height < minimalDimension.height) {
-                    d.height = minimalDimension.height;
-                    changed = true;
-                }
-                if (changed) {
-                    e.getComponent().setSize(d);
-                }
-            }
-        });
-        if (layout != null && layout.isValid()) {
-            dialog.setLocation(layout.getX(), layout.getY());
-            dialog.setSize(layout.getWidth(), layout.getHeight());
-            dialog.setVisible(true);
-        } else {
-            SwingUtils.packAndShowRelativeTo(dialog, MyTunesRss.ROOT_FRAME);
-        }
+    protected void showSettings(SettingsForm form) {
+        MyTunesRssUtils.showSettingsForm(form);
     }
 
     public class ServerInfoButtonListener implements ActionListener {

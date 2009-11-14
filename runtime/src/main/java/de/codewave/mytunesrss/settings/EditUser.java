@@ -51,7 +51,6 @@ public class EditUser implements MyTunesRssEventListener {
     private JLabel myInfoReset;
     private JLabel myInfoDownBytes;
     private JLabel myInfoRemainBytes;
-    private JPanel myInformationPanel;
     private JPanel myQuotaInfoPanel;
     private JCheckBox myPermChangePasswordInput;
     private JTextField myFileTypesInput;
@@ -183,6 +182,7 @@ public class EditUser implements MyTunesRssEventListener {
         initValues();
         myInputsPanel.setVisible(myUser != null);
         myHelpLabel.setVisible(myUser == null);
+        myRootPanel.validate();
     }
 
     private void fillForceTranscoderPanel() {

@@ -33,6 +33,7 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
     private JScrollPane myTreeScroller;
     private JScrollPane myEditScroller;
     private EditUser myEditUserForm;
+    private JButton myEditLdapButton;
     private JPopupMenu myUserPopupMenu = new JPopupMenu();
     private DragSource myDragSource;
     private ImageIcon myUserIcon = new ImageIcon(getClass().getResource("user.png"));
@@ -54,13 +55,17 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
         DragGestureRecognizer dgr = myDragSource.createDefaultDragGestureRecognizer(myUserTree, DnDConstants.ACTION_MOVE, this);
         dgr.setSourceActions(dgr.getSourceActions() & ~InputEvent.BUTTON3_MASK);
         new DropTarget(myUserTree, this);
+        myEditLdapButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MyTunesRssUtils.showSettingsForm(new Ldap());
+            }
+        });
     }
 
     public void initValues() {
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
         addUsers(rootNode, MyTunesRss.CONFIG.getUsers(), null);
         myUserTree.setModel(new DefaultTreeModel(rootNode));
-        DefaultMutableTreeNode root = (((DefaultMutableTreeNode) myUserTree.getModel().getRoot()));
         myEditUserForm.init(null, null);
     }
 
