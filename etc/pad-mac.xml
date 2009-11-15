@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XML_DIZ_INFO>
+    <MASTER_PAD_VERSION_INFO>
+        <MASTER_PAD_VERSION>3.10</MASTER_PAD_VERSION>
+        <MASTER_PAD_EDITOR>Codewave</MASTER_PAD_EDITOR>
+        <MASTER_PAD_INFO>Portable Application Description, or PAD for short, is a data set that is used by shareware
+            authors to disseminate information to anyone interested in their software products. To find out more go to
+            http://www.asp-shareware.org/pad
+        </MASTER_PAD_INFO>
+    </MASTER_PAD_VERSION_INFO>
+    <Company_Info>
+        <Company_Name>Codewave Software Michael Descher</Company_Name>
+        <Address_1>Saturnstr. 20</Address_1>
+        <Address_2/>
+        <City_Town>Rastatt</City_Town>
+        <State_Province/>
+        <Zip_Postal_Code>76437</Zip_Postal_Code>
+        <Country>Germany</Country>
+        <Company_WebSite_URL>http://www.codewave.de</Company_WebSite_URL>
+        <Contact_Info>
+            <Author_First_Name>Michael</Author_First_Name>
+            <Author_Last_Name>Descher</Author_Last_Name>
+            <Author_Email>info@codewave.de</Author_Email>
+            <Contact_First_Name>Michael</Contact_First_Name>
+            <Contact_Last_Name>Descher</Contact_Last_Name>
+            <Contact_Email>info@codewave.de</Contact_Email>
+        </Contact_Info>
+        <Support_Info>
+            <Sales_Email>info@codewave.de</Sales_Email>
+            <Support_Email>support@codewave.de</Support_Email>
+            <General_Email>info@codewave.de</General_Email>
+            <Sales_Phone/>
+            <Support_Phone/>
+            <General_Phone/>
+            <Fax_Phone/>
+        </Support_Info>
+    </Company_Info>
+    <Program_Info>
+        <Program_Name>MyTunesRSS</Program_Name>
+        <Program_Version>3.7.8</Program_Version>
+        <Program_Release_Month>11</Program_Release_Month>
+        <Program_Release_Day>15</Program_Release_Day>
+        <Program_Release_Year>2009</Program_Release_Year>
+        <Program_Cost_Dollars/>
+        <Program_Cost_Other_Code>EUR</Program_Cost_Other_Code>
+        <Program_Cost_Other>15</Program_Cost_Other>
+        <Program_Type>Commercial</Program_Type>
+        <Program_Release_Status>Minor Update</Program_Release_Status>
+        <Program_Install_Support>No Install Support</Program_Install_Support>
+        <Program_OS_Support>Java,Mac OS X</Program_OS_Support>
+        <Program_Language>English,German</Program_Language>
+        <Program_Change_Info>Bugfixes
+        </Program_Change_Info>
+        <Program_Category_Class>Audio &amp; Multimedia::Other</Program_Category_Class>
+        <Program_System_Requirements>Java 1.5</Program_System_Requirements>
+        <File_Info>
+            <File_Size_Bytes>18909298</File_Size_Bytes>
+            <File_Size_K>0</File_Size_K>
+            <File_Size_MB>0.0</File_Size_MB>
+        </File_Info>
+        <Expire_Info>
+            <Has_Expire_Info>Y</Has_Expire_Info>
+            <Expire_Count>30</Expire_Count>
+            <Expire_Based_On>Days</Expire_Based_On>
+            <Expire_Other_Info/>
+            <Expire_Month/>
+            <Expire_Day/>
+            <Expire_Year/>
+        </Expire_Info>
+    </Program_Info>
+    <Program_Descriptions>
+        <English>
+            <Keywords>audio video music streaming mp3 m4a mp4 mpeg rss m3u xspf itunes</Keywords>
+            <Char_Desc_45>Access your music and video wherever you are.</Char_Desc_45>
+            <Char_Desc_80>Access your music and video wherever you are. All you need is a web browser.</Char_Desc_80>
+            <Char_Desc_250>Create RSS feeds, M3U or XSPF playlists, play MP3 music directly in your browser and much
+                more. Create multiple user accounts, assign permissions, create download quotas and much more. Use your
+                iTunes library or simple watch folders.
+            </Char_Desc_250>
+            <Char_Desc_450>Create RSS feeds, M3U or XSPF playlists, play MP3 music directly in your browser with a flash
+                music player and much more. Create multiple user accounts, assign permissions, create download quotas
+                and much more. Discover other MyTunesRSS servers on your local network. Use your iTunes library or
+                simple watch folders. Upload new music to the server through the beautiful web interface. Browse your
+                music library by album, artist or genre.
+            </Char_Desc_450>
+            <Char_Desc_2000>Create RSS feeds, M3U or XSPF playlists, play MP3 music directly in your browser with a
+                flash music player and much more. Create multiple user accounts, assign permissions, create download
+                quotas and much more. Discover other MyTunesRSS servers on your local network. Use your iTunes library
+                or simple watch folders. Upload new music to the server through the beautiful web interface. Browse your
+                music library by album, artist or genre. All the things you ever wanted to do!
+            </Char_Desc_2000>
+        </English>
+    </Program_Descriptions>
+    <Web_Info>
+        <Application_URLs>
+            <Application_Info_URL>http://www.codewave.de/products/mytunesrss</Application_Info_URL>
+            <Application_Order_URL>http://www.codewave.de/products/mytunesrss/buy</Application_Order_URL>
+            <Application_Screenshot_URL>http://codewave.dyn-o-saur.com/products/mytunesrss/server.png
+            </Application_Screenshot_URL>
+            <Application_Icon_URL>http://codewave.dyn-o-saur.com/products/mytunesrss/mytunesrss.gif
+            </Application_Icon_URL>
+            <Application_XML_File_URL>http://www.codewave.de/products/mytunesrss/pad-mac.xml</Application_XML_File_URL>
+        </Application_URLs>
+        <Download_URLs>
+            <Primary_Download_URL>http://www.codewave.de/products/mytunesrss/?download_file=mytunesrss-3.7.8-macosx.zip
+            </Primary_Download_URL>
+            <Secondary_Download_URL/>
+            <Additional_Download_URL_1/>
+            <Additional_Download_URL_2/>
+        </Download_URLs>
+    </Web_Info>
+    <Permissions>
+        <Distribution_Permissions/>
+        <EULA/>
+    </Permissions>
+</XML_DIZ_INFO>
