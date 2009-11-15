@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.7.8" date="2009-xx-xx" description="Bugfix release">
+        <release version="3.7.8" date="2009-11-15" description="Bugfix release">
             <action dev="mdescher" type="add">
                 Added license information for third party software to readme.
             </action>
