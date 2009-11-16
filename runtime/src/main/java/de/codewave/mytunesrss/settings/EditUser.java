@@ -358,16 +358,20 @@ public class EditUser implements MyTunesRssEventListener {
     }
 
     private void refreshInfo() {
-        myInfoReset.setText(new SimpleDateFormat(MyTunesRssUtils.getBundleString("common.dateFormat")).format(new Date(myUser.getResetTime())));
-        myInfoDownBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(myUser.getDownBytes()));
-        myInfoDownBytes.setVisible(true);
-        if (myUser.getQuotaType() != User.QuotaType.None) {
-            myInfoRemainBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(Math.max(myUser.getBytesQuota() - myUser.getQuotaDownBytes(), 0)));
-            myQuotaInfoPanel.setVisible(true);
-        } else {
-            myQuotaInfoPanel.setVisible(false);
+        if (myUser != null) {
+            myInfoReset.setText(new SimpleDateFormat(MyTunesRssUtils.getBundleString("common.dateFormat"))
+                    .format(new Date(myUser.getResetTime())));
+            myInfoDownBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(myUser.getDownBytes()));
+            myInfoDownBytes.setVisible(true);
+            if (myUser.getQuotaType() != User.QuotaType.None) {
+                myInfoRemainBytes.setText(MyTunesRssUtils.getMemorySizeForDisplay(Math.max(myUser.getBytesQuota()
+                        - myUser.getQuotaDownBytes(), 0)));
+                myQuotaInfoPanel.setVisible(true);
+            } else {
+                myQuotaInfoPanel.setVisible(false);
+            }
+            myRootPanel.validate();
         }
-        myRootPanel.validate();
     }
 
     private void createUIComponents() {
