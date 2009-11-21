@@ -14,6 +14,8 @@ public class DisplayFilter {
     private String myTextFilter;
     private MediaType myMediaType;
     private Protection myProtection;
+    private int myMinYear = -1;
+    private int myMaxYear = -1;
 
     public Protection getProtection() {
         return myProtection;
@@ -37,5 +39,21 @@ public class DisplayFilter {
 
     public void setMediaType(MediaType mediaType) {
         myMediaType = mediaType;
+    }
+
+    public int getMinYear() {
+        return myMinYear;
+    }
+
+    public void setMinYear(int minYear) {
+        myMinYear = Math.max(minYear, -1);
+    }
+
+    public int getMaxYear() {
+        return myMaxYear;
+    }
+
+    public void setMaxYear(int maxYear) {
+        myMaxYear = Math.max(maxYear, -1);
     }
 }

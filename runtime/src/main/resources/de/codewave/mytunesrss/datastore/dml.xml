@@ -8,9 +8,10 @@
             <![CDATA[
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
             FROM album a, track t
-            WHERE ((:artist IS NOT NULL AND t.lower_artist = LOWER(:artist) AND t.album = a.name)
-            OR (:genre IS NOT NULL AND t.lower_genre = LOWER(:genre) AND t.album = a.name))
+            WHERE ((:index < 0 OR :index > 8) OR ({letterRegionByIndex}))
             AND (:filter IS NULL OR a.lower_name LIKE :filter)
+            AND (:artist IS NULL OR (t.lower_artist = LOWER(:artist) AND t.album = a.name))
+            AND (:genre IS NULL OR (t.lower_genre = LOWER(:genre) AND t.album = a.name))
             AND (a.year >= :min_year AND a.year <= :max_year)
             GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash, a.year
             ORDER BY albumname
@@ -24,9 +25,10 @@
             <![CDATA[
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
             FROM album a, link_track_playlist rltp, track t
-            WHERE ((:artist IS NOT NULL AND t.lower_artist = LOWER(:artist) AND t.album = a.name)
-            OR (:genre IS NOT NULL AND t.lower_genre = LOWER(:genre) AND t.album = a.name))
+            WHERE ((:index < 0 OR :index > 8) OR ({letterRegionByIndex}))
             AND (:filter IS NULL OR a.lower_name LIKE :filter)
+            AND (:artist IS NULL OR (t.lower_artist = LOWER(:artist) AND t.album = a.name))
+            AND (:genre IS NULL OR (t.lower_genre = LOWER(:genre) AND t.album = a.name))
             AND (a.year >= :min_year AND a.year <= :max_year)
             AND rltp.playlist_id = :restrictedPlaylistId
             AND rltp.track_id = t.id
@@ -37,37 +39,39 @@
         </sql>
     </statement>
 
-    <statement name="findAlbumsWithLetterRegion">
+    <statement name="findAlbumsSortByYear">
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
-            FROM album a
-            WHERE ((:index < 0 OR :index > 8)
-            OR ({letterRegionByIndex}))
+            FROM album a, track t
+            WHERE ((:index < 0 OR :index > 8) OR ({letterRegionByIndex}))
             AND (:filter IS NULL OR a.lower_name LIKE :filter)
+            AND (:artist IS NULL OR (t.lower_artist = LOWER(:artist) AND t.album = a.name))
+            AND (:genre IS NULL OR (t.lower_genre = LOWER(:genre) AND t.album = a.name))
             AND (a.year >= :min_year AND a.year <= :max_year)
-            GROUP BY albumname, track_count, artist_count, artist, image_hash, year
-            ORDER BY albumname
+            GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash, a.year
+            ORDER BY year
             ]]>
         </sql>
     </statement>
 
-    <statement name="findAlbumsRestrictedWithLetterRegion">
+    <statement name="findAlbumsRestrictedSortByYear">
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
             FROM album a, link_track_playlist rltp, track t
-            WHERE ((:index < 0 OR :index > 8)
-            OR ({letterRegionByIndex}))
+            WHERE ((:index < 0 OR :index > 8) OR ({letterRegionByIndex}))
             AND (:filter IS NULL OR a.lower_name LIKE :filter)
+            AND (:artist IS NULL OR (t.lower_artist = LOWER(:artist) AND t.album = a.name))
+            AND (:genre IS NULL OR (t.lower_genre = LOWER(:genre) AND t.album = a.name))
             AND (a.year >= :min_year AND a.year <= :max_year)
             AND rltp.playlist_id = :restrictedPlaylistId
             AND rltp.track_id = t.id
             AND t.album = a.name
             GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash, a.year
-            ORDER BY albumname
+            ORDER BY year
             ]]>
         </sql>
     </statement>

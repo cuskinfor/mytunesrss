@@ -27,8 +27,9 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     private int myMinYear;
     private int myMaxYear;
     private String myRestrictedPlaylistId;
+    private boolean mySortByYear;
 
-    public FindAlbumQuery(User user, String filter, String artist, String genre, int index, int minYear, int maxYear) {
+    public FindAlbumQuery(User user, String filter, String artist, String genre, int index, int minYear, int maxYear, boolean sortByYear) {
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + filter + "%" : null;
         myArtist = artist;
         myGenre = genre;
@@ -36,11 +37,18 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         myMinYear = minYear >= 0 ? minYear : Integer.MIN_VALUE;
         myMaxYear = (maxYear >= 0 && maxYear >= minYear) ? maxYear : Integer.MAX_VALUE;
         myRestrictedPlaylistId = user.getPlaylistId();
+        mySortByYear = sortByYear;
     }
 
     public QueryResult<Album> execute(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection,
-                                                                   "findAlbums" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted") + (myArtist == null && myGenre == null ? "WithLetterRegion" : ""));
+        String statementName = "findAlbums";
+        if (StringUtils.isNotEmpty(myRestrictedPlaylistId)) {
+            statementName += "Restricted";
+        }
+        if (mySortByYear) {
+            statementName += "SortByYear";
+        }
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, statementName);
         statement.setString("filter", myFilter);
         statement.setString("artist", myArtist);
         statement.setString("genre", myGenre);

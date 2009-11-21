@@ -41,8 +41,9 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                                                                artist,
                                                                genre,
                                                                getIntegerRequestParameter("page", -1),
-                                                               getIntegerRequestParameter("minyear", -1),
-                                                               getIntegerRequestParameter("maxyear", -1));
+                                                               getDisplayFilter().getMinYear(),
+                                                               getDisplayFilter().getMaxYear(),
+                                                               getBooleanRequestParameter("sortByYear", false));
             DataStoreQuery.QueryResult<Album> queryResult = getTransaction().executeQuery(findAlbumQuery);
             int pageSize = getWebConfig().getEffectivePageSize();
             List<Album> albums;

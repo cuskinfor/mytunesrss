@@ -15,7 +15,6 @@ import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.utils.servlet.CommandHandler;
-import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.swing.Task;
@@ -31,7 +30,6 @@ import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
 import javax.naming.AuthenticationException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
@@ -411,11 +409,17 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             }
         }
         if (getRequest().getParameter("filterProtected") != null) {
-            if ("".equals(getRequest().getParameter("filterProtected"))) {
-                filter.setProtection(DisplayFilter.Protection.All);
+            if (StringUtils.isBlank(getRequest().getParameter("filterProtected"))) {
+                filter.setProtection(null);
             } else {
                 filter.setProtection(DisplayFilter.Protection.valueOf(getRequest().getParameter("filterProtected")));
             }
+        }
+        if (getRequest().getParameter("filterMinYear") != null) {
+            filter.setMinYear(getIntegerRequestParameter("filterMinYear", -1));
+        }
+        if (getRequest().getParameter("filterMaxYear") != null) {
+            filter.setMaxYear(getIntegerRequestParameter("filterMaxYear", -1));
         }
     }
 

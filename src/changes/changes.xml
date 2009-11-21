@@ -9,6 +9,15 @@
 
         <release version="3.8.0-EAP-7" date="2009-11-15" description="3.8.0 EAP 7">
             <action dev="mdescher" type="add">
+                Filter for release year in album browser.
+            </action>
+            <action dev="mdescher" type="add">
+                Toggle display of filters in browsers.
+            </action>
+        </release>
+
+        <release version="3.8.0-EAP-7" date="2009-11-15" description="3.8.0 EAP 7">
+            <action dev="mdescher" type="add">
                 LDAP authentication support.
             </action>
             <action dev="mdescher" type="add">

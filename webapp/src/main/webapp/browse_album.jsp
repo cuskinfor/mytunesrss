@@ -93,15 +93,18 @@
 
 <jsp:include page="incl_playlist.jsp" />
 
-<c:set var="pager" scope="request" value="${albumPager}" />
-<c:set var="pagerCommand" scope="request" value="${servletUrl}/browseAlbum/${auth}/page={index}" />
-<c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.artist || !empty param.genre, '*', param.page)}" />
-<jsp:include page="incl_pager.jsp" />
+<c:if test="${param.sortByYear != 'true'}">
+    <c:set var="pager" scope="request" value="${albumPager}" />
+    <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseAlbum/${auth}/page={index}" />
+    <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.artist || !empty param.genre, '*', param.page)}" />
+    <jsp:include page="incl_pager.jsp" />
+</c:if>
 
     <table class="select" cellspacing="0">
         <tr>
             <td colspan="4" style="padding:0">
                 <c:set var="displayFilterUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}</c:set>
+                <c:set var="filterYearActive" scope="request" value="true"/>
                 <jsp:include page="/incl_display_filter.jsp"/>
             </td>
         </tr>
