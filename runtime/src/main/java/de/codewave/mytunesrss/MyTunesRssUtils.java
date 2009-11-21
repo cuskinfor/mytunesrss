@@ -40,8 +40,13 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Enumeration;
+import java.util.Map;
+import java.util.Collections;
 import java.awt.event.*;
 import java.awt.*;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -328,7 +333,19 @@ public class MyTunesRssUtils {
     }
 
     public static SmartStatement createStatement(Connection connection, String name) throws SQLException {
-        return MyTunesRss.STORE.getSmartStatementFactory().createStatement(connection, name);
+        return createStatement(connection, name, Collections.<String, Boolean>emptyMap());
+    }
+
+    public static SmartStatement createStatement(Connection connection, String name, final Map<String, Boolean> conditionals) throws SQLException {
+        return MyTunesRss.STORE.getSmartStatementFactory().createStatement(connection, name, (Map<String, Boolean>)Proxy.newProxyInstance(MyTunesRss.class.getClassLoader(), new Class[] {Map.class}, new InvocationHandler() {
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                if ("get".equals(method.getName()) && args.length == 1 && args[0] instanceof String) {
+                    return conditionals.containsKey((String)args[0]) ? conditionals.get((String)args[0]) : Boolean.FALSE;
+                } else {
+                    return method.invoke(conditionals, args);
+                }
+            }
+        }));
     }
 
     public static void executeDatabaseUpdate() {

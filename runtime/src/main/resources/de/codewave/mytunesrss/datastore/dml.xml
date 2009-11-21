@@ -4,15 +4,16 @@
 
     <statement name="findAlbums">
         <parameter name="index" type="java.lang.Integer"/>
+        <conditionals>track,filter,artist,album,year</conditionals>
         <sql>
             <![CDATA[
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
-            FROM album a, track t
-            WHERE ((:index < 0 OR :index > 8) OR ({letterRegionByIndex}))
-            AND (:filter IS NULL OR a.lower_name LIKE :filter)
-            AND (:artist IS NULL OR (t.lower_artist = LOWER(:artist) AND t.album = a.name))
-            AND (:genre IS NULL OR (t.lower_genre = LOWER(:genre) AND t.album = a.name))
-            AND (a.year >= :min_year AND a.year <= :max_year)
+            FROM album a <track>, track t</track>
+            WHERE ((:index < 0 OR :index > 8) OR {letterRegionByIndex})
+            <filter>AND a.lower_name LIKE :filter</filter>
+            <artist>AND t.lower_artist = LOWER(:artist) AND t.album = a.name</artist>
+            <genre>AND t.lower_genre = LOWER(:genre) AND t.album = a.name</genre>
+            <year>AND a.year >= :min_year AND a.year <= :max_year</year>
             GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash, a.year
             ORDER BY albumname
             ]]>
@@ -25,11 +26,11 @@
             <![CDATA[
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
             FROM album a, link_track_playlist rltp, track t
-            WHERE ((:index < 0 OR :index > 8) OR ({letterRegionByIndex}))
-            AND (:filter IS NULL OR a.lower_name LIKE :filter)
-            AND (:artist IS NULL OR (t.lower_artist = LOWER(:artist) AND t.album = a.name))
-            AND (:genre IS NULL OR (t.lower_genre = LOWER(:genre) AND t.album = a.name))
-            AND (a.year >= :min_year AND a.year <= :max_year)
+            WHERE ((:index < 0 OR :index > 8) OR {letterRegionByIndex}))
+            <filter>AND a.lower_name LIKE :filter</filter>
+            <artist>AND t.lower_artist = LOWER(:artist) AND t.album = a.name</artist>
+            <genre>AND t.lower_genre = LOWER(:genre) AND t.album = a.name</genre>
+            <year>AND a.year >= :min_year AND a.year <= :max_year</year>
             AND rltp.playlist_id = :restrictedPlaylistId
             AND rltp.track_id = t.id
             AND t.album = a.name
@@ -44,12 +45,12 @@
         <sql>
             <![CDATA[
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
-            FROM album a, track t
-            WHERE ((:index < 0 OR :index > 8) OR ({letterRegionByIndex}))
-            AND (:filter IS NULL OR a.lower_name LIKE :filter)
-            AND (:artist IS NULL OR (t.lower_artist = LOWER(:artist) AND t.album = a.name))
-            AND (:genre IS NULL OR (t.lower_genre = LOWER(:genre) AND t.album = a.name))
-            AND (a.year >= :min_year AND a.year <= :max_year)
+            FROM album a <track>, track t</track>
+            WHERE ((:index < 0 OR :index > 8) OR {letterRegionByIndex}))
+            <filter>AND a.lower_name LIKE :filter</filter>
+            <artist>AND t.lower_artist = LOWER(:artist) AND t.album = a.name</artist>
+            <genre>AND t.lower_genre = LOWER(:genre) AND t.album = a.name</genre>
+            <year>AND a.year >= :min_year AND a.year <= :max_year</year>
             GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash, a.year
             ORDER BY year
             ]]>
@@ -62,11 +63,11 @@
             <![CDATA[
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
             FROM album a, link_track_playlist rltp, track t
-            WHERE ((:index < 0 OR :index > 8) OR ({letterRegionByIndex}))
-            AND (:filter IS NULL OR a.lower_name LIKE :filter)
-            AND (:artist IS NULL OR (t.lower_artist = LOWER(:artist) AND t.album = a.name))
-            AND (:genre IS NULL OR (t.lower_genre = LOWER(:genre) AND t.album = a.name))
-            AND (a.year >= :min_year AND a.year <= :max_year)
+            WHERE ((:index < 0 OR :index > 8) OR {letterRegionByIndex}))
+            <filter>AND a.lower_name LIKE :filter</filter>
+            <artist>AND t.lower_artist = LOWER(:artist) AND t.album = a.name</artist>
+            <genre>AND t.lower_genre = LOWER(:genre) AND t.album = a.name</genre>
+            <year>AND a.year >= :min_year AND a.year <= :max_year</year>
             AND rltp.playlist_id = :restrictedPlaylistId
             AND rltp.track_id = t.id
             AND t.album = a.name

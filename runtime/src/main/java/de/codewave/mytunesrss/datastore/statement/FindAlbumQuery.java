@@ -14,6 +14,9 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
@@ -48,7 +51,13 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         if (mySortByYear) {
             statementName += "SortByYear";
         }
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, statementName);
+        Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+        conditionals.put("track", StringUtils.isNotBlank(myArtist) || StringUtils.isNotBlank(myGenre));
+        conditionals.put("filter", StringUtils.isNotBlank(myFilter));
+        conditionals.put("artist", StringUtils.isNotBlank(myArtist));
+        conditionals.put("genre", StringUtils.isNotBlank(myGenre));
+        conditionals.put("year", myMaxYear > Integer.MIN_VALUE || myMaxYear < Integer.MAX_VALUE);
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, statementName, conditionals);
         statement.setString("filter", myFilter);
         statement.setString("artist", myArtist);
         statement.setString("genre", myGenre);
