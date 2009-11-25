@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQuery
@@ -81,7 +82,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private String[] myGenres;
     private String[] myArtists;
     private SortOrder mySortOrder;
-    private List<String> myRestrictedPlaylistIds;
+    private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private String[] mySearchTerms = new String[0];
 
     private FindTrackQuery() {

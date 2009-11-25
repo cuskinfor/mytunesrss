@@ -15,13 +15,14 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
  */
 public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Genre>> {
     private int myIndex;
-    private List<String> myRestrictedPlaylistIds;
+    private List<String> myRestrictedPlaylistIds = Collections.emptyList();;
 
     public FindGenreQuery(User user, int index) {
         myIndex = index;
