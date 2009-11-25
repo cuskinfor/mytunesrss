@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
@@ -23,24 +24,24 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
     private String myAlbum;
     private String myGenre;
     private int myIndex;
-    private String myRestrictedPlaylistId;
+    private List<String> myRestrictedPlaylistIds;
 
     public FindArtistQuery(User user, String filter, String album, String genre, int index) {
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + filter + "%" : null;
         myAlbum = album;
         myGenre = genre;
         myIndex = index;
-        myRestrictedPlaylistId = user.getPlaylistId();
+        myRestrictedPlaylistIds = user.getPlaylistIds();
     }
 
     public QueryResult<Artist> execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection,
-                                                                   "findArtists" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted"));
+                                                                   "findArtists" + (myRestrictedPlaylistIds.isEmpty() ? "" : "Restricted"));
         statement.setString("filter", myFilter);
         statement.setString("album", myAlbum);
         statement.setString("genre", myGenre);
         statement.setInt("index", myIndex);
-        statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
+        statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         return execute(statement, new ArtistResultBuilder());
     }
 

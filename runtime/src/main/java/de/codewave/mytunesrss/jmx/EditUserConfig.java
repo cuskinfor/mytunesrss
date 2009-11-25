@@ -21,8 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.jmx.EditUserConfig
@@ -276,14 +275,22 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
         return names;
     }
 
-    public String getRestrictionPlaylist() {
-        String playlistId = MyTunesRss.CONFIG.getUser(myUsername).getPlaylistId();
-        if (StringUtils.isNotEmpty(playlistId)) {
-            DataStoreQuery.QueryResult<Playlist> playlists = null;
+    public String[] getRestrictionPlaylists() {
+        List<String> playlistIds = MyTunesRss.CONFIG.getUser(myUsername).getPlaylistIds();
+        if (!playlistIds.isEmpty()) {
             DataStoreSession session = MyTunesRss.STORE.getTransaction();
             try {
-                playlists = session.executeQuery(new FindPlaylistQuery(null, playlistId, null, true));
-                return playlists.getResultSize() != 0 ? playlists.nextResult().getName() : MyTunesRssUtils.getBundleString("editUser.noPlaylist");
+                List<String> playlistNames = new ArrayList<String>();
+                for (Playlist playlist : session.executeQuery(new FindPlaylistQuery(null, null, null, true)).getResults()) {
+                    if (playlistIds.contains(playlist.getId())) {
+                        playlistNames.add(playlist.getName());
+                    }
+                }
+                if (playlistNames.isEmpty()) {
+                    return new String[]{MyTunesRssUtils.getBundleString("editUser.noPlaylist")};
+                }
+                Collections.sort(playlistNames);
+                return playlistNames.toArray(new String[playlistNames.size()]);
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not query playlists.", e);
@@ -292,20 +299,42 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
                 session.commit();
             }
         }
-        return MyTunesRssUtils.getBundleString("editUser.noPlaylist");
+        return new String[]{MyTunesRssUtils.getBundleString("editUser.noPlaylist")};
     }
 
-    public void setRestrictionPlaylist(String playlistName) {
+    public void addRestrictionPlaylist(String playlistName) {
         DataStoreQuery.QueryResult<Playlist> playlists = null;
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
             playlists = session.executeQuery(new FindPlaylistQuery(null, null, null, true));
             if (playlists.getResultSize() > 0) {
                 User user = MyTunesRss.CONFIG.getUser(myUsername);
-                user.setPlaylistId(null);
                 for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
                     if (StringUtils.containsIgnoreCase(playlist.getName(), playlistName)) {
-                        user.setPlaylistId(playlist.getId());
+                        user.addPlaylistId(playlist.getId());
+                    }
+                }
+            }
+            onChange();
+        } catch (SQLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not query playlists.", e);
+            }
+        } finally {
+            session.commit();
+        }
+    }
+
+    public void removeRestrictionPlaylist(String playlistName) {
+        DataStoreQuery.QueryResult<Playlist> playlists = null;
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
+        try {
+            playlists = session.executeQuery(new FindPlaylistQuery(null, null, null, true));
+            if (playlists.getResultSize() > 0) {
+                User user = MyTunesRss.CONFIG.getUser(myUsername);
+                for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
+                    if (StringUtils.containsIgnoreCase(playlist.getName(), playlistName)) {
+                        user.removePlaylistId(playlist.getId());
                     }
                 }
             }

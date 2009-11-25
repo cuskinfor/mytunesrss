@@ -33,7 +33,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     public static FindTrackQuery getForSearchTerm(User user, String searchTerm, int fuzziness, SortOrder sortOrder) throws IOException, ParseException {
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
-        query.myRestrictedPlaylistId = user.getPlaylistId();
+        query.myRestrictedPlaylistIds = user.getPlaylistIds();
         String[] searchTerms = StringUtils.split(StringUtils.defaultString(searchTerm), " ");
         query.mySearchTerms = new String[searchTerms.length];
         for (int i = 0; i < searchTerms.length; i++) {
@@ -50,7 +50,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         for (int i = 0; i < albums.length; i++) {
             query.myAlbums[i] = albums[i].toLowerCase();
         }
-        query.myRestrictedPlaylistId = user.getPlaylistId();
+        query.myRestrictedPlaylistIds = user.getPlaylistIds();
         return query;
     }
 
@@ -61,7 +61,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         for (int i = 0; i < artists.length; i++) {
             query.myArtists[i] = artists[i].toLowerCase();
         }
-        query.myRestrictedPlaylistId = user.getPlaylistId();
+        query.myRestrictedPlaylistIds = user.getPlaylistIds();
         return query;
     }
 
@@ -72,7 +72,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         for (int i = 0; i < genres.length; i++) {
             query.myGenres[i] = genres[i].toLowerCase();
         }
-        query.myRestrictedPlaylistId = user.getPlaylistId();
+        query.myRestrictedPlaylistIds = user.getPlaylistIds();
         return query;
     }
 
@@ -81,7 +81,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private String[] myGenres;
     private String[] myArtists;
     private SortOrder mySortOrder;
-    private String myRestrictedPlaylistId;
+    private List<String> myRestrictedPlaylistIds;
     private String[] mySearchTerms = new String[0];
 
     private FindTrackQuery() {
@@ -93,7 +93,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             return executeForIds(connection);
         } else {
             SmartStatement statement;
-            String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
+            String suffix = myRestrictedPlaylistIds.isEmpty() ? "" : "Restricted";
             if (mySortOrder == SortOrder.Artist) {
                 statement = MyTunesRssUtils.createStatement(connection, "findTracksWithArtistOrder" + suffix);
             } else if (mySortOrder == SortOrder.Album) {
@@ -104,7 +104,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             statement.setItems("album", myAlbums);
             statement.setItems("artist", myArtists);
             statement.setItems("genre", myGenres);
-            statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
+            statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
             return execute(statement, new TrackResultBuilder());
         }
     }
@@ -121,7 +121,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             statement.setObject("first_search_term", mySearchTerms[0]);
             statement.execute();
         }
-        String suffix = StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted";
+        String suffix = myRestrictedPlaylistIds.isEmpty() ? "" : "Restricted";
         if (mySortOrder == SortOrder.Artist) {
             statement = MyTunesRssUtils.createStatement(connection, "findTracksByIdsWithArtistOrder" + suffix);
         } else if (mySortOrder == SortOrder.Album) {
@@ -129,7 +129,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         } else {
             statement = MyTunesRssUtils.createStatement(connection, "findTracksByIds" + suffix);
         }
-        statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
+        statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         return execute(statement, new TrackResultBuilder());
     }
 }

@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
@@ -29,7 +30,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     private int myIndex;
     private int myMinYear;
     private int myMaxYear;
-    private String myRestrictedPlaylistId;
+    private List<String> myRestrictedPlaylistIds;
     private boolean mySortByYear;
 
     public FindAlbumQuery(User user, String filter, String artist, String genre, int index, int minYear, int maxYear, boolean sortByYear) {
@@ -39,13 +40,13 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         myIndex = index;
         myMinYear = minYear >= 0 ? minYear : Integer.MIN_VALUE;
         myMaxYear = (maxYear >= 0 && maxYear >= minYear) ? maxYear : Integer.MAX_VALUE;
-        myRestrictedPlaylistId = user.getPlaylistId();
+        myRestrictedPlaylistIds = user.getPlaylistIds();
         mySortByYear = sortByYear;
     }
 
     public QueryResult<Album> execute(Connection connection) throws SQLException {
         String statementName = "findAlbums";
-        if (StringUtils.isNotEmpty(myRestrictedPlaylistId)) {
+        if (!myRestrictedPlaylistIds.isEmpty()) {
             statementName += "Restricted";
         }
         if (mySortByYear) {
@@ -64,7 +65,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         statement.setInt("index", myIndex);
         statement.setInt("min_year", myMinYear);
         statement.setInt("max_year", myMaxYear);
-        statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
+        statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         return execute(statement, new AlbumResultBuilder());
     }
 

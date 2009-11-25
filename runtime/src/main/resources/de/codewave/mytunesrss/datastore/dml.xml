@@ -26,12 +26,12 @@
             <![CDATA[
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
             FROM album a, link_track_playlist rltp, track t
-            WHERE ((:index < 0 OR :index > 8) OR {letterRegionByIndex}))
+            WHERE ((:index < 0 OR :index > 8) OR {letterRegionByIndex})
             <filter>AND a.lower_name LIKE :filter</filter>
             <artist>AND t.lower_artist = LOWER(:artist) AND t.album = a.name</artist>
             <genre>AND t.lower_genre = LOWER(:genre) AND t.album = a.name</genre>
             <year>AND a.year >= :min_year AND a.year <= :max_year</year>
-            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
             AND t.album = a.name
             GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash, a.year
@@ -68,7 +68,7 @@
             <artist>AND t.lower_artist = LOWER(:artist) AND t.album = a.name</artist>
             <genre>AND t.lower_genre = LOWER(:genre) AND t.album = a.name</genre>
             <year>AND a.year >= :min_year AND a.year <= :max_year</year>
-            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
             AND t.album = a.name
             GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash, a.year
@@ -103,7 +103,7 @@
             OR (:album IS NOT NULL AND a.name IN (SELECT DISTINCT(artist) FROM track WHERE lower_album = LOWER(:album)))
             OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(artist) FROM track WHERE lower_genre = LOWER(:genre)))
             OR {letterRegionByIndex})
-            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
             AND t.artist = a.name
             AND (:filter IS NULL OR a.lower_name LIKE :filter)
@@ -145,7 +145,7 @@
             SELECT g.name AS name, g.track_count AS track_count, g.artist_count AS artist_count, g.album_count AS album_count
             FROM genre g, link_track_playlist rltp, track t
             WHERE ((:index < 0 OR :index > 8) OR {letterRegionByIndex})
-            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
             AND t.genre = g.name
             GROUP BY g.name, g.track_count, g.artist_count, g.album_count
@@ -198,7 +198,7 @@
             WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
             AND (user_private IS NULL OR user_private = FALSE OR :username IS NULL OR user_owner = :username)
             AND (type != 'TEMP')
-            AND rltp.playlist_id = :restrictionPlaylistId
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND ltp.track_id = rltp.track_id
             AND ltp.playlist_id = p.id
             AND ((:size_of_types = 0 AND :id IS NULL)
@@ -237,7 +237,7 @@
             FROM link_track_playlist ltp, link_track_playlist rltp, track t
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
-            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND t.id = rltp.track_id
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
@@ -271,7 +271,7 @@
             FROM link_track_playlist ltp, link_track_playlist rltp, track t
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
-            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND t.id = rltp.track_id
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
@@ -305,7 +305,7 @@
             FROM link_track_playlist ltp, link_track_playlist rltp, track t
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
-            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND t.id = rltp.track_id
             AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
             AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
@@ -329,7 +329,7 @@
             <![CDATA[
             SELECT {trackColumns}
             FROM link_track_playlist rltp, track t
-            WHERE rltp.playlist_id = :restrictedPlaylistId
+            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND t.id = rltp.track_id
             ORDER BY album, pos_number, track_number, name
             ]]>
@@ -351,7 +351,7 @@
             <![CDATA[
             SELECT {trackColumns}
             FROM link_track_playlist rltp, track t
-            WHERE rltp.playlist_id = :restrictedPlaylistId
+            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND t.id = rltp.track_id
             ORDER BY artist, album, pos_number, track_number, name
             ]]>
@@ -902,7 +902,7 @@
         <![CDATA[
         SELECT {trackColumns}
         FROM link_track_playlist rltp, track t
-        WHERE rltp.playlist_id = :restrictedPlaylistId
+        WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
         AND rltp.track_id = t.id
         AND (:size_of_genre = 0 OR t.lower_genre IN (:genre[]))
         AND (:size_of_artist = 0 OR t.lower_artist IN (:artist[]))
@@ -914,13 +914,13 @@
         <![CDATA[
             SELECT {trackColumns}
             FROM link_track_playlist rltp, temp_lucene_tracks tt, track t
-            WHERE rltp.playlist_id = :restrictedPlaylistId
+            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
             AND tt.track_id = t.id
         UNION
             SELECT {trackColumns}
             FROM link_track_playlist rltp, temp_like_tracks tt, track t
-            WHERE rltp.playlist_id = :restrictedPlaylistId
+            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
             AND tt.track_id = t.id
         ]]>

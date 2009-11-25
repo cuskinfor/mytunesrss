@@ -34,7 +34,6 @@ import java.util.Timer;
  * @version $Id:$
  */
 public class EditUser implements MyTunesRssEventListener {
-    private static final Logger LOG = LoggerFactory.getLogger(EditUser.class);
     private static final int MEGABYTE = 1024 * 1024;
 
     private JTextField myUserNameInput;
@@ -60,7 +59,6 @@ public class EditUser implements MyTunesRssEventListener {
     private JScrollPane myScrollPane;
     private JCheckBox myPermTranscoderInput;
     private JTextField myBandwidthLimit;
-    private JComboBox myRestrictionPlaylistInput;
     private JScrollPane myScrollPane2;
     private JCheckBox mySaveUserSettingsInput;
     private JCheckBox myPermEditSettings;
@@ -83,6 +81,7 @@ public class EditUser implements MyTunesRssEventListener {
     private DefaultMutableTreeNode myUserNode;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
     private JTextPane myHelpLabel;
+    private JButton myPlaylistRestrictionsInput;
 
     public EditUser() {
         myScrollPane.getViewport().setOpaque(false);
@@ -111,6 +110,11 @@ public class EditUser implements MyTunesRssEventListener {
                 myUser.setDownBytes(0);
                 myUser.setResetTime(System.currentTimeMillis());
                 refreshInfo();
+            }
+        });
+        myPlaylistRestrictionsInput.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MyTunesRssUtils.showSettingsForm(new RestrictionPlaylists(myUser));
             }
         });
         JTextFieldValidation.setValidation(new CompositeTextFieldValidation(myUserNameInput, new NotEmptyTextFieldValidation(myUserNameInput,
@@ -177,7 +181,6 @@ public class EditUser implements MyTunesRssEventListener {
                 }
             });
         }
-        fillPlaylistSelect();
         fillForceTranscoderPanel();
         initValues();
         myInputsPanel.setVisible(myUser != null);
@@ -237,7 +240,7 @@ public class EditUser implements MyTunesRssEventListener {
         SwingUtils.enableElementAndLabel(myPermChangeEmail, !parentUser);
         SwingUtils.enableElementAndLabel(myPermRemoteControlnput, !parentUser);
         SwingUtils.enableElementAndLabel(mySaveUserSettingsInput, !parentUser);
-        SwingUtils.enableElementAndLabel(myRestrictionPlaylistInput, !parentUser);
+        SwingUtils.enableElementAndLabel(myPlaylistRestrictionsInput, !parentUser);
         SwingUtils.enableElementAndLabel(myPermExternalSitesInput, !parentUser);
         SwingUtils.enableElementAndLabel(myPermEditTagsInput, !parentUser);
     }
@@ -274,7 +277,6 @@ public class EditUser implements MyTunesRssEventListener {
             myPermExternalSitesInput.setSelected(myUser.isExternalSites());
             mySearchFuzzinessInput.setText(myUser.getSearchFuzziness() > -1 ? Integer.toString(myUser.getSearchFuzziness()) : "");
             myPermEditTagsInput.setSelected(myUser.isEditTags());
-            selectPlaylist(myUser.getPlaylistId());
             setParentUser(myUser.getParent() != null);
             if (myQuotaTypeInput.getSelectedItem() == User.QuotaType.None) {
                 SwingUtils.enableElementAndLabel(myBytesQuotaInput, false);
@@ -316,44 +318,6 @@ public class EditUser implements MyTunesRssEventListener {
             myPermExternalSitesInput.setSelected(false);
             myPermEditTagsInput.setSelected(false);
             setParentUser(false);
-        }
-    }
-
-    private void fillPlaylistSelect() {
-        DataStoreQuery.QueryResult<Playlist> playlists = null;
-        DataStoreSession session = MyTunesRss.STORE.getTransaction();
-        try {
-            playlists = session.executeQuery(new FindPlaylistQuery(null, null, null, true));
-            myRestrictionPlaylistInput.removeAllItems();
-            myRestrictionPlaylistInput.addItem(new Playlist() {
-                @Override
-                public String toString() {
-                    return MyTunesRssUtils.getBundleString("editUser.noPlaylist");
-                }
-            });
-            if (playlists != null) {
-                for (Playlist playlist = playlists.nextResult(); playlist != null; playlist = playlists.nextResult()) {
-                    myRestrictionPlaylistInput.addItem(playlist);
-                }
-            }
-            if (myUser != null) {
-                selectPlaylist(myUser.getPlaylistId());
-            }
-        } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not query playlists from database.", e);
-            }
-        } finally {
-            session.commit();
-        }
-    }
-
-    private void selectPlaylist(String playlistId) {
-        for (int i = 0; i < myRestrictionPlaylistInput.getItemCount(); i++) {
-            if (myUser != null && StringUtils.isNotEmpty(myUser.getPlaylistId()) && myUser.getPlaylistId().equals(((Playlist) myRestrictionPlaylistInput.getItemAt(i)).getId())) {
-                myRestrictionPlaylistInput.setSelectedIndex(i);
-                return;
-            }
         }
     }
 
@@ -415,11 +379,6 @@ public class EditUser implements MyTunesRssEventListener {
             myUser.setBandwidthLimit(MyTunesRssUtils.getTextFieldInteger(myBandwidthLimit, 0));
             myUser.setEmail(myEmailInput.getText());
             myUser.setChangeEmail(myPermChangeEmail.isSelected());
-            if (myRestrictionPlaylistInput.getSelectedItem() != null) {
-                myUser.setPlaylistId(((Playlist) myRestrictionPlaylistInput.getSelectedItem()).getId());
-            } else {
-                myUser.setPlaylistId(null);
-            }
             myUser.setSaveWebSettings(mySaveUserSettingsInput.isSelected());
             myUser.setLastFmUsername(myLastFmUsernameInput.getText());
             myUser.setLastFmPasswordHash(myLastFmPasswordInput.getPasswordHash());
@@ -429,7 +388,6 @@ public class EditUser implements MyTunesRssEventListener {
             myUser.setExternalSites(myPermExternalSitesInput.isSelected());
             myUser.setSearchFuzziness(MyTunesRssUtils.getTextFieldInteger(mySearchFuzzinessInput, -1));
             myUser.setEditTags(myPermEditTagsInput.isSelected());
-            myUser.setPlaylistId(((Playlist) myRestrictionPlaylistInput.getSelectedItem()).getId());
             myUser.clearForceTranscoders();
             for (Component transcoderCheckbox : myForceTranscodersPanel.getComponents()) {
                 if (transcoderCheckbox instanceof JCheckBox) {

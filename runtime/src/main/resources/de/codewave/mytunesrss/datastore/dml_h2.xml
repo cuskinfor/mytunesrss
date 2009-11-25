@@ -28,7 +28,7 @@
             OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(album) FROM track WHERE lower_genre = LOWER(:genre))))
             AND (:filter IS NULL OR a.lower_name LIKE :filter)
             AND (a.year >= :min_year AND a.year <= :max_year)
-            AND rltp.playlist_id = :restrictedPlaylistId
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
             AND t.album = a.name
             GROUP BY albumname, track_count, artist_count, artist, image_hash, year
@@ -75,7 +75,7 @@
             FROM link_track_playlist rltp, track t
             WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM
                 link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
-            AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[]) AND t.id = rltp.track_id
             AND (:mediatype IS NULL OR t.mediatype = :mediatype)
             AND (NOT t.protected OR t.protected = :protected)
             ORDER BY RAND()
@@ -87,7 +87,7 @@
             FROM link_track_playlist rltp, track t
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM
                 link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId)
-            AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[]) AND t.id = rltp.track_id
             ORDER BY ts_updated DESC
         </sql>
     </statement>
@@ -98,7 +98,7 @@
             FROM link_track_playlist rltp, track t
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM
                 link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId)
-            AND rltp.playlist_id = :restrictedPlaylistId AND t.id = rltp.track_id
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[]) AND t.id = rltp.track_id
             ORDER BY playcount DESC
         </sql>
     </statement>

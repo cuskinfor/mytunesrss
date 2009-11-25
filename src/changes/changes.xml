@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.8.0-EAP-8" date="2009-xx-xx" description="3.8.0 EAP 8">
+            <action dev="mdescher" type="add">
+                Multiple restriction playlists per user.
+            </action>
+        </release>
+
         <release version="3.8.0-EAP-7" date="2009-11-15" description="3.8.0 EAP 7">
             <action dev="mdescher" type="add">
                 Filter for release year in album browser.

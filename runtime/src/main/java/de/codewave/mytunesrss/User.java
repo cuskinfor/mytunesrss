@@ -289,7 +289,11 @@ public class User implements MyTunesRssEventListener, Cloneable {
     public void addPlaylistId(String playlistId) {
         myPlaylistIds.add(playlistId);
     }
-    
+
+    public void removePlaylistId(String playlistId) {
+        myPlaylistIds.remove(playlistId);
+    }
+
     public void setPlaylistIds(List<String> playlistIds) {
         myPlaylistIds = new ArrayList<String>(playlistIds);
     }
@@ -513,9 +517,9 @@ public class User implements MyTunesRssEventListener, Cloneable {
         setTranscoder(JXPathUtils.getBooleanValue(settings, "featureTranscoder", false));
         setSessionTimeout(JXPathUtils.getIntValue(settings, "sessionTimeout", 10));
         setBandwidthLimit(JXPathUtils.getIntValue(settings, "bandwidthLimit", 0));
-        Iterator<JXPathContext> playlistIdIterator = JXPathUtils.getContextIterator(settings, "playlists");
+        Iterator<JXPathContext> playlistIdIterator = JXPathUtils.getContextIterator(settings, "playlists/id");
         while (playlistIdIterator.hasNext()) {
-            addPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), "id", null));
+            addPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), ".", null));
         }
         setSaveWebSettings(JXPathUtils.getBooleanValue(settings, "saveWebSettings", false));
         setWebSettings(JXPathUtils.getStringValue(settings, "webSettings", null));

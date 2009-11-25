@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2009. Codewave Software Michael Descher.
+ * All rights reserved.
+ */
+
 package de.codewave.mytunesrss.settings;
 
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -19,24 +24,28 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.awt.*;
 
 /**
- * de.codewave.mytunesrss.settings.Content
+ * de.codewave.mytunesrss.settings.RestrictionPlaylists
  */
-public class Content extends PlaylistsDialog implements MyTunesRssEventListener, SettingsForm {
-    private static final Logger LOG = LoggerFactory.getLogger(Content.class);
-
+public class RestrictionPlaylists extends PlaylistsDialog implements MyTunesRssEventListener, SettingsForm {
     private JPanel myRootPanel;
     private JScrollPane myScrollPane;
     private JPanel myPlaylistsPanel;
+    private User myUser;
 
-    public Content() {
+    public RestrictionPlaylists(User user) {
+        myUser = user;
         myScrollPane.getViewport().setOpaque(false);
-        MyTunesRssEventManager.getInstance().addListener(this);
+    }
+
+    public void initValues() {
+        refreshPlaylistList();
     }
 
     public String updateConfigFromGui() {
-        // intentionally left blank
+        // nothing to do here
         return null;
     }
 
@@ -44,8 +53,8 @@ public class Content extends PlaylistsDialog implements MyTunesRssEventListener,
         return myRootPanel;
     }
 
-    public void initValues() {
-        refreshPlaylistList();
+    public String getDialogTitle() {
+        return MyTunesRssUtils.getBundleString("restrictionPlaylistsTitle", myUser.getName());
     }
 
     public void handleEvent(final MyTunesRssEvent event) {
@@ -60,40 +69,19 @@ public class Content extends PlaylistsDialog implements MyTunesRssEventListener,
         });
     }
 
-    public String getDialogTitle() {
-        return MyTunesRssUtils.getBundleString("dialog.content.title");
-    }
-
     protected JPanel getPlaylistsPanel() {
         return myPlaylistsPanel;
     }
 
     protected boolean isSelected(Playlist playlist) {
-        return !playlist.isHidden();
+        return myUser.getPlaylistIds().contains(playlist.getId());
     }
 
     protected void stateChanged(Playlist playlist, boolean selected) {
-        DataStoreSession session = MyTunesRss.STORE.getTransaction();
-        SavePlaylistAttributesStatement statement = new SavePlaylistAttributesStatement();
-        statement.setId(playlist.getId());
-        statement.setHidden(!selected);
-        statement.setName(playlist.getName());
-        statement.setUserOwner(playlist.getUserOwner());
-        statement.setUserPrivate(playlist.isUserPrivate());
-        try {
-            session.executeStatement(statement);
-            session.commit();
-        } catch (SQLException e1) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not update playlist attributes.", e1);
-            }
-            try {
-                session.rollback();
-            } catch (SQLException e2) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not rollback transaction.", e2);
-                }
-            }
+        if (selected) {
+            myUser.addPlaylistId(playlist.getId());
+        } else {
+            myUser.removePlaylistId(playlist.getId());
         }
     }
 }

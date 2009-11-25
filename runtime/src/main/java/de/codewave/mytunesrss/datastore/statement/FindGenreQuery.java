@@ -14,24 +14,25 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
  */
 public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Genre>> {
     private int myIndex;
-    private String myRestrictedPlaylistId;
+    private List<String> myRestrictedPlaylistIds;
 
     public FindGenreQuery(User user, int index) {
         myIndex = index;
-        myRestrictedPlaylistId = user.getPlaylistId();
+        myRestrictedPlaylistIds = user.getPlaylistIds();
     }
 
     public QueryResult<Genre> execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection,
-                                                                   "findGenres" + (StringUtils.isEmpty(myRestrictedPlaylistId) ? "" : "Restricted"));
+                                                                   "findGenres" + (myRestrictedPlaylistIds.isEmpty() ? "" : "Restricted"));
         statement.setInt("index", myIndex);
-        statement.setString("restrictedPlaylistId", myRestrictedPlaylistId);
+        statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         return execute(statement, new GenreResultBuilder());
     }
 

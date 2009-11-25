@@ -99,9 +99,11 @@ public interface EditUserConfigMBean {
 
     String[] getPlaylists();
 
-    String getRestrictionPlaylist();
+    String[] getRestrictionPlaylists();
 
-    void setRestrictionPlaylist(String playlistName);
+    void addRestrictionPlaylist(String playlistName);
+
+    void removeRestrictionPlaylist(String playlistName);
 
     boolean isSaveWebSettings();
 

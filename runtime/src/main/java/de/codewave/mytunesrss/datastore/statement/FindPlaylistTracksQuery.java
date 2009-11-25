@@ -16,6 +16,9 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
@@ -29,7 +32,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
 
     private String myId;
     private SortOrder mySortOrder;
-    private String myRestrictionPlaylistId;
+    private List<String> myRestrictionPlaylistIds = Collections.emptyList();
 
     public FindPlaylistTracksQuery(String id, SortOrder sortOrder) {
         myId = id;
@@ -38,12 +41,12 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
 
     public FindPlaylistTracksQuery(User user, String id, SortOrder sortOrder) {
         this(id, sortOrder);
-        myRestrictionPlaylistId = user.getPlaylistId();
+        myRestrictionPlaylistIds = user.getPlaylistIds();
     }
 
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
-        String suffix = StringUtils.isEmpty(myRestrictionPlaylistId) || myRestrictionPlaylistId.equals(myId) ? "" : "Restricted";
+        String suffix = myRestrictionPlaylistIds.isEmpty() || (myRestrictionPlaylistIds.size() == 1 && myRestrictionPlaylistIds.get(0).equals(myId)) ? "" : "Restricted";
         if (PSEUDO_ID_ALL_BY_ALBUM.equals(myId)) {
             statement = MyTunesRssUtils.createStatement(connection, "findAllTracksOrderedByAlbum" + suffix);
             myId = null;
@@ -90,7 +93,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
                 statement.setInt("lastIndex", Integer.parseInt(parts[2]));
             }
         }
-        statement.setString("restrictedPlaylistId", myRestrictionPlaylistId);
+        statement.setItems("restrictedPlaylistIds", myRestrictionPlaylistIds);
         return execute(statement, new TrackResultBuilder());
     }
 }

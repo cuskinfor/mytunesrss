@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery
@@ -24,7 +25,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
     private String myId;
     private String myContainerId;
     private List<PlaylistType> myTypes;
-    private String myRestrictionPlaylistId;
+    private List<String> myRestrictionPlaylistIds = Collections.emptyList();
     private String myUserName;
     private boolean myIncludeHidden;
     private boolean myMatchingOwnerOnly;
@@ -38,14 +39,14 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
 
     public FindPlaylistQuery(User user, List<PlaylistType> types, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly) {
         this(types, id, containerId, includeHidden);
-        myRestrictionPlaylistId = user.getPlaylistId();
+        myRestrictionPlaylistIds = user.getPlaylistIds();
         myUserName = user.getName();
         myMatchingOwnerOnly = matchingOwnerOnly;
     }
 
     public QueryResult<Playlist> execute(Connection connection) throws SQLException {
         String name = myMatchingOwnerOnly ? "findUserPlaylists" :
-                (StringUtils.isEmpty(myRestrictionPlaylistId) ? "findPlaylists" : "findPlaylistsRestricted");
+                (myRestrictionPlaylistIds.isEmpty() ? "findPlaylists" : "findPlaylistsRestricted");
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, name);
         if (myTypes != null) {
             List<String> typeNames = new ArrayList<String>(myTypes.size());
@@ -58,7 +59,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         }
         statement.setString("id", myId);
         statement.setString("containerId", myContainerId);
-        statement.setString("restrictionPlaylistId", myRestrictionPlaylistId);
+        statement.setItems("restrictionPlaylistIds", myRestrictionPlaylistIds);
         statement.setString("username", myUserName);
         statement.setBoolean("includeHidden", myIncludeHidden);
         return execute(statement, new PlaylistResultBuilder());
