@@ -4,7 +4,6 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.lastfm.LastFmSession;
 import de.codewave.mytunesrss.lastfm.LastFmSubmission;
 import de.codewave.mytunesrss.lastfm.LastFmUtils;
-import de.codewave.mytunesrss.settings.DialogLayout;
 import de.codewave.utils.servlet.RangeHeader;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.xml.DOMUtils;
@@ -12,9 +11,9 @@ import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -70,7 +69,7 @@ public class User implements MyTunesRssEventListener, Cloneable {
     private boolean mySpecialPlaylists;
     private boolean myTranscoder;
     private int myBandwidthLimit;
-    private String myPlaylistId;
+    private List<String> myPlaylistIds = new ArrayList<String>();
     private boolean mySaveWebSettings;
     private String myWebSettings;
     private boolean myCreatePlaylists;
@@ -283,12 +282,16 @@ public class User implements MyTunesRssEventListener, Cloneable {
         myBandwidthLimit = bandwidthLimit;
     }
 
-    public String getPlaylistId() {
-        return getParent() != null ? getParent().getPlaylistId() : myPlaylistId;
+    public List<String> getPlaylistIds() {
+        return getParent() != null ? getParent().getPlaylistIds() : new ArrayList<String>(myPlaylistIds);
     }
 
-    public void setPlaylistId(String playlistId) {
-        myPlaylistId = playlistId;
+    public void addPlaylistId(String playlistId) {
+        myPlaylistIds.add(playlistId);
+    }
+    
+    public void setPlaylistIds(List<String> playlistIds) {
+        myPlaylistIds = new ArrayList<String>(playlistIds);
     }
 
     public boolean isSaveWebSettings() {
@@ -510,7 +513,10 @@ public class User implements MyTunesRssEventListener, Cloneable {
         setTranscoder(JXPathUtils.getBooleanValue(settings, "featureTranscoder", false));
         setSessionTimeout(JXPathUtils.getIntValue(settings, "sessionTimeout", 10));
         setBandwidthLimit(JXPathUtils.getIntValue(settings, "bandwidthLimit", 0));
-        setPlaylistId(JXPathUtils.getStringValue(settings, "playlistId", null));
+        Iterator<JXPathContext> playlistIdIterator = JXPathUtils.getContextIterator(settings, "playlists");
+        while (playlistIdIterator.hasNext()) {
+            addPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), "id", null));
+        }
         setSaveWebSettings(JXPathUtils.getBooleanValue(settings, "saveWebSettings", false));
         setWebSettings(JXPathUtils.getStringValue(settings, "webSettings", null));
         setLastFmUsername(JXPathUtils.getStringValue(settings, "lastFmUser", null));
@@ -562,8 +568,12 @@ public class User implements MyTunesRssEventListener, Cloneable {
         users.appendChild(DOMUtils.createIntElement(settings, "sessionTimeout", getSessionTimeout()));
         users.appendChild(DOMUtils.createIntElement(settings, "bandwidthLimit", getBandwidthLimit()));
         users.appendChild(DOMUtils.createTextElement(settings, "email", getEmail()));
-        if (StringUtils.isNotEmpty(getPlaylistId())) {
-            users.appendChild(DOMUtils.createTextElement(settings, "playlistId", getPlaylistId()));
+        if (!CollectionUtils.isEmpty(getPlaylistIds())) {
+            Element playlists = settings.createElement("playlists");
+            users.appendChild(playlists);
+            for (String playlistId : getPlaylistIds()) {
+                playlists.appendChild(DOMUtils.createTextElement(settings, "id", playlistId));
+            }
         }
         users.appendChild(DOMUtils.createBooleanElement(settings, "saveWebSettings", isSaveWebSettings()));
         if (StringUtils.isNotEmpty(getWebSettings())) {
