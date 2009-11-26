@@ -42,20 +42,16 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     }
 
     public QueryResult<Album> execute(Connection connection) throws SQLException {
-        String statementName = "findAlbums";
-        if (!myRestrictedPlaylistIds.isEmpty()) {
-            statementName += "Restricted";
-        }
-        if (mySortByYear) {
-            statementName += "SortByYear";
-        }
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
         conditionals.put("track", StringUtils.isNotBlank(myArtist) || StringUtils.isNotBlank(myGenre));
         conditionals.put("filter", StringUtils.isNotBlank(myFilter));
         conditionals.put("artist", StringUtils.isNotBlank(myArtist));
         conditionals.put("genre", StringUtils.isNotBlank(myGenre));
         conditionals.put("year", myMaxYear > Integer.MIN_VALUE || myMaxYear < Integer.MAX_VALUE);
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, statementName, conditionals);
+        conditionals.put("albumorder", !mySortByYear);
+        conditionals.put("yearorder", mySortByYear);
+        conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAlbums", conditionals);
         statement.setString("filter", myFilter);
         statement.setString("artist", myArtist);
         statement.setString("genre", myGenre);
