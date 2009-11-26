@@ -154,7 +154,7 @@
         </sql>
     </statement>
 
-    <statement name="findPlaylists">
+    <!--statement name="findPlaylists">
         <sql>
             <![CDATA[
             SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
@@ -188,24 +188,22 @@
             ORDER BY name
             ]]>
         </sql>
-    </statement>
+    </statement-->
 
-    <statement name="findPlaylistsRestricted">
+    <statement name="findPlaylists">
         <sql>
             <![CDATA[
             SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
-            FROM playlist p, link_track_playlist rltp, link_track_playlist ltp
-            WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
-            AND (user_private IS NULL OR user_private = FALSE OR :username IS NULL OR user_owner = :username)
-            AND (type != 'TEMP')
-            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND ltp.track_id = rltp.track_id
-            AND ltp.playlist_id = p.id
-            AND ((:size_of_types = 0 AND :id IS NULL)
-            OR (:size_of_types > 0 AND :id IS NULL AND p.type IN (:types[]))
-            OR (:size_of_types = 0 AND :id IS NOT NULL AND p.id = :id)
-            OR (:size_of_types > 0 AND :id IS NOT NULL AND p.type IN (:types[]) AND p.id = :id))
-            AND (:containerId IS NULL OR (:containerId = 'ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
+            FROM playlist p<restricted>, link_track_playlist rltp, link_track_playlist ltp</restricted>
+            WHERE type != 'TEMP'
+            <nohidden>AND (hidden IS NULL OR hidden = FALSE)</nohidden>
+            <matching>AND user_owner = :username</matching>
+            <user>AND (user_private IS NULL OR user_private = FALSE OR user_owner = :username)</user>
+            <restricted>AND rltp.playlist_id IN (:restrictedPlaylistIds[]) AND ltp.track_id = rltp.track_id AND ltp.playlist_id = p.id</restricted>
+            <types>AND p.type IN (:types[])</types>
+            <id>AND p.id = :id</id>
+            <container>AND container_id = :containerId</container>
+            <rootcontainer>AND container_id IS NULL</rootcontainer>
             GROUP BY id, name, type, track_count, user_private, hidden, user_owner, container_id
             ORDER BY name
             ]]>

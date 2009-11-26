@@ -14,9 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery
@@ -25,7 +23,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
     private String myId;
     private String myContainerId;
     private List<PlaylistType> myTypes;
-    private List<String> myRestrictionPlaylistIds = Collections.emptyList();
+    private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private String myUserName;
     private boolean myIncludeHidden;
     private boolean myMatchingOwnerOnly;
@@ -39,15 +37,22 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
 
     public FindPlaylistQuery(User user, List<PlaylistType> types, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly) {
         this(types, id, containerId, includeHidden);
-        myRestrictionPlaylistIds = user.getPlaylistIds();
+        myRestrictedPlaylistIds = user.getPlaylistIds();
         myUserName = user.getName();
         myMatchingOwnerOnly = matchingOwnerOnly;
     }
 
     public QueryResult<Playlist> execute(Connection connection) throws SQLException {
-        String name = myMatchingOwnerOnly ? "findUserPlaylists" :
-                (myRestrictionPlaylistIds.isEmpty() ? "findPlaylists" : "findPlaylistsRestricted");
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, name);
+        Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+        conditionals.put("container", StringUtils.isNotBlank(myContainerId) && !myContainerId.equals("ROOT"));
+        conditionals.put("rootcontainer", StringUtils.equals(myContainerId, "ROOT"));
+        conditionals.put("nohidden", !myIncludeHidden);
+        conditionals.put("matching", myMatchingOwnerOnly);
+        conditionals.put("user", !myMatchingOwnerOnly && StringUtils.isNotBlank(myUserName));
+        conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
+        conditionals.put("types", myTypes != null && !myTypes.isEmpty());
+        conditionals.put("id", StringUtils.isNotBlank(myId));
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findPlaylists", conditionals);
         if (myTypes != null) {
             List<String> typeNames = new ArrayList<String>(myTypes.size());
             for (PlaylistType type : myTypes) {
@@ -59,7 +64,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         }
         statement.setString("id", myId);
         statement.setString("containerId", myContainerId);
-        statement.setItems("restrictionPlaylistIds", myRestrictionPlaylistIds);
+        statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setString("username", myUserName);
         statement.setBoolean("includeHidden", myIncludeHidden);
         return execute(statement, new PlaylistResultBuilder());
