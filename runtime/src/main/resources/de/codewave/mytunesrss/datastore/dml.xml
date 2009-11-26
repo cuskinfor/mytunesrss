@@ -154,42 +154,6 @@
         </sql>
     </statement>
 
-    <!--statement name="findPlaylists">
-        <sql>
-            <![CDATA[
-            SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
-            FROM playlist
-            WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
-            AND (type != 'TEMP')
-            AND (user_private IS NULL OR user_private = FALSE OR :username IS NULL OR user_owner = :username)
-            AND ((:size_of_types = 0 AND :id IS NULL)
-            OR (:size_of_types > 0 AND :id IS NULL AND type IN (:types[]))
-            OR (:size_of_types = 0 AND :id IS NOT NULL AND id = :id)
-            OR (:size_of_types > 0 AND :id IS NOT NULL AND type IN (:types[]) AND id = :id))
-            AND (:containerId IS NULL OR (:containerId = 'ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
-            ORDER BY name
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findUserPlaylists">
-        <sql>
-            <![CDATA[
-            SELECT id AS id, name AS name, type AS type, track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
-            FROM playlist
-            WHERE (hidden IS NULL OR :includeHidden = TRUE OR hidden = FALSE)
-            AND (type != 'TEMP')
-            AND user_owner = :username
-            AND ((:size_of_types = 0 AND :id IS NULL)
-            OR (:size_of_types > 0 AND :id IS NULL AND type IN (:types[]))
-            OR (:size_of_types = 0 AND :id IS NOT NULL AND id = :id)
-            OR (:size_of_types > 0 AND :id IS NOT NULL AND type IN (:types[]) AND id = :id))
-            AND (:containerId IS NULL OR (:containerId = 'ROOT' AND container_id IS NULL) OR (:containerId != 'ROOT' AND container_id = :containerId))
-            ORDER BY name
-            ]]>
-        </sql>
-    </statement-->
-
     <statement name="findPlaylists">
         <sql>
             <![CDATA[
