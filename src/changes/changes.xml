@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.8.0-EAP-8" date="2009-xx-xx" description="3.8.0 EAP 8">
+        <release version="3.8.0-EAP-8" date="2009-11-28" description="3.8.0 EAP 8">
             <action dev="mdescher" type="add">
                 Multiple restriction playlists per user.
             </action>
