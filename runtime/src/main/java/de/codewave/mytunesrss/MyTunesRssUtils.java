@@ -616,13 +616,13 @@ public class MyTunesRssUtils {
 
     /**
      * Check if the specified index is a valid letter pager index. A valid index is
-     * in the range from 0 to 7.
+     * in the range from 0 to 8.
      * 
      * @param index An index.
      * 
      * @return TRUE if the index is a valid letter pager index or FALSE otherwise.
      */
     public static Boolean isLetterPagerIndex(int index) {
-        return index >= 0 && index <= 7;
+        return index >= 0 && index <= 8;
     }
 }
