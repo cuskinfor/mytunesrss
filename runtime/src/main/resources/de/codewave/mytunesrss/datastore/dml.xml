@@ -149,82 +149,24 @@
 
     <statement name="findTracks">
       <sql>
-        {findTracksQuery}
+        <![CDATA[
+        SELECT {trackColumns}
+        FROM track t<restricted>, link_track_playlist rltp</restricted><temptables>, temp_lucene_tracks tluc, temp_like_tracks tlike</temptables>
+        WHERE {alwaysTrueCondition}
+        <genre>AND t.lower_genre IN (:genre[])</genre>
+        <artist>AND t.lower_artist IN (:artist[])</artist>
+        <album>AND t.lower_album IN (:album[])</album>
+        <restricted>
+            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+            AND rltp.track_id = t.id
+        <restricted>
+        <temptables>
+            AND (t.id = tluc.id OR t.id = tlike.id) 
+        </temptables>
+        <albumorder>ORDER BY album, pos_number, track_number, name</albumorder>
+        <artistorder>ORDER BY artist, album, pos_number, track_number, name</artistorder>
+        ]]>
       </sql>
-    </statement>
-
-    <statement name="findTracksRestricted">
-      <sql>
-        {findTracksQueryRestricted}
-      </sql>
-    </statement>
-
-    <statement name="findTracksWithAlbumOrder">
-      <sql>
-        {findTracksQuery}
-        ORDER BY album, pos_number, track_number, name
-      </sql>
-    </statement>
-
-    <statement name="findTracksWithAlbumOrderRestricted">
-      <sql>
-        {findTracksQueryRestricted}
-        ORDER BY album, pos_number, track_number, name
-      </sql>
-    </statement>
-
-    <statement name="findTracksWithArtistOrder">
-      <sql>
-        {findTracksQuery}
-        ORDER BY artist, album, pos_number, track_number, name
-      </sql>
-    </statement>
-
-    <statement name="findTracksWithArtistOrderRestricted">
-      <sql>
-        {findTracksQueryRestricted}
-        ORDER BY artist, album, pos_number, track_number, name
-      </sql>
-    </statement>
-
-    <statement name="findTracksByIds">
-        <sql>
-            {findTracksByIdsQuery}
-        </sql>
-    </statement>
-
-    <statement name="findTracksByIdsRestricted">
-        <sql>
-            {findTracksByIdsQueryRestricted}
-        </sql>
-    </statement>
-
-    <statement name="findTracksByIdsWithAlbumOrder">
-        <sql>
-            {findTracksByIdsQuery}
-            ORDER BY album, pos_number, track_number, name
-        </sql>
-    </statement>
-
-    <statement name="findTracksByIdsWithAlbumOrderRestricted">
-        <sql>
-            {findTracksByIdsQueryRestricted}
-            ORDER BY album, pos_number, track_number, name
-        </sql>
-    </statement>
-
-    <statement name="findTracksByIdsWithArtistOrder">
-        <sql>
-            {findTracksByIdsQuery}
-            ORDER BY artist, album, pos_number, track_number, name
-        </sql>
-    </statement>
-
-    <statement name="findTracksByIdsWithArtistOrderRestricted">
-        <sql>
-            {findTracksByIdsQueryRestricted}
-            ORDER BY artist, album, pos_number, track_number, name
-        </sql>
     </statement>
 
     <statement name="deletePlaylistById">
@@ -652,56 +594,6 @@
         INSERT INTO link_track_playlist (idx, playlist_id, track_id) VALUES (:loopindex_track_id, :id, :loopitem_track_id)
     </fragment>
 
-    <fragment name="findTracksQuery">
-        <![CDATA[
-        SELECT {trackColumns}
-        FROM track t
-        WHERE (:size_of_genre = 0 OR t.lower_genre IN (:genre[]))
-        AND (:size_of_artist = 0 OR t.lower_artist IN (:artist[]))
-        AND (:size_of_album = 0 OR t.lower_album IN (:album[]))
-        ]]>
-    </fragment>
-
-    <fragment name="findTracksByIdsQuery">
-        <![CDATA[
-            SELECT {trackColumns}
-            FROM temp_lucene_tracks tt, track t
-            WHERE tt.track_id = t.id
-        UNION
-            SELECT {trackColumns}
-            FROM temp_like_tracks tt, track t
-            WHERE tt.track_id = t.id
-        ]]>
-    </fragment>
-
-    <fragment name="findTracksQueryRestricted">
-        <![CDATA[
-        SELECT {trackColumns}
-        FROM link_track_playlist rltp, track t
-        WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
-        AND rltp.track_id = t.id
-        AND (:size_of_genre = 0 OR t.lower_genre IN (:genre[]))
-        AND (:size_of_artist = 0 OR t.lower_artist IN (:artist[]))
-        AND (:size_of_album = 0 OR t.lower_album IN (:album[]))
-        ]]>
-    </fragment>
-
-    <fragment name="findTracksByIdsQueryRestricted">
-        <![CDATA[
-            SELECT {trackColumns}
-            FROM link_track_playlist rltp, temp_lucene_tracks tt, track t
-            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND rltp.track_id = t.id
-            AND tt.track_id = t.id
-        UNION
-            SELECT {trackColumns}
-            FROM link_track_playlist rltp, temp_like_tracks tt, track t
-            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND rltp.track_id = t.id
-            AND tt.track_id = t.id
-        ]]>
-    </fragment>
-    
     <fragment name="alwaysTrueCondition">
         <![CDATA[
             0 = 0

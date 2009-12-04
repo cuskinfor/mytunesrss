@@ -17,8 +17,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQuery
@@ -90,47 +92,35 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     }
 
     public QueryResult<Track> execute(Connection connection) throws SQLException {
-        if (!CollectionUtils.isEmpty(myIds) || (mySearchTerms != null && mySearchTerms.length > 0)) {
-            return executeForIds(connection);
-        } else {
-            SmartStatement statement;
-            String suffix = myRestrictedPlaylistIds.isEmpty() ? "" : "Restricted";
-            if (mySortOrder == SortOrder.Artist) {
-                statement = MyTunesRssUtils.createStatement(connection, "findTracksWithArtistOrder" + suffix);
-            } else if (mySortOrder == SortOrder.Album) {
-                statement = MyTunesRssUtils.createStatement(connection, "findTracksWithAlbumOrder" + suffix);
-            } else {
-                statement = MyTunesRssUtils.createStatement(connection, "findTracks" + suffix);
-            }
-            statement.setItems("album", myAlbums);
-            statement.setItems("artist", myArtists);
-            statement.setItems("genre", myGenres);
-            statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
-            return execute(statement, new TrackResultBuilder());
-        }
-    }
-
-    private QueryResult<Track> executeForIds(Connection connection) throws SQLException {
+        SmartStatement statement;
+        Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
         MyTunesRssUtils.createStatement(connection, "createSearchTempTables").execute(); // create if not exists
         MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
-        statement.setObject("track_id", myIds);
-        statement.execute();
+        if (!CollectionUtils.isEmpty(myIds)) {
+            statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
+            statement.setObject("track_id", myIds);
+            statement.execute();
+            conditionals.put("temptables", Boolean.TRUE);
+        }
         if (mySearchTerms != null && mySearchTerms.length > 0) {
             statement = MyTunesRssUtils.createStatement(connection, "fillLikeSearchTempTable");
             statement.setObject("search_term", Arrays.asList(mySearchTerms));
             statement.setObject("first_search_term", mySearchTerms[0]);
             statement.execute();
+            conditionals.put("temptables", Boolean.TRUE);
         }
-        String suffix = myRestrictedPlaylistIds.isEmpty() ? "" : "Restricted";
-        if (mySortOrder == SortOrder.Artist) {
-            statement = MyTunesRssUtils.createStatement(connection, "findTracksByIdsWithArtistOrder" + suffix);
-        } else if (mySortOrder == SortOrder.Album) {
-            statement = MyTunesRssUtils.createStatement(connection, "findTracksByIdsWithAlbumOrder" + suffix);
-        } else {
-            statement = MyTunesRssUtils.createStatement(connection, "findTracksByIds" + suffix);
-        }
+        conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
+        conditionals.put("artistsort", mySortOrder == SortOrder.Artist);
+        conditionals.put("albumsort", mySortOrder == SortOrder.Album);
+        conditionals.put("album", myAlbums != null && myAlbums.length > 0);
+        conditionals.put("artist", myArtists != null && myArtists.length > 0);
+        conditionals.put("genre", myGenres != null && myGenres.length > 0);
+        statement = MyTunesRssUtils.createStatement(connection, "findTracks", conditionals);
+        statement.setItems("album", myAlbums);
+        statement.setItems("artist", myArtists);
+        statement.setItems("genre", myGenres);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         return execute(statement, new TrackResultBuilder());
+        
     }
 }
