@@ -48,7 +48,8 @@ public enum MyTunesRssCommand implements Command {
     Upload("upload", UploadCommandHandler.class),
     ShowIphoneIndex("showIphoneIndex", ShowIphoneIndexCommandHandler.class),
     ShowIphoneStartup("showIphoneStartup", ShowIphoneStartupCommandHandler.class),
-    GetTagsForAutocomplete("getTagsForAutocomplete", GetTagsForAutocompleteCommandHandler.class);
+    GetTagsForAutocomplete("getTagsForAutocomplete", GetTagsForAutocompleteCommandHandler.class),
+    OpenSearch("openSearch", OpenSearchCommandHandler.class);
 
     private String myName;
     private Class<? extends CommandHandler> myCommandHandlerClass;

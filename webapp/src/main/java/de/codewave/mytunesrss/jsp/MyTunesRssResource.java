@@ -42,7 +42,8 @@ public enum MyTunesRssResource {
     RemoteControl("/remote_control.jsp"),
     EditSmartPlaylist("/edit_smart_playlist.jsp"),
     IphoneIndex("/iphone/index.jsp"),
-    IphoneStartup("/iphone/startup.jsp");
+    IphoneStartup("/iphone/startup.jsp"),
+    OpenSearch("/opensearch.jsp");
 
     private String myValue;
 

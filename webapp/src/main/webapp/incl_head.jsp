@@ -10,6 +10,7 @@
 <link rel="stylesheet" type="text/css" href="${appUrl}/styles/jquery-ui/jquery-ui.css?ts=${sessionCreationTime}" />
 <link rel="stylesheet" type="text/css" href="${appUrl}/styles/jquery.autocomplete.css?ts=${sessionCreationTime}" />
 <link rel="shortcut icon" href="${appUrl}/images/favicon.ico" type="image/x-icon" />
+<link rel="search" type="application/opensearchdescription+xml" href="${servletUrl}/openSearch" title="MyTunesRSS" />
 <script src="${appUrl}/js/prototype.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/jquery-1.3.2.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/jquery-ui.js?ts=${sessionCreationTime}" type="text/javascript"></script>
