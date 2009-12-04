@@ -37,12 +37,9 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistIds = user.getPlaylistIds();
-        String[] searchTerms = StringUtils.split(StringUtils.defaultString(searchTerm), " ");
-        query.mySearchTerms = new String[searchTerms.length];
-        for (int i = 0; i < searchTerms.length; i++) {
-            query.mySearchTerms[i] = "%" + StringUtils.lowerCase(searchTerms[i]) + "%";
-        }
-        query.myIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness);
+        String[] searchTerms = StringUtils.split(StringUtils.defaultString(StringUtils.lowerCase(searchTerm)), " ");
+        List<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness);
+        query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : luceneResult;
         return query;
     }
 
@@ -85,7 +82,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private String[] myArtists;
     private SortOrder mySortOrder;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
-    private String[] mySearchTerms = new String[0];
 
     private FindTrackQuery() {
         // intentionally left blank
@@ -102,13 +98,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             statement.execute();
             conditionals.put("temptables", Boolean.TRUE);
         }
-        if (mySearchTerms != null && mySearchTerms.length > 0) {
-            statement = MyTunesRssUtils.createStatement(connection, "fillLikeSearchTempTable");
-            statement.setObject("search_term", Arrays.asList(mySearchTerms));
-            statement.setObject("first_search_term", mySearchTerms[0]);
-            statement.execute();
-            conditionals.put("temptables", Boolean.TRUE);
-        }
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("artistsort", mySortOrder == SortOrder.Artist);
         conditionals.put("albumsort", mySortOrder == SortOrder.Album);
@@ -121,6 +110,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         statement.setItems("genre", myGenres);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         return execute(statement, new TrackResultBuilder());
-        
+
     }
 }

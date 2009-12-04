@@ -3,11 +3,11 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.datastore.statement.FindAllTagsForTrackQuery;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultBuilder;
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -19,14 +19,13 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -119,9 +118,10 @@ public class LuceneTrackService {
             if (!STOP_WORDS.contains(searchTerm)) {
                 BooleanQuery orQuery = new BooleanQuery();
                 for (String field : new String[]{"name", "album", "artist", "comment", "tags"}) {
-                    Term term = new Term(field, searchTerm);
-                    Query termQuery = fuzziness > 0 ? new FuzzyQuery(term, ((float)(100 - fuzziness)) / 100f) : new TermQuery(term);
-                    orQuery.add(termQuery, BooleanClause.Occur.SHOULD);
+                    orQuery.add(new WildcardQuery(new Term(field, "*" + searchTerm + "*")), BooleanClause.Occur.SHOULD);
+                    if (fuzziness > 0) {
+                        orQuery.add(new FuzzyQuery(new Term(field, searchTerm), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
+                    }
                 }
                 andQuery.add(orQuery, BooleanClause.Occur.MUST);
             }

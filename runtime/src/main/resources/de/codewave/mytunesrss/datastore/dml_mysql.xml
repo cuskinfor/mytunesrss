@@ -65,12 +65,6 @@
                 UNIQUE(track_id)
             )
         </sql>
-        <sql>
-            CREATE TEMPORARY TABLE IF NOT EXISTS temp_like_tracks (
-                track_id VARCHAR(100),
-                UNIQUE(track_id)
-            )
-        </sql>
     </statement>
 
     <statement name="migrate_3.8.0_eap_1_part_3">

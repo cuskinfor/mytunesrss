@@ -154,7 +154,7 @@
       <sql>
         <![CDATA[
         SELECT {trackColumns}
-        FROM track t<restricted>, link_track_playlist rltp</restricted><temptables>, temp_lucene_tracks tluc, temp_like_tracks tlike</temptables>
+        FROM track t<restricted>, link_track_playlist rltp</restricted><temptables>, temp_lucene_tracks tluc</temptables>
         WHERE {alwaysTrueCondition}
         <genre>AND t.lower_genre IN (:genre[])</genre>
         <artist>AND t.lower_artist IN (:artist[])</artist>
@@ -163,9 +163,7 @@
             AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
         </restricted>
-        <temptables>
-            AND (t.id = tluc.track_id OR t.id = tlike.track_id)
-        </temptables>
+        <temptables>AND t.id = tluc.track_id</temptables>
         GROUP BY {trackColumnsForGrouping}
         <albumorder>ORDER BY album, pos_number, track_number, name</albumorder>
         <artistorder>ORDER BY artist, album, pos_number, track_number, name</artistorder>
@@ -463,46 +461,11 @@
 
     <statement name="truncateSearchTempTables">
         <sql>TRUNCATE TABLE temp_lucene_tracks</sql>
-        <sql>TRUNCATE TABLE temp_like_tracks</sql>
     </statement>
 
     <statement name="fillLuceneSearchTempTable">
         <sql loop="track_id" loopbatch="10000">
             INSERT INTO temp_lucene_tracks (track_id) VALUES (:loopitem_track_id)
-        </sql>
-    </statement>
-
-    <statement name="fillLikeSearchTempTable">
-        <sql>
-            INSERT INTO temp_like_tracks (track_id)
-                SELECT DISTINCT(t.id) FROM track t, tag tg
-                WHERE (
-                    t.lower_name LIKE :first_search_term {likeEscape}
-                    OR t.lower_album LIKE :first_search_term {likeEscape}
-                    OR t.lower_artist LIKE :first_search_term {likeEscape}
-                    OR t.lower_comment LIKE :first_search_term {likeEscape}
-                    OR (
-                        tg.tag LIKE :first_search_term {likeEscape}
-                        AND tg.track_id = t.id
-                    )
-                )
-        </sql>
-        <sql loop="search_term" loopbatch="100">
-            DELETE FROM temp_like_tracks
-            WHERE NOT EXISTS (
-                SELECT t.id FROM track t, tag tg
-                WHERE t.id = temp_like_tracks.track_id
-                AND (
-                    t.lower_name LIKE :loopitem_search_term {likeEscape}
-                    OR t.lower_album LIKE :loopitem_search_term {likeEscape}
-                    OR t.lower_artist LIKE :loopitem_search_term {likeEscape}
-                    OR t.lower_comment LIKE :loopitem_search_term {likeEscape}
-                    OR (
-                        tg.tag LIKE :loopitem_search_term {likeEscape}
-                        AND tg.track_id = t.id
-                    )
-                )
-            )
         </sql>
     </statement>
 
