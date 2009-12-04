@@ -30,33 +30,17 @@
         <sql>
             <![CDATA[
             SELECT name AS name, track_count AS track_count, album_count AS album_count
-            FROM artist
-            WHERE ((:album IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
-            OR (:album IS NOT NULL AND name IN (SELECT DISTINCT(artist) FROM track WHERE lower_album = LOWER(:album)))
-            OR (:genre IS NOT NULL AND name IN (SELECT DISTINCT(artist) FROM track WHERE lower_genre = LOWER(:genre)))
-            OR {letterRegionByIndex})
-            AND (:filter IS NULL OR lower_name LIKE :filter)
-            ORDER BY name
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findArtistsRestricted">
-        <parameter name="index" type="java.lang.Integer"/>
-        <sql>
-            <![CDATA[
-            SELECT a.name AS name, a.track_count AS track_count, a.album_count AS album_count
-            FROM artist a, link_track_playlist rltp, track t
-            WHERE ((:album IS NULL AND :genre IS NULL AND (:index < 0 OR :index > 8))
-            OR (:album IS NOT NULL AND a.name IN (SELECT DISTINCT(artist) FROM track WHERE lower_album = LOWER(:album)))
-            OR (:genre IS NOT NULL AND a.name IN (SELECT DISTINCT(artist) FROM track WHERE lower_genre = LOWER(:genre)))
-            OR {letterRegionByIndex})
-            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND rltp.track_id = t.id
-            AND t.artist = a.name
-            AND (:filter IS NULL OR a.lower_name LIKE :filter)
-            GROUP BY a.name, a.track_count, a.album_count
-            ORDER BY name
+            FROM artist a<track>, track t</track><restricted>, link_track_playlist rltp</restricted>
+            WHERE ((:index < 0 OR :index > 8) OR {letterRegionByIndex})
+            <filter>AND lower_name LIKE :filter</filter>
+            <album>AND t.lower_album = LOWER(:album) AND t.artist = a.name</album>
+            <genre>AND t.lower_genre = LOWER(:genre) AND t.artist = a.name</genre>
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND rltp.track_id = t.id
+                AND t.artist = a.name
+            </restricted>
+            ORDER BY a.name
             ]]>
         </sql>
     </statement>
