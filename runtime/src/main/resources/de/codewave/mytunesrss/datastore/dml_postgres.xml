@@ -5,11 +5,15 @@
     <statement name="findRandomTracks">
         <sql>
             SELECT {trackColumns}
-            FROM track t
+            FROM track t<restricted>, link_track_playlist rltp</restricted>
             WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId))
             AND (:mediatype IS NULL OR t.mediatype = :mediatype)
             AND (NOT t.protected OR t.protected = :protected)
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND t.id = rltp.track_id
+            </restricted>
             ORDER BY random() LIMIT :maxCount OFFSET 0
         </sql>
     </statement>
@@ -17,9 +21,13 @@
     <statement name="findLastUpdatedTracks">
         <sql>
             SELECT {trackColumns}
-            FROM track t
+            FROM track t<restricted>, link_track_playlist rltp</restricted>
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId)
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND t.id = rltp.track_id
+            </restricted>
             ORDER BY ts_updated DESC LIMIT :maxCount OFFSET 0
         </sql>
     </statement>
@@ -27,44 +35,13 @@
     <statement name="findMostPlayedTracks">
         <sql>
             SELECT {trackColumns}
-            FROM track t
+            FROM track t<restricted>, link_track_playlist rltp</restricted>
             WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
                 ltp.playlist_id = :sourcePlaylistId)
-            ORDER BY playcount DESC LIMIT :maxCount OFFSET 0
-        </sql>
-    </statement>
-
-    <statement name="findRandomTracksRestricted">
-        <sql>
-            SELECT {trackColumns}
-            FROM link_track_playlist rltp, track t
-            WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
-                ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
-            AND rltp.playlist_id IN (:restrictedPlaylistIds[]) AND t.id = rltp.track_id
-            AND (:mediatype IS NULL OR t.mediatype = :mediatype)
-            AND (NOT t.protected OR t.protected = :protected)
-            ORDER BY random() LIMIT :maxCount OFFSET 0
-        </sql>
-    </statement>
-
-    <statement name="findLastUpdatedTracksRestricted">
-        <sql>
-            SELECT {trackColumns}
-            FROM tlink_track_playlist rltp, rack t
-            WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
-                ltp.playlist_id = :sourcePlaylistId)
-            AND rltp.playlist_id IN (:restrictedPlaylistIds[]) AND t.id = rltp.track_id
-            ORDER BY ts_updated DESC LIMIT :maxCount OFFSET 0
-        </sql>
-    </statement>
-
-    <statement name="findMostPlayedTracksRestricted">
-        <sql>
-            SELECT {trackColumns}
-            FROM link_track_playlist rltp, track t
-            WHERE :sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND
-                ltp.playlist_id = :sourcePlaylistId)
-            AND rltp.playlist_id IN (:restrictedPlaylistIds[]) AND t.id = rltp.track_id
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND t.id = rltp.track_id
+            </restricted>
             ORDER BY playcount DESC LIMIT :maxCount OFFSET 0
         </sql>
     </statement>
@@ -77,21 +54,6 @@
 
     <statement name="nextPlaylistId">
         <sql>SELECT nextval('playlist_id_sequence') AS id FROM system_information</sql>
-    </statement>
-
-    <statement name="nextSearchId">
-        <sql>SELECT nextval('search_id_sequence') AS id FROM system_information</sql>
-    </statement>
-
-    <statement name="tuneDatabase">
-        <sql>ANALYZE track</sql>
-        <sql>ANALYZE artist</sql>
-        <sql>ANALYZE album</sql>
-        <sql>ANALYZE genre</sql>
-        <sql>ANALYZE link_track_playlist</sql>
-        <sql>ANALYZE statistics</sql>
-        <sql>ANALYZE playlist</sql>
-        <sql>ANALYZE image</sql>
     </statement>
 
     <statement name="createSearchTempTables">
