@@ -46,9 +46,9 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
         conditionals.put("genre", StringUtils.isNotBlank(myGenre));
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findArtists", conditionals);
-        statement.setString("filter", myFilter);
-        statement.setString("album", myAlbum);
-        statement.setString("genre", myGenre);
+        statement.setString("filter", StringUtils.lowerCase(myFilter));
+        statement.setString("album", StringUtils.lowerCase(myAlbum));
+        statement.setString("genre", StringUtils.lowerCase(myGenre));
         statement.setInt("index", myIndex);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         return execute(statement, new ArtistResultBuilder());

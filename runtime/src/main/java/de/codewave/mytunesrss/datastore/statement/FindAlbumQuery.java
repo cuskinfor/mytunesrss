@@ -53,9 +53,9 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         conditionals.put("yearorder", mySortByYear);
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAlbums", conditionals);
-        statement.setString("filter", myFilter);
-        statement.setString("artist", myArtist);
-        statement.setString("genre", myGenre);
+        statement.setString("filter", StringUtils.lowerCase(myFilter));
+        statement.setString("artist", StringUtils.lowerCase(myArtist));
+        statement.setString("genre", StringUtils.lowerCase(myGenre));
         statement.setInt("index", myIndex);
         statement.setInt("min_year", myMinYear);
         statement.setInt("max_year", myMaxYear);

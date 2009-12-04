@@ -9,17 +9,17 @@
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
             FROM album a<track>, track t</track><restricted>, link_track_playlist rltp</restricted>
             WHERE {alwaysTrueCondition}
-            <index>AND {letterRegionByIndex}</index>
+            <index>AND ({letterRegionByIndex})</index>
             <filter>AND a.lower_name LIKE :filter</filter>
-            <artist>AND t.lower_artist = LOWER(:artist) AND t.album = a.name</artist>
-            <genre>AND t.lower_genre = LOWER(:genre) AND t.album = a.name</genre>
+            <artist>AND t.lower_artist = :artist AND t.album = a.name</artist>
+            <genre>AND t.lower_genre = :genre AND t.album = a.name</genre>
             <year>AND a.year >= :min_year AND a.year <= :max_year</year>
             <restricted>
                 AND rltp.playlist_id IN (:restrictedPlaylistIds[])
                 AND rltp.track_id = t.id
                 AND t.album = a.name
             </restricted>
-            GROUP BY albumname, track_count, artist_count, a.artist, a.image_hash, a.year
+            GROUP BY a.name, a.track_count, a.artist_count, a.artist, a.image_hash, a.year
             <albumorder>ORDER BY albumname</albumorder>
             <yearorder>ORDER BY year</yearorder>
             ]]>
@@ -30,18 +30,19 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT name AS name, track_count AS track_count, album_count AS album_count
+            SELECT a.name AS name, a.track_count AS track_count, a.album_count AS album_count
             FROM artist a<track>, track t</track><restricted>, link_track_playlist rltp</restricted>
             WHERE {alwaysTrueCondition}
-            <index>AND {letterRegionByIndex}</index>
+            <index>AND ({letterRegionByIndex})</index>
             <filter>AND lower_name LIKE :filter</filter>
-            <album>AND t.lower_album = LOWER(:album) AND t.artist = a.name</album>
-            <genre>AND t.lower_genre = LOWER(:genre) AND t.artist = a.name</genre>
+            <album>AND t.lower_album = :album AND t.artist = a.name</album>
+            <genre>AND t.lower_genre = :genre AND t.artist = a.name</genre>
             <restricted>
                 AND rltp.playlist_id IN (:restrictedPlaylistIds[])
                 AND rltp.track_id = t.id
                 AND t.artist = a.name
             </restricted>
+            GROUP BY a.name, a.track_count, a.album_count
             ORDER BY a.name
             ]]>
         </sql>
@@ -63,17 +64,17 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT name AS name, track_count AS track_count, artist_count AS artist_count, album_count AS album_count
+            SELECT g.name AS name, g.track_count AS track_count, g.artist_count AS artist_count, g.album_count AS album_count
             FROM genre g<restricted>, link_track_playlist rltp, track t</restricted>
             WHERE {alwaysTrueCondition}
-            <index>AND {letterRegionByIndex}</index>
+            <index>AND ({letterRegionByIndex})</index>
             <restricted>
                 AND rltp.playlist_id IN (:restrictedPlaylistIds[])
                 AND rltp.track_id = t.id
                 AND t.genre = g.name
             </restricted>
             GROUP BY g.name, g.track_count, g.artist_count, g.album_count
-            ORDER BY name
+            ORDER BY g.name
             ]]>
         </sql>
     </statement>
@@ -114,6 +115,7 @@
                 AND rltp.playlist_id IN (:restrictedPlaylistIds[])
                 AND t.id = rltp.track_id
             </restricted>
+            GROUP BY ltp.idx, {trackColumnsForGrouping}
             <indexorder>ORDER BY idx</indexorder>
             <albumorder>ORDER BY album, pos_number, track_number, name</albumorder>
             <artistorder>ORDER BY artist, album, pos_number, track_number, name</artistorder>
@@ -128,6 +130,7 @@
             FROM track t<restricted>, link_track_playlist rltp
             WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND t.id = rltp.track_id</restricted>
+            GROUP BY {trackColumnsForGrouping}
             <albumorder>ORDER BY album, pos_number, track_number, name</albumorder>
             <artistorder>ORDER BY artist, album, pos_number, track_number, name</artistorder>
             ]]>
@@ -159,10 +162,11 @@
         <restricted>
             AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
-        <restricted>
+        </restricted>
         <temptables>
-            AND (t.id = tluc.id OR t.id = tlike.id) 
+            AND (t.id = tluc.track_id OR t.id = tlike.track_id)
         </temptables>
+        GROUP BY {trackColumnsForGrouping}
         <albumorder>ORDER BY album, pos_number, track_number, name</albumorder>
         <artistorder>ORDER BY artist, album, pos_number, track_number, name</artistorder>
         ]]>
@@ -494,7 +498,7 @@
                     OR t.lower_artist LIKE :loopitem_search_term {likeEscape}
                     OR t.lower_comment LIKE :loopitem_search_term {likeEscape}
                     OR (
-                        tg.tag LIKE :first_search_term {likeEscape}
+                        tg.tag LIKE :loopitem_search_term {likeEscape}
                         AND tg.track_id = t.id
                     )
                 )
@@ -582,6 +586,11 @@
         t.file AS file, t.protected AS protected, t.mediatype AS mediatype, t.genre AS genre, t.mp4codec AS mp4codec, t.ts_played AS ts_played, t.ts_updated AS ts_updated,
         t.playcount AS playcount, t.last_image_update AS last_image_update, t.comment AS comment, t.pos_number AS pos_number, t.pos_size AS pos_size, t.image_hash AS image_hash,
         t.year AS year
+    </fragment>
+
+    <fragment name="trackColumnsForGrouping">
+        t.source, t.id, t.name, t.artist, t.original_artist, t.album, t.time, t.track_number, t.file, t.protected, t.mediatype, t.genre, t.mp4codec, t.ts_played, t.ts_updated,
+        t.playcount, t.last_image_update, t.comment, t.pos_number, t.pos_size, t.image_hash, t.year
     </fragment>
 
     <fragment name="updatePlaylistCount">
