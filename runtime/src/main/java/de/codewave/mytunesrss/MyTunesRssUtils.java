@@ -613,4 +613,16 @@ public class MyTunesRssUtils {
             SwingUtils.packAndShowRelativeTo(dialog, MyTunesRss.ROOT_FRAME);
         }
     }
+
+    /**
+     * Check if the specified index is a valid letter pager index. A valid index is
+     * in the range from 0 to 7.
+     * 
+     * @param index An index.
+     * 
+     * @return TRUE if the index is a valid letter pager index or FALSE otherwise.
+     */
+    public static Boolean isLetterPagerIndex(int index) {
+        return index >= 0 && index <= 7;
+    }
 }

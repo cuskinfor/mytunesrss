@@ -14,8 +14,10 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
@@ -30,8 +32,10 @@ public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ge
     }
 
     public QueryResult<Genre> execute(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection,
-                                                                   "findGenres" + (myRestrictedPlaylistIds.isEmpty() ? "" : "Restricted"));
+        Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+        conditionals.put("index", MyTunesRssUtils.isLetterPagerIndex(myIndex));
+        conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenres", conditionals);
         statement.setInt("index", myIndex);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         return execute(statement, new GenreResultBuilder());

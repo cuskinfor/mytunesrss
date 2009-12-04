@@ -8,7 +8,8 @@
             <![CDATA[
             SELECT a.name AS albumname, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
             FROM album a<track>, track t</track><restricted>, link_track_playlist rltp</restricted>
-            WHERE ((:index < 0 OR :index > 8) OR {letterRegionByIndex})
+            WHERE {alwaysTrueCondition}
+            <index>AND {letterRegionByIndex}</index>
             <filter>AND a.lower_name LIKE :filter</filter>
             <artist>AND t.lower_artist = LOWER(:artist) AND t.album = a.name</artist>
             <genre>AND t.lower_genre = LOWER(:genre) AND t.album = a.name</genre>
@@ -31,7 +32,8 @@
             <![CDATA[
             SELECT name AS name, track_count AS track_count, album_count AS album_count
             FROM artist a<track>, track t</track><restricted>, link_track_playlist rltp</restricted>
-            WHERE ((:index < 0 OR :index > 8) OR {letterRegionByIndex})
+            WHERE {alwaysTrueCondition}
+            <index>AND {letterRegionByIndex}</index>
             <filter>AND lower_name LIKE :filter</filter>
             <album>AND t.lower_album = LOWER(:album) AND t.artist = a.name</album>
             <genre>AND t.lower_genre = LOWER(:genre) AND t.artist = a.name</genre>
@@ -62,24 +64,14 @@
         <sql>
             <![CDATA[
             SELECT name AS name, track_count AS track_count, artist_count AS artist_count, album_count AS album_count
-            FROM genre
-            WHERE (:index < 0 OR :index > 8)
-            OR {letterRegionByIndex}
-            ORDER BY name
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findGenresRestricted">
-        <parameter name="index" type="java.lang.Integer"/>
-        <sql>
-            <![CDATA[
-            SELECT g.name AS name, g.track_count AS track_count, g.artist_count AS artist_count, g.album_count AS album_count
-            FROM genre g, link_track_playlist rltp, track t
-            WHERE ((:index < 0 OR :index > 8) OR {letterRegionByIndex})
-            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND rltp.track_id = t.id
-            AND t.genre = g.name
+            FROM genre g<restricted>, link_track_playlist rltp, track t</restricted>
+            WHERE {alwaysTrueCondition}
+            <index>AND {letterRegionByIndex}</index>
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND rltp.track_id = t.id
+                AND t.genre = g.name
+            </restricted>
             GROUP BY g.name, g.track_count, g.artist_count, g.album_count
             ORDER BY name
             ]]>
@@ -817,6 +809,12 @@
             WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
             AND tt.track_id = t.id
+        ]]>
+    </fragment>
+    
+    <fragment name="alwaysTrueCondition">
+        <![CDATA[
+            0 = 0
         ]]>
     </fragment>
 
