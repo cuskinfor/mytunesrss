@@ -98,148 +98,38 @@
         </sql>
     </statement>
 
-    <statement name="findPlaylistTracksOrderedByIndex">
+    <statement name="findPlaylistTracks">
         <default name="firstIndex" value="-1" type="java.lang.Integer"/>
         <default name="lastIndex" value="-1" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
             SELECT ltp.idx AS idx, {trackColumns}
-            FROM link_track_playlist ltp, track t
+            FROM link_track_playlist ltp, track t<restricted>, link_track_playlist rltp</restricted>
             WHERE t.id = ltp.track_id
             AND ltp.playlist_id = :id
-            AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
-            AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
-            ORDER BY idx
+            <index>AND ltp.idx >= :firstIndex</index>
+            <index>AND ltp.idx <= :lastIndex</index>
+            <restricted>
+                AND ltp.playlist_id = :id
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND t.id = rltp.track_id
+            </restricted>
+            <indexorder>ORDER BY idx</indexorder>
+            <albumorder>ORDER BY album, pos_number, track_number, name</albumorder>
+            <artistorder>ORDER BY artist, album, pos_number, track_number, name</artistorder>
             ]]>
         </sql>
     </statement>
 
-    <statement name="findPlaylistTracksOrderedByIndexRestricted">
-        <default name="firstIndex" value="-1" type="java.lang.Integer"/>
-        <default name="lastIndex" value="-1" type="java.lang.Integer"/>
-        <sql>
-            <![CDATA[
-            SELECT ltp.idx AS idx, {trackColumns}
-            FROM link_track_playlist ltp, link_track_playlist rltp, track t
-            WHERE t.id = ltp.track_id
-            AND ltp.playlist_id = :id
-            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND t.id = rltp.track_id
-            AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
-            AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
-            ORDER BY idx
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findPlaylistTracksOrderedByAlbum">
-        <default name="firstIndex" value="-1" type="java.lang.Integer"/>
-        <default name="lastIndex" value="-1" type="java.lang.Integer"/>
+    <statement name="findAllTracks">
         <sql>
             <![CDATA[
             SELECT {trackColumns}
-            FROM link_track_playlist ltp, track t
-            WHERE t.id = ltp.track_id
-            AND ltp.playlist_id = :id
-            AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
-            AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
-            ORDER BY album, pos_number, track_number, name
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findPlaylistTracksOrderedByAlbumRestricted">
-        <default name="firstIndex" value="-1" type="java.lang.Integer"/>
-        <default name="lastIndex" value="-1" type="java.lang.Integer"/>
-        <sql>
-            <![CDATA[
-            SELECT {trackColumns}
-            FROM link_track_playlist ltp, link_track_playlist rltp, track t
-            WHERE t.id = ltp.track_id
-            AND ltp.playlist_id = :id
-            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND t.id = rltp.track_id
-            AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
-            AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
-            ORDER BY album, pos_number, track_number, name
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findPlaylistTracksOrderedByArtist">
-        <default name="firstIndex" value="-1" type="java.lang.Integer"/>
-        <default name="lastIndex" value="-1" type="java.lang.Integer"/>
-        <sql>
-            <![CDATA[
-            SELECT {trackColumns}
-            FROM link_track_playlist ltp, track t
-            WHERE t.id = ltp.track_id
-            AND ltp.playlist_id = :id
-            AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
-            AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
-            ORDER BY artist, album, pos_number, track_number, name
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findPlaylistTracksOrderedByArtistRestricted">
-        <default name="firstIndex" value="-1" type="java.lang.Integer"/>
-        <default name="lastIndex" value="-1" type="java.lang.Integer"/>
-        <sql>
-            <![CDATA[
-            SELECT {trackColumns}
-            FROM link_track_playlist ltp, link_track_playlist rltp, track t
-            WHERE t.id = ltp.track_id
-            AND ltp.playlist_id = :id
-            AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND t.id = rltp.track_id
-            AND (:firstIndex = -1 OR ltp.idx >= :firstIndex)
-            AND (:lastIndex = -1 OR ltp.idx <= :lastIndex)
-            ORDER BY artist, album, pos_number, track_number, name
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findAllTracksOrderedByAlbum">
-        <sql>
-            <![CDATA[
-            SELECT {trackColumns}
-            FROM track t
-            ORDER BY album, pos_number, track_number, name
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findAllTracksOrderedByAlbumRestricted">
-        <sql>
-            <![CDATA[
-            SELECT {trackColumns}
-            FROM link_track_playlist rltp, track t
+            FROM track t<restricted>, link_track_playlist rltp
             WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND t.id = rltp.track_id
-            ORDER BY album, pos_number, track_number, name
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findAllTracksOrderedByArtist">
-        <sql>
-            <![CDATA[
-            SELECT {trackColumns}
-            FROM track t
-            ORDER BY artist, album, pos_number, track_number, name
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findAllTracksOrderedByArtistRestricted">
-        <sql>
-            <![CDATA[
-            SELECT {trackColumns}
-            FROM link_track_playlist rltp, track t
-            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND t.id = rltp.track_id
-            ORDER BY artist, album, pos_number, track_number, name
+            AND t.id = rltp.track_id</restricted>
+            <albumorder>ORDER BY album, pos_number, track_number, name</albumorder>
+            <artistorder>ORDER BY artist, album, pos_number, track_number, name</artistorder>
             ]]>
         </sql>
     </statement>
