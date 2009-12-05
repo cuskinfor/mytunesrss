@@ -69,7 +69,7 @@ public class User implements MyTunesRssEventListener, Cloneable {
     private boolean mySpecialPlaylists;
     private boolean myTranscoder;
     private int myBandwidthLimit;
-    private List<String> myPlaylistIds = new ArrayList<String>();
+    private Set<String> myPlaylistIds = new HashSet<String>();
     private boolean mySaveWebSettings;
     private String myWebSettings;
     private boolean myCreatePlaylists;
@@ -294,8 +294,8 @@ public class User implements MyTunesRssEventListener, Cloneable {
         myPlaylistIds.remove(playlistId);
     }
 
-    public void setPlaylistIds(List<String> playlistIds) {
-        myPlaylistIds = new ArrayList<String>(playlistIds);
+    public void setPlaylistIds(Set<String> playlistIds) {
+        myPlaylistIds = new HashSet<String>(playlistIds);
     }
 
     public boolean isSaveWebSettings() {

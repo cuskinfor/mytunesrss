@@ -22,6 +22,8 @@ import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -29,7 +31,7 @@ import java.util.*;
  * de.codewave.mytunesrss.jsp.MyTunesFunctions
  */
 public class MyTunesFunctions {
-    private static final Logger LOG = LoggerFactory.getLogger(MyTunesFunctions.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesFunctions.class);
 
     private static final String DEFAULT_NAME = "MyTunesRSS";
 
@@ -321,5 +323,16 @@ public class MyTunesFunctions {
             throw new IllegalArgumentException("Not an iterable or an array: " + items.getClass());
         }
         return builder.substring(0, builder.length() - 1);
+    }
+
+    public static String hostFromUrl(String url) {
+        try {
+            return new URL(url).getHost();
+        } catch (MalformedURLException e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not create URL from \"" + url + "\". Returning complete URL as host.");
+            }
+        }
+        return url;
     }
 }
