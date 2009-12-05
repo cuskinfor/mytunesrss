@@ -165,8 +165,8 @@
         </restricted>
         <temptables>AND t.id = tluc.track_id</temptables>
         GROUP BY {trackColumnsForGrouping}
-        <albumorder>ORDER BY album, pos_number, track_number, name</albumorder>
-        <artistorder>ORDER BY artist, album, pos_number, track_number, name</artistorder>
+        <albumsort>ORDER BY t.album, t.pos_number, t.track_number, t.name</albumsort>
+        <artistsort>ORDER BY t.artist, t.album, t.pos_number, t.track_number, t.name</artistsort>
         ]]>
       </sql>
     </statement>
