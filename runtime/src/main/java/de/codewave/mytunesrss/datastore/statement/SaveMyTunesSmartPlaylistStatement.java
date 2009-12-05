@@ -43,6 +43,8 @@ public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
         statement.setString("genre_pattern", mySmartInfo.getGenrePattern());
         statement.setString("title_pattern", mySmartInfo.getTitlePattern());
         statement.setString("file_pattern", mySmartInfo.getFilePattern());
+        statement.setString("tag_pattern", mySmartInfo.getTagPattern());
+        statement.setString("comment_pattern", mySmartInfo.getCommentPattern());
         if (mySmartInfo.getTimeMin() != null) {
             statement.setInt("time_min", mySmartInfo.getTimeMin());
         }

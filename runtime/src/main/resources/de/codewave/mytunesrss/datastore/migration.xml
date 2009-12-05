@@ -200,4 +200,9 @@
         <sql>CREATE INDEX idx_album_year ON album (year)</sql>
     </statement>
 
+    <statement name="migrate_3.8.0_eap_9">
+        <sql>ALTER TABLE smart_info ADD COLUMN tag_pattern VARCHAR(100)</sql>
+        <sql>ALTER TABLE smart_info ADD COLUMN comment_pattern VARCHAR(100)</sql>
+    </statement>
+
 </statements>

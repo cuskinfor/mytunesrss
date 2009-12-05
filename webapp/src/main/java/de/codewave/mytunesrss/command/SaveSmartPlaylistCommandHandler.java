@@ -27,6 +27,8 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
             smartInfo.setGenrePattern(getRequestParameter("smartPlaylist.smartInfo.genrePattern", null));
             smartInfo.setTitlePattern(getRequestParameter("smartPlaylist.smartInfo.titlePattern", null));
             smartInfo.setFilePattern(getRequestParameter("smartPlaylist.smartInfo.filePattern", null));
+            smartInfo.setTagPattern(getRequestParameter("smartPlaylist.smartInfo.tagPattern", null));
+            smartInfo.setCommentPattern(getRequestParameter("smartPlaylist.smartInfo.commentPattern", null));
             if (StringUtils.isNotBlank(getRequestParameter("smartPlaylist.smartInfo.timeMin", null))) {
                 smartInfo.setTimeMin(getIntegerRequestParameter("smartPlaylist.smartInfo.timeMin", 0));
             }

@@ -3,6 +3,7 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.SmartInfo;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
@@ -66,7 +67,7 @@ public class LuceneTrackService {
                         tags.add(resultSet.getString(2));
                         return null;
                     }
-                });
+                }).getResults(); // call #getResults() just to make result builder run
                 return null;
             }
         });
@@ -77,8 +78,12 @@ public class LuceneTrackService {
             document.add(new Field("name", track.getName(), Field.Store.NO, Field.Index.ANALYZED));
             document.add(new Field("album", track.getAlbum(), Field.Store.NO, Field.Index.ANALYZED));
             document.add(new Field("artist", track.getArtist(), Field.Store.NO, Field.Index.ANALYZED));
+            document.add(new Field("filename", track.getFilename(), Field.Store.NO, Field.Index.ANALYZED));
             if (StringUtils.isNotBlank(track.getComment())) {
                 document.add(new Field("comment", track.getComment(), Field.Store.NO, Field.Index.ANALYZED));
+            }
+            if (StringUtils.isNotBlank(track.getGenre())) {
+                document.add(new Field("genre", track.getGenre(), Field.Store.NO, Field.Index.ANALYZED));
             }
             if (trackTagMap.get(track.getId()) != null) {
                 document.add(new Field("tags", StringUtils.join(trackTagMap.get(track.getId()), " "), Field.Store.NO, Field.Index.ANALYZED));
@@ -127,5 +132,50 @@ public class LuceneTrackService {
             }
         }
         return andQuery;
+    }
+
+    public List<String> searchTrackIds(SmartInfo smartInfo, int fuzziness) throws IOException, ParseException {
+        Directory directory = getDirectory();
+        final IndexSearcher isearcher = new IndexSearcher(directory);
+        Query luceneQuery = createQuery(smartInfo, fuzziness);
+        final BitSet bits = new BitSet();
+        isearcher.search(luceneQuery, new HitCollector() {
+            @Override
+            public void collect(int i, float v) {
+                bits.set(i);
+            }
+        });
+        final List<String> trackIds = new ArrayList<String>();
+        for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
+            trackIds.add(isearcher.doc(i).get("id"));
+        }
+        isearcher.close();
+        directory.close();
+        return trackIds;
+    }
+
+    private Query createQuery(SmartInfo smartInfo, int fuzziness) {
+        BooleanQuery andQuery = new BooleanQuery();
+        addToAndQuery(andQuery, "album", smartInfo.getAlbumPattern(), fuzziness);
+        addToAndQuery(andQuery, "artist", smartInfo.getArtistPattern(), fuzziness);
+        addToAndQuery(andQuery, "genre", smartInfo.getGenrePattern(), fuzziness);
+        addToAndQuery(andQuery, "tags", smartInfo.getTagPattern(), fuzziness);
+        addToAndQuery(andQuery, "name", smartInfo.getTitlePattern(), fuzziness);
+        addToAndQuery(andQuery, "comment", smartInfo.getCommentPattern(), fuzziness);
+        addToAndQuery(andQuery, "filename", smartInfo.getFilePattern(), fuzziness);
+        return andQuery;
+    }
+
+    private void addToAndQuery(BooleanQuery andQuery, String field, String pattern, int fuzziness) {
+        if (StringUtils.isNotEmpty(pattern)) {
+            if (!STOP_WORDS.contains(pattern)) {
+                BooleanQuery orQuery = new BooleanQuery();
+                orQuery.add(new WildcardQuery(new Term(field, "*" + pattern + "*")), BooleanClause.Occur.SHOULD);
+                if (fuzziness > 0) {
+                    orQuery.add(new FuzzyQuery(new Term(field, pattern), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
+                }
+                andQuery.add(orQuery, BooleanClause.Occur.MUST);
+            }
+        }
     }
 }

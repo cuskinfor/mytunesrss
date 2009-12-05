@@ -148,6 +148,7 @@ public class Database implements MyTunesRssEventListener, SettingsForm {
                     case DATABASE_UPDATE_STATE_CHANGED:
                         setGuiMode(GuiMode.DatabaseUpdating);
                         break;
+                    case DATABASE_UPDATE_FINISHED:
                     case DATABASE_UPDATE_FINISHED_NOT_RUN:
                         setGuiMode(GuiMode.DatabaseIdle);
                         break;

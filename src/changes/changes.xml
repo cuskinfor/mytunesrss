@@ -9,6 +9,12 @@
 
         <release version="3.8.0-EAP-9" date="2009-xx-xx" description="3.8.0 EAP 9">
             <action dev="mdescher" type="add">
+                Performance improvements for search and smart playlists (lucene index used instead of sql LIKE queries).
+            </action>
+            <action dev="mdescher" type="add">
+                Support for tags and comments in smart playlist.
+            </action>
+            <action dev="mdescher" type="add">
                 Bugfix: restriction playlists where added multiple times.
             </action>
             <action dev="mdescher" type="add">

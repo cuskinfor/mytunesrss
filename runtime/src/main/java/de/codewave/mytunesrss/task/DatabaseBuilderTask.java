@@ -170,9 +170,16 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 MyTunesRssEventManager.getInstance().fireEvent(event);
                 internalExecute();
                 myExecuted = true;
-                event.setMessageKey("settings.buildingTrackIndex");
-                MyTunesRssEventManager.getInstance().fireEvent(event);
-                MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
+                if (!getExecutionThread().isInterrupted()) {
+                    event.setMessageKey("settings.buildingTrackIndex");
+                    MyTunesRssEventManager.getInstance().fireEvent(event);
+                    MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
+                    if (!getExecutionThread().isInterrupted()) {
+                        DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
+                        storeSession.executeStatement(new RefreshSmartPlaylistsStatement());
+                        storeSession.commit();
+                    }
+                }
                 MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED);
             } catch (Exception e) {
                 MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN);
@@ -389,9 +396,6 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         DatabaseBuilderTask.doCheckpoint(storeSession, true);
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Obsolete tracks and playlists removed from database.");
-        }
-        if (!getExecutionThread().isInterrupted()) {
-            storeSession.executeStatement(new RefreshSmartPlaylistsStatement());
         }
         return missingItunesFiles;
     }

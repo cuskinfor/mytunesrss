@@ -10,7 +10,7 @@
             FROM album a<track>, track t</track><restricted>, link_track_playlist rltp</restricted>
             WHERE {alwaysTrueCondition}
             <index>AND ({letterRegionByIndex})</index>
-            <filter>AND a.lower_name LIKE :filter</filter>
+            <filter>AND a.lower_name LIKE :filter {likeEscape}</filter>
             <artist>AND t.lower_artist = :artist AND t.album = a.name</artist>
             <genre>AND t.lower_genre = :genre AND t.album = a.name</genre>
             <year>AND a.year >= :min_year AND a.year <= :max_year</year>
@@ -34,7 +34,7 @@
             FROM artist a<track>, track t</track><restricted>, link_track_playlist rltp</restricted>
             WHERE {alwaysTrueCondition}
             <index>AND ({letterRegionByIndex})</index>
-            <filter>AND lower_name LIKE :filter</filter>
+            <filter>AND lower_name LIKE :filter {likeEscape}</filter>
             <album>AND t.lower_album = :album AND t.artist = a.name</album>
             <genre>AND t.lower_genre = :genre AND t.artist = a.name</genre>
             <restricted>
@@ -383,19 +383,19 @@
         <parameter name="mediatype" type="java.lang.String"/>
         <sql>
             INSERT INTO smart_info (playlist_id, album_pattern, artist_pattern, genre_pattern, title_pattern,
-                                    file_pattern, time_min, time_max, mediatype, protected)
+                                    file_pattern, tag_pattern, comment_pattern, time_min, time_max, mediatype, protected)
             VALUES (:playlist_id, :album_pattern, :artist_pattern, :genre_pattern, :title_pattern,
-                    :file_pattern, :time_min, :time_max, :mediatype, :protected)
+                    :file_pattern, :tag_pattern, :comment_pattern, :time_min, :time_max, :mediatype, :protected)
         </sql>
     </statement>
 
     <statement name="findSmartPlaylistById">
         <sql>
             SELECT
-                p.name AS name, p.track_count AS track_count, p.user_private AS user_private, p.hidden AS hidden,
+                p.id AS id, p.name AS name, p.track_count AS track_count, p.user_private AS user_private, p.hidden AS hidden,
                 p.user_owner AS user_owner, p.container_id AS container_id,
                 si.album_pattern AS album_pattern, si.artist_pattern AS artist_pattern, si.genre_pattern AS genre_pattern,
-                si.title_pattern AS title_pattern, si.file_pattern AS file_pattern, si.time_min AS time_min,
+                si.title_pattern AS title_pattern, si.file_pattern AS file_pattern, si.tag_pattern AS tag_pattern, si.comment_pattern AS comment_pattern, si.time_min AS time_min,
                 si.time_max AS time_max, si.mediatype AS mediatype, si.protected AS protected
             FROM
                 playlist p, smart_info si
@@ -418,6 +418,8 @@
                 genre_pattern = :genre_pattern,
                 title_pattern = :title_pattern,
                 file_pattern = :file_pattern,
+                tag_pattern = :tag_pattern,
+                comment_pattern = :comment_pattern,
                 time_min = :time_min,
                 time_max = :time_max,
                 mediatype = :mediatype,
@@ -427,35 +429,49 @@
         </sql>
     </statement>
 
-    <statement name="refreshSmartPlaylists">
+    <statement name="findAllSmartPlaylists">
+        <sql>
+            SELECT
+                p.id AS id, p.name AS name, p.track_count AS track_count, p.user_private AS user_private, p.hidden AS hidden,
+                p.user_owner AS user_owner, p.container_id AS container_id,
+                si.album_pattern AS album_pattern, si.artist_pattern AS artist_pattern, si.genre_pattern AS genre_pattern,
+                si.title_pattern AS title_pattern, si.file_pattern AS file_pattern, si.tag_pattern AS tag_pattern, si.comment_pattern AS comment_pattern, si.time_min AS time_min,
+                si.time_max AS time_max, si.mediatype AS mediatype, si.protected AS protected
+            FROM
+                playlist p, smart_info si
+            WHERE
+                p.id = si.playlist_id
+        </sql>
+    </statement>
+
+    <statement name="refreshSmartPlaylist">
         <sql>
             DELETE FROM
                 link_track_playlist
             WHERE
-                playlist_id IN (SELECT playlist_id FROM smart_info)
+                playlist_id = :id
         </sql>
         <sql>
+            <![CDATA[
             INSERT INTO
                 link_track_playlist (playlist_id, track_id)
-                SELECT si.playlist_id, t.id FROM smart_info si, track t
-                    WHERE (si.album_pattern IS NULL OR t.lower_album LIKE LOWER(si.album_pattern))
-                    AND (si.artist_pattern IS NULL OR t.lower_artist LIKE LOWER(si.artist_pattern))
-                    AND (si.genre_pattern IS NULL OR t.lower_genre LIKE LOWER(si.genre_pattern))
-                    AND (si.title_pattern IS NULL OR t.lower_name LIKE LOWER(si.title_pattern))
-                    AND (si.file_pattern IS NULL OR LOWER(t.file) LIKE LOWER(si.file_pattern))
-                    AND (si.time_min IS NULL OR t.time &gt;= si.time_min)
-                    AND (si.time_max IS NULL OR t.time &lt;= si.time_max)
-                    AND (si.mediatype IS NULL OR t.mediatype = si.mediatype)
-                    AND (si.protected IS NULL OR t.protected = si.protected)
-                ORDER BY t.album, t.pos_number, t.track_number, t.name
+                SELECT :id, t.id
+                FROM track t, temp_lucene_tracks tluc
+                WHERE t.id = tluc.track_id
+                <mintime>AND t.time >= :time_min</mintime>
+                <maxtime>AND t.time <= :time_max</maxtime>
+                <mediatype>AND t.mediatype = :mediatype</mediatype>
+                <protected>AND t.protected = :protected</protected>
+                ORDER BY t.artist, t.album, t.pos_number, t.track_number, t.name
+            ]]>
         </sql>
         <sql>
             UPDATE
                 playlist p
             SET
-                track_count = (SELECT COUNT(playlist_id) FROM link_track_playlist WHERE playlist_id = p.id)
+                track_count = (SELECT COUNT(playlist_id) FROM link_track_playlist WHERE playlist_id = :id)
             WHERE
-                p.id IN (SELECT si.playlist_id FROM smart_info si)
+                p.id = :id
         </sql>
     </statement>
 

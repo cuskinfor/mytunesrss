@@ -11,6 +11,8 @@ public class SmartInfo {
     private String myGenrePattern;
     private String myTitlePattern;
     private String myFilePattern;
+    private String myTagPattern;
+    private String myCommentPattern;
     private Integer myTimeMin;
     private Integer myTimeMax;
     private Boolean myProtected;
@@ -54,6 +56,22 @@ public class SmartInfo {
 
     public void setFilePattern(String filePattern) {
         myFilePattern = filePattern;
+    }
+
+    public String getTagPattern() {
+        return myTagPattern;
+    }
+
+    public void setTagPattern(String tagPattern) {
+        myTagPattern = tagPattern;
+    }
+
+    public String getCommentPattern() {
+        return myCommentPattern;
+    }
+
+    public void setCommentPattern(String commentPattern) {
+        myCommentPattern = commentPattern;
     }
 
     public Integer getTimeMin() {

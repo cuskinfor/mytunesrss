@@ -122,6 +122,8 @@
                 genre_pattern VARCHAR(100),
                 title_pattern VARCHAR(100),
                 file_pattern VARCHAR(100),
+                tag_pattern VARCHAR(100),
+                comment_pattern VARCHAR(100),
                 time_min INTEGER,
                 time_max INTEGER,
                 mediatype VARCHAR(20),

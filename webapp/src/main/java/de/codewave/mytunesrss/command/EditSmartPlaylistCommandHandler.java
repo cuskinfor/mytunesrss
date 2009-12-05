@@ -27,8 +27,9 @@ public class EditSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
     }
 
     static String[] getFields() {
-        return new String[] {"smartPlaylist.smartInfo.albumPattern", "smartPlaylist.smartInfo.artistPattern", "smartPlaylist.smartInfo.genrePattern",
-                             "smartPlaylist.smartInfo.titlePattern", "smartPlaylist.smartInfo.filePattern", "smartPlaylist.smartInfo.timeMin",
-                             "smartPlaylist.smartInfo.timeMax"};
+        return new String[]{"smartPlaylist.smartInfo.albumPattern", "smartPlaylist.smartInfo.artistPattern", "smartPlaylist.smartInfo.genrePattern",
+                "smartPlaylist.smartInfo.titlePattern", "smartPlaylist.smartInfo.filePattern", "smartPlaylist.smartInfo.tagPattern", "smartPlaylist.smartInfo.commentPattern",
+                "smartPlaylist.smartInfo.timeMin",
+                "smartPlaylist.smartInfo.timeMax"};
     }
 }
