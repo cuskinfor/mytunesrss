@@ -566,27 +566,25 @@
 
     <statement name="findLastUpdatedTracks">
         <sql>
+            <![CDATA[
             {selectLimitedTracks}
-            FROM track t
-            <restricted>, link_track_playlist rltp</restricted>
-            <restricted>
-                WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
-                AND t.id = rltp.track_id
-            </restricted>
+            FROM track t<restricted>, link_track_playlist rltp
+            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
+            AND t.id = rltp.track_id</restricted>
             {findLastUpdatedTracksOrderClause}
+            ]]>
         </sql>
     </statement>
 
     <statement name="findMostPlayedTracks">
         <sql>
+            <![CDATA[
             {selectLimitedTracks}
-            FROM track t
-            <restricted>, link_track_playlist rltp</restricted>
-            <restricted>
-                WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
-                AND t.id = rltp.track_id
-            </restricted>
+            FROM track t<restricted>, link_track_playlist rltp
+            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
+            AND t.id = rltp.track_id</restricted>
             {findMostPlayedTracksOrderClause}
+            ]]>
         </sql>
     </statement>
 
