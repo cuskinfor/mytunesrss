@@ -2,50 +2,6 @@
 
 <statements>
 
-    <statement name="findRandomTracks">
-        <sql>
-            SELECT {trackColumns}
-            FROM track t<restricted>, link_track_playlist rltp</restricted>
-            WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
-            ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
-            AND (:mediatype IS NULL OR t.mediatype = :mediatype)
-            AND (NOT t.protected OR t.protected = :protected)
-            <restricted>
-                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-                AND t.id = rltp.track_id
-            </restricted>
-            ORDER BY RAND() LIMIT :maxCount
-        </sql>
-    </statement>
-
-    <statement name="findLastUpdatedTracks">
-        <sql>
-            SELECT {trackColumns}
-            FROM track t<restricted>, link_track_playlist rltp</restricted>
-            WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
-            ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
-            <restricted>
-                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-                AND t.id = rltp.track_id
-            </restricted>
-            ORDER BY ts_updated DESC LIMIT :maxCount
-        </sql>
-    </statement>
-
-    <statement name="findMostPlayedTracks">
-        <sql>
-            SELECT {trackColumns}
-            FROM track t<restricted>, link_track_playlist rltp</restricted>
-            WHERE (:sourcePlaylistId IS NULL OR EXISTS (SELECT * FROM link_track_playlist ltp WHERE
-            ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId))
-            <restricted>
-                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-                AND t.id = rltp.track_id
-            </restricted>
-            ORDER BY playcount DESC LIMIT :maxCount
-        </sql>
-    </statement>
-
     <statement name="findAlbumImage">
         <sql>
             SELECT data AS data FROM image i, track t WHERE t.album = :album AND i.hash = t.image_hash AND i.size = :size LIMIT 1
@@ -72,6 +28,14 @@
     </statement>
 
     <!-- reusable sql fragments -->
+
+    <fragment name="selectLimitedTracks">SELECT {trackColumns}</fragment>
+
+    <fragment name="findRandomTracksOrderClause">ORDER BY RAND() LIMIT :maxCount</fragment>
+
+    <fragment name="findLastUpdatedTracksOrderClause">ORDER BY ts_updated DESC LIMIT :maxCount</fragment>
+
+    <fragment name="findMostPlayedTracksOrderClause">ORDER BY playcount DESC LIMIT :maxCount</fragment>
 
     <fragment name="likeEscape">ESCAPE '\\'</fragment>
 

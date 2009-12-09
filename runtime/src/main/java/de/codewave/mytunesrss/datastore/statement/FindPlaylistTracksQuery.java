@@ -63,19 +63,26 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
             String[] splitted = myId.split("_");
             statement.setInt("maxCount", Integer.parseInt(splitted[1]));
         } else if (myId.startsWith(PSEUDO_ID_RANDOM)) {
-            statement = MyTunesRssUtils.createStatement(connection, "findRandomTracks", conditionals);
             String[] splitted = myId.split("_", 4);
-            statement.setString("mediatype", StringUtils.trimToNull(splitted[1].split("-", 2)[0]));
-            statement.setBoolean("protected", "p".equals(splitted[1].split("-", 2)[1]));
-            statement.setInt("maxCount", Integer.parseInt(splitted[2]));
+            String mediaType = StringUtils.trimToNull(splitted[1].split("-", 2)[0]);
+            boolean protection = "p".equals(splitted[1].split("-", 2)[1]);
+            int maxCount = Integer.parseInt(splitted[2]);
+            String sourcePlaylistId = null;
             if (splitted.length > 3) {
                 String sourceId = splitted[3];
                 QueryResult<Playlist> playlists = new FindPlaylistQuery(null, sourceId, null, false).execute(connection);
                 if (playlists.getResultSize() == 1) {
                     Playlist playlist = playlists.nextResult();
-                    statement.setString("sourcePlaylistId", StringUtils.trimToNull(playlist.getId()));
+                    sourcePlaylistId = StringUtils.trimToNull(playlist.getId());
                 }
             }
+            conditionals.put("sourceplaylist", sourcePlaylistId != null);
+            conditionals.put("mediatype", mediaType != null);
+            statement = MyTunesRssUtils.createStatement(connection, "findRandomTracks", conditionals);
+            statement.setString("mediatype", mediaType);
+            statement.setBoolean("protected", protection);
+            statement.setInt("maxCount", maxCount);
+            statement.setString("sourcePlaylistId", sourcePlaylistId);
         } else {
             conditionals.put("indexorder", mySortOrder != SortOrder.Album && mySortOrder != SortOrder.Artist);
             conditionals.put("albumorder", mySortOrder == SortOrder.Album);

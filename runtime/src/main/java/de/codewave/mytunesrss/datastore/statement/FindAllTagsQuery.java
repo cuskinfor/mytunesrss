@@ -12,8 +12,11 @@ import de.codewave.utils.sql.SmartStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAllTagsQuery
@@ -31,7 +34,9 @@ public class FindAllTagsQuery extends DataStoreQuery<DataStoreQuery.QueryResult<
     }
 
     public DataStoreQuery.QueryResult<String> execute(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAllTags");
+        Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+        conditionals.put("query", StringUtils.isNotBlank(myStartsWith));
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAllTags", conditionals);
         statement.setString("query", myStartsWith + "%");
         return execute(statement, new ResultBuilder<String>() {
             public String create(ResultSet resultSet) throws SQLException {

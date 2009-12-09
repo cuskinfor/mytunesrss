@@ -487,10 +487,12 @@
 
     <statement name="findAllTags">
         <sql>
+            <![CDATA[
             SELECT DISTINCT(tag)
             FROM tag
-            WHERE :query IS NULL OR tag LIKE :query {likeEscape}
-            ORDER BY tag;
+            <query>WHERE tag LIKE :query {likeEscape}</query>
+            ORDER BY tag
+            ]]>
         </sql>
     </statement>
 
@@ -542,6 +544,49 @@
     <statement name="getTrackTagMap">
         <sql>
             SELECT t.id, tg.tag FROM track t, tag tg WHERE t.id = tg.track_id
+        </sql>
+    </statement>
+
+    <statement name="findRandomTracks">
+        <sql>
+            <![CDATA[
+            {selectLimitedTracks}
+            FROM track t<restricted>, link_track_playlist rltp</restricted>
+            WHERE (NOT t.protected OR t.protected = :protected)
+            <sourceplaylist>AND EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId)</sourceplaylist>
+            <mediatype>AND t.mediatype = :mediatype</mediatype>
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND t.id = rltp.track_id
+            </restricted>
+            {findRandomTracksOrderClause}
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findLastUpdatedTracks">
+        <sql>
+            {selectLimitedTracks}
+            FROM track t
+            <restricted>, link_track_playlist rltp</restricted>
+            <restricted>
+                WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND t.id = rltp.track_id
+            </restricted>
+            {findLastUpdatedTracksOrderClause}
+        </sql>
+    </statement>
+
+    <statement name="findMostPlayedTracks">
+        <sql>
+            {selectLimitedTracks}
+            FROM track t
+            <restricted>, link_track_playlist rltp</restricted>
+            <restricted>
+                WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND t.id = rltp.track_id
+            </restricted>
+            {findMostPlayedTracksOrderClause}
         </sql>
     </statement>
 
