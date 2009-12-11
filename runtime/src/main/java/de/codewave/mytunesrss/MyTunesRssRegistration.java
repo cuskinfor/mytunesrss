@@ -20,7 +20,6 @@ import java.util.Date;
  */
 public class MyTunesRssRegistration {
     private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssRegistration.class);
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final long TRIAL_PERIOD_MILLIS = 1000L * 3600L * 24L * 30L; // 30 days
 
     private String myName;
@@ -159,7 +158,7 @@ public class MyTunesRssRegistration {
             }
             if (expirationDate != null) {
                 try {
-                    myExpiration = DATE_FORMAT.parse(expirationDate).getTime();
+                    myExpiration = new SimpleDateFormat("yyyy-MM-dd").parse(expirationDate).getTime();
                 } catch (ParseException e) {
                     // intentionally left blank
                 }
