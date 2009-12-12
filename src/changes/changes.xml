@@ -7,9 +7,12 @@
 
     <body>
 
-        <release version="3.8.0-EAP-9" date="2009-xx-xx" description="3.8.0 EAP 9">
-            <action dev="mdescher" type="add">
-                Performance improvements for search and smart playlists (lucene index used instead of sql LIKE queries).
+        <release version="3.8.0-EAP-9" date="2009-12-12" description="3.8.0 EAP 9">
+            <action dev="mdescher" type="update">
+                Search and smart playlists: Lucene queries only, no SQL LIKE queries.
+            </action>
+            <action dev="mdescher" type="update">
+                Database performance improvements.
             </action>
             <action dev="mdescher" type="add">
                 Support for tags and comments in smart playlist.
