@@ -62,7 +62,7 @@
         <sql>
             {create_table_prefix} system_information (
                 lastupdate BIGINT,
-                version VARCHAR(20) NOT NULL,
+                version VARCHAR(30) NOT NULL,
                 track_count INTEGER,
                 album_count INTEGER,
                 artist_count INTEGER,
