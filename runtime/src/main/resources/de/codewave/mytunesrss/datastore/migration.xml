@@ -12,11 +12,6 @@
         <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (idx)</sql>
     </statement>
 
-    <statement name="migrate31eap131eap4">
-        <sql>ALTER TABLE track ALTER COLUMN id VARCHAR(100) NOT NULL</sql>
-        <sql>ALTER TABLE link_track_playlist ALTER COLUMN track_id VARCHAR(100) NOT NULL</sql>
-    </statement>
-
     <statement name="migrate31eap4to31eap6">
         <sql>UPDATE system_information SET lastupdate = 0</sql>
         <sql>
@@ -26,11 +21,6 @@
                 data {image_datatype} NOT NULL,
                 UNIQUE(track_id, size))
         </sql>
-    </statement>
-
-    <statement name="migrate31eap6to31eap9">
-        <sql>ALTER TABLE playlist ALTER COLUMN id VARCHAR(100)</sql>
-        <sql>ALTER TABLE link_track_playlist ALTER COLUMN playlist_id VARCHAR(100)</sql>
     </statement>
 
     <statement name="migrate31eap9to31eap11">

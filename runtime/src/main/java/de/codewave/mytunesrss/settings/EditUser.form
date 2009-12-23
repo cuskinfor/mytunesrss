@@ -651,6 +651,7 @@
           <editable value="false"/>
           <opaque value="false"/>
           <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="editUser.help"/>
+          <visible value="true"/>
         </properties>
       </component>
     </children>
