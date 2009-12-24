@@ -101,9 +101,9 @@ public class DatabaseConfig extends MyTunesRssMBean implements DatabaseConfigMBe
     }
 
     public void handleEvent(MyTunesRssEvent event) {
-        if (event == MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED) {
+        if (event.getType() == MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED) {
             myCurrentUpdateAction = MyTunesRssUtils.getBundleString(event.getMessageKey());
-        } else if (event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED || event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN) {
+        } else if (event.getType() == MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED || event.getType() == MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED_NOT_RUN) {
             myCurrentUpdateAction = null;
         }
     }

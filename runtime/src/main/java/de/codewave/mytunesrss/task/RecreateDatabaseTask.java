@@ -22,6 +22,6 @@ public class RecreateDatabaseTask extends MyTunesRssTask {
         LOGGER.debug("Destroying store for recreation.");
         MyTunesRss.STORE.destroy();
         myInitializeDatabaseTask.execute();
-        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED);
+        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
     }
 }

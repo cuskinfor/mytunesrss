@@ -165,7 +165,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             setExecutionThread(Thread.currentThread());
             CURRENTLY_RUNNING_TASK = this;
             try {
-                MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+                MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
                 event.setMessageKey("settings.databaseUpdateRunning");
                 MyTunesRssEventManager.getInstance().fireEvent(event);
                 internalExecute();
@@ -180,9 +180,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                         storeSession.commit();
                     }
                 }
-                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED);
+                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
             } catch (Exception e) {
-                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_UPDATE_FINISHED_NOT_RUN);
+                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED_NOT_RUN));
                 throw e;
             } finally {
                 CURRENTLY_RUNNING_TASK = null;
@@ -248,7 +248,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
     private void runImageUpdate(DataStoreSession storeSession, long lastUpdateTime, final long timeUpdateStart) throws SQLException {
         myState = State.UpdatingTrackImages;
-        MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+        MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
         event.setMessageKey("settings.databaseUpdateRunningImages");
         MyTunesRssEventManager.getInstance().fireEvent(event);
         TX_BEGIN = System.currentTimeMillis();
@@ -279,7 +279,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             for (Track track = result.nextResult(); track != null && !getExecutionThread().isInterrupted(); track = result.nextResult()) {
                 scannedCount++;
                 if (System.currentTimeMillis() - lastEventTime > 2500L) {
-                    event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+                    event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
                     event.setMessageKey("settings.databaseUpdateRunningImagesWithCount");
                     event.setMessageParams(scannedCount, scannedCount / ((System.currentTimeMillis() - startTime) / 1000L));
                     MyTunesRssEventManager.getInstance().fireEvent(event);
@@ -341,7 +341,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 doCheckpoint(storeSession, false);
                 if (datasource.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(datasource.getName())) && !getExecutionThread().isInterrupted()) {
                     myState = State.UpdatingTracksFromItunes;
-                    MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+                    MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
                     event.setMessageKey("settings.databaseUpdateRunningItunes");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
                     missingItunesFiles.put(datasource.getCanonicalPath(), ItunesLoader.loadFromITunes(getExecutionThread(), datasource.toURL(),
@@ -352,7 +352,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 } else if (datasource.isDirectory() && !getExecutionThread().isInterrupted()) {
                     try {
                         myState = State.UpdatingTracksFromFolder;
-                        MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+                        MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
                         event.setMessageKey("settings.databaseUpdateRunningFolder");
                         MyTunesRssEventManager.getInstance().fireEvent(event);
                         FileSystemLoader.loadFromFileSystem(getExecutionThread(), datasource, storeSession, timeLastUpdate, trackIds, m3uPlaylistIds);
@@ -366,7 +366,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         if (myExternalDatasources != null && !getExecutionThread().isInterrupted()) {
             for (String external : myExternalDatasources) {
                 doCheckpoint(storeSession, false);
-                MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+                MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
                 event.setMessageKey("settings.databaseUpdateRunningExternal");
                 MyTunesRssEventManager.getInstance().fireEvent(event);
                 ExternalLoader.process(StringUtils.trim(external), storeSession, timeLastUpdate, trackIds);

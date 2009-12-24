@@ -105,7 +105,7 @@ public class MyTunesRssSystray implements MyTunesRssEventListener {
     }
 
     public void handleEvent(MyTunesRssEvent event) {
-        switch (event) {
+        switch (event.getType()) {
             case SERVER_STARTED:
                 setServerRunning();
                 break;

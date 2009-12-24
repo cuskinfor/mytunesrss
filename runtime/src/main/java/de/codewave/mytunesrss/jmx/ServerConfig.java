@@ -85,7 +85,7 @@ public class ServerConfig extends MyTunesRssMBean implements ServerConfigMBean {
     public void setAutostart(boolean autostart) {
         MyTunesRss.CONFIG.setAutoStartServer(autostart);
         MyTunesRssEventManager.getInstance().fireEvent(
-                autostart ? MyTunesRssEvent.ENABLE_AUTO_START_SERVER : MyTunesRssEvent.DISABLE_AUTO_START_SERVER);
+                autostart ? MyTunesRssEvent.create(MyTunesRssEvent.EventType.ENABLE_AUTO_START_SERVER) : MyTunesRssEvent.create(MyTunesRssEvent.EventType.DISABLE_AUTO_START_SERVER));
         onChange();
     }
 

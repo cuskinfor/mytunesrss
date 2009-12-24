@@ -167,7 +167,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
     public void handleEvent(final MyTunesRssEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                switch (event) {
+                switch (event.getType()) {
                     case ENABLE_AUTO_START_SERVER:
                         myUpdateOnStartInputCache = myUpdateOnStartInput.isSelected();
                         myUpdateOnStartInput.setSelected(false);

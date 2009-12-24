@@ -71,9 +71,9 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
             }
         });
         if (myAutoStartServerInput.isSelected()) {
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.ENABLE_AUTO_START_SERVER);
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.ENABLE_AUTO_START_SERVER));
         } else {
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DISABLE_AUTO_START_SERVER);
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DISABLE_AUTO_START_SERVER));
         }
         myAdditionContextsScrollpane.getViewport().setOpaque(false);
         myAdditionalContextsTable.setModel(new AdditionalContextsTableModel());
@@ -117,7 +117,7 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
     public void handleEvent(final MyTunesRssEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                switch (event) {
+                switch (event.getType()) {
                     case CONFIGURATION_CHANGED:
                         initValues();
                         break;
@@ -221,9 +221,9 @@ public class Server implements MyTunesRssEventListener, SettingsForm {
     public class AutoStartServerInputListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (myAutoStartServerInput.isSelected()) {
-                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.ENABLE_AUTO_START_SERVER);
+                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.ENABLE_AUTO_START_SERVER));
             } else {
-                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DISABLE_AUTO_START_SERVER);
+                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DISABLE_AUTO_START_SERVER));
             }
             myRootPanel.validate();
         }

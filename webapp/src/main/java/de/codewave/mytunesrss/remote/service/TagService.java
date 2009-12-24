@@ -1,12 +1,13 @@
 package de.codewave.mytunesrss.remote.service;
 
-import de.codewave.mytunesrss.TrackUtils;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
+import de.codewave.mytunesrss.task.RefreshSmartPlaylistsAndLuceneIndexTask;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -61,52 +62,40 @@ public class TagService {
         throw new IllegalAccessException("Unauthorized");
     }
 
-    public void setTagsToTracks(String[] trackIds, String[] tags) throws IllegalAccessException, SQLException {
+    public void setTagsToTracks(String[] trackIds, String[] tags) throws IllegalAccessException, SQLException, IOException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             for (String tag : tags) {
                 TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(trackIds, tag));
             }
+            RefreshSmartPlaylistsAndLuceneIndexTask.execute(trackIds);
         } else {
             throw new IllegalAccessException("Unauthorized");
         }
     }
 
-    public void removeTagsFromTracks(String[] trackIds, String[] tags) throws IllegalAccessException, SQLException {
+    public void removeTagsFromTracks(String[] trackIds, String[] tags) throws IllegalAccessException, SQLException, IOException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             for (String tag : tags) {
                 TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(trackIds, tag));
             }
+            RefreshSmartPlaylistsAndLuceneIndexTask.execute(trackIds);
         } else {
             throw new IllegalAccessException("Unauthorized");
         }
     }
 
-    public void setTagsToTrack(String trackId, String[] tags) throws IllegalAccessException, SQLException {
-        User user = MyTunesRssRemoteEnv.getSession().getUser();
-        if (user != null) {
-            for (String tag : tags) {
-                TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(new String[] {trackId}, tag));
-            }
-        } else {
-            throw new IllegalAccessException("Unauthorized");
-        }
+    public void setTagsToTrack(String trackId, String[] tags) throws IllegalAccessException, SQLException, IOException {
+        setTagsToTracks(new String[]{trackId}, tags);
     }
 
-    public void removeTagsFromTrack(String trackId, String[] tags) throws IllegalAccessException, SQLException {
-        User user = MyTunesRssRemoteEnv.getSession().getUser();
-        if (user != null) {
-            for (String tag : tags) {
-                TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(new String[]{trackId}, tag));
-            }
-        } else {
-            throw new IllegalAccessException("Unauthorized");
-        }
+    public void removeTagsFromTrack(String trackId, String[] tags) throws IllegalAccessException, SQLException, IOException {
+        removeTagsFromTracks(new String[]{trackId}, tags);
     }
 
 
-    public void setTagsToPlaylist(String playlistId, String[] tags) throws IllegalAccessException, SQLException {
+    public void setTagsToPlaylist(String playlistId, String[] tags) throws IllegalAccessException, SQLException, IOException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             List<Track> tracks = TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(playlistId, SortOrder.KeepOrder)).getResults();
@@ -116,7 +105,7 @@ public class TagService {
         }
     }
 
-    public void removeTagsFromPlaylist(String playlistId, String[] tags) throws IllegalAccessException, SQLException {
+    public void removeTagsFromPlaylist(String playlistId, String[] tags) throws IllegalAccessException, SQLException, IOException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             List<Track> tracks = TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(playlistId, SortOrder.KeepOrder)).getResults();
@@ -126,7 +115,7 @@ public class TagService {
         }
     }
 
-    public void setTagsToAlbum(String album, String[] tags) throws IllegalAccessException, SQLException {
+    public void setTagsToAlbum(String album, String[] tags) throws IllegalAccessException, SQLException, IOException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             List<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(user, new String[]{album}, SortOrder.KeepOrder)).getResults();
@@ -136,7 +125,7 @@ public class TagService {
         }
     }
 
-    public void removeTagsFromAlbum(String album, String[] tags) throws IllegalAccessException, SQLException {
+    public void removeTagsFromAlbum(String album, String[] tags) throws IllegalAccessException, SQLException, IOException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             List<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(user, new String[]{album}, SortOrder.KeepOrder)).getResults();
@@ -146,7 +135,7 @@ public class TagService {
         }
     }
 
-    public void setTagsToArtist(String artist, String[] tags) throws IllegalAccessException, SQLException {
+    public void setTagsToArtist(String artist, String[] tags) throws IllegalAccessException, SQLException, IOException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             List<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForArtist(user, new String[]{artist}, SortOrder.KeepOrder)).getResults();
@@ -155,7 +144,7 @@ public class TagService {
         throw new IllegalAccessException("Unauthorized");
     }
 
-    public void removeTagsFromArtist(String artist, String[] tags) throws IllegalAccessException, SQLException {
+    public void removeTagsFromArtist(String artist, String[] tags) throws IllegalAccessException, SQLException, IOException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             List<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForArtist(user, new String[]{artist}, SortOrder.KeepOrder)).getResults();

@@ -132,7 +132,7 @@ public class DataImport implements SettingsForm, MyTunesRssEventListener {
     }
 
     public void handleEvent(MyTunesRssEvent event) {
-        if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+        if (event.getType() == MyTunesRssEvent.EventType.CONFIGURATION_CHANGED) {
             initValues();
         }
     }

@@ -79,7 +79,7 @@ public class MyTunesRssComUpdateTask extends TimerTask {
         postMethod.addParameter("context", MyTunesRss.CONFIG.getWebappContext());
         HttpClient client = MyTunesRssUtils.createHttpClient();
         try {
-            MyTunesRssEvent event = MyTunesRssEvent.MYTUNESRSS_COM_UPDATED;
+            MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.MYTUNESRSS_COM_UPDATED);
             int responseCode = client.executeMethod(postMethod);
             if (responseCode != 200) {
                 if (LOG.isInfoEnabled()) {

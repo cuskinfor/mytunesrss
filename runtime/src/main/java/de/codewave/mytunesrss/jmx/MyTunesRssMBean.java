@@ -39,7 +39,7 @@ public class MyTunesRssMBean extends StandardMBean {
     }
 
     protected void onChange() {
-        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.CONFIGURATION_CHANGED);
+        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.CONFIGURATION_CHANGED));
     }
 }
 

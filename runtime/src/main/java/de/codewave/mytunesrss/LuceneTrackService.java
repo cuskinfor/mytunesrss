@@ -1,9 +1,6 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
-import de.codewave.mytunesrss.datastore.statement.SortOrder;
-import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.datastore.statement.SmartInfo;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
@@ -73,21 +70,7 @@ public class LuceneTrackService {
         });
         DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
         for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
-            Document document = new Document();
-            document.add(new Field("id", track.getId(), Field.Store.YES, Field.Index.NO));
-            document.add(new Field("name", track.getName(), Field.Store.NO, Field.Index.ANALYZED));
-            document.add(new Field("album", track.getAlbum(), Field.Store.NO, Field.Index.ANALYZED));
-            document.add(new Field("artist", track.getArtist(), Field.Store.NO, Field.Index.ANALYZED));
-            document.add(new Field("filename", track.getFilename(), Field.Store.NO, Field.Index.ANALYZED));
-            if (StringUtils.isNotBlank(track.getComment())) {
-                document.add(new Field("comment", track.getComment(), Field.Store.NO, Field.Index.ANALYZED));
-            }
-            if (StringUtils.isNotBlank(track.getGenre())) {
-                document.add(new Field("genre", track.getGenre(), Field.Store.NO, Field.Index.ANALYZED));
-            }
-            if (trackTagMap.get(track.getId()) != null) {
-                document.add(new Field("tags", StringUtils.join(trackTagMap.get(track.getId()), " "), Field.Store.NO, Field.Index.ANALYZED));
-            }
+            Document document = createTrackDocument(track, trackTagMap);
             iwriter.addDocument(document);
         }
         iwriter.optimize();
@@ -97,7 +80,77 @@ public class LuceneTrackService {
         LOGGER.debug("Finished indexing all tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
     }
 
-    public List<String> searchTrackIds(String[] searchTerms, int fuzziness) throws IOException, ParseException {
+    /**
+     * Create a document for a track.
+     *
+     * @param track A track to create a document from.
+     * @param trackTagMap Track to tag mapping.
+     *
+     * @return Document for the track.
+     */
+    private Document createTrackDocument(Track track, Map<String, List<String>> trackTagMap) {
+        Document document = new Document();
+        document.add(new Field("id", track.getId(), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("name", track.getName(), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new Field("album", track.getAlbum(), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new Field("artist", track.getArtist(), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new Field("filename", track.getFilename(), Field.Store.NO, Field.Index.ANALYZED));
+        if (StringUtils.isNotBlank(track.getComment())) {
+            document.add(new Field("comment", track.getComment(), Field.Store.NO, Field.Index.ANALYZED));
+        }
+        if (StringUtils.isNotBlank(track.getGenre())) {
+            document.add(new Field("genre", track.getGenre(), Field.Store.NO, Field.Index.ANALYZED));
+        }
+        if (trackTagMap.get(track.getId()) != null) {
+            document.add(new Field("tags", StringUtils.join(trackTagMap.get(track.getId()), " "), Field.Store.NO, Field.Index.ANALYZED));
+        }
+        return document;
+    }
+
+    public void updateTracks(String[] trackIds) throws IOException, SQLException {
+        LOGGER.debug("Indexing " + trackIds.length + " tracks.");
+        long start = System.currentTimeMillis();
+        Directory directory = getDirectory();
+        StandardAnalyzer analyzer = new StandardAnalyzer(STOP_WORDS);
+        IndexWriter iwriter = new IndexWriter(directory, analyzer, false, new IndexWriter.MaxFieldLength(300));
+        FindTrackQuery query = FindTrackQuery.getForIds(trackIds);
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
+        final Map<String, List<String>> trackTagMap = new HashMap<String, List<String>>();
+        session.executeQuery(new DataStoreQuery<Object>() {
+            @Override
+            public Object execute(Connection connection) throws SQLException {
+                execute(MyTunesRssUtils.createStatement(connection, "getTrackTagMap"), new ResultBuilder<Object>() {
+                    public Object create(ResultSet resultSet) throws SQLException {
+                        List<String> tags = trackTagMap.get(resultSet.getString(1));
+                        if (tags == null) {
+                            tags = new ArrayList<String>();
+                            trackTagMap.put(resultSet.getString(1), tags);
+                        }
+                        tags.add(resultSet.getString(2));
+                        return null;
+                    }
+                }).getResults(); // call #getResults() just to make result builder run
+                return null;
+            }
+        });
+        DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
+        Set<String> deletedTracks = new HashSet<String>(Arrays.asList(trackIds));
+        for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
+            Document document = createTrackDocument(track, trackTagMap);
+            iwriter.updateDocument(new Term("id", track.getId()), document);
+            deletedTracks.remove(track.getId());
+        }
+        for (String deletedTrack : deletedTracks) {
+            iwriter.deleteDocuments(new Term("id", deletedTrack));
+        }
+        iwriter.optimize();
+        iwriter.close();
+        directory.close();
+        session.commit();
+        LOGGER.debug("Finished indexing " + trackIds.length + " tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
+    }
+
+    public Collection<String> searchTrackIds(String[] searchTerms, int fuzziness) throws IOException, ParseException {
         Directory directory = getDirectory();
         final IndexSearcher isearcher = new IndexSearcher(directory);
         Query luceneQuery = createQuery(searchTerms, fuzziness);
@@ -108,7 +161,7 @@ public class LuceneTrackService {
                 bits.set(i);
             }
         });
-        final List<String> trackIds = new ArrayList<String>();
+        final Set<String> trackIds = new HashSet<String>();
         for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
             trackIds.add(isearcher.doc(i).get("id"));
         }

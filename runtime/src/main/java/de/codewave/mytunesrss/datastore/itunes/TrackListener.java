@@ -94,7 +94,7 @@ public class TrackListener implements PListHandlerListener {
             myLastEventTime = System.currentTimeMillis();
             myStartTime = myLastEventTime;
         } else if (System.currentTimeMillis() - myLastEventTime > 2500L) {
-            MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+            MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
             event.setMessageKey("settings.databaseUpdateRunningItunesWithCount");
             event.setMessageParams(myScannedCount, myScannedCount / ((System.currentTimeMillis() - myStartTime) / 1000L));
             MyTunesRssEventManager.getInstance().fireEvent(event);

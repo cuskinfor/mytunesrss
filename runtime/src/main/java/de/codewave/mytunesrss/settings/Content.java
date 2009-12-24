@@ -51,9 +51,9 @@ public class Content extends PlaylistsDialog implements MyTunesRssEventListener,
     public void handleEvent(final MyTunesRssEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                if (event == MyTunesRssEvent.DATABASE_PLAYLIST_UPDATED || event == MyTunesRssEvent.DATABASE_UPDATE_FINISHED) {
+                if (event.getType() == MyTunesRssEvent.EventType.DATABASE_PLAYLIST_UPDATED || event.getType() == MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED) {
                     refreshPlaylistList();
-                } else if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+                } else if (event.getType() == MyTunesRssEvent.EventType.CONFIGURATION_CHANGED) {
                     initValues();
                 }
             }

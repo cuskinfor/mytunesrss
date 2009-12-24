@@ -27,7 +27,7 @@ public class User implements MyTunesRssEventListener, Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(User.class);
 
     public void handleEvent(MyTunesRssEvent event) {
-        if (event == MyTunesRssEvent.SERVER_STOPPED) {
+        if (event.getType() == MyTunesRssEvent.EventType.SERVER_STOPPED) {
             if (myLastFmSession != null) {
                 LastFmUtils.sendSubmissions(myLastFmSession);
             }

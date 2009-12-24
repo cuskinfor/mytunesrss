@@ -65,7 +65,7 @@ public class PlaylistFileProcessor implements FileProcessor {
                     myDataStoreSession.executeStatement(statement);
                     myExistingIds.add(id);
                     DatabaseBuilderTask.doCheckpoint(myDataStoreSession, true);
-                    MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.DATABASE_PLAYLIST_UPDATED);
+                    MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_PLAYLIST_UPDATED));
                 }
             } catch (IOException e) {
                 if (LOG.isErrorEnabled()) {

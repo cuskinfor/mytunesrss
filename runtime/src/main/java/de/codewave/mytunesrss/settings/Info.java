@@ -53,7 +53,7 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
     public void handleEvent(final MyTunesRssEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                switch (event) {
+                switch (event.getType()) {
                     case CONFIGURATION_CHANGED:
                         initValues();
                         break;

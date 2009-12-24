@@ -393,10 +393,6 @@ public class MyTunesRss {
         }
     }
 
-    public static DatabaseBuilderTask createDatabaseBuilderTask() {
-        return new DatabaseBuilderTask();
-    }
-
     private static void executeGuiMode()
             throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException, IOException,
             InterruptedException, AWTException, SQLException {
@@ -627,7 +623,7 @@ public class MyTunesRss {
             if (MyTunesRss.CONFIG.isAvailableOnLocalNet()) {
                 MulticastService.startListener();
             }
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.SERVER_STARTED);
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STARTED));
         }
     }
 
@@ -641,7 +637,7 @@ public class MyTunesRss {
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
             MulticastService.stopListener();
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.SERVER_STOPPED);
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STOPPED));
         }
     }
 

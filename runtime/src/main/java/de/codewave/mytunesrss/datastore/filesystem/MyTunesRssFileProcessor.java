@@ -71,8 +71,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             myLastEventTime = System.currentTimeMillis();
             myStartTime = myLastEventTime;
         } else if (System.currentTimeMillis() - myLastEventTime > 2500L) {
-            MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
-            event.setMessageKey("settings.databaseUpdateRunningFolderWithCount");
+            MyTunesRssEvent event = new MyTunesRssEvent(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "settings.databaseUpdateRunningFolderWithCount", null, null);
             event.setMessageParams(myScannedCount, myScannedCount / ((System.currentTimeMillis() - myStartTime) / 1000L));
             MyTunesRssEventManager.getInstance().fireEvent(event);
             myLastEventTime = System.currentTimeMillis();

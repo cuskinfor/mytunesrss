@@ -7,14 +7,34 @@ package de.codewave.mytunesrss;
 /**
  * de.codewave.mytunesrss.MyTunesRssEvent
  */
-public enum MyTunesRssEvent {
-    ENABLE_AUTO_START_SERVER,
-    DISABLE_AUTO_START_SERVER,
-    CONFIGURATION_CHANGED, SERVER_STOPPED, SERVER_STARTED, DATABASE_UPDATE_FINISHED, DATABASE_UPDATE_FINISHED_NOT_RUN,
-    DATABASE_UPDATE_STATE_CHANGED, MYTUNESRSS_COM_UPDATED, DATABASE_PLAYLIST_UPDATED;
+public class MyTunesRssEvent {
 
+    public enum EventType {
+        ENABLE_AUTO_START_SERVER,
+        DISABLE_AUTO_START_SERVER,
+        CONFIGURATION_CHANGED, SERVER_STOPPED, SERVER_STARTED, DATABASE_UPDATE_FINISHED, DATABASE_UPDATE_FINISHED_NOT_RUN,
+        DATABASE_UPDATE_STATE_CHANGED, MYTUNESRSS_COM_UPDATED, DATABASE_PLAYLIST_UPDATED;
+    }
+
+    public static MyTunesRssEvent create(EventType type) {
+        return new MyTunesRssEvent(type, null, null, null);
+    }
+
+    private EventType myType;
     private String myMessageKey;
     private Object[] myMessageParams;
+    private Object[] myEventParams;
+
+    public MyTunesRssEvent(EventType type, String messageKey, Object[] messageParams, Object[] eventParams) {
+        myType = type;
+        myMessageKey = messageKey;
+        myMessageParams = messageParams;
+        myEventParams = eventParams;
+    }
+
+    public EventType getType() {
+        return myType;
+    }
 
     public void setMessageKey(String messageKey) {
         myMessageKey = messageKey;
@@ -30,5 +50,13 @@ public enum MyTunesRssEvent {
 
     public void setMessageParams(Object... messageParams) {
         myMessageParams = messageParams;
+    }
+
+    public Object[] getEventParams() {
+        return myEventParams;
+    }
+
+    public void setEventParams(Object[] eventParams) {
+        myEventParams = eventParams;
     }
 }

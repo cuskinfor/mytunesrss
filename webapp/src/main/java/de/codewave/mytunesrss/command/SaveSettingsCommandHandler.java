@@ -43,7 +43,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         } else {
             forward(MyTunesRssResource.Login);
         }
-        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.CONFIGURATION_CHANGED);
+        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.CONFIGURATION_CHANGED));
     }
 
     private boolean transferAndValidate(WebConfig webConfig) {

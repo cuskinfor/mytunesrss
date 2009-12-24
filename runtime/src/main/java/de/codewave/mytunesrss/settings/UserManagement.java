@@ -161,7 +161,7 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
     public void handleEvent(final MyTunesRssEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                if (event == MyTunesRssEvent.CONFIGURATION_CHANGED) {
+                if (event.getType() == MyTunesRssEvent.EventType.CONFIGURATION_CHANGED) {
                     initValues();
                 }
             }

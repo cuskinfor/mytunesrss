@@ -32,7 +32,7 @@ public class RemoveTrackStatement implements DataStoreStatement {
     }
 
     public void execute(Connection connection) throws SQLException {
-        MyTunesRssEvent event = MyTunesRssEvent.DATABASE_UPDATE_STATE_CHANGED;
+        MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
         event.setMessageKey("settings.databaseUpdateRemovingTracks");
         event.setMessageParams(myTrackIds.size());
         MyTunesRssEventManager.getInstance().fireEvent(event);

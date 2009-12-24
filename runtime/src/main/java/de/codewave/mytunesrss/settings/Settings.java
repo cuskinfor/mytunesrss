@@ -118,7 +118,7 @@ public class Settings implements MyTunesRssEventListener {
     public void handleEvent(final MyTunesRssEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                switch (event) {
+                switch (event.getType()) {
                     case SERVER_STARTED:
                         MyTunesRss.SYSTRAY.setServerRunning();
                         myStartServerButton.setEnabled(false);
