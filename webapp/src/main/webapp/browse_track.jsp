@@ -121,7 +121,9 @@
                                    backUrl="${mtfn:encode64(backUrl)}"
                                    linkFragment="${sectionArguments}"
                                    filename="${mtfn:webSafeFileName(sectionFileName)}"
-                                   zipFileCount="${mtfn:sectionTrackCount(track.sectionIds)}" />
+                                   zipFileCount="${mtfn:sectionTrackCount(track.sectionIds)}"
+                                   editTagsType="${cwfn:choose(empty track.sectionPlaylistId, 'Track', 'Playlist')}"
+                                   editTagsId="${cwfn:choose(empty track.sectionPlaylistId, cwfn:encodeUrl(track.sectionIds), track.sectionPlaylistId)}" />                                   
 
                 </c:when>
                 <c:otherwise>

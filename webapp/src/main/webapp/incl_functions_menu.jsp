@@ -8,28 +8,28 @@
 <div id="functions" style="display:none">
     <a id="functions_externalsites" style="cursor:pointer" onclick="functionMenuClick('externalsites');">
         <img src="${appUrl}/images/http.gif" />&nbsp;<fmt:message key="tooltip.externalSites"/>
+        <br />
     </a>
-    <br />
     <a id="functions_edittags" style="cursor:pointer" onclick="functionMenuClick('edittags');">
         <img src="${appUrl}/images/edit_tags.png" />&nbsp;<fmt:message key="tooltip.editTags"/>
+        <br />
     </a>
-    <br />
     <a id="functions_remotecontrol" style="cursor:pointer" onclick="functionMenuClick('remotecontrol');">
         <img src="${appUrl}/images/remote_control.gif" />&nbsp;<fmt:message key="tooltip.remotecontrol"/>
+        <br />
     </a>
-    <br />
     <a id="functions_rss" style="cursor:pointer" onclick="functionMenuClick('rss');">
         <img src="${appUrl}/images/rss.gif" />&nbsp;<fmt:message key="tooltip.rssfeed"/>
+        <br />
     </a>
-    <br />
     <a id="functions_playlist" style="cursor:pointer" onclick="functionMenuClick('playlist');">
         <img src="${appUrl}/images/playlist.gif" />&nbsp;<fmt:message key="tooltip.playlist"/>
+        <br />
     </a>
-    <br />
     <a id="functions_player" style="cursor:pointer" onclick="functionMenuClick('player');">
         <img src="${appUrl}/images/player.gif" />&nbsp;<fmt:message key="tooltip.flashplayer"/>
+        <br />
     </a>
-    <br />
     <a id="functions_download" style="cursor:pointer" onclick="functionMenuClick('download');">
         <img src="${appUrl}/images/download.gif" />&nbsp;<fmt:message key="tooltip.downloadzip"/>
     </a>

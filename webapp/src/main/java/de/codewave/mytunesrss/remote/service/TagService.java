@@ -83,6 +83,29 @@ public class TagService {
         }
     }
 
+    public void setTagsToTrack(String trackId, String[] tags) throws IllegalAccessException, SQLException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            for (String tag : tags) {
+                TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(new String[] {trackId}, tag));
+            }
+        } else {
+            throw new IllegalAccessException("Unauthorized");
+        }
+    }
+
+    public void removeTagsFromTrack(String trackId, String[] tags) throws IllegalAccessException, SQLException {
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            for (String tag : tags) {
+                TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(new String[]{trackId}, tag));
+            }
+        } else {
+            throw new IllegalAccessException("Unauthorized");
+        }
+    }
+
+
     public void setTagsToPlaylist(String playlistId, String[] tags) throws IllegalAccessException, SQLException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
