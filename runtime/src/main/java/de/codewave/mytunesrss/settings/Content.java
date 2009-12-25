@@ -16,6 +16,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
  */
 public class Content extends PlaylistsDialog implements MyTunesRssEventListener, SettingsForm {
     private static final Logger LOG = LoggerFactory.getLogger(Content.class);
+    private static final List<PlaylistType> PLAYLIST_TYPES = Arrays.asList(new PlaylistType[]{PlaylistType.ITunes, PlaylistType.ITunesFolder, PlaylistType.M3uFile});
 
     private JPanel myRootPanel;
     private JScrollPane myScrollPane;
@@ -66,6 +68,11 @@ public class Content extends PlaylistsDialog implements MyTunesRssEventListener,
 
     protected JPanel getPlaylistsPanel() {
         return myPlaylistsPanel;
+    }
+
+    @Override
+    protected List<PlaylistType> getTypes() {
+        return PLAYLIST_TYPES;
     }
 
     protected boolean isSelected(Playlist playlist) {

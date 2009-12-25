@@ -21,6 +21,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -30,6 +31,8 @@ import java.awt.*;
  * de.codewave.mytunesrss.settings.RestrictionPlaylists
  */
 public class RestrictionPlaylists extends PlaylistsDialog implements MyTunesRssEventListener, SettingsForm {
+    private static final List<PlaylistType> PLAYLIST_TYPES = Arrays.asList(new PlaylistType[]{PlaylistType.ITunes, PlaylistType.ITunesFolder, PlaylistType.M3uFile, PlaylistType.MyTunes, PlaylistType.MyTunesSmart});
+
     private JPanel myRootPanel;
     private JScrollPane myScrollPane;
     private JPanel myPlaylistsPanel;
@@ -71,6 +74,11 @@ public class RestrictionPlaylists extends PlaylistsDialog implements MyTunesRssE
 
     protected JPanel getPlaylistsPanel() {
         return myPlaylistsPanel;
+    }
+
+    @Override
+    protected List<PlaylistType> getTypes() {
+        return PLAYLIST_TYPES;
     }
 
     protected boolean isSelected(Playlist playlist) {

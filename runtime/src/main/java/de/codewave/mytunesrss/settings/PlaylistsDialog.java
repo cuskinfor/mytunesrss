@@ -1,31 +1,30 @@
 package de.codewave.mytunesrss.settings;
 
-import de.codewave.utils.swing.SwingUtils;
-import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.datastore.statement.Playlist;
-import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
-import de.codewave.mytunesrss.datastore.statement.PlaylistType;
-
-import java.util.List;
-import java.util.Collections;
-import java.util.Comparator;
-import java.sql.SQLException;
-
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.GridConstraints;
-
-import javax.swing.*;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
+import de.codewave.mytunesrss.datastore.statement.Playlist;
+import de.codewave.mytunesrss.datastore.statement.PlaylistType;
+import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.swing.SwingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public abstract class PlaylistsDialog {
     private static final Logger LOG = LoggerFactory.getLogger(PlaylistsDialog.class);
 
     protected abstract JPanel getPlaylistsPanel();
+
+    protected abstract List<PlaylistType> getTypes();
 
     protected void refreshPlaylistList() {
         SwingUtils.invokeAndWait(new Runnable() {
@@ -33,7 +32,7 @@ public abstract class PlaylistsDialog {
                 getPlaylistsPanel().removeAll();
                 DataStoreSession session = MyTunesRss.STORE.getTransaction();
                 try {
-                    List<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(null, null, null, true)).getResults();
+                    List<Playlist> playlists = session.executeQuery(new FindPlaylistQuery(getTypes(), null, null, true)).getResults();
                     Collections.sort(playlists, new Comparator<Playlist>() {
                         public int compare(Playlist o1, Playlist o2) {
                             return o1.getName().compareTo(o2.getName());
@@ -42,10 +41,7 @@ public abstract class PlaylistsDialog {
                     getPlaylistsPanel().setLayout(new GridLayoutManager(playlists.size() + 1, 2));
                     int row = 0;
                     for (Playlist playlist : playlists) {
-                        if (playlist.getType() == PlaylistType.ITunes || playlist.getType() == PlaylistType.ITunesFolder ||
-                                playlist.getType() == PlaylistType.M3uFile) {
-                            addPlaylist(playlist, row++);
-                        }
+                        addPlaylist(playlist, row++);
                     }
                     addPanelComponent(new JLabel(""), new GridConstraints(row,
                             0,

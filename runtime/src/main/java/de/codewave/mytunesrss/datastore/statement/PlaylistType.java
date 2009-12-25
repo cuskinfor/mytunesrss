@@ -5,5 +5,5 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 public enum PlaylistType {
-    ITunes(), MyTunes(), M3uFile(), TEMP(), ITunesFolder(), MyTunesMeta(), MyTunesSmart();
+    ITunes(), MyTunes(), M3uFile(), TEMP(), ITunesFolder(), MyTunesSmart();
 }

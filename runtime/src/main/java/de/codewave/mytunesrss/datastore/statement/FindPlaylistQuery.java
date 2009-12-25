@@ -44,7 +44,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
 
     public QueryResult<Playlist> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
-        conditionals.put("container", StringUtils.isNotBlank(myContainerId) && !myContainerId.equals("ROOT"));
+        conditionals.put("container", StringUtils.isNotBlank(myContainerId) && !"ROOT".equals(myContainerId));
         conditionals.put("rootcontainer", StringUtils.equals(myContainerId, "ROOT"));
         conditionals.put("nohidden", !myIncludeHidden);
         conditionals.put("matching", myMatchingOwnerOnly);
@@ -53,14 +53,12 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         conditionals.put("types", myTypes != null && !myTypes.isEmpty());
         conditionals.put("id", StringUtils.isNotBlank(myId));
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findPlaylists", conditionals);
-        if (myTypes != null) {
+        if (myTypes != null && !myTypes.isEmpty()) {
             List<String> typeNames = new ArrayList<String>(myTypes.size());
             for (PlaylistType type : myTypes) {
                 typeNames.add(type.name());
             }
             statement.setItems("types", typeNames);
-        } else {
-            statement.setItems("types", (Object[])null);
         }
         statement.setString("id", myId);
         statement.setString("containerId", myContainerId);
