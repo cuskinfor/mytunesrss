@@ -533,9 +533,16 @@ public class User implements MyTunesRssEventListener, Cloneable {
         setChangeEmail(JXPathUtils.getBooleanValue(settings, "changeEmail", false));
         setSearchFuzziness(JXPathUtils.getIntValue(settings, "searchFuzziness", 0));
         setEditTags(JXPathUtils.getBooleanValue(settings, "editTags", false));
+        Set<String> availableTranscoders = new HashSet<String>();
+        for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+            availableTranscoders.add(config.getName());
+        }
         Iterator<JXPathContext> forceTranscoderIterator = JXPathUtils.getContextIterator(settings, "forcetranscoder/name");
         while (forceTranscoderIterator.hasNext()) {
-            myForceTranscoders.add(JXPathUtils.getStringValue(forceTranscoderIterator.next(), ".", null));
+            String name = JXPathUtils.getStringValue(forceTranscoderIterator.next(), ".", null);
+            if (availableTranscoders.contains(name)) {
+                myForceTranscoders.add(name);
+            }
         }
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
