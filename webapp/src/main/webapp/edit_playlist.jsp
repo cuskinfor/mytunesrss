@@ -262,7 +262,7 @@
     <a style="cursor:pointer" onclick="firstItem=#{index};loadView()" #{classActive}>#{pageName}</a>
 </textarea>
 
-<div id="errordialog" style="display:none" title="MyTunesRSS"/>
+<div id="errordialog" style="display:none" title="MyTunesRSS"></div>
 
 </body>
 
