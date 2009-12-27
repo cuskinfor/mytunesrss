@@ -31,7 +31,7 @@
         initExistingTags(json);
         $jQ("#editTagsDialog").dialog("option", "editTagsType", editTagsType);
         $jQ("#editTagsDialog").dialog("option", "editTagsId", editTagsId);
-        $jQ("#editTagsDialog_targetInfo").text("\"" + title.trim() + "\"");
+        $jQ("#editTagsDialog_targetInfo").text("\"" + jQuery.trim(title) + "\"");
         $jQ("#editTagsDialog").dialog("open");
     }
     function removeTags() {
