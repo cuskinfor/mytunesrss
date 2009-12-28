@@ -575,7 +575,12 @@ public class MyTunesRssUtils {
                 layout.setHeight((int) dialog.getSize().getHeight());
                 String messages = form.updateConfigFromGui();
                 if (messages != null) {
-                    MyTunesRssUtils.showErrorMessage(messages);
+                    String cont = MyTunesRssUtils.getBundleString("question.dialogErrors.continue");
+                    String canc = MyTunesRssUtils.getBundleString("question.dialogErrors.cancel");
+                    String[] options = new String[]{canc, cont};
+                    if (canc.equals(MyTunesRssUtils.showQuestionMessage(messages + MyTunesRssUtils.getBundleString("question.dialogErrors"), options))) {
+                        dialog.dispose();
+                    }
                 } else {
                     dialog.dispose();
                 }
@@ -617,9 +622,9 @@ public class MyTunesRssUtils {
     /**
      * Check if the specified index is a valid letter pager index. A valid index is
      * in the range from 0 to 8.
-     * 
+     *
      * @param index An index.
-     * 
+     *
      * @return TRUE if the index is a valid letter pager index or FALSE otherwise.
      */
     public static Boolean isLetterPagerIndex(int index) {

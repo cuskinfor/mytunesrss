@@ -8,6 +8,10 @@
     <body>
 
         <release version="3.8.0-RC-1" date="2009-12-30" description="3.8.0 RC 1">
+            <action dev="mdescher" type="update">
+                Ask user if he wants to continue editing or cancel without saving if there are validation
+                errors when closing a dialog.
+            </action>
             <action dev="mdescher" type="fix">
                 Use all playlists (smart ones as well) for user restrictions selection.
             </action>
