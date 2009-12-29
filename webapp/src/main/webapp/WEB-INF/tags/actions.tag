@@ -34,25 +34,20 @@
              alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
 </c:if>
 <c:if test="${authUser.rss}">
-    <a id="fn_rss${index}" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.xml" style="display:${cwfn:choose(config.showRss, "inline", "none")}">
-        <img src="${appUrl}/images/rss${cwfn:choose(index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.rssfeed"/>" title="<fmt:message key="tooltip.rssfeed"/>" /> </a>
+    <a id="fn_rss${index}" class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.xml" <c:if test="config.showRss">style="display:none"</c:if> title="<fmt:message key="tooltip.rssfeed"/>">RSS</a>
 </c:if>
 <c:if test="${authUser.playlist}">
-    <a id="fn_playlist${index}" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.${config.playlistFileSuffix}" style="display:${cwfn:choose(config.showPlaylist, "inline", "none")}">
-        <img src="${appUrl}/images/playlist${cwfn:choose(index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playlist"/>" title="<fmt:message key="tooltip.playlist"/>" /> </a>
+    <a id="fn_playlist${index}" class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.${config.playlistFileSuffix}" <c:if test="config.showPlaylist">style="display:none"</c:if> title="<fmt:message key="tooltip.playlist"/>">Playlist</a>
 </c:if>
 <c:if test="${authUser.player}">
-    <a id="fn_player${index}" style="cursor:pointer;display:${cwfn:choose(config.showPlayer, "inline", "none")}" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${linkFragment}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${filename}.xspf</mt:encrypt>'); return false;">
-        <img src="${appUrl}/images/player${cwfn:choose(index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.flashplayer"/>" title="<fmt:message key="tooltip.flashplayer"/>" /> </a>
+    <a id="fn_player${index}" class="flash" <c:if test="config.showPlayer">style="display:none"</c:if> onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${linkFragment}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${filename}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>">Flash Player</a>
 </c:if>
 <c:if test="${authUser.download}">
     <c:choose>
         <c:when test="${!empty track}">
             <c:choose>
                 <c:when test="${!config.yahooMediaPlayer || mtfn:lowerSuffix(config, authUser, track) ne 'mp3'}">
-                    <a id="fn_download${index}" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" style="display:${cwfn:choose(config.showDownload, "inline", "none")}">
-                        <img src="${appUrl}/images/download${cwfn:choose(index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.playtrack"/>" title="<fmt:message key="tooltip.playtrack"/>" />
-                    </a>
+                    <a id="fn_download${index}" class="download" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" <c:if test="config.showDownload">style="display:none"</c:if> title="<fmt:message key="tooltip.playtrack"/>">Download</a>
                 </c:when>
                 <c:otherwise>
                     <c:set var="yahoo" value="true"/>
@@ -63,13 +58,10 @@
             </c:choose>
         </c:when>
         <c:when test="${authUser.maximumZipEntries <= 0 || zipFileCount <= authUser.maximumZipEntries}">
-            <a id="fn_download${index}" href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.zip" style="display:${cwfn:choose(config.showDownload, "inline", "none")}">
-                <img src="${appUrl}/images/download${cwfn:choose(index % 2 == 0, '', '_odd')}.gif"
-                     alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
+            <a id="fn_download${index}" class="download" href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.zip" <c:if test="config.showDownload">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>">Download</a>
         </c:when>
         <c:otherwise>
-            <a id="fn_download${index}" style="cursor:pointer;display:${cwfn:choose(config.showDownload, "inline", "none")}" onclick="alert('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>'); return false;">
-                <img src="${appUrl}/images/download${cwfn:choose(index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="tooltip.downloadzip"/>" title="<fmt:message key="tooltip.downloadzip"/>" /></a>
+            <a id="fn_download${index}" class="download" <c:if test="config.showDownload">style="display:none"</c:if> onclick="alert('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>'); return false;" title="<fmt:message key="tooltip.downloadzip"/>">Download</a>
         </c:otherwise>
     </c:choose>
 </c:if>
@@ -77,6 +69,6 @@
     <a id="fn_edittags${index}" style="display:${cwfn:choose(config.showEditTags, "inline", "none")};cursor:pointer" onclick="jsonRpc('${servletUrl}', 'TagService.getTagsFor${editTagsType}', ['${editTagsId}'], function(json) {openEditTagsDialog(json, '${editTagsType}', '${editTagsId}', $jQ('#functionsDialogName${index}').text());}, '${remoteApiSessionId}');return false;">
         <img src="${appUrl}/images/edit_tags.png" onmouseover="showEditTagsTooltip(this, '${editTagsType}', '${editTagsId}');" onmouseout="hideTooltipElement(document.getElementById('tooltip_edittags'));"/> </a>
 </c:if>
-<a style="cursor:pointer" onclick="openFunctionsMenu(${index}, $jQ('#functionsDialogName${index}').text());">
-    <img src="${appUrl}/images/menu.png"
-         alt="<fmt:message key="tooltip.functionsMenu"/>" title="<fmt:message key="tooltip.functionsMenu"/>" /> </a>
+<a onclick="openFunctionsMenu(${index}, $jQ('#functionsDialogName${index}').text());" class="menu" title="<fmt:message key="tooltip.functionsMenu"/>">
+    Menu
+</a>

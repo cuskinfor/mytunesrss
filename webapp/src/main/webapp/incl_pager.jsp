@@ -23,7 +23,7 @@
                 </c:choose>
             </td>
         </c:forEach>
-        <td>
+        <td class="last">
             <a href="${cwfn:choose(empty pagerCurrent, '#', mtfn:replace(pagerCommand, '{index}', ''))}"
                     <c:if test="${empty pagerCurrent}">class="active"</c:if>>
                 <fmt:message key="alphabetPagerAll"/>

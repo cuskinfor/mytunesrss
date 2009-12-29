@@ -39,73 +39,74 @@
 
 </head>
 
-<body>
+<body onload="document.forms[0].elements['searchTerm'].focus()" class="startpage">
 
 <div class="body">
 
-    <h1 class="search" onclick="window.open('http://www.codewave.de')" style="cursor: pointer"><span><fmt:message key="myTunesRss" /></span></h1>
-
-    <ul class="links">
-        <c:if test="${authUser.editWebSettings}">
-            <li><a href="${servletUrl}/showSettings/${auth}">
-                <fmt:message key="doSettings" />
-            </a></li>
-        </c:if>
-        <c:if test="${globalConfig.serverBrowserActive}">
-            <li><a href="${servletUrl}/browseServers/${auth}">
-                <fmt:message key="browseServers" />
-            </a></li>
-        </c:if>
-        <c:if test="${empty globalConfig.autoLogin}">
-            <li style="float:right"><a href="${servletUrl}/logout">
-                <fmt:message key="doLogout" />
-            </a></li>
-        </c:if>
-    </ul>
-
-    <jsp:include page="/incl_error.jsp" />
-
-    <form id="search" action="${servletUrl}/searchTracks/${auth}" method="post">
-
-        <table class="portal" cellspacing="0">
-            <tr>
-                <td class="search">
-                    <table border="0" cellspacing="0" cellpadding="0" style="border-bottom:0"><tr><td width="99%" style="background:transparent;padding:0 10px 0 0"><input class="text" type="text" name="searchTerm" value="<c:out value="${lastSearchTerm}"/>" style="width:99%"/></td><td style="background:transparent;padding:0 0"><input class="button" type="submit" value="<fmt:message key="doSearch"/>"/></td></tr></table>
+    <div class="head">
+        <h1 onclick="window.open('http://www.codewave.de')" style="cursor: pointer"><span><fmt:message key="myTunesRss" /></span></h1>
+    </div>
+    
+    <div class="content">
+        <div class="content-inner">
+        
+        <ul class="menu">
+            <c:if test="${authUser.editWebSettings}">
+                <li class="settings"><a href="${servletUrl}/showSettings/${auth}">
+                    <fmt:message key="doSettings" />
+                </a></li>
+            </c:if>
+            <c:if test="${globalConfig.serverBrowserActive}">
+                <li class="servers"><a href="${servletUrl}/browseServers/${auth}">
+                    <fmt:message key="browseServers" />
+                </a></li>
+            </c:if>
+            <c:if test="${empty globalConfig.autoLogin}">
+                <li class="logout"><a href="${servletUrl}/logout">
+                    <fmt:message key="doLogout" />
+                </a></li>
+            </c:if>
+        </ul>
+    
+        <jsp:include page="/incl_error.jsp" />
+    
+        <form id="search" action="${servletUrl}/searchTracks/${auth}" method="post">
+        
+            <div class="navigation">
+    
+                <div class="search">
+                    <input class="text" type="text" name="searchTerm" value="<c:out value="${lastSearchTerm}"/>"/>
                     <c:choose>
                         <c:when test="${authUser.searchFuzziness == -1}">
-                            <table border="0" cellspacing="0" cellpadding="0" style="border-bottom:0"><tr>
-                                <td style="background:transparent;padding:5px 10px 0 0">
-                                    <select name="searchFuzziness" style="width:99%">
-                                        <option value="0"><fmt:message key="search.fuzziness.0"/></option>
-                                        <option value="30" <c:if test="${config.searchFuzziness == 30}">selected="selected"</c:if>><fmt:message key="search.fuzziness.30"/></option>
-                                        <option value="60" <c:if test="${config.searchFuzziness == 60}">selected="selected"</c:if>><fmt:message key="search.fuzziness.60"/></option>
-                                    </select>
-                                </td>
-                            </tr></table>
+                            <select name="searchFuzziness">
+                                <option value="0"><fmt:message key="search.fuzziness.0"/></option>
+                                <option value="30" <c:if test="${config.searchFuzziness == 30}">selected="selected"</c:if>><fmt:message key="search.fuzziness.30"/></option>
+                                <option value="60" <c:if test="${config.searchFuzziness == 60}">selected="selected"</c:if>><fmt:message key="search.fuzziness.60"/></option>
+                            </select>
                         </c:when>
                         <c:otherwise>
                             <input type="hidden" name="searchFuzziness" value="${authUser.searchFuzziness}" />
                         </c:otherwise>
                     </c:choose>
-                    <div>
-                        <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
-                    </div>
-                </td>
-                <td class="links">
+                    <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
+                    <input class="button" type="submit" value="<fmt:message key="doSearch"/>"/>                    
+                </div>
+                
+                <div class="links">
                     <c:if test="${!globalConfig.disableBrowser}">
-                        <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>" style="background-image:url('${appUrl}/images/library_small.gif');">
+                        <a class="library" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
                             <fmt:message key="browseLibrary" />
                         </a>
                     </c:if>
                     <c:if test="${authUser.createPlaylists}">
                         <c:choose>
                             <c:when test="${!stateEditPlaylist}">
-                                <a href="${servletUrl}/showPlaylistManager/${auth}" style="background-image:url('${appUrl}/images/feeds_small.gif');">
+                                <a class="playlists" href="${servletUrl}/showPlaylistManager/${auth}">
                                     <fmt:message key="managePlaylists" />
                                 </a>
                             </c:when>
                             <c:otherwise>
-                                <a href="${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist/backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>"
+                                <a class="playlists" href="${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist/backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>"
                                    style="background-image:url('${appUrl}/images/feeds_small.gif');">
                                     <fmt:message key="finishPlaylist" />
                                 </a>
@@ -113,48 +114,29 @@
                         </c:choose>
                     </c:if>
                     <c:if test="${uploadLink}">
-                        <a href="${servletUrl}/showUpload/${auth}" style="background-image:url('${appUrl}/images/upload_small.gif');">
+                        <a class="upload" href="${servletUrl}/showUpload/${auth}">
                             <fmt:message key="showUpload" />
                         </a>
                     </c:if>
-                </td>
-            </tr>
-        </table>
+                </div>
+            
+            </div>
+    
+        </form>
+    
+        <jsp:include page="incl_playlist.jsp" />        
 
-    </form>
-
-    <jsp:include page="incl_playlist.jsp" />
-
-    <table cellspacing="0">
-        <c:if test="${!empty statistics && !globalConfig.disableBrowser}">
-            <tr>
-                <th class="active" colspan="3" align="right">
-                    <fmt:message key="statistics" />
-                </th>
-            </tr>
-            <tr id="statistics">
-                <td colspan="3">
-                    <table class="statistics">
-                        <tr>
-                            <td><fmt:message key="statistics.tracks" />: ${statistics.trackCount}</td>
-                            <td><a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>"><fmt:message key="statistics.albums" />: ${statistics.albumCount}</a></td>
-                            <td><a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>"><fmt:message key="statistics.artists" />: ${statistics.artistCount}</a></td>
-                            <td style="width:100%"><a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>"><fmt:message key="statistics.genres" />: ${statistics.genreCount}</a></td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </c:if>
-        <tr>
-            <th class="active">
-                <fmt:message key="playlists" />
-            </th>
-            <c:if test="${!empty playlists}">
-                <th class="active" colspan="2">
-                    <fmt:message key="tracks" />
-                </th>
-            </c:if>
-        </tr>
+            <table class="tracklist" cellspacing="0">
+                <tr>
+                    <th>
+                        <fmt:message key="playlists" />
+                    </th>
+                    <c:if test="${!empty playlists}">
+                        <th class="tracks" colspan="2">
+                            <fmt:message key="tracks" />
+                        </th>
+                    </c:if>
+                </tr>
 
         <c:if test="${!empty container}">
             <tr class="even">
@@ -184,7 +166,7 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="icon">
+                <td class="actions">
                     <mttag:actions index="${loopStatus.index}"
                                    backUrl="${mtfn:encode64(backUrl)}"
                                    linkFragment="playlist=${playlist.id}"
@@ -209,6 +191,21 @@
         <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
         <jsp:include page="incl_bottomPager.jsp" />
     </c:if>
+    
+        </div>
+    </div>
+    
+    <div class="footer">
+        <div class="footer-inner">
+            <c:if test="${!empty statistics && !globalConfig.disableBrowser}">
+                <fmt:message key="statistics" />:
+                ${statistics.trackCount} <fmt:message key="statistics.tracks" />,
+                <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.albumCount} <fmt:message key="statistics.albums" /></a>,
+                <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.artistCount} <fmt:message key="statistics.artists" /></a>,
+                <a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.genreCount} <fmt:message key="statistics.genres" /></a>
+               </c:if>
+        </div>
+    </div>    
 
 </div>
 

@@ -55,52 +55,59 @@
 
 </head>
 
-<body>
+<body class="browse">
 
-<div class="body">
+    <div class="body">
+    
+        <div class="head">
+            <h1 class="artists">
+                <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
+                <span><fmt:message key="myTunesRss"/></span>
+            </h1>
+        </div>
 
-<h1 class="browse">
-    <a class="portal" href="${servletUrl}/showPortal/${auth}"><fmt:message key="portal"/></a> <span><fmt:message key="myTunesRss"/></span>
-</h1>
+        <jsp:include page="/incl_error.jsp" />
+        
+        <div class="content">
+        
+            <div class="content-inner">
 
-<jsp:include page="/incl_error.jsp" />
+                <ul class="menu">
+                    <li>
+                        <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${cwfn:choose(empty param.artist, param.page, '1')}</mt:encrypt>"><fmt:message key="browseArtist"/></a>
+                    </li>
+                    <li>
+                        <a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}</mt:encrypt>"><fmt:message key="browseGenres"/></a>
+                    </li>
+                    <c:if test="${!stateEditPlaylist && authUser.createPlaylists}">
+                        <li class="playlist">
+                            <c:choose>
+                                <c:when test="${empty editablePlaylists || simpleNewPlaylist}">
+                                    <a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><fmt:message key="newPlaylist"/></a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a style="cursor:pointer" onclick="$jQ('#editPlaylistDialog').dialog('open')"><fmt:message key="editExistingPlaylist"/></a>
+                                </c:otherwise>
+                            </c:choose>
+                        </li>
+                    </c:if>
+                    <c:if test="${!empty param.backUrl}">
+                        <li class="back">
+                            <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
+                        </li>
+                    </c:if>
+                </ul>
 
-<ul class="links">
-    <li>
-        <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${cwfn:choose(empty param.artist, param.page, '1')}</mt:encrypt>"><fmt:message key="browseArtist"/></a>
-    </li>
-    <li>
-        <a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}</mt:encrypt>"><fmt:message key="browseGenres"/></a>
-    </li>
-    <c:if test="${!stateEditPlaylist && authUser.createPlaylists}">
-        <li>
-            <c:choose>
-                <c:when test="${empty editablePlaylists || simpleNewPlaylist}">
-                    <a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><fmt:message key="newPlaylist"/></a>
-                </c:when>
-                <c:otherwise>
-                    <a style="cursor:pointer" onclick="$jQ('#editPlaylistDialog').dialog('open')"><fmt:message key="editExistingPlaylist"/></a>
-                </c:otherwise>
-            </c:choose>
-        </li>
-    </c:if>
-    <c:if test="${!empty param.backUrl}">
-        <li style="float:right;">
-            <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
-        </li>
-    </c:if>
-</ul>
+                <jsp:include page="incl_playlist.jsp" />
+                
+                <c:if test="${param.sortByYear != 'true'}">
+                    <c:set var="pager" scope="request" value="${albumPager}" />
+                    <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseAlbum/${auth}/page={index}" />
+                    <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.artist || !empty param.genre, '*', param.page)}" />
+                    <jsp:include page="incl_pager.jsp" />
+                </c:if>
 
-<jsp:include page="incl_playlist.jsp" />
-
-<c:if test="${param.sortByYear != 'true'}">
-    <c:set var="pager" scope="request" value="${albumPager}" />
-    <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseAlbum/${auth}/page={index}" />
-    <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.artist || !empty param.genre, '*', param.page)}" />
-    <jsp:include page="incl_pager.jsp" />
-</c:if>
-
-    <table class="select" cellspacing="0">
+    <table class="tracklist" cellspacing="0">
         <tr>
             <td colspan="4" style="padding:0">
                 <c:set var="displayFilterUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}</c:set>
@@ -115,7 +122,7 @@
                 <c:if test="${!empty param.artist}"> <fmt:message key="with"/> "${cwfn:choose(mtfn:unknown(mtfn:decode64(param.artist)), msgUnknown, mtfn:decode64(param.artist))}"</c:if>
             </th>
             <th><fmt:message key="artist"/></th>
-            <th colspan="2"><fmt:message key="tracks"/></th>
+            <th colspan="2" class="tracks"><fmt:message key="tracks"/></th>
         </tr>
         <c:forEach items="${albums}" var="album" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -152,7 +159,7 @@
                 <td class="tracks">
                     <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${album.trackCount} </a>
                 </td>
-                <td class="icon">
+                <td class="actions">
                     <c:choose>
                         <c:when test="${!stateEditPlaylist}">
                             <mttag:actions index="${loopStatus.index}"
@@ -249,6 +256,14 @@
         <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
         <jsp:include page="incl_bottomPager.jsp" />
     </c:if>
+    
+        </div>
+    
+    </div>
+    
+    <div class="footer">
+        <div class="footer-inner"></div>
+    </div>        
 
 </div>
 

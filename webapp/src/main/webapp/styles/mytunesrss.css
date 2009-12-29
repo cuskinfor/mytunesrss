@@ -1,5 +1,6 @@
 /* CSS Document */
 
+
 /* Body */
 
 body {
@@ -7,17 +8,535 @@ body {
     padding: 0;
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: 12px;
-    background: #ccc url( "../images/background.gif" ) center top repeat-y;
+    background: #d1dfec url( "../images/background.png" ) repeat-x;
+    text-align: center;
 }
 
 div.body {
-    max-width: 480px;
-    min-width: 250px;
+    max-width: 640px;
+    min-width: 480px;
     margin: 0 auto;
-    padding: 0 0 15px 0;
+    padding: 0;
+    text-align: left;
 }
 
-/* Common Definitions */
+
+/* Head */
+
+.startpage div.head,
+.loginpage div.head {
+    margin: 10px 0 0 0;
+    padding: 0 14px 0 0;
+    background: url("../images/head.png") bottom right;
+}
+
+.startpage h1,
+.loginpage h1 {
+    background: url( "../images/head.png" ) left top;
+    height: 50px;
+    padding: 11px 0 0 0;
+    margin: 0;
+    text-align: center;
+}
+
+.startpage h1 span,
+.loginpage h1 span {
+    display: block;
+    width: 195px;
+    height: 42px;
+    margin: 0 auto;
+    text-indent: -9999px;
+    background: url("../images/logo.png");
+}
+
+.browse div.head,
+.settings div.head {
+    margin: 10px 0 0 0;
+    padding: 0 14px 0 0;
+    background: url("../images/head-small.png") bottom right;
+}
+
+.browse h1,
+.settings h1 {
+    position: relative;
+    height: 20px;
+    padding: 6px 0 0 0;
+    margin: 0;
+    background: url( "../images/head-small.png" ) left top;
+    font-size: 12px;  
+    text-align: center;
+    font-weight: normal;
+    cursor: default;
+}
+
+.browse h1 span,
+.settings h1 span {
+    padding-left: 20px;
+    color: #000;
+    text-shadow: #eee 0 1px 0;
+    background: url("../images/library.png") left center no-repeat;
+}
+
+.browse h1 a,
+.settings h1 a {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 6px;
+    padding: 0 3px 0 0;
+    background: url("../images/portal-button.png") right bottom no-repeat;
+    text-decoration: none;
+    outline: 0;
+}
+
+.browse h1 a span,
+.settings h1 a span {
+    display: block;
+    height:  15px;
+    padding: 1px 5px 0 8px;
+    background: url("../images/portal-button.png") left top no-repeat;
+    font-size: 10px;
+    color: #000;
+    font-weight: bold;       
+}
+
+
+/* Menu */
+
+ul.menu {
+    height: 25px;
+    margin: 0;
+    padding: 0;
+    background: url("../images/menu.png") left top;
+}
+
+ul.menu li {
+    float: left;
+    margin: 0;
+    padding: 0;
+    list-style: none;        
+}
+
+ul.menu a {
+    display: block;
+    padding: 0 12px 0 10px;
+    line-height: 25px;
+    background: url("../images/menu-seperator.png") right top no-repeat;
+    font-size: 10px;
+    font-weight: bold;
+    color: #eee;
+    text-decoration: none;
+    text-shadow: #000 0 -1px 0px;
+    outline: 0;    
+}
+
+
+ul.menu a:HOVER {
+    text-decoration: underline;
+}
+
+ul.menu .logout,
+ul.menu .back {
+    float: right;
+}
+
+ul.menu .logout a,
+ul.menu .back a {
+    padding: 0 10px 0 12px;
+    background: url("../images/menu-seperator.png") left top no-repeat;       
+}
+
+
+/* Navigation */
+
+.navigation {
+    background: #dadfe7;
+    display: table;
+    position: static;
+    padding: 8px 0 8px 9px;
+}
+
+.navigation .search {
+    width: 65%;
+    background: url("../images/search.png") 10px center no-repeat;
+    padding: 0 20px 0 52px;
+    display: table-cell;
+    vertical-align: middle;    
+}
+
+.navigation .search input[type="text"] {
+    width: 98%;
+    margin: 0 0 8px 0;
+}
+
+.navigation .search input[type="submit"] {
+    float: right;
+    margin: 0;
+}
+
+
+.navigation .links {
+    display: table-cell;
+    width: 35%;
+    padding: 0 10px 0 22px;
+    background: url("../images/navigation-seperator.png") left center no-repeat;
+    vertical-align: middle;    
+}
+
+.navigation a {
+    display: block;
+    margin: 2px 0;
+    padding: 2px 0 2px 20px;
+    background-repeat: no-repeat;
+    color: #000;
+    text-decoration: none;
+    outline: 0;
+}
+
+.navigation a:HOVER {
+    text-decoration: underline;
+}
+
+.navigation .library {
+    background: url("../images/library.png") left center no-repeat;
+}
+
+.navigation .playlists {
+    background: url("../images/playlists.png") left center no-repeat;
+}
+
+.navigation .upload {
+    background: url("../images/upload.png") left center no-repeat;
+}
+
+
+/* Content */
+
+.content {
+    padding: 0 9px 0 0;
+    background: url("../images/content-right.png") right top repeat-y;
+}
+
+.content-inner {
+    padding: 0 0 0 9px;
+    background: url("../images/content-left.png") left top repeat-y;    
+}
+
+
+/* Actions */
+
+.actions a {
+    display: inline-block;
+    height: 18px;
+    width: 18px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    text-indent: -9999px;
+    cursor: pointer;
+    border: none;
+    text-align: left;
+}
+
+.actions .rss {
+    background: url("../images/action-rss.png") left top no-repeat;    
+}
+
+.actions .playlist {
+    background: url("../images/action-playlist.png") left top no-repeat;    
+}
+
+.actions .flash {
+    background: url("../images/action-flash.png") left top no-repeat;    
+}
+
+.actions .download {
+    background: url("../images/action-download.png") left top no-repeat;    
+}
+
+.actions .menu {
+    background: url("../images/action-menu.png") left top no-repeat;    
+}
+
+
+/* Tracklists */
+
+.tracklist {
+    width: 100%;
+    cursor: default;    
+}
+
+.tracklist th {
+    padding: 0;
+    background: url("../images/tracklist-head.png") right top repeat-x;
+    color: #fff;
+    font-size: 10px;
+    line-height: 20px;
+    text-align: center;
+    font-weight: bold;
+    text-shadow: #243ece 0 -1px 0px;
+}
+
+.searchResult th {
+    padding: 2px 5px;
+    background: pink url("../images/searchResult-head.png") right top repeat-x;
+    font-size: 12px;
+    text-align: left;
+}
+
+.searchResult th a {
+    color: #fff;
+    text-shadow: #243ece 0 -1px 0px;
+    text-decoration: none;  
+    outline: 0;  
+}
+
+.searchResult th a:HOVER {
+    text-decoration: underline;
+}
+
+.searchResult th.actions {
+    text-align: right;
+    padding-top: 4px;
+    padding-bottom: 0;
+    background-position: left top;
+}
+
+
+.tracklist th.tracks {
+    background-position: left top;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.tracklist td {
+    padding: 2px 5px;
+}
+
+.tracklist tr.odd td {
+    background: #f4f7fb;
+}
+
+.tracklist td a {
+    color: #000;
+    text-decoration: none;
+    outline: 0;
+}
+
+.tracklist td a:HOVER {
+    text-decoration: underline;
+}
+
+.tracklist td.actions {
+    text-align: right;
+    padding-top: 4px;
+    padding-bottom: 0;
+}
+
+.tracklist td.tracks a {
+    display: block;
+    background: url("../images/tracks.png") left center no-repeat;
+    padding-left: 16px;
+}
+
+.tracklist td.album a {
+    display: block;
+    background: url("../images/albums.png") left center no-repeat;
+    padding-left: 16px;
+}
+
+.tracklist td.artists a {
+    display: block;
+    background: url("../images/artists.png") left center no-repeat;
+    padding-left: 16px;
+}
+
+
+
+/* Footer */
+
+.footer {
+    padding: 0 17px 0 0;
+    background: url("../images/footer.png") right bottom no-repeat;
+}
+
+.footer-inner {
+    height: 42px;
+    padding: 0 0 0 17px;
+    background: url("../images/footer.png") left top no-repeat;
+    color: #999;
+    font-size: 10px;
+    line-height: 24px;
+    text-align: center;
+    text-shadow: #fff 0 1px 0;
+    cursor: default;
+}
+
+.footer a {
+    color: #999;
+    text-decoration: none;
+}
+
+.footer a:HOVER {
+    text-decoration: underline;
+}
+
+/* Login Page */
+
+h2 {
+    margin: 0;
+    padding: 0;
+    background: url("../images/tracklist-head.png") center top repeat-x;
+    color: #fff;
+    font-size: 10px;
+    line-height: 20px;
+    text-align: center;
+    font-weight: bold;
+    text-shadow: #243ece 0 -1px 0px;
+    cursor: default;
+}
+
+form {
+    margin: 0;
+    padding: 0;
+}
+
+table.login {
+    width: 100%;
+    background: #dadfe7;
+    border: 15px solid #dadfe7;
+    text-shadow: #eee 0 1px 0;
+    color: #444;
+    cursor: default;
+}
+
+table.login td {
+    padding: 5px 8px;    
+}
+
+table.login .label {
+    text-align: right;
+    width: 30%;
+}
+
+table.login input[type="text"],
+table.login input[type="password"] {
+    width: 99%;
+}
+
+table.login select {
+    width: 100%;
+}
+
+
+/* Messages */
+
+div.error {
+    color: #f00;
+    padding: 5px;
+    border-bottom: 1px solid #666;
+    background: #fee;
+    text-align: center;
+}
+
+div.message {
+    color: #000;
+    padding: 5px;
+    border-bottom: 1px solid #666;
+    background: #ffe;
+    font-weight: bold;
+}
+
+
+/* Pager */
+
+table.pager {
+    width: 100%;
+}
+
+table.pager td {
+    padding: 0;
+}
+
+table.pager a {
+    display: block;
+    padding: 2px 2px 0 0;
+    background: url("../images/pager.png") right top no-repeat;
+    height: 15px;
+    font-size: 10px;
+    font-weight: bold;
+    text-shadow: #fff 0 1px 0;
+    text-align: center;
+    color: #000;
+    text-decoration: none;
+    outline: 0;
+}
+
+table.pager td.last a {
+    padding-right: 0;
+    background-position: left top;
+}
+
+table.pager a:HOVER {
+    text-decoration: underline;
+}
+
+
+/* Settings */
+
+table.settings {
+    width: 100%;
+    background: #dadfe7;
+    cursor: default;
+}
+
+table.settings th {
+    padding: 0;
+    background: url("../images/tracklist-head.png") center top repeat-x;
+    color: #fff;
+    font-size: 10px;
+    line-height: 20px;
+    text-align: center;
+    font-weight: bold;
+    text-shadow: #243ece 0 -1px 0px;
+    cursor: default;
+}
+
+table.settings td {
+    padding: 5px 15px 5px 10px;
+    font-weight: bold;
+    color: #000;
+}
+
+table.settings td.label {
+    width: 45%;
+    padding: 5px 10px;
+    text-align: right;
+    text-shadow: #eee 0 1px 0;
+    color: #444;
+    font-weight: normal;       
+}
+
+table.settings input[type="text"],
+table.settings input[type="password"] {
+    width: 99%;
+}
+
+table.settings input.number {
+    width: 40px;
+}
+
+div.buttons {
+    padding: 20px 0 10px 0;
+    background: #dadfe7;
+    text-align: center;
+}
+
+
+
+/* old styles
+
+
 
 h2 {
     margin: 0;
@@ -133,18 +652,6 @@ div.message {
     font-weight: bold;
 }
 
-/* Search Page */
-
-h1.search {
-    background: url( "../images/index_head.gif" ) center center no-repeat;
-    height: 60px;
-    padding: 0;
-    margin: 0;
-}
-
-h1.search span {
-    visibility: hidden;
-}
 
 h1.browse {
     background: url( "../images/browse_library.gif" ) center center no-repeat;
@@ -190,18 +697,6 @@ h1.searchResult span {
     display: none;
 }
 
-/* Result Page */
-
-div.head {
-    background: url( "../images/select_head.gif" ) top right no-repeat;
-}
-
-div.head h1 {
-    font-size: 12px;
-    color: #666;
-    margin: 0;
-    padding: 5px 10px;
-}
 
 div.input {
     padding: 4px 0 12px 15px;
@@ -688,8 +1183,6 @@ div.fatalError p {
     text-align: center;
 }
 
-/* Track Info */
-
 h1.info {
     background: url( "../images/track_info.gif" ) center center no-repeat;
     height: 30px;
@@ -700,8 +1193,6 @@ h1.info {
 h1.info span {
     visibility: hidden;
 }
-
-/* Upload Page `*/
 
 h1.upload {
     background: url( "../images/upload.gif" ) center center no-repeat;
@@ -714,8 +1205,6 @@ h1.upload span {
     visibility: hidden;
 }
 
-/* Browse Servers Page `*/
-
 h1.serverbrowser {
     background: url( "../images/browse_servers.gif" ) center center no-repeat;
     height: 30px;
@@ -727,7 +1216,6 @@ h1.serverbrowser span {
     visibility: hidden;
 }
 
-/* Progress Bar */
 
 #progressDiv {
     display: none;
@@ -823,3 +1311,5 @@ img.coverThumbnail {
     vertical-align: top;
     float: left;
 }
+
+*/
