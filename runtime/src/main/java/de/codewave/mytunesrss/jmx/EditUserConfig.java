@@ -390,11 +390,11 @@ public class EditUserConfig extends MyTunesRssMBean implements EditUserConfigMBe
     }
 
     public String getEmail() {
-        return MyTunesRss.CONFIG.getUser(myUsername).getEmail();
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUser(myUsername).getEmail());
     }
 
     public void setEmail(String email) {
-        MyTunesRss.CONFIG.getUser(myUsername).setEmail(email);
+        MyTunesRss.CONFIG.getUser(myUsername).setEmail(StringUtils.trimToNull(email));
         onChange();
     }
 
