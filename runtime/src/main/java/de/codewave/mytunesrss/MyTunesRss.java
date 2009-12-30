@@ -157,6 +157,11 @@ public class MyTunesRss {
     public static void main(final String[] args)
             throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException,
             IOException, SQLException, SchedulerException {
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+                MyTunesRssUtils.onShutdown();
+            }
+        }));
         ORIGINAL_CMD_ARGS = args;
         Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
         if (arguments != null) {

@@ -157,7 +157,6 @@ public class MyTunesRssUtils {
                 MyTunesRss.CONFIG.setWindowX(MyTunesRss.ROOT_FRAME.getLocation().x);
                 MyTunesRss.CONFIG.setWindowY(MyTunesRss.ROOT_FRAME.getLocation().y);
             }
-            MyTunesRss.CONFIG.save();
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             if (DatabaseBuilderTask.isRunning()) {
                 if (LOGGER.isDebugEnabled()) {
@@ -215,26 +214,6 @@ public class MyTunesRssUtils {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Shutting down.");
         }
-        if (MyTunesRss.STREAMING_CACHE != null) {
-            try {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Cleaning up streamig cache.");
-                }
-                File destinationFile = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache.xml");
-                FileUtils.writeStringToFile(destinationFile, MyTunesRss.STREAMING_CACHE.getContent());
-            } catch (IOException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not write streaming cache contents, all files will be lost on next start.", e);
-                }
-                MyTunesRss.STREAMING_CACHE.clearCache();
-            }
-        }
-        if (MyTunesRss.ARCHIVE_CACHE != null) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Cleaning up archive cache.");
-            }
-            MyTunesRss.ARCHIVE_CACHE.clearCache();
-        }
         if (MyTunesRss.QUARTZ_SCHEDULER != null) {
             try {
                 if (LOGGER.isInfoEnabled()) {
@@ -258,24 +237,33 @@ public class MyTunesRssUtils {
             SystrayUtils.remove(MyTunesRss.SYSTRAY.getUUID());
         }
         MyTunesRssJmxUtils.stopJmxServer();
-        if (MyTunesRss.CONFIG.isRestartOnExit()) {
-            new Thread() {
-                public void run() {
-                    try {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Restarting MyTunesRSS.");
-                        }
-                        MyTunesRss.main(MyTunesRss.ORIGINAL_CMD_ARGS);
-                    } catch (Exception e) {
-                        // intentionally left blank
-                    }
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Very last log message before shutdown.");
+        }
+        System.exit(0);
+    }
+
+    public static void onShutdown() {
+        MyTunesRss.CONFIG.save();
+        if (MyTunesRss.STREAMING_CACHE != null) {
+            try {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Cleaning up streamig cache.");
                 }
-            }.start();
-        } else {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Very last log message before shutdown.");
+                File destinationFile = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache.xml");
+                FileUtils.writeStringToFile(destinationFile, MyTunesRss.STREAMING_CACHE.getContent());
+            } catch (IOException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not write streaming cache contents, all files will be lost on next start.", e);
+                }
+                MyTunesRss.STREAMING_CACHE.clearCache();
             }
-            System.exit(0);
+        }
+        if (MyTunesRss.ARCHIVE_CACHE != null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Cleaning up archive cache.");
+            }
+            MyTunesRss.ARCHIVE_CACHE.clearCache();
         }
     }
 

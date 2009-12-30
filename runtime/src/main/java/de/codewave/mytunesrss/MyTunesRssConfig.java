@@ -132,7 +132,6 @@ public class MyTunesRssConfig {
     private boolean myDisableGui;
     private boolean myDisableWebLogin;
     private boolean myDisableJmxHtml;
-    private boolean myRestartOnExit;
     private boolean myQuicktime64BitWarned;
     private Set<PathReplacement> myPathReplacements = new HashSet<PathReplacement>();
     private LdapConfig myLdapConfig;
@@ -995,14 +994,6 @@ public class MyTunesRssConfig {
 
     public void setDisableJmxHtml(boolean disableJmxHtml) {
         myDisableJmxHtml = disableJmxHtml;
-    }
-
-    public boolean isRestartOnExit() {
-        return myRestartOnExit;
-    }
-
-    public void setRestartOnExit(boolean restartOnExit) {
-        myRestartOnExit = restartOnExit;
     }
 
     public boolean isQuicktime64BitWarned() {

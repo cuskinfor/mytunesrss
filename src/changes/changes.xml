@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.8.0-RC-1" date="2010-01-xx" description="3.8.0 RC 1">
+            <action dev="mdescher" type="add">
+                Shutdown hook for saving config and clearing caches.
+            </action>
             <action dev="mdescher" type="update">
                 Only 2 choices for search (exact and default where default is 30% fuzziness).
             </action>
