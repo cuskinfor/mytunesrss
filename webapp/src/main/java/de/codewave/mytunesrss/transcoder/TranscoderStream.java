@@ -7,8 +7,6 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.io.LogStreamCopyThread;
 import de.codewave.utils.sql.DataStoreSession;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -28,6 +26,7 @@ public class TranscoderStream extends InputStream {
 
     private Process myProcess;
     private TranscoderConfig myTranscoderConfig;
+    private File myImageFile;
 
     public TranscoderStream(TranscoderConfig transcoderConfig, Track track)
             throws IOException {
@@ -38,10 +37,6 @@ public class TranscoderStream extends InputStream {
         for (String part : getArguments().split(" ")) {
             transcoderCommand[i++] = part;
         }
-        //final File tempFile = File.createTempFile("mytunesrss-", "." + FilenameUtils.getExtension(track.getFile().getName()));
-        //tempFile.deleteOnExit();
-        //FileUtils.copyFile(track.getFile(), tempFile);
-        //track.setFile(tempFile);
         replaceTokens(transcoderCommand, track);
         if (LOG.isDebugEnabled()) {
             LOG.debug("executing " + getName() + " command \"" + StringUtils.join(transcoderCommand, " ") + "\".");
@@ -57,6 +52,7 @@ public class TranscoderStream extends InputStream {
 
     @Override
     public void close() throws IOException {
+        myImageFile.delete();
         myProcess.destroy();
         super.close();
     }
@@ -69,7 +65,7 @@ public class TranscoderStream extends InputStream {
         return myTranscoderConfig.getOptions();
     }
 
-    public static void replaceTokens(String[] command, Track track) {
+    public void replaceTokens(String[] command, Track track) {
         for (int i = 0; i < command.length; i++) {
             if ("{info.album}".equals(command[i])) {
                 command[i] = track.getAlbum();
@@ -102,10 +98,10 @@ public class TranscoderStream extends InputStream {
         }
     }
 
-    private static void replaceImageToken(Track track, String[] command, int i) {
+    private void replaceImageToken(Track track, String[] command, int i) {
         try {
-            File imageFile = File.createTempFile("mytunesrss-temp-image", ".jpg");
-            imageFile.deleteOnExit();
+            myImageFile = File.createTempFile("mytunesrss_img_", ".jpg");
+            myImageFile.deleteOnExit();
             DataStoreSession transaction = MyTunesRss.STORE.getTransaction();
             byte[] data = new byte[0];
             try {
@@ -114,13 +110,13 @@ public class TranscoderStream extends InputStream {
                     Image image = new Image("image/jpeg", data);
                     FileOutputStream fos = null;
                     try {
-                        fos = new FileOutputStream(imageFile);
+                        fos = new FileOutputStream(myImageFile);
                         fos.write(image.getData());
                     } catch (IOException e) {
                         if (LOG.isErrorEnabled()) {
                             LOG.error("Could not create image file.", e);
                         }
-
+                        myImageFile.delete();
                     } finally {
                         IOUtils.closeQuietly(fos);
                     }
@@ -129,13 +125,14 @@ public class TranscoderStream extends InputStream {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not query image data.", e);
                 }
+                myImageFile.delete();
             } finally {
                 transaction.commit();
             }
             try {
-                command[i] = imageFile.getCanonicalPath();
+                command[i] = myImageFile.getCanonicalPath();
             } catch (IOException e) {
-                command[i] = imageFile.getAbsolutePath();
+                command[i] = myImageFile.getAbsolutePath();
             }
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {

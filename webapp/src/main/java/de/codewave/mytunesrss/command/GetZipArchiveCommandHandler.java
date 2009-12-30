@@ -37,11 +37,11 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.command.GetZipArchiveCommandHandler
  */
 public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GetZipArchiveCommandHandler.class);
-    
+
     private static final long ARCHIVE_CACHE_TIMEOUT = 1000L * 60L * 10L; // timeout = 10 minutes
-    
+
     @Override
     public void executeAuthorized() throws Exception {
         User user = getAuthUser();
@@ -70,14 +70,19 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 try {
                     if (cachedFile == null || !cachedFile.isFile()) {
                         LOGGER.debug("No archive with ID \"" + fileIdentifier + "\" found in cache.");
-                        tempFile = File.createTempFile("MyTunesRSS_", null);
+                        tempFile = File.createTempFile("mytunesrss_archive_", ".zip");
                         tempFile.deleteOnExit();
-                        createZipArchive(user, new FileOutputStream(tempFile), tracks, baseName, null);
+                        try {
+                            createZipArchive(user, new FileOutputStream(tempFile), tracks, baseName, null);
+                        } catch (Exception e) {
+                            tempFile.delete();
+                            throw e;
+                        }
                         MyTunesRss.ARCHIVE_CACHE.add(fileIdentifier, tempFile, ARCHIVE_CACHE_TIMEOUT); // TODO timeout from config?
                     } else {
                         LOGGER.debug("Using archive with ID \"" + fileIdentifier + "\" from cache.");
                     }
-                    File sendFile = cachedFile != null && cachedFile.isFile() ? cachedFile : tempFile;  
+                    File sendFile = cachedFile != null && cachedFile.isFile() ? cachedFile : tempFile;
                     FileSender fileSender = new FileSender(sendFile, "application/zip", (int) sendFile.length());
                     fileSender.setCounter(new MyTunesRssSendCounter(user, sessionInfo));
                     fileSender.setOutputStreamWrapper(user.getOutputStreamWrapper(0));
@@ -102,9 +107,9 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
 
     /**
      * Calculate an identifier for a list of tracks.
-     * 
+     *
      * @param tracks A list of tracks.
-     * 
+     *
      * @return Identifier for the list of tracks.
      */
     private String calculateIdentifier(QueryResult<Track> tracks) {

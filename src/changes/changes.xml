@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.8.0-RC-1" date="2010-01-xx" description="3.8.0 RC 1">
+            <action dev="mdescher" type="fix">
+                Better temp file handling (deleted as soon as not needed anymore).
+            </action>
             <action dev="mdescher" type="update">
                 Use special file in cache dir for default ssl keystore instead of anonymous temp file.
             </action>

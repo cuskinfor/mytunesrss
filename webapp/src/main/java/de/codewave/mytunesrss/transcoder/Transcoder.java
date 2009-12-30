@@ -61,13 +61,18 @@ public class Transcoder {
         if (!cacheDir.exists()) {
             cacheDir.mkdirs();
         }
-        File file = File.createTempFile("mytunesrss_", ".tmp", cacheDir);
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
-        InputStream inputStream = getStream();
-        IOUtils.copy(inputStream, fileOutputStream);
-        inputStream.close();
-        fileOutputStream.close();
-        return file;
+        File file = File.createTempFile("mytunesrss_transcoded_", ".tmp", cacheDir);
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            InputStream inputStream = getStream();
+            IOUtils.copy(inputStream, fileOutputStream);
+            inputStream.close();
+            fileOutputStream.close();
+            return file;
+        } catch (IOException e) {
+            file.delete();
+            throw e;
+        }
     }
 
     public StreamSender getStreamSender() throws IOException {
