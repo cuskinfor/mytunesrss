@@ -7,7 +7,13 @@
 
     <body>
 
-        <release version="3.8.0-RC-1" date="2009-12-30" description="3.8.0 RC 1">
+        <release version="3.8.0-EAP-11" date="2009-12-30" description="3.8.0 EAP 11">
+            <action dev="mdescher" type="fix">
+                Fixed typo in migration.
+            </action>
+        </release>
+
+        <release version="3.8.0-EAP-10" date="2009-12-30" description="3.8.0 EAP 10">
             <action dev="mdescher" type="update">
                 Ask user if he wants to continue editing or cancel without saving if there are validation
                 errors when closing a dialog.
