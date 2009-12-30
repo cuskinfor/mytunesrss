@@ -46,10 +46,10 @@
     <div class="head">
         <h1 onclick="window.open('http://www.codewave.de')" style="cursor: pointer"><span><fmt:message key="myTunesRss" /></span></h1>
     </div>
-    
+
     <div class="content">
         <div class="content-inner">
-        
+
         <ul class="menu">
             <c:if test="${authUser.editWebSettings}">
                 <li class="settings"><a href="${servletUrl}/showSettings/${auth}">
@@ -67,13 +67,13 @@
                 </a></li>
             </c:if>
         </ul>
-    
+
         <jsp:include page="/incl_error.jsp" />
-    
+
         <form id="search" action="${servletUrl}/searchTracks/${auth}" method="post">
-        
+
             <div class="navigation">
-    
+
                 <div class="search">
                     <input class="text" type="text" name="searchTerm" value="<c:out value="${lastSearchTerm}"/>"/>
                     <c:choose>
@@ -81,7 +81,6 @@
                             <select name="searchFuzziness">
                                 <option value="0"><fmt:message key="search.fuzziness.0"/></option>
                                 <option value="30" <c:if test="${config.searchFuzziness == 30}">selected="selected"</c:if>><fmt:message key="search.fuzziness.30"/></option>
-                                <option value="60" <c:if test="${config.searchFuzziness == 60}">selected="selected"</c:if>><fmt:message key="search.fuzziness.60"/></option>
                             </select>
                         </c:when>
                         <c:otherwise>
@@ -89,9 +88,9 @@
                         </c:otherwise>
                     </c:choose>
                     <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
-                    <input class="button" type="submit" value="<fmt:message key="doSearch"/>"/>                    
+                    <input class="button" type="submit" value="<fmt:message key="doSearch"/>"/>
                 </div>
-                
+
                 <div class="links">
                     <c:if test="${!globalConfig.disableBrowser}">
                         <a class="library" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
@@ -119,12 +118,12 @@
                         </a>
                     </c:if>
                 </div>
-            
+
             </div>
-    
+
         </form>
-    
-        <jsp:include page="incl_playlist.jsp" />        
+
+        <jsp:include page="incl_playlist.jsp" />
 
             <table class="tracklist" cellspacing="0">
                 <tr>
@@ -191,10 +190,10 @@
         <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
         <jsp:include page="incl_bottomPager.jsp" />
     </c:if>
-    
+
         </div>
     </div>
-    
+
     <div class="footer">
         <div class="footer-inner">
             <c:if test="${!empty statistics && !globalConfig.disableBrowser}">
@@ -205,7 +204,7 @@
                 <a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.genreCount} <fmt:message key="statistics.genres" /></a>
                </c:if>
         </div>
-    </div>    
+    </div>
 
 </div>
 
