@@ -56,10 +56,6 @@ public class Transcoder {
         myActive = webConfig.isActiveTranscoder(transcoderConfig.getName());
     }
 
-    protected void setTempFileRequested(boolean tempFile) {
-        myTempFile = !myPlayerRequest && tempFile;
-    }
-
     public File getTranscodedFile() throws IOException {
         File cacheDir = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache");
         if (!cacheDir.exists()) {
