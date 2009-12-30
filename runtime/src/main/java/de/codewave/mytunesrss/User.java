@@ -416,12 +416,12 @@ public class User implements MyTunesRssEventListener, Cloneable {
 
     @Override
     public boolean equals(Object object) {
-        return object != null && object instanceof User && getName().equals(((User) object).getName());
+        return object != null && object instanceof User && getName().equalsIgnoreCase(((User) object).getName());
     }
 
     @Override
     public int hashCode() {
-        return getName() != null ? getName().hashCode() : 0;
+        return getName() != null ? getName().toLowerCase(Locale.ENGLISH).hashCode() : 0;
     }
 
     public boolean isQuotaExceeded() {

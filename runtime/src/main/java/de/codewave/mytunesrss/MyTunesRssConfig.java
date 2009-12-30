@@ -436,7 +436,7 @@ public class MyTunesRssConfig {
 
     public User getUser(String name) {
         for (User user : getUsers()) {
-            if (user.getName().equals(name)) {
+            if (user.getName().equalsIgnoreCase(name)) {
                 return user;
             }
         }

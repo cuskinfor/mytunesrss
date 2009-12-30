@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="3.8.0-RC-1" date="2010-01-xx" description="3.8.0 RC 1">
+            <action dev="mdescher" type="update">
+                User name case insensitive for login and when checking for existing user while creating new ones.
+            </action>
+            <action dev="mdescher" type="update">
+                Check for existing user when creating new one in JMX interface.
+            </action>
+        </release>
+
         <release version="3.8.0-EAP-11" date="2009-12-30" description="3.8.0 EAP 11">
             <action dev="mdescher" type="fix">
                 Fixed typo in migration.
