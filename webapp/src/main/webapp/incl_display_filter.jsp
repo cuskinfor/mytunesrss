@@ -12,11 +12,6 @@
 <%--@elvariable id="filterProtectionActive" type="boolean"--%>
 <%--@elvariable id="displayFilterUrl" type="java.lang.String"--%>
 
-<table class="displayfilter" cellspacing="0">
-    <tr id="displayfilterHeaderLine">
-        <th class="active" colspan="2"><fmt:message key="filter.title"/><img style="float:right" src="${appUrl}/images/refresh.png" alt="" onclick="$jQ('#displayfilter').slideToggle();" /></th>
-    </tr>
-</table>
 <table id="displayfilter" class="displayfilter" cellspacing="0" style="display:${cwfn:choose(empty displayFilter.textFilter && ((displayFilter.minYear == -1 && displayFilter.maxYear == -1) || !filterYearActive), 'none', 'block')}">
     <tr>
         <td><fmt:message key="filter.text"/>:</td>

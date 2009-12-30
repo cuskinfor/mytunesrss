@@ -23,11 +23,14 @@
                 </c:choose>
             </td>
         </c:forEach>
-        <td class="last">
+        <td>
             <a href="${cwfn:choose(empty pagerCurrent, '#', mtfn:replace(pagerCommand, '{index}', ''))}"
                     <c:if test="${empty pagerCurrent}">class="active"</c:if>>
                 <fmt:message key="alphabetPagerAll"/>
             </a>
+        </td>
+        <td class="filter">
+            <a onclick="$jQ('#displayfilter').slideToggle();" title="<fmt:message key="filter.title"/>">Filter</a>
         </td>
     </tr>
 </table>
