@@ -531,7 +531,7 @@ public class User implements MyTunesRssEventListener, Cloneable {
         myParent = new UserProxy(JXPathUtils.getStringValue(settings, "parent", null));
         setExternalSites(JXPathUtils.getBooleanValue(settings, "externalSites", false));
         setChangeEmail(JXPathUtils.getBooleanValue(settings, "changeEmail", false));
-        setSearchFuzziness(JXPathUtils.getIntValue(settings, "searchFuzziness", 0));
+        setSearchFuzziness(JXPathUtils.getIntValue(settings, "searchFuzziness", -1));
         setEditTags(JXPathUtils.getBooleanValue(settings, "editTags", false));
         Set<String> availableTranscoders = new HashSet<String>();
         for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
