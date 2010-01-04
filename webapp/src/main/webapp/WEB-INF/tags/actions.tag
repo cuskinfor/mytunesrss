@@ -14,8 +14,6 @@
 <%@ attribute name="editTagsType" required="false" type="java.lang.String" %>
 <%@ attribute name="editTagsId" required="false" type="java.lang.String" %>
 
-<%@ variable scope="AT_END" name-given="yahoo" %>
-
 <%--@elvariable id="appUrl" type="java.lang.String"--%>
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
@@ -50,7 +48,7 @@
                     <a id="fn_download${index}" class="download" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" <c:if test="config.showDownload">style="display:none"</c:if> title="<fmt:message key="tooltip.playtrack"/>">Download</a>
                 </c:when>
                 <c:otherwise>
-                    <c:set var="yahoo" value="true"/>
+                    <c:set var="yahoo" scope="request" value="true"/>
                     <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="<c:out value="${track.name}"/>">
                         <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=128</mt:encrypt>" style="display:none" alt=""/>
                     </a>
