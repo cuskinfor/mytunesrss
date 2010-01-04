@@ -122,23 +122,26 @@
                 <c:if test="${!empty param.artist}"> <fmt:message key="with"/> "${cwfn:choose(mtfn:unknown(mtfn:decode64(param.artist)), msgUnknown, mtfn:decode64(param.artist))}"</c:if>
             </th>
             <th><fmt:message key="artist"/></th>
-            <th colspan="2" class="tracks"><fmt:message key="tracks"/></th>
+            <th><fmt:message key="tracks"/></th>
+            <th>&nbsp;</th>
         </tr>
         <c:forEach items="${albums}" var="album" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                 <td id="functionsDialogName${loopStatus.index}" <c:if test="${config.showThumbnailsForAlbums && !empty(album.imageHash)}">class="coverThumbnailColumn"</c:if>">
-                    <c:if test="${config.showThumbnailsForAlbums && !empty(album.imageHash)}">
-                        <img class="coverThumbnail" id="albumthumb_${loopStatus.index}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(album.imageHash)}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
-                        <div class="tooltip" id="tooltip_albumthumb_${loopStatus.index}"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(album.imageHash)}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
-                    </c:if>
-                    <c:choose>
-                        <c:when test="${mtfn:unknown(album.name)}">
-                            <fmt:message key="unknown"/>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${album.name}"/></a>
-                        </c:otherwise>
-                    </c:choose>
+                    <div class="trackName">
+                        <c:if test="${config.showThumbnailsForAlbums && !empty(album.imageHash)}">
+                            <img class="coverThumbnail" id="albumthumb_${loopStatus.index}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(album.imageHash)}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
+                            <div class="tooltip" id="tooltip_albumthumb_${loopStatus.index}"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(album.imageHash)}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
+                        </c:if>
+                        <c:choose>
+                            <c:when test="${mtfn:unknown(album.name)}">
+                                <fmt:message key="unknown"/>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${album.name}"/></a>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
                 </td>
                 <td>
                     <c:choose>
@@ -229,7 +232,7 @@
                 <td class="tracks">
                     <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${allArtistGenreTrackCount}</a>
                 </td>
-                <td class="icon">
+                <td class="actions">
                     <c:choose>
                         <c:when test="${!stateEditPlaylist}">
                             <mttag:actions index="${fn:length(albums) + 2}"

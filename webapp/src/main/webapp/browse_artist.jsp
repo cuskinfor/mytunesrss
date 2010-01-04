@@ -110,7 +110,8 @@
                             <c:if test="${!empty param.album}"> <fmt:message key="on"/> "<c:out value="${mtfn:decode64(param.album)}" />"</c:if>
                         </th>
                         <th><fmt:message key="albums"/></th>
-                        <th colspan="2" class="tracks"><fmt:message key="tracks"/></th>
+                        <th><fmt:message key="tracks"/></th>
+                        <th>&nbsp;</th>
                     </tr>
                     <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
                         <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">

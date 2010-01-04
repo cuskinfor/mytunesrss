@@ -14,6 +14,8 @@
 <%@ attribute name="editTagsType" required="false" type="java.lang.String" %>
 <%@ attribute name="editTagsId" required="false" type="java.lang.String" %>
 
+<%@ variable scope="AT_END" name-given="yahoo" %>
+
 <%--@elvariable id="appUrl" type="java.lang.String"--%>
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>

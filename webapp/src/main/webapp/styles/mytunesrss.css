@@ -21,6 +21,18 @@ div.body {
 }
 
 
+/* Common */
+
+a {
+    text-decoration: none;
+    color: #217dd9;
+}
+
+a:HOVER {
+    text-decoration: underline;
+}
+
+
 /* Head */
 
 .startpage div.head,
@@ -252,7 +264,7 @@ ul.menu .back a {
     text-indent: -9999px;
     cursor: pointer;
     border: none;
-    text-align: left;
+    text-align: center;
 }
 
 .actions .rss {
@@ -354,14 +366,15 @@ ul.menu .back a {
 }
 
 .tracklist td.actions {
+    width: 1%;
     text-align: right;
-padding: 3px 5px 0 0;
+    padding: 3px 5px 0 10px;
     white-space: nowrap;
 }
 
 .tracklist td.tracks,
-.tracklist td.album {
-    padding-left: 10px;
+.tracklist td.album,
+.tracklist td.genreartist {
     width: 1%;
 }
 
@@ -377,7 +390,7 @@ padding: 3px 5px 0 0;
     padding-left: 16px;
 }
 
-.tracklist td.artists a {
+.tracklist td.genreartist a {
     display: block;
     background: url("../images/artists.png") left center no-repeat;
     padding-left: 16px;
@@ -574,9 +587,9 @@ table.settings td.label {
     width: 45%;
     padding: 5px 10px;
     text-align: right;
-    text-shadow: #eee 0 1px 0;
-    color: #444;
-    font-weight: normal;       
+    text-shadow: #efefef 0 1px 0;
+    color: #666;
+    font-weight: bold;       
 }
 
 table.settings input[type="text"],
@@ -609,6 +622,23 @@ td.filter a {
     padding: 0;
     background: url("../images/filter.png");
     text-indent: -9999px;
+}
+
+
+/* Track Info */
+
+a.original {
+    background: url("../images/action-download.png") left center no-repeat;
+    padding-left: 24px;
+    margin-bottom: 20px;
+}
+
+
+/* Yahoo Player */
+
+.actions a.ymp-btn-page-play,
+.actions a.ymp-btn-page-pause {
+    padding: 0 !important;
 }
 
 /* old styles

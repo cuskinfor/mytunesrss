@@ -108,7 +108,8 @@
                             </th>
                             <th><fmt:message key="albums"/></th>
                             <th><fmt:message key="artists"/></th>
-                            <th colspan="2"><fmt:message key="tracks"/></th>
+                            <th><fmt:message key="tracks"/></th>
+                            <th>&nbsp;</th>
                         </tr>
                         <c:forEach items="${genres}" var="genre" varStatus="loopStatus">
                             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">

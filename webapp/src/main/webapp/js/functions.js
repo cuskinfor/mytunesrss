@@ -50,8 +50,9 @@ function showTooltip(element) {
 
 function showTooltipElement(element) {
     if (element != null) {
+        document.body.appendChild(element);
         element.style.position = "absolute";
-        element.style.left = (mouseX) + "px";
+        element.style.left = (mouseX) + 10 + "px";
         element.style.top = (mouseY + 20) + "px";
         element.style.display = "block";
     }

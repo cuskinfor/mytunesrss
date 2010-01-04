@@ -193,13 +193,15 @@
                         <tr <mt:flipFlop/>>
                             <td>&nbsp;</td>
                             <td>
-                                <a href="<c:out value="${mtfn:downloadLink(pageContext, track, 'notranscode=true')}"/>">
-                                    <img src="${appUrl}/images/download_odd.gif" alt="<fmt:message key="tooltip.originalDownload"/>" title="<fmt:message key="tooltip.originalDownload"/>" />
+                                <a href="<c:out value="${mtfn:downloadLink(pageContext, track, 'notranscode=true')}"/>" class="original" title="<fmt:message key="tooltip.originalDownload"/>">
                                     <fmt:message key="originalDownload"/>
                                 </a>
                             </td>
                         </tr>
                     </c:if>
+                    <tr class="spacerRow">
+                        <td colspan="2">&nbsp;</td>
+                    </tr>
                     <tr>
                         <th colspan="2" class="active">
                             <fmt:message key="trackinfo.statistics"/>
