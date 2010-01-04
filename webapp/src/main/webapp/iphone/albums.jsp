@@ -7,7 +7,7 @@ var first;
 var pageSize = 10;
 function loadItems(page) {
     first = 0;
-    top.mytunesrss('AlbumService.getAlbums', [null,null,null,page,-1,-1], function(json){top.json=json;buildList()});
+    top.mytunesrss('AlbumService.getAlbums', [null,null,null,page,-1,-1,false,-1,-1], function(json){top.json=json;buildList()});
 }
 function play(name) {
     top.mytunesrss("AlbumService.getTracks", [$A([name])], function(json) {top.createIphonePlaylist('${appUrl}', json, 'top.loadContent(\"${appUrl}/iphone/albums.jsp?first=' + first + '\")')});

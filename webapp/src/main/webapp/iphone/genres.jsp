@@ -10,7 +10,7 @@ function loadItems(page) {
     top.mytunesrss('GenreService.getGenres', [page,-1,-1], function(json){top.json=json;buildList()});
 }
 function play(name) {
-    top.mytunesrss("AlbumService.getAlbums", [null,null,name,-1,-1,-1], function(json) {top.json=json;top.loadContent("${appUrl}/iphone/albums.jsp?first=0")});
+    top.mytunesrss("AlbumService.getAlbums", [null,null,name,-1,-1,-1,false,-1,-1], function(json) {top.json=json;top.loadContent("${appUrl}/iphone/albums.jsp?first=0")});
 }
 function buildList() {
     var json = top.json;

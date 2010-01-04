@@ -18,7 +18,7 @@
 	 <td colspan="2" align="center" background="${appUrl}/iphone/img/toolbar.png" style="font-weight:bold;color:white;font-size:24px" height="38px">MyTunesRSS Portal</td></tr>
         <tr>
             <td width="100px" height="60px" align="center"><img src="${appUrl}/iphone/img/albums.png"></td>
-			<td align="center" style="font-size:26px" onclick="top.mytunesrss('AlbumService.getAlbums', [null,null,null,1,-1,-1], function(json) {top.json=json;top.loadContent('${appUrl}/iphone/albums.jsp?first=0')})">Albums</td>
+			<td align="center" style="font-size:26px" onclick="top.mytunesrss('AlbumService.getAlbums', [null,null,null,1,-1,-1,false,-1,-1], function(json) {top.json=json;top.loadContent('${appUrl}/iphone/albums.jsp?first=0')})">Albums</td>
         </tr>
 		<TR><TD colspan="2"><img src="${appUrl}/iphone/img/line.png" width="100%" height="1px"></TD></TR>
         <tr>

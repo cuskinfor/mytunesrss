@@ -9,6 +9,9 @@
 
         <release version="3.8.0-RC-1" date="2010-01-xx" description="3.8.0 RC 1">
             <action dev="mdescher" type="fix">
+                Fixed album service calls in iPhone interface.
+            </action>
+            <action dev="mdescher" type="fix">
                 Better temp file handling (deleted as soon as not needed anymore).
             </action>
             <action dev="mdescher" type="update">
