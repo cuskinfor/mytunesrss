@@ -290,7 +290,7 @@
                                 <td class="label"><fmt:message key="settings.playlistTypes.rss" /></td>
                                 <td>
                                     <input type="checkbox" name="feedType" value="rss" <c:if test="${config.showRss}">checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/rss_odd.gif" alt="RSS" style="vertical-align:text-top;" />
+                                    <img src="${appUrl}/images/action-rss.png" alt="RSS" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>
@@ -299,12 +299,8 @@
                                 <td class="label"><fmt:message key="settings.playlistTypes.playlist" /></td>
                                 <td>
                                     <input type="checkbox" name="feedType" value="playlist" <c:if test="${config.showPlaylist}"> checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/playlist_odd.gif" alt="playlist" style="vertical-align:text-top;" />
-                                </td>
-                            </tr>
-                            <tr <mt:flipFlop/>>
-                                <td class="label"><fmt:message key="settings.playlistType" /></td>
-                                <td>
+                                    <img src="${appUrl}/images/action-playlist.png" alt="playlist" style="vertical-align:text-top;" />
+                                    <!--<fmt:message key="settings.playlistType" />:-->
                                     <select name="playlistType">
                                         <option value="M3u" <c:if test="${config.playlistType eq 'M3u'}">selected="selected"</c:if>>m3u</option>
                                         <option value="Xspf" <c:if test="${config.playlistType eq 'Xspf'}">selected="selected"</c:if>>xspf</option>
@@ -318,7 +314,7 @@
                                 <td class="label"><fmt:message key="settings.showDownload" /></td>
                                 <td>
                                     <input id="downloadCheckbox" type="checkbox" name="showDownload" value="true" <c:if test="${config.showDownload}">checked="checked"</c:if> onclick="toggleDownload()"/>
-                                    <img src="${appUrl}/images/download.gif" alt="playlist" style="vertical-align:text-top;" />
+                                    <img src="${appUrl}/images/action-download.png" alt="playlist" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                             <tr <mt:flipFlop/>>
@@ -333,17 +329,13 @@
                                 <td class="label"><fmt:message key="settings.showPlayer" /></td>
                                 <td>
                                     <input type="checkbox" name="showPlayer" value="true" <c:if test="${config.showPlayer}">checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/player.gif" alt="player" style="vertical-align:text-top;" />
-                                </td>
-                            </tr>
-                            <tr <mt:flipFlop/>>
-                                <td class="label"><fmt:message key="settings.flashplayerType" /></td>
-                                <td>
+                                    <img src="${appUrl}/images/action-flash.png" alt="player" style="vertical-align:text-top;" />
+                                    <!--<fmt:message key="settings.flashplayerType" />-->
                                     <select name="flashplayerType">
                                         <option value="jw" <c:if test="${config.flashplayerType eq 'jw'}">selected="selected"</c:if>><fmt:message key="flashplayer.jw"/></option>
                                         <option value="jw3" <c:if test="${config.flashplayerType eq 'jw3'}">selected="selected"</c:if>><fmt:message key="flashplayer.jw3"/></option>
                                         <option value="xspf" <c:if test="${config.flashplayerType eq 'xspf'}">selected="selected"</c:if>><fmt:message key="flashplayer.xspf"/></option>
-                                    </select>
+                                    </select>)
                                 </td>
                             </tr>
                         </c:if>
@@ -352,7 +344,7 @@
                                 <td class="label"><fmt:message key="settings.showRemoteControl" /></td>
                                 <td>
                                     <input type="checkbox" name="remoteControl" value="true" <c:if test="${config.remoteControl}">checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/remote_control.gif" alt="remote control" style="vertical-align:text-top;" />
+                                    <img src="${appUrl}/images/action-remote.png" alt="remote control" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>

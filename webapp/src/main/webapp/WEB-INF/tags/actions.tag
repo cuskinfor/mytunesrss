@@ -27,9 +27,7 @@
     <img id="fn_externalsites${index}" src="${appUrl}/images/http.gif" alt="<fmt:message key="tooltip.externalSites"/>" title="<fmt:message key="tooltip.externalSites"/>" style="cursor:pointer;display:${cwfn:choose(config.showExternalSites, "inline", "none")}" onclick="openExternalSitesDialog($jQ('#functionsDialogName${index}').text())"/>
 </c:if>
 <c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
-    <a id="fn_remotecontrol${index}" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/backUrl=${backUrl}" style="display:${cwfn:choose(config.remoteControl, "inline", "none")}">
-        <img src="${appUrl}/images/remote_control${cwfn:choose(index % 2 == 0, '', '_odd')}.gif"
-             alt="<fmt:message key="tooltip.remotecontrol"/>" title="<fmt:message key="tooltip.remotecontrol"/>" /> </a>
+    <a id="fn_remotecontrol${index}" class="remote" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/backUrl=${backUrl}" <c:if test="config.remoteControl">style="display:none"</c:if> title="<fmt:message key="tooltip.remotecontrol"/>">Remote</a>
 </c:if>
 <c:if test="${authUser.rss}">
     <a id="fn_rss${index}" class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.xml" <c:if test="config.showRss">style="display:none"</c:if> title="<fmt:message key="tooltip.rssfeed"/>">RSS</a>
