@@ -353,7 +353,7 @@
                                 <td class="label"><fmt:message key="settings.showExternalSites" /></td>
                                 <td>
                                     <input type="checkbox" name="showExternalSites" value="true" <c:if test="${config.showExternalSites}">checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/http.gif" alt="external links" style="vertical-align:text-top;" />
+                                    <img src="${appUrl}/images/action-links.png" alt="external links" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>
@@ -362,7 +362,7 @@
                                 <td class="label"><fmt:message key="settings.showEditTags" /></td>
                                 <td>
                                     <input type="checkbox" name="showEditTags" value="true" <c:if test="${config.showEditTags}">checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/edit_tags.png" alt="edit tags" style="vertical-align:text-top;" />
+                                    <img src="${appUrl}/images/action-tags.png" alt="edit tags" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>

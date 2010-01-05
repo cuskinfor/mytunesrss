@@ -64,8 +64,7 @@
     </c:choose>
 </c:if>
 <c:if test="${authUser.editTags && !empty editTagsType && !empty editTagsId}">
-    <a id="fn_edittags${index}" style="display:${cwfn:choose(config.showEditTags, "inline", "none")};cursor:pointer" onclick="jsonRpc('${servletUrl}', 'TagService.getTagsFor${editTagsType}', ['${editTagsId}'], function(json) {openEditTagsDialog(json, '${editTagsType}', '${editTagsId}', $jQ('#functionsDialogName${index}').text());}, '${remoteApiSessionId}');return false;">
-        <img src="${appUrl}/images/edit_tags.png" onmouseover="showEditTagsTooltip(this, '${editTagsType}', '${editTagsId}');" onmouseout="hideTooltipElement(document.getElementById('tooltip_edittags'));"/> </a>
+    <a id="fn_edittags${index}" class="tags" <c:if test="config.showEditTags">style="display:none</c:if> onclick="jsonRpc('${servletUrl}', 'TagService.getTagsFor${editTagsType}', ['${editTagsId}'], function(json) {openEditTagsDialog(json, '${editTagsType}', '${editTagsId}', $jQ('#functionsDialogName${index}').text());}, '${remoteApiSessionId}');return false;"  onmouseover="showEditTagsTooltip(this, '${editTagsType}', '${editTagsId}');" onmouseout="hideTooltipElement(document.getElementById('tooltip_edittags'));">Edit Tags</a>
 </c:if>
 <a onclick="openFunctionsMenu(${index}, $jQ('#functionsDialogName${index}').text());" class="menu" title="<fmt:message key="tooltip.functionsMenu"/>">
     Menu

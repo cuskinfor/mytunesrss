@@ -5,33 +5,27 @@
 
 <%--@elvariable id="appUrl" type="java.lang.String"--%>
 
-<div id="functions" style="display:none">
-    <a id="functions_externalsites" style="cursor:pointer" onclick="functionMenuClick('externalsites');">
-        <img src="${appUrl}/images/http.gif" />&nbsp;<fmt:message key="tooltip.externalSites"/>
-        <br />
+<div id="functions" style="display:none" class="actionsMenu">
+    <a id="functions_externalsites" class="links" onclick="functionMenuClick('externalsites');">
+        <fmt:message key="tooltip.externalSites"/>
     </a>
-    <a id="functions_edittags" style="cursor:pointer" onclick="functionMenuClick('edittags');">
-        <img src="${appUrl}/images/edit_tags.png" />&nbsp;<fmt:message key="tooltip.editTags"/>
-        <br />
+    <a id="functions_edittags" class="tags" onclick="functionMenuClick('edittags');">
+        <fmt:message key="tooltip.editTags"/>
     </a>
-    <a id="functions_remotecontrol" style="cursor:pointer" onclick="functionMenuClick('remotecontrol');">
-        <img src="${appUrl}/images/remote_control.gif" />&nbsp;<fmt:message key="tooltip.remotecontrol"/>
-        <br />
+    <a id="functions_remotecontrol" class="remote" onclick="functionMenuClick('remotecontrol');">
+        <fmt:message key="tooltip.remotecontrol"/>
     </a>
-    <a id="functions_rss" style="cursor:pointer" onclick="functionMenuClick('rss');">
-        <img src="${appUrl}/images/rss.gif" />&nbsp;<fmt:message key="tooltip.rssfeed"/>
-        <br />
+    <a id="functions_rss" class="rss" onclick="functionMenuClick('rss');">
+        <fmt:message key="tooltip.rssfeed"/>
     </a>
-    <a id="functions_playlist" style="cursor:pointer" onclick="functionMenuClick('playlist');">
-        <img src="${appUrl}/images/playlist.gif" />&nbsp;<fmt:message key="tooltip.playlist"/>
-        <br />
+    <a id="functions_playlist" class="playlist" onclick="functionMenuClick('playlist');">
+        <fmt:message key="tooltip.playlist"/>
     </a>
-    <a id="functions_player" style="cursor:pointer" onclick="functionMenuClick('player');">
-        <img src="${appUrl}/images/player.gif" />&nbsp;<fmt:message key="tooltip.flashplayer"/>
-        <br />
+    <a id="functions_player" class="flash" onclick="functionMenuClick('player');">
+        <fmt:message key="tooltip.flashplayer"/>
     </a>
-    <a id="functions_download" style="cursor:pointer" onclick="functionMenuClick('download');">
-        <img src="${appUrl}/images/download.gif" />&nbsp;<fmt:message key="tooltip.downloadzip"/>
+    <a id="functions_download" class="download" onclick="functionMenuClick('download');">
+        <fmt:message key="tooltip.downloadzip"/>
     </a>
 </div>
 

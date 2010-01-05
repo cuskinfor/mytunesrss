@@ -267,19 +267,23 @@ ul.menu .back a {
     text-align: center;
 }
 
-.actions .rss {
+.actions .rss,
+.actionsMenu .rss {
     background: url("../images/action-rss.png") left top no-repeat;    
 }
 
-.actions .playlist {
+.actions .playlist,
+.actionsMenu .playlist {
     background: url("../images/action-playlist.png") left top no-repeat;    
 }
 
-.actions .flash {
+.actions .flash,
+.actionsMenu .flash {
     background: url("../images/action-flash.png") left top no-repeat;    
 }
 
-.actions .download {
+.actions .download,
+.actionsMenu .download {
     background: url("../images/action-download.png") left top no-repeat;    
 }
 
@@ -291,8 +295,32 @@ ul.menu .back a {
     background: url("../images/action-add.png") left top no-repeat;    
 }
 
-.actions .remote {
+.actions .remote,
+.actionsMenu .remote {
     background: url("../images/action-remote.png") left top no-repeat;
+}
+
+.actions .tags,
+.actionsMenu .tags {
+    background: url("../images/action-tags.png") left top no-repeat;
+}
+
+.actions .links,
+.actionsMenu .links {
+    background: url("../images/action-links.png") left top no-repeat;
+}
+
+
+/* Actions Menu */
+
+.actionsMenu a {
+    display: block !important;
+    margin: 5px 0;
+    padding: 1px 24px;
+    background-position: left center;
+    background-repeat: no-repeat;
+    text-align: left;
+    cursor: pointer;
 }
 
 
