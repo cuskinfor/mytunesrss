@@ -712,6 +712,41 @@ a.original {
     padding: 0 !important;
 }
 
+
+/* Upload Page and Progress Bar */
+
+body.upload td.label {
+	text-align: left;
+	font-weight: normal;
+	padding: 20px 50px;
+}
+
+body.upload form {
+	text-align: center;
+	padding: 0 0 20px 0;
+}
+
+#progressDiv {
+	display: none;
+	background: #DADFE7;
+	padding: 0 50px 20px 50px;
+}
+
+#progressBackground {
+	background: url("../images/progress_background.gif") center center no-repeat;	
+	border: 1px solid #666;
+}
+
+#progressBar {
+	background: url("../images/progress_bar.gif") center center no-repeat;
+	text-align: center;
+	font-weight: bold;
+	font-size: 10px;
+	color: #fff;
+	text-shadow: #666 0 -1px 0;
+}
+
+
 /* old styles
 
 
