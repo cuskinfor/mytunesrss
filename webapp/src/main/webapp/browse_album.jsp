@@ -104,6 +104,7 @@
                     <c:set var="pager" scope="request" value="${albumPager}" />
                     <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseAlbum/${auth}/page={index}" />
                     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.artist || !empty param.genre, '*', param.page)}" />
+                    <c:set var="filterToggle" scope="request" value="true" />
                     <jsp:include page="incl_pager.jsp" />
                 </c:if>
 

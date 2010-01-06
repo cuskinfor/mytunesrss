@@ -5,6 +5,11 @@
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
+<%--@elvariable id="pager" type="de.codewave.mytunesrss.Pager"--%>
+<%--@elvariable id="pagerCurrent" type="java.lang.String"--%>
+<%--@elvariable id="pagerCommand" type="java.lang.String"--%>
+<%--@elvariable id="filterToggle" type="boolean"--%>
+
 <table class="pager" cellspacing="0">
     <tr>
         <c:forEach items="${pager.currentPages}" var="page">
@@ -29,8 +34,10 @@
                 <fmt:message key="alphabetPagerAll"/>
             </a>
         </td>
-        <td class="filter">
-            <a onclick="$jQ('#displayfilter').slideToggle();" title="<fmt:message key="filter.title"/>">Filter</a>
-        </td>
+        <c:if test="${filterToggle}">
+            <td class="filter">
+                <a onclick="$jQ('#displayfilter').slideToggle();" title="<fmt:message key="filter.title"/>">Filter</a>
+            </td>
+        </c:if>
     </tr>
 </table>

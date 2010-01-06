@@ -93,6 +93,7 @@
                 <c:set var="pager" scope="request" value="${genrePager}" />
                 <c:set var="pagerCommand" scope="request" value="${servletUrl}/browseGenre/${auth}/page={index}" />
                 <c:set var="pagerCurrent" scope="request" value="${param.page}" />
+                <c:set var="filterToggle" scope="request" value="false" />
                 <jsp:include page="incl_pager.jsp" />
             
                 <form id="browse" action="" method="post">
