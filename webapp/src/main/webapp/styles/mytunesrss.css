@@ -380,7 +380,7 @@ ul.menu .back a {
 }
 
 .tracklist tr.odd td {
-    background: #f4f7fb;
+    background-color: #f4f7fb;
 }
 
 .tracklist td a {
@@ -454,6 +454,49 @@ ul.menu .back a {
     display: none;
 }
 
+/* Playlists */
+
+.tracklist td.mytunes {
+    padding-left: 32px;
+    background-image: url( "../images/playlist_mt.png" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+.tracklist td.itunes {
+    padding-left: 32px;
+    background-image: url( "../images/playlist_it.png" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+.tracklist td.itunesfolder {
+    padding-left: 32px;
+    background-image: url( "../images/folder_it.png" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+.tracklist td.mytunessmart {
+    padding-left: 32px;
+    background-image: url( "../images/playlist_mt_smart.png" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+.tracklist td.homefolder {
+    padding-left: 32px;
+    background-image: url( "../images/home_folder.gif" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+.tracklist td.parentfolder {
+    padding-left: 32px;
+    background-image: url( "../images/parent_folder.gif" );
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
 
 
 /* Footer */
