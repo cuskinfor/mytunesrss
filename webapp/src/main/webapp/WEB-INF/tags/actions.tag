@@ -29,23 +29,23 @@
     <img id="fn_externalsites${index}" src="${appUrl}/images/http.gif" alt="<fmt:message key="tooltip.externalSites"/>" title="<fmt:message key="tooltip.externalSites"/>" style="cursor:pointer;display:${cwfn:choose(config.showExternalSites, "inline", "none")}" onclick="openExternalSitesDialog($jQ('#functionsDialogName${index}').text())"/>
 </c:if>
 <c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
-    <a id="fn_remotecontrol${index}" class="remote" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/backUrl=${backUrl}" <c:if test="config.remoteControl">style="display:none"</c:if> title="<fmt:message key="tooltip.remotecontrol"/>">Remote</a>
+    <a id="fn_remotecontrol${index}" class="remote" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/backUrl=${backUrl}" <c:if test="${!config.remoteControl}">style="display:none"</c:if> title="<fmt:message key="tooltip.remotecontrol"/>">Remote</a>
 </c:if>
 <c:if test="${authUser.rss}">
-    <a id="fn_rss${index}" class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.xml" <c:if test="config.showRss">style="display:none"</c:if> title="<fmt:message key="tooltip.rssfeed"/>">RSS</a>
+    <a id="fn_rss${index}" class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.xml" <c:if test="${!config.showRss}">style="display:none"</c:if> title="<fmt:message key="tooltip.rssfeed"/>">RSS</a>
 </c:if>
 <c:if test="${authUser.playlist}">
-    <a id="fn_playlist${index}" class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.${config.playlistFileSuffix}" <c:if test="config.showPlaylist">style="display:none"</c:if> title="<fmt:message key="tooltip.playlist"/>">Playlist</a>
+    <a id="fn_playlist${index}" class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.${config.playlistFileSuffix}" <c:if test="${!config.showPlaylist}">style="display:none"</c:if> title="<fmt:message key="tooltip.playlist"/>">Playlist</a>
 </c:if>
 <c:if test="${authUser.player}">
-    <a id="fn_player${index}" class="flash" <c:if test="config.showPlayer">style="display:none"</c:if> onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${linkFragment}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${filename}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>">Flash Player</a>
+    <a id="fn_player${index}" class="flash" <c:if test="${!config.showPlayer}">style="display:none"</c:if> onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${linkFragment}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${filename}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>">Flash Player</a>
 </c:if>
 <c:if test="${authUser.download}">
     <c:choose>
         <c:when test="${!empty track}">
             <c:choose>
                 <c:when test="${!config.yahooMediaPlayer || mtfn:lowerSuffix(config, authUser, track) ne 'mp3'}">
-                    <a id="fn_download${index}" class="download" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" <c:if test="config.showDownload">style="display:none"</c:if> title="<fmt:message key="tooltip.playtrack"/>">Download</a>
+                    <a id="fn_download${index}" class="download" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.playtrack"/>">Download</a>
                 </c:when>
                 <c:otherwise>
                     <c:set var="yahoo" scope="request" value="true"/>
@@ -56,15 +56,15 @@
             </c:choose>
         </c:when>
         <c:when test="${authUser.maximumZipEntries <= 0 || zipFileCount <= authUser.maximumZipEntries}">
-            <a id="fn_download${index}" class="download" href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.zip" <c:if test="config.showDownload">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>">Download</a>
+            <a id="fn_download${index}" class="download" href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.zip" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>">Download</a>
         </c:when>
         <c:otherwise>
-            <a id="fn_download${index}" class="download" <c:if test="config.showDownload">style="display:none"</c:if> onclick="alert('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>'); return false;" title="<fmt:message key="tooltip.downloadzip"/>">Download</a>
+            <a id="fn_download${index}" class="download" <c:if test="${!config.showDownload}">style="display:none"</c:if> onclick="alert('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>'); return false;" title="<fmt:message key="tooltip.downloadzip"/>">Download</a>
         </c:otherwise>
     </c:choose>
 </c:if>
 <c:if test="${authUser.editTags && !empty editTagsType && !empty editTagsId}">
-    <a id="fn_edittags${index}" class="tags" <c:if test="config.showEditTags">style="display:none</c:if> onclick="jsonRpc('${servletUrl}', 'TagService.getTagsFor${editTagsType}', ['${editTagsId}'], function(json) {openEditTagsDialog(json, '${editTagsType}', '${editTagsId}', $jQ('#functionsDialogName${index}').text());}, '${remoteApiSessionId}');return false;"  onmouseover="showEditTagsTooltip(this, '${editTagsType}', '${editTagsId}');" onmouseout="hideTooltipElement(document.getElementById('tooltip_edittags'));">Edit Tags</a>
+    <a id="fn_edittags${index}" class="tags" <c:if test="${!config.showEditTags}">style="display:none"</c:if> onclick="jsonRpc('${servletUrl}', 'TagService.getTagsFor${editTagsType}', ['${editTagsId}'], function(json) {openEditTagsDialog(json, '${editTagsType}', '${editTagsId}', $jQ('#functionsDialogName${index}').text());}, '${remoteApiSessionId}');return false;"  onmouseover="showEditTagsTooltip(this, '${editTagsType}', '${editTagsId}');" onmouseout="hideTooltipElement(document.getElementById('tooltip_edittags'));">Edit Tags</a>
 </c:if>
 <a onclick="openFunctionsMenu(${index}, $jQ('#functionsDialogName${index}').text());" class="menu" title="<fmt:message key="tooltip.functionsMenu"/>">
     Menu
