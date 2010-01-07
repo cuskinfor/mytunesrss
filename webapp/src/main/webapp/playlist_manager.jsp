@@ -80,22 +80,21 @@
                         <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                             <td class="${fn:toLowerCase(playlist.type)}"><c:out value="${playlist.name}" /></td>
                             <td class="tracks"><a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${playlist.trackCount}</a></td>
-                            <td class="icon">
+                            <td class="actions">
                                 <c:choose>
                                     <c:when test="${playlist.type == 'MyTunesSmart'}">
-                                        <a href="${servletUrl}/editSmartPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlistId=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="edit" /></a>                        </c:when>
+                                        <a class="edit" href="${servletUrl}/editSmartPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlistId=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">Edit</a>
+                                        </c:when>
                                     <c:otherwise>
-                                        <a style="cursor:pointer" onclick="loadAndEditPlaylist('${playlist.id}')"><img src="${appUrl}/images/edit${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="edit" /></a>
+                                        <a class="edit" onclick="loadAndEditPlaylist('${playlist.id}')">Edit</a>
                                     </c:otherwise>
                                 </c:choose>
                                 <c:choose>
                                     <c:when test="${deleteConfirmation}">
-                                        <a style="cursor:pointer" onclick="$jQ('#confirmDeletePlaylist').dialog('option', 'serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');$jQ('#confirmDeletePlaylist').dialog('open')">
-                                            <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
+                                        <a class="delete" onclick="$jQ('#confirmDeletePlaylist').dialog('option', 'serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');$jQ('#confirmDeletePlaylist').dialog('open')">Delete</a>
                                     </c:when>
                                     <c:otherwise>
-                                        <a href="${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>">
-                                            <img src="${appUrl}/images/delete${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="delete" /> </a>
+                                        <a class="delete" href="${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>">Delete</a>
                                     </c:otherwise>
                                 </c:choose>
                             </td>

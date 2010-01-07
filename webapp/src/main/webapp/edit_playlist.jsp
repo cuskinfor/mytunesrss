@@ -173,79 +173,90 @@
 
 </head>
 
-<body>
+<body class="playlistEditor">
 
 <div class="body">
 
-    <h1 class="manager">
-        <a class="portal" href="${servletUrl}/showPortal/${auth}"><fmt:message key="portal" /></a> <span><fmt:message key="myTunesRss" /></span>
-    </h1>
+	<div class="head">
+	    <h1 class="manager">
+	        <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal" /></span></a>
+	        <span><fmt:message key="myTunesRss" /></span>
+	    </h1>
+	</div>
+	
+	<div class="content">
+	
+		<div class="content-inner">
 
-    <ul class="links">
-        <li style="float:right;">
-            <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back" /></a>
-        </li>
-    </ul>
+		    <ul class="menu">
+		    	<li>
+					<a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
+						<fmt:message key="addMoreSongs" />
+					</a>		    	
+		    	</li>
+		        <li class="back">
+		            <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back" /></a>
+		        </li>
+		    </ul>
+		
+		    <jsp:include page="/incl_error.jsp" />
+		    
+		    <table class="settings" cellspacing="0">
+		    	<tr>
+		    		<td>
+		    			<fmt:message key="playlistName" />
+			    		<input type="text" id="playlistName" name="name" value="<c:out value="${editPlaylistName}"/>" />
+						<input type="checkbox"
+						       id="privatePlaylist"
+						       value="true"
+						       <c:if test="${playlist.userPrivate}">checked="checked"</c:if> />
+						       <fmt:message key="playlistUserPrivate" />
+		    		</td>
+		    	</tr>
+		    </table>
 
-    <jsp:include page="/incl_error.jsp" />
-
-    <table class="portal" cellspacing="0">
-        <tr>
-            <td class="playlistManager">
-                <fmt:message key="playlistName" /> <input id="playlistName" name="name" value="<c:out value="${editPlaylistName}"/>" />
-            </td>
-            <td class="links">
-                <a class="add"
-                   href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>"
-                   style="background-image:url('${appUrl}/images/add_more.gif');"><fmt:message key="addMoreSongs" /></a>
-            </td>
-    </table>
-
-    <table id="trackTable" cellspacing="0">
-        <tr>
-            <th class="active" colspan="4"><fmt:message key="playlistSettings" /></th>
-        </tr>
-        <tr>
-            <td class="even" colspan="4">
-                <input type="checkbox"
-                       id="privatePlaylist"
-                       value="true"
-                       <c:if test="${playlist.userPrivate}">checked="checked"</c:if> /> <fmt:message key="playlistUserPrivate" />
-            </td>
-        </tr>
-        <tr>
-            <c:choose> <c:when test="${!empty tracks}">
-                <th class="active">&nbsp;</th>
-                <th class="active" colspan="3"><fmt:message key="playlistContent" /></th>
-            </c:when> <c:otherwise>
-                <th class="active" colspan="4"><fmt:message key="playlistContent" /></th>
-            </c:otherwise> </c:choose>
-        </tr>
-    </table>
-
-    <div id="pager" class="pager"></div>
-
-    <div class="buttons">
-        <input type="button" onclick="savePlaylist()" value="<fmt:message key="savePlaylist"/>" />
-        <input type="button" onclick="cancelEditPlaylist()" value="<fmt:message key="doCancel"/>" />
-    </div>
+		    <table id="trackTable" class="tracklist" cellspacing="0">
+		        <tr>
+		            <c:choose> <c:when test="${!empty tracks}">
+		                <th class="active">&nbsp;</th>
+		                <th class="active" colspan="3"><fmt:message key="playlistContent" /></th>
+		            </c:when> <c:otherwise>
+		                <th class="active" colspan="4"><fmt:message key="playlistContent" /></th>
+		            </c:otherwise> </c:choose>
+		        </tr>
+		    </table>
+		
+		    <div id="pager" class="pager"></div>
+		
+		    <div class="buttons">
+		        <input type="button" onclick="savePlaylist()" value="<fmt:message key="savePlaylist"/>" />
+		        <input type="button" onclick="cancelEditPlaylist()" value="<fmt:message key="doCancel"/>" />
+		    </div>
+		    
+		</div>
+		
+	</div>
+	
+	<div class="footer">
+		<div class="footer-inner"></div>
+	</div>
 
 </div>
 
 <textarea id="templatePlaylistRow" style="display:none">
     <tr id="trackTableRow#{index}" class="#{rowClass}">
         <td class="iconleft">
-            <a style="cursor:pointer;display:#{displayMoveUp}" onclick="swapTracks(#{indexBefore})"><img src="${appUrl}/images/move_up#{oddSuffix}.gif" alt="U"/></a>
-            <a style="cursor:pointer;display:#{displayMoveDown}" onclick="swapTracks(#{index})"><img src="${appUrl}/images/move_down#{oddSuffix}.gif" alt="D"/></a>
+            <a style="cursor:pointer;display:#{displayMoveUp}" onclick="swapTracks(#{indexBefore})"><img src="${appUrl}/images/move_up.png" alt="U"/></a>
+            <a style="cursor:pointer;display:#{displayMoveDown}" onclick="swapTracks(#{index})"><img src="${appUrl}/images/move_down.png" alt="D"/></a>
         </td>
-        <td width="99%">
+        <td>
             <img src="${appUrl}/images/protected#{oddSuffix}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle;display:#{displayProtected}" />
             <img src="${appUrl}/images/movie#{oddSuffix}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle;display:#{displayVideo}" />
             #{trackName}
         </td>
         <td>#{trackArtist}</td>
-        <td class="icon">
-            <a style="cursor:pointer" onclick="removeTrack(#{index}, '#{trackId}')"><img src="${appUrl}/images/delete#{oddSuffix}.gif" alt="delete" /></a>
+        <td class="actions">
+            <a class="delete" onclick="removeTrack(#{index}, '#{trackId}')">Delete</a>
         </td>
     </tr>
 </textarea>
