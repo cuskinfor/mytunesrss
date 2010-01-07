@@ -47,7 +47,7 @@
         if ($jQ("#fn_" + name + $jQ('#functions').dialog('option', 'functionIndex')).length == 0) {
              $jQ("#functions_" + name).css("display", "none");
         } else {
-            $jQ("#functions_" + name).css("display", "inline");
+            $jQ("#functions_" + name).css("display", "block");
         }
     }
     $jQ("#functions").dialog({

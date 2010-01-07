@@ -68,6 +68,7 @@ a:HOVER {
 .upload div.head,
 .playlistEditor div.head,
 .smartPlaylist div.head,
+.remote div.head,
 .settings div.head {
     margin: 10px 0 0 0;
     padding: 0 14px 0 0;
@@ -80,6 +81,7 @@ a:HOVER {
 .upload h1,
 .playlistEditor h1,
 .smartPlaylist h1,
+.remote h1,
 .settings h1 {
     position: relative;
     height: 20px;
@@ -98,6 +100,7 @@ a:HOVER {
 .upload h1 span,
 .playlistEditor h1 span,
 .smartPlaylist h1 span,
+.remote h1 span,
 .settings h1 span {
     padding-left: 20px;
     color: #000;
@@ -111,6 +114,7 @@ a:HOVER {
 .upload h1 a,
 .playlistEditor h1 a,
 .smartPlaylist h1 a,
+.remote h1 a,
 .settings h1 a {
     display: block;
     position: absolute;
@@ -128,6 +132,7 @@ a:HOVER {
 .upload h1 a span,
 .playlistEditor h1 a span,
 .smartPlaylist h1 a span,
+.remote h1 a span,
 .settings h1 a span {
     display: block;
     height:  15px;
@@ -333,7 +338,7 @@ ul.menu .back a {
 /* Actions Menu */
 
 .actionsMenu a {
-    display: block !important;
+    display: block;
     margin: 5px 0;
     padding: 1px 24px;
     background-position: left center;
@@ -457,20 +462,30 @@ ul.menu .back a {
 }
 
 .tracklist .coverThumbnailColumn div.trackName {
-    min-height: 28px;
+    min-height: 23px;
     position: relative;
-    padding: 6px 5px 2px 42px;
+    padding: 3px 5px 0 32px;
 }
 
 .tracklist .coverThumbnailColumn img {
     position: absolute;
-    top: 2px;
-    left: 2px;
+    top: 1px;
+    left: 1px;
+    height: 24px;
 }
 
 .tooltip {
     position: absolute;
     display: none;
+	display:none;
+	z-index:20;
+	border-style:solid;
+	border-color:black;
+	border-width:1px;
+	background-color:#FFFFCC;
+	padding: 2px;
+	max-width: 500px;
+	text-align: left;    
 }
 
 /* Playlists */
@@ -849,6 +864,49 @@ div.playlistbottom {
 	width: 32px;
 }
 
+
+/* Remote Control */
+
+.remote .navigation {
+	padding-bottom: 15px;
+	border-bottom: 1px solid #666;
+	text-align: center;
+	text-shadow: #fff 0 1px 0;
+}
+
+.remotecontrolPanel {
+	margin-top: 5px;
+	text-align: center;
+}
+
+#volume,
+#progress {
+	margin: 5px 50px 0 50px;
+}
+
+.volumeContainer {
+	float: left;
+	width: 50%;
+}
+
+.progressContainer {
+	float: right;
+	width: 50%;
+}
+
+tr.remoteplaybackplaying td {
+    background: #217dd9;
+    color: #fff;
+}
+
+td.remotecontrolTrackImage {
+	width: 30px;
+	padding: 2px;
+}
+
+td.remotecontrolTrackImage img {
+	height: 24px;
+}
 
 
 

@@ -57,15 +57,15 @@
                 }
             }
             if (currentPage > 0) {
-                document.getElementById("pager_first").style.display = "inline";
-                document.getElementById("pager_previous").style.display = "inline";
+                document.getElementById("pager_first").style.display = "inline-block";
+                document.getElementById("pager_previous").style.display = "inline-block";
             } else {
                 document.getElementById("pager_first").style.display = "none";
                 document.getElementById("pager_previous").style.display = "none";
             }
             if ((currentPage + 1) * itemsPerPage < trackNames.length) {
-                document.getElementById("pager_next").style.display = "inline";
-                document.getElementById("pager_last").style.display = "inline";
+                document.getElementById("pager_next").style.display = "inline-block";
+                document.getElementById("pager_last").style.display = "inline-block";
             } else {
                 document.getElementById("pager_next").style.display = "none";
                 document.getElementById("pager_last").style.display = "none";
@@ -79,12 +79,12 @@
                     if ((start + i) * itemsPerPage < trackNames.length) {
                         if (start + i == currentPage) {
                             document.getElementById("pager_active_" + i).innerHTML = (start + i);
-                            document.getElementById("pager_active_" + i).style.display = "inline";
+                            document.getElementById("pager_active_" + i).style.display = "inline-block";
                             document.getElementById("pager_inactive_" + i).style.display = "none";
                         } else {
                             document.getElementById("pager_inactive_" + i).innerHTML = (start + i);
                             document.getElementById("pager_active_" + i).style.display = "none";
-                            document.getElementById("pager_inactive_" + i).style.display = "inline";
+                            document.getElementById("pager_inactive_" + i).style.display = "inline-block";
                         }
                     } else {
                         document.getElementById("pager_active_" + i).style.display = "none";
@@ -225,63 +225,87 @@
 
 </head>
 
-<body onload="init()">
+<body class="remote" onload="init()">
 
     <div id="body" class="body">
+    
+    	<div class="head">
+	        <h1>
+		        <a class="portal" href="${servletUrl}/showPortal/${auth}">
+		            <span><fmt:message key="portal" /></span>
+		        </a>
+		        <span><fmt:message key="myTunesRss" /></span>
+	        </h1>
+	    </div>
+	    
+	    <div class="content">
+	    
+	    	<div class="content-inner">
 
-        <h1 class="search" onclick="window.open('http://www.codewave.de')" style="cursor: pointer"><span><fmt:message key="myTunesRss" /></span></h1>
+		        <ul class="menu">
+		            <li class="back"><a style="cursor:pointer" onclick="self.document.location.href='${mtfn:decode64(param.backUrl)}'">
+		                <fmt:message key="back" />
+		            </a></li>
+		        </ul>
+		        
+		        <div class="navigation">
+		        
+			        <div class="remotecontrolPanel">
+			            <img src="${appUrl}/images/rc_prev.png" alt="prev" onclick="previousTrack()" style="cursor:pointer"/>
+			            <img id="rc_play" src="${appUrl}/images/rc_play.png" alt="prev" onclick="play()" style="cursor:pointer;display:none"/>
+			            <img id="rc_pause" src="${appUrl}/images/rc_pause.png" alt="prev" onclick="pause()" style="cursor:pointer"/>
+			            <img src="${appUrl}/images/rc_stop.png" alt="stop" onclick="stop()" style="cursor:pointer"/>
+			            <img src="${appUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
+			            <img src="${appUrl}/images/rc_shuffle.png" alt="shuffle" onclick="shuffle()" style="cursor:pointer"/>
+			            <img src="${appUrl}/images/rc_fullscreen.png" alt="fullscreen" onclick="toggleFullScreen()" style="cursor:pointer"/>
+			        </div>
+			        
+			        <div class="volumeContainer">
+				        Volume
+				        <div id="volume"></div>
+					</div>
+					<div class="progressContainer">
+						Progress
+						<div id="progress"></div>
+	        		</div>
+			        
+		        </div>		        
+	
+		        <table cellspacing="0" class="tracklist">
+		
+		            <c:forEach begin="0" end="9" varStatus="itemLoopStatus">
+		                <tr id="trackrow${itemLoopStatus.index}" class="${cwfn:choose(itemLoopStatus.count % 2 == 0, 'even', 'odd')}">
+		                    <td id="cover${itemLoopStatus.index}" class="remotecontrolTrackImage">&nbsp;</td>
+		                    <td style="cursor:pointer" onclick="startPlayback(${itemLoopStatus.index})" class="artist" id="track${itemLoopStatus.index}"/>
+		                </tr>
+		            </c:forEach>
+		
+		        </table>
+		
+		        <div id="pager" class="pager">
+		
+		            <a onclick="currentPage = 0;createPlaylist()"><img id="pager_first" src="${appUrl}/images/pager_first.gif" alt="first" /></a>
+		            <a onclick="currentPage--;createPlaylist()"><img id="pager_previous" src="${appUrl}/images/pager_previous.gif" alt="previous" /></a>
+		
+		            <c:forEach begin="0" end="9" varStatus="status">
+		                <a id="pager_active_${status.index}" class="active">&nbsp;</a>
+		                <a id="pager_inactive_${status.index}" style="cursor:pointer" onclick="currentPage = (Math.floor(currentPage / pagesPerPager) * pagesPerPager) + ${status.index};createPlaylist()">&nbsp;</a>
+		            </c:forEach>
+		
+		            <a onclick="currentPage++;createPlaylist()"><img id="pager_next" src="${appUrl}/images/pager_next.gif" alt="next" /></a>
+		            <a onclick="currentPage = Math.floor(trackNames.length / itemsPerPage);createPlaylist()"><img id="pager_last" src="${appUrl}/images/pager_last.gif" alt="last" /></a>
+		
+		        </div>
+		
+			</div>
 
-        <ul class="links">
-            <li><a style="cursor:pointer" onclick="self.document.location.href='${mtfn:decode64(param.backUrl)}'">
-                <fmt:message key="back" />
-            </a></li>
-            <li style="float:right"><a href="${servletUrl}/showPortal/${auth}">
-                <fmt:message key="portal" />
-            </a></li>
-        </ul>
+		</div>
+		
+		<div class="footer">
+			<div class="footer-inner"></div>
+		</div>
 
-        <table cellspacing="0">
-
-            <c:forEach begin="0" end="9" varStatus="itemLoopStatus">
-                <tr id="trackrow${itemLoopStatus.index}" class="${cwfn:choose(itemLoopStatus.count % 2 == 0, 'even', 'odd')}">
-                    <td id="cover${itemLoopStatus.index}" class="remotecontrolTrackImage">&nbsp;</td>
-                    <td style="cursor:pointer" onclick="startPlayback(${itemLoopStatus.index})" class="artist" id="track${itemLoopStatus.index}"/>
-                </tr>
-            </c:forEach>
-
-        </table>
-
-        <div id="pager" class="pager">
-
-            <a onclick="currentPage = 0;createPlaylist()"><img id="pager_first" src="${appUrl}/images/pager_first.gif" alt="first" /></a>
-            <a onclick="currentPage--;createPlaylist()"><img id="pager_previous" src="${appUrl}/images/pager_previous.gif" alt="previous" /></a>
-
-            <c:forEach begin="0" end="9" varStatus="status">
-                <a id="pager_active_${status.index}" class="active">&nbsp;</a>
-                <a id="pager_inactive_${status.index}" style="cursor:pointer" onclick="currentPage = (Math.floor(currentPage / pagesPerPager) * pagesPerPager) + ${status.index};createPlaylist()">&nbsp;</a>
-            </c:forEach>
-
-            <a onclick="currentPage++;createPlaylist()"><img id="pager_next" src="${appUrl}/images/pager_next.gif" alt="next" /></a>
-            <a onclick="currentPage = Math.floor(trackNames.length / itemsPerPage);createPlaylist()"><img id="pager_last" src="${appUrl}/images/pager_last.gif" alt="last" /></a>
-
-        </div>
-
-
-        <div class="remotecontrolPanel">
-            <img src="${appUrl}/images/rc_prev.png" alt="prev" onclick="previousTrack()" style="cursor:pointer"/>
-            <img id="rc_play" src="${appUrl}/images/rc_play.png" alt="prev" onclick="play()" style="cursor:pointer;display:none"/>
-            <img id="rc_pause" src="${appUrl}/images/rc_pause.png" alt="prev" onclick="pause()" style="cursor:pointer"/>
-            <img src="${appUrl}/images/rc_stop.png" alt="stop" onclick="stop()" style="cursor:pointer"/>
-            <img src="${appUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
-            <img src="${appUrl}/images/rc_shuffle.png" alt="shuffle" onclick="shuffle()" style="cursor:pointer"/>
-            <img src="${appUrl}/images/rc_fullscreen.png" alt="fullscreen" onclick="toggleFullScreen()" style="cursor:pointer"/>
-        </div>
-
-        <div id="volume" style="margin:15px 20px 0 20px"/>
-
-        <div id="progress" style="margin:30px 0 30px 0"/>
-
-    </div>
+	</div>
 
 </body>
 
