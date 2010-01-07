@@ -520,14 +520,14 @@ ul.menu .back a {
 
 .tracklist td.homefolder {
     padding-left: 32px;
-    background-image: url( "../images/home_folder.gif" );
+    background-image: url( "../images/home_folder.png" );
     background-position: 10px center;
     background-repeat: no-repeat;
 }
 
 .tracklist td.parentfolder {
     padding-left: 32px;
-    background-image: url( "../images/parent_folder.gif" );
+    background-image: url( "../images/parent_folder.png" );
     background-position: 10px center;
     background-repeat: no-repeat;
 }
@@ -587,50 +587,112 @@ fieldset {
     border: none;
 }
 
-table.login {
-    width: 100%;
+div.login {
+	padding: 15px 15px 5px 15px;
     background: #dadfe7;
-    border: 15px solid #dadfe7;
+    text-align: center;
+}
+
+div.login table {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
     text-shadow: #eee 0 1px 0;
     color: #444;
     cursor: default;
 }
 
-table.login td {
-    padding: 5px 8px;    
+div.login table td {
+    padding: 5px 8px;
+    text-align: left;   
 }
 
-table.login .label {
+div.login table .label {
     text-align: right;
     width: 30%;
 }
 
-table.login input[type="text"],
-table.login input[type="password"] {
+div.login table input[type="text"],
+div.login table input[type="password"] {
     width: 99%;
 }
 
-table.login select {
+div.login input[type="checkbox"],
+div.login input[type="submit"] {
+	margin-bottom: 10px;
+}
+
+div.login table select {
     width: 100%;
 }
 
 
 /* Messages */
 
-div.error {
-    color: #f00;
-    padding: 5px;
-    border-bottom: 1px solid #666;
-    background: #fee;
-    text-align: center;
+div.messageContainer {
+	text-align: center;
+	background: #dadfe7;
+	padding: 10px 10px 0 10px;	
 }
 
+div.error,
 div.message {
-    color: #000;
-    padding: 5px;
-    border-bottom: 1px solid #666;
-    background: #ffe;
-    font-weight: bold;
+	display: inline-block;
+}
+
+div.messageContainer .top {
+	padding-right: 9px;
+	background: url("../images/message-top.png") right bottom no-repeat;
+}
+
+div.messageContainer .top .inner {
+	height: 6px;
+	background: url("../images/message-top.png") left top no-repeat;	
+}
+
+div.messageContainer .bottom {
+	padding-right: 10px;
+	background: url("../images/message-bottom.png") right bottom no-repeat;
+}
+
+div.messageContainer .bottom .inner {
+	height: 11px;
+	background: url("../images/message-bottom.png") left top no-repeat;	
+}
+
+div.messageContainer .messageContent {
+	padding-right: 4px;
+	background: url("../images/message-right.png") right center no-repeat;
+}
+
+div.messageContainer .messageContent .inner {
+	position: relative;
+	padding: 2px 8px 2px 42px;
+	background: url("../images/message-left.png") left center no-repeat;
+	color: #000;
+	font-weight: bold;
+	text-shadow: #ccc 0 1px 0;	
+}
+
+div.messageContainer div.icon {
+	position: absolute;
+	left: 10px;
+	top: -2px;
+	width: 24px;
+	height: 22px;
+	background: url("../images/warning.png");
+}
+
+div.messageContainer .message .messageContent .inner {
+	padding-left: 39px;
+	font-weight: normal;
+}
+
+div.messageContainer div.message div.icon {
+	top: -1px;
+	width: 20px;
+	height: 21px;
+	background: url("../images/information.png");
 }
 
 
