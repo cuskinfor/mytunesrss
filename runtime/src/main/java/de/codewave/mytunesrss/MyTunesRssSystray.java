@@ -97,7 +97,7 @@ public class MyTunesRssSystray implements MyTunesRssEventListener {
     }
 
     public void setDatabaseUpdateFinished() {
-        myUpdate.setEnabled(false);
+        myUpdate.setEnabled(true);
     }
 
     public void setMinimized() {
