@@ -40,7 +40,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetZipArchiveCommandHandler.class);
 
-    private static final long ARCHIVE_CACHE_TIMEOUT = 1000L * 60L * 10L; // timeout = 10 minutes
+    private static final long ARCHIVE_CACHE_TIMEOUT = 1000L * 60L * 60L; // timeout = 60 minutes
 
     @Override
     public void executeAuthorized() throws Exception {
