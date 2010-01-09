@@ -79,8 +79,8 @@
                     <c:choose>
                         <c:when test="${authUser.searchFuzziness == -1}">
                             <select name="searchFuzziness">
-                                <option value="0"><fmt:message key="search.fuzziness.0"/></option>
-                                <option value="30" <c:if test="${config.searchFuzziness == 30}">selected="selected"</c:if>><fmt:message key="search.fuzziness.30"/></option>
+                                <option value="0" <c:if test="${config.searchFuzziness == 0}">selected="selected"</c:if>><fmt:message key="search.fuzziness.0"/></option>
+                                <option value="30" <c:if test="${config.searchFuzziness != 0}">selected="selected"</c:if>><fmt:message key="search.fuzziness.30"/></option>
                             </select>
                         </c:when>
                         <c:otherwise>

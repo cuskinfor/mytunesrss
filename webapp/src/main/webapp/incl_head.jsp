@@ -18,7 +18,7 @@
 <script type="text/javascript">
     var $jQ=jQuery.noConflict();
 
-    <c:if test="${config.keepAlive}">
+    <c:if test="${config.keepAlive && !empty authUser}">
         function sendKeepAlive() {
             $jQ.get("${servletUrl}/keepSessionAlive");
             window.setTimeout(sendKeepAlive, ${(authUser.sessionTimeout * 60 * 1000) - 20000});
