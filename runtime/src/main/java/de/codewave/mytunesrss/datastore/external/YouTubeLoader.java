@@ -37,7 +37,7 @@ public class YouTubeLoader {
     private static final String YOUTUBE_VIDEO_PREFIX = "http://www.youtube.com/watch?v=";
     private static final String YOUTUBE_VIDEO_FEED_PREFIX = "http://gdata.youtube.com/feeds/api/videos/";
     private static final String YOUTUBE_API_CLIENT_ID = "ytapi-MichaelDescher-MyTuneRSS-l70f4r3p-0";
-    private static final Pattern YOUTUBE_ADDITIONAL_PARAM_PATTERN = Pattern.compile("swfArgs.*\\{.*\"t\".*?\"([^\"]+)\"");
+    private static final Pattern YOUTUBE_ADDITIONAL_PARAM_PATTERN = Pattern.compile("SWF_ARGS.*\\{.*\"t\".*?\"([^\"]+)\"");
     private static final HttpClient HTTP_CLIENT = new HttpClient(new MultiThreadedHttpConnectionManager());
 
     public static boolean handles(String external) {
