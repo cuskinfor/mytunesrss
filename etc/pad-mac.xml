@@ -49,12 +49,29 @@
         <Program_Install_Support>No Install Support</Program_Install_Support>
         <Program_OS_Support>Java,Mac OS X</Program_OS_Support>
         <Program_Language>English,German</Program_Language>
-        <Program_Change_Info>Bugfixes
+        <Program_Change_Info>
+Configurable links to external sites for albums, artists and tracks, e.g. to link to Amazon.
+Playlist editing with much improved usability.
+Search can find exact matches like before or similar matches as well. Similar matches are standard. Improved performance when searching.
+Much more comfortable user management.
+Support for HTML in welcome message.
+System tray support for Mac OS X added (known issues on Linux).
+Windows bundle with installer (optionally can install Java runtime as well).
+File cache for downloaded ZIP archives (support for download managers).
+New function in web interface to set tags for tracks. You can also set tags for all tracks of an album, a playlist, etc.
+All functions (rss feed, flash player, download, etc.) are available through a popup menu in the web interface now. So you can enable the ones you usually use in the settings like before and access the other ones through the menu if needed. So you can save display space by disabling some functions but also use them if needed.
+When accessing the server with the iPhone the user is asked whether he wants to use the default interface or the iPhone optimized interface which does not have all functions of the default interface. The special iPhone service through http://iphone.mytunesrss.com will be disabled soon.
+Optionally configure forced transcoders for a user, i.e. force transcoder usage for a user.
+Simpler transcoder configuration for all media types (e.g. transcode AVI video to MP4 or FLV to play it in Flash player).
+LDAP authentication support.
+You can now configure multiple playlists if you want to restrict a user to a number of tracks.
+Opensearch link in portal page. You can add the MyTunesRSS search to your Firefox (other browsers have not been tested yet) search plugins.
+Bugfixes.
         </Program_Change_Info>
         <Program_Category_Class>Audio &amp; Multimedia::Other</Program_Category_Class>
         <Program_System_Requirements>Java 1.5</Program_System_Requirements>
         <File_Info>
-            <File_Size_Bytes>18909298</File_Size_Bytes>
+            <File_Size_Bytes>19741321</File_Size_Bytes>
             <File_Size_K>0</File_Size_K>
             <File_Size_MB>0.0</File_Size_MB>
         </File_Info>
