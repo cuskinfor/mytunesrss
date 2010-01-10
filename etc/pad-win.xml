@@ -66,6 +66,7 @@ Simpler transcoder configuration for all media types (e.g. transcode AVI video t
 LDAP authentication support.
 You can now configure multiple playlists if you want to restrict a user to a number of tracks.
 Opensearch link in portal page. You can add the MyTunesRSS search to your Firefox (other browsers have not been tested yet) search plugins.
+Complete new web interface design (not completely done, please report all issues).
 Bugfixes.
         </Program_Change_Info>
         <Program_Category_Class>Audio &amp; Multimedia::Other</Program_Category_Class>
