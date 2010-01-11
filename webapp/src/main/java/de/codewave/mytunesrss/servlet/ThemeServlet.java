@@ -30,33 +30,34 @@ public class ThemeServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(ThemeServlet.class);
 
     protected File getFile(HttpServletRequest httpServletRequest) {
+        String resourcePath = httpServletRequest.getRequestURI().substring(StringUtils.trimToEmpty(httpServletRequest.getContextPath()).length());
         String theme = MyTunesRssWebUtils.getWebConfig(httpServletRequest).getTheme();
         if (LOG.isDebugEnabled()) {
             LOG.debug("File \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + theme + "\" requested.");
         }
         try {
             if (StringUtils.isNotEmpty(theme)) {
-                File file = new File(MyTunesRssUtils.getPreferencesDataPath() + "/themes/" + theme + httpServletRequest.getRequestURI());
+                File file = new File(MyTunesRssUtils.getPreferencesDataPath() + "/themes/" + theme + resourcePath);
                 if (file.exists()) {
                     // addon theme found
                     return file;
                 }
-                file = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/themes/" + theme + httpServletRequest.getRequestURI());
+                file = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/themes/" + theme + resourcePath);
                 if (file.exists()) {
                     // built-in theme found
                     return file;
                 }
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Could not find file \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + theme +
+                    LOG.debug("Could not find file \"" + resourcePath + "\" for theme \"" + theme +
                             "\". Using default resource.");
                 }
             }
         } catch (IOException e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Could not find file \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + theme + "\". Using default resource.", e);
+                LOG.debug("Could not find file \"" + resourcePath + "\" for theme \"" + theme + "\". Using default resource.", e);
             }
         }
-        return new File(getServletContext().getRealPath(httpServletRequest.getRequestURI()));
+        return new File(getServletContext().getRealPath(resourcePath));
     }
 
     @Override
