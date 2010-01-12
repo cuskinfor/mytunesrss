@@ -69,6 +69,7 @@ a:HOVER {
 .playlistEditor div.head,
 .smartPlaylist div.head,
 .remote div.head,
+.errorPage div.head,
 .settings div.head {
     margin: 10px 0 0 0;
     padding: 0 14px 0 0;
@@ -82,6 +83,7 @@ a:HOVER {
 .playlistEditor h1,
 .smartPlaylist h1,
 .remote h1,
+.errorPage h1,
 .settings h1 {
     position: relative;
     height: 20px;
@@ -101,6 +103,7 @@ a:HOVER {
 .playlistEditor h1 span,
 .smartPlaylist h1 span,
 .remote h1 span,
+.errorPage h1 span,
 .settings h1 span {
     padding-left: 20px;
     color: #000;
@@ -467,11 +470,21 @@ ul.menu .back a {
     padding: 3px 5px 0 32px;
 }
 
-.tracklist .coverThumbnailColumn img {
+.tracklist img.coverThumbnail {
     position: absolute;
     top: 1px;
     left: 1px;
-    height: 24px;
+    width: 24px;
+}
+
+.tracklist a.youtube {
+	padding-left: 24px;
+	background: url("../images/youtube.png") left center no-repeat;
+}
+
+.tracklist a.movie {
+	padding-left: 24px;
+	background: url("../images/movie.gif") left center no-repeat;
 }
 
 .tooltip {
@@ -637,7 +650,6 @@ div.messageContainer {
 
 div.error,
 div.message {
-	display: inline-block;
 }
 
 div.messageContainer .top {
@@ -667,19 +679,22 @@ div.messageContainer .messageContent {
 
 div.messageContainer .messageContent .inner {
 	position: relative;
-	padding: 2px 8px 2px 42px;
+	padding: 2px 8px;
 	background: url("../images/message-left.png") left center no-repeat;
 	color: #000;
 	font-weight: bold;
-	text-shadow: #ccc 0 1px 0;	
+	text-shadow: #ccc 0 1px 0;
+	text-align: center;
+	cursor: default;	
 }
 
 div.messageContainer div.icon {
-	position: absolute;
-	left: 10px;
-	top: -2px;
+	display: inline-block;
 	width: 24px;
 	height: 22px;
+	margin-top: -3px;
+	margin-right: 5px;
+	vertical-align: text-top;
 	background: url("../images/warning.png");
 }
 
@@ -689,7 +704,6 @@ div.messageContainer .message .messageContent .inner {
 }
 
 div.messageContainer div.message div.icon {
-	top: -1px;
 	width: 20px;
 	height: 21px;
 	background: url("../images/information.png");
@@ -971,6 +985,23 @@ td.remotecontrolTrackImage img {
 }
 
 
+/* Error Page */
+
+div.fatalError {
+	background: #dadfe7;
+	text-shadow: #fff 0 1px 0;
+	padding: 15px;
+	text-align: center;
+}
+
+div.fatalError p {
+	margin: 15px 0 0 0;
+}
+
+h2.fatalError {
+    background: url("../images/error-head.png") center top repeat-x;
+    text-shadow: #550000 0 -1px 0;
+}
 
 /* old styles
 

@@ -53,7 +53,7 @@ function showTooltipElement(element) {
         document.body.appendChild(element);
         element.style.position = "absolute";
         element.style.left = (mouseX) + 10 + "px";
-        element.style.top = (mouseY + 20) + "px";
+        element.style.top = (mouseY + 10) + "px";
         element.style.display = "block";
     }
 }

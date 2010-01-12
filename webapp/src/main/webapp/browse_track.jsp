@@ -149,11 +149,15 @@
                                 <div class="tooltip" id="tooltip_trackthumb_${loopStatus.index}"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
                             </c:if>
                             <c:if test="${track.protected}"><img src="${appUrl}/images/protected${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
-                            <c:choose>
-                                <c:when test="${track.source.jspName == 'YouTube'}"><img src="${appUrl}/images/youtube${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.png" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:when>
-                                <c:when test="${track.mediaType.jspName == 'Video'}"><img src="${appUrl}/images/movie${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle"/></c:when>
-                            </c:choose>
-                            <a id="functionsDialogName${fnCount}" href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
+                            <a id="functionsDialogName${fnCount}"
+                               href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
+                               onmouseover="showTooltip(this)"
+                               onmouseout="hideTooltip(this)"
+								<c:choose>
+								    <c:when test="${track.source.jspName == 'YouTube'}">title="<fmt:message key="video"/>" class="youtube"</c:when>
+								    <c:when test="${track.mediaType.jspName == 'Video'}">title="<fmt:message key="video"/>" class="movie"</c:when>
+								</c:choose>                               
+                            >
                                 <c:choose>
                                     <c:when test="${!empty param['playlist']}">
                                         <c:if test="${!mtfn:unknown(track.artist)}"><c:out value="${track.artist}"/> -</c:if>
@@ -170,7 +174,7 @@
                                     </c:otherwise>
                                 </c:choose>
                                 <c:if test="${!empty track.comment}">
-                                    <div class="tooltip" id="tooltip_tracklink_${track.id}">
+                                    <div class="tooltip" id="tooltip_functionsDialogName${fnCount}">
                                         <c:forEach var="comment" varStatus="loopStatus" items="${mtfn:splitComments(track.comment)}">
                                             <c:out value="${comment}"/>
                                             <c:if test="${!loopStatus.last}"><br /></c:if>
