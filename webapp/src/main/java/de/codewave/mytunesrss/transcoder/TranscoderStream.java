@@ -52,8 +52,12 @@ public class TranscoderStream extends InputStream {
 
     @Override
     public void close() throws IOException {
-        myImageFile.delete();
-        myProcess.destroy();
+        if (myImageFile != null) {
+            myImageFile.delete();
+        }
+        if (myProcess != null) {
+            myProcess.destroy();
+        }
         super.close();
     }
 
