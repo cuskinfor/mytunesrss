@@ -35,6 +35,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private static final String ATOM_ARTIST = "moov.udta.meta.ilst.\u00a9ART.data";
     private static final String ATOM_TITLE = "moov.udta.meta.ilst.\u00a9nam.data";
     private static final String ATOM_TRACK_NUMBER = "moov.udta.meta.ilst.trkn.data";
+    private static final String ATOM_DISK_NUMBER = "moov.udta.meta.ilst.disk.data";
     private static final String ATOM_GENRE = "moov.udta.meta.ilst.\u00a9gen.data";
     private static final String ATOM_STSD = "moov.trak.mdia.minf.stbl.stsd";
     private static final String ATOM_COVER = "moov.udta.meta.ilst.covr.data";
@@ -273,7 +274,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
             }
-            atoms = Mp4Utils.getAtoms(file, Arrays.asList(ATOM_ALBUM, ATOM_ARTIST, ATOM_TITLE, ATOM_TRACK_NUMBER, ATOM_GENRE, ATOM_STSD, ATOM_COVER));
+            atoms = Mp4Utils.getAtoms(file, Arrays.asList(ATOM_ALBUM, ATOM_ARTIST, ATOM_TITLE, ATOM_TRACK_NUMBER, ATOM_DISK_NUMBER, ATOM_GENRE, ATOM_STSD, ATOM_COVER));
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
@@ -305,6 +306,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 atom = atoms.get(ATOM_TRACK_NUMBER);
                 if (atom != null) {
                     statement.setTrackNumber(atom.getData()[11]);
+                }
+                atom = atoms.get(ATOM_DISK_NUMBER);
+                if (atom != null) {
+                    statement.setPos(atom.getData()[11], atom.getData()[13]);
                 }
                 atom = atoms.get(ATOM_STSD);
                 if (atom != null) {
