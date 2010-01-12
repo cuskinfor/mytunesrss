@@ -872,12 +872,42 @@ div.pager a {
 	width: 24px;
 	margin: 0;
 	padding: 0 0 1px 0;
-	background: url("../images/pager_button.png") center center no-repeat;
+	background: url("../images/pager_button.png") 0 -32px no-repeat;
 	color: #fff;
 	font-size: 10px;
 	font-weight: bold;
 	line-height: 15px;
 	text-shadow: #000 0 0 1px;
+	cursor: pointer;
+}
+
+div.pager .first {
+	background-position: 0 0;
+	text-indent: -9999px;
+}
+
+div.pager .previous {
+	background-position: 0 -16px;
+	text-indent: -9999px;
+}
+
+div.pager .next {
+	background-position: 0 -48px;
+	text-indent: -9999px;
+}
+
+div.pager .last {
+	background-position: 0 -64px;
+	text-indent: -9999px;
+}
+
+div.pager .active {
+	background-position: right center;
+	cursor: default;
+}
+
+div.pager .active:HOVER {
+	text-decoration: none;
 }
 
 div.pager img {
