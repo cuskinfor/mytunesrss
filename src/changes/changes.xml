@@ -9,6 +9,9 @@
 
         <release version="3.8.0-RC-2" date="2010-01-17">
             <action dev="mdescher" type="fix">
+                http://jira.codewave.dyn-o-saur.com/browse/MYTUNESRSS-74
+            </action>
+            <action dev="mdescher" type="fix">
                 http://jira.codewave.dyn-o-saur.com/browse/MYTUNESRSS-72
             </action>
         </release>

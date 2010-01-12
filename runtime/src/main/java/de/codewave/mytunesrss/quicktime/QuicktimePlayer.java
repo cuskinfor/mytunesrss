@@ -71,9 +71,14 @@ public class QuicktimePlayer {
         if (myInitialized) {
             stop();
             LOGGER.debug("Destroying quicktime player.");
-            QTSession.exitMovies();
-            QTSession.close();
-            myInitialized = false;
+            try {
+                QTSession.exitMovies();
+                QTSession.close();
+            } catch (Exception e) {
+                LOGGER.error("Could not close quicktime session correctly.", e);
+            } finally {
+                myInitialized = false;
+            }
         }
     }
 
