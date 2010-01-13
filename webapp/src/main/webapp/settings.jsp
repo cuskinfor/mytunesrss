@@ -395,7 +395,7 @@
         </div>
         
         <div class="footer">
-            <div class="footer-inner"></div>
+            <div class="inner"></div>
         </div>
         
     </div>

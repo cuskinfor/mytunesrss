@@ -66,6 +66,9 @@
             <div class="content-inner">
     
                 <ul class="menu">
+                	<li class="active">
+                		<span><fmt:message key="browseArtist"/></span>
+                	</li>
                     <li>
                         <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${cwfn:choose(empty param.album, param.page, '1')}</mt:encrypt>"><fmt:message key="browseAlbums"/></a>
                     </li>
@@ -112,7 +115,7 @@
                         </th>
                         <th><fmt:message key="albums"/></th>
                         <th><fmt:message key="tracks"/></th>
-                        <th>&nbsp;</th>
+                        <th class="actions">&nbsp;</th>
                     </tr>
                     <c:forEach items="${artists}" var="artist" varStatus="loopStatus">
                         <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
@@ -168,7 +171,7 @@
         </div>
         
         <div class="footer">
-            <div class="footer-inner"></div>
+            <div class="inner"></div>
         </div>       
     
     </div>

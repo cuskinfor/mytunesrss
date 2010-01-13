@@ -74,6 +74,9 @@
                     <li>
                         <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${cwfn:choose(empty param.artist, param.page, '1')}</mt:encrypt>"><fmt:message key="browseArtist"/></a>
                     </li>
+                    <li class="active">
+                    	<span><fmt:message key="browseAlbums"/></span>
+                    </li>
                     <li>
                         <a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}</mt:encrypt>"><fmt:message key="browseGenres"/></a>
                     </li>
@@ -266,7 +269,7 @@
     </div>
     
     <div class="footer">
-        <div class="footer-inner"></div>
+        <div class="inner"></div>
     </div>        
 
 </div>

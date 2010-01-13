@@ -195,7 +195,7 @@
     </div>
 
     <div class="footer">
-        <div class="footer-inner">
+        <div class="inner">
             <c:if test="${!empty statistics && !globalConfig.disableBrowser}">
                 <fmt:message key="statistics" />:
                 ${statistics.trackCount} <fmt:message key="statistics.tracks" />,

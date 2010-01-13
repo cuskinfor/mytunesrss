@@ -72,6 +72,9 @@
                     <li>
                         <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}</mt:encrypt>"><fmt:message key="browseAlbums"/></a>
                     </li>
+					<li class="active">
+						<span><fmt:message key="browseGenres"/></span>
+					</li>                    
                     <c:if test="${!stateEditPlaylist && authUser.createPlaylists}">
                         <li>
                             <c:choose>
@@ -161,7 +164,7 @@
         </div>
         
         <div class="footer">
-            <div class="footer-inner"></div>
+            <div class="inner"></div>
         </div>
     
     </div>

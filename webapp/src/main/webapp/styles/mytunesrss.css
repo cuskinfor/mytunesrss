@@ -176,6 +176,18 @@ ul.menu a {
     outline: 0;    
 }
 
+ul.menu li.active span {
+	display: block;
+	padding: 0 12px 0 10px;
+	line-height: 25px;
+	background: #000;
+	font-size: 10px;
+	font-weight: bold;
+	color: #eee;
+	text-decoration: none;
+	text-shadow: #000 0 -1px 0px;
+}
+
 
 ul.menu a:HOVER {
     text-decoration: underline;
@@ -200,7 +212,6 @@ ul.menu .back a {
     position: static;
     width:  100%;
     padding: 8px 0;
-    background: #dadfe7;
 }
 
 .navigation .search {
@@ -355,6 +366,7 @@ ul.menu .back a {
 
 .tracklist {
     width: 100%;
+    background: #fff;
     cursor: default;    
 }
 
@@ -400,6 +412,10 @@ ul.menu .back a {
 .tracklist th.tracks {
     background-position: left top;
     text-align: left;
+}
+
+.tracklist th.actions {
+    background-position: left top;
 }
 
 .tracklist td {
@@ -453,7 +469,6 @@ ul.menu .back a {
 
 .tracklist td.empty {
     font-style: italic;
-    background: #dadfe7;
     padding: 10px;
     color:  #666;
     text-shadow: #fff 0 1px 0;
@@ -553,20 +568,20 @@ ul.menu .back a {
     background: url("../images/footer.png") right bottom no-repeat;
 }
 
-.footer-inner {
-    height: 42px;
+.footer .inner {
+    height: 43px;
     padding: 0 0 0 17px;
     background: url("../images/footer.png") left top no-repeat;
-    color: #999;
+    color: #666;
     font-size: 10px;
     line-height: 24px;
     text-align: center;
-    text-shadow: #fff 0 1px 0;
+    text-shadow: #eee 0 1px 0;
     cursor: default;
 }
 
 .footer a {
-    color: #999;
+    color: #666;
     text-decoration: none;
 }
 
@@ -602,7 +617,6 @@ fieldset {
 
 div.login {
 	padding: 15px 15px 5px 15px;
-    background: #dadfe7;
     text-align: center;
 }
 
@@ -643,9 +657,12 @@ div.login table select {
 /* Messages */
 
 div.messageContainer {
-	text-align: center;
-	background: #dadfe7;
-	padding: 10px 10px 0 10px;	
+	padding: 8px 8px 0 8px;
+}
+
+body.browse div.messageContainer {
+	padding: 8px 8px 4px 8px;
+	border-bottom: 1px solid #666;
 }
 
 div.error,
@@ -679,31 +696,33 @@ div.messageContainer .messageContent {
 
 div.messageContainer .messageContent .inner {
 	position: relative;
-	padding: 2px 8px;
+	padding: 2px 8px 2px 46px;
 	background: url("../images/message-left.png") left center no-repeat;
 	color: #000;
 	font-weight: bold;
 	text-shadow: #ccc 0 1px 0;
-	text-align: center;
 	cursor: default;	
 }
 
 div.messageContainer div.icon {
-	display: inline-block;
+	display: block;
+	position: absolute;
+	left: 14px;
+	top: -1px;
 	width: 24px;
 	height: 22px;
-	margin-top: -3px;
-	margin-right: 5px;
 	vertical-align: text-top;
 	background: url("../images/warning.png");
 }
 
 div.messageContainer .message .messageContent .inner {
-	padding-left: 39px;
+	padding-left: 40px;
 	font-weight: normal;
 }
 
 div.messageContainer div.message div.icon {
+	top: 0;
+	left: 15px;
 	width: 20px;
 	height: 21px;
 	background: url("../images/information.png");
@@ -743,7 +762,6 @@ table.pager a:HOVER {
 
 table.settings {
     width: 100%;
-    background: #dadfe7;
     cursor: default;
 }
 
@@ -784,7 +802,6 @@ table.settings input.number {
 
 div.buttons {
     padding: 20px 0 10px 0;
-    background: #dadfe7;
     text-align: center;
 }
 
@@ -838,7 +855,6 @@ body.upload form {
 
 #progressDiv {
 	display: none;
-	background: #DADFE7;
 	padding: 0 50px 20px 50px;
 }
 
@@ -861,8 +877,7 @@ body.upload form {
 
 div.pager {
 	padding: 2px;
-	background: #DADFE7;
-	border-top: 1px solid #999;
+	background: url("../images/pager_bottom_background.png") left top repeat-x;
 	text-align: center;
 }
 
@@ -1018,7 +1033,6 @@ td.remotecontrolTrackImage img {
 /* Error Page */
 
 div.fatalError {
-	background: #dadfe7;
 	text-shadow: #fff 0 1px 0;
 	padding: 15px;
 	text-align: center;
@@ -1032,6 +1046,29 @@ h2.fatalError {
     background: url("../images/error-head.png") center top repeat-x;
     text-shadow: #550000 0 -1px 0;
 }
+
+
+/* Display Filter */
+
+.displayfilter {
+	padding: 5px 8px;
+}
+
+.displayfilter input[type="button"] {
+	margin-top: 2px;
+	float: right;
+}
+
+.displayfilter input[type="text"] {
+	margin: 0 15px 0 5px;
+}
+
+.displayfilter input[name="filterMinYear"],
+.displayfilter input[name="filterMaxYear"] {
+	width: 50px;
+	margin: 0 5px;
+}
+
 
 /* old styles
 
