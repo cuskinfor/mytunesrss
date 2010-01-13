@@ -65,8 +65,6 @@
                 <span><fmt:message key="myTunesRss"/></span>
             </h1>
         </div>
-
-        <jsp:include page="/incl_error.jsp" />
         
         <div class="content">
         
@@ -97,6 +95,8 @@
                         </li>
                     </c:if>
                 </ul>
+                
+                <jsp:include page="/incl_error.jsp" />
 
                 <jsp:include page="incl_playlist.jsp" />
                 

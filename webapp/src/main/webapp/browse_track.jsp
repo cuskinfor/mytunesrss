@@ -43,8 +43,6 @@
         <div class="content">
             
             <div class="content-inner">
-    
-                <jsp:include page="/incl_error.jsp" />
                 
                 <ul class="menu">
                     <c:if test="${sortOrderLink}">
@@ -69,6 +67,8 @@
                         <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
                     </li>
                 </ul>
+                
+                <jsp:include page="/incl_error.jsp" />
                 
                 <jsp:include page="incl_playlist.jsp" />
                 

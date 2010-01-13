@@ -321,6 +321,7 @@
                                 <td class="label"><fmt:message key="settings.showYahooMediaPlayer" /></td>
                                 <td>
                                     <input id="yahooPlayerCheckbox" type="checkbox" name="showYahooMediaPlayer" value="true" <c:if test="${config.yahooMediaPlayer}">checked="checked"</c:if> <c:if test="${!config.showDownload}">disabled="disabled"</c:if> />
+                                    <img src="${appUrl}/images/action-yahoo.png" alt="playlist" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>

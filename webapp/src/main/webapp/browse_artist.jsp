@@ -65,8 +65,6 @@
         
             <div class="content-inner">
     
-                <jsp:include page="/incl_error.jsp" />
-    
                 <ul class="menu">
                     <li>
                         <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${cwfn:choose(empty param.album, param.page, '1')}</mt:encrypt>"><fmt:message key="browseAlbums"/></a>
@@ -92,6 +90,8 @@
                         </li>
                     </c:if>
                 </ul>
+                
+                <jsp:include page="/incl_error.jsp" />
             
                 <jsp:include page="incl_playlist.jsp" />
             
