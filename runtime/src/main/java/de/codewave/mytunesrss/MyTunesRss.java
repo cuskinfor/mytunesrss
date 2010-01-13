@@ -253,6 +253,10 @@ public class MyTunesRss {
         } else if (REGISTRATION.isExpired() && HEADLESS) {
             MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpiredHeadless"));
             MyTunesRssUtils.shutdownGracefully();
+        } else if (REGISTRATION.isExpirationDate() && !REGISTRATION.isReleaseVersion()) {
+            MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.preReleaseExpiration",
+                    REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
+                            "common.dateFormat"))));
         } else if (REGISTRATION.isExpirationDate() && !REGISTRATION.isExpired()) {
             MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.expirationInfo",
                     REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
@@ -307,14 +311,6 @@ public class MyTunesRss {
                 LOGGER.info("No quicktime environment found, quicktime player disabled.");
             }
         }
-    }
-
-    private static String getFirstTrimmedArgument(Map<String, String[]> args, String name) {
-        String[] values = args.get(name);
-        if (values != null && values.length > 0) {
-            return StringUtils.trimToNull(values[0]);
-        }
-        return null;
     }
 
     private static ClassLoader createExtraClassloader(File libDir) {
