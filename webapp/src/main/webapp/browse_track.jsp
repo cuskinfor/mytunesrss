@@ -63,6 +63,7 @@
                             </c:choose>
                         </li>
                     </c:if>
+                    <li class="spacer">&nbsp;</li>
                     <li class="back">
                         <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
                     </li>

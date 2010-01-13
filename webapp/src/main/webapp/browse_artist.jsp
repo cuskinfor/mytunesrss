@@ -66,7 +66,7 @@
             <div class="content-inner">
     
                 <ul class="menu">
-                	<li class="active">
+                	<li class="active first">
                 		<span><fmt:message key="browseArtist"/></span>
                 	</li>
                     <li>
@@ -87,8 +87,9 @@
                             </c:choose>
                         </li>
                     </c:if>
+                    <li class="spacer">&nbsp;</li>
                     <c:if test="${!empty param.backUrl}">
-                        <li style="float:right;">
+                        <li class="back">
                             <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
                         </li>
                     </c:if>

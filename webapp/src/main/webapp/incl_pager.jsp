@@ -28,7 +28,7 @@
                 </c:choose>
             </td>
         </c:forEach>
-        <td>
+        <td <c:if test="${!filterToggle}">class="last"</c:if>>
             <a href="${cwfn:choose(empty pagerCurrent, '#', mtfn:replace(pagerCommand, '{index}', ''))}"
                     <c:if test="${empty pagerCurrent}">class="active"</c:if>>
                 <fmt:message key="alphabetPagerAll"/>

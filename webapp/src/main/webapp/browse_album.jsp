@@ -71,7 +71,7 @@
             <div class="content-inner">
 
                 <ul class="menu">
-                    <li>
+                    <li class="first">
                         <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${cwfn:choose(empty param.artist, param.page, '1')}</mt:encrypt>"><fmt:message key="browseArtist"/></a>
                     </li>
                     <li class="active">
@@ -92,6 +92,7 @@
                             </c:choose>
                         </li>
                     </c:if>
+                    <li class="spacer">&nbsp;</li>
                     <c:if test="${!empty param.backUrl}">
                         <li class="back">
                             <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
@@ -110,15 +111,12 @@
                     <c:set var="filterToggle" scope="request" value="true" />
                     <jsp:include page="incl_pager.jsp" />
                 </c:if>
+                
+				<c:set var="displayFilterUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}</c:set>
+				<c:set var="filterYearActive" scope="request" value="true"/>
+				<jsp:include page="/incl_display_filter.jsp"/>
 
     <table class="tracklist" cellspacing="0">
-        <tr>
-            <td colspan="4" style="padding:0">
-                <c:set var="displayFilterUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}</c:set>
-                <c:set var="filterYearActive" scope="request" value="true"/>
-                <jsp:include page="/incl_display_filter.jsp"/>
-            </td>
-        </tr>
         <tr>
             <th class="active">
                 <c:if test="${!empty param.genre}">${mtfn:capitalize(mtfn:decode64(param.genre))}</c:if>

@@ -52,14 +52,17 @@
 
         <ul class="menu">
             <c:if test="${authUser.editWebSettings}">
-                <li class="settings"><a href="${servletUrl}/showSettings/${auth}">
+                <li class="settings first"><a href="${servletUrl}/showSettings/${auth}">
                     <fmt:message key="doSettings" />
                 </a></li>
             </c:if>
             <c:if test="${globalConfig.serverBrowserActive}">
-                <li class="servers"><a href="${servletUrl}/browseServers/${auth}">
+                <li class="servers <c:if test="${!authUser.editWebSettings}">first</c:if>"><a href="${servletUrl}/browseServers/${auth}">
                     <fmt:message key="browseServers" />
                 </a></li>
+            </c:if>
+            <c:if test="${authUser.editWebSettings || globalConfig.serverBrowserActive}">
+	            <li class="spacer">&nbsp;</li>
             </c:if>
             <c:if test="${empty globalConfig.autoLogin}">
                 <li class="logout"><a href="${servletUrl}/logout">

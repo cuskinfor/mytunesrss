@@ -66,7 +66,7 @@
             <div class="content-inner">
             
                 <ul class="menu">
-                    <li>
+                    <li class="first">
                         <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}</mt:encrypt>"><fmt:message key="browseArtist"/></a>
                     </li>
                     <li>
@@ -87,6 +87,7 @@
                             </c:choose>
                         </li>
                     </c:if>
+					<li class="spacer">&nbsp;</li>
                 </ul>
                 
                 <jsp:include page="/incl_error.jsp" />
@@ -113,7 +114,7 @@
                             <th><fmt:message key="albums"/></th>
                             <th><fmt:message key="artists"/></th>
                             <th><fmt:message key="tracks"/></th>
-                            <th>&nbsp;</th>
+                            <th class="actions">&nbsp;</th>
                         </tr>
                         <c:forEach items="${genres}" var="genre" varStatus="loopStatus">
                             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">

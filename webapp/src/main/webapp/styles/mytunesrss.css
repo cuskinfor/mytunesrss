@@ -153,21 +153,22 @@ ul.menu {
     height: 25px;
     margin: 0;
     padding: 0;
-    background: url("../images/menu.png") left top;
+    background: url("../images/menu.png") center center;
 }
 
 ul.menu li {
     float: left;
     margin: 0;
-    padding: 0;
-    list-style: none;        
+    padding: 0 1px 0 0;
+    background: url("../images/menu.png") right center;
+    list-style: none;
 }
 
 ul.menu a {
     display: block;
     padding: 0 12px 0 10px;
     line-height: 25px;
-    background: url("../images/menu-seperator.png") right top no-repeat;
+    background: url("../images/menu.png") left center no-repeat;
     font-size: 10px;
     font-weight: bold;
     color: #eee;
@@ -176,32 +177,48 @@ ul.menu a {
     outline: 0;    
 }
 
+ul.menu li.active {
+	background: url("../images/menu-active.png") center center no-repeat;
+}
+
 ul.menu li.active span {
 	display: block;
 	padding: 0 12px 0 10px;
 	line-height: 25px;
-	background: #000;
 	font-size: 10px;
 	font-weight: bold;
-	color: #eee;
+	color: #bfdfff;
 	text-decoration: none;
-	text-shadow: #000 0 -1px 0px;
+	text-shadow: #0080ff 0 0 5px;
+	cursor: default;
 }
 
 
 ul.menu a:HOVER {
-    text-decoration: underline;
+    text-shadow: #0080ff 0 0 10px;
+    color: #bfdfff;
 }
 
 ul.menu .logout,
 ul.menu .back {
     float: right;
+    background-position: center center;
 }
 
 ul.menu .logout a,
 ul.menu .back a {
     padding: 0 10px 0 12px;
     background: url("../images/menu-seperator.png") left top no-repeat;       
+}
+
+ul.menu li.first a {
+	background-position: center center;
+}
+
+ul.menu li.spacer {
+	width: 1px;
+	height: 25px;
+    background: url("../images/menu.png") left center no-repeat;
 }
 
 
@@ -507,13 +524,18 @@ ul.menu .back a {
     display: none;
 	display:none;
 	z-index:20;
-	border-style:solid;
-	border-color:black;
-	border-width:1px;
-	background-color:#FFFFCC;
-	padding: 2px;
+	border: 1px solid #000;
+	background: #FFFFCC;
+	padding: 1px;
 	max-width: 500px;
-	text-align: left;    
+	text-align: left;
+	-moz-box-shadow: 3px 8px 15px #666;
+	-webkit-box-shadow: 3px 8px 15px #666;
+}
+
+.tooltip img {
+	margin: 0;
+	vertical-align: middle;
 }
 
 /* Playlists */
@@ -755,6 +777,10 @@ table.pager a {
 
 table.pager a:HOVER {
     text-decoration: underline;
+}
+
+table.pager td.last a {
+	background-position: left top;
 }
 
 
@@ -1051,11 +1077,11 @@ h2.fatalError {
 /* Display Filter */
 
 .displayfilter {
-	padding: 5px 8px;
+	padding: 8px 8px;
 }
 
 .displayfilter input[type="button"] {
-	margin-top: 2px;
+	margin-top: 3px;
 	float: right;
 }
 
