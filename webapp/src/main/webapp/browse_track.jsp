@@ -46,13 +46,13 @@
                 
                 <ul class="menu">
                     <c:if test="${sortOrderLink}">
-                        <li>
+                        <li class="first">
                             <c:if test="${sortOrder != 'Album'}"><a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=Album</mt:encrypt>/backUrl=${param.backUrl}"><fmt:message key="groupByAlbum" /></a></c:if>
                             <c:if test="${sortOrder != 'Artist'}"><a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=Artist</mt:encrypt>/backUrl=${param.backUrl}"><fmt:message key="groupByArtist" /></a></c:if>
                         </li>
                     </c:if>
                     <c:if test="${!stateEditPlaylist && authUser.createPlaylists}">
-                        <li>
+                        <li <c:if test="${!sortOrderLink}">class="first"</c:if>>
                             <c:choose>
                                 <c:when test="${empty editablePlaylists || simpleNewPlaylist}">
                                     <a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><fmt:message key="newPlaylist"/></a>
@@ -80,6 +80,14 @@
                     <c:set var="sectionFileName" value=""/>
                     <tr>
                         <th id="functionsDialogName${fnCount}" class="active" colspan="2">
+
+						    <c:if test="${config.showThumbnailsForAlbums && !empty(track.imageHash)}">
+							    <div class="albumCover">
+									<img id="albumthumb_${loopStatus.index}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(track.imageHash)}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
+									<div class="tooltip" id="tooltip_albumthumb_${loopStatus.index}"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(track.imageHash)}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
+								</div>
+							</c:if>
+
                             <c:choose>
                                 <c:when test="${sortOrder == 'Album'}">
                                     <c:if test="${track.simple}">

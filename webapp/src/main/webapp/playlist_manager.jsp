@@ -63,8 +63,9 @@
             <div class="content-inner">
     
                 <ul class="menu">
-                    <li><a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${cwfn:encode64(browseArtistUrl)}"><fmt:message key="newPlaylist"/></a></li>
+                    <li class="first"><a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${cwfn:encode64(browseArtistUrl)}"><fmt:message key="newPlaylist"/></a></li>
                     <li><a href="${servletUrl}/editSmartPlaylist/${auth}"><fmt:message key="newSmartPlaylist"/></a></li>
+                    <li class="spacer">&nbsp;</li>
                 </ul>
             
                 <jsp:include page="/incl_error.jsp" />
@@ -73,7 +74,8 @@
                     <tr>
                         <th class="active"><fmt:message key="playlists"/></th>
 						<c:if test="${!empty playlists}">
-							<th colspan="3"><fmt:message key="tracks"/></th>
+							<th><fmt:message key="tracks"/></th>
+							<th class="actions">&nbsp;</th>
 						</c:if>
                     </tr>
                     <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
