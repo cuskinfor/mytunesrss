@@ -679,6 +679,7 @@ public class MyTunesRss {
             if (SystemUtils.IS_OS_MAC_OSX) {
                 LOGGER.debug("Window is being closed on Mac OS X, so the window is hidden now.");
                 ROOT_FRAME.setVisible(false);
+                SYSTRAY.setMinimized();
             } else {
                 LOGGER.debug("Window is being closed, so the application is shut down now.");
                 if (CONFIG.isQuitConfirmation()) {
