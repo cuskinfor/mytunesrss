@@ -81,7 +81,7 @@
                     <tr>
                         <th id="functionsDialogName${fnCount}" class="active" colspan="2">
 
-						    <c:if test="${config.showThumbnailsForAlbums && !empty(track.imageHash)}">
+						    <c:if test="${config.showThumbnailsForAlbums && !empty(track.imageHash) && sortOrder == 'Album'}">
 							    <div class="albumCover">
 									<img id="albumthumb_${loopStatus.index}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(track.imageHash)}/size=32</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
 									<div class="tooltip" id="tooltip_albumthumb_${loopStatus.index}"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(track.imageHash)}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
