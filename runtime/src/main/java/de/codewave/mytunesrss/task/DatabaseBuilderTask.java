@@ -171,14 +171,9 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 internalExecute();
                 myExecuted = true;
                 if (!getExecutionThread().isInterrupted()) {
-                    event.setMessageKey("settings.buildingTrackIndex");
-                    MyTunesRssEventManager.getInstance().fireEvent(event);
-                    MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
-                    if (!getExecutionThread().isInterrupted()) {
-                        DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
-                        storeSession.executeStatement(new RefreshSmartPlaylistsStatement());
-                        storeSession.commit();
-                    }
+                    DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
+                    storeSession.executeStatement(new RefreshSmartPlaylistsStatement());
+                    storeSession.commit();
                 }
                 MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
             } catch (Exception e) {
@@ -396,6 +391,12 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         DatabaseBuilderTask.doCheckpoint(storeSession, true);
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Obsolete tracks and playlists removed from database.");
+        }
+        if (!getExecutionThread().isInterrupted()) {
+            MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
+            event.setMessageKey("settings.buildingTrackIndex");
+            MyTunesRssEventManager.getInstance().fireEvent(event);
+            MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
         }
         return missingItunesFiles;
     }
