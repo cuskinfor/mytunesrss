@@ -49,28 +49,28 @@ public class MyTunesRssSystray implements MyTunesRssEventListener {
         myQuit = new MenuItem(MyTunesRssUtils.getBundleString("systray.quit"));
         myQuit.setActionCommand("quit");
         myQuit.addActionListener(menuListener);
-        menu.add(myQuit);
-        menu.addSeparator();
         myShow = new MenuItem(MyTunesRssUtils.getBundleString("systray.show"));
         myShow.setActionCommand("show");
         myShow.addActionListener(menuListener);
         myShow.setEnabled(false);
-        menu.add(myShow);
-        menu.addSeparator();
         myUpdate = new MenuItem(MyTunesRssUtils.getBundleString("systray.updateDatabase"));
         myUpdate.setActionCommand("update");
         myUpdate.addActionListener(menuListener);
-        menu.add(myUpdate);
-        menu.addSeparator();
         myStopServer = new MenuItem(MyTunesRssUtils.getBundleString("systray.stopServer"));
         myStopServer.setActionCommand("stop_server");
         myStopServer.addActionListener(menuListener);
         myStopServer.setEnabled(false);
-        menu.add(myStopServer);
         myStartServer = new MenuItem(MyTunesRssUtils.getBundleString("systray.startServer"));
         myStartServer.setActionCommand("start_server");
         myStartServer.addActionListener(menuListener);
         menu.add(myStartServer);
+        menu.add(myStopServer);
+        menu.addSeparator();
+        menu.add(myUpdate);
+        menu.addSeparator();
+        menu.add(myShow);
+        menu.addSeparator();
+        menu.add(myQuit);
         return menu;
     }
 
