@@ -92,6 +92,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                         user.setName(userName);
                         LOG.debug("Storing new user with name \"" + user.getName() + "\".");
                         MyTunesRss.CONFIG.addUser(user);
+                        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.CONFIGURATION_CHANGED));
                     }
                 }
                 if (user == null) {
