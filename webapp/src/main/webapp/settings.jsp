@@ -334,6 +334,7 @@
                                     <!--<fmt:message key="settings.flashplayerType" />-->
                                     <select name="flashplayerType">
                                         <option value="jw" <c:if test="${config.flashplayerType eq 'jw'}">selected="selected"</c:if>><fmt:message key="flashplayer.jw"/></option>
+                                        <option value="jw43" <c:if test="${config.flashplayerType eq 'jw43'}">selected="selected"</c:if>><fmt:message key="flashplayer.jw43"/></option>
                                         <option value="jw3" <c:if test="${config.flashplayerType eq 'jw3'}">selected="selected"</c:if>><fmt:message key="flashplayer.jw3"/></option>
                                         <option value="xspf" <c:if test="${config.flashplayerType eq 'xspf'}">selected="selected"</c:if>><fmt:message key="flashplayer.xspf"/></option>
                                     </select>
