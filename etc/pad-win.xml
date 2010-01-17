@@ -37,7 +37,7 @@
     </Company_Info>
     <Program_Info>
         <Program_Name>MyTunesRSS</Program_Name>
-        <Program_Version>3.8.0-RC-1</Program_Version>
+        <Program_Version>3.8.0-RC-2</Program_Version>
         <Program_Release_Month>01</Program_Release_Month>
         <Program_Release_Day>10</Program_Release_Day>
         <Program_Release_Year>2010</Program_Release_Year>
@@ -72,7 +72,7 @@ Bugfixes.
         <Program_Category_Class>Audio &amp; Multimedia::Other</Program_Category_Class>
         <Program_System_Requirements>Java 1.5</Program_System_Requirements>
         <File_Info>
-            <File_Size_Bytes>36263644</File_Size_Bytes>
+            <File_Size_Bytes>36178287</File_Size_Bytes>
             <File_Size_K>0</File_Size_K>
             <File_Size_MB>0.0</File_Size_MB>
         </File_Info>
