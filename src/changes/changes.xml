@@ -9,6 +9,9 @@
 
         <release version="3.8.0-RC-2" date="2010-01-17">
             <action dev="mdescher" type="fix">
+                MYTUNESRSS-93: External site links do not work.
+            </action>
+            <action dev="mdescher" type="update">
                 Re-add jw mediaplayer 4.3 which fixes duration problems for some files on 4.6 (4.5 and 4.4 did not fix
                 the problem). Did not find any reason in the changelogs of the player. So now we have 4 players to chose
                 from (jw 4.6, 4.3, 3.15 and simple). Also do not add duration tag in xspf if duration is less than 1.
