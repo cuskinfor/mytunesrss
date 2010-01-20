@@ -14,6 +14,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -176,9 +177,10 @@ public class LuceneTrackService {
             if (!STOP_WORDS.contains(searchTerm)) {
                 BooleanQuery orQuery = new BooleanQuery();
                 for (String field : new String[]{"name", "album", "artist", "comment", "tags"}) {
-                    orQuery.add(new WildcardQuery(new Term(field, "*" + searchTerm + "*")), BooleanClause.Occur.SHOULD);
+                    String escapedSearchTerm = QueryParser.escape(searchTerm);
+                    orQuery.add(new WildcardQuery(new Term(field, "*" + escapedSearchTerm + "*")), BooleanClause.Occur.SHOULD);
                     if (fuzziness > 0) {
-                        orQuery.add(new FuzzyQuery(new Term(field, searchTerm), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
+                        orQuery.add(new FuzzyQuery(new Term(field, escapedSearchTerm), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
                     }
                 }
                 andQuery.add(orQuery, BooleanClause.Occur.MUST);
@@ -223,9 +225,10 @@ public class LuceneTrackService {
         if (StringUtils.isNotEmpty(pattern)) {
             if (!STOP_WORDS.contains(pattern)) {
                 BooleanQuery orQuery = new BooleanQuery();
-                orQuery.add(new WildcardQuery(new Term(field, "*" + pattern + "*")), BooleanClause.Occur.SHOULD);
+                String escapedPattern = QueryParser.escape(pattern);
+                orQuery.add(new WildcardQuery(new Term(field, "*" + escapedPattern + "*")), BooleanClause.Occur.SHOULD);
                 if (fuzziness > 0) {
-                    orQuery.add(new FuzzyQuery(new Term(field, pattern), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
+                    orQuery.add(new FuzzyQuery(new Term(field, escapedPattern), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
                 }
                 andQuery.add(orQuery, BooleanClause.Occur.MUST);
             }
