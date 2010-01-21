@@ -11,22 +11,38 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
-<body>
+<head>
 
-    <div align="center">
-        <img src="${appUrl}/images/index_head.gif" width="100%" alt="MyTunesRSS" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}'"/>
-    </div>
+	<jsp:include page="incl_head.jsp"/>
 
-    <div style="text-align:center;margin-top:70px">
+</head>
 
-        <embed src="${appUrl}/images/movie_poster.png" href="<c:out value="${mtfn:playbackLink(pageContext, tracks[0], null)}"/>" type="${mtfn:contentType(config, authUser, tracks[0])}" target="myself"
-            <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus" begin="1">
-                qtnext${trackLoopStatus.index}="<<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>> T<myself>"
-            </c:forEach>
-            qtnext${fn:length(tracks)}="GOTO0"
-        />
+<body class="qtpage">
 
-    </div>
+	<div class="body">
+	
+	    <div class="head">
+	        <h1 onclick="self.document.location.href='${servletUrl}/showPortal/${auth}'"><span><fmt:message key="myTunesRss"/></span></h1>
+	    </div>
+	
+	    <div class="content">
+	        <div class="content-inner" style="text-align:center;padding: 25px 0;">
+	
+				<embed src="${appUrl}/images/movie_poster.png" href="<c:out value="${mtfn:playbackLink(pageContext, tracks[0], null)}"/>" type="${mtfn:contentType(config, authUser, tracks[0])}" target="myself"
+				    <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus" begin="1">
+				        qtnext${trackLoopStatus.index}="<<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>> T<myself>"
+				    </c:forEach>
+				    qtnext${fn:length(tracks)}="GOTO0"
+				/>
+	
+			</div>
+	    </div>
+	    
+	    <div class="footer">
+	    	<div class="inner">&nbsp;</div>
+	    </div>
+	    
+	</div>
 
 </body>
 

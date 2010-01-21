@@ -37,14 +37,16 @@ a:HOVER {
 /* Head */
 
 .startpage div.head,
-.loginpage div.head {
+.loginpage div.head,
+.qtpage div.head {
     margin: 10px 0 0 0;
     padding: 0 14px 0 0;
     background: url("../images/head.png") bottom right;
 }
 
 .startpage h1,
-.loginpage h1 {
+.loginpage h1,
+.qtpage h1 {
     background: url( "../images/head.png" ) left top;
     height: 50px;
     padding: 11px 0 0 0;
@@ -53,7 +55,8 @@ a:HOVER {
 }
 
 .startpage h1 span,
-.loginpage h1 span {
+.loginpage h1 span,
+.qtpage h1 span {
     display: block;
     width: 195px;
     height: 42px;
