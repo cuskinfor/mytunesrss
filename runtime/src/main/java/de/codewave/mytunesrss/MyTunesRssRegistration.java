@@ -28,6 +28,7 @@ public class MyTunesRssRegistration {
     private boolean myValid;
     private Version myMaxVersion;
     private JXPathContext mySettings;
+    private static final String UNREGISTERED = "unregistered";
 
     public static MyTunesRssRegistration register(File registrationFile) {
         try {
@@ -116,12 +117,14 @@ public class MyTunesRssRegistration {
                 LOG.info("Using registration data from preferences.");
             }
             handleRegistration(registration);
-            if (isExpired()) {
+            if (isExpired() || isUnregistered()) {
                 if (LOG.isInfoEnabled()) {
-                    LOG.info("License expired. Using default registration data.");
+                    LOG.info("License expired or UNREGISTERED license. Using default registration data.");
                 }
                 if (allowDefaultLicense) {
                     handleRegistration(RegistrationUtils.getRegistrationData(getDefaultLicenseFile(), getPublicKey()));
+                    myExpiration = MyTunesRss.CONFIG.getConfigCreationTime() + TRIAL_PERIOD_MILLIS;
+                    LOG.info("Set expiration to " + new SimpleDateFormat("yyyy-MM-dd").format(new Date(myExpiration)));
                 }
             }
         } else if (allowDefaultLicense) {
@@ -142,7 +145,7 @@ public class MyTunesRssRegistration {
         if (StringUtils.isNotEmpty(registration)) {
             JXPathContext registrationContext = JXPathUtils.getContext(registration);
             myReleaseVersion = JXPathUtils.getBooleanValue(registrationContext, "/registration/release-version", true);
-            myName = JXPathUtils.getStringValue(registrationContext, "/registration/name", "unregistered");
+            myName = JXPathUtils.getStringValue(registrationContext, "/registration/name", UNREGISTERED);
             String versionString = JXPathUtils.getStringValue(registrationContext, "/registration/max-version", Integer.toString(Integer.MAX_VALUE));
             myMaxVersion = new Version(versionString + "." + Integer.MAX_VALUE + "." + Integer.MAX_VALUE);
             String expirationDate = JXPathUtils.getStringValue(registrationContext, "/registration/expiration", null);
@@ -196,6 +199,10 @@ public class MyTunesRssRegistration {
 
     public String getName() {
         return myName;
+    }
+
+    public boolean isUnregistered() {
+        return StringUtils.equals(myName, UNREGISTERED);
     }
 
     public boolean isExpiredPreReleaseVersion() {
