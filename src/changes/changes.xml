@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.8.0" date="2010-01-28">
+            <action dev="mdescher" type="update">
+                Camel 0.9.10 to fix genre bug.
+            </action>
+        </release>
+
         <release version="3.8.0-RC-3" date="2010-01-24">
             <action dev="mdescher" type="fix">
                 Escape lucene query terms.
