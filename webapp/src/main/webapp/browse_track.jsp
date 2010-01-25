@@ -143,7 +143,7 @@
                 
                                 </c:when>
                                 <c:otherwise>
-                                    <a class="add" onclick="addTracksToPlaylist($A([${mtfn:jsArray(fn:split(track.sectionIds, ","))}]))" alt="add">Add</a>
+                                    <a class="add" onclick="addTracksToPlaylist($A([${mtfn:jsArray(fn:split(track.sectionIds, ","))}]))" alt="add"><span>Add</span></a>
                                 </c:otherwise>
                             </c:choose>
                         </th>
@@ -219,7 +219,7 @@
                                         <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=64</mt:encrypt>" style="display:none" alt=""/>
                                     </a>
                                 </c:if>
-                                <a class="add" onclick="addTracksToPlaylist($A(['${mtfn:escapeJs(track.id)}']))" alt="add">Add</a>
+                                <a class="add" onclick="addTracksToPlaylist($A(['${mtfn:escapeJs(track.id)}']))" alt="add"><span>Add</span></a>
                             </c:otherwise>
                         </c:choose>
                     </td>

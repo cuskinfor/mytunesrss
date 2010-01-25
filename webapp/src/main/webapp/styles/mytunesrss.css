@@ -39,6 +39,7 @@ a:HOVER {
 .startpage div.head,
 .loginpage div.head,
 .qtpage div.head {
+	position: relative;
     margin: 10px 0 0 0;
     padding: 0 14px 0 0;
     background: url("../images/head.png") bottom right;
@@ -74,6 +75,7 @@ a:HOVER {
 .remote div.head,
 .errorPage div.head,
 .settings div.head {
+	position: relative;
     margin: 10px 0 0 0;
     padding: 0 14px 0 0;
     background: url("../images/head-small.png") bottom right;
@@ -108,10 +110,10 @@ a:HOVER {
 .remote h1 span,
 .errorPage h1 span,
 .settings h1 span {
-    padding-left: 20px;
+	padding: 1px 0 1px 20px;
     color: #000;
     text-shadow: #eee 0 1px 0;
-    background: url("../images/library.png") left center no-repeat;
+    background: url("../images/mytunesrss.png") left center no-repeat;
 }
 
 .browse h1 a,
@@ -147,6 +149,7 @@ a:HOVER {
     font-size: 10px;
     color: #000;
     font-weight: bold;       
+    line-height: 14px;
 }
 
 
@@ -227,11 +230,15 @@ ul.menu li.spacer {
 
 /* Navigation */
 
-.navigation {
+div.navigation {
+    padding: 8px 0;
+}
+
+table.navigation {
+	margin: 8px 0;
     display: table;
     position: static;
     width:  100%;
-    padding: 8px 0;
 }
 
 .navigation .search {
@@ -245,6 +252,10 @@ ul.menu li.spacer {
 .navigation .search input[type="text"] {
     width: 98%;
     margin: 0 0 8px 0;
+}
+
+.navigation .search select {
+	float: left;
 }
 
 .navigation .search input[type="submit"] {
@@ -291,12 +302,13 @@ ul.menu li.spacer {
 /* Content */
 
 .content {
+	/* IE 7 needs this */
+	position: relative;
     padding: 0 9px 0 0;
     background: url("../images/content-right.png") right top repeat-y;
 }
 
 .content-inner {
-    position: relative;
     padding: 0 0 0 9px;
     background: url("../images/content-left.png") left top repeat-y;    
 }
@@ -308,13 +320,15 @@ ul.menu li.spacer {
     display: inline-block;
     height: 18px;
     width: 18px;
-    margin: 0;
+    margin: 0 0 0 2px;
     padding: 0;
-    overflow: hidden;
-    text-indent: -9999px;
     cursor: pointer;
     border: none;
-    text-align: center;
+	white-space: nowrap;
+}
+
+.actions a span {
+	display: none;
 }
 
 .actions .rss,
@@ -405,7 +419,7 @@ ul.menu li.spacer {
 
 .tracklist th {
     padding: 0 8px;
-    background: url("../images/tracklist-head.png") right top repeat-x;
+    background: #6492e3 url("../images/tracklist-head.png") right top repeat-x;
     color: #fff;
     font-size: 10px;
     line-height: 20px;
@@ -416,7 +430,7 @@ ul.menu li.spacer {
 
 .searchResult th {
     padding: 3px 8px 2px 8px;
-    background: url("../images/searchResult-head.png") right top repeat-x;
+    background: #6492e3 url("../images/searchResult-head.png") right top repeat-x;
     font-size: 12px;
     text-align: left;
     vertical-align: top;
@@ -449,12 +463,11 @@ ul.menu li.spacer {
 }
 
 .searchResult th.actions {
+	width: 1%;
     text-align: right;
-    padding-top: 4px;
-    padding-bottom: 0;
-    padding-right: 5px;
-    background-position: left top;
+	padding: 2px 5px 2px 10px;
     white-space: nowrap;
+	font-size: 0.1em;
 }
 
 
@@ -488,8 +501,9 @@ ul.menu li.spacer {
 .tracklist td.actions {
     width: 1%;
     text-align: right;
-    padding: 3px 5px 0 10px;
+    padding: 2px 5px 2px 10px;
     white-space: nowrap;
+    font-size: 0.1em;
 }
 
 .tracklist td.tracks,
@@ -619,6 +633,7 @@ ul.menu li.spacer {
 /* Footer */
 
 .footer {
+	position: relative; /* IE 7 needs this */
     padding: 0 17px 0 0;
     background: url("../images/footer.png") right bottom no-repeat;
 }
@@ -648,11 +663,11 @@ ul.menu li.spacer {
 
 h2 {
     margin: 0;
-    padding: 0;
-    background: url("../images/tracklist-head.png") center top repeat-x;
+	padding: 4px 0 0 0;
+	background: #6492e3 url("../images/tracklist-head.png") center top repeat-x;
     color: #fff;
     font-size: 10px;
-    line-height: 20px;
+	height: 16px;
     text-align: center;
     font-weight: bold;
     text-shadow: #243ece 0 -1px 0px;
@@ -699,10 +714,16 @@ div.login table input[type="password"] {
     width: 99%;
 }
 
-div.login input[type="checkbox"],
-div.login input[type="submit"] {
+div.login div.rememberChk {
+	float: left;
 	margin-bottom: 10px;
 }
+
+div.login div.submitBtn {
+	float: right;
+	margin-bottom: 10px;
+}
+
 
 div.login table select {
     width: 100%;
@@ -850,6 +871,12 @@ table.settings td.label {
     font-weight: bold;       
 }
 
+table.settings input,
+table.settings img,
+table.settings select {
+	vertical-align: middle;
+}
+
 table.settings input[type="text"],
 table.settings input[type="password"] {
     width: 99%;
@@ -885,9 +912,10 @@ td.filter a {
 /* Track Info */
 
 a.original {
+	display: inline-block;
     background: url("../images/action-download.png") left center no-repeat;
     padding-left: 24px;
-    margin-bottom: 20px;
+    line-height: 18px !important;
 }
 
 
@@ -935,22 +963,22 @@ body.upload form {
 /* Pager */
 
 div.pager {
-	padding: 2px;
+	padding: 5px 5px 4px 5px;
 	background: url("../images/pager_bottom_background.png") left top repeat-x;
 	text-align: center;
 }
 
 div.pager a {
 	display: inline-block;
-	height: 15px;
+	height: 14px;
 	width: 24px;
 	margin: 0;
-	padding: 0 0 1px 0;
+	padding: 2px 0 0 0;
 	background: url("../images/pager_button.png") 0 -32px no-repeat;
 	color: #fff;
 	font-size: 10px;
+	line-height: 10px;
 	font-weight: bold;
-	line-height: 15px;
 	text-shadow: #000 0 0 1px;
 	cursor: pointer;
 }

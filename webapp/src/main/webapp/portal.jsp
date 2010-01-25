@@ -75,9 +75,9 @@
 
         <form id="search" action="${servletUrl}/searchTracks/${auth}" method="post">
 
-            <div class="navigation">
-
-                <div class="search">
+            <table class="navigation" cellspacing="0">
+            	<tr>
+	                <td class="search">
                     <input class="text" type="text" name="searchTerm" value="<c:out value="${lastSearchTerm}"/>"/>
                     <c:choose>
                         <c:when test="${authUser.searchFuzziness == -1}">
@@ -92,9 +92,9 @@
                     </c:choose>
                     <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
                     <input class="button" type="submit" value="<fmt:message key="doSearch"/>"/>
-                </div>
+	                </td>
 
-                <div class="links">
+	                <td class="links">
                     <c:if test="${!globalConfig.disableBrowser}">
                         <a class="library" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
                             <fmt:message key="browseLibrary" />
@@ -120,9 +120,9 @@
                             <fmt:message key="showUpload" />
                         </a>
                     </c:if>
-                </div>
-
-            </div>
+	                </td>
+                </tr>
+            </table>
 
         </form>
 

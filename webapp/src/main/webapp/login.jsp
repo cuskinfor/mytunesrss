@@ -81,9 +81,13 @@
 	                        <tr>
 	                            <td>&nbsp;</td>
 	                            <td>
+	                            	<div class="rememberChk">
 	                                <input type="checkbox" name="rememberLogin" value="true" id="rememberCheck"/>
 	                                <label for="rememberCheck"><fmt:message key="rememberLogin"/></label>
-	                                <input class="button" type="submit" value="<fmt:message key="doLogin"/>" style="float:right"/>
+		                            </div>
+	                                <div class="submitBtn">
+		                                <input class="button" type="submit" value="<fmt:message key="doLogin"/>"/>
+		                            </div>
 	                            </td>
 	                            <td>&nbsp;</td>
 	                        </tr>

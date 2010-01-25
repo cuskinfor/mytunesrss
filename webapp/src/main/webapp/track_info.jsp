@@ -42,7 +42,7 @@
     
         <div class="head">    
             <h1>
-                <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal" /></a>
+                <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal" /></span></a>
                 <span><fmt:message key="myTunesRss" /></span>
             </h1>
         </div>
@@ -55,7 +55,7 @@
             
               <ul class="menu">
                 <c:if test="${!empty param.backUrl}">
-                  <li>
+                  <li class="back">
                     <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back" /></a>
                   </li>
                 </c:if>
@@ -173,19 +173,19 @@
                         <td>&nbsp;</td>
                         <td class="actions">
                             <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
-                                <a href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="tooltip.remotecontrol"/>">Remote Control</a>
+                                <a class="remote" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="tooltip.remotecontrol"/>"><span>Remote Control</span></a>
                             </c:if>
                             <c:if test="${authUser.rss && config.showRss}">
-                                    <a class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml" title="<fmt:message key="tooltip.rssfeed"/>">RSS</a>
+                                    <a class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml" title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
                             </c:if>
                             <c:if test="${authUser.playlist && config.showPlaylist}">
-                                    <a class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}" title="<fmt:message key="tooltip.playlist"/>">Playlist</a>
+                                    <a class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}" title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
                             </c:if>
                             <c:if test="${authUser.player && config.showPlayer}">
-                                    <a class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=track=${track.id}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>">Flash Player</a>
+                                    <a class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=track=${track.id}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <c:if test="${authUser.download && config.showDownload}">
-                                    <a class="download" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="${track.name}" title="<fmt:message key="tooltip.playtrack"/>">Download</a>
+                                    <a class="download" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="${track.name}" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
                             </c:if>
                         </td>
                     </tr>

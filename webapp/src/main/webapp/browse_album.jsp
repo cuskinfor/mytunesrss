@@ -125,7 +125,7 @@
             </th>
             <th><fmt:message key="artist"/></th>
             <th><fmt:message key="tracks"/></th>
-            <th>&nbsp;</th>
+            <th class="actions">&nbsp;</th>
         </tr>
         <c:forEach items="${albums}" var="album" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
