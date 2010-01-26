@@ -95,10 +95,9 @@ a:HOVER {
     padding: 6px 0 0 0;
     margin: 0;
     background: url( "../images/head-small.png" ) left top;
-    font-size: 12px;  
+    font-size: 12px;
     text-align: center;
     font-weight: normal;
-    cursor: default;
 }
 
 .browse h1 span,
@@ -114,6 +113,7 @@ a:HOVER {
     color: #000;
     text-shadow: #eee 0 1px 0;
     background: url("../images/mytunesrss.png") left center no-repeat;
+    cursor: default;
 }
 
 .browse h1 a,
@@ -148,8 +148,10 @@ a:HOVER {
     background: url("../images/portal-button.png") left top no-repeat;
     font-size: 10px;
     color: #000;
-    font-weight: bold;       
+    font-weight: bold;
     line-height: 14px;
+    cursor: inherit;
+    cursor: hand;
 }
 
 
@@ -180,7 +182,7 @@ ul.menu a {
     color: #eee;
     text-decoration: none;
     text-shadow: #000 0 -1px 0px;
-    outline: 0;    
+    outline: 0;
 }
 
 ul.menu li.active {
@@ -214,7 +216,7 @@ ul.menu .back {
 ul.menu .logout a,
 ul.menu .back a {
     padding: 0 10px 0 12px;
-    background: url("../images/menu-seperator.png") left top no-repeat;       
+    background: url("../images/menu-seperator.png") left top no-repeat;
 }
 
 ul.menu li.first a {
@@ -246,7 +248,7 @@ table.navigation {
     background: url("../images/search.png") 10px center no-repeat;
     padding: 0 20px 0 57px;
     display: table-cell;
-    vertical-align: middle;    
+    vertical-align: middle;
 }
 
 .navigation .search input[type="text"] {
@@ -269,7 +271,7 @@ table.navigation {
     width: 35%;
     padding: 0 10px 0 22px;
     background: url("../images/navigation-seperator.png") left center no-repeat;
-    vertical-align: middle;    
+    vertical-align: middle;
 }
 
 .navigation a {
@@ -310,7 +312,7 @@ table.navigation {
 
 .content-inner {
     padding: 0 0 0 9px;
-    background: url("../images/content-left.png") left top repeat-y;    
+    background: url("../images/content-left.png") left top repeat-y;
 }
 
 
@@ -333,30 +335,30 @@ table.navigation {
 
 .actions .rss,
 .actionsMenu .rss {
-    background: url("../images/action-rss.png") left top no-repeat;    
+    background: url("../images/action-rss.png") left top no-repeat;
 }
 
 .actions .playlist,
 .actionsMenu .playlist {
-    background: url("../images/action-playlist.png") left top no-repeat;    
+    background: url("../images/action-playlist.png") left top no-repeat;
 }
 
 .actions .flash,
 .actionsMenu .flash {
-    background: url("../images/action-flash.png") left top no-repeat;    
+    background: url("../images/action-flash.png") left top no-repeat;
 }
 
 .actions .download,
 .actionsMenu .download {
-    background: url("../images/action-download.png") left top no-repeat;    
+    background: url("../images/action-download.png") left top no-repeat;
 }
 
 .actions .menu {
-    background: url("../images/action-menu.png") left top no-repeat;    
+    background: url("../images/action-menu.png") left top no-repeat;
 }
 
 .actions .add {
-    background: url("../images/action-add.png") left top no-repeat;    
+    background: url("../images/action-add.png") left top no-repeat;
 }
 
 .actions .remote,
@@ -414,12 +416,12 @@ table.navigation {
 .tracklist {
     width: 100%;
     background: #fff;
-    cursor: default;    
+    cursor: default;
 }
 
 .tracklist th {
     padding: 0 8px;
-    background: #6492e3 url("../images/tracklist-head.png") right top repeat-x;
+    background: #6492e3 url("../images/tracklist-head.png") right center repeat-x;
     color: #fff;
     font-size: 10px;
     line-height: 20px;
@@ -428,60 +430,18 @@ table.navigation {
     text-shadow: #243ece 0 -1px 0px;
 }
 
-.searchResult th {
-    padding: 3px 8px 2px 8px;
-    background: #6492e3 url("../images/searchResult-head.png") right top repeat-x;
-    font-size: 12px;
-    text-align: left;
-    vertical-align: top;
-}
-
-.searchResult th .albumCover {
-	float: left;
-	width: 14px;
-	height: 15px;
-	margin: 2px 8px 0 -4px;
-	padding: 1px 1px 2px 1px;
-	background: url("../images/cover-head.png") no-repeat;
-}
-
-.searchResult th .albumCover img {
-	position: absolute;
-	width: 14px;
-	height: 14px;
-}
-
-.searchResult th a {
-    color: #fff;
-    text-shadow: #243ece 0 -1px 0px;
-    text-decoration: none;  
-    outline: 0;  
-}
-
-.searchResult th a:HOVER {
-    text-decoration: underline;
-}
-
-.searchResult th.actions {
-	width: 1%;
-    text-align: right;
-	padding: 2px 5px 2px 10px;
-    white-space: nowrap;
-	font-size: 0.1em;
-}
-
-
 .tracklist th.tracks {
-    background-position: left top;
+    background-position: left center;
     text-align: left;
 }
 
 .tracklist th.actions {
-    background-position: left top;
+    background-position: left center;
+    vertical-align: top;
 }
 
 .tracklist td {
-    padding: 2px 8px;
+    padding: 4px 8px;
 }
 
 .tracklist tr.odd td {
@@ -501,9 +461,11 @@ table.navigation {
 .tracklist td.actions {
     width: 1%;
     text-align: right;
-    padding: 2px 5px 2px 10px;
+    padding: 3px 3px 3px 3px;
     white-space: nowrap;
     font-size: 0.1em;
+    line-height: 0.1em;
+    vertical-align: top;
 }
 
 .tracklist td.tracks,
@@ -539,21 +501,20 @@ table.navigation {
 }
 
 .tracklist .coverThumbnailColumn {
-    padding: 0 !important;
+	padding: 0 !important;
 }
 
-.tracklist .coverThumbnailColumn div.trackName {
-    min-height: 23px;
+.tracklist .coverThumbnailColumn .trackName {
+	min-height: 16px;
     position: relative;
-    padding: 3px 5px 0 32px;
+    padding: 4px 8px 4px 28px;
 }
 
-.tracklist img.coverThumbnail {
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    width: 24px;
-    height: 24px;
+.tracklist .coverThumbnailColumn .albumCover {
+	position: absolute;
+	margin: 0;
+	top: 4px;
+	left: 4px;
 }
 
 .tracklist a.youtube {
@@ -564,6 +525,54 @@ table.navigation {
 .tracklist a.movie {
 	padding-left: 24px;
 	background: url("../images/movie.gif") left center no-repeat;
+}
+
+.searchResult th {
+    padding: 2px 8px;
+    background: #6492e3 url("../images/searchResult-head.png") right center repeat-x;
+    border-top: 1px solid #367ade;
+    border-bottom: 1px solid #243ece;
+    font-size: 12px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.tracklist .albumCover {
+	float: left;
+	width: 14px;
+	height: 15px;
+	margin: 2px 8px 0 -4px;
+	padding: 1px 1px 2px 1px;
+	background: url("../images/cover-head.png") no-repeat;
+	line-height: 0.1em;
+	font-size: 0.1em;
+}
+
+.tracklist .albumCover img {
+	width: 14px;
+	height: 14px;
+	margin: 0;
+	text-align: top;
+}
+
+.searchResult th a {
+    color: #fff;
+    text-shadow: #243ece 0 -1px 0px;
+    text-decoration: none;
+    outline: 0;
+}
+
+.searchResult th a:HOVER {
+    text-decoration: underline;
+}
+
+.searchResult th.actions {
+	width: 1%;
+    text-align: right;
+	padding: 3px 3px 0 3px;
+    white-space: nowrap;
+	font-size: 0.1em;
+	line-height: 0.1em;
 }
 
 .tooltip {
@@ -588,44 +597,44 @@ table.navigation {
 /* Playlists */
 
 .tracklist td.mytunes {
-    padding-left: 32px;
+    padding-left: 28px;
     background-image: url( "../images/playlist_mt.png" );
-    background-position: 10px center;
+    background-position: 5px center;
     background-repeat: no-repeat;
 }
 
 .tracklist td.itunes {
-    padding-left: 32px;
+    padding-left: 28px;
     background-image: url( "../images/playlist_it.png" );
-    background-position: 10px center;
+    background-position: 5px center;
     background-repeat: no-repeat;
 }
 
 .tracklist td.itunesfolder {
-    padding-left: 32px;
+    padding-left: 28px;
     background-image: url( "../images/folder_it.png" );
-    background-position: 10px center;
+    background-position: 4px center;
     background-repeat: no-repeat;
 }
 
 .tracklist td.mytunessmart {
-    padding-left: 32px;
+    padding-left: 28px;
     background-image: url( "../images/playlist_mt_smart.png" );
-    background-position: 10px center;
+    background-position: 5px center;
     background-repeat: no-repeat;
 }
 
 .tracklist td.homefolder {
-    padding-left: 32px;
+    padding-left: 28px;
     background-image: url( "../images/home_folder.png" );
-    background-position: 10px center;
+    background-position: 5px center;
     background-repeat: no-repeat;
 }
 
 .tracklist td.parentfolder {
-    padding-left: 32px;
+    padding-left: 28pxs;
     background-image: url( "../images/parent_folder.png" );
-    background-position: 10px center;
+    background-position: 5px center;
     background-repeat: no-repeat;
 }
 
@@ -701,7 +710,7 @@ div.login table {
 
 div.login table td {
     padding: 5px 8px;
-    text-align: left;   
+    text-align: left;
 }
 
 div.login table .label {
@@ -752,7 +761,7 @@ div.messageContainer .top {
 
 div.messageContainer .top .inner {
 	height: 6px;
-	background: url("../images/message-top.png") left top no-repeat;	
+	background: url("../images/message-top.png") left top no-repeat;
 }
 
 div.messageContainer .bottom {
@@ -762,7 +771,7 @@ div.messageContainer .bottom {
 
 div.messageContainer .bottom .inner {
 	height: 11px;
-	background: url("../images/message-bottom.png") left top no-repeat;	
+	background: url("../images/message-bottom.png") left top no-repeat;
 }
 
 div.messageContainer .messageContent {
@@ -777,7 +786,7 @@ div.messageContainer .messageContent .inner {
 	color: #000;
 	font-weight: bold;
 	text-shadow: #ccc 0 1px 0;
-	cursor: default;	
+	cursor: default;
 }
 
 div.messageContainer div.icon {
@@ -868,7 +877,7 @@ table.settings td.label {
     text-align: right;
     text-shadow: #efefef 0 1px 0;
     color: #666;
-    font-weight: bold;       
+    font-weight: bold;
 }
 
 table.settings input,
@@ -946,7 +955,7 @@ body.upload form {
 }
 
 #progressBackground {
-	background: url("../images/progress_background.gif") center center no-repeat;	
+	background: url("../images/progress_background.gif") center center no-repeat;
 	border: 1px solid #666;
 }
 
@@ -1052,11 +1061,11 @@ div.playlistbottom {
 }
 
 .playlist .close {
-    background: url("../images/action-delete.png") left top no-repeat;    
+    background: url("../images/action-delete.png") left top no-repeat;
 }
 
 .playlist .finish {
-    background: url("../images/action-confirm.png") left top no-repeat;    
+    background: url("../images/action-confirm.png") left top no-repeat;
 }
 
 .playlistEditor table.settings td {
