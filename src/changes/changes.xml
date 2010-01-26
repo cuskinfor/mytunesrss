@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.8.0" date="2010-01-28">
+        <release version="3.8.0-RC-4" date="2010-01-26">
             <action dev="mdescher" type="fix">
                 Display correct count for "all tracks of genre" in album browser for a certain genre.
             </action>
