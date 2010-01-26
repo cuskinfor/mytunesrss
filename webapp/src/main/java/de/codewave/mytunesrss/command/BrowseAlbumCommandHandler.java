@@ -80,11 +80,11 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                         }
                     }));
                 } else {
-                    final String finalArtist = artist;
+                    final String finalGenre = genre;
                     getRequest().setAttribute("allArtistGenreTrackCount", getTransaction().executeQuery(new DataStoreQuery<Object>() {
                         public Object execute(Connection connection) throws SQLException {
                             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenreTrackCount");
-                            statement.setString("name", finalArtist);
+                            statement.setString("name", finalGenre);
                             ResultSet rs = statement.executeQuery();
                             if (rs.next()) {
                                 return rs.getInt("COUNT");
