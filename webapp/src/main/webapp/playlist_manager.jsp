@@ -85,18 +85,18 @@
                             <td class="actions">
                                 <c:choose>
                                     <c:when test="${playlist.type == 'MyTunesSmart'}">
-                                        <a class="edit" href="${servletUrl}/editSmartPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlistId=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">Edit</a>
+                                        <a class="edit" href="${servletUrl}/editSmartPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlistId=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Edit</span></a>
                                         </c:when>
                                     <c:otherwise>
-                                        <a class="edit" onclick="loadAndEditPlaylist('${playlist.id}')">Edit</a>
+                                        <a class="edit" onclick="loadAndEditPlaylist('${playlist.id}')"><span>Edit</span></a>
                                     </c:otherwise>
                                 </c:choose>
                                 <c:choose>
                                     <c:when test="${deleteConfirmation}">
-                                        <a class="delete" onclick="$jQ('#confirmDeletePlaylist').dialog('option', 'serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');$jQ('#confirmDeletePlaylist').dialog('open')">Delete</a>
+                                        <a class="delete" onclick="$jQ('#confirmDeletePlaylist').dialog('option', 'serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');$jQ('#confirmDeletePlaylist').dialog('open')"><span>Delete</span></a>
                                     </c:when>
                                     <c:otherwise>
-                                        <a class="delete" href="${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>">Delete</a>
+                                        <a class="delete" href="${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>"><span>Delete</span></a>
                                     </c:otherwise>
                                 </c:choose>
                             </td>

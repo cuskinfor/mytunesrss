@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="3.8.1" date="2010-01-29">
+            <action dev="mdescher" type="fix">
+                MYTUNESRSS-111 "Small dot at the top right of some icons"
+            </action>
+            <action dev="mdescher" type="fix">
+                MYTUNESRSS-110 "Playlist editing completely broken "
+            </action>
+        </release>
+
         <release version="3.8.0" date="2010-01-28">
             <action dev="mdescher" type="fix">
                 MYTUNESRSS-106 "Do not display tray icon before main window has been opened"

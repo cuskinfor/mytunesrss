@@ -180,10 +180,8 @@
 
                         </c:when>
                         <c:otherwise>
-                            <a style="cursor:pointer" onclick="addAlbumsToPlaylist($A(['${mtfn:escapeJs(album.name)}']))">
-                                <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add"/> </a>
-                            <a href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}/name=${cwfn:encodeUrl(album.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                <img src="${appUrl}/images/one_click_playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="oneClickPlaylist" /> </a>
+                            <a class="add" onclick="addAlbumsToPlaylist($A(['${mtfn:escapeJs(album.name)}']))"><span>Add</span></a>
+                            <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}/name=${cwfn:encodeUrl(album.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Add</span></a>
                         </c:otherwise>
                     </c:choose>
                 </td>
@@ -207,10 +205,8 @@
                                            zipFileCount="${allAlbumsTrackCount}" />
                         </c:when>
                         <c:otherwise>
-                            <a style="cursor:pointer" onclick="addToPlaylist(null, $A(['${mtfn:escapeJs(cwfn:decode64(param.artist))}']), $A(['${mtfn:escapeJs(cwfn:decode64(param.genre))}']), null, true)">
-                                <img src="${appUrl}/images/add${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
-                            <a href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/name=${cwfn:encodeUrl(param.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                <img src="${appUrl}/images/one_click_playlist${cwfn:choose(fn:length(albums) % 2 == 0, '', '_odd')}.gif" alt="oneClickPlaylist" /> </a>
+                            <a class="add" onclick="addToPlaylist(null, $A(['${mtfn:escapeJs(cwfn:decode64(param.artist))}']), $A(['${mtfn:escapeJs(cwfn:decode64(param.genre))}']), null, true)"><span>Add</span></a>
+                            <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/name=${cwfn:encodeUrl(param.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Add</span></a>
                         </c:otherwise>
                     </c:choose>
                 </td>
@@ -246,10 +242,8 @@
                                            zipFileCount="${allArtistGenreTrackCount}" />
                         </c:when>
                         <c:otherwise>
-                            <a style="cursor:pointer" onclick="addToPlaylist(null, $A(['${mtfn:escapeJs(cwfn:decode64(param.artist))}']), $A(['${mtfn:escapeJs(cwfn:decode64(param.genre))}']), null, false)">
-                                <img src="${appUrl}/images/add${cwfn:choose(fn:length(albums) % 2 == 0, '_odd', '')}.gif" alt="add" /> </a>
-                            <a href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/name=${cwfn:encodeUrl(param.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                <img src="${appUrl}/images/one_click_playlist${cwfn:choose(fn:length(albums) % 2 == 0, '_odd', '')}.gif" alt="oneClickPlaylist" /> </a>
+                            <a class="add" onclick="addToPlaylist(null, $A(['${mtfn:escapeJs(cwfn:decode64(param.artist))}']), $A(['${mtfn:escapeJs(cwfn:decode64(param.genre))}']), null, false)"><span>Add</span></a>
+                            <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/name=${cwfn:encodeUrl(param.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Add</span></a>
                         </c:otherwise>
                     </c:choose>
                 </td>
