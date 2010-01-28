@@ -37,9 +37,9 @@
     </Company_Info>
     <Program_Info>
         <Program_Name>MyTunesRSS</Program_Name>
-        <Program_Version>3.8.0-RC-4</Program_Version>
+        <Program_Version>3.8.0</Program_Version>
         <Program_Release_Month>01</Program_Release_Month>
-        <Program_Release_Day>26</Program_Release_Day>
+        <Program_Release_Day>28</Program_Release_Day>
         <Program_Release_Year>2010</Program_Release_Year>
         <Program_Cost_Dollars/>
         <Program_Cost_Other_Code>EUR</Program_Cost_Other_Code>
@@ -72,7 +72,7 @@ Bugfixes.
         <Program_Category_Class>Audio &amp; Multimedia::Other</Program_Category_Class>
         <Program_System_Requirements>Java 1.5</Program_System_Requirements>
         <File_Info>
-            <File_Size_Bytes>36179116</File_Size_Bytes>
+            <File_Size_Bytes>36179629</File_Size_Bytes>
             <File_Size_K>0</File_Size_K>
             <File_Size_MB>0.0</File_Size_MB>
         </File_Info>
@@ -120,7 +120,7 @@ Bugfixes.
             <Application_XML_File_URL>http://www.codewave.de/products/mytunesrss/pad-win.xml</Application_XML_File_URL>
         </Application_URLs>
         <Download_URLs>
-            <Primary_Download_URL>http://www.codewave.de/products/mytunesrss/?download_file=mytunesrss-3.8.0-RC-4-setup.exe
+            <Primary_Download_URL>http://www.codewave.de/products/mytunesrss/?download_file=mytunesrss-3.8.0-setup.exe
             </Primary_Download_URL>
             <Secondary_Download_URL/>
             <Additional_Download_URL_1/>
