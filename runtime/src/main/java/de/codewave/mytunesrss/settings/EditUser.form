@@ -639,8 +639,9 @@
       </grid>
       <component id="d890f" class="javax.swing.JTextPane" binding="myHelpLabel">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="4" anchor="0" fill="0" indent="0" use-parent-layout="false">
-            <preferred-size width="300" height="400"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false">
+            <minimum-size width="300" height="300"/>
+            <preferred-size width="300" height="300"/>
           </grid>
         </constraints>
         <properties>

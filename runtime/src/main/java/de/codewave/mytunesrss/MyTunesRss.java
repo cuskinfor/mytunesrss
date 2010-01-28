@@ -402,9 +402,6 @@ public class MyTunesRss {
         //DATABASE_FORM = SETTINGS.getDatabaseForm();
         MyTunesRssMainWindowListener mainWindowListener = new MyTunesRssMainWindowListener(SETTINGS);
         executeApple(SETTINGS);
-        SYSTRAY = new MyTunesRssSystray(SETTINGS);
-        SYSTRAY.setServerStopped();
-        MyTunesRssEventManager.getInstance().addListener(SYSTRAY);
         ROOT_FRAME.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         ROOT_FRAME.addWindowListener(mainWindowListener);
         ROOT_FRAME.getContentPane().add(SETTINGS.getRootPanel());
@@ -447,6 +444,9 @@ public class MyTunesRss {
         }
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
+        SYSTRAY = new MyTunesRssSystray(SETTINGS);
+        SYSTRAY.setServerStopped();
+        MyTunesRssEventManager.getInstance().addListener(SYSTRAY);
         SETTINGS.init();
         ROOT_FRAME.setVisible(true);
         ROOT_FRAME.pack();
