@@ -217,11 +217,11 @@
                             <c:otherwise>
                                 <c:if test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && config.showDownload && authUser.download && config.yahooMediaPlayer}">
                                     <c:set var="yahoo" value="true"/>
-                                    <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>"/>
+                                    <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>">
                                         <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=64</mt:encrypt>" style="display:none" alt=""/>
                                     </a>
                                 </c:if>
-                                <a class="add" onclick="addTracksToPlaylist($A(['${mtfn:escapeJs(track.id)}']))" alt="add"><span>Add</span></a>
+                                <a class="add" onclick="addTracksToPlaylist($A(['${mtfn:escapeJs(track.id)}']))"><span>Add</span></a>
                             </c:otherwise>
                         </c:choose>
                     </td>

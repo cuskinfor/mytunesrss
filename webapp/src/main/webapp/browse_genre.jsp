@@ -140,10 +140,8 @@
                                                            zipFileCount="${genre.trackCount}" />
                                         </c:when>
                                         <c:otherwise>
-                                            <a style="cursor:pointer" onclick="addGenresToPlaylist($A(['${mtfn:escapeJs(genre.name)}']), false)">
-                                                <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
-                                            <a href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/name=${cwfn:encodeUrl(genre.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                                <img src="${appUrl}/images/one_click_playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                                            <a class="add" onclick="addGenresToPlaylist($A(['${mtfn:escapeJs(genre.name)}']), false)"><span>Add</span></a>
+                                            <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/name=${cwfn:encodeUrl(genre.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Add</span></a>
                                         </c:otherwise>
                                     </c:choose>
                                 </td>

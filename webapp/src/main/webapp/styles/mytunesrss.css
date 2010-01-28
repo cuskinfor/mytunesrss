@@ -361,6 +361,10 @@ table.navigation {
     background: url("../images/action-add.png") left top no-repeat;
 }
 
+.actions .oneclickplaylist {
+    background: url("../images/action-oneclickplaylist.png") left top no-repeat;
+}
+
 .actions .remote,
 .actionsMenu .remote {
     background: url("../images/action-remote.png") left top no-repeat;

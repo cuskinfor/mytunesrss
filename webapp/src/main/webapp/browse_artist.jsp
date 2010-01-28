@@ -149,10 +149,8 @@
                                                        editTagsId="${artist.name}" />
                                     </c:when>
                                     <c:otherwise>
-                                        <a style="cursor:pointer" onclick="addArtistsToPlaylist($A(['${mtfn:escapeJs(artist.name)}']), false)">
-                                            <img src="${appUrl}/images/add${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
-                                        <a href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/name=${cwfn:encodeUrl(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                            <img src="${appUrl}/images/one_click_playlist${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="add" /> </a>
+                                        <a class="add" onclick="addArtistsToPlaylist($A(['${mtfn:escapeJs(artist.name)}']), false)"><span>Add</span></a>
+                                        <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/name=${cwfn:encodeUrl(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Add</span></a>
                                     </c:otherwise>
                                 </c:choose>
                             </td>
