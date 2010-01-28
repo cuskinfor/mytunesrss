@@ -60,13 +60,13 @@ Windows bundle with installer (optionally can install Java runtime as well).
 File cache for downloaded ZIP archives (support for download managers).
 New function in web interface to set tags for tracks. You can also set tags for all tracks of an album, a playlist, etc.
 All functions (rss feed, flash player, download, etc.) are available through a popup menu in the web interface now. So you can enable the ones you usually use in the settings like before and access the other ones through the menu if needed. So you can save display space by disabling some functions but also use them if needed.
-When accessing the server with the iPhone the user is asked whether he wants to use the default interface or the iPhone optimized interface which does not have all functions of the default interface. The special iPhone service through http://iphone.mytunesrss.com will be disabled soon.
+When accessing the server with the iPhone the user is asked whether he wants to use the default interface or the iPhone optimized interface which does not have all functions of the default interface.
 Optionally configure forced transcoders for a user, i.e. force transcoder usage for a user.
 Simpler transcoder configuration for all media types (e.g. transcode AVI video to MP4 or FLV to play it in Flash player).
 LDAP authentication support.
 You can now configure multiple playlists if you want to restrict a user to a number of tracks.
-Opensearch link in portal page. You can add the MyTunesRSS search to your Firefox (other browsers have not been tested yet) search plugins.
-Complete new web interface design (not completely done, please report all issues).
+Opensearch link in portal page. You can add the MyTunesRSS search to your Firefox search plugins.
+Complete new web interface design.
 Bugfixes.
         </Program_Change_Info>
         <Program_Category_Class>Audio &amp; Multimedia::Other</Program_Category_Class>
