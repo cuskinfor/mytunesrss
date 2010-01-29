@@ -16,6 +16,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 public class TranscoderConfig {
     private String myName;
@@ -24,13 +25,13 @@ public class TranscoderConfig {
 
     private String myOptions;
 
-    private String mySuffixes;
+    private String myPattern;
 
     private String myTargetSuffix;
 
     private String myTargetContentType;
 
-    private String[] mySuffixesSplitted;
+    private Pattern myCompiledPattern;
 
     private String myMp4Codecs;
 
@@ -44,7 +45,7 @@ public class TranscoderConfig {
         setName(JXPathUtils.getStringValue(context, "name", null));
         setBinary(JXPathUtils.getStringValue(context, "binary", null));
         setOptions(JXPathUtils.getStringValue(context, "options", null));
-        setSuffixes(JXPathUtils.getStringValue(context, "suffixes", null));
+        setPattern(JXPathUtils.getStringValue(context, "pattern", null));
         setMp4Codecs(JXPathUtils.getStringValue(context, "mp4codecs", null));
         setMp4Codecs(JXPathUtils.getStringValue(context, "mp4codecs", null));
         setTargetSuffix(JXPathUtils.getStringValue(context, "targetsuffix", null));
@@ -55,7 +56,7 @@ public class TranscoderConfig {
         config.appendChild(DOMUtils.createTextElement(settings, "name", getName()));
         config.appendChild(DOMUtils.createTextElement(settings, "binary", getBinary()));
         config.appendChild(DOMUtils.createTextElement(settings, "options", getOptions()));
-        config.appendChild(DOMUtils.createTextElement(settings, "suffixes", getSuffixes()));
+        config.appendChild(DOMUtils.createTextElement(settings, "pattern", getPattern()));
         config.appendChild(DOMUtils.createTextElement(settings, "mp4codecs", getMp4Codecs()));
         config.appendChild(DOMUtils.createTextElement(settings, "targetsuffix", getTargetSuffix()));
         config.appendChild(DOMUtils.createTextElement(settings, "targetcontenttype", getTargetContentType()));
@@ -85,13 +86,13 @@ public class TranscoderConfig {
         myOptions = options;
     }
 
-    public String getSuffixes() {
-        return mySuffixes;
+    public String getPattern() {
+        return myPattern;
     }
 
-    public void setSuffixes(String suffixes) {
-        mySuffixes = StringUtils.defaultString(StringUtils.remove(StringUtils.lowerCase(suffixes), ' '), "");
-        mySuffixesSplitted = StringUtils.split(mySuffixes, ',');
+    public void setPattern(String pattern) {
+        myPattern = StringUtils.defaultString(pattern, "");
+        myCompiledPattern = Pattern.compile(myPattern, Pattern.CASE_INSENSITIVE);
     }
 
     public String getTargetSuffix() {
@@ -123,11 +124,8 @@ public class TranscoderConfig {
         return StringUtils.isNotBlank(myBinary) && new File(myBinary).isFile();
     }
 
-    public boolean isValidFor(String suffix, String mp4codec, MediaType mediaType) {
-//        if (mediaType != MediaType.Audio) {
-//            return false;
-//        }
-        if (ArrayUtils.contains(mySuffixesSplitted, StringUtils.trim(StringUtils.lowerCase(suffix)))) {
+    public boolean isValidFor(String file, String mp4codec) {
+        if (myCompiledPattern.matcher(file).matches()) {
             if (StringUtils.isBlank(myMp4Codecs) || StringUtils.isBlank(mp4codec)) {
                 return true;
             }

@@ -65,6 +65,9 @@ public enum MyTunesRssResource {
         if (this != BrowseServers) {
             request.getSession().removeAttribute("remoteServers");
         }
+        if (this == Login) {
+            handleLoginMessage(request);
+        }
         if (this == Portal && !Boolean.TRUE.equals(request.getSession().getAttribute("welcomeMessageDone"))) {
             handleWelcomeMessage(request);
         }
@@ -77,24 +80,31 @@ public enum MyTunesRssResource {
     }
 
     private void handleWelcomeMessage(HttpServletRequest request) {
-        if (!Boolean.TRUE.equals(request.getSession().getAttribute("welcomeMessageDone"))) {
-            String welcomeMessage = MyTunesRss.CONFIG.getWebWelcomeMessage();
-            if (!StringUtils.isBlank(welcomeMessage)) {
-                LocalizationContext context = (LocalizationContext)request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
-                String message = welcomeMessage;
-                if (context != null) {
-                    try {
-                        message = context.getResourceBundle().getString(welcomeMessage);
-                    } catch (Exception e) {
-                        // intentionally left blank
-                    }
+        String welcomeMessage = MyTunesRss.CONFIG.getWebWelcomeMessage();
+        handleMessage(request, welcomeMessage);
+        request.getSession().setAttribute("welcomeMessageDone", Boolean.TRUE);
+    }
+
+    private void handleLoginMessage(HttpServletRequest request) {
+        String loginMessage = MyTunesRss.CONFIG.getWebLoginMessage();
+        handleMessage(request, loginMessage);
+    }
+
+    private void handleMessage(HttpServletRequest request, String welcomeMessage) {
+        if (!StringUtils.isBlank(welcomeMessage)) {
+            LocalizationContext context = (LocalizationContext)request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+            String message = welcomeMessage;
+            if (context != null) {
+                try {
+                    message = context.getResourceBundle().getString(welcomeMessage);
+                } catch (Exception e) {
+                    // intentionally left blank
                 }
-                message = message.replace("'", "''").replace("{", "'{'");
-                LocalizedError error = new LocalizedError(message);
-                error.setEscapeXml(false);
-                MyTunesRssWebUtils.addError(request, error, "messages");
             }
-            request.getSession().setAttribute("welcomeMessageDone", Boolean.TRUE);
+            message = message.replace("'", "''").replace("{", "'{'");
+            LocalizedError error = new LocalizedError(message);
+            error.setEscapeXml(false);
+            MyTunesRssWebUtils.addError(request, error, "messages");
         }
     }
 }

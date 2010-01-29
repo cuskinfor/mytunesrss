@@ -5,9 +5,6 @@
 <script type="text/javascript">
     function login(json) {
         if (json.result && !json.error) {
-            var expireDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30);
-            top.document.cookie = "mtr_iphone_username=" + document.getElementById("username").value + "; expires=" + expireDate.toGMTString();
-            top.document.cookie = "mtr_iphone_password=" + SHA1(document.getElementById("password").value) + "; expires=" + expireDate.toGMTString();
             top.setSessionId(json.result);
             top.loadContent("${appUrl}/iphone/portal.jsp");
         } else {
@@ -26,33 +23,13 @@
 
     function clickLogin() {
         top.handleError = false;
-        top.mytunesrss("LoginService.login", [document.getElementById("username").value, SHA1(document.getElementById("password").value), 180], login);
+        top.mytunesrss("LoginService.login", [document.getElementById("username").value, document.getElementById("password").value, 180], login);
+        //top.mytunesrss("LoginService.login", [document.getElementById("username").value, SHA1(document.getElementById("password").value), 180], login);
     }
 
-    function tryCookieLogin() {
-        var cookieUser = top.getCookieValue("mtr_iphone_username");
-        var cookiePass = top.getCookieValue("mtr_iphone_password");
-        if (cookieUser != "undefined" && cookiePass != "undefined") {
-            top.handleError = false;
-            top.mytunesrss("LoginService.login", [cookieUser, cookiePass, 180], cookieLogin);
-        } else {
-            setVisible();
-        }
-    }
-
-    var defaultDisplay;
-
-    function setHidden() {
-        defaultDisplay = document.getElementById("loginpage").style.display;
-        document.getElementById("loginpage").style.display = "none";
-    }
-
-    function setVisible() {
-        document.getElementById("loginpage").style.display = defaultDisplay;
-    }
 </script>
 </head>
-<body onload="setHidden();top.initScroll();tryCookieLogin()" style="font-size:24px">
+<body onload="top.initScroll();" style="font-size:24px">
 
 <TABLE border="0" width="100%" id="loginpage">
 <TR>

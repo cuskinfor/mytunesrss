@@ -8,6 +8,7 @@
 package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.Session;
@@ -35,13 +36,20 @@ public class LoginService {
                 LOGGER.debug("Could not decode hex value \"" + password + "\".");
             }
             if ((Arrays.equals(user.getPasswordHash(), passwordHash1) || Arrays.equals(user.getPasswordHash(), passwordHash2)) && user.isActive()) {
-                MyTunesRssRemoteEnv.getRequest().getSession().setAttribute("remoteApiUser", user);
-                String sid = MyTunesRssRemoteEnv.createSessionId();
-                MyTunesRssRemoteEnv.addSession(MyTunesRssRemoteEnv.getRequest(), new Session(sid, user, sessionTimeoutMinutes * 60000));
-                return sid;
+                return handleLogin(user, sessionTimeoutMinutes);
             }
         }
+        if (MyTunesRssUtils.loginLDAP(username, password)){
+            return handleLogin(user, sessionTimeoutMinutes);
+        }
         throw new IllegalAccessException("Unauthorized");
+    }
+
+    private String handleLogin(User user, int sessionTimeoutMinutes) {
+        MyTunesRssRemoteEnv.getRequest().getSession().setAttribute("remoteApiUser", user);
+        String sid = MyTunesRssRemoteEnv.createSessionId();
+        MyTunesRssRemoteEnv.addSession(MyTunesRssRemoteEnv.getRequest(), new Session(sid, user, sessionTimeoutMinutes * 60000));
+        return sid;
     }
 
     public void logout() throws IllegalAccessException {

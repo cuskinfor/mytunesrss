@@ -66,6 +66,7 @@ public class MyTunesRssConfig {
     private boolean myQuitConfirmation;
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
+    private String myWebLoginMessage = "";
     private int myStreamingCacheTimeout = 20;
     private int myStreamingCacheMaxFiles = 300;
     private boolean myBandwidthLimit;
@@ -533,6 +534,14 @@ public class MyTunesRssConfig {
 
     public void setWebWelcomeMessage(String webWelcomeMessage) {
         myWebWelcomeMessage = webWelcomeMessage;
+    }
+
+    public String getWebLoginMessage() {
+        return myWebLoginMessage;
+    }
+
+    public void setWebLoginMessage(String webLoginMessage) {
+        myWebLoginMessage = webLoginMessage;
     }
 
     public int getWindowX() {
@@ -1149,6 +1158,7 @@ public class MyTunesRssConfig {
         setArtistDropWords(JXPathUtils.getStringValue(settings, "artistDropWords", getArtistDropWords()));
         setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
         setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
+        setWebLoginMessage(JXPathUtils.getStringValue(settings, "webLoginMessage", getWebLoginMessage()));
         readPathInfoEncryptionKey(settings);
         setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
         setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
@@ -1362,6 +1372,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, CREATION_TIME_KEY, myCryptedCreationTime));
             root.appendChild(DOMUtils.createBooleanElement(settings, "quitConfirmation", myQuitConfirmation));
             root.appendChild(DOMUtils.createTextElement(settings, "webWelcomeMessage", myWebWelcomeMessage));
+            root.appendChild(DOMUtils.createTextElement(settings, "webLoginMessage", myWebLoginMessage));
             if (myPathInfoKey != null) {
                 root.appendChild(DOMUtils.createByteArrayElement(settings, "pathInfoKey", myPathInfoKey.getEncoded()));
             }
