@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.8.2" date="2010-01-29">
+            <action dev="mdescher" type="fix">
+                MYTUNESRSS-113 "External sites link icon missing"
+            </action>
+        </release>
+
         <release version="3.8.1" date="2010-01-29">
             <action dev="mdescher" type="fix">
                 MYTUNESRSS-111 "Small dot at the top right of some icons"

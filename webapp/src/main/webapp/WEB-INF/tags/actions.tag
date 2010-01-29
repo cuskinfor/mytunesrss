@@ -26,7 +26,7 @@
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 
 <c:if test="${externalSitesFlag}">
-    <img id="fn_externalsites${index}" src="${appUrl}/images/http.gif" alt="<fmt:message key="tooltip.externalSites"/>" title="<fmt:message key="tooltip.externalSites"/>" style="cursor:pointer;display:${cwfn:choose(config.showExternalSites, "inline", "none")}" onclick="openExternalSitesDialog($jQ('#functionsDialogName${index}').text())"/>
+    <a id="fn_externalsites${index}" class="links" title="<fmt:message key="tooltip.externalSites"/>" <c:if test="${!config.showExternalSites}">style="display:none"</c:if> onclick="openExternalSitesDialog($jQ('#functionsDialogName${index}').text()); return false;"><span>External Sites</span></a>
 </c:if>
 <c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
 	<a id="fn_remotecontrol${index}" class="remote" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/backUrl=${backUrl}" <c:if test="${!config.remoteControl}">style="display:none"</c:if> title="<fmt:message key="tooltip.remotecontrol"/>"><span>Remote</span></a>
