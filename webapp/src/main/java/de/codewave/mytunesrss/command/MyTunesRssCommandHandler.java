@@ -70,54 +70,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     private boolean isAuthorizedLdapUser(String userName, String password) {
-        LOG.debug("Checking authorization with LDAP server.");
-        LdapConfig ldapConfig = MyTunesRss.CONFIG.getLdapConfig();
-        if (ldapConfig.isValid()) {
-            Hashtable<String, String> env = new Hashtable<String, String>();
-            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-            env.put(Context.PROVIDER_URL, "ldap://" + ldapConfig.getHost() + ":" + ldapConfig.getPort());
-            env.put(Context.SECURITY_AUTHENTICATION, ldapConfig.getAuthMethod().name());
-            env.put(Context.SECURITY_PRINCIPAL, MessageFormat.format(ldapConfig.getAuthPrincipal(), userName));
-            env.put(Context.SECURITY_CREDENTIALS, password);
-            try {
-                DirContext ctx = new InitialDirContext(env);
-                LOG.debug("Checking authorization with LDAP server: authorized!");
-                User user = MyTunesRss.CONFIG.getUser(userName);
-                if (user == null) {
-                    LOG.debug("Corresponding user for LDAP \"" + userName + "\" not found.");
-                    User template = MyTunesRss.CONFIG.getUser(ldapConfig.getTemplateUser());
-                    if (template != null) {
-                        LOG.debug("Using LDAP template user \"" + template.getName() + "\".");
-                        user = (User) template.clone();
-                        user.setName(userName);
-                        user.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(UUID.randomUUID().toString().getBytes("UTF-8")));
-                        LOG.debug("Storing new user with name \"" + user.getName() + "\".");
-                        MyTunesRss.CONFIG.addUser(user);
-                        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.CONFIGURATION_CHANGED));
-                    }
-                }
-                if (user == null) {
-                    LOG.error("Could not create new user \"" + userName + "\" from template user \"" + ldapConfig.getTemplateUser() + "\".");
-                    return false;
-                }
-                if (ldapConfig.isFetchEmail()) {
-                    LOG.debug("Fetching email for user \"" + userName + "\" from LDAP.");
-                    SearchControls searchControls = new SearchControls(SearchControls.SUBTREE_SCOPE, 1, ldapConfig.getSearchTimeout(), new String[]{ldapConfig.getMailAttributeName()}, false, false);
-                    NamingEnumeration<SearchResult> namingEnum = ctx.search(StringUtils.defaultString(ldapConfig.getSearchRoot()), MessageFormat.format(ldapConfig.getSearchExpression(), userName), searchControls);
-                    if (namingEnum.hasMore()) {
-                        String email = namingEnum.next().getAttributes().get(ldapConfig.getMailAttributeName()).get().toString();
-                        LOG.debug("Setting email \"" + email + "\" for user \"" + user.getName() + "\".");
-                        user.setEmail(email);
-                    }
-                }
-                return true;
-            } catch (AuthenticationException e) {
-                LOG.info("LDAP login failed for \"" + userName + "\".");
-            } catch (Exception e) {
-                LOG.error("Could not validate username/password with LDAP server.", e);
-            }
-        }
-        return false;
+        return MyTunesRssUtils.loginLDAP(userName, password);
     }
 
     protected boolean isAuthorized(String userName, byte[] passwordHash) {

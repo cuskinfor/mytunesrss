@@ -29,6 +29,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
+import javax.naming.AuthenticationException;
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -39,9 +46,7 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Collections;
+import java.util.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.lang.reflect.Proxy;
@@ -617,5 +622,56 @@ public class MyTunesRssUtils {
      */
     public static Boolean isLetterPagerIndex(int index) {
         return index >= 0 && index <= 8;
+    }
+
+    public static boolean loginLDAP(String userName, String password) {
+        LOGGER.debug("Checking authorization with LDAP server.");
+        LdapConfig ldapConfig = MyTunesRss.CONFIG.getLdapConfig();
+        if (ldapConfig.isValid()) {
+            Hashtable<String, String> env = new Hashtable<String, String>();
+            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+            env.put(Context.PROVIDER_URL, "ldap://" + ldapConfig.getHost() + ":" + ldapConfig.getPort());
+            env.put(Context.SECURITY_AUTHENTICATION, ldapConfig.getAuthMethod().name());
+            env.put(Context.SECURITY_PRINCIPAL, MessageFormat.format(ldapConfig.getAuthPrincipal(), userName));
+            env.put(Context.SECURITY_CREDENTIALS, password);
+            try {
+                DirContext ctx = new InitialDirContext(env);
+                LOGGER.debug("Checking authorization with LDAP server: authorized!");
+                User user = MyTunesRss.CONFIG.getUser(userName);
+                if (user == null) {
+                    LOGGER.debug("Corresponding user for LDAP \"" + userName + "\" not found.");
+                    User template = MyTunesRss.CONFIG.getUser(ldapConfig.getTemplateUser());
+                    if (template != null) {
+                        LOGGER.debug("Using LDAP template user \"" + template.getName() + "\".");
+                        user = (User) template.clone();
+                        user.setName(userName);
+                        user.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(UUID.randomUUID().toString().getBytes("UTF-8")));
+                        LOGGER.debug("Storing new user with name \"" + user.getName() + "\".");
+                        MyTunesRss.CONFIG.addUser(user);
+                        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.CONFIGURATION_CHANGED));
+                    }
+                }
+                if (user == null) {
+                    LOGGER.error("Could not create new user \"" + userName + "\" from template user \"" + ldapConfig.getTemplateUser() + "\".");
+                    return false;
+                }
+                if (ldapConfig.isFetchEmail()) {
+                    LOGGER.debug("Fetching email for user \"" + userName + "\" from LDAP.");
+                    SearchControls searchControls = new SearchControls(SearchControls.SUBTREE_SCOPE, 1, ldapConfig.getSearchTimeout(), new String[]{ldapConfig.getMailAttributeName()}, false, false);
+                    NamingEnumeration<SearchResult> namingEnum = ctx.search(StringUtils.defaultString(ldapConfig.getSearchRoot()), MessageFormat.format(ldapConfig.getSearchExpression(), userName), searchControls);
+                    if (namingEnum.hasMore()) {
+                        String email = namingEnum.next().getAttributes().get(ldapConfig.getMailAttributeName()).get().toString();
+                        LOGGER.debug("Setting email \"" + email + "\" for user \"" + user.getName() + "\".");
+                        user.setEmail(email);
+                    }
+                }
+                return true;
+            } catch (AuthenticationException e) {
+                LOGGER.info("LDAP login failed for \"" + userName + "\".");
+            } catch (Exception e) {
+                LOGGER.error("Could not validate username/password with LDAP server.", e);
+            }
+        }
+        return false;
     }
 }
