@@ -8,7 +8,7 @@
 ;--------------------------------
 ;General
 
-  !define VERSION 3.8.1
+  !define VERSION 3.8.2
 
   ;Name and file
   Name "MyTunesRSS ${VERSION}"
