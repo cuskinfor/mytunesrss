@@ -90,6 +90,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                         LOG.debug("Using LDAP template user \"" + template.getName() + "\".");
                         user = (User) template.clone();
                         user.setName(userName);
+                        user.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(UUID.randomUUID().toString().getBytes("UTF-8")));
                         LOG.debug("Storing new user with name \"" + user.getName() + "\".");
                         MyTunesRss.CONFIG.addUser(user);
                         MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.CONFIGURATION_CHANGED));
