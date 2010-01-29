@@ -3,9 +3,7 @@ package de.codewave.mytunesrss.settings;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.TranscoderConfig;
-import de.codewave.utils.swing.FileExistsTextFieldValidation;
-import de.codewave.utils.swing.JTextFieldValidation;
-import de.codewave.utils.swing.NotEmptyTextFieldValidation;
+import de.codewave.utils.swing.*;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -17,7 +15,7 @@ import java.awt.event.ActionListener;
  */
 public class Transcoder {
     private JTextField myNameInput;
-    private JTextField mySuffixesInput;
+    private JTextField myPatternInput;
     private JTextField myMp4CodecsInput;
     private JTextField myOptionsInput;
     private JTextField myBinaryInput;
@@ -37,7 +35,7 @@ public class Transcoder {
                 return StringUtils.isNotBlank(text) && StringUtils.isAlphanumericSpace(text) && text.length() <= 40;
             }
         });
-        JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(mySuffixesInput, MyTunesRssUtils.getBundleString("error.transcoderSuffixesBlank")));
+        JTextFieldValidation.setValidation(new CompositeTextFieldValidation(myPatternInput, new NotEmptyTextFieldValidation(myPatternInput, MyTunesRssUtils.getBundleString("error.transcoderPatternBlank")), new ValidRegExpTextFieldValidation(myPatternInput, MyTunesRssUtils.getBundleString("error.transcoderPatternInvalid"))));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myTargetSuffixInput, MyTunesRssUtils.getBundleString("error.transcoderTargetSuffixBlank")));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myTargetContentTypeInput, MyTunesRssUtils.getBundleString("error.transcoderTargetContentTypeBlank")));
     }
@@ -56,7 +54,7 @@ public class Transcoder {
 
     public void init(TranscoderConfig tc) {
         myNameInput.setText(tc.getName());
-        mySuffixesInput.setText(tc.getSuffixes());
+        myPatternInput.setText(tc.getPattern());
         myMp4CodecsInput.setText(tc.getMp4Codecs());
         myOptionsInput.setText(tc.getOptions());
         myBinaryInput.setText(tc.getBinary());
@@ -68,7 +66,7 @@ public class Transcoder {
         String messages = JTextFieldValidation.getAllValidationFailureMessage(myRootPanel);
         if (messages == null) {
             tc.setName(myNameInput.getText());
-            tc.setSuffixes(mySuffixesInput.getText());
+            tc.setPattern(myPatternInput.getText());
             tc.setMp4Codecs(myMp4CodecsInput.getText());
             tc.setOptions(myOptionsInput.getText());
             tc.setBinary(myBinaryInput.getText());

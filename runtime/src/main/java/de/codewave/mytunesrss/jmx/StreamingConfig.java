@@ -9,6 +9,8 @@ import javax.management.NotCompliantMBeanException;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigMBean {
     public StreamingConfig() throws NotCompliantMBeanException {
@@ -54,17 +56,22 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
     public String[] getTranscoders() {
         List<String> configs = new ArrayList<String>();
         for (TranscoderConfig tc : MyTunesRss.CONFIG.getTranscoderConfigs()) {
-            configs.add(tc.getName() + ": suffixes=" + tc.getSuffixes() + " -- mp4codecs=" + tc.getMp4Codecs() + " -- binary=" + tc.getBinary() + " -- options=" + tc.getOptions());
+            configs.add(tc.getName() + ": pattern=" + tc.getPattern() + " -- mp4codecs=" + tc.getMp4Codecs() + " -- binary=" + tc.getBinary() + " -- options=" + tc.getOptions());
         }
         return configs.toArray(new String[configs.size()]);
     }
 
-    public String addTranscoder(String name, String suffixes, String mp4codecs, String targetSuffix, String targetContentType, String binary, String options) {
+    public String addTranscoder(String name, String pattern, String mp4codecs, String targetSuffix, String targetContentType, String binary, String options) {
         if (StringUtils.isBlank(name) || name.length() > 40 || !StringUtils.isAlphanumericSpace(name)) {
             return MyTunesRssUtils.getBundleString("error.transcoderNameInvalid");
         }
-        if (StringUtils.isBlank(suffixes)) {
-            return MyTunesRssUtils.getBundleString("error.transcoderSuffixesBlank");
+        if (StringUtils.isBlank(pattern)) {
+            return MyTunesRssUtils.getBundleString("error.transcoderPatternBlank");
+        }
+        try {
+            Pattern.compile(pattern);
+        } catch (PatternSyntaxException e) {
+            return MyTunesRssUtils.getBundleString("error.transcoderPatternInvalid");
         }
         if (StringUtils.isBlank(targetSuffix)) {
             return MyTunesRssUtils.getBundleString("error.transcoderTargetSuffixBlank");
@@ -84,7 +91,7 @@ public class StreamingConfig extends MyTunesRssMBean implements StreamingConfigM
         }
         TranscoderConfig tc = new TranscoderConfig();
         tc.setName(name);
-        tc.setSuffixes(suffixes);
+        tc.setPattern(pattern);
         tc.setTargetSuffix(targetSuffix);
         tc.setTargetContentType(targetContentType);
         tc.setMp4Codecs(mp4codecs);

@@ -33,17 +33,17 @@
         </constraints>
         <properties>
           <labelFor value="2728"/>
-          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.transcoder.suffixes"/>
+          <text resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.transcoder.regexp"/>
         </properties>
       </component>
-      <component id="2728" class="javax.swing.JTextField" binding="mySuffixesInput">
+      <component id="2728" class="javax.swing.JTextField" binding="myPatternInput">
         <constraints>
           <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
         <properties>
-          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.transcoder.suffixes.tooltip"/>
+          <toolTipText resource-bundle="de/codewave/mytunesrss/MyTunesRss" key="settings.transcoder.regexp.tooltip"/>
         </properties>
       </component>
       <component id="c45a5" class="javax.swing.JLabel">

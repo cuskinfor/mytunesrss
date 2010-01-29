@@ -24,7 +24,7 @@ public interface StreamingConfigMBean {
 
     String[] getTranscoders();
 
-    String addTranscoder(String name, String suffixes, String mp4codecs, String targetSuffix, String targetContentType, String binary, String options);
+    String addTranscoder(String name, String pattern, String mp4codecs, String targetSuffix, String targetContentType, String binary, String options);
 
     String deleteTranscoder(String name);
 }

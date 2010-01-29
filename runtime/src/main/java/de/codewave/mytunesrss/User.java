@@ -673,7 +673,7 @@ public class User implements MyTunesRssEventListener, Cloneable {
 
     public TranscoderConfig getTranscoder(Track track) {
         for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
-            if (isActiveTranscoder(config.getName()) && config.isValidFor(FileSupportUtils.getFileSuffix(track.getFilename()), track.getMp4Codec(), track.getMediaType())) {
+            if (isActiveTranscoder(config.getName()) && config.isValidFor(track.getFilename(), track.getMp4Codec())) {
                 return config;
             }
         }
