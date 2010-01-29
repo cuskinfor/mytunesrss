@@ -9,6 +9,9 @@
 
         <release version="3.8.2" date="2010-01-29">
             <action dev="mdescher" type="fix">
+                MYTUNESRSS-114 "Reset password must not work for LDAP users"
+            </action>
+            <action dev="mdescher" type="fix">
                 MYTUNESRSS-109 "Remote API login does not use LDAP"
             </action>
             <action dev="mdescher" type="fix">
