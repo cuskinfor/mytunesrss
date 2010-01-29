@@ -38,6 +38,7 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
     private DragSource myDragSource;
     private ImageIcon myUserIcon = new ImageIcon(getClass().getResource("user.png"));
     private ImageIcon myGroupIcon = new ImageIcon(getClass().getResource("group.png"));
+    private List<User> myUsers = new ArrayList<User>();
 
     public UserManagement() {
         myTreeScroller.getViewport().setOpaque(false);
@@ -57,7 +58,11 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
         new DropTarget(myUserTree, this);
         myEditLdapButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                MyTunesRssUtils.showSettingsForm(new Ldap());
+                if (myUserTree.getModel().getChildCount(myUserTree.getModel().getRoot()) == 0) {
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.needRegularUserForLdapConfig"));
+                } else {
+                    MyTunesRssUtils.showSettingsForm(new Ldap(myUsers));
+                }
             }
         });
     }
@@ -70,6 +75,7 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
     }
 
     private void addUsers(DefaultMutableTreeNode node, Collection<User> users, User parent) {
+        myUsers.addAll(users);
         List<User> children = new ArrayList<User>();
         for (User user : users) {
             if ((parent == null && user.getParent() == null) || (parent != null && parent.equals(user.getParent()))) {
@@ -366,6 +372,7 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
             user.setParent(parentUser);
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(user);
             insertNode(newNode, myParentNode);
+            myUsers.add(user);
             TreePath treePath = new TreePath(newNode.getPath());
             myUserTree.scrollPathToVisible(treePath);
             myUserTree.setSelectionPath(treePath);
@@ -384,6 +391,7 @@ public class UserManagement implements MyTunesRssEventListener, SettingsForm, Dr
         public void actionPerformed(ActionEvent e) {
             DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) myNode.getParent();
             ((DefaultTreeModel) myUserTree.getModel()).removeNodeFromParent(myNode);
+            myUsers.remove(myNode.getUserObject());
             if (!parentNode.isRoot()) {
                 TreePath treePath = new TreePath(parentNode.getPath());
                 myUserTree.scrollPathToVisible(treePath);

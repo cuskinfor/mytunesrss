@@ -26,7 +26,7 @@ public class Ldap implements SettingsForm {
     private JComboBox myTemplateUserInput;
     private JComboBox myAuthMethodInput;
 
-    public Ldap() {
+    public Ldap(List<User> users) {
         JTextFieldValidation.setValidation(new MinMaxValueTextFieldValidation(myPortInput, 1, 65535, true, MyTunesRssUtils.getBundleString("error.illegalLdapPort")));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myHostInput, MyTunesRssUtils.getBundleString("error.emptyLdapHost")));
         JTextFieldValidation.setValidation(new NotEmptyTextFieldValidation(myAuthPrincipalInput, MyTunesRssUtils.getBundleString("error.emptyAuthPrincipal")));
@@ -40,7 +40,7 @@ public class Ldap implements SettingsForm {
             myAuthMethodInput.addItem(methodName);
         }
         List<String> userNames = new ArrayList<String>();
-        for (User user : MyTunesRss.CONFIG.getUsers()) {
+        for (User user : users) {
             userNames.add(user.getName());
         }
         Collections.sort(userNames);

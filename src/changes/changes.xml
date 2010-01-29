@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.8.3" date="2010-xx-xx">
+            <action dev="mdescher" type="fix">
+                MYTUNESRSS-115 "NPE when closing LDAP config dialog"
+            </action>
+        </release>
+
         <release version="3.8.2" date="2010-01-29">
             <action dev="mdescher" type="fix">
                 MYTUNESRSS-91 "Transcoder configuration per file (regexp)"
