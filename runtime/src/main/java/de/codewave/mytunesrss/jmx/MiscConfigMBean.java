@@ -29,6 +29,10 @@ public interface MiscConfigMBean {
 
     void setWebWelcomeMessage(String message);
 
+    String getWebLoginMessage();
+
+    void setWebLoginMessage(String message);
+
     String getMailHost();
 
     void setMailHost(String mailHost);

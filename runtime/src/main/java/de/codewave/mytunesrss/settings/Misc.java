@@ -51,6 +51,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
     private JComboBox mySmtpProtocolInput;
     private JCheckBox myMinimizeToSystrayInput;
     private JCheckBox myServerBrowserActiveInput;
+    private JTextField myLoginMessageInput;
     private boolean myUpdateOnStartInputCache;
 
     public Misc() {
@@ -96,6 +97,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
         myUpdateOnStartInputCache = myUpdateOnStartInput.isSelected();
         myMyTunesRssComStatus.setText(MyTunesRssUtils.getBundleString("mytunesrsscom.stateUnknown"));
         myWelcomeMessageInput.setText(MyTunesRss.CONFIG.getWebWelcomeMessage());
+        myLoginMessageInput.setText(MyTunesRss.CONFIG.getWebLoginMessage());
         myMailHostInput.setText(MyTunesRss.CONFIG.getMailHost());
         myMailPortInput.setText(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getMailPort(), 1, 65535, ""));
         myMailLoginInput.setText(MyTunesRss.CONFIG.getMailLogin());
@@ -131,6 +133,7 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
             MyTunesRss.CONFIG.setQuitConfirmation(myQuitConfirmationInput.isSelected());
             MyTunesRss.CONFIG.setCheckUpdateOnStart(myUpdateOnStartInput.isSelected());
             MyTunesRss.CONFIG.setWebWelcomeMessage(myWelcomeMessageInput.getText());
+            MyTunesRss.CONFIG.setWebLoginMessage(myLoginMessageInput.getText());
             MyTunesRss.CONFIG.setMailHost(myMailHostInput.getText());
             MyTunesRss.CONFIG.setMailPort(MyTunesRssUtils.getTextFieldInteger(myMailPortInput, -1));
             MyTunesRss.CONFIG.setSmtpProtocol((SmtpProtocol) mySmtpProtocolInput.getSelectedItem());

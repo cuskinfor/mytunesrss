@@ -74,6 +74,15 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
         onChange();
     }
 
+    public String getWebLoginMessage() {
+        return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebLoginMessage());
+    }
+
+    public void setWebLoginMessage(String message) {
+        MyTunesRss.CONFIG.setWebLoginMessage(StringUtils.trimToNull(message));
+        onChange();
+    }
+
     public String getMailHost() {
         return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getMailHost());
     }
