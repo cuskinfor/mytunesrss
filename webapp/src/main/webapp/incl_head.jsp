@@ -11,7 +11,7 @@
 <link rel="stylesheet" type="text/css" href="${appUrl}/styles/jquery.autocomplete.css?ts=${sessionCreationTime}" />
 <link rel="shortcut icon" href="${appUrl}/images/favicon.ico" type="image/x-icon" />
 <script src="${appUrl}/js/prototype.js?ts=${sessionCreationTime}" type="text/javascript"></script>
-<script src="${appUrl}/js/jquery-1.3.2.js?ts=${sessionCreationTime}" type="text/javascript"></script>
+<script src="${appUrl}/js/jquery.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/jquery-ui.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/jquery.autocomplete.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/functions.js?ts=${sessionCreationTime}" type="text/javascript"></script>
