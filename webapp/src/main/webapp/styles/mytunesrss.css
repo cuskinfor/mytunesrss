@@ -161,14 +161,14 @@ ul.menu {
     height: 25px;
     margin: 0;
     padding: 0;
-    background: url("../images/menu.png") center center;
+    background: url("../images/menu.png") center center repeat-x;
 }
 
 ul.menu li {
     float: left;
     margin: 0;
     padding: 0 1px 0 0;
-    background: url("../images/menu.png") right center;
+    background: url("../images/menu.png") right center repeat-x;
     list-style: none;
 }
 
@@ -176,7 +176,7 @@ ul.menu a {
     display: block;
     padding: 0 12px 0 10px;
     line-height: 25px;
-    background: url("../images/menu.png") left center no-repeat;
+    background: url("../images/menu.png") left center repeat-x;
     font-size: 10px;
     font-weight: bold;
     color: #eee;
@@ -186,7 +186,7 @@ ul.menu a {
 }
 
 ul.menu li.active {
-	background: url("../images/menu-active.png") center center no-repeat;
+	background: url("../images/menu-active.png") center center repeat-x;
 }
 
 ul.menu li.active span {
