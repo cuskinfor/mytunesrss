@@ -11,8 +11,8 @@
 <c:if test="${stateEditPlaylist}">
     <div class="playlisttop"></div>
     <div class="playlist">
-	    <a class="close" href="${servletUrl}/cancelCreatePlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}">Cancel</a>
-		<a class="finish" href="${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">Finish</a>
+	    <a class="close" href="${servletUrl}/cancelCreatePlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="doCancel" />"><fmt:message key="doCancel" /></a>
+		<a class="finish" href="${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="finishPlaylist" />"><fmt:message key="finishPlaylist" /></a>
 		<span>
 			<strong>${cwfn:choose (empty editPlaylistName, newPlaylistName, editPlaylistName)}</strong>
 			- <fmt:message key="playlistTrackCount" />:
