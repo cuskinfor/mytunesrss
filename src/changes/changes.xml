@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.8.3" date="2010-xx-xx">
+            <action dev="mdescher" type="add">
+                MYTUNESRSS-116: "Open documentation in browser on Java 6 platforms"
+            </action>
             <action dev="mdescher" type="fix">
                 Moved user management help text lon top of dialog since
                 the other solution did not work most of the time.

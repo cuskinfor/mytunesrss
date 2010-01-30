@@ -33,6 +33,8 @@ public class Settings implements MyTunesRssEventListener {
     private JButton myUpdateDatabaseButton;
     private JButton myDeleteDatabaseButton;
     private JPanel myConfigButtonsPanel;
+    private JButton myHelpButton;
+    private JLabel myLogoLabel;
     private Info myInfoForm;
     private SettingsForm[] mySettingsForms;
 
@@ -82,6 +84,22 @@ public class Settings implements MyTunesRssEventListener {
         myConfigButtonsPanel.setPreferredSize(new Dimension(400, d.height * rows));
         refreshLastUpdate();
         MyTunesRssEventManager.getInstance().addListener(this);
+        if (MyTunesRss.DESKTOP_WRAPPER.isSupported()) {
+            myHelpButton.setVisible(true);
+            myHelpButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    MyTunesRss.DESKTOP_WRAPPER.openDocumentation();
+                }
+            });
+            myLogoLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    MyTunesRss.DESKTOP_WRAPPER.openHomepage();
+                }
+            });
+        } else {
+            myHelpButton.setVisible(false);
+        }
         initValues();
     }
 

@@ -5,6 +5,8 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.desktop.DesktopWrapper;
+import de.codewave.mytunesrss.desktop.DesktopWrapperFactory;
 import de.codewave.mytunesrss.jmx.ErrorQueue;
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
@@ -92,6 +94,7 @@ public class MyTunesRss {
     public static QuicktimePlayer QUICKTIME_PLAYER;
     public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
     public static String[] ORIGINAL_CMD_ARGS;
+    public static DesktopWrapper DESKTOP_WRAPPER;
 
     private static void init() {
         try {
@@ -152,6 +155,7 @@ public class MyTunesRss {
                 LOGGER.error("Could not create MD5 digest.", e);
             }
         }
+        DESKTOP_WRAPPER = DesktopWrapperFactory.createDesktopWrapper();
     }
 
     public static void main(final String[] args)
