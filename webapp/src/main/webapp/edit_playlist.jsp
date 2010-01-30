@@ -256,7 +256,7 @@
         </td>
         <td>#{trackArtist}</td>
         <td class="actions">
-            <a class="delete" onclick="removeTrack(#{index}, '#{trackId}')">Delete</a>
+            <a class="delete" onclick="removeTrack(#{index}, '#{trackId}')"><span>Delete</span></a>
         </td>
     </tr>
 </textarea>
