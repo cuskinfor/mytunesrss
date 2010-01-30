@@ -80,7 +80,6 @@ public class EditUser implements MyTunesRssEventListener {
     private User myUser;
     private DefaultMutableTreeNode myUserNode;
     private Timer myTimer = new Timer("EditUserRefreshTimer");
-    private JTextPane myHelpLabel;
     private JButton myPlaylistRestrictionsInput;
 
     public EditUser() {
@@ -143,7 +142,6 @@ public class EditUser implements MyTunesRssEventListener {
                 "error.illegalBandwidthLimit")));
         JTextFieldValidation.validateAll(myRootPanel);
         myTimer.schedule(new RefreshTask(), 1000);
-        myHelpLabel.setVisible(false);
     }
 
     JPanel getRootPanel() {
@@ -184,7 +182,6 @@ public class EditUser implements MyTunesRssEventListener {
         fillForceTranscoderPanel();
         initValues();
         myInputsPanel.setVisible(myUser != null);
-        myHelpLabel.setVisible(myUser == null);
         myRootPanel.validate();
     }
 
