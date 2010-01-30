@@ -221,7 +221,7 @@
                                         <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=64</mt:encrypt>" style="display:none" alt=""/>
                                     </a>
                                 </c:if>
-                                <a class="add" onclick="addTracksToPlaylist($A(['${mtfn:escapeJs(track.id)}']))"><span>Add</span></a>
+                                <a class="add" onclick="addTracksToPlaylist($A(['${mtfn:escapeJs(track.id)}']))" title="<fmt:message key="playlist.addToPlaylist"/>"><span><fmt:message key="playlist.addToPlaylist"/></span></a>
                             </c:otherwise>
                         </c:choose>
                     </td>
