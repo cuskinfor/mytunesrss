@@ -180,8 +180,8 @@
 
                         </c:when>
                         <c:otherwise>
-                            <a class="add" onclick="addAlbumsToPlaylist($A(['${mtfn:escapeJs(album.name)}']))" title="<fmt:message key="playlist.addAlbums"/>"><span><fmt:message key="playlist.addAlbums"/></span></a>
-                            <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}/name=${cwfn:encodeUrl(album.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="playlist.oneclickAlbums"/>"><span><fmt:message key="playlist.oneclickAlbums"/></span></a>
+                            <a class="add" onclick="addAlbumsToPlaylist($A(['${mtfn:escapeJs(album.name)}']))" title="<fmt:message key="playlist.addAlbum"/>"><span><fmt:message key="playlist.addAlbum"/></span></a>
+                            <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}/name=${cwfn:encodeUrl(album.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="playlist.oneclickAlbum"/>"><span><fmt:message key="playlist.oneclickAlbum"/></span></a>
                         </c:otherwise>
                     </c:choose>
                 </td>

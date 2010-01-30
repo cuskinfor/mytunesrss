@@ -149,8 +149,8 @@
                                                        editTagsId="${artist.name}" />
                                     </c:when>
                                     <c:otherwise>
-                                        <a class="add" onclick="addArtistsToPlaylist($A(['${mtfn:escapeJs(artist.name)}']), false)" title="<fmt:message key="playlist.addArtists"/>"><span><fmt:message key="playlist.addArtists"/></span></a>
-                                        <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/name=${cwfn:encodeUrl(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="playlist.oneclickArtists"/>"><span><fmt:message key="playlist.oneclickArtists"/></span></a>
+                                        <a class="add" onclick="addArtistsToPlaylist($A(['${mtfn:escapeJs(artist.name)}']), false)" title="<fmt:message key="playlist.addArtist"/>"><span><fmt:message key="playlist.addArtist"/></span></a>
+                                        <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/name=${cwfn:encodeUrl(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="playlist.oneclickArtist"/>"><span><fmt:message key="playlist.oneclickArtist"/></span></a>
                                     </c:otherwise>
                                 </c:choose>
                             </td>
