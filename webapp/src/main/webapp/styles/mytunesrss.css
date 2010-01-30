@@ -282,6 +282,7 @@ table.navigation {
     color: #000;
     text-decoration: none;
     outline: 0;
+    white-space: nowrap;
 }
 
 .navigation a:HOVER {
