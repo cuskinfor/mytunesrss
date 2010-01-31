@@ -166,7 +166,7 @@ public class LuceneTrackService {
         IndexSearcher isearcher = new IndexSearcher(directory);
         Query luceneQuery = null;
         try {
-            luceneQuery = new QueryParser(Version.LUCENE_CURRENT, "title", new WhitespaceAnalyzer()).parse(searchExpression);
+            luceneQuery = new QueryParser(Version.LUCENE_CURRENT, "name", new WhitespaceAnalyzer()).parse(searchExpression);
         } catch (Exception e) {
             throw new LuceneQueryParserException("Could not parse query string.", e);
         }
