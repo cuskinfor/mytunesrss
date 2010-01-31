@@ -38,7 +38,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             if (StringUtils.isNotEmpty(searchTerm)) {
                 if (getWebConfig().getSearchFuzziness() == -1) {
                     try {
-                        query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, getWebConfig().getSearchFuzziness(), sortOrderValue);
+                        query = FindTrackQuery.getForExpertSearchTerm(getAuthUser(), searchTerm, sortOrderValue);
                     } catch (LuceneQueryParserException e) {
                         addError(new BundleError("error.illegalExpertSearchTerm"));
                         forward(MyTunesRssCommand.ShowPortal);

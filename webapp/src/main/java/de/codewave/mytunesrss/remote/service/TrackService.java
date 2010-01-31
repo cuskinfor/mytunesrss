@@ -2,12 +2,14 @@ package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.camel.mp3.Mp3Info;
 import de.codewave.camel.mp3.Mp3Utils;
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.jsp.MyTunesFunctions;
-import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
+import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.LuceneQueryParserException;
+import de.codewave.mytunesrss.TrackUtils;
+import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
-import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
+import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -19,10 +21,10 @@ import org.apache.lucene.queryParser.ParseException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 /**
  * Service for track retrieval and management.
@@ -32,7 +34,6 @@ public class TrackService {
      * Get an URL for downloading the track with the specified ID.
      *
      * @param trackId ID of the track.
-     *
      * @return The URL for playback of the track.
      */
     public String getDownloadUrl(String trackId) throws SQLException {
@@ -44,7 +45,6 @@ public class TrackService {
      * Get an URL for playing the track with the specified ID.
      *
      * @param trackId ID of the track.
-     *
      * @return The URL for playback of the track.
      */
     public String getPlaybackUrl(String trackId) throws SQLException {
@@ -55,10 +55,10 @@ public class TrackService {
     public Object getTrackInfo(String trackId) throws IllegalAccessException, SQLException, IOException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-            Collection<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {trackId})).getResults();
+            Collection<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId})).getResults();
             if (!tracks.isEmpty()) {
                 Track track = tracks.iterator().next();
-                Map<String, Object> result = (Map<String, Object>)RenderMachine.getInstance().render(track);
+                Map<String, Object> result = (Map<String, Object>) RenderMachine.getInstance().render(track);
                 if (FileSupportUtils.isMp3(track.getFile())) {
                     result.put("mp3info", Boolean.TRUE);
                     Mp3Info info = Mp3Utils.getMp3Info(new FileInputStream(track.getFile()));
@@ -73,34 +73,50 @@ public class TrackService {
         throw new IllegalAccessException("Unauthorized");
     }
 
-    public Object search(String searchTerm, int fuzziness, String sortOrderName, int firstItem, int maxItems) throws IllegalAccessException, SQLException, IOException, ParseException, LuceneQueryParserException {
+    public Object search(String searchTerm, int fuzziness, String sortOrderName, int firstItem, int maxItems) throws IllegalAccessException, SQLException, IOException, ParseException {
         SortOrder sortOrder = SortOrder.valueOf(sortOrderName);
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             if (StringUtils.isNotBlank(searchTerm)) {
                 FindTrackQuery query;
-                if (fuzziness == -1) {
-                    query = FindTrackQuery.getForSearchTerm(user, searchTerm, fuzziness, SortOrder.KeepOrder);
-                } else {
-                    int maxTermSize = 0;
-                    for (String term : searchTerm.split(" ")) {
-                        if (term.length() > maxTermSize) {
-                            maxTermSize = term.length();
-                        }
-                    }
-                    if (maxTermSize >= 2) {
-                        query = FindTrackQuery.getForSearchTerm(user, searchTerm, fuzziness, SortOrder.KeepOrder);
-                        DataStoreSession transaction = TransactionFilter.getTransaction();
-                        List<Track> tracks = new ArrayList<Track>();
-                        if (query != null) {
-                        DataStoreQuery.QueryResult<Track> result = transaction.executeQuery(query);
-                            tracks = maxItems > 0 ? result.getResults(firstItem, maxItems) : result.getResults();
-                        }
-                        return RenderMachine.getInstance().render(TrackUtils.getEnhancedTracks(transaction, tracks, sortOrder));
-                    } else {
-                        throw new IllegalArgumentException("At least one of the search terms must be longer than 2 characters!");
+                int maxTermSize = 0;
+                for (String term : searchTerm.split(" ")) {
+                    if (term.length() > maxTermSize) {
+                        maxTermSize = term.length();
                     }
                 }
+                if (maxTermSize >= 2) {
+                    query = FindTrackQuery.getForSearchTerm(user, searchTerm, fuzziness, SortOrder.KeepOrder);
+                    DataStoreSession transaction = TransactionFilter.getTransaction();
+                    List<Track> tracks = new ArrayList<Track>();
+                    if (query != null) {
+                        DataStoreQuery.QueryResult<Track> result = transaction.executeQuery(query);
+                        tracks = maxItems > 0 ? result.getResults(firstItem, maxItems) : result.getResults();
+                    }
+                    return RenderMachine.getInstance().render(TrackUtils.getEnhancedTracks(transaction, tracks, sortOrder));
+                } else {
+                    throw new IllegalArgumentException("At least one of the search terms must be longer than 2 characters!");
+                }
+            } else {
+                throw new IllegalArgumentException("Search term must not be NULL ot empty!");
+            }
+        }
+        throw new IllegalAccessException("Unauthorized");
+    }
+
+    public Object expertSearch(String searchTerm, String sortOrderName, int firstItem, int maxItems) throws IllegalAccessException, SQLException, IOException, ParseException, LuceneQueryParserException {
+        SortOrder sortOrder = SortOrder.valueOf(sortOrderName);
+        User user = MyTunesRssRemoteEnv.getSession().getUser();
+        if (user != null) {
+            if (StringUtils.isNotBlank(searchTerm)) {
+                FindTrackQuery query = FindTrackQuery.getForExpertSearchTerm(user, searchTerm, SortOrder.KeepOrder);
+                DataStoreSession transaction = TransactionFilter.getTransaction();
+                List<Track> tracks = new ArrayList<Track>();
+                if (query != null) {
+                    DataStoreQuery.QueryResult<Track> result = transaction.executeQuery(query);
+                    tracks = maxItems > 0 ? result.getResults(firstItem, maxItems) : result.getResults();
+                }
+                return RenderMachine.getInstance().render(TrackUtils.getEnhancedTracks(transaction, tracks, sortOrder));
             } else {
                 throw new IllegalArgumentException("Search term must not be NULL ot empty!");
             }
