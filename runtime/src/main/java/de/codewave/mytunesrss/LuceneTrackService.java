@@ -6,8 +6,10 @@ import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultBuilder;
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.StopFilter;
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -47,7 +49,7 @@ public class LuceneTrackService {
         LOGGER.debug("Indexing all tracks.");
         long start = System.currentTimeMillis();
         Directory directory = getDirectory();
-        StandardAnalyzer analyzer = new StandardAnalyzer(STOP_WORDS);
+        Analyzer analyzer = new WhitespaceAnalyzer(); //STOP_WORDS);
         IndexWriter iwriter = new IndexWriter(directory, analyzer, true, new IndexWriter.MaxFieldLength(300));
         FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
@@ -92,18 +94,18 @@ public class LuceneTrackService {
     private Document createTrackDocument(Track track, Map<String, List<String>> trackTagMap) {
         Document document = new Document();
         document.add(new Field("id", track.getId(), Field.Store.YES, Field.Index.NO));
-        document.add(new Field("name", track.getName(), Field.Store.NO, Field.Index.ANALYZED));
-        document.add(new Field("album", track.getAlbum(), Field.Store.NO, Field.Index.ANALYZED));
-        document.add(new Field("artist", track.getArtist(), Field.Store.NO, Field.Index.ANALYZED));
-        document.add(new Field("filename", track.getFilename(), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new Field("name", StringUtils.lowerCase(track.getName()), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new Field("album", StringUtils.lowerCase(track.getAlbum()), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new Field("artist", StringUtils.lowerCase(track.getArtist()), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new Field("filename", StringUtils.lowerCase(track.getFilename()), Field.Store.NO, Field.Index.NOT_ANALYZED));
         if (StringUtils.isNotBlank(track.getComment())) {
-            document.add(new Field("comment", track.getComment(), Field.Store.NO, Field.Index.ANALYZED));
+            document.add(new Field("comment", StringUtils.lowerCase(track.getComment()), Field.Store.NO, Field.Index.ANALYZED));
         }
         if (StringUtils.isNotBlank(track.getGenre())) {
-            document.add(new Field("genre", track.getGenre(), Field.Store.NO, Field.Index.ANALYZED));
+            document.add(new Field("genre", StringUtils.lowerCase(track.getGenre()), Field.Store.NO, Field.Index.ANALYZED));
         }
         if (trackTagMap.get(track.getId()) != null) {
-            document.add(new Field("tags", StringUtils.join(trackTagMap.get(track.getId()), " "), Field.Store.NO, Field.Index.ANALYZED));
+            document.add(new Field("tags", StringUtils.lowerCase(StringUtils.join(trackTagMap.get(track.getId()), " ")), Field.Store.NO, Field.Index.ANALYZED));
         }
         return document;
     }
@@ -211,13 +213,13 @@ public class LuceneTrackService {
 
     private Query createQuery(SmartInfo smartInfo, int fuzziness) {
         BooleanQuery andQuery = new BooleanQuery();
-        addToAndQuery(andQuery, "album", smartInfo.getAlbumPattern(), fuzziness);
-        addToAndQuery(andQuery, "artist", smartInfo.getArtistPattern(), fuzziness);
-        addToAndQuery(andQuery, "genre", smartInfo.getGenrePattern(), fuzziness);
-        addToAndQuery(andQuery, "tags", smartInfo.getTagPattern(), fuzziness);
-        addToAndQuery(andQuery, "name", smartInfo.getTitlePattern(), fuzziness);
-        addToAndQuery(andQuery, "comment", smartInfo.getCommentPattern(), fuzziness);
-        addToAndQuery(andQuery, "filename", smartInfo.getFilePattern(), fuzziness);
+        addToAndQuery(andQuery, "album", StringUtils.lowerCase(smartInfo.getAlbumPattern()), fuzziness);
+        addToAndQuery(andQuery, "artist", StringUtils.lowerCase(smartInfo.getArtistPattern()), fuzziness);
+        addToAndQuery(andQuery, "genre", StringUtils.lowerCase(smartInfo.getGenrePattern()), fuzziness);
+        addToAndQuery(andQuery, "tags", StringUtils.lowerCase(smartInfo.getTagPattern()), fuzziness);
+        addToAndQuery(andQuery, "name", StringUtils.lowerCase(smartInfo.getTitlePattern()), fuzziness);
+        addToAndQuery(andQuery, "comment", StringUtils.lowerCase(smartInfo.getCommentPattern()), fuzziness);
+        addToAndQuery(andQuery, "filename", StringUtils.lowerCase(smartInfo.getFilePattern()), fuzziness);
         return andQuery;
     }
 
