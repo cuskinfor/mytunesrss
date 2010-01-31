@@ -94,7 +94,7 @@ public class TrackService {
                     }
                     return RenderMachine.getInstance().render(TrackUtils.getEnhancedTracks(transaction, tracks, sortOrder));
                 } else {
-                    throw new IllegalArgumentException("At least one of the search terms must be longer than 3 characters!");
+                    throw new IllegalArgumentException("At least one of the search terms must be longer than 2 characters!");
                 }
             } else {
                 throw new IllegalArgumentException("Search term must not be NULL ot empty!");

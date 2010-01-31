@@ -43,7 +43,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                 if (maxTermSize >= 2) {
                     query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, getWebConfig().getSearchFuzziness(), sortOrderValue);
                 } else {
-                    addError(new BundleError("error.searchTermMinSize", 3));
+                    addError(new BundleError("error.searchTermMinSize", 2));
                     forward(MyTunesRssCommand.ShowPortal);
                     return;// early return
                 }
