@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.8.3" date="2010-xx-xx">
+            <action dev="mdescher" type="add">
+                MYTUNESRSS-105: "Expert search with lucene syntax"
+            </action>
             <action dev="mdescher" type="fix">
                 MYTUNESRSS-108: "Search not working well."
                 Switched from Standard to Whitespace analyzer and set standard search fuzziness from 30 to 35.

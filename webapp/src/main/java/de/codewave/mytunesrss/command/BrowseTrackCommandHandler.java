@@ -10,10 +10,12 @@ import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.queryParser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,18 +36,28 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
 
             DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
             if (StringUtils.isNotEmpty(searchTerm)) {
-                int maxTermSize = 0;
-                for (String term : searchTerm.split(" ")) {
-                    if (term.length() > maxTermSize) {
-                        maxTermSize = term.length();
+                if (getWebConfig().getSearchFuzziness() == -1) {
+                    try {
+                        query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, getWebConfig().getSearchFuzziness(), sortOrderValue);
+                    } catch (LuceneQueryParserException e) {
+                        addError(new BundleError("error.illegalExpertSearchTerm"));
+                        forward(MyTunesRssCommand.ShowPortal);
+                        return; // early return
                     }
-                }
-                if (maxTermSize >= 2) {
-                    query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, getWebConfig().getSearchFuzziness(), sortOrderValue);
                 } else {
-                    addError(new BundleError("error.searchTermMinSize", 2));
-                    forward(MyTunesRssCommand.ShowPortal);
-                    return;// early return
+                    int maxTermSize = 0;
+                    for (String term : searchTerm.split(" ")) {
+                        if (term.length() > maxTermSize) {
+                            maxTermSize = term.length();
+                        }
+                    }
+                    if (maxTermSize >= 2) {
+                        query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, getWebConfig().getSearchFuzziness(), sortOrderValue);
+                    } else {
+                        addError(new BundleError("error.searchTermMinSize", 2));
+                        forward(MyTunesRssCommand.ShowPortal);
+                        return;// early return
+                    }
                 }
             } else {
                 query = TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true);

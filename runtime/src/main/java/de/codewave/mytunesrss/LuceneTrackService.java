@@ -7,10 +7,7 @@ import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.StopAnalyzer;
-import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
@@ -20,9 +17,11 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -35,21 +34,17 @@ import java.util.*;
 public class LuceneTrackService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LuceneTrackService.class);
 
-    private static final Set<String> STOP_WORDS = new HashSet<String>();
-
-    {
-        STOP_WORDS.addAll(StopFilter.makeStopSet(StopAnalyzer.ENGLISH_STOP_WORDS));
-    }
+    private static final int MAX_RESULTS = 10000;
 
     private Directory getDirectory() throws IOException {
-        return FSDirectory.getDirectory(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/lucene/track");
+        return FSDirectory.open(new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/lucene/track"));
     }
 
     public void indexAllTracks() throws IOException, SQLException {
         LOGGER.debug("Indexing all tracks.");
         long start = System.currentTimeMillis();
         Directory directory = getDirectory();
-        Analyzer analyzer = new WhitespaceAnalyzer(); //STOP_WORDS);
+        Analyzer analyzer = new WhitespaceAnalyzer();
         IndexWriter iwriter = new IndexWriter(directory, analyzer, true, new IndexWriter.MaxFieldLength(300));
         FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
@@ -86,9 +81,8 @@ public class LuceneTrackService {
     /**
      * Create a document for a track.
      *
-     * @param track A track to create a document from.
+     * @param track       A track to create a document from.
      * @param trackTagMap Track to tag mapping.
-     *
      * @return Document for the track.
      */
     private Document createTrackDocument(Track track, Map<String, List<String>> trackTagMap) {
@@ -114,7 +108,7 @@ public class LuceneTrackService {
         LOGGER.debug("Indexing " + trackIds.length + " tracks.");
         long start = System.currentTimeMillis();
         Directory directory = getDirectory();
-        StandardAnalyzer analyzer = new StandardAnalyzer(STOP_WORDS);
+        Analyzer analyzer = new WhitespaceAnalyzer();
         IndexWriter iwriter = new IndexWriter(directory, analyzer, false, new IndexWriter.MaxFieldLength(300));
         FindTrackQuery query = FindTrackQuery.getForIds(trackIds);
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
@@ -155,18 +149,31 @@ public class LuceneTrackService {
 
     public Collection<String> searchTrackIds(String[] searchTerms, int fuzziness) throws IOException, ParseException {
         Directory directory = getDirectory();
-        final IndexSearcher isearcher = new IndexSearcher(directory);
+        IndexSearcher isearcher = new IndexSearcher(directory);
         Query luceneQuery = createQuery(searchTerms, fuzziness);
-        final BitSet bits = new BitSet();
-        isearcher.search(luceneQuery, new HitCollector() {
-            @Override
-            public void collect(int i, float v) {
-                bits.set(i);
-            }
-        });
-        final Set<String> trackIds = new HashSet<String>();
-        for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
-            trackIds.add(isearcher.doc(i).get("id"));
+        TopDocs topDocs = isearcher.search(luceneQuery, MAX_RESULTS);
+        Collection<String> trackIds = new HashSet<String>();
+        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+            trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
+        }
+        isearcher.close();
+        directory.close();
+        return trackIds;
+    }
+
+    public Collection<String> searchTrackIds(String searchExpression) throws IOException, LuceneQueryParserException {
+        Directory directory = getDirectory();
+        IndexSearcher isearcher = new IndexSearcher(directory);
+        Query luceneQuery = null;
+        try {
+            luceneQuery = new QueryParser(Version.LUCENE_CURRENT, "title", new WhitespaceAnalyzer()).parse(searchExpression);
+        } catch (Exception e) {
+            throw new LuceneQueryParserException("Could not parse query string.", e);
+        }
+        TopDocs topDocs = isearcher.search(luceneQuery, MAX_RESULTS);
+        Collection<String> trackIds = new HashSet<String>();
+        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+            trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
         }
         isearcher.close();
         directory.close();
@@ -176,35 +183,27 @@ public class LuceneTrackService {
     private Query createQuery(String[] searchTerms, int fuzziness) {
         BooleanQuery andQuery = new BooleanQuery();
         for (String searchTerm : searchTerms) {
-            if (!STOP_WORDS.contains(searchTerm)) {
-                BooleanQuery orQuery = new BooleanQuery();
-                for (String field : new String[]{"name", "album", "artist", "comment", "tags"}) {
-                    String escapedSearchTerm = QueryParser.escape(searchTerm);
-                    orQuery.add(new WildcardQuery(new Term(field, "*" + escapedSearchTerm + "*")), BooleanClause.Occur.SHOULD);
-                    if (fuzziness > 0) {
-                        orQuery.add(new FuzzyQuery(new Term(field, escapedSearchTerm), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
-                    }
+            BooleanQuery orQuery = new BooleanQuery();
+            for (String field : new String[]{"name", "album", "artist", "comment", "tags"}) {
+                String escapedSearchTerm = QueryParser.escape(searchTerm);
+                orQuery.add(new WildcardQuery(new Term(field, "*" + escapedSearchTerm + "*")), BooleanClause.Occur.SHOULD);
+                if (fuzziness > 0) {
+                    orQuery.add(new FuzzyQuery(new Term(field, escapedSearchTerm), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
                 }
-                andQuery.add(orQuery, BooleanClause.Occur.MUST);
             }
+            andQuery.add(orQuery, BooleanClause.Occur.MUST);
         }
         return andQuery;
     }
 
-    public List<String> searchTrackIds(SmartInfo smartInfo, int fuzziness) throws IOException, ParseException {
+    public Collection<String> searchTrackIds(SmartInfo smartInfo, int fuzziness) throws IOException, ParseException {
         Directory directory = getDirectory();
-        final IndexSearcher isearcher = new IndexSearcher(directory);
+        IndexSearcher isearcher = new IndexSearcher(directory);
         Query luceneQuery = createQuery(smartInfo, fuzziness);
-        final BitSet bits = new BitSet();
-        isearcher.search(luceneQuery, new HitCollector() {
-            @Override
-            public void collect(int i, float v) {
-                bits.set(i);
-            }
-        });
-        final List<String> trackIds = new ArrayList<String>();
-        for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
-            trackIds.add(isearcher.doc(i).get("id"));
+        TopDocs topDocs = isearcher.search(luceneQuery, MAX_RESULTS);
+        Collection<String> trackIds = new HashSet<String>();
+        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+            trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
         }
         isearcher.close();
         directory.close();
@@ -225,15 +224,13 @@ public class LuceneTrackService {
 
     private void addToAndQuery(BooleanQuery andQuery, String field, String pattern, int fuzziness) {
         if (StringUtils.isNotEmpty(pattern)) {
-            if (!STOP_WORDS.contains(pattern)) {
-                BooleanQuery orQuery = new BooleanQuery();
-                String escapedPattern = QueryParser.escape(pattern);
-                orQuery.add(new WildcardQuery(new Term(field, "*" + escapedPattern + "*")), BooleanClause.Occur.SHOULD);
-                if (fuzziness > 0) {
-                    orQuery.add(new FuzzyQuery(new Term(field, escapedPattern), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
-                }
-                andQuery.add(orQuery, BooleanClause.Occur.MUST);
+            BooleanQuery orQuery = new BooleanQuery();
+            String escapedPattern = QueryParser.escape(pattern);
+            orQuery.add(new WildcardQuery(new Term(field, "*" + escapedPattern + "*")), BooleanClause.Occur.SHOULD);
+            if (fuzziness > 0) {
+                orQuery.add(new FuzzyQuery(new Term(field, escapedPattern), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
             }
+            andQuery.add(orQuery, BooleanClause.Occur.MUST);
         }
     }
 }

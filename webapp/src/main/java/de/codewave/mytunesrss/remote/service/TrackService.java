@@ -73,28 +73,33 @@ public class TrackService {
         throw new IllegalAccessException("Unauthorized");
     }
 
-    public Object search(String searchTerm, int fuzziness, String sortOrderName, int firstItem, int maxItems) throws IllegalAccessException, SQLException, IOException, ParseException {
+    public Object search(String searchTerm, int fuzziness, String sortOrderName, int firstItem, int maxItems) throws IllegalAccessException, SQLException, IOException, ParseException, LuceneQueryParserException {
         SortOrder sortOrder = SortOrder.valueOf(sortOrderName);
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             if (StringUtils.isNotBlank(searchTerm)) {
-                int maxTermSize = 0;
-                for (String term : searchTerm.split(" ")) {
-                    if (term.length() > maxTermSize) {
-                        maxTermSize = term.length();
-                    }
-                }
-                if (maxTermSize >= 2) {
-                    FindTrackQuery query = FindTrackQuery.getForSearchTerm(user, searchTerm, fuzziness, SortOrder.KeepOrder);
-                    DataStoreSession transaction = TransactionFilter.getTransaction();
-                    List<Track> tracks = new ArrayList<Track>();
-                    if (query != null) {
-                    DataStoreQuery.QueryResult<Track> result = transaction.executeQuery(query);
-                        tracks = maxItems > 0 ? result.getResults(firstItem, maxItems) : result.getResults();
-                    }
-                    return RenderMachine.getInstance().render(TrackUtils.getEnhancedTracks(transaction, tracks, sortOrder));
+                FindTrackQuery query;
+                if (fuzziness == -1) {
+                    query = FindTrackQuery.getForSearchTerm(user, searchTerm, fuzziness, SortOrder.KeepOrder);
                 } else {
-                    throw new IllegalArgumentException("At least one of the search terms must be longer than 2 characters!");
+                    int maxTermSize = 0;
+                    for (String term : searchTerm.split(" ")) {
+                        if (term.length() > maxTermSize) {
+                            maxTermSize = term.length();
+                        }
+                    }
+                    if (maxTermSize >= 2) {
+                        query = FindTrackQuery.getForSearchTerm(user, searchTerm, fuzziness, SortOrder.KeepOrder);
+                        DataStoreSession transaction = TransactionFilter.getTransaction();
+                        List<Track> tracks = new ArrayList<Track>();
+                        if (query != null) {
+                        DataStoreQuery.QueryResult<Track> result = transaction.executeQuery(query);
+                            tracks = maxItems > 0 ? result.getResults(firstItem, maxItems) : result.getResults();
+                        }
+                        return RenderMachine.getInstance().render(TrackUtils.getEnhancedTracks(transaction, tracks, sortOrder));
+                    } else {
+                        throw new IllegalArgumentException("At least one of the search terms must be longer than 2 characters!");
+                    }
                 }
             } else {
                 throw new IllegalArgumentException("Search term must not be NULL ot empty!");

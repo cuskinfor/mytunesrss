@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.mytunesrss.LuceneQueryParserException;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
@@ -29,12 +30,17 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         return query;
     }
 
-    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, int fuzziness, SortOrder sortOrder) throws IOException, ParseException {
+    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, int fuzziness, SortOrder sortOrder) throws IOException, ParseException, LuceneQueryParserException {
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistIds = user.getPlaylistIds();
-        String[] searchTerms = StringUtils.split(StringUtils.defaultString(StringUtils.lowerCase(searchTerm)), " ");
-        Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness);
+        Collection<String> luceneResult;
+        if (fuzziness == -1) {
+            luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerm);
+        } else {
+            String[] searchTerms = StringUtils.split(StringUtils.defaultString(StringUtils.lowerCase(searchTerm)), " ");
+            luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness);
+        }
         query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
         return query;
     }

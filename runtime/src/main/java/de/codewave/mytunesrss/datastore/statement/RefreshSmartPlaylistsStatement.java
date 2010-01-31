@@ -1,22 +1,22 @@
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.LuceneTrackService;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
+import org.apache.lucene.queryParser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
-import org.apache.lucene.queryParser.ParseException;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.io.IOException;
 
 /**
  * Statement for updating all smart playlists.
@@ -34,7 +34,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
         MyTunesRssUtils.createStatement(connection, "createSearchTempTables").execute(); // create if not exists
         for (SmartPlaylist smartPlaylist : smartPlaylists) {
             try {
-                List<String> trackIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(smartPlaylist.getSmartInfo(), 0);
+                Collection<String> trackIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(smartPlaylist.getSmartInfo(), 0);
                 MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
                 if (!CollectionUtils.isEmpty(trackIds)) {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
