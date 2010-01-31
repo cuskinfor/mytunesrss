@@ -84,7 +84,7 @@ public class TrackService {
                         maxTermSize = term.length();
                     }
                 }
-                if (maxTermSize >= 3) {
+                if (maxTermSize >= 2) {
                     FindTrackQuery query = FindTrackQuery.getForSearchTerm(user, searchTerm, fuzziness, SortOrder.KeepOrder);
                     DataStoreSession transaction = TransactionFilter.getTransaction();
                     List<Track> tracks = new ArrayList<Track>();

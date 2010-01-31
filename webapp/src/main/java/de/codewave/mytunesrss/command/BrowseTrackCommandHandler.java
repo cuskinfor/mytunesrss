@@ -40,7 +40,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                         maxTermSize = term.length();
                     }
                 }
-                if (maxTermSize >= 3) {
+                if (maxTermSize >= 2) {
                     query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, getWebConfig().getSearchFuzziness(), sortOrderValue);
                 } else {
                     addError(new BundleError("error.searchTermMinSize", 3));
