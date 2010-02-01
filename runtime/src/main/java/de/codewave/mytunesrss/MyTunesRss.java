@@ -155,7 +155,6 @@ public class MyTunesRss {
                 LOGGER.error("Could not create MD5 digest.", e);
             }
         }
-        DESKTOP_WRAPPER = DesktopWrapperFactory.createDesktopWrapper();
     }
 
     public static void main(final String[] args)
@@ -401,6 +400,7 @@ public class MyTunesRss {
     private static void executeGuiMode()
             throws IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException, IOException,
             InterruptedException, AWTException, SQLException {
+        DESKTOP_WRAPPER = DesktopWrapperFactory.createDesktopWrapper();
         showNewVersionInfo();
         SETTINGS = new Settings();
         //DATABASE_FORM = SETTINGS.getDatabaseForm();
