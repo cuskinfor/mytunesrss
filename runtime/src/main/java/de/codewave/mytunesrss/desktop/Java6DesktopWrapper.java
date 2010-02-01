@@ -12,6 +12,10 @@ import java.net.URISyntaxException;
 
 public class Java6DesktopWrapper implements DesktopWrapper {
 
+    public Java6DesktopWrapper() {
+        Desktop.getDesktop(); // just to check if it exsist
+    }
+
     public void openHomepage() {
         try {
             Desktop.getDesktop().browse(new URI("http://www.codewave.de"));

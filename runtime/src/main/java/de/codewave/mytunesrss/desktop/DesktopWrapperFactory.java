@@ -5,10 +5,15 @@
 
 package de.codewave.mytunesrss.desktop;
 
+import org.apache.commons.lang.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Factory for desktop wrapper.
  */
 public class DesktopWrapperFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DesktopWrapperFactory.class);
 
     /**
      * Create a desktop wrapper.
@@ -17,11 +22,9 @@ public class DesktopWrapperFactory {
      */
     public static final DesktopWrapper createDesktopWrapper() {
         try {
-            Class.forName("java.awt.Desktop");
-            // class found, so we have JDK 1.6 or better and we can use the Java 6 wrapper
             return new Java6DesktopWrapper();
-        } catch (ClassNotFoundException e) {
-            // class not found, so we use a null wrapper which does nothing
+        } catch (Exception e) {
+            LOGGER.debug("Could not create Java6DesktopWrapper: " + e.getMessage());        
             return new NullDesktopWrapper();
         }
     }
