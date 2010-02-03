@@ -37,9 +37,9 @@
     </Company_Info>
     <Program_Info>
         <Program_Name>MyTunesRSS</Program_Name>
-        <Program_Version>3.8.3</Program_Version>
+        <Program_Version>3.8.4</Program_Version>
         <Program_Release_Month>02</Program_Release_Month>
-        <Program_Release_Day>02</Program_Release_Day>
+        <Program_Release_Day>03</Program_Release_Day>
         <Program_Release_Year>2010</Program_Release_Year>
         <Program_Cost_Dollars/>
         <Program_Cost_Other_Code>EUR</Program_Cost_Other_Code>
@@ -50,10 +50,8 @@
         <Program_OS_Support>Java,Win2000,Win7 x32,Win7 x64,WinVista,WinVista x64,WinXP</Program_OS_Support>
         <Program_Language>English,German</Program_Language>
         <Program_Change_Info>
-            Expert search with lucene syntax.
-            Improved search for better results.
-            Button for opening documentation in browser on Java 6 platforms.
-            Bugfixes.
+            Fixed bug with new help button on unsupported (Java 5) platforms.
+            Fixed bug for smart playlist with multiple terms for a field.
         </Program_Change_Info>
         <Program_Category_Class>Audio &amp; Multimedia::Other</Program_Category_Class>
         <Program_System_Requirements>Java 1.5</Program_System_Requirements>
@@ -91,7 +89,7 @@
                 flash music player and much more. Create multiple user accounts, assign permissions, create download
                 quotas and much more. Discover other MyTunesRSS servers on your local network. Use your iTunes library
                 or simple watch folders. Upload new music to the server through the beautiful web interface. Browse your
-                music library by album, artist or genre. All the things you ever wanted to do!
+                music library by album, artist or genre.
             </Char_Desc_2000>
         </English>
     </Program_Descriptions>
@@ -104,7 +102,7 @@
             <Application_XML_File_URL>http://www.codewave.de/products/mytunesrss/pad-win.xml</Application_XML_File_URL>
         </Application_URLs>
         <Download_URLs>
-            <Primary_Download_URL>http://www.codewave.de/products/mytunesrss/?download_file=mytunesrss-3.8.3-setup.exe</Primary_Download_URL>
+            <Primary_Download_URL>http://www.codewave.de/products/mytunesrss/?download_file=mytunesrss-3.8.4-setup.exe</Primary_Download_URL>
             <Secondary_Download_URL/>
             <Additional_Download_URL_1/>
             <Additional_Download_URL_2/>
