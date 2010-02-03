@@ -228,7 +228,9 @@ public class LuceneTrackService {
         if (StringUtils.isNotEmpty(pattern)) {
             BooleanQuery orQuery = new BooleanQuery();
             String escapedPattern = QueryParser.escape(pattern);
-            orQuery.add(new WildcardQuery(new Term(field, "*" + escapedPattern + "*")), BooleanClause.Occur.SHOULD);
+            for (String term : StringUtils.split(escapedPattern)) { 
+                orQuery.add(new WildcardQuery(new Term(field, "*" + term + "*")), BooleanClause.Occur.SHOULD);
+            }
             if (fuzziness > 0) {
                 orQuery.add(new FuzzyQuery(new Term(field, escapedPattern), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
             }

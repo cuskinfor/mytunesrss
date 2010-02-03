@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.8.4" date="2010-xx-xx">
+            <action dev="mdescher" type="fix">
+                MYTUNESRSS-121: "Smart playlist does not work for artist with space in name"
+            </action>
+        </release>
+
         <release version="3.8.3" date="2010-02-02">
             <action dev="mdescher" type="add">
                 MYTUNESRSS-105: "Expert search with lucene syntax"
