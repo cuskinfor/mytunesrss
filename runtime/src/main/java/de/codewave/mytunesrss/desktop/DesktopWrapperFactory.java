@@ -23,7 +23,7 @@ public class DesktopWrapperFactory {
     public static final DesktopWrapper createDesktopWrapper() {
         try {
             return new Java6DesktopWrapper();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.debug("Could not create Java6DesktopWrapper: " + e.getMessage());        
             return new NullDesktopWrapper();
         }
