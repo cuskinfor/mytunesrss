@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.8.5" date="2010-02-03">
+            <action dev="mdescher" type="fix">
+                Fixed desktop wrapper for unsupported platforms. Have to catch Throwable, not Exception!
+            </action>
+        </release>
+
         <release version="3.8.4" date="2010-02-03">
             <action dev="mdescher" type="fix">
                 Fixed desktop wrapper for unsupported platforms.
