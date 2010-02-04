@@ -49,12 +49,6 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                 }
                 int randomPlaylistSize = getWebConfig().getRandomPlaylistSize();
                 if (randomPlaylistSize > 0) {
-                    DataStoreQuery.QueryResult<Playlist> randomPlaylistSources = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
-                                                                                                                                     null,
-                                                                                                                                     getWebConfig().getRandomSource(),
-                                                                                                                                     null,
-                                                                                                                                     false,
-                                                                                                                                     false));
                     StringBuilder randomType = new StringBuilder();
                     if (StringUtils.isNotBlank(getWebConfig().getRandomMediaType())) {
                         randomType.append(getWebConfig().getRandomMediaType());
@@ -63,18 +57,31 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                     if (getWebConfig().isRandomProtected()) {
                         randomType.append('p');
                     }
-                    if (randomPlaylistSources.getResultSize() == 1) {
-                        Playlist firstResult = randomPlaylistSources.getResult(0);
-                        playlists.add(new Playlist(
-                                FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomType.toString() + "_" + randomPlaylistSize + "_" +
-                                        firstResult.getId(), PlaylistType.MyTunesSmart, MessageFormat.format(getBundleString("playlist.specialRandom"),
-                                                                                                        randomPlaylistSize,
-                                                                                                        firstResult.getName()), randomPlaylistSize));
+                    if (StringUtils.isNotBlank(getWebConfig().getRandomSource())) {
+                        DataStoreQuery.QueryResult<Playlist> randomPlaylistSources = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
+                                null,
+                                getWebConfig().getRandomSource(),
+                                null,
+                                false,
+                                false));
+                        if (randomPlaylistSources.getResultSize() == 1) {
+                            Playlist firstResult = randomPlaylistSources.getResult(0);
+                            playlists.add(new Playlist(
+                                    FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomType.toString() + "_" + randomPlaylistSize + "_" +
+                                            firstResult.getId(), PlaylistType.MyTunesSmart, MessageFormat.format(getBundleString("playlist.specialRandom"),
+                                                                                                            randomPlaylistSize,
+                                                                                                            firstResult.getName()), randomPlaylistSize));
+                        } else {
+                            playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomType.toString() + "_" + randomPlaylistSize,
+                                                       PlaylistType.MyTunesSmart,
+                                                       MessageFormat.format(getBundleString("playlist.specialRandomWholeLibrary"), randomPlaylistSize),
+                                                       randomPlaylistSize));
+                        }
                     } else {
                         playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RANDOM + "_" + randomType.toString() + "_" + randomPlaylistSize,
-                                                   PlaylistType.MyTunesSmart,
-                                                   MessageFormat.format(getBundleString("playlist.specialRandomWholeLibrary"), randomPlaylistSize),
-                                                   randomPlaylistSize));
+                                PlaylistType.MyTunesSmart,
+                                MessageFormat.format(getBundleString("playlist.specialRandomWholeLibrary"), randomPlaylistSize),
+                                randomPlaylistSize));
                     }
                 }
             }

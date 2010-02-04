@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.8.6" date="2010-xx-xx">
+            <action dev="mdescher" type="fix">
+                MYTUNESRSS-122 "Random playlist source problems"
+            </action>
+        </release>
+
         <release version="3.8.5" date="2010-02-03">
             <action dev="mdescher" type="fix">
                 Fixed desktop wrapper for unsupported platforms. Have to catch Throwable, not Exception!
