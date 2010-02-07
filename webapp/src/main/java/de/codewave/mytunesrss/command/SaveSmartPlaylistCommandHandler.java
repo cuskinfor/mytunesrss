@@ -35,8 +35,8 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
             if (StringUtils.isNotBlank(getRequestParameter("smartPlaylist.smartInfo.timeMax", null))) {
                 smartInfo.setTimeMax(getIntegerRequestParameter("smartPlaylist.smartInfo.timeMax", 0));
             }
-            if (StringUtils.isNotBlank(getRequestParameter("smartPlaylist.smartInfo.mediatype", null))) {
-                smartInfo.setMediaType(MediaType.valueOf(getRequestParameter("smartPlaylist.smartInfo.mediatype", MediaType.Other.name())));
+            if (StringUtils.isNotBlank(getRequestParameter("smartPlaylist.smartInfo.mediaType", null))) {
+                smartInfo.setMediaType(MediaType.valueOf(getRequestParameter("smartPlaylist.smartInfo.mediaType", MediaType.Other.name())));
             }
             if (StringUtils.isNotBlank(getRequestParameter("smartPlaylist.smartInfo.protected", null))) {
                 smartInfo.setProtected(getBooleanRequestParameter("smartPlaylist.smartInfo.protected", false));
@@ -59,10 +59,12 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
                                  "smartPlaylist.smartInfo.genrePattern",
                                  "smartPlaylist.smartInfo.titlePattern",
                                  "smartPlaylist.smartInfo.filePattern",
+                                 "smartPlaylist.smartInfo.tagPattern",
+                                 "smartPlaylist.smartInfo.commentPattern",
                                  "smartPlaylist.smartInfo.timeMin",
                                  "smartPlaylist.smartInfo.timeMax",
                                  "smartPlaylist.smartInfo.protected",
-                    "smartPlaylist.smartInfo.mediatype");
+                                 "smartPlaylist.smartInfo.mediaType");
             getRequest().setAttribute("fields", EditSmartPlaylistCommandHandler.getFields());
             forward(MyTunesRssResource.EditSmartPlaylist);
         }

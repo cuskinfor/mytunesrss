@@ -213,7 +213,7 @@ public class MyTunesRssWebUtils {
 
     public static void createParameterModel(HttpServletRequest request, String... parameterNames) {
         for (String parameterName : parameterNames) {
-            String[] parts = parameterName.split(".");
+            String[] parts = parameterName.split("\\.");
             Map map = null;
             for (int i = 0; i < parts.length; i++) {
                 if (i < parts.length - 1) {

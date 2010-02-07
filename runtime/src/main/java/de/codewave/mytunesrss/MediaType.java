@@ -16,7 +16,7 @@ public enum MediaType {
         return myMimeTypePrefix;
     }
 
-    public String getJspName() {
+    public String toString() {
         return name();
     }
 }
