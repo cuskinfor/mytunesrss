@@ -226,15 +226,16 @@ public class LuceneTrackService {
 
     private void addToAndQuery(BooleanQuery andQuery, String field, String pattern, int fuzziness) {
         if (StringUtils.isNotEmpty(pattern)) {
-            BooleanQuery orQuery = new BooleanQuery();
+            BooleanQuery innerAndQuery = new BooleanQuery();
             String escapedPattern = QueryParser.escape(pattern);
-            for (String term : StringUtils.split(escapedPattern)) { 
-                orQuery.add(new WildcardQuery(new Term(field, "*" + term + "*")), BooleanClause.Occur.SHOULD);
+            for (String term : StringUtils.split(escapedPattern)) {
+                if (fuzziness > 0) {
+                    innerAndQuery.add(new FuzzyQuery(new Term(field, term), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.MUST);
+                } else {
+                    innerAndQuery.add(new WildcardQuery(new Term(field, "*" + term + "*")), BooleanClause.Occur.MUST);
+                }
             }
-            if (fuzziness > 0) {
-                orQuery.add(new FuzzyQuery(new Term(field, escapedPattern), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
-            }
-            andQuery.add(orQuery, BooleanClause.Occur.MUST);
+            andQuery.add(innerAndQuery, BooleanClause.Occur.MUST);
         }
     }
 }
