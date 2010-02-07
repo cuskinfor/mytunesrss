@@ -7,7 +7,10 @@
 
     <body>
 
-        <release version="3.8.6" date="2010-xx-xx">
+        <release version="3.8.6" date="2010-02-07">
+            <action dev="mdescher" type="fix">
+                Bugfix for cleared fields when smart playlist saving failed.
+            </action>
             <action dev="mdescher" type="fix">
                 Smart playlists used an OR style query in lucene instead of and AND style query.
             </action>

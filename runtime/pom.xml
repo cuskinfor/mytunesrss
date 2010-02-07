@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
-    <version>3.8.6-SNAPSHOT</version>
+    <version>3.9.0-EAP-1-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Runtime</name>
     <distributionManagement>
         <site>
@@ -407,6 +407,11 @@
             <artifactId>systray</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty</artifactId>
+            <version>6.1.22</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -429,17 +434,6 @@
             </plugin>
         </plugins>
     </build>
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<configuration>
-					<findbugsXmlOutput>true</findbugsXmlOutput>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
 	<scm>
 		<developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/trunk</developerConnection>
 	</scm>

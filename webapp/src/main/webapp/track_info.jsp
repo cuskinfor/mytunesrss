@@ -165,7 +165,7 @@
                         <td class="label"><fmt:message key="type"/>:</td>
                         <td>
                             <c:if test="${track.protected}"><img src="${appUrl}/images/protected.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle" /></c:if>
-                            <c:if test="${track.mediaType.jspName == 'Video'}"><img src="${appUrl}/images/movie.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle" /></c:if>
+                            <c:if test="${track.mediaType== 'Video'}"><img src="${appUrl}/images/movie.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle" /></c:if>
                             <c:out value="${mtfn:suffix(null, null, track)}" />
                         </td>
                     </tr>
@@ -236,11 +236,11 @@
                             </td>
                         </tr>
                     </c:if>
-                    <c:if test="${!empty(track.imageHash) || (track.mediaType.jspName == 'Video' && userAgent != 'Psp')}">
+                    <c:if test="${!empty(track.imageHash) || (track.mediaType == 'Video' && userAgent != 'Psp')}">
                         <tr>
                             <th colspan="2" class="active">
                                 <c:choose>
-                                    <c:when test="${track.mediaType.jspName == 'Video'}">
+                                    <c:when test="${track.mediaType == 'Video'}">
                                         <fmt:message key="trackinfo.movie"/>
                                     </c:when>
                                     <c:otherwise>
@@ -252,7 +252,7 @@
                         <tr>
                           <td colspan="2" align="center">
                             <c:choose>
-                                <c:when test="${track.mediaType.jspName == 'Video'}">
+                                <c:when test="${track.mediaType == 'Video'}">
                                     <c:set var="imgUrl" value="${appUrl}/images/movie_poster.png"/>
                                     <c:if test="${!empty(track.imageHash)}"><c:set var="imgUrl">${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=256</mt:encrypt></c:set></c:if>
                                     <embed src="${imgUrl}" href="<c:out value="${mtfn:playbackLink(pageContext, track, 'notranscode=true')}"/>" type="${mtfn:contentType(config, authUser, track)}" <c:if test="${userAgent == 'Iphone'}">target="myself"</c:if> scale="1"></embed>

@@ -30,6 +30,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.handler.ContextHandler;
+import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.webapp.WebAppContext;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -158,7 +162,7 @@ public class MyTunesRss {
     }
 
     public static void main(final String[] args)
-            throws LifecycleException, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException,
+            throws Exception, IllegalAccessException, UnsupportedLookAndFeelException, InstantiationException, ClassNotFoundException,
             IOException, SQLException, SchedulerException {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
@@ -178,6 +182,13 @@ public class MyTunesRss {
         if (StringUtils.isEmpty(VERSION)) {
             VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");
         }
+
+        // start admin jetty on port 12345
+        Server adminServer = new Server(12345);
+        Context adminContext = new WebAppContext("webapps/ADMIN", "/");
+        adminServer.setHandler(adminContext);
+        adminServer.start();
+        
         CONFIG = new MyTunesRssConfig();
         MyTunesRss.CONFIG.load();
         File license = null;

@@ -166,7 +166,7 @@
                                onmouseout="hideTooltip(this)"
 								<c:choose>
 								    <c:when test="${track.source.jspName == 'YouTube'}">title="<fmt:message key="video"/>" class="youtube"</c:when>
-								    <c:when test="${track.mediaType.jspName == 'Video'}">title="<fmt:message key="video"/>" class="movie"</c:when>
+								    <c:when test="${track.mediaType == 'Video'}">title="<fmt:message key="video"/>" class="movie"</c:when>
 								</c:choose>                               
                             >
                                 <c:choose>

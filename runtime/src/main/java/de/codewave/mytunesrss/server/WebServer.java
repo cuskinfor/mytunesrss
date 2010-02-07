@@ -7,11 +7,13 @@ package de.codewave.mytunesrss.server;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssConfig;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.quicktime.QuicktimePlayerException;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
-import de.codewave.utils.PrefsUtils;
+import de.codewave.mytunesrss.quicktime.QuicktimePlayerException;
 import de.codewave.utils.servlet.SessionManager;
-import org.apache.catalina.*;
+import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.session.StandardManager;
@@ -59,12 +61,12 @@ public class WebServer {
                         LOGGER.debug("Using catalina base: \"" + catalinaBase + "\".");
                     }
                     myEmbeddedTomcat = createServer("mytunesrss",
-                                                    null,
-                                                    MyTunesRss.CONFIG.getPort(),
-                                                    new File(catalinaBase),
-                                                    "ROOT",
-                                                    MyTunesRss.CONFIG.getWebappContext(),
-                                                    contextEntries);
+                            null,
+                            MyTunesRss.CONFIG.getPort(),
+                            new File(catalinaBase),
+                            "ROOT",
+                            MyTunesRss.CONFIG.getWebappContext(),
+                            contextEntries);
                     if (myEmbeddedTomcat != null) {
                         myEmbeddedTomcat.start();
                         byte health = checkServerHealth(MyTunesRss.CONFIG.getPort(), true);
@@ -150,7 +152,7 @@ public class WebServer {
             if (LOGGER.isInfoEnabled() && logging) {
                 LOGGER.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             }
-            connection = (HttpURLConnection)targetUrl.openConnection();
+            connection = (HttpURLConnection) targetUrl.openConnection();
             int responseCode = connection.getResponseCode();
             if (LOGGER.isInfoEnabled() && logging) {
                 LOGGER.info("HTTP response code is " + responseCode);
@@ -173,7 +175,7 @@ public class WebServer {
                 if (LOGGER.isInfoEnabled() && logging) {
                     LOGGER.info("Health servlet response code is " + result + " after " + trial + " trials.");
                 }
-                return result != -1 ? (byte)result : CheckHealthResult.EOF;
+                return result != -1 ? (byte) result : CheckHealthResult.EOF;
             } else {
                 return CheckHealthResult.INVALID_HTTP_RESPONSE;
             }
@@ -190,7 +192,7 @@ public class WebServer {
     }
 
     private Embedded createServer(String name, InetAddress listenAddress, int listenPort, File catalinaBasePath, String webAppName,
-            String webAppContext, Map<String, Object> contextEntries) throws IOException {
+                                  String webAppContext, Map<String, Object> contextEntries) throws IOException {
         Embedded server = new Embedded();
         server.setCatalinaBase(catalinaBasePath.getCanonicalPath());
         Engine engine = server.createEngine();
@@ -202,7 +204,7 @@ public class WebServer {
             MyTunesRssUtils
                     .deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
         }
-        ((StandardHost)host).setWorkDir(MyTunesRssUtils.getCacheDataPath() + "/tomcat-work");
+        ((StandardHost) host).setWorkDir(MyTunesRssUtils.getCacheDataPath() + "/tomcat-work");
         engine.addChild(host);
         myContext = server.createContext(webAppContext, webAppName);
         mySessionManager = new StandardManager();
@@ -349,11 +351,11 @@ public class WebServer {
 
     public List<MyTunesRssSessionInfo> getSessionInfos() {
         if (isRunning()) {
-            List<MyTunesRssSessionInfo> sessionInfos = new ArrayList<MyTunesRssSessionInfo>((Collection<MyTunesRssSessionInfo>)SessionManager
+            List<MyTunesRssSessionInfo> sessionInfos = new ArrayList<MyTunesRssSessionInfo>((Collection<MyTunesRssSessionInfo>) SessionManager
                     .getAllSessionInfo(myContext.getServletContext()));
             Collections.sort(sessionInfos, new Comparator<MyTunesRssSessionInfo>() {
                 public int compare(MyTunesRssSessionInfo sessionInfo, MyTunesRssSessionInfo sessionInfo1) {
-                    return (int)(sessionInfo.getConnectTime() - sessionInfo1.getConnectTime());
+                    return (int) (sessionInfo.getConnectTime() - sessionInfo1.getConnectTime());
                 }
             });
             return sessionInfos;
