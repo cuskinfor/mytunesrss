@@ -17,6 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -104,7 +107,7 @@ public class TrackListener implements PListHandlerListener {
         String name = (String) track.get("Name");
         String trackType = (String) track.get("Track Type");
         if (trackType == null || "File".equals(trackType)) {
-            String filename = ItunesLoader.getFileNameForLocation((String) track.get("Location"));
+            String filename = ItunesLoader.getFileNameForLocation(applyReplacements((String) track.get("Location")));
             String mp4Codec = getMp4Codec(track, filename, myLibraryListener.getTimeLastUpate());
             if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && FileSupportUtils.isSupported(filename) && !isMp4CodecDisabled(mp4Codec)) {
                 if (!new File(filename).isFile()) {
@@ -127,7 +130,7 @@ public class TrackListener implements PListHandlerListener {
                             statement.setAlbum(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Album"))));
                             statement.setTime((int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0));
                             statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
-                            statement.setFileName(applyReplacements(filename));
+                            statement.setFileName(filename);
                             statement.setProtected(FileSupportUtils.isProtected(filename));
                             statement.setMediaType(track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue() ? MediaType.Video : MediaType.Audio);
                             statement.setGenre(StringUtils.trimToNull((String) track.get("Genre")));
