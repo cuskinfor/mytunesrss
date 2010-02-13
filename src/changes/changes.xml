@@ -7,6 +7,13 @@
 
     <body>
 
+        <release version="3.8.7" date="2010-02-13">
+            <action dev="mdescher" type="fix">
+                MYTUNESRSS-123 "Path replacement uses resolved fle path"
+            </action>
+        </release>
+
+
         <release version="3.8.6" date="2010-02-07">
             <action dev="mdescher" type="fix">
                 Bugfix for cleared fields when smart playlist saving failed.
@@ -16,12 +23,6 @@
             </action>
             <action dev="mdescher" type="fix">
                 MYTUNESRSS-122 "Random playlist source problems"
-            </action>
-        </release>
-
-        <release version="3.8.6" date="xxxx-xx-xx">
-            <action dev="mdescher" type="fix">
-                MYTUNESRSS-123 "Path replacement uses resolved fle path"
             </action>
         </release>
 
