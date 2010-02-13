@@ -29,7 +29,7 @@ public class ItunesLoader {
 
     static String getFileNameForLocation(String location) {
         try {
-            return new File(new URI(location).getPath()).getCanonicalPath();
+            return new File(MyTunesRssUtils.normalize(new URI(location).getPath())).getCanonicalPath();
         } catch (URISyntaxException e) {
             LOG.error("Could not create URI from location \"" + location + "\".", e);
         } catch (IOException e) {
