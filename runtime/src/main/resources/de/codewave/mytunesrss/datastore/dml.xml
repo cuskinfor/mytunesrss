@@ -226,6 +226,10 @@
         <sql loop="track_id" loopbatch="10000" loopcommit="10000">DELETE FROM track WHERE id = :loopitem_track_id</sql>
     </statement>
 
+    <statement name="removeTrackByMp4Codec">
+        <sql>DELETE FROM track WHERE mp4codec IN (:codecs[])</sql>
+    </statement>
+
     <statement name="findImage">
         <sql>
             SELECT data AS data FROM image WHERE hash = :hash AND size = :size

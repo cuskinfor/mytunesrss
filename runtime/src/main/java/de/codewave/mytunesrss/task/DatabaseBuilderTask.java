@@ -372,6 +372,10 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 LOGGER.info("Trying to remove up to " + trackIds.size() + " tracks from database.");
             }
             storeSession.executeStatement(new RemoveTrackStatement(trackIds));
+            String codecs = MyTunesRss.CONFIG.getDisabledMp4Codecs();
+            if (StringUtils.isNotBlank(codecs)) {
+                storeSession.executeStatement(new RemoveTrackByMp4CodecsStatement(codecs.split(",")));
+            }
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
         }
         if (!getExecutionThread().isInterrupted()) {
