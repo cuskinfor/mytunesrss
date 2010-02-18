@@ -9,6 +9,9 @@
 
         <release version="3.8.8" date="2010-02-20">
             <action dev="mdescher" type="fix">
+                MYTUNESRSS-127 "Unknown playlist format for 'all tracks for above albums'"
+            </action>
+            <action dev="mdescher" type="fix">
                 MYTUNESRSS-126 "Obsolete tracks not removed from database"
             </action>
             <action dev="mdescher" type="fix">
