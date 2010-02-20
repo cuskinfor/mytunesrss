@@ -6,39 +6,24 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
-import com.vaadin.data.Property;
-import com.vaadin.ui.*;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Window;
 
 public class MyTunesRssWebAdmin extends Application {
+
     public void init() {
-        Window main = new Window("MyTunesRSS Web Admin");
+        Window main = new Window("MyTunesRSS Adminstration"); // TODO i18n
         setMainWindow(main);
-        Tree configPages = new Tree("MyTunesRSS configuration");
-        for (String item : new String[] {"Status", "Server", "Database", "Data sources", "Data import", "Content", "User management", "Admin notifications", "Statistics", "Miscellaneous", "Streaming", "Addons", "Support and registration"}) {
-            configPages.addItem(item);
-            configPages.setChildrenAllowed(item, false);
-        }
-        configPages.setImmediate(true);
-        final SplitPanel splitter = new SplitPanel(SplitPanel.ORIENTATION_HORIZONTAL);
-        configPages.addListener(new Property.ValueChangeListener() {
-            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                Panel p = new Panel();
-                Form f = new Form();
-                f.setCaption("Allgemeine Einstellungen");
-                f.addField("autoStartServer", new CheckBox(MyTunesRssUtils.getBundleString("settings.autoStartServer"), MyTunesRss.CONFIG.isAutoStartServer()));
-                f.addField("localTempArchive", new CheckBox(MyTunesRssUtils.getBundleString("settings.tempZipArchives"), MyTunesRss.CONFIG.isLocalTempArchive()));
-                f.addField("availableOnLocalNet", new CheckBox(MyTunesRssUtils.getBundleString("settings.availableOnLocalNet"), MyTunesRss.CONFIG.isAvailableOnLocalNet()));
-                TextField serverNameTextField = new TextField(MyTunesRssUtils.getBundleString("settings.serverName"), MyTunesRss.CONFIG.getServerName());
-                serverNameTextField.setEnabled(MyTunesRss.CONFIG.isAvailableOnLocalNet());
-                f.addField("availableOnLocalNet", serverNameTextField);
-                p.addComponent(f);
-                splitter.setSecondComponent(p);
-            }
-        });
-        splitter.setFirstComponent(configPages);
-        splitter.setSecondComponent(new Panel("Overview Panel"));
-        main.addComponent(splitter);
+        main.addComponent(new LoginPanel(MyTunesRssWebAdminUtils.COMPONENT_FACTORY));
+    }
+
+    public void setMainComponent(Component component) {
+        Window mainWindow = getMainWindow();
+        mainWindow.removeAllComponents();
+        mainWindow.addComponent(component);
+    }
+
+    public void showError(String messageKey, Object... parameters) {
+        getMainWindow().showNotification(null, MyTunesRssWebAdminUtils.getBundleString(messageKey, parameters), Window.Notification.TYPE_ERROR_MESSAGE);
     }
 }

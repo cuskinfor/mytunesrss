@@ -1186,13 +1186,13 @@ public class MyTunesRssConfig {
         String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
         setWebappContext(context != null ? "/" + context : "");
         setTomcatProxyHost(JXPathUtils.getStringValue(settings, "tomcat/proxy-host", null));
-        setTomcatProxyScheme(JXPathUtils.getStringValue(settings, "tomcat/proxy-scheme", null));
+        setTomcatProxyScheme(JXPathUtils.getStringValue(settings, "tomcat/proxy-scheme", "HTTP"));
         setTomcatProxyPort(JXPathUtils.getIntValue(settings, "tomcat/proxy-port", 0));
         setSslKeystoreFile(JXPathUtils.getStringValue(settings, "ssl/keystore/file", null));
         setSslKeystoreKeyAlias(JXPathUtils.getStringValue(settings, "ssl/keystore/keyalias", null));
         setSslKeystorePass(JXPathUtils.getStringValue(settings, "ssl/keystore/pass", null));
         setSslPort(JXPathUtils.getIntValue(settings, "ssl/port", 0));
-        setTomcatSslProxyScheme(JXPathUtils.getStringValue(settings, "ssl/proxy-scheme", null));
+        setTomcatSslProxyScheme(JXPathUtils.getStringValue(settings, "ssl/proxy-scheme", "HTTPS"));
         setTomcatSslProxyHost(JXPathUtils.getStringValue(settings, "ssl/proxy-host", null));
         setTomcatSslProxyPort(JXPathUtils.getIntValue(settings, "ssl/proxy-port", 0));
         myAdditionalContexts = new ArrayList<String>();
