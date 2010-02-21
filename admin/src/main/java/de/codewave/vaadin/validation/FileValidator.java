@@ -13,14 +13,12 @@ import java.util.regex.Pattern;
 
 public class FileValidator extends AbstractStringValidator {
 
-    private boolean myAllowEmpty;
     private boolean myAllowFile;
     private boolean myAllowDirectory;
     private Pattern myNamePattern;
 
-    public FileValidator(String errorMessage, boolean allowEmpty, boolean allowFile, boolean allowDirectory, Pattern namePattern) {
+    public FileValidator(String errorMessage, boolean allowFile, boolean allowDirectory, Pattern namePattern) {
         super(errorMessage);
-        myAllowEmpty = allowEmpty;
         myAllowFile = allowFile;
         myAllowDirectory = allowDirectory;
         myNamePattern = namePattern;
@@ -28,7 +26,7 @@ public class FileValidator extends AbstractStringValidator {
 
     @Override
     protected boolean isValidString(String value) {
-        if (StringUtils.isEmpty(value) && myAllowEmpty) {
+        if (StringUtils.isEmpty(value)) {
             return true;
         }
         File file = new File(value);

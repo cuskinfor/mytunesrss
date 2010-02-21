@@ -53,6 +53,7 @@ public class StatusPanel extends Panel implements Button.ClickListener {
         textField.setWidth("100%");
         server.addComponent(textField);
         Panel serverButtons = new Panel(myComponentFactory.createHorizontalLayout(false, true));
+        serverButtons.addStyleName("light");
         server.addComponent(serverButtons);
         myStartServer = myComponentFactory.createButton("statusPanel.server.start", StatusPanel.this);
         myStopServer = myComponentFactory.createButton("statusPanel.server.stop", StatusPanel.this);
@@ -67,6 +68,7 @@ public class StatusPanel extends Panel implements Button.ClickListener {
         textField.setWidth("100%");
         database.addComponent(textField);
         Panel databaseButtons = new Panel(myComponentFactory.createHorizontalLayout(false, true));
+        databaseButtons.addStyleName("light");
         database.addComponent(databaseButtons);
         myUpdateDatabase = myComponentFactory.createButton("statusPanel.database.update", StatusPanel.this);
         myResetDatabase = myComponentFactory.createButton("statusPanel.database.reset", StatusPanel.this);
@@ -98,7 +100,8 @@ public class StatusPanel extends Panel implements Button.ClickListener {
         configButtons.addComponent(myStreamingConfig);
         configButtons.addComponent(myAddonsConfig);
         configButtons.addComponent(mySupportConfig);
-        Panel buttons = new Panel(myComponentFactory.createHorizontalLayout(true, true));
+        Panel buttons = new Panel(myComponentFactory.createHorizontalLayout(false, true));
+        buttons.addStyleName("light");
         addComponent(buttons);
         myHelp = myComponentFactory.createButton("statusPanel.help", StatusPanel.this);
         myLogout = myComponentFactory.createButton("statusPanel.logout", StatusPanel.this);

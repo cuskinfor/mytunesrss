@@ -9,6 +9,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import de.codewave.vaadin.ComponentFactory;
+import org.apache.commons.lang.StringUtils;
 
 public class LoginPanel extends Panel implements Button.ClickListener {
 
@@ -32,7 +33,7 @@ public class LoginPanel extends Panel implements Button.ClickListener {
 
     public void buttonClick(Button.ClickEvent clickEvent) {
         MyTunesRssWebAdmin application = ((MyTunesRssWebAdmin) getApplication());
-        if ("a".equals(myUsername.getValue()) && "a".equals(myPassword.getValue())) {
+        if (StringUtils.isEmpty((String)myUsername.getValue()) && StringUtils.isEmpty((String)myPassword.getValue())) {
             application.setMainComponent(new StatusPanel(myComponentFactory));
         } else {
             application.showError("loginPanel.error.invalidLogin");
