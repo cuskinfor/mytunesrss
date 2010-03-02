@@ -129,6 +129,8 @@ public class ServerConfigPanel extends Panel implements Button.ClickListener {
         mainButtons.addComponent(mySave);
         mainButtons.addComponent(myReset);
         mainButtons.addComponent(myCancel);
+
+        ((Layout.AlignmentHandler) getContent()).setComponentAlignment(mainButtons, Alignment.MIDDLE_RIGHT);
     }
 
     private void initFromConfig() {

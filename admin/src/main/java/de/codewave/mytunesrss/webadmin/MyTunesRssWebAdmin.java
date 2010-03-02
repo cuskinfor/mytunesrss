@@ -12,6 +12,7 @@ import com.vaadin.ui.Window;
 public class MyTunesRssWebAdmin extends Application {
 
     public void init() {
+        setTheme("mytunesrss");
         Window main = new Window("MyTunesRSS Adminstration"); // TODO i18n
         setMainWindow(main);
         main.addComponent(new LoginPanel(MyTunesRssWebAdminUtils.COMPONENT_FACTORY));
