@@ -157,7 +157,14 @@
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                 <td id="functionsDialogName${loopStatus.index}" class="${fn:toLowerCase(playlist.type)}" <c:if test="${playlist.type == 'ITunesFolder'}">style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${playlist.id}</mt:encrypt>'"</c:if>>
-                    <c:out value="${playlist.name}" />
+                    <c:choose>
+                        <c:when test="${playlist.type != 'ITunesFolder' && playlist.trackCount >= 0}">
+                            <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${playlist.name}" /></a>
+                        </c:when>
+                        <c:otherwise>
+                            <c:out value="${playlist.name}" />
+                        </c:otherwise>
+                    </c:choose>
                 </td>
                 <td class="tracks">
                     <c:choose>
