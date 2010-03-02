@@ -7,6 +7,25 @@
 
     <body>
 
+        <release version="3.8.9" date="___D___">
+            <action dev="mdescher" type="update">
+                MYTUNESRSS-133 "Link to playlist content in playlist name"
+            </action>
+        </release>
+
+        <release version="3.8.8" date="2010-02-20">
+            <action dev="mdescher" type="fix">
+                MYTUNESRSS-127 "Unknown playlist format for 'all tracks for above albums'"
+            </action>
+            <action dev="mdescher" type="fix">
+                MYTUNESRSS-126 "Obsolete tracks not removed from database"
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed problem with non-ASCII characters in filename on Windows (stupid Windows does not
+                understand all UTF-8 encodings correctly).
+            </action>
+        </release>
+
         <release version="3.8.7" date="2010-02-13">
             <action dev="mdescher" type="fix">
                 MYTUNESRSS-123 "Path replacement uses resolved fle path"
