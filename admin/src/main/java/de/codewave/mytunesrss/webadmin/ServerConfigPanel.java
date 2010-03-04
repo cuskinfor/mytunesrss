@@ -19,9 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import java.io.File;
 import java.util.Arrays;
 
-public class ServerConfigPanel extends Panel implements Button.ClickListener {
+public class ServerConfigPanel extends MyTunesRssConfigPanel {
 
-    private ComponentFactory myComponentFactory;
     private Form myGeneralForm;
     private Form myExtendedForm;
     private Form myHttpForm;
@@ -45,72 +44,63 @@ public class ServerConfigPanel extends Panel implements Button.ClickListener {
     private Button mySslKeystoreFileSelect;
     private TextField mySslKeystorePass;
     private TextField mySslKeystoreKeyAlias;
-    private Button mySave;
-    private Button myReset;
-    private Button myCancel;
 
     public ServerConfigPanel(ComponentFactory componentFactory) {
-        super(MyTunesRssWebAdminUtils.getBundleString("serverConfigPanel.caption"), componentFactory.createGridLayout(2, 3, true, true));
-        myComponentFactory = componentFactory;
-        init();
-        initFromConfig();
+        super(MyTunesRssWebAdminUtils.getBundleString("serverConfigPanel.caption"), componentFactory.createGridLayout(2, 3, true, true), componentFactory);
     }
 
-    private void init() {
-        myAutoStartServer = myComponentFactory.createCheckBox("serverConfigPanel.autoStartServer");
-        myLocalTempArchive = myComponentFactory.createCheckBox("serverConfigPanel.localTempArchive");
-        myAvailableOnLocalNet = myComponentFactory.createCheckBox("serverConfigPanel.availableOnLocalNet");
+    protected void init(ComponentFactory componentFactory) {
+        myAutoStartServer = componentFactory.createCheckBox("serverConfigPanel.autoStartServer");
+        myLocalTempArchive = componentFactory.createCheckBox("serverConfigPanel.localTempArchive");
+        myAvailableOnLocalNet = componentFactory.createCheckBox("serverConfigPanel.availableOnLocalNet");
         myAvailableOnLocalNet.addListener(new Property.ValueChangeListener() {
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                 myServerName.setEnabled(myAvailableOnLocalNet.booleanValue());
             }
         });
-        myServerName = myComponentFactory.createTextField("serverConfigPanel.serverName");
-        myWebappContext = myComponentFactory.createTextField("serverConfigPanel.webappContext");
-        myTomcatMaxThreads = myComponentFactory.createTextField("serverConfigPanel.tomcatMaxThreads", ValidatorFactory.createMinMaxValidator(5, 1000));
+        myServerName = componentFactory.createTextField("serverConfigPanel.serverName");
+        myWebappContext = componentFactory.createTextField("serverConfigPanel.webappContext");
+        myTomcatMaxThreads = componentFactory.createTextField("serverConfigPanel.tomcatMaxThreads", ValidatorFactory.createMinMaxValidator(5, 1000));
         MyTunesRssWebAdminUtils.setRequired(myTomcatMaxThreads);
-        myTomcatAjpPort = myComponentFactory.createTextField("serverConfigPanel.tomcatAjpPort", ValidatorFactory.createPortValidator());
-        myPort = myComponentFactory.createTextField("serverConfigPanel.port", ValidatorFactory.createPortValidator());
+        myTomcatAjpPort = componentFactory.createTextField("serverConfigPanel.tomcatAjpPort", ValidatorFactory.createPortValidator());
+        myPort = componentFactory.createTextField("serverConfigPanel.port", ValidatorFactory.createPortValidator());
         MyTunesRssWebAdminUtils.setRequired(myPort);
-        myTomcatProxyScheme = myComponentFactory.createSelect("serverConfigPanel.tomcatProxyScheme", Arrays.asList("HTTP", "HTTPS"));
-        myTomcatProxyHost = myComponentFactory.createTextField("serverConfigPanel.tomcatProxyHost");
-        myTomcatProxyPort = myComponentFactory.createTextField("serverConfigPanel.tomcatProxyPort", ValidatorFactory.createPortValidator());
-        mySslPort = myComponentFactory.createTextField("serverConfigPanel.sslPort", ValidatorFactory.createPortValidator());
-        myTomcatSslProxyScheme = myComponentFactory.createSelect("serverConfigPanel.tomcatSslProxyScheme", Arrays.asList("HTTPS", "HTTP"));
-        myTomcatSslProxyHost = myComponentFactory.createTextField("serverConfigPanel.tomcatSslProxyHost");
-        myTomcatSslProxyPort = myComponentFactory.createTextField("serverConfigPanel.tomcatSslProxyPort", ValidatorFactory.createPortValidator());
-        mySslKeystoreFile = myComponentFactory.createTextField("serverConfigPanel.sslKeystoreFile", new FileValidator(MyTunesRssWebAdminUtils.getBundleString("serverConfigPanel.error.invalidKeystore"), true, false, null));
-        mySslKeystoreFileSelect = myComponentFactory.createButton("serverConfigPanel.sslKeystoreFile.select", this);
-        mySslKeystorePass = myComponentFactory.createPasswordTextField("serverConfigPanel.sslKeystorePass");
-        mySslKeystoreKeyAlias = myComponentFactory.createTextField("serverConfigPanel.sslKeystoreKeyAlias");
-        mySave = myComponentFactory.createButton("save", this);
-        myReset = myComponentFactory.createButton("reset", this);
-        myCancel = myComponentFactory.createButton("cancel", this);
+        myTomcatProxyScheme = componentFactory.createSelect("serverConfigPanel.tomcatProxyScheme", Arrays.asList("HTTP", "HTTPS"));
+        myTomcatProxyHost = componentFactory.createTextField("serverConfigPanel.tomcatProxyHost");
+        myTomcatProxyPort = componentFactory.createTextField("serverConfigPanel.tomcatProxyPort", ValidatorFactory.createPortValidator());
+        mySslPort = componentFactory.createTextField("serverConfigPanel.sslPort", ValidatorFactory.createPortValidator());
+        myTomcatSslProxyScheme = componentFactory.createSelect("serverConfigPanel.tomcatSslProxyScheme", Arrays.asList("HTTPS", "HTTP"));
+        myTomcatSslProxyHost = componentFactory.createTextField("serverConfigPanel.tomcatSslProxyHost");
+        myTomcatSslProxyPort = componentFactory.createTextField("serverConfigPanel.tomcatSslProxyPort", ValidatorFactory.createPortValidator());
+        mySslKeystoreFile = componentFactory.createTextField("serverConfigPanel.sslKeystoreFile", new FileValidator(MyTunesRssWebAdminUtils.getBundleString("serverConfigPanel.error.invalidKeystore"), true, false, null));
+        mySslKeystoreFileSelect = componentFactory.createButton("serverConfigPanel.sslKeystoreFile.select", this);
+        mySslKeystorePass = componentFactory.createPasswordTextField("serverConfigPanel.sslKeystorePass");
+        mySslKeystoreKeyAlias = componentFactory.createTextField("serverConfigPanel.sslKeystoreKeyAlias");
 
-        myGeneralForm = myComponentFactory.createForm(MyTunesRssWebAdminUtils.getBundleString("serverConfigPanel.caption.general"), true);
+        myGeneralForm = componentFactory.createForm(null, true);
         myGeneralForm.addField(myAutoStartServer, myAutoStartServer);
         myGeneralForm.addField(myLocalTempArchive, myLocalTempArchive);
         myGeneralForm.addField(myAvailableOnLocalNet, myAvailableOnLocalNet);
         myGeneralForm.addField(myServerName, myServerName);
-        Panel generalPanel = myComponentFactory.surroundWithPanel(myGeneralForm, true, null);
+        Panel generalPanel = componentFactory.surroundWithPanel(myGeneralForm, FORM_PANEL_MARGIN_INFO, MyTunesRssWebAdminUtils.getBundleString("serverConfigPanel.caption.general"));
         addComponent(generalPanel);
 
-        myExtendedForm = myComponentFactory.createForm(MyTunesRssWebAdminUtils.getBundleString("serverConfigPanel.caption.extended"), true);
+        myExtendedForm = componentFactory.createForm(null, true);
         myExtendedForm.addField(myWebappContext, myWebappContext);
         myExtendedForm.addField(myTomcatMaxThreads, myTomcatMaxThreads);
         myExtendedForm.addField(myTomcatAjpPort, myTomcatAjpPort);
-        Panel extendedPanel = myComponentFactory.surroundWithPanel(myExtendedForm, true, null);
+        Panel extendedPanel = componentFactory.surroundWithPanel(myExtendedForm, FORM_PANEL_MARGIN_INFO, MyTunesRssWebAdminUtils.getBundleString("serverConfigPanel.caption.extended"));
         addComponent(extendedPanel);
 
-        myHttpForm = myComponentFactory.createForm(MyTunesRssWebAdminUtils.getBundleString("serverConfigPanel.caption.http"), true);
+        myHttpForm = componentFactory.createForm(null, true);
         myHttpForm.addField(myPort, myPort);
         myHttpForm.addField(myTomcatProxyScheme, myTomcatProxyScheme);
         myHttpForm.addField(myTomcatProxyHost, myTomcatProxyHost);
         myHttpForm.addField(myTomcatProxyPort, myTomcatProxyPort);
-        Panel httpPanel = myComponentFactory.surroundWithPanel(myHttpForm, true, null);
+        Panel httpPanel = componentFactory.surroundWithPanel(myHttpForm, FORM_PANEL_MARGIN_INFO, MyTunesRssWebAdminUtils.getBundleString("serverConfigPanel.caption.http"));
         addComponent(httpPanel);
 
-        myHttpsForm = myComponentFactory.createForm(MyTunesRssWebAdminUtils.getBundleString("serverConfigPanel.caption.https"), true);
+        myHttpsForm = componentFactory.createForm(null, true);
         myHttpsForm.addField(mySslPort, mySslPort);
         myHttpsForm.addField(myTomcatSslProxyScheme, myTomcatSslProxyScheme);
         myHttpsForm.addField(myTomcatSslProxyHost, myTomcatSslProxyHost);
@@ -119,21 +109,13 @@ public class ServerConfigPanel extends Panel implements Button.ClickListener {
         myHttpsForm.addField(mySslKeystoreFileSelect, mySslKeystoreFileSelect);
         myHttpsForm.addField(mySslKeystorePass, mySslKeystorePass);
         myHttpsForm.addField(mySslKeystoreKeyAlias, mySslKeystoreKeyAlias);
-        Panel httpsPanel = myComponentFactory.surroundWithPanel(myHttpsForm, true, null);
+        Panel httpsPanel = componentFactory.surroundWithPanel(myHttpsForm, FORM_PANEL_MARGIN_INFO, MyTunesRssWebAdminUtils.getBundleString("serverConfigPanel.caption.https"));
         addComponent(httpsPanel);
 
-        Panel mainButtons = new Panel();
-        mainButtons.addStyleName("light");
-        mainButtons.setContent(myComponentFactory.createHorizontalLayout(false, true));
-        ((GridLayout) getContent()).addComponent(mainButtons, 0, 2, 1, 2);
-        mainButtons.addComponent(mySave);
-        mainButtons.addComponent(myReset);
-        mainButtons.addComponent(myCancel);
-
-        ((Layout.AlignmentHandler) getContent()).setComponentAlignment(mainButtons, Alignment.MIDDLE_RIGHT);
+        addMainButtons(0, 2, 1, 2);
     }
 
-    private void initFromConfig() {
+    protected void initFromConfig() {
         myAutoStartServer.setValue(MyTunesRss.CONFIG.isAutoStartServer());
         myLocalTempArchive.setValue(MyTunesRss.CONFIG.isLocalTempArchive());
         myAvailableOnLocalNet.setValue(MyTunesRss.CONFIG.isAvailableOnLocalNet());
@@ -155,7 +137,7 @@ public class ServerConfigPanel extends Panel implements Button.ClickListener {
         mySslKeystoreKeyAlias.setValue(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getSslKeystoreKeyAlias()));
     }
 
-    private void writeToConfig() {
+    protected void writeToConfig() {
         MyTunesRss.CONFIG.setAutoStartServer(myAutoStartServer.booleanValue());
         MyTunesRss.CONFIG.setLocalTempArchive(myLocalTempArchive.booleanValue());
         MyTunesRss.CONFIG.setAvailableOnLocalNet(myAvailableOnLocalNet.booleanValue());
@@ -176,20 +158,13 @@ public class ServerConfigPanel extends Panel implements Button.ClickListener {
         MyTunesRss.CONFIG.setSslKeystoreKeyAlias(StringUtils.trimToNull(mySslKeystoreKeyAlias.toString()));
     }
 
+    @Override
+    protected boolean isPanelValid() {
+        return VaadinUtils.isValid(myGeneralForm, myExtendedForm, myHttpForm, myHttpsForm);
+    }
+
     public void buttonClick(Button.ClickEvent clickEvent) {
-        MyTunesRssWebAdmin application = ((MyTunesRssWebAdmin) getApplication());
-        if (clickEvent.getButton() == mySave) {
-            if (!VaadinUtils.isValid(myGeneralForm, myExtendedForm, myHttpForm, myHttpsForm)) {
-                application.showError("error.formInvalid");
-                return;
-            }
-            writeToConfig();
-            application.setMainComponent(new StatusPanel(myComponentFactory));
-        } else if (clickEvent.getButton() == myReset) {
-            initFromConfig();
-        } else if (clickEvent.getButton() == myCancel) {
-            application.setMainComponent(new StatusPanel(myComponentFactory));
-        } else if (clickEvent.getButton() == mySslKeystoreFileSelect) {
+        if (clickEvent.getButton() == mySslKeystoreFileSelect) {
             Window window = new Window("Choose a keystore file", new ServerSideFileChooser(new File(mySslKeystoreFile.getValue().toString()), false, true, null) {
                 @Override
                 protected void onCancel() {
@@ -206,6 +181,8 @@ public class ServerConfigPanel extends Panel implements Button.ClickListener {
             window.setResizable(false);
             window.setWidth(600, Sizeable.UNITS_PIXELS);
             getApplication().getMainWindow().addWindow(window);
+        } else {
+            super.buttonClick(clickEvent);
         }
     }
 }

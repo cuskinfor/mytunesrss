@@ -6,6 +6,7 @@
 package de.codewave.vaadin;
 
 import com.vaadin.data.Validator;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 
 import java.text.MessageFormat;
@@ -34,6 +35,7 @@ public class ComponentFactory {
 
     public TextField createTextField(String labelKey, Validator validator) {
         TextField textField = new TextField(getBundleString(labelKey));
+        textField.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         if (validator != null) {
             textField.addValidator(validator);
         }
@@ -43,6 +45,11 @@ public class ComponentFactory {
     public void setRequired(Field field, String requiredErrorKey, Object... parameters) {
         field.setRequired(true);
         field.setRequiredError(getBundleString(requiredErrorKey, parameters));
+    }
+
+    public void setOptional(Field field) {
+        field.setRequired(false);
+        field.setRequiredError(null);
     }
 
     public TextField createPasswordTextField(String labelKey) {
@@ -62,7 +69,8 @@ public class ComponentFactory {
     }
 
     public Select createSelect(String labelKey, Collection<? extends Object> options) {
-        Select select = new Select(getBundleString(labelKey), options);
+        String caption = labelKey != null ? getBundleString(labelKey) : null;
+        Select select = new Select(caption, options);
         select.setNullSelectionAllowed(false);
         return select;
     }
@@ -97,8 +105,10 @@ public class ComponentFactory {
         return layout;
     }
 
-    public Panel surroundWithPanel(Component component, boolean margin, String caption) {
-        Panel panel = new Panel(createVerticalLayout(margin, false));
+    public Panel surroundWithPanel(Component component, Layout.MarginInfo marginInfo, String caption) {
+        VerticalLayout verticalLayout = createVerticalLayout(false, false);
+        verticalLayout.setMargin(marginInfo);
+        Panel panel = new Panel(verticalLayout);
         if (caption != null) {
             panel.setCaption(caption);
         }

@@ -120,6 +120,8 @@ public class StatusPanel extends Panel implements Button.ClickListener {
             application.close();
         } else if (clickEvent.getButton() == myServerConfig) {
             application.setMainComponent(new ServerConfigPanel(myComponentFactory));
+        } else if (clickEvent.getButton() == myDatabaseConfig) {
+            application.setMainComponent(new DatabaseConfigPanel(myComponentFactory));
         }
     }
 }

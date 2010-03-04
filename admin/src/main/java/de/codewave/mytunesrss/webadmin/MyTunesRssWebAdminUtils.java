@@ -39,4 +39,8 @@ public class MyTunesRssWebAdminUtils {
     public static void setRequired(Field field) {
         COMPONENT_FACTORY.setRequired(field, "error.requiredField");
     }
+
+    public static void setOptional(Field field) {
+        COMPONENT_FACTORY.setOptional(field);
+    }
 }
