@@ -159,8 +159,12 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     }
 
     @Override
-    protected boolean isPanelValid() {
-        return VaadinUtils.isValid(myGeneralForm, myExtendedForm, myHttpForm, myHttpsForm);
+    protected boolean beforeSave() {
+        boolean valid = VaadinUtils.isValid(myGeneralForm, myExtendedForm, myHttpForm, myHttpsForm);
+        if (!valid) {
+            getApplication().showError("error.formInvalid");
+        }
+        return valid;
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {

@@ -29,4 +29,12 @@ public class MyTunesRssWebAdmin extends Application {
     public void showError(String messageKey, Object... parameters) {
         getMainWindow().showNotification(null, MyTunesRssWebAdminUtils.getBundleString(messageKey, parameters), Window.Notification.TYPE_ERROR_MESSAGE);
     }
+
+    public void showWarning(String messageKey, Object... parameters) {
+        getMainWindow().showNotification(null, MyTunesRssWebAdminUtils.getBundleString(messageKey, parameters), Window.Notification.TYPE_WARNING_MESSAGE);
+    }
+
+    public void showInfo(String messageKey, Object... parameters) {
+        getMainWindow().showNotification(null, MyTunesRssWebAdminUtils.getBundleString(messageKey, parameters), Window.Notification.TYPE_HUMANIZED_MESSAGE);
+    }
 }

@@ -29,9 +29,9 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
     }
 
     protected void addMainButtons(int columnn1, int row1, int column2, int row2) {
-        mySave = myComponentFactory.createButton("save", this);
-        myReset = myComponentFactory.createButton("reset", this);
-        myCancel = myComponentFactory.createButton("cancel", this);
+        mySave = myComponentFactory.createButton("button.save", this);
+        myReset = myComponentFactory.createButton("button.reset", this);
+        myCancel = myComponentFactory.createButton("button.cancel", this);
         Panel mainButtons = new Panel();
         mainButtons.addStyleName("light");
         mainButtons.setContent(myComponentFactory.createHorizontalLayout(false, true));
@@ -48,7 +48,13 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
 
     protected abstract void initFromConfig();
 
-    protected abstract boolean isPanelValid();
+    protected String getBundleString(String key, Object... parameters) {
+        return MyTunesRssWebAdminUtils.getBundleString(key, parameters);
+    }
+
+    public MyTunesRssWebAdmin getApplication() {
+        return (MyTunesRssWebAdmin)super.getApplication();
+    }
 
     protected GridLayout getGridLayout() {
         return (GridLayout) getContent();
@@ -57,20 +63,34 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
     protected ComponentFactory getComponentFactory() {
         return myComponentFactory;
     }
-    
+
+    protected boolean beforeCancel() {
+        return true;
+    }
+
+    protected boolean beforeReset() {
+        return true;
+    }
+
+    protected boolean beforeSave() {
+        return true;
+    }
+
     public void buttonClick(Button.ClickEvent clickEvent) {
         MyTunesRssWebAdmin application = ((MyTunesRssWebAdmin) getApplication());
         if (clickEvent.getButton() == mySave) {
-            if (!isPanelValid()) {
-                application.showError("error.formInvalid");
-                return;
+            if (beforeSave()) {
+                writeToConfig();
+                application.setMainComponent(new StatusPanel(myComponentFactory));
             }
-            writeToConfig();
-            application.setMainComponent(new StatusPanel(myComponentFactory));
         } else if (clickEvent.getButton() == myReset) {
-            initFromConfig();
+            if (beforeReset()) {
+                initFromConfig();
+            }
         } else if (clickEvent.getButton() == myCancel) {
-            application.setMainComponent(new StatusPanel(myComponentFactory));
+            if (beforeCancel()) {
+                application.setMainComponent(new StatusPanel(myComponentFactory));
+            }
         }
     }
 

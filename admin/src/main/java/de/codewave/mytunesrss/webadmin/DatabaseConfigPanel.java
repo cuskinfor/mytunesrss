@@ -6,16 +6,17 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.Property;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.settings.Database;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.OptionWindow;
+import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EventObject;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Property.ValueChangeListener {
@@ -94,6 +95,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         for (String cronTrigger : MyTunesRss.CONFIG.getDatabaseCronTriggers()) {
             addCronTrigger(cronTrigger);
         }
+        setCronTriggersPageLength();
     }
 
     private void addCronTrigger(String cronTrigger) {
@@ -132,30 +134,63 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     protected void writeToConfig() {
-
+        MyTunesRss.CONFIG.setDatabaseType(((Database.DatabaseType) myDatabaseType.getValue()).name());
+        MyTunesRss.CONFIG.setDatabaseDriver((String) myDatabaseDriver.getValue());
+        MyTunesRss.CONFIG.setDatabaseConnection((String) myDatabaseConnection.getValue());
+        MyTunesRss.CONFIG.setDatabaseUser((String) myDatabaseUser.getValue());
+        MyTunesRss.CONFIG.setDatabasePassword((String) myDatabasePassword.getValue());
+        MyTunesRss.CONFIG.setUpdateDatabaseOnServerStart(myUpdateDatabaseOnServerStart.booleanValue());
+        MyTunesRss.CONFIG.setItunesDeleteMissingFiles(myItunesDeleteMissingFiles.booleanValue());
+        List<String> databaseCronTriggers = new ArrayList<String>();
+        for (Object itemId : myCronTriggers.getItemIds()) {
+            databaseCronTriggers.add("0 " + getTableCellString(itemId, "minute") + " " + getTableCellString(itemId, "hour") + " ? * " + getTableCellString(itemId, "day"));
+        }
+        MyTunesRss.CONFIG.setDatabaseCronTriggers(databaseCronTriggers);
+        MyTunesRssJobUtils.scheduleDatabaseJob();
     }
 
-    @Override
-    protected boolean isPanelValid() {
-        return true;
+    private String getTableCellString(Object itemId, String property) {
+        Select select = (Select) myCronTriggers.getItem(itemId).getItemProperty(property).getValue();
+        MyTunesRssJobUtils.TriggerItem triggerItem = (MyTunesRssJobUtils.TriggerItem) select.getValue();
+        return triggerItem.getKey();
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddSchedule) {
             addCronTrigger("0 0 0 ? * SUN-SAT");
         } else {
-            Long cronTriggerToDelete = getCronTriggerToDelete(clickEvent.getSource());
+            final Long cronTriggerToDelete = getCronTriggerToDelete(clickEvent.getSource());
             if (cronTriggerToDelete != null) {
-                myCronTriggers.removeItem(cronTriggerToDelete);
-                setCronTriggersPageLength();
+                final Button yes = new Button(getBundleString("button.yes"));
+                Button no = new Button(getBundleString("button.no"));
+                new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("databaseConfigDialog.optionWindowDeleteCronTrigger.caption"), getBundleString("databaseConfigDialog.optionWindowDeleteCronTrigger.message"), yes, no) {
+                    public void clicked(Button button) {
+                        if (button == yes) {
+                            myCronTriggers.removeItem(cronTriggerToDelete);
+                            setCronTriggersPageLength();
+                        }
+                    }
+                }.show(getApplication().getMainWindow());
             } else {
                 super.buttonClick(clickEvent);
             }
         }
     }
 
+    protected boolean beforeSave() {
+        if (VaadinUtils.isValid(myDatabaseTypeForm, myMiscOptionsForm)) {
+            if (isDatabaseChanged()) {
+                getApplication().showWarning("databaseConfigPanel.warning.databaseChanged");
+            }
+            return true;
+        } else {
+            getApplication().showError("error.formInvalid");
+        }
+        return false;
+    }
+
     private Long getCronTriggerToDelete(Object source) {
-        for (Long itemId : (Collection<Long>)myCronTriggers.getItemIds()) {
+        for (Long itemId : (Collection<Long>) myCronTriggers.getItemIds()) {
             if (source == myCronTriggers.getItem(itemId).getItemProperty("delete").getValue()) {
                 return itemId;
             }
