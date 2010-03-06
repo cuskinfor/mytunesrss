@@ -16,7 +16,10 @@ import de.codewave.vaadin.OptionWindow;
 import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EventObject;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Property.ValueChangeListener {
@@ -24,7 +27,6 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     private AtomicLong myTriggerIdGenerator;
     private Form myDatabaseTypeForm;
     private Form myMiscOptionsForm;
-    private Panel mySchedulesPanel;
     private Select myDatabaseType;
     private TextField myDatabaseDriver;
     private TextField myDatabaseConnection;
@@ -70,10 +72,10 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myMiscOptionsForm.addField(myItunesDeleteMissingFiles, myItunesDeleteMissingFiles);
         addComponent(componentFactory.surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, MyTunesRssWebAdminUtils.getBundleString("databaseConfigPanel.caption.misc")));
 
-        mySchedulesPanel = new Panel(MyTunesRssWebAdminUtils.getBundleString("databaseConfigPanel.caption.cronTriggers"), componentFactory.createVerticalLayout(true, true));
-        mySchedulesPanel.addComponent(myCronTriggers);
-        mySchedulesPanel.addComponent(myAddSchedule);
-        addComponent(mySchedulesPanel);
+        Panel schedulesPanel = new Panel(MyTunesRssWebAdminUtils.getBundleString("databaseConfigPanel.caption.cronTriggers"), componentFactory.createVerticalLayout(true, true));
+        schedulesPanel.addComponent(myCronTriggers);
+        schedulesPanel.addComponent(myAddSchedule);
+        addComponent(schedulesPanel);
 
         addMainButtons(0, 3, 0, 3);
     }
@@ -134,6 +136,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     protected void writeToConfig() {
+        //noinspection OverlyStrongTypeCast
         MyTunesRss.CONFIG.setDatabaseType(((Database.DatabaseType) myDatabaseType.getValue()).name());
         MyTunesRss.CONFIG.setDatabaseDriver((String) myDatabaseDriver.getValue());
         MyTunesRss.CONFIG.setDatabaseConnection((String) myDatabaseConnection.getValue());
@@ -159,7 +162,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         if (clickEvent.getSource() == myAddSchedule) {
             addCronTrigger("0 0 0 ? * SUN-SAT");
         } else {
-            final Long cronTriggerToDelete = getCronTriggerToDelete(clickEvent.getSource());
+            final Object cronTriggerToDelete = getCronTriggerToDelete(clickEvent.getSource());
             if (cronTriggerToDelete != null) {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
@@ -189,8 +192,8 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         return false;
     }
 
-    private Long getCronTriggerToDelete(Object source) {
-        for (Long itemId : (Collection<Long>) myCronTriggers.getItemIds()) {
+    private Object getCronTriggerToDelete(Object source) {
+        for (Object itemId : myCronTriggers.getItemIds()) {
             if (source == myCronTriggers.getItem(itemId).getItemProperty("delete").getValue()) {
                 return itemId;
             }

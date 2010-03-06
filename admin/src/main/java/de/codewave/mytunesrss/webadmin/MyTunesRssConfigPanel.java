@@ -53,7 +53,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
     }
 
     public MyTunesRssWebAdmin getApplication() {
-        return (MyTunesRssWebAdmin)super.getApplication();
+        return (MyTunesRssWebAdmin) super.getApplication();
     }
 
     protected GridLayout getGridLayout() {
@@ -77,11 +77,10 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {
-        MyTunesRssWebAdmin application = ((MyTunesRssWebAdmin) getApplication());
         if (clickEvent.getButton() == mySave) {
             if (beforeSave()) {
                 writeToConfig();
-                application.setMainComponent(new StatusPanel(myComponentFactory));
+                getApplication().setMainComponent(new StatusPanel(myComponentFactory));
             }
         } else if (clickEvent.getButton() == myReset) {
             if (beforeReset()) {
@@ -89,7 +88,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
             }
         } else if (clickEvent.getButton() == myCancel) {
             if (beforeCancel()) {
-                application.setMainComponent(new StatusPanel(myComponentFactory));
+                getApplication().setMainComponent(new StatusPanel(myComponentFactory));
             }
         }
     }

@@ -9,12 +9,13 @@ import com.vaadin.Application;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;
+import de.codewave.mytunesrss.MyTunesRss;
 
 public class MyTunesRssWebAdmin extends Application {
 
     public void init() {
         setTheme("mytunesrss");
-        Window main = new Window("MyTunesRSS Adminstration"); // TODO i18n
+        Window main = new Window(MyTunesRssWebAdminUtils.getBundleString("mainWindowTitle", MyTunesRss.VERSION));
         main.getContent().setWidth(100, Sizeable.UNITS_PERCENTAGE);
         setMainWindow(main);
         main.addComponent(new LoginPanel(MyTunesRssWebAdminUtils.COMPONENT_FACTORY));
