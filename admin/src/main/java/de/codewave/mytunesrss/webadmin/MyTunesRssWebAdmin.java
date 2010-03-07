@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
+import com.vaadin.terminal.ClassResource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;

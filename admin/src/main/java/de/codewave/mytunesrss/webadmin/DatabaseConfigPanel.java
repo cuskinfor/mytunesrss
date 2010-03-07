@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.Application;
 import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
@@ -12,7 +13,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.settings.Database;
 import de.codewave.vaadin.ComponentFactory;
-import de.codewave.vaadin.OptionWindow;
+import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -20,11 +21,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EventObject;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Property.ValueChangeListener {
 
-    private AtomicLong myTriggerIdGenerator;
     private Form myDatabaseTypeForm;
     private Form myMiscOptionsForm;
     private Select myDatabaseType;
@@ -37,42 +36,41 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     private Table myCronTriggers;
     private Button myAddSchedule;
 
-    public DatabaseConfigPanel(ComponentFactory componentFactory) {
-        super(MyTunesRssWebAdminUtils.getBundleString("databaseConfigPanel.caption"), componentFactory.createGridLayout(1, 4, true, true), componentFactory);
+    public DatabaseConfigPanel(Application application, ComponentFactory componentFactory) {
+        super(application, getBundleString("databaseConfigPanel.caption"), componentFactory.createGridLayout(1, 4, true, true), componentFactory);
     }
 
-    protected void init(ComponentFactory componentFactory) {
-        myTriggerIdGenerator = new AtomicLong();
-        myDatabaseType = componentFactory.createSelect("databaseConfigPanel.databaseType", Arrays.asList(Database.DatabaseType.h2, Database.DatabaseType.h2custom, Database.DatabaseType.postgres, Database.DatabaseType.mysql));
+    protected void init(Application application) {
+        myDatabaseType = getComponentFactory().createSelect("databaseConfigPanel.databaseType", Arrays.asList(Database.DatabaseType.h2, Database.DatabaseType.h2custom, Database.DatabaseType.postgres, Database.DatabaseType.mysql));
         myDatabaseType.addListener(this);
-        myDatabaseDriver = componentFactory.createTextField("databaseConfigPanel.databaseDriver");
-        myDatabaseConnection = componentFactory.createTextField("databaseConfigPanel.databaseConnection");
-        myDatabaseUser = componentFactory.createTextField("databaseConfigPanel.databaseUser");
-        myDatabasePassword = componentFactory.createPasswordTextField("databaseConfigPanel.databasePassword");
-        myUpdateDatabaseOnServerStart = componentFactory.createCheckBox("databaseConfigPanel.updateDatabaseOnServerStart");
-        myItunesDeleteMissingFiles = componentFactory.createCheckBox("databaseConfigPanel.itunesDeleteMissingFiles");
+        myDatabaseDriver = getComponentFactory().createTextField("databaseConfigPanel.databaseDriver");
+        myDatabaseConnection = getComponentFactory().createTextField("databaseConfigPanel.databaseConnection");
+        myDatabaseUser = getComponentFactory().createTextField("databaseConfigPanel.databaseUser");
+        myDatabasePassword = getComponentFactory().createPasswordTextField("databaseConfigPanel.databasePassword");
+        myUpdateDatabaseOnServerStart = getComponentFactory().createCheckBox("databaseConfigPanel.updateDatabaseOnServerStart");
+        myItunesDeleteMissingFiles = getComponentFactory().createCheckBox("databaseConfigPanel.itunesDeleteMissingFiles");
         myCronTriggers = new Table();
-        myCronTriggers.addContainerProperty("day", Select.class, null, MyTunesRssWebAdminUtils.getBundleString("databaseConfigPanel.cronTriggers.day"), null, null);
-        myCronTriggers.addContainerProperty("hour", Select.class, null, MyTunesRssWebAdminUtils.getBundleString("databaseConfigPanel.cronTriggers.hour"), null, null);
-        myCronTriggers.addContainerProperty("minute", Select.class, null, MyTunesRssWebAdminUtils.getBundleString("databaseConfigPanel.cronTriggers.minute"), null, null);
+        myCronTriggers.addContainerProperty("day", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.day"), null, null);
+        myCronTriggers.addContainerProperty("hour", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.hour"), null, null);
+        myCronTriggers.addContainerProperty("minute", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.minute"), null, null);
         myCronTriggers.addContainerProperty("delete", Button.class, null, "", null, null);
         myCronTriggers.setEditable(true);
-        myAddSchedule = componentFactory.createButton("databaseConfigPanel.addSchedule", this);
+        myAddSchedule = getComponentFactory().createButton("databaseConfigPanel.addSchedule", this);
 
-        myDatabaseTypeForm = componentFactory.createForm(null, true);
+        myDatabaseTypeForm = getComponentFactory().createForm(null, true);
         myDatabaseTypeForm.addField(myDatabaseType, myDatabaseType);
         myDatabaseTypeForm.addField(myDatabaseDriver, myDatabaseDriver);
         myDatabaseTypeForm.addField(myDatabaseConnection, myDatabaseConnection);
         myDatabaseTypeForm.addField(myDatabaseUser, myDatabaseUser);
         myDatabaseTypeForm.addField(myDatabasePassword, myDatabasePassword);
-        addComponent(componentFactory.surroundWithPanel(myDatabaseTypeForm, FORM_PANEL_MARGIN_INFO, MyTunesRssWebAdminUtils.getBundleString("databaseConfigPanel.caption.database")));
+        addComponent(getComponentFactory().surroundWithPanel(myDatabaseTypeForm, FORM_PANEL_MARGIN_INFO, getBundleString("databaseConfigPanel.caption.database")));
 
-        myMiscOptionsForm = componentFactory.createForm(null, true);
+        myMiscOptionsForm = getComponentFactory().createForm(null, true);
         myMiscOptionsForm.addField(myUpdateDatabaseOnServerStart, myUpdateDatabaseOnServerStart);
         myMiscOptionsForm.addField(myItunesDeleteMissingFiles, myItunesDeleteMissingFiles);
-        addComponent(componentFactory.surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, MyTunesRssWebAdminUtils.getBundleString("databaseConfigPanel.caption.misc")));
+        addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("databaseConfigPanel.caption.misc")));
 
-        Panel schedulesPanel = new Panel(MyTunesRssWebAdminUtils.getBundleString("databaseConfigPanel.caption.cronTriggers"), componentFactory.createVerticalLayout(true, true));
+        Panel schedulesPanel = new Panel(getBundleString("databaseConfigPanel.caption.cronTriggers"), getComponentFactory().createVerticalLayout(true, true));
         schedulesPanel.addComponent(myCronTriggers);
         schedulesPanel.addComponent(myAddSchedule);
         addComponent(schedulesPanel);
@@ -80,7 +78,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         addMainButtons(0, 3, 0, 3);
     }
 
-    protected void initFromConfig() {
+    protected void initFromConfig(Application application) {
         myDatabaseType.select(Database.DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
         myDatabaseDriver.setValue(MyTunesRss.CONFIG.getDatabaseDriver());
         myDatabaseConnection.setValue(MyTunesRss.CONFIG.getDatabaseConnection());
@@ -108,8 +106,8 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         hourSelect.select(new MyTunesRssJobUtils.TriggerItem(cronTriggerParts[2], null));
         Select minuteSelect = getComponentFactory().createSelect(null, Arrays.asList(MyTunesRssJobUtils.getMinutes()));
         minuteSelect.select(new MyTunesRssJobUtils.TriggerItem(cronTriggerParts[1], null));
-        Button deleteButton = new Button(MyTunesRssWebAdminUtils.getBundleString("databaseConfigPanel.cronTriggers.delete"), this);
-        myCronTriggers.addItem(new Object[]{daySelect, hourSelect, minuteSelect, deleteButton}, myTriggerIdGenerator.getAndIncrement());
+        Button deleteButton = new Button(getBundleString("button.delete"), this);
+        myCronTriggers.addItem(new Object[]{daySelect, hourSelect, minuteSelect, deleteButton}, myItemIdGenerator.getAndIncrement());
         setCronTriggersPageLength();
     }
 

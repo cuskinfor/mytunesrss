@@ -5,9 +5,12 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.Application;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.vaadin.ComponentFactory;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class MyTunesRssConfigPanel extends Panel implements Button.ClickListener {
     protected static final Layout.MarginInfo FORM_PANEL_MARGIN_INFO = new Layout.MarginInfo(false, true, false, true);
@@ -16,16 +19,17 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
     private Button myReset;
     private Button myCancel;
     private ComponentFactory myComponentFactory;
+    protected AtomicLong myItemIdGenerator = new AtomicLong(0);
 
-    public MyTunesRssConfigPanel(String caption, GridLayout content, ComponentFactory componentFactory) {
+    public MyTunesRssConfigPanel(Application application, String caption, GridLayout content, ComponentFactory componentFactory) {
         super(caption, content);
         getGridLayout().setWidth(100, Sizeable.UNITS_PERCENTAGE);
         for (int i = 0; i < getGridLayout().getColumns(); i++) {
             getGridLayout().setColumnExpandRatio(i, 1);
         }
         myComponentFactory = componentFactory;
-        init(componentFactory);
-        initFromConfig();
+        init(application);
+        initFromConfig(application);
     }
 
     protected void addMainButtons(int columnn1, int row1, int column2, int row2) {
@@ -42,13 +46,13 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         getGridLayout().setComponentAlignment(mainButtons, Alignment.MIDDLE_RIGHT);
     }
 
-    protected abstract void init(ComponentFactory componentFactory);
+    protected abstract void init(Application application);
 
     protected abstract void writeToConfig();
 
-    protected abstract void initFromConfig();
+    protected abstract void initFromConfig(Application application);
 
-    protected String getBundleString(String key, Object... parameters) {
+    protected static String getBundleString(String key, Object... parameters) {
         return MyTunesRssWebAdminUtils.getBundleString(key, parameters);
     }
 
@@ -80,15 +84,15 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         if (clickEvent.getButton() == mySave) {
             if (beforeSave()) {
                 writeToConfig();
-                getApplication().setMainComponent(new StatusPanel(myComponentFactory));
+                getApplication().setMainComponent(new StatusPanel(getApplication(), myComponentFactory));
             }
         } else if (clickEvent.getButton() == myReset) {
             if (beforeReset()) {
-                initFromConfig();
+                initFromConfig(getApplication());
             }
         } else if (clickEvent.getButton() == myCancel) {
             if (beforeCancel()) {
-                getApplication().setMainComponent(new StatusPanel(myComponentFactory));
+                getApplication().setMainComponent(new StatusPanel(getApplication(), myComponentFactory));
             }
         }
     }

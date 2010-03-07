@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package de.codewave.vaadin;
+package de.codewave.vaadin.component;
 
 import com.vaadin.terminal.Resource;
 import com.vaadin.ui.*;

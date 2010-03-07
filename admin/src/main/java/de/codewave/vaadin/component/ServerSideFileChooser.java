@@ -5,6 +5,7 @@
 
 package de.codewave.vaadin.component;
 
+import com.vaadin.data.util.MethodProperty;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
@@ -20,11 +21,13 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
     private File myCurrentDir;
     private Button myOk;
     private Button myCancel;
+    private Button myCreateDir;
     private boolean myAllowSelectDirectory;
     private boolean myAllowSelectFile;
     private Pattern myAllowedNamePattern;
+    private Label myCurrentDirLabel;
 
-    public ServerSideFileChooser(File currentDir, boolean allowSelectDirectory, boolean allowSelectFile, Pattern allowedNamePattern) {
+    public ServerSideFileChooser(File currentDir, boolean allowSelectDirectory, boolean allowSelectFile, Pattern allowedNamePattern, boolean allowCreateDir) {
         myAllowSelectDirectory = allowSelectDirectory;
         myAllowSelectFile = allowSelectFile;
         myAllowedNamePattern = allowedNamePattern;
@@ -36,6 +39,8 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         Panel panel = new Panel();
         ((Layout) panel.getContent()).setMargin(true);
         ((Layout.SpacingHandler) panel.getContent()).setSpacing(true);
+        myCurrentDirLabel = new Label();
+        panel.addComponent(myCurrentDirLabel);
         myChooser = new Table();
         myChooser.setWidth(100f, Sizeable.UNITS_PERCENTAGE);
         myChooser.setSelectable(true);
@@ -43,13 +48,17 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         myChooser.addContainerProperty("Date", String.class, null);
         myChooser.setColumnExpandRatio("File", 1f);
         myChooser.addListener(this);
-        myOk = new Button("Ok", this);
+        myOk = new Button("Ok", this); // TODO i18n
         myOk.setEnabled(false);
-        myCancel = new Button("Cancel", this);
+        myCancel = new Button("Cancel", this); // TODO i18n
+        myCreateDir = new Button("Create folder", this); // TODO i18n
         panel.addComponent(myChooser);
         Panel buttonPanel = new Panel(new HorizontalLayout());
         ((Layout.SpacingHandler) buttonPanel.getContent()).setSpacing(true);
         buttonPanel.addStyleName("light");
+        if (allowCreateDir) {
+            buttonPanel.addComponent(myCreateDir);
+        }
         buttonPanel.addComponent(myOk);
         buttonPanel.addComponent(myCancel);
         panel.addComponent(buttonPanel);
@@ -58,6 +67,8 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
     }
 
     private void setFiles() {
+        myCurrentDirLabel.setValue(myCurrentDir.getAbsolutePath());
+        myOk.setEnabled(false);
         myChooser.removeAllItems();
         if (myCurrentDir.getParentFile() != null) {
             myChooser.addItem(new Object[]{"[..]", null}, myCurrentDir.getParentFile());
@@ -75,6 +86,15 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
             }
         } else if (clickEvent.getButton() == myCancel) {
             onCancel();
+        } else if (clickEvent.getButton() == myCreateDir) {
+            new TextFieldWindow(30, Sizeable.UNITS_EM, null, "Create folder", "Please enter the name of the new folder.", "Create", "Cancel") {
+                @Override
+                protected void onOk(String text) {
+                    ServerSideFileChooser.this.getApplication().getMainWindow().removeWindow(this);
+                    new File(myCurrentDir, text).mkdir();
+                    setFiles();
+                }
+            }.show(getApplication().getMainWindow());
         }
     }
 

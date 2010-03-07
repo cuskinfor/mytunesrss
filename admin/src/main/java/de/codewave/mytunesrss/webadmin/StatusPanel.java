@@ -5,10 +5,9 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
+import com.vaadin.Application;
+import com.vaadin.terminal.ClassResource;
+import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.ComponentFactory;
 
@@ -37,15 +36,16 @@ public class StatusPanel extends Panel implements Button.ClickListener {
     private Button myHelp;
     private Button myLogout;
 
-    public StatusPanel(ComponentFactory componentFactory) {
+    public StatusPanel(Application application, ComponentFactory componentFactory) {
         super(componentFactory.createVerticalLayout(true, true));
         myComponentFactory = componentFactory;
-        init();
-        initFromConfig();
+        init(application);
+        initFromConfig(application);
     }
 
-    protected void init() {
+    protected void init(Application application) {
         setCaption(MyTunesRssWebAdminUtils.getBundleString("statusPanel.caption"));
+        addComponent(new Embedded("", new ClassResource("mytunesrss.png", application)));
         Panel server = new Panel(MyTunesRssWebAdminUtils.getBundleString("statusPanel.server.caption"), myComponentFactory.createVerticalLayout(true, true));
         addComponent(server);
         TextField textField = myComponentFactory.createTextField("statusPanel.server.status"); // TODO status
@@ -74,7 +74,7 @@ public class StatusPanel extends Panel implements Button.ClickListener {
         myResetDatabase = myComponentFactory.createButton("statusPanel.database.reset", StatusPanel.this);
         databaseButtons.addComponent(myUpdateDatabase);
         databaseButtons.addComponent(myResetDatabase);
-        Panel configButtons = new Panel(MyTunesRssWebAdminUtils.getBundleString("statusPanel.config.caption"), myComponentFactory.createGridLayout(4, 3, true, false));
+        Panel configButtons = new Panel(MyTunesRssWebAdminUtils.getBundleString("statusPanel.config.caption"), myComponentFactory.createGridLayout(4, 3, true, true));
         addComponent(configButtons);
         myServerConfig = myComponentFactory.createButton("statusPanel.config.server", StatusPanel.this);
         myDatabaseConfig = myComponentFactory.createButton("statusPanel.config.database", StatusPanel.this);
@@ -109,7 +109,7 @@ public class StatusPanel extends Panel implements Button.ClickListener {
         buttons.addComponent(myLogout);
     }
 
-    private void initFromConfig() {
+    private void initFromConfig(Application application) {
         myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
         myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
     }
@@ -119,9 +119,11 @@ public class StatusPanel extends Panel implements Button.ClickListener {
         if (clickEvent.getButton() == myLogout) {
             application.close();
         } else if (clickEvent.getButton() == myServerConfig) {
-            application.setMainComponent(new ServerConfigPanel(myComponentFactory));
+            application.setMainComponent(new ServerConfigPanel(getApplication(), myComponentFactory));
         } else if (clickEvent.getButton() == myDatabaseConfig) {
-            application.setMainComponent(new DatabaseConfigPanel(myComponentFactory));
+            application.setMainComponent(new DatabaseConfigPanel(getApplication(), myComponentFactory));
+        } else if (clickEvent.getButton() == myDatasourcesConfig) {
+            application.setMainComponent(new DatasourcesConfigPanel(getApplication(), myComponentFactory));
         }
     }
 }

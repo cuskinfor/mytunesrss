@@ -1,2 +1,5 @@
 @import "../reindeer/styles.css";
 
+td.v-table-cell-content {
+    vertical-align: middle;
+}

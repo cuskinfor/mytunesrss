@@ -34,7 +34,7 @@ public class LoginPanel extends Panel implements Button.ClickListener {
     public void buttonClick(Button.ClickEvent clickEvent) {
         MyTunesRssWebAdmin application = ((MyTunesRssWebAdmin) getApplication());
         if (StringUtils.isEmpty((String)myUsername.getValue()) && StringUtils.isEmpty((String)myPassword.getValue())) {
-            application.setMainComponent(new StatusPanel(myComponentFactory));
+            application.setMainComponent(new StatusPanel(getApplication(), myComponentFactory));
         } else {
             application.showError("loginPanel.error.invalidLogin");
         }

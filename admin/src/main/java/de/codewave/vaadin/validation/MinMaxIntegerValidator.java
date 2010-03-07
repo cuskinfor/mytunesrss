@@ -12,7 +12,6 @@ public class MinMaxIntegerValidator extends IntegerValidator {
 
     private int myMinValue;
     private int myMaxValue;
-    private boolean myAllowEmpty;
 
     public MinMaxIntegerValidator(String errorMessage, int minValue, int maxValue) {
         super(errorMessage);
