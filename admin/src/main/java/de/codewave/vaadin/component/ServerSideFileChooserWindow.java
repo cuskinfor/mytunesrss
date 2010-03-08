@@ -18,7 +18,7 @@ public abstract class ServerSideFileChooserWindow extends Window {
         parent.addWindow(this);
     }
 
-    public ServerSideFileChooserWindow(float width, int units, Resource icon, String caption, File currentDir, boolean allowSelectDirectory, boolean allowSelectFile, Pattern allowedNamePattern, boolean allowCreateFolders) {
+    public ServerSideFileChooserWindow(float width, int units, Resource icon, String caption, File currentDir, Pattern allowedDirPattern, Pattern allowedFilePattern, boolean allowCreateFolders) {
         super();
         if (caption != null) {
             setCaption(caption);
@@ -31,7 +31,7 @@ public abstract class ServerSideFileChooserWindow extends Window {
         setClosable(false);
         setResizable(false);
         setDraggable(false);
-        setContent(new ServerSideFileChooser(currentDir, allowSelectDirectory, allowSelectFile, allowedNamePattern, allowCreateFolders) {
+        setContent(new ServerSideFileChooser(currentDir, allowedDirPattern, allowedFilePattern, allowCreateFolders) {
             @Override
             protected void onCancel() {
                 getApplication().getMainWindow().removeWindow(getWindow());

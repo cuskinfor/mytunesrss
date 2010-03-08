@@ -5,37 +5,49 @@
 
 package de.codewave.vaadin;
 
-import com.vaadin.ui.Form;
+import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.data.Validatable;
+import com.vaadin.ui.Table;
 
 public class VaadinUtils {
 
-    public static boolean isModified(Form... forms) {
-        for (Form form : forms) {
-            if (form.isModified()) {
-                return true;
+    public static void validate(Validatable... validatables) {
+        for (Validatable validatable : validatables) {
+            if (validatable instanceof Table) {
+                Table table = (Table) validatable;
+                for (Object itemId : table.getItemIds()) {
+                    Item item = table.getItem(itemId);
+                    for (Object itemPropertyId : item.getItemPropertyIds()) {
+                        Property itemProperty = item.getItemProperty(itemPropertyId);
+                        if (itemProperty.getValue() instanceof Validatable) {
+                            ((Validatable) itemProperty.getValue()).validate();
+                        }
+                    }
+                }
+            } else {
+                validatable.validate();
             }
         }
-        return false;
     }
 
-    public static boolean isValid(Form... forms) {
-        for (Form form : forms) {
-            if (!form.isValid()) {
+    public static boolean isValid(Validatable... validatables) {
+        for (Validatable validatable : validatables) {
+            if (validatable instanceof Table) {
+                Table table = (Table) validatable;
+                for (Object itemId : table.getItemIds()) {
+                    Item item = table.getItem(itemId);
+                    for (Object itemPropertyId : item.getItemPropertyIds()) {
+                        Property itemProperty = item.getItemProperty(itemPropertyId);
+                        if (itemProperty.getValue() instanceof Validatable && !(((Validatable) itemProperty.getValue()).isValid())) {
+                            return false;
+                        }
+                    }
+                }
+            } else if (!validatable.isValid()) {
                 return false;
             }
         }
         return true;
-    }
-
-    public static void discard(Form... forms) {
-        for (Form form : forms) {
-            form.discard();
-        }
-    }
-
-    public static void commit(Form... forms) {
-        for (Form form : forms) {
-            form.commit();
-        }
     }
 }

@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
+import com.vaadin.data.Item;
 import com.vaadin.terminal.ClassResource;
 import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.Sizeable;
@@ -14,7 +15,9 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.PathReplacement;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
+import de.codewave.vaadin.component.ServerSideFileChooser;
 import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import de.codewave.vaadin.component.TextFieldWindow;
 import de.codewave.vaadin.validation.FileValidator;
@@ -25,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
@@ -40,6 +44,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myUploadCreateUserDir;
     private Form myFallbackForm;
     private Form myUploadForm;
+    private static final Pattern XML_FILE_PATTERN = Pattern.compile("^.*\\.xml$", Pattern.CASE_INSENSITIVE);
 
     public DatasourcesConfigPanel(Application application, ComponentFactory componentFactory) {
         super(application, getBundleString("datasourcesConfigPanel.caption"), componentFactory.createGridLayout(1, 5, true, true), componentFactory);
@@ -51,6 +56,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myDatasources = new Table();
         myDatasources.addContainerProperty("icon", Embedded.class, null, "", null, null);
         myDatasources.addContainerProperty("path", String.class, null, getBundleString("datasourcesConfigPanel.sourcePath"), null, null);
+        myDatasources.addContainerProperty("edit", Button.class, null, "", null, null);
         myDatasources.addContainerProperty("delete", Button.class, null, "", null, null);
         myDatasources.setEditable(false);
         sourcesPanel.addComponent(myDatasources);
@@ -68,16 +74,16 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         Panel replacementsPanel = new Panel(getBundleString("datasourcesConfigPanel.caption.replacements"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(replacementsPanel);
         myPathReplacements = new Table();
-        myPathReplacements.addContainerProperty("search", String.class, null, getBundleString("datasourcesConfigPanel.replaceSearch"), null, null);
-        myPathReplacements.addContainerProperty("replace", String.class, null, getBundleString("datasourcesConfigPanel.replaceReplace"), null, null);
+        myPathReplacements.addContainerProperty("search", TextField.class, null, getBundleString("datasourcesConfigPanel.replaceSearch"), null, null);
+        myPathReplacements.addContainerProperty("replace", TextField.class, null, getBundleString("datasourcesConfigPanel.replaceReplace"), null, null);
         myPathReplacements.addContainerProperty("delete", Button.class, null, "", null, null);
-        myPathReplacements.setEditable(true);
+        myPathReplacements.setEditable(false);
         replacementsPanel.addComponent(myPathReplacements);
         myAddPathReplacement = getComponentFactory().createButton("datasourcesConfigPanel.addReplacement", this);
         replacementsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddPathReplacement));
 
         myUploadForm = getComponentFactory().createForm(null, true);
-        myUploadDir = getComponentFactory().createTextField("datasourcesConfigPanel.uploadDir", new FileValidator(getBundleString("datasourcesConfigPanel.error.invalidUploadDir"), false, true, null));
+        myUploadDir = getComponentFactory().createTextField("datasourcesConfigPanel.uploadDir", new FileValidator(getBundleString("datasourcesConfigPanel.error.invalidUploadDir"), FileValidator.PATTERN_ALL, null));
         myUploadDir.setImmediate(true);
         mySelectUploadDir = getComponentFactory().createButton("datasourcesConfigPanel.selectUploadDir", this);
         myUploadCreateUserDir = getComponentFactory().createCheckBox("datasourcesConfigPanel.uploadCreateUserDir");
@@ -90,11 +96,13 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void initFromConfig(Application application) {
+        myDatasources.removeAllItems();
         for (String datasource : MyTunesRss.CONFIG.getDatasources()) {
             addDatasource(application, datasource);
         }
         myAlbumFallback.setValue(MyTunesRss.CONFIG.getAlbumFallback());
         myArtistFallback.setValue(MyTunesRss.CONFIG.getArtistFallback());
+        myPathReplacements.removeAllItems();
         for (PathReplacement replacement : MyTunesRss.CONFIG.getPathReplacements()) {
             addPathReplacement(replacement);
         }
@@ -104,7 +112,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private void addDatasource(Application application, String datasource) {
-        myDatasources.addItem(new Object[]{new Embedded("", getDatasourceImage(application, datasource)), datasource, getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
+        myDatasources.addItem(new Object[]{new Embedded("", getDatasourceImage(application, datasource)), datasource, getComponentFactory().createButton("button.edit", this), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
     }
 
     private void addPathReplacement(PathReplacement replacement) {
@@ -112,7 +120,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         searchTextField.setValue(replacement.getSearchPattern());
         searchTextField.addValidator(new ValidRegExpValidator("datasourcesConfigPanel.error.invalidSearchExpression"));
         searchTextField.setImmediate(true);
-        myPathReplacements.addItem(new Object[]{searchTextField, replacement.getReplacement(), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
+        myPathReplacements.addItem(new Object[]{searchTextField, new TextField(null, replacement.getReplacement()), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
     }
 
     private Resource getDatasourceImage(Application application, String datasource) {
@@ -134,7 +142,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setAlbumFallback((String) myAlbumFallback.getValue());
         MyTunesRss.CONFIG.setArtistFallback((String) myArtistFallback.getValue());
         MyTunesRss.CONFIG.clearPathReplacements();
-        for (Object itemId : myDatasources.getItemIds()) {
+        for (Object itemId : myPathReplacements.getItemIds()) {
             MyTunesRss.CONFIG.addPathReplacement(new PathReplacement((String) myPathReplacements.getItem(itemId).getItemProperty("search").getValue(), (String) myPathReplacements.getItem(itemId).getItemProperty("replace").getValue()));
         }
         MyTunesRss.CONFIG.setUploadDir((String) myUploadDir.getValue());
@@ -148,33 +156,32 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddLocalDatasource) {
-            // todo
+            addOrEditLocalDataSource(null, new File(""));
         } else if (clickEvent.getSource() == myAddRemoteDatasource) {
-            new TextFieldWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.addRemoteDatasource.caption"), getBundleString("datasourcesConfigPanel.addRemoteDatasource.message"), getBundleString("datasourcesConfigPanel.addRemoteDatasource.ok"), getBundleString("button.cancel")) {
-                @Override
-                protected void onOk(String text) {
-                    if (MyTunesRssUtils.isValidRemoteUrl(text)) {
-                        addDatasource(getApplication(), text);
-                        getApplication().getMainWindow().removeWindow(this);
-                    } else {
-                        DatasourcesConfigPanel.this.getApplication().showWarning("datasourcesConfigPanel.warning.illegalRemoteUrl");
-                    }
-                }
-            }.show(getApplication().getMainWindow());
+            addOrEditRemoteDataSource(null, "");
         } else if (clickEvent.getSource() == myAddPathReplacement) {
             addPathReplacement(new PathReplacement("^.*$", "\\0"));
             setTablePageLengths();
         } else if (findTableItemWithObject(myDatasources, clickEvent.getSource()) != null) {
-            final Button yes = new Button(getBundleString("button.yes"));
-            Button no = new Button(getBundleString("button.no"));
-            new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigDialog.optionWindowDeleteDatasource.caption"), getBundleString("datasourcesConfigDialog.optionWindowDeleteDatasource.message"), yes, no) {
-                public void clicked(Button button) {
-                    if (button == yes) {
-                        myDatasources.removeItem(findTableItemWithObject(myDatasources, clickEvent.getSource()));
-                        setTablePageLengths();
-                    }
+            Item item = myDatasources.getItem(findTableItemWithObject(myDatasources, clickEvent.getSource()));
+            if (item.getItemProperty("edit").getValue() == clickEvent.getSource()) {
+                if (MyTunesRssUtils.isValidRemoteUrl((String) item.getItemProperty("path").getValue())) {
+                    addOrEditRemoteDataSource(findTableItemWithObject(myDatasources, clickEvent.getSource()), (String) item.getItemProperty("path").getValue());
+                } else {
+                    addOrEditLocalDataSource(findTableItemWithObject(myDatasources, clickEvent.getSource()), new File((String) item.getItemProperty("path").getValue()));
                 }
-            }.show(getApplication().getMainWindow());
+            } else {
+                final Button yes = new Button(getBundleString("button.yes"));
+                Button no = new Button(getBundleString("button.no"));
+                new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigDialog.optionWindowDeleteDatasource.caption"), getBundleString("datasourcesConfigDialog.optionWindowDeleteDatasource.message"), yes, no) {
+                    public void clicked(Button button) {
+                        if (button == yes) {
+                            myDatasources.removeItem(findTableItemWithObject(myDatasources, clickEvent.getSource()));
+                            setTablePageLengths();
+                        }
+                    }
+                }.show(getApplication().getMainWindow());
+            }
         } else if (findTableItemWithObject(myPathReplacements, clickEvent.getSource()) != null) {
             final Button yes = new Button(getBundleString("button.yes"));
             Button no = new Button(getBundleString("button.no"));
@@ -187,7 +194,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 }
             }.show(getApplication().getMainWindow());
         } else if (clickEvent.getSource() == mySelectUploadDir) {
-            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectUploadDir"), new File((String) myUploadDir.getValue()), true, false, null, true) {
+            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectUploadDir"), new File((String) myUploadDir.getValue()), ServerSideFileChooser.PATTERN_ALL, null, true) {
                 @Override
                 protected void onFileSelected(File file) {
                     myUploadDir.setValue(file.getAbsolutePath());
@@ -199,8 +206,47 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         }
     }
 
+    private void addOrEditRemoteDataSource(final Object itemId, String url) {
+        String okButtonLabel = itemId == null ? getBundleString("datasourcesConfigPanel.addRemoteDatasource.ok") : getBundleString("datasourcesConfigPanel.updateRemoteDatasource.ok");
+        new TextFieldWindow(50, Sizeable.UNITS_EM, url, null, getBundleString("datasourcesConfigPanel.addRemoteDatasource.caption"), getBundleString("datasourcesConfigPanel.addRemoteDatasource.message"), okButtonLabel, getBundleString("button.cancel")) {
+            @Override
+            protected void onOk(String text) {
+                if (MyTunesRssUtils.isValidRemoteUrl(text)) {
+                    if (itemId != null) {
+                        myDatasources.getItem(itemId).getItemProperty("path").setValue(text);
+                    } else {
+                        addDatasource(getApplication(), text);
+                        setTablePageLengths();
+                    }
+                    getApplication().getMainWindow().removeWindow(this);
+                } else {
+                    DatasourcesConfigPanel.this.getApplication().showWarning("datasourcesConfigPanel.warning.illegalRemoteUrl");
+                }
+            }
+        }.show(getApplication().getMainWindow());
+    }
+
+    private void addOrEditLocalDataSource(final Object itemId, File file) {
+        new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectLocalDatasource"), file, ServerSideFileChooser.PATTERN_ALL, XML_FILE_PATTERN, false) {
+            @Override
+            protected void onFileSelected(File file) {
+                if (itemId != null) {
+                    myDatasources.getItem(itemId).getItemProperty("path").setValue(file.getAbsolutePath());
+                } else {
+                    addDatasource(getApplication(), file.getAbsolutePath());
+                    setTablePageLengths();
+                }
+                getApplication().getMainWindow().removeWindow(this);
+            }
+        }.show(getApplication().getMainWindow());
+    }
+
     protected boolean beforeSave() {
-        return false;
+        if (!VaadinUtils.isValid(myFallbackForm, myPathReplacements, myUploadForm)) {
+            getApplication().showError("error.formInvalid");
+            return false;
+        }
+        return true;
     }
 
     private Object findTableItemWithObject(Table table, Object component) {

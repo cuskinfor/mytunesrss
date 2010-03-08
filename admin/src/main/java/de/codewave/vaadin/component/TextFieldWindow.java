@@ -20,7 +20,7 @@ public abstract class TextFieldWindow extends Window implements Button.ClickList
         parent.addWindow(this);
     }
 
-    public TextFieldWindow(float width, int units, Resource icon, String caption, String message, String okButtonText, String cancelButtonText) {
+    public TextFieldWindow(float width, int units, String value, Resource icon, String caption, String message, String okButtonText, String cancelButtonText) {
         super();
         if (caption != null) {
             setCaption(caption);
@@ -40,6 +40,7 @@ public abstract class TextFieldWindow extends Window implements Button.ClickList
         Label label = new Label(message);
         addComponent(label);
         myTextField = new TextField();
+        myTextField.setValue(value);
         myTextField.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         addComponent(myTextField);
         Panel panel = new Panel();
@@ -57,7 +58,6 @@ public abstract class TextFieldWindow extends Window implements Button.ClickList
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {
-        close();
         if (clickEvent.getSource() == myOkButton) {
             onOk((String) myTextField.getValue());
         } else {

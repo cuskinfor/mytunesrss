@@ -5,7 +5,6 @@
 
 package de.codewave.vaadin.component;
 
-import com.vaadin.data.util.MethodProperty;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
@@ -17,20 +16,20 @@ import java.util.regex.Pattern;
 
 public abstract class ServerSideFileChooser extends CustomComponent implements Button.ClickListener, ItemClickEvent.ItemClickListener {
 
+    public static Pattern PATTERN_ALL = Pattern.compile("^.*$");
+
     private Table myChooser;
     private File myCurrentDir;
     private Button myOk;
     private Button myCancel;
     private Button myCreateDir;
-    private boolean myAllowSelectDirectory;
-    private boolean myAllowSelectFile;
-    private Pattern myAllowedNamePattern;
+    private Pattern myAllowedDirPattern;
+    private Pattern myAllowedFilePattern;
     private Label myCurrentDirLabel;
 
-    public ServerSideFileChooser(File currentDir, boolean allowSelectDirectory, boolean allowSelectFile, Pattern allowedNamePattern, boolean allowCreateDir) {
-        myAllowSelectDirectory = allowSelectDirectory;
-        myAllowSelectFile = allowSelectFile;
-        myAllowedNamePattern = allowedNamePattern;
+    public ServerSideFileChooser(File currentDir, Pattern allowedDirPattern, Pattern allowedFilePattern, boolean allowCreateDir) {
+        myAllowedDirPattern = allowedDirPattern;
+        myAllowedFilePattern = allowedFilePattern;
         if (currentDir.exists()) {
             myCurrentDir = currentDir.isDirectory() ? currentDir : currentDir.getParentFile();
         } else {
@@ -87,7 +86,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         } else if (clickEvent.getButton() == myCancel) {
             onCancel();
         } else if (clickEvent.getButton() == myCreateDir) {
-            new TextFieldWindow(30, Sizeable.UNITS_EM, null, "Create folder", "Please enter the name of the new folder.", "Create", "Cancel") {
+            new TextFieldWindow(30, Sizeable.UNITS_EM, null, null, "Create folder", "Please enter the name of the new folder.", "Create", "Cancel") {
                 @Override
                 protected void onOk(String text) {
                     ServerSideFileChooser.this.getApplication().getMainWindow().removeWindow(this);
@@ -100,9 +99,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
 
     private boolean isAllowedSelect(File file) {
         if (file != null && file.exists()) {
-            if (file.isFile() && myAllowSelectFile || file.isDirectory() && myAllowSelectDirectory) {
-                return myAllowedNamePattern == null || myAllowedNamePattern.matcher(file.getName()).matches();
-            }
+            return (file.isFile() && myAllowedFilePattern != null && myAllowedFilePattern.matcher(file.getName()).matches()) || (file.isDirectory() && myAllowedDirPattern != null && myAllowedDirPattern.matcher(file.getName()).matches());
         }
         return false;
     }

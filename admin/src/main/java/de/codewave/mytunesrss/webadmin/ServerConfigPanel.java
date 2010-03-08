@@ -74,7 +74,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myTomcatSslProxyScheme = getComponentFactory().createSelect("serverConfigPanel.tomcatSslProxyScheme", Arrays.asList("HTTPS", "HTTP"));
         myTomcatSslProxyHost = getComponentFactory().createTextField("serverConfigPanel.tomcatSslProxyHost");
         myTomcatSslProxyPort = getComponentFactory().createTextField("serverConfigPanel.tomcatSslProxyPort", ValidatorFactory.createPortValidator());
-        mySslKeystoreFile = getComponentFactory().createTextField("serverConfigPanel.sslKeystoreFile", new FileValidator(getBundleString("serverConfigPanel.error.invalidKeystore"), true, false, null));
+        mySslKeystoreFile = getComponentFactory().createTextField("serverConfigPanel.sslKeystoreFile", new FileValidator(getBundleString("serverConfigPanel.error.invalidKeystore"), null, FileValidator.PATTERN_ALL));
         mySslKeystoreFileSelect = getComponentFactory().createButton("serverConfigPanel.sslKeystoreFile.select", this);
         mySslKeystorePass = getComponentFactory().createPasswordTextField("serverConfigPanel.sslKeystorePass");
         mySslKeystoreKeyAlias = getComponentFactory().createTextField("serverConfigPanel.sslKeystoreKeyAlias");
@@ -171,7 +171,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
 
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getButton() == mySslKeystoreFileSelect) {
-            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("serverConfigPanel.caption.selectKeystoreFile"), new File((String) mySslKeystoreFile.getValue()), false, true, null, false) {
+            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("serverConfigPanel.caption.selectKeystoreFile"), new File((String) mySslKeystoreFile.getValue()), null, ServerSideFileChooser.PATTERN_ALL, false) {
                 @Override
                 protected void onFileSelected(File file) {
                     mySslKeystoreFile.setValue(file.getAbsolutePath());

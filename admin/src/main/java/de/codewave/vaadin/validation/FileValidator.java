@@ -13,15 +13,15 @@ import java.util.regex.Pattern;
 
 public class FileValidator extends AbstractStringValidator {
 
-    private boolean myAllowFile;
-    private boolean myAllowDirectory;
-    private Pattern myNamePattern;
+    public static final Pattern PATTERN_ALL = Pattern.compile("^.*$");
 
-    public FileValidator(String errorMessage, boolean allowFile, boolean allowDirectory, Pattern namePattern) {
+    private Pattern myAllowedFilePattern;
+    private Pattern myAllowedDirPattern;
+
+    public FileValidator(String errorMessage, Pattern allowedDirPattern, Pattern allowedFilePattern) {
         super(errorMessage);
-        myAllowFile = allowFile;
-        myAllowDirectory = allowDirectory;
-        myNamePattern = namePattern;
+        myAllowedDirPattern = allowedDirPattern;
+        myAllowedFilePattern = allowedFilePattern;
     }
 
     @Override
@@ -30,9 +30,6 @@ public class FileValidator extends AbstractStringValidator {
             return true;
         }
         File file = new File(value);
-        if (myAllowFile && file.isFile() || myAllowDirectory && file.isDirectory()) {
-            return myNamePattern == null || myNamePattern.matcher(file.getName()).matches();
-        }
-        return false;
+        return (file.isFile() && myAllowedFilePattern != null && myAllowedFilePattern.matcher(value).matches()) || (file.isDirectory() && myAllowedDirPattern != null && myAllowedDirPattern.matcher(value).matches());
     }
 }
