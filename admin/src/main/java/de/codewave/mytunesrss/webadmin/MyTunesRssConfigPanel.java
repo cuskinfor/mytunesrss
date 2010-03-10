@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
+import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.vaadin.ComponentFactory;
@@ -78,6 +79,10 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
 
     protected boolean beforeSave() {
         return true;
+    }
+
+    protected Object getTableCellPropertyValue(Table table, Object itemId, Object itemPropertyId) {
+        return ((Property) table.getItem(itemId).getItemProperty(itemPropertyId).getValue()).getValue();
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {

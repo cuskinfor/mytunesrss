@@ -143,7 +143,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setArtistFallback((String) myArtistFallback.getValue());
         MyTunesRss.CONFIG.clearPathReplacements();
         for (Object itemId : myPathReplacements.getItemIds()) {
-            MyTunesRss.CONFIG.addPathReplacement(new PathReplacement((String) myPathReplacements.getItem(itemId).getItemProperty("search").getValue(), (String) myPathReplacements.getItem(itemId).getItemProperty("replace").getValue()));
+            MyTunesRss.CONFIG.addPathReplacement(new PathReplacement((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));
         }
         MyTunesRss.CONFIG.setUploadDir((String) myUploadDir.getValue());
         MyTunesRss.CONFIG.setUploadCreateUserDir(myUploadCreateUserDir.booleanValue());
