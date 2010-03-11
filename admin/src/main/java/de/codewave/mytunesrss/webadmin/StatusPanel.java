@@ -25,7 +25,7 @@ public class StatusPanel extends Panel implements Button.ClickListener {
     private Button myDatabaseConfig;
     private Button myDatasourcesConfig;
     private Button myDataimportConfig;
-    private Button myContentsConfig;
+    private Button myContentConfig;
     private Button myUsersConfig;
     private Button myNotificationsConfig;
     private Button myStatisticsConfig;
@@ -80,7 +80,7 @@ public class StatusPanel extends Panel implements Button.ClickListener {
         myDatabaseConfig = myComponentFactory.createButton("statusPanel.config.database", StatusPanel.this);
         myDatasourcesConfig = myComponentFactory.createButton("statusPanel.config.datasources", StatusPanel.this);
         myDataimportConfig = myComponentFactory.createButton("statusPanel.config.dataimport", StatusPanel.this);
-        myContentsConfig = myComponentFactory.createButton("statusPanel.config.contents", StatusPanel.this);
+        myContentConfig = myComponentFactory.createButton("statusPanel.config.contents", StatusPanel.this);
         myUsersConfig = myComponentFactory.createButton("statusPanel.config.users", StatusPanel.this);
         myNotificationsConfig = myComponentFactory.createButton("statusPanel.config.notifications", StatusPanel.this);
         myStatisticsConfig = myComponentFactory.createButton("statusPanel.config.statistics", StatusPanel.this);
@@ -92,7 +92,7 @@ public class StatusPanel extends Panel implements Button.ClickListener {
         configButtons.addComponent(myDatabaseConfig);
         configButtons.addComponent(myDatasourcesConfig);
         configButtons.addComponent(myDataimportConfig);
-        configButtons.addComponent(myContentsConfig);
+        configButtons.addComponent(myContentConfig);
         configButtons.addComponent(myUsersConfig);
         configButtons.addComponent(myNotificationsConfig);
         configButtons.addComponent(myStatisticsConfig);
@@ -126,6 +126,8 @@ public class StatusPanel extends Panel implements Button.ClickListener {
             application.setMainComponent(new DatasourcesConfigPanel(getApplication(), myComponentFactory));
         } else if (clickEvent.getButton() == myDataimportConfig) {
             application.setMainComponent(new DataImportConfigPanel(getApplication(), myComponentFactory));
+        } else if (clickEvent.getButton() == myContentConfig) {
+            application.setMainComponent(new ContentConfigPanel(getApplication(), myComponentFactory));
         }
     }
 }

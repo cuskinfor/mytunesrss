@@ -6,11 +6,11 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
-import com.vaadin.terminal.ClassResource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.MyTunesRss;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 public class MyTunesRssWebAdmin extends Application {
 
@@ -38,5 +38,10 @@ public class MyTunesRssWebAdmin extends Application {
 
     public void showInfo(String messageKey, Object... parameters) {
         getMainWindow().showNotification(null, MyTunesRssWebAdminUtils.getBundleString(messageKey, parameters), Window.Notification.TYPE_HUMANIZED_MESSAGE);
+    }
+
+    public void handleException(Exception e) {
+        // TODO send support request dialog
+        getMainWindow().showNotification("An unexpected error has occured", ExceptionUtils.getFullStackTrace(e), Window.Notification.TYPE_ERROR_MESSAGE);
     }
 }

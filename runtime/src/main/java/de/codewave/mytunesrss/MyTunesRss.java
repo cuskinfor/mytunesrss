@@ -16,7 +16,6 @@ import de.codewave.mytunesrss.server.WebServer;
 import de.codewave.mytunesrss.settings.Settings;
 import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesTask;
 import de.codewave.mytunesrss.task.InitializeDatabaseTask;
 import de.codewave.utils.ProgramUtils;
@@ -25,14 +24,12 @@ import de.codewave.utils.io.FileCache;
 import de.codewave.utils.maven.MavenUtils;
 import de.codewave.utils.swing.SwingUtils;
 import de.codewave.utils.xml.JXPathUtils;
-import org.apache.catalina.LifecycleException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.ContextHandler;
-import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -185,10 +182,10 @@ public class MyTunesRss {
 
         // start admin jetty on port 12345
         Server adminServer = new Server(12345);
-        Context adminContext = new WebAppContext("webapps/ADMIN", "/");
+        WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
         adminServer.setHandler(adminContext);
         adminServer.start();
-        
+
         CONFIG = new MyTunesRssConfig();
         MyTunesRss.CONFIG.load();
         File license = null;
@@ -446,7 +443,7 @@ public class MyTunesRss {
                 }
             }
             if (task.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
-                String answer = (String)MyTunesRssUtils.showQuestionMessage(MyTunesRssUtils.getBundleString("question.databaseVersionMismatch", MyTunesRss.VERSION, task.getDatabaseVersion()), options);
+                String answer = (String) MyTunesRssUtils.showQuestionMessage(MyTunesRssUtils.getBundleString("question.databaseVersionMismatch", MyTunesRss.VERSION, task.getDatabaseVersion()), options);
                 if (answer == retry) {
                     MyTunesRss.CONFIG.setDefaultDatabaseSettings();
                     new DeleteDatabaseFilesTask().execute();
