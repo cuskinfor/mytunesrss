@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
 import com.vaadin.terminal.ClassResource;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.ComponentFactory;
@@ -45,7 +46,10 @@ public class StatusPanel extends Panel implements Button.ClickListener {
 
     protected void init(Application application) {
         setCaption(MyTunesRssWebAdminUtils.getBundleString("statusPanel.caption"));
-        addComponent(new Embedded("", new ClassResource("mytunesrss.png", application)));
+        Embedded logo = new Embedded("", new ClassResource("mytunesrss.png", application));
+        logo.setWidth(435, Sizeable.UNITS_PIXELS);
+        logo.setHeight(100, Sizeable.UNITS_PIXELS);
+        addComponent(logo);
         Panel server = new Panel(MyTunesRssWebAdminUtils.getBundleString("statusPanel.server.caption"), myComponentFactory.createVerticalLayout(true, true));
         addComponent(server);
         TextField textField = myComponentFactory.createTextField("statusPanel.server.status"); // TODO status
