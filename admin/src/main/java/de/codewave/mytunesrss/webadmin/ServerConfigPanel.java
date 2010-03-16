@@ -48,7 +48,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private TextField mySslKeystoreKeyAlias;
 
     public ServerConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("serverConfigPanel.caption"), componentFactory.createGridLayout(2, 3, true, true), componentFactory);
+        super(application, getBundleString("serverConfigPanel.caption"), componentFactory.createGridLayout(1, 5, true, true), componentFactory);
     }
 
     protected void init(Application application) {
@@ -114,7 +114,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         Panel httpsPanel = getComponentFactory().surroundWithPanel(myHttpsForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.https"));
         addComponent(httpsPanel);
 
-        addMainButtons(0, 2, 1, 2);
+        addMainButtons(0, 4, 0, 4);
     }
 
     protected void initFromConfig(Application application) {
