@@ -138,6 +138,8 @@ public class StatusPanel extends Panel implements Button.ClickListener {
             application.setMainComponent(new StatisticsConfigPanel(getApplication(), myComponentFactory));
         } else if (clickEvent.getButton() == myMiscConfig) {
             application.setMainComponent(new MiscConfigPanel(getApplication(), myComponentFactory));
+        } else if (clickEvent.getButton() == myStreamingConfig) {
+            application.setMainComponent(new StreamingConfigPanel(getApplication(), myComponentFactory));
         }
     }
 }

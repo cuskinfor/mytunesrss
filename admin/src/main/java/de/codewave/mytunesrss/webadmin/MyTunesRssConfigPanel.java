@@ -102,4 +102,9 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         }
     }
 
+    protected Field setValue(Field field, Object value) {
+        field.setValue(value);
+        return field;
+    }
+
 }

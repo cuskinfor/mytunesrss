@@ -8,7 +8,12 @@ package de.codewave.vaadin;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validatable;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Table;
+import org.h2.command.CommandContainer;
+
+import java.util.Iterator;
 
 public class VaadinUtils {
 
@@ -49,5 +54,32 @@ public class VaadinUtils {
             }
         }
         return true;
+    }
+
+    public static boolean isChild(Component ancestor, Component child) {
+        Component component = child;
+        while (component.getParent() != null && component != ancestor) {
+            component = component.getParent();
+        }
+        return component == ancestor;
+    }
+
+    public static <T> T getAncestor(Component component, Class<T> ancestorType) {
+        while (component != null && !ancestorType.isAssignableFrom(component.getClass())) {
+            component = component.getParent();
+        }
+        return (T) component;
+    }
+
+    public static int getComponentCount(ComponentContainer container, Class componentType) {
+        int count = 0;
+        Iterator<Component> componentIterator = container.getComponentIterator();
+        while (componentIterator.hasNext()) {
+            Component component = componentIterator.next();
+            if (componentType == null || componentType.isAssignableFrom(component.getClass())) {
+                count++;
+            }
+        }
+        return count;
     }
 }
