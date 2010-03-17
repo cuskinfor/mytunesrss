@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import de.codewave.vaadin.validation.EmailValidator;
 import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 
 public class ValidatorFactory {
@@ -15,5 +16,9 @@ public class ValidatorFactory {
 
     public static MinMaxIntegerValidator createMinMaxValidator(int minValue, int maxValue) {
         return new MinMaxIntegerValidator(MyTunesRssWebAdminUtils.getBundleString("error.minMaxValue", minValue, maxValue), minValue, maxValue);
+    }
+
+    public static EmailValidator createEmailValidator() {
+        return new EmailValidator(MyTunesRssWebAdminUtils.getBundleString("error.invalidEmail"));
     }
 }

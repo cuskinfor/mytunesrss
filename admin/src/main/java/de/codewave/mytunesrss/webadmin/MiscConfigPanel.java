@@ -6,9 +6,9 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
-import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.SmtpProtocol;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.VaadinUtils;
@@ -32,7 +32,6 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     private TextField myWebLoginMessage;
     private TextField myWebWelcomeMessage;
     private CheckBox myServerBrowserActive;
-    private CheckBox myProxyServer;
     private TextField myProxyHost;
     private TextField myProxyPort;
     private TextField myMailHost;
@@ -62,7 +61,6 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myWebLoginMessage = getComponentFactory().createTextField("miscConfigPanel.webLoginMessage");
         myWebWelcomeMessage = getComponentFactory().createTextField("miscConfigPanel.webWelcomeMessage");
         myServerBrowserActive = getComponentFactory().createCheckBox("miscConfigPanel.serverBrowserActive");
-        myProxyServer = getComponentFactory().createCheckBox("miscConfigPanel.proxyServer");
         myProxyHost = getComponentFactory().createTextField("miscConfigPanel.proxyHost");
         myProxyPort = getComponentFactory().createTextField("miscConfigPanel.proxyPort", ValidatorFactory.createPortValidator());
         myMailHost = getComponentFactory().createTextField("miscConfigPanel.mailHost");
@@ -70,7 +68,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         mySmtpProtocol = getComponentFactory().createSelect("miscConfigPanel.smtpProtocol", Arrays.asList(SmtpProtocol.PLAINTEXT, SmtpProtocol.STARTTLS, SmtpProtocol.SSL));
         myMailLogin = getComponentFactory().createTextField("miscConfigPanel.mailLogin");
         myMailPassword = getComponentFactory().createPasswordTextField("miscConfigPanel.mailPassword");
-        myMailSender = getComponentFactory().createTextField("miscConfigPanel.mailSender", new EmailValidator(getBundleString("error.invalidEmail")));
+        myMailSender = getComponentFactory().createTextField("miscConfigPanel.mailSender", ValidatorFactory.createEmailValidator());
         myGeneralForm.addField(myQuitConfirmation, myQuitConfirmation);
         myGeneralForm.addField(myMinimizeToSystray, myMinimizeToSystray);
         myGeneralForm.addField(myCheckUpdateOnStart, myCheckUpdateOnStart);
@@ -82,7 +80,6 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myMyTunesRssComForm.addField(myMyTunesRssComSsl, myMyTunesRssComSsl);
         Panel myTunesRssComPanel = getComponentFactory().surroundWithPanel(myMyTunesRssComForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.myTunesRssCom"));
         addComponent(myTunesRssComPanel);
-        myProxyForm.addField(myProxyServer, myProxyServer);
         myProxyForm.addField(myProxyHost, myProxyHost);
         myProxyForm.addField(myProxyPort, myProxyPort);
         Panel proxyPanel = getComponentFactory().surroundWithPanel(myProxyForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.proxy"));
@@ -114,11 +111,10 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myWebLoginMessage.setValue(MyTunesRss.CONFIG.getWebLoginMessage());
         myWebWelcomeMessage.setValue(MyTunesRss.CONFIG.getWebWelcomeMessage());
         myServerBrowserActive.setValue(MyTunesRss.CONFIG.isServerBrowserActive());
-        myProxyServer.setValue(MyTunesRss.CONFIG.isProxyServer());
         myProxyHost.setValue(MyTunesRss.CONFIG.getProxyHost());
-        myProxyPort.setValue(MyTunesRss.CONFIG.getProxyPort());
+        myProxyPort.setValue(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getProxyPort(), 1, 65535, ""));
         myMailHost.setValue(MyTunesRss.CONFIG.getMailHost());
-        myMailPort.setValue(MyTunesRss.CONFIG.getMailPort());
+        myMailPort.setValue(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getMailPort(), 1, 65535, ""));
         mySmtpProtocol.setValue(MyTunesRss.CONFIG.getSmtpProtocol());
         myMailLogin.setValue(MyTunesRss.CONFIG.getMailLogin());
         myMailPassword.setValue(MyTunesRss.CONFIG.getMailPassword());
@@ -135,7 +131,6 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setWebLoginMessage((String) myWebLoginMessage.getValue());
         MyTunesRss.CONFIG.setWebWelcomeMessage((String) myWebWelcomeMessage.getValue());
         MyTunesRss.CONFIG.setServerBrowserActive((Boolean) myServerBrowserActive.getValue());
-        MyTunesRss.CONFIG.setProxyServer((Boolean) myProxyServer.getValue());
         MyTunesRss.CONFIG.setProxyHost((String) myProxyHost.getValue());
         MyTunesRss.CONFIG.setProxyPort((Integer) myProxyPort.getValue());
         MyTunesRss.CONFIG.setMailHost((String) myMailHost.getValue());

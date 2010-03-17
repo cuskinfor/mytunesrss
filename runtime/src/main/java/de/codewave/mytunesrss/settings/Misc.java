@@ -127,7 +127,6 @@ public class Misc implements MyTunesRssEventListener, SettingsForm {
                 MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(myPasswordInput.getPasswordHash());
             }
             MyTunesRss.CONFIG.setMyTunesRssComSsl(myMyTunesRssComSsl.isSelected());
-            MyTunesRss.CONFIG.setProxyServer(myUseProxyInput.isSelected());
             MyTunesRss.CONFIG.setProxyHost(myProxyHostInput.getText());
             MyTunesRss.CONFIG.setProxyPort(MyTunesRssUtils.getTextFieldInteger(myProxyPortInput, -1));
             MyTunesRss.CONFIG.setQuitConfirmation(myQuitConfirmationInput.isSelected());

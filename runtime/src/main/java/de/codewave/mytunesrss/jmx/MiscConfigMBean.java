@@ -3,10 +3,6 @@ package de.codewave.mytunesrss.jmx;
 import java.io.UnsupportedEncodingException;
 
 public interface MiscConfigMBean {
-    boolean isUseProxy();
-
-    void setUseProxy(boolean useProxy);
-
     String getProxyHost();
 
     void setProxyHost(String proxyHost);

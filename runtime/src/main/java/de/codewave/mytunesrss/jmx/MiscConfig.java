@@ -13,15 +13,6 @@ public class MiscConfig extends MyTunesRssMBean implements MiscConfigMBean {
         super(MiscConfigMBean.class);
     }
 
-    public boolean isUseProxy() {
-        return MyTunesRss.CONFIG.isProxyServer();
-    }
-
-    public void setUseProxy(boolean useProxy) {
-        MyTunesRss.CONFIG.setProxyServer(useProxy);
-        onChange();
-    }
-
     public String getProxyHost() {
         return StringUtils.trimToEmpty(MyTunesRss.CONFIG.getProxyHost());
     }

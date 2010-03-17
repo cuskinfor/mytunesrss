@@ -51,7 +51,6 @@ public class MyTunesRssConfig {
     private Collection<User> myUsers = new HashSet<User>();
     private String mySupportName = "";
     private String mySupportEmail = "";
-    private boolean myProxyServer;
     private String myProxyHost = "";
     private int myProxyPort = -1;
     private boolean myItunesDeleteMissingFiles = true;
@@ -489,11 +488,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isProxyServer() {
-        return myProxyServer;
-    }
-
-    public void setProxyServer(boolean proxyServer) {
-        myProxyServer = proxyServer;
+        return StringUtils.isNotBlank(myProxyHost) && myProxyPort > 0 && myProxyPort < 65536;
     }
 
     public byte[] getMyTunesRssComPasswordHash() {
@@ -1135,7 +1130,6 @@ public class MyTunesRssConfig {
         }
         setSupportName(JXPathUtils.getStringValue(settings, "supportName", getSupportName()));
         setSupportEmail(JXPathUtils.getStringValue(settings, "supportEmail", getSupportEmail()));
-        setProxyServer(JXPathUtils.getBooleanValue(settings, "proxyServer", isProxyServer()));
         setProxyHost(JXPathUtils.getStringValue(settings, "proxyHost", getProxyHost()));
         setProxyPort(JXPathUtils.getIntValue(settings, "proxyPort", getProxyPort()));
         setMyTunesRssComSsl(JXPathUtils.getBooleanValue(settings, "myTunesRssComSsl", isMyTunesRssComSsl()));
@@ -1349,7 +1343,6 @@ public class MyTunesRssConfig {
             }
             root.appendChild(DOMUtils.createTextElement(settings, "supportName", mySupportName));
             root.appendChild(DOMUtils.createTextElement(settings, "supportEmail", mySupportEmail));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "proxyServer", myProxyServer));
             root.appendChild(DOMUtils.createTextElement(settings, "proxyHost", myProxyHost));
             root.appendChild(DOMUtils.createIntElement(settings, "proxyPort", myProxyPort));
             root.appendChild(DOMUtils.createBooleanElement(settings, "myTunesRssComSsl", myMyTunesRssComSsl));

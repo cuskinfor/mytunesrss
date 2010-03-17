@@ -6,7 +6,6 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
-import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Form;
@@ -41,7 +40,7 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
     protected void init(Application application) {
         myEmailForm = getComponentFactory().createForm(null, true);
         myNotificationsForm = getComponentFactory().createForm(null, true);
-        myAdminEmail = getComponentFactory().createTextField("adminNotificationsConfigPanel.adminEmail", new EmailValidator(getBundleString("adminNotificationsConfigPanel.error.illegalEmail")));
+        myAdminEmail = getComponentFactory().createTextField("adminNotificationsConfigPanel.adminEmail", ValidatorFactory.createEmailValidator());
         myNotifyOnDatabaseUpdate = getComponentFactory().createCheckBox("adminNotificationsConfigPanel.notifyOnDatabaseUpdate");
         myNotifyOnEmailChange = getComponentFactory().createCheckBox("adminNotificationsConfigPanel.notifyOnEmailChange");
         myNotifyOnInternalError = getComponentFactory().createCheckBox("adminNotificationsConfigPanel.notifyOnInternalError");
