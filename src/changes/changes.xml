@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.8.9" date="___D___">
+            <action dev="mdescher" type="add">
+                Japanese web translation.
+            </action>
             <action dev="mdescher" type="update">
                 MYTUNESRSS-133 "Link to playlist content in playlist name"
             </action>
