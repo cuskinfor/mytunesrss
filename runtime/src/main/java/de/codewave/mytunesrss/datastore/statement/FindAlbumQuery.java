@@ -48,7 +48,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         conditionals.put("filter", StringUtils.isNotBlank(myFilter));
         conditionals.put("artist", StringUtils.isNotBlank(myArtist));
         conditionals.put("genre", StringUtils.isNotBlank(myGenre));
-        conditionals.put("year", myMaxYear > Integer.MIN_VALUE || myMaxYear < Integer.MAX_VALUE);
+        conditionals.put("year", myMinYear > Integer.MIN_VALUE || myMaxYear < Integer.MAX_VALUE);
         conditionals.put("albumorder", !mySortByYear);
         conditionals.put("yearorder", mySortByYear);
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
