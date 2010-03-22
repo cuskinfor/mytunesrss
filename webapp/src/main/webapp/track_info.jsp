@@ -182,7 +182,8 @@
                                     <a class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}" title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
                             </c:if>
                             <c:if test="${authUser.player && config.showPlayer}">
-                                    <a class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=track=${track.id}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                <c:set var="playlistParams">track=${track.id}</c:set>
+                                    <a class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${cwfn:encode64(playlistParams)}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <c:if test="${authUser.download && config.showDownload}">
                                     <a class="download" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="${track.name}" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>

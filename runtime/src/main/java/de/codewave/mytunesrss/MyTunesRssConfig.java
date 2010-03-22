@@ -1121,13 +1121,6 @@ public class MyTunesRssConfig {
         setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
         setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
         setLocalTempArchive(JXPathUtils.getBooleanValue(settings, "localTempArchive", isLocalTempArchive()));
-        Iterator<JXPathContext> users = JXPathUtils.getContextIterator(settings, "users/user");
-        while (users != null && users.hasNext()) {
-            JXPathContext userContext = users.next();
-            User user = new User(JXPathUtils.getStringValue(userContext, "name", null));
-            user.loadFromPreferences(userContext);
-            addUser(user);
-        }
         setSupportName(JXPathUtils.getStringValue(settings, "supportName", getSupportName()));
         setSupportEmail(JXPathUtils.getStringValue(settings, "supportEmail", getSupportEmail()));
         setProxyHost(JXPathUtils.getStringValue(settings, "proxyHost", getProxyHost()));
@@ -1267,6 +1260,13 @@ public class MyTunesRssConfig {
             myPathReplacements.add(new PathReplacement(search, replacement));
         }
         myLdapConfig = new LdapConfig(settings);
+        Iterator<JXPathContext> users = JXPathUtils.getContextIterator(settings, "users/user");
+        while (users != null && users.hasNext()) {
+            JXPathContext userContext = users.next();
+            User user = new User(JXPathUtils.getStringValue(userContext, "name", null));
+            user.loadFromPreferences(userContext);
+            addUser(user);
+        }
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
