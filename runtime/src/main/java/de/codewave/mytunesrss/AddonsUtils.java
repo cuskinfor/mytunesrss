@@ -4,7 +4,6 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.PrefsUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -133,7 +132,7 @@ public class AddonsUtils {
         return null;
     }
 
-    public static String addTheme(File theme) {
+    public static AddFileResult addTheme(File theme) {
         if (isThemeArchive(theme)) {
             File themeDir = null;
             CodewaveZipInputStream zipInputStream = null;
@@ -154,7 +153,7 @@ public class AddonsUtils {
                         }
                     }
                 }
-                return MyTunesRssUtils.getBundleString("error.couldNotExtractTheme");
+                return AddFileResult.ExtractFailed;
             } finally {
                 if (zipInputStream != null) {
                     try {
@@ -167,9 +166,9 @@ public class AddonsUtils {
                 }
             }
         } else {
-            return MyTunesRssUtils.getBundleString("error.invalidThemeFile");
+            return AddFileResult.InvalidFile;
         }
-        return null;
+        return AddFileResult.Ok;
     }
 
     private static boolean isThemeArchive(File theme) {
@@ -234,7 +233,7 @@ public class AddonsUtils {
         return !(StringUtils.isEmpty(fileName) || fileName.endsWith("/") || fileName.endsWith("\\")) && !fileName.contains("__MACOSX/");
     }
 
-    public static String addLanguage(File language) {
+    public static AddFileResult addLanguage(File language) {
         if (isLanguageArchive(language)) {
             CodewaveZipInputStream zipInputStream = null;
             File languageDir = null;
@@ -267,7 +266,7 @@ public class AddonsUtils {
                         }
                     }
                 }
-                return MyTunesRssUtils.getBundleString("error.couldNotExtractLanguage");
+                return AddFileResult.ExtractFailed;
             } finally {
                 if (zipInputStream != null) {
                     try {
@@ -280,9 +279,9 @@ public class AddonsUtils {
                 }
             }
         } else {
-            return MyTunesRssUtils.getBundleString("error.invalidLanguageFile");
+            return AddFileResult.InvalidFile;
         }
-        return null;
+        return AddFileResult.Ok;
     }
 
     private static boolean isLanguageArchive(File language) {
@@ -383,7 +382,7 @@ public class AddonsUtils {
         return null;
     }
 
-    public static class LanguageDefinition {
+    public static class LanguageDefinition implements Comparable<LanguageDefinition> {
         private String myCode;
         private String myInfo;
 
@@ -425,9 +424,13 @@ public class AddonsUtils {
         public int hashCode() {
             return myCode != null ? myCode.hashCode() : 0;
         }
+
+        public int compareTo(LanguageDefinition o) {
+            return myCode.compareTo(o.getCode());
+        }
     }
 
-    public static class ThemeDefinition {
+    public static class ThemeDefinition implements Comparable<ThemeDefinition> {
         private String myName;
         private String myInfo;
 
@@ -469,5 +472,13 @@ public class AddonsUtils {
         public int hashCode() {
             return myName != null ? myName.hashCode() : 0;
         }
+
+        public int compareTo(ThemeDefinition o) {
+            return myName.compareTo(o.getName());
+        }
+    }
+
+    public static enum AddFileResult {
+        ExtractFailed(), InvalidFile(), Ok();
     }
 }

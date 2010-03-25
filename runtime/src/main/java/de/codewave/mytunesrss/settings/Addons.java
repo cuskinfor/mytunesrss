@@ -123,7 +123,8 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
         myAddThemeButton.addActionListener(new AddButtonListener(MyTunesRssUtils.getBundleString("dialog.lookupTheme"),
                 MyTunesRssUtils.getBundleString("pleaseWait.addingTheme")) {
             protected String add(File theme) {
-                return AddonsUtils.addTheme(theme);
+                AddonsUtils.addTheme(theme);
+                throw new RuntimeException("BANG!");
             }
         });
         myDeleteThemeButton.addActionListener(new DeleteButtonListener(myThemesListModel, myThemesList) {
@@ -134,7 +135,8 @@ public class Addons implements MyTunesRssEventListener, SettingsForm {
         myAddLanguageButton.addActionListener(new AddButtonListener(MyTunesRssUtils.getBundleString("dialog.lookupLanguage"),
                 MyTunesRssUtils.getBundleString("pleaseWait.addingLanguage")) {
             protected String add(File language) {
-                return AddonsUtils.addLanguage(language);
+                AddonsUtils.addLanguage(language);
+                throw new RuntimeException("BANG!");
             }
         });
         myDeleteLanguageButton.addActionListener(new DeleteButtonListener(myLanguagesListModel, myLanguagesList) {

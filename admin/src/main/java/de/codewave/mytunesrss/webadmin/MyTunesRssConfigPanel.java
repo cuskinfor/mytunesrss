@@ -11,6 +11,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.vaadin.ComponentFactory;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class MyTunesRssConfigPanel extends Panel implements Button.ClickListener {
