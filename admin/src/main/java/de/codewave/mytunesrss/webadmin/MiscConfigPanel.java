@@ -17,15 +17,10 @@ import java.util.Arrays;
 
 public class MiscConfigPanel extends MyTunesRssConfigPanel {
 
-    private Form myGeneralForm;
     private Form myMyTunesRssComForm;
     private Form myWebInterfaceForm;
     private Form myProxyForm;
     private Form mySmtpForm;
-    private CheckBox myCheckUpdateOnStart;
-    private Button myCheckUpdate;
-    private CheckBox myQuitConfirmation;
-    private CheckBox myMinimizeToSystray;
     private TextField myMyTunesRssComUser;
     private TextField myMyTunesRssComPassword;
     private CheckBox myMyTunesRssComSsl;
@@ -42,19 +37,14 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     private TextField myMailSender;
 
     public MiscConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("miscConfigPanel.caption"), componentFactory.createGridLayout(1, 6, true, true), componentFactory);
+        super(application, getBundleString("miscConfigPanel.caption"), componentFactory.createGridLayout(1, 5, true, true), componentFactory);
     }
 
     protected void init(Application application) {
-        myGeneralForm = getComponentFactory().createForm(null, true);
         myMyTunesRssComForm = getComponentFactory().createForm(null, true);
         myWebInterfaceForm = getComponentFactory().createForm(null, true);
         myProxyForm = getComponentFactory().createForm(null, true);
         mySmtpForm = getComponentFactory().createForm(null, true);
-        myCheckUpdateOnStart = getComponentFactory().createCheckBox("miscConfigPanel.checkUpdateOnStart");
-        myCheckUpdate = getComponentFactory().createButton("miscConfigPanel.checkUpdate", this);
-        myQuitConfirmation = getComponentFactory().createCheckBox("miscConfigPanel.quitConfirmation");
-        myMinimizeToSystray = getComponentFactory().createCheckBox("miscConfigPanel.minimizeToSystray");
         myMyTunesRssComUser = getComponentFactory().createTextField("miscConfigPanel.myTunesRssComUser");
         myMyTunesRssComPassword = getComponentFactory().createPasswordTextField("miscConfigPanel.myTunesRssComPassword");
         myMyTunesRssComSsl = getComponentFactory().createCheckBox("miscConfigPanel.myTunesRssComSsl");
@@ -69,12 +59,6 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myMailLogin = getComponentFactory().createTextField("miscConfigPanel.mailLogin");
         myMailPassword = getComponentFactory().createPasswordTextField("miscConfigPanel.mailPassword");
         myMailSender = getComponentFactory().createTextField("miscConfigPanel.mailSender", ValidatorFactory.createEmailValidator());
-        myGeneralForm.addField(myQuitConfirmation, myQuitConfirmation);
-        myGeneralForm.addField(myMinimizeToSystray, myMinimizeToSystray);
-        myGeneralForm.addField(myCheckUpdateOnStart, myCheckUpdateOnStart);
-        myGeneralForm.addField(myCheckUpdate, myCheckUpdate);
-        Panel generalPanel = getComponentFactory().surroundWithPanel(myGeneralForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.general"));
-        addComponent(generalPanel);
         myMyTunesRssComForm.addField(myMyTunesRssComUser, myMyTunesRssComUser);
         myMyTunesRssComForm.addField(myMyTunesRssComPassword, myMyTunesRssComPassword);
         myMyTunesRssComForm.addField(myMyTunesRssComSsl, myMyTunesRssComSsl);
@@ -98,13 +82,10 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         Panel webInterfacePanel = getComponentFactory().surroundWithPanel(myWebInterfaceForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.webInterface"));
         addComponent(webInterfacePanel);
 
-        addMainButtons(0, 5, 0, 5);
+        addMainButtons(0, 4, 0, 4);
     }
 
     protected void initFromConfig(Application application) {
-        myCheckUpdateOnStart.setValue(MyTunesRss.CONFIG.isCheckUpdateOnStart());
-        myQuitConfirmation.setValue(MyTunesRss.CONFIG.isQuitConfirmation());
-        myMinimizeToSystray.setValue(MyTunesRss.CONFIG.isMinimizeToSystray());
         myMyTunesRssComUser.setValue(MyTunesRss.CONFIG.getMyTunesRssComUser());
         myMyTunesRssComPassword.setValue(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash()); // TODO
         myMyTunesRssComSsl.setValue(MyTunesRss.CONFIG.isMyTunesRssComSsl());
@@ -122,9 +103,6 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void writeToConfig() {
-        MyTunesRss.CONFIG.setCheckUpdateOnStart((Boolean) myCheckUpdateOnStart.getValue());
-        MyTunesRss.CONFIG.setQuitConfirmation((Boolean) myQuitConfirmation.getValue());
-        MyTunesRss.CONFIG.setMinimizeToSystray((Boolean) myMinimizeToSystray.getValue());
         MyTunesRss.CONFIG.setMyTunesRssComUser((String) myMyTunesRssComUser.getValue());
         MyTunesRss.CONFIG.setMyTunesRssComPasswordHash((byte[]) myMyTunesRssComPassword.getValue()); // TODO
         MyTunesRss.CONFIG.setMyTunesRssComSsl((Boolean) myMyTunesRssComSsl.getValue());
@@ -143,7 +121,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
 
     @Override
     protected boolean beforeSave() {
-        boolean valid = VaadinUtils.isValid(myGeneralForm, myMyTunesRssComForm, myWebInterfaceForm, myProxyForm, mySmtpForm);
+        boolean valid = VaadinUtils.isValid(myMyTunesRssComForm, myWebInterfaceForm, myProxyForm, mySmtpForm);
         if (!valid) {
             getApplication().showError("error.formInvalid");
         }
