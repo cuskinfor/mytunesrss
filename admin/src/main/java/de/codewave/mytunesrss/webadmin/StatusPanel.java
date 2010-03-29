@@ -132,6 +132,8 @@ public class StatusPanel extends Panel implements Button.ClickListener {
             application.setMainComponent(new DataImportConfigPanel(getApplication(), myComponentFactory));
         } else if (clickEvent.getButton() == myContentConfig) {
             application.setMainComponent(new ContentConfigPanel(getApplication(), myComponentFactory));
+        } else if (clickEvent.getButton() == myUsersConfig) {
+            application.setMainComponent(new UserConfigPanel(getApplication(), myComponentFactory));
         } else if (clickEvent.getButton() == myNotificationsConfig) {
             application.setMainComponent(new AdminNotificationsConfigPanel(getApplication(), myComponentFactory));
         } else if (clickEvent.getButton() == myStatisticsConfig) {
