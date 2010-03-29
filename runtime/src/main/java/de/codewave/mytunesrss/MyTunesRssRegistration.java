@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss;
 
-import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.registration.RegistrationUtils;
 import de.codewave.utils.xml.JXPathUtils;
@@ -30,29 +29,25 @@ public class MyTunesRssRegistration {
     private JXPathContext mySettings;
     private static final String UNREGISTERED = "unregistered";
 
-    public static MyTunesRssRegistration register(File registrationFile) {
+    public static MyTunesRssRegistration register(File registrationFile) throws MyTunesRssRegistrationException {
         try {
             if (MyTunesRssRegistration.isValidRegistration(registrationFile)) {
                 MyTunesRssRegistration registration = new MyTunesRssRegistration();
                 registration.init(registrationFile, false);
                 if (registration.isExpired()) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicenseExpired", registration.getExpiration(
-                            MyTunesRssUtils.getBundleString("common.dateFormat"))));
+                    throw new MyTunesRssRegistrationException(MyTunesRssRegistrationException.Error.LicenseExpired);
                 } else if (!registration.myValid) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicense"));
+                    throw new MyTunesRssRegistrationException(MyTunesRssRegistrationException.Error.InvalidFile);
                 } else {
                     copyFile(registrationFile, new File(MyTunesRssUtils.getPreferencesDataPath() + "/MyTunesRSS.key"));
-                    MyTunesRssUtils.showInfoMessage(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("error.loadLicenseOk",
-                                                                                                           registration.getName()));
                     return registration;
                 }
             } else {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicense"));
+                throw new MyTunesRssRegistrationException(MyTunesRssRegistrationException.Error.InvalidFile);
             }
         } catch (IOException e) {
-            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.loadLicense"));
+            throw new MyTunesRssRegistrationException(MyTunesRssRegistrationException.Error.InvalidFile);
         }
-        return null;
     }
 
     private static void copyFile(File source, File destination) throws IOException {
@@ -111,7 +106,7 @@ public class MyTunesRssRegistration {
 
         String path = MyTunesRssUtils.getPreferencesDataPath();
         String registration = RegistrationUtils.getRegistrationData(file != null ? file.toURL() : new File(path + "/MyTunesRSS.key").toURL(),
-                                                                    getPublicKey());
+                getPublicKey());
         if (registration != null) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Using registration data from preferences.");
@@ -156,7 +151,7 @@ public class MyTunesRssRegistration {
                     settingsText = settingsText.replace("<!--" + token + "-->", values != null && values.length > 0 ? values[0] : "");
                 }
                 mySettings = JXPathUtils.getContext(JXPathUtils.getContext(settingsText), "settings");
-            } else{
+            } else {
                 mySettings = null;
             }
             if (expirationDate != null) {

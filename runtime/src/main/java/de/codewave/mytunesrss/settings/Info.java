@@ -95,7 +95,11 @@ public class Info implements MyTunesRssEventListener, SettingsForm {
                 FileDialog fileDialog = new FileDialog(MyTunesRss.ROOT_FRAME, MyTunesRssUtils.getBundleString("dialog.loadLicense"), FileDialog.LOAD);
                 fileDialog.setVisible(true);
                 if (fileDialog.getFile() != null) {
-                    MyTunesRssRegistration.register(new File(fileDialog.getDirectory(), fileDialog.getFile()));
+                    try {
+                        MyTunesRssRegistration.register(new File(fileDialog.getDirectory(), fileDialog.getFile()));
+                    } catch (MyTunesRssRegistrationException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             } else {
                 MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.preReleaseNoRegister"));
