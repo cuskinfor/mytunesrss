@@ -7,15 +7,15 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.SmartTextField;
 import org.apache.commons.lang.StringUtils;
 
 public class LoginPanel extends Panel implements Button.ClickListener {
 
     private ComponentFactory myComponentFactory;
-    private TextField myUsername;
-    private TextField myPassword;
+    private SmartTextField myUsername;
+    private SmartTextField myPassword;
 
     public LoginPanel(ComponentFactory componentFactory) {
         super(MyTunesRssWebAdminUtils.getBundleString("loginPanel.caption"), componentFactory.createVerticalLayout(true, true));

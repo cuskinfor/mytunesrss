@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.User
  */
-public class User implements MyTunesRssEventListener, Cloneable {
+public class User implements MyTunesRssEventListener, Cloneable, Comparable<User> {
     private static final Logger LOG = LoggerFactory.getLogger(User.class);
 
     public void handleEvent(MyTunesRssEvent event) {
@@ -36,6 +36,10 @@ public class User implements MyTunesRssEventListener, Cloneable {
 
     public boolean isForceTranscoders() {
         return myForceTranscoders != null && !myForceTranscoders.isEmpty();
+    }
+
+    public int compareTo(User o) {
+        return myName == null ? -1 : myName.compareTo(o.myName);
     }
 
     public enum QuotaType {
@@ -412,6 +416,11 @@ public class User implements MyTunesRssEventListener, Cloneable {
 
     public void removeForceTranscoder(String transcoder) {
         myForceTranscoders.remove(transcoder);
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     @Override

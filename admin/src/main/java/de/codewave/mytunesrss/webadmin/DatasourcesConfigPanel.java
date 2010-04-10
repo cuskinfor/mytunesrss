@@ -15,6 +15,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.PathReplacement;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.ServerSideFileChooser;
@@ -35,11 +36,11 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     private Table myDatasources;
     private Button myAddLocalDatasource;
     private Button myAddRemoteDatasource;
-    private TextField myAlbumFallback;
-    private TextField myArtistFallback;
+    private SmartTextField myAlbumFallback;
+    private SmartTextField myArtistFallback;
     private Table myPathReplacements;
     private Button myAddPathReplacement;
-    private TextField myUploadDir;
+    private SmartTextField myUploadDir;
     private Button mySelectUploadDir;
     private CheckBox myUploadCreateUserDir;
     private Form myFallbackForm;
@@ -116,11 +117,11 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private void addPathReplacement(PathReplacement replacement) {
-        TextField searchTextField = new TextField();
+        SmartTextField searchTextField = new SmartTextField();
         searchTextField.setValue(replacement.getSearchPattern());
         searchTextField.addValidator(new ValidRegExpValidator("datasourcesConfigPanel.error.invalidSearchExpression"));
         searchTextField.setImmediate(true);
-        myPathReplacements.addItem(new Object[]{searchTextField, new TextField(null, replacement.getReplacement()), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
+        myPathReplacements.addItem(new Object[]{searchTextField, new SmartTextField(null, replacement.getReplacement()), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
     }
 
     private Resource getDatasourceImage(Application application, String datasource) {
@@ -139,13 +140,13 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
             datasources.add((String) myDatasources.getItem(itemId).getItemProperty("path").getValue());
         }
         MyTunesRss.CONFIG.setDatasources(datasources.toArray(new String[datasources.size()]));
-        MyTunesRss.CONFIG.setAlbumFallback((String) myAlbumFallback.getValue());
-        MyTunesRss.CONFIG.setArtistFallback((String) myArtistFallback.getValue());
+        MyTunesRss.CONFIG.setAlbumFallback(myAlbumFallback.getStringValue(null));
+        MyTunesRss.CONFIG.setArtistFallback(myArtistFallback.getStringValue(null));
         MyTunesRss.CONFIG.clearPathReplacements();
         for (Object itemId : myPathReplacements.getItemIds()) {
             MyTunesRss.CONFIG.addPathReplacement(new PathReplacement((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));
         }
-        MyTunesRss.CONFIG.setUploadDir((String) myUploadDir.getValue());
+        MyTunesRss.CONFIG.setUploadDir(myUploadDir.getStringValue(null));
         MyTunesRss.CONFIG.setUploadCreateUserDir(myUploadCreateUserDir.booleanValue());
     }
 

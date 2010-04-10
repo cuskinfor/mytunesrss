@@ -11,6 +11,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.SmartTextField;
 
 public class StatusPanel extends Panel implements Button.ClickListener {
 
@@ -52,7 +53,7 @@ public class StatusPanel extends Panel implements Button.ClickListener {
         addComponent(logo);
         Panel server = new Panel(MyTunesRssWebAdminUtils.getBundleString("statusPanel.server.caption"), myComponentFactory.createVerticalLayout(true, true));
         addComponent(server);
-        TextField textField = myComponentFactory.createTextField("statusPanel.server.status"); // TODO status
+        SmartTextField textField = myComponentFactory.createTextField("statusPanel.server.status"); // TODO status
         textField.setReadOnly(true);
         textField.setWidth("100%");
         server.addComponent(textField);

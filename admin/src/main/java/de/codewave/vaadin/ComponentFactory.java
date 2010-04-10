@@ -29,12 +29,12 @@ public class ComponentFactory {
     }
 
 
-    public TextField createTextField(String labelKey) {
+    public SmartTextField createTextField(String labelKey) {
         return createTextField(labelKey, null);
     }
 
-    public TextField createTextField(String labelKey, Validator validator) {
-        TextField textField = new TextField(getBundleString(labelKey));
+    public SmartTextField createTextField(String labelKey, Validator validator) {
+        SmartTextField textField = new SmartTextField(getBundleString(labelKey));
         textField.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         if (validator != null) {
             textField.addValidator(validator);
@@ -52,8 +52,14 @@ public class ComponentFactory {
         field.setRequiredError(null);
     }
 
-    public TextField createPasswordTextField(String labelKey) {
-        TextField textField = createTextField(labelKey);
+    public SmartTextField createPasswordTextField(String labelKey) {
+        SmartTextField textField = createTextField(labelKey);
+        textField.setSecret(true);
+        return textField;
+    }
+
+    public SmartTextField createPasswordTextField(String labelKey, Validator validator) {
+        SmartTextField textField = createTextField(labelKey, validator);
         textField.setSecret(true);
         return textField;
     }

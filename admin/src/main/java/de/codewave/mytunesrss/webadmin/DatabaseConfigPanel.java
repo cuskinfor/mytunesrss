@@ -13,6 +13,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.settings.Database;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,10 +28,10 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     private Form myDatabaseTypeForm;
     private Form myMiscOptionsForm;
     private Select myDatabaseType;
-    private TextField myDatabaseDriver;
-    private TextField myDatabaseConnection;
-    private TextField myDatabaseUser;
-    private TextField myDatabasePassword;
+    private SmartTextField myDatabaseDriver;
+    private SmartTextField myDatabaseConnection;
+    private SmartTextField myDatabaseUser;
+    private SmartTextField myDatabasePassword;
     private CheckBox myUpdateDatabaseOnServerStart;
     private CheckBox myItunesDeleteMissingFiles;
     private Table myCronTriggers;
@@ -136,10 +137,10 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     protected void writeToConfig() {
         //noinspection OverlyStrongTypeCast
         MyTunesRss.CONFIG.setDatabaseType(((Database.DatabaseType) myDatabaseType.getValue()).name());
-        MyTunesRss.CONFIG.setDatabaseDriver((String) myDatabaseDriver.getValue());
-        MyTunesRss.CONFIG.setDatabaseConnection((String) myDatabaseConnection.getValue());
-        MyTunesRss.CONFIG.setDatabaseUser((String) myDatabaseUser.getValue());
-        MyTunesRss.CONFIG.setDatabasePassword((String) myDatabasePassword.getValue());
+        MyTunesRss.CONFIG.setDatabaseDriver(myDatabaseDriver.getStringValue(null));
+        MyTunesRss.CONFIG.setDatabaseConnection(myDatabaseConnection.getStringValue(null));
+        MyTunesRss.CONFIG.setDatabaseUser(myDatabaseUser.getStringValue(null));
+        MyTunesRss.CONFIG.setDatabasePassword(myDatabasePassword.getStringValue(null));
         MyTunesRss.CONFIG.setUpdateDatabaseOnServerStart(myUpdateDatabaseOnServerStart.booleanValue());
         MyTunesRss.CONFIG.setItunesDeleteMissingFiles(myItunesDeleteMissingFiles.booleanValue());
         List<String> databaseCronTriggers = new ArrayList<String>();

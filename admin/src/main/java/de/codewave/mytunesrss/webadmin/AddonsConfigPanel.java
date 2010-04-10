@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.ExternalSiteDefinition;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import org.apache.commons.io.FileUtils;
@@ -116,14 +117,14 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     }
 
     private void addSite(ExternalSiteDefinition site) {
-        TextField name = new TextField(null, site.getName());
+        SmartTextField name = new SmartTextField(null, site.getName());
         name.setImmediate(true);
         name.addValidator(new SiteValidator("name", "type"));
         Select type = getComponentFactory().createSelect(null, Arrays.asList("album", "artist", "title"));
         type.setValue(site.getType());
         type.setImmediate(true);
         type.addValidator(new SiteValidator("type", "name"));
-        TextField url = new TextField(null, site.getUrl());
+        SmartTextField url = new SmartTextField(null, site.getUrl());
         url.setImmediate(true);
         url.addValidator(new AbstractStringValidator(getBundleString("addonsConfigPanel.error.invalidSiteUrl")) {
             @Override

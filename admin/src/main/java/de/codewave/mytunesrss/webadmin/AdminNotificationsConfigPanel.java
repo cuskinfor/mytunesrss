@@ -9,9 +9,9 @@ import com.vaadin.Application;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Form;
-import com.vaadin.ui.TextField;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
 
     private Form myEmailForm;
     private Form myNotificationsForm;
-    private TextField myAdminEmail;
+    private SmartTextField myAdminEmail;
     private CheckBox myNotifyOnDatabaseUpdate;
     private CheckBox myNotifyOnEmailChange;
     private CheckBox myNotifyOnInternalError;
@@ -80,7 +80,7 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void writeToConfig() {
-        MyTunesRss.CONFIG.setAdminEmail((String) myAdminEmail.getValue());
+        MyTunesRss.CONFIG.setAdminEmail(myAdminEmail.getStringValue(null));
         MyTunesRss.CONFIG.setNotifyOnDatabaseUpdate((Boolean) myNotifyOnDatabaseUpdate.getValue());
         MyTunesRss.CONFIG.setNotifyOnEmailChange((Boolean) myNotifyOnEmailChange.getValue());
         MyTunesRss.CONFIG.setNotifyOnInternalError((Boolean) myNotifyOnInternalError.getValue());

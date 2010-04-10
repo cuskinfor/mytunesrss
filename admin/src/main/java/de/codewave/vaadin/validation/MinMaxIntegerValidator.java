@@ -20,6 +20,15 @@ public class MinMaxIntegerValidator extends IntegerValidator {
     }
 
     @Override
+    public boolean isValid(Object value) {
+        if (value instanceof Number) {
+            long numVal = ((Number)value).longValue();
+            return numVal >= myMinValue && numVal <= myMaxValue;
+        }
+        return super.isValid(value);
+    }
+
+    @Override
     protected boolean isValidString(String value) {
         if (StringUtils.isNotBlank(value) && super.isValidString(value)) {
             int intValue = Integer.parseInt(value);

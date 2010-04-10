@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.SmtpProtocol;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 
 import java.util.Arrays;
@@ -21,20 +22,20 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     private Form myWebInterfaceForm;
     private Form myProxyForm;
     private Form mySmtpForm;
-    private TextField myMyTunesRssComUser;
-    private TextField myMyTunesRssComPassword;
+    private SmartTextField myMyTunesRssComUser;
+    private SmartTextField myMyTunesRssComPassword;
     private CheckBox myMyTunesRssComSsl;
-    private TextField myWebLoginMessage;
-    private TextField myWebWelcomeMessage;
+    private SmartTextField myWebLoginMessage;
+    private SmartTextField myWebWelcomeMessage;
     private CheckBox myServerBrowserActive;
-    private TextField myProxyHost;
-    private TextField myProxyPort;
-    private TextField myMailHost;
-    private TextField myMailPort;
+    private SmartTextField myProxyHost;
+    private SmartTextField myProxyPort;
+    private SmartTextField myMailHost;
+    private SmartTextField myMailPort;
     private Select mySmtpProtocol;
-    private TextField myMailLogin;
-    private TextField myMailPassword;
-    private TextField myMailSender;
+    private SmartTextField myMailLogin;
+    private SmartTextField myMailPassword;
+    private SmartTextField myMailSender;
 
     public MiscConfigPanel(Application application, ComponentFactory componentFactory) {
         super(application, getBundleString("miscConfigPanel.caption"), componentFactory.createGridLayout(1, 5, true, true), componentFactory);
@@ -87,15 +88,15 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
 
     protected void initFromConfig(Application application) {
         myMyTunesRssComUser.setValue(MyTunesRss.CONFIG.getMyTunesRssComUser());
-        myMyTunesRssComPassword.setValue(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash()); // TODO
+        myMyTunesRssComPassword.setValue(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash());
         myMyTunesRssComSsl.setValue(MyTunesRss.CONFIG.isMyTunesRssComSsl());
         myWebLoginMessage.setValue(MyTunesRss.CONFIG.getWebLoginMessage());
         myWebWelcomeMessage.setValue(MyTunesRss.CONFIG.getWebWelcomeMessage());
         myServerBrowserActive.setValue(MyTunesRss.CONFIG.isServerBrowserActive());
         myProxyHost.setValue(MyTunesRss.CONFIG.getProxyHost());
-        myProxyPort.setValue(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getProxyPort(), 1, 65535, ""));
+        myProxyPort.setValue(MyTunesRss.CONFIG.getProxyPort(), 1, 65535, "");
         myMailHost.setValue(MyTunesRss.CONFIG.getMailHost());
-        myMailPort.setValue(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getMailPort(), 1, 65535, ""));
+        myMailPort.setValue(MyTunesRss.CONFIG.getMailPort(), 1, 65535, "");
         mySmtpProtocol.setValue(MyTunesRss.CONFIG.getSmtpProtocol());
         myMailLogin.setValue(MyTunesRss.CONFIG.getMailLogin());
         myMailPassword.setValue(MyTunesRss.CONFIG.getMailPassword());
@@ -103,20 +104,20 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void writeToConfig() {
-        MyTunesRss.CONFIG.setMyTunesRssComUser((String) myMyTunesRssComUser.getValue());
-        MyTunesRss.CONFIG.setMyTunesRssComPasswordHash((byte[]) myMyTunesRssComPassword.getValue()); // TODO
-        MyTunesRss.CONFIG.setMyTunesRssComSsl((Boolean) myMyTunesRssComSsl.getValue());
-        MyTunesRss.CONFIG.setWebLoginMessage((String) myWebLoginMessage.getValue());
-        MyTunesRss.CONFIG.setWebWelcomeMessage((String) myWebWelcomeMessage.getValue());
-        MyTunesRss.CONFIG.setServerBrowserActive((Boolean) myServerBrowserActive.getValue());
-        MyTunesRss.CONFIG.setProxyHost((String) myProxyHost.getValue());
-        MyTunesRss.CONFIG.setProxyPort((Integer) myProxyPort.getValue());
-        MyTunesRss.CONFIG.setMailHost((String) myMailHost.getValue());
-        MyTunesRss.CONFIG.setMailPort((Integer) myMailPort.getValue());
+        MyTunesRss.CONFIG.setMyTunesRssComUser(myMyTunesRssComUser.getStringValue(null));
+        MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(myMyTunesRssComPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
+        MyTunesRss.CONFIG.setMyTunesRssComSsl(myMyTunesRssComSsl.booleanValue());
+        MyTunesRss.CONFIG.setWebLoginMessage(myWebLoginMessage.getStringValue(null));
+        MyTunesRss.CONFIG.setWebWelcomeMessage(myWebWelcomeMessage.getStringValue(null));
+        MyTunesRss.CONFIG.setServerBrowserActive(myServerBrowserActive.booleanValue());
+        MyTunesRss.CONFIG.setProxyHost(myProxyHost.getStringValue(null));
+        MyTunesRss.CONFIG.setProxyPort(myProxyPort.getIntegerValue(-1));
+        MyTunesRss.CONFIG.setMailHost(myMailHost.getStringValue(null));
+        MyTunesRss.CONFIG.setMailPort(myMailPort.getIntegerValue(-1));
         MyTunesRss.CONFIG.setSmtpProtocol((SmtpProtocol) mySmtpProtocol.getValue());
-        MyTunesRss.CONFIG.setMailLogin((String) myMailLogin.getValue());
-        MyTunesRss.CONFIG.setMailPassword((String) myMailPassword.getValue());
-        MyTunesRss.CONFIG.setMailSender((String) myMailSender.getValue());
+        MyTunesRss.CONFIG.setMailLogin(myMailLogin.getStringValue(null));
+        MyTunesRss.CONFIG.setMailPassword(myMailPassword.getStringValue(null));
+        MyTunesRss.CONFIG.setMailSender(myMailSender.getStringValue(null));
     }
 
     @Override

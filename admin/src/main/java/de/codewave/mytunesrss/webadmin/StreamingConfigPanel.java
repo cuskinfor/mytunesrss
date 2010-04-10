@@ -7,14 +7,13 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
 import com.vaadin.data.Validatable;
-import com.vaadin.data.Validator;
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.ServerSideFileChooser;
@@ -24,10 +23,8 @@ import de.codewave.vaadin.validation.ValidRegExpValidator;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class StreamingConfigPanel extends MyTunesRssConfigPanel {
@@ -47,8 +44,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private Panel myTranscoderPanel;
     private Form myCacheForm;
     private Button myAddTranscoder;
-    private TextField myStreamingCacheTimeout;
-    private TextField myStreamingCacheMaxFiles;
+    private SmartTextField myStreamingCacheTimeout;
+    private SmartTextField myStreamingCacheMaxFiles;
     private AtomicLong myTranscoderNumberGenerator = new AtomicLong(1);
 
     public StreamingConfigPanel(Application application, ComponentFactory componentFactory) {
@@ -115,8 +112,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             form.getField("binary").setValue(config.getBinary());
             form.getField("options").setValue(config.getOptions());
         }
-        myStreamingCacheTimeout.setValue(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getStreamingCacheTimeout(), 0, 1440, "0"));
-        myStreamingCacheMaxFiles.setValue(MyTunesRssUtils.getValueString(MyTunesRss.CONFIG.getStreamingCacheMaxFiles(), 0, 10000, "0"));
+        myStreamingCacheTimeout.setValue(MyTunesRss.CONFIG.getStreamingCacheTimeout(), 0, 1440, "0");
+        myStreamingCacheMaxFiles.setValue(MyTunesRss.CONFIG.getStreamingCacheMaxFiles(), 0, 10000, "0");
     }
 
     protected void writeToConfig() {
@@ -126,17 +123,17 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         while (formIterator.hasNext()) {
             Form form = (Form) formIterator.next();
             TranscoderConfig conf = new TranscoderConfig();
-            conf.setName((String) form.getField("name").getValue());
-            conf.setPattern((String) form.getField("pattern").getValue());
-            conf.setMp4Codecs((String) form.getField("codecs").getValue());
-            conf.setTargetSuffix((String) form.getField("suffix").getValue());
-            conf.setTargetContentType((String) form.getField("contentType").getValue());
-            conf.setBinary((String) form.getField("binary").getValue());
-            conf.setOptions((String) form.getField("options").getValue());
+            conf.setName(((SmartTextField) form.getField("name")).getStringValue(null));
+            conf.setPattern(((SmartTextField) form.getField("pattern")).getStringValue(null));
+            conf.setMp4Codecs(((SmartTextField) form.getField("codecs")).getStringValue(null));
+            conf.setTargetSuffix(((SmartTextField) form.getField("suffix")).getStringValue(null));
+            conf.setTargetContentType(((SmartTextField) form.getField("contentType")).getStringValue(null));
+            conf.setBinary(((SmartTextField) form.getField("binary")).getStringValue(null));
+            conf.setOptions(((SmartTextField) form.getField("options")).getStringValue(null));
             configs.add(conf);
         }
-        MyTunesRss.CONFIG.setStreamingCacheTimeout((Integer) myStreamingCacheTimeout.getValue());
-        MyTunesRss.CONFIG.setStreamingCacheMaxFiles((Integer) myStreamingCacheMaxFiles.getValue());
+        MyTunesRss.CONFIG.setStreamingCacheTimeout(myStreamingCacheTimeout.getIntegerValue(0));
+        MyTunesRss.CONFIG.setStreamingCacheMaxFiles(myStreamingCacheMaxFiles.getIntegerValue(0));
     }
 
     @Override

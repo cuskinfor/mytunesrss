@@ -10,6 +10,7 @@ import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.task.SendSupportRequestTask;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.SmartTextField;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -27,15 +28,15 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
     private Form myRegistrationForm;
     private Form mySysInfoForm;
     private Select myLogLevel;
-    private TextField myName;
-    private TextField myEmail;
-    private TextField myDescription;
+    private SmartTextField myName;
+    private SmartTextField myEmail;
+    private SmartTextField myDescription;
     private CheckBox myIncludeItunesXml;
     private Button mySendSupport;
-    private TextField myRegName;
+    private SmartTextField myRegName;
     private DateField myExpirationDate;
     private Upload myUploadLicense;
-    private TextField mySysInfo;
+    private SmartTextField mySysInfo;
     private File myUploadDir;
 
     public SupportConfigPanel(Application application, ComponentFactory componentFactory) {

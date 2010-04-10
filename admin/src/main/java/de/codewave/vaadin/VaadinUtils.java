@@ -11,7 +11,8 @@ import com.vaadin.data.Validatable;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Table;
-import org.h2.command.CommandContainer;
+import com.vaadin.ui.TextField;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Iterator;
 

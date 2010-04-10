@@ -12,6 +12,7 @@ import de.codewave.mytunesrss.FileType;
 import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 
@@ -39,9 +40,9 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     private Table myFileTypes;
     private Button myAddFileType;
     private Button myResetFileTypes;
-    private TextField myArtistDropWords;
-    private TextField myId3v2TrackComment;
-    private TextField myDisabledMp4Codecs;
+    private SmartTextField myArtistDropWords;
+    private SmartTextField myId3v2TrackComment;
+    private SmartTextField myDisabledMp4Codecs;
     private CheckBox myIgnoreArtwork;
     private CheckBox myIgnoreTimestamps;
     private Form myMiscForm;
@@ -102,9 +103,9 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     private void addFileType(FileType fileType) {
         CheckBox active = new CheckBox();
         active.setValue(fileType.isActive());
-        TextField suffix = new TextField();
+        SmartTextField suffix = new SmartTextField();
         suffix.setValue(fileType.getSuffix());
-        TextField mimeType = new TextField();
+        SmartTextField mimeType = new SmartTextField();
         mimeType.setValue(fileType.getMimeType());
         Select mediaType = getComponentFactory().createSelect(null, Arrays.asList(MediaType.Audio, MediaType.Video, MediaType.Image, MediaType.Other));
         mediaType.setValue(fileType.getMediaType());
@@ -130,6 +131,11 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
             Protection protection = (Protection) getTableCellPropertyValue(myFileTypes, itemId, "protection");
             MyTunesRss.CONFIG.getFileTypes().add(new FileType(active, suffix, mimeType, mediaType, protection == Protection.Protected));
         }
+        MyTunesRss.CONFIG.setArtistDropWords(myArtistDropWords.getStringValue(null));
+        MyTunesRss.CONFIG.setId3v2TrackComment(myId3v2TrackComment.getStringValue(null));
+        MyTunesRss.CONFIG.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(null));
+        MyTunesRss.CONFIG.setIgnoreArtwork(myIgnoreArtwork.booleanValue());
+        MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestamps.booleanValue());
     }
 
     public void buttonClick(final Button.ClickEvent clickEvent) {

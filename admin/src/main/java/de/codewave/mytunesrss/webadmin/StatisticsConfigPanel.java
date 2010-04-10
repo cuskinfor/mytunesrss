@@ -9,13 +9,13 @@ import com.vaadin.Application;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Form;
-import com.vaadin.ui.TextField;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.statistics.GetStatisticEventsQuery;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
     private static final Logger LOG = LoggerFactory.getLogger(StatisticsConfigPanel.class);
 
     private Form myConfigForm;
-    private TextField myStatisticsKeepTime;
+    private SmartTextField myStatisticsKeepTime;
     private DateField myReportFromDate;
     private DateField myReportToDate;
     private Button mySendButton;
@@ -70,11 +70,11 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void initFromConfig(Application application) {
-        myStatisticsKeepTime.setValue(Integer.toString(MyTunesRss.CONFIG.getStatisticKeepTime()));
+        myStatisticsKeepTime.setValue(MyTunesRss.CONFIG.getStatisticKeepTime(), 0, 365, 60);
     }
 
     protected void writeToConfig() {
-        MyTunesRss.CONFIG.setStatisticKeepTime(Integer.parseInt((String) myStatisticsKeepTime.getValue()));
+        MyTunesRss.CONFIG.setStatisticKeepTime(myStatisticsKeepTime.getIntegerValue(60));
     }
 
     @Override
