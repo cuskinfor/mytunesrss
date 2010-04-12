@@ -48,13 +48,13 @@ public class StatusPanel extends Panel implements Button.ClickListener {
     protected void init(Application application) {
         setCaption(MyTunesRssWebAdminUtils.getBundleString("statusPanel.caption"));
         Embedded logo = new Embedded("", new ClassResource("mytunesrss.png", application));
-        logo.setWidth(435, Sizeable.UNITS_PIXELS);
-        logo.setHeight(100, Sizeable.UNITS_PIXELS);
+        logo.setWidth(241, Sizeable.UNITS_PIXELS);
+        logo.setHeight(88, Sizeable.UNITS_PIXELS);
         addComponent(logo);
         Panel server = new Panel(MyTunesRssWebAdminUtils.getBundleString("statusPanel.server.caption"), myComponentFactory.createVerticalLayout(true, true));
         addComponent(server);
         SmartTextField textField = myComponentFactory.createTextField("statusPanel.server.status"); // TODO status
-        textField.setReadOnly(true);
+        textField.setEnabled(false);
         textField.setWidth("100%");
         server.addComponent(textField);
         Panel serverButtons = new Panel(myComponentFactory.createHorizontalLayout(false, true));
@@ -69,7 +69,7 @@ public class StatusPanel extends Panel implements Button.ClickListener {
         Panel database = new Panel(MyTunesRssWebAdminUtils.getBundleString("statusPanel.database.caption"), myComponentFactory.createVerticalLayout(true, true));
         addComponent(database);
         textField = myComponentFactory.createTextField("statusPanel.database.status"); // TODO status
-        textField.setReadOnly(true);
+        textField.setEnabled(false);
         textField.setWidth("100%");
         database.addComponent(textField);
         Panel databaseButtons = new Panel(myComponentFactory.createHorizontalLayout(false, true));
@@ -79,6 +79,12 @@ public class StatusPanel extends Panel implements Button.ClickListener {
         myResetDatabase = myComponentFactory.createButton("statusPanel.database.reset", StatusPanel.this);
         databaseButtons.addComponent(myUpdateDatabase);
         databaseButtons.addComponent(myResetDatabase);
+        Panel mytunesrss = new Panel(MyTunesRssWebAdminUtils.getBundleString("statusPanel.mytunesrss.caption"), myComponentFactory.createVerticalLayout(true, true));
+        addComponent(mytunesrss);
+        textField = myComponentFactory.createTextField("statusPanel.mytunesrss.status"); // TODO status
+        textField.setEnabled(false);
+        textField.setWidth("100%");
+        mytunesrss.addComponent(textField);
         Panel configButtons = new Panel(MyTunesRssWebAdminUtils.getBundleString("statusPanel.config.caption"), myComponentFactory.createGridLayout(4, 3, true, true));
         addComponent(configButtons);
         myServerConfig = myComponentFactory.createButton("statusPanel.config.server", StatusPanel.this);
