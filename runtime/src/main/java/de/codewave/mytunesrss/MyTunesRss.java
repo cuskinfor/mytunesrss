@@ -75,6 +75,7 @@ public class MyTunesRss {
     public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
     public static String[] ORIGINAL_CMD_ARGS;
     public static ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+    public static Server ADMIN_SERVER;
 
     private static void init() {
         try {
@@ -173,10 +174,7 @@ public class MyTunesRss {
             LOGGER.debug("Starting admin server on port " + MyTunesRss.CONFIG.getAdminPort() + ".");
         }
 
-        Server adminServer = new Server(MyTunesRss.CONFIG.getAdminPort());
-        WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
-        adminServer.setHandler(adminContext);
-        adminServer.start();
+        startAdminServer();
 
         REGISTRATION = new MyTunesRssRegistration();
         REGISTRATION.init(license, true);
@@ -256,6 +254,34 @@ public class MyTunesRss {
         ARCHIVE_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER + "_Archives", 10000, 50); // TODO max size config?
         StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
         executeHeadlessMode();
+    }
+
+    public static boolean startAdminServer() {
+        try {
+            ADMIN_SERVER = new Server(MyTunesRss.CONFIG.getAdminPort());
+            WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
+            ADMIN_SERVER.setHandler(adminContext);
+            ADMIN_SERVER.start();
+        } catch (Exception e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Cannot start admin server.", e);
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean stopAdminServer() {
+        try {
+            ADMIN_SERVER.stop();
+            ADMIN_SERVER.join();
+        } catch (Exception e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Cannot stop admin server.", e);
+            }
+            return false;
+        }
+        return true;
     }
 
     private static void initializeQuicktimePlayer() {
@@ -397,9 +423,7 @@ public class MyTunesRss {
         }
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
-        if (CONFIG.isAutoStartServer()) {
-            startWebserver();
-        }
+        startWebserver();
         while (!QUIT_REQUEST) {
             try {
                 Thread.sleep(1000);

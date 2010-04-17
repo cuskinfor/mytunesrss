@@ -42,7 +42,6 @@ public class MyTunesRssConfig {
     private boolean myAvailableOnLocalNet = true;
     private List<String> myDatasources = new ArrayList<String>();
     private boolean myCheckUpdateOnStart = true;
-    private boolean myAutoStartServer;
     private String myVersion;
     private boolean myIgnoreTimestamps;
     private String myAlbumFallback;
@@ -171,14 +170,6 @@ public class MyTunesRssConfig {
 
     public void setCheckUpdateOnStart(boolean checkUpdateOnStart) {
         myCheckUpdateOnStart = checkUpdateOnStart;
-    }
-
-    public boolean isAutoStartServer() {
-        return myAutoStartServer;
-    }
-
-    public void setAutoStartServer(boolean autoStartServer) {
-        myAutoStartServer = autoStartServer;
     }
 
     public String getVersion() {
@@ -925,7 +916,6 @@ public class MyTunesRssConfig {
         setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
         setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
         setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
-        setAutoStartServer(JXPathUtils.getBooleanValue(settings, "autoStartServer", isAutoStartServer()));
         setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
         setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
         List<String> dataSources = new ArrayList<String>();
@@ -1110,7 +1100,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "serverName", myServerName));
             root.appendChild(DOMUtils.createBooleanElement(settings, "availableOnLocalNet", myAvailableOnLocalNet));
             root.appendChild(DOMUtils.createBooleanElement(settings, "checkUpdateOnStart", myCheckUpdateOnStart));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "autoStartServer", myAutoStartServer));
             root.appendChild(DOMUtils.createBooleanElement(settings, "updateDatabaseOnServerStart", myUpdateDatabaseOnServerStart));
             root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreTimestamps", myIgnoreTimestamps));
             root.appendChild(DOMUtils.createIntElement(settings, "baseDirCount", myDatasources.size()));
@@ -1299,5 +1288,9 @@ public class MyTunesRssConfig {
 
     public boolean isMyTunesRssComActive() {
         return StringUtils.isNotEmpty(myMyTunesRssComUser) && myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0;
+    }
+
+    public boolean isValidMailConfig() {
+        return StringUtils.isNotEmpty(getMailHost()) && StringUtils.isNotEmpty(getMailSender());
     }
 }

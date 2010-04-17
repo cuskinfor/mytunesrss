@@ -148,7 +148,7 @@ public class WebServer {
     private byte checkServerHealth(int port, boolean logging) {
         HttpURLConnection connection = null;
         try {
-            URL targetUrl = new URL("http://127.0.0.1:" + port + MyTunesRss.CONFIG.getWebappContext() + "/mytunesrss/checkHealth?ignoreSession=true");
+            URL targetUrl = new URL("http://127.0.0.1:" + port + StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext()) + "/mytunesrss/checkHealth?ignoreSession=true");
             if (LOGGER.isInfoEnabled() && logging) {
                 LOGGER.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             }
@@ -206,7 +206,7 @@ public class WebServer {
         }
         ((StandardHost) host).setWorkDir(MyTunesRssUtils.getCacheDataPath() + "/tomcat-work");
         engine.addChild(host);
-        myContext = server.createContext(webAppContext, webAppName);
+        myContext = server.createContext(StringUtils.trimToEmpty(webAppContext), webAppName);
         mySessionManager = new StandardManager();
         mySessionManager.setPathname("");
         myContext.setManager(mySessionManager);
