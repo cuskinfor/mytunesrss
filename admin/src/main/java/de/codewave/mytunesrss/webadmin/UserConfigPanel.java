@@ -96,9 +96,11 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
         for (User user : MyTunesRss.CONFIG.getUsers()) {
             myUserTree.addItem(user);
             myUserTree.setChildrenAllowed(user, false);
+        }
+        for (User user : MyTunesRss.CONFIG.getUsers()) {
             if (user.getParent() != null) {
-                myUserTree.setParent(user, user.getParent());
                 myUserTree.setChildrenAllowed(user.getParent(), true);
+                myUserTree.setParent(user, user.getParent());
             }
         }
     }

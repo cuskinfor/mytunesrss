@@ -6,20 +6,15 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
-import de.codewave.mytunesrss.MediaType;
 import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.File;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Map;
 
 /**

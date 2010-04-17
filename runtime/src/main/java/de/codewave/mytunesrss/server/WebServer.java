@@ -211,13 +211,6 @@ public class WebServer {
         mySessionManager.setPathname("");
         myContext.setManager(mySessionManager);
         host.addChild(myContext);
-        for (String contextInfo : MyTunesRss.CONFIG.getAdditionalContexts()) {
-            Context context = server.createContext(contextInfo.split(":", 2)[0], contextInfo.split(":", 2)[1]);
-            StandardManager extraSessionManager = new StandardManager();
-            extraSessionManager.setPathname("");
-            context.setManager(extraSessionManager);
-            host.addChild(context);
-        }
         server.addEngine(engine);
         Connector httpConnector = createConnector(server, listenAddress, listenPort, "http");
         if (httpConnector != null) {

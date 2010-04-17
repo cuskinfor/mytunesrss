@@ -5,7 +5,7 @@ import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.datastore.statement.SaveM3uFilePlaylistStatement;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.io.FileProcessor;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.DataStoreSession;
@@ -64,7 +64,7 @@ public class PlaylistFileProcessor implements FileProcessor {
                     }
                     myDataStoreSession.executeStatement(statement);
                     myExistingIds.add(id);
-                    DatabaseBuilderTask.doCheckpoint(myDataStoreSession, true);
+                    DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, true);
                     MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_PLAYLIST_UPDATED));
                 }
             } catch (IOException e) {

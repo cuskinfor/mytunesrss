@@ -21,7 +21,7 @@ public class FileSystemLoader {
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLoader.class);
 
     public static void loadFromFileSystem(final Thread watchdogThread, File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds,
-            Collection<String> playlistIds) throws IOException, SQLException {
+                                          Collection<String> playlistIds) throws IOException, SQLException {
         MyTunesRssFileProcessor fileProcessor = null;
         if (baseDir != null && baseDir.isDirectory()) {
             fileProcessor = new MyTunesRssFileProcessor(storeSession, lastUpdateTime, trackIds);

@@ -7,14 +7,15 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
-import org.apache.commons.lang.StringUtils;
+
+import java.util.Arrays;
 
 public class LoginPanel extends Panel implements Button.ClickListener {
 
     private ComponentFactory myComponentFactory;
-    private SmartTextField myUsername;
     private SmartTextField myPassword;
 
     public LoginPanel(ComponentFactory componentFactory) {
@@ -24,8 +25,6 @@ public class LoginPanel extends Panel implements Button.ClickListener {
     }
 
     protected void init() {
-        myUsername = myComponentFactory.createTextField("loginPanel.username");
-        addComponent(myUsername);
         myPassword = myComponentFactory.createPasswordTextField("loginPanel.password");
         addComponent(myPassword);
         addComponent(myComponentFactory.createButton("loginPanel.login", this));
@@ -33,7 +32,7 @@ public class LoginPanel extends Panel implements Button.ClickListener {
 
     public void buttonClick(Button.ClickEvent clickEvent) {
         MyTunesRssWebAdmin application = ((MyTunesRssWebAdmin) getApplication());
-        if (StringUtils.isEmpty((String)myUsername.getValue()) && StringUtils.isEmpty((String)myPassword.getValue())) {
+        if (Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST))) {
             application.setMainComponent(new StatusPanel(getApplication(), myComponentFactory));
         } else {
             application.showError("loginPanel.error.invalidLogin");

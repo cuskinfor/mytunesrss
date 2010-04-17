@@ -8,34 +8,24 @@ package de.codewave.mytunesrss.task;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
 import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.swing.Task;
-import de.codewave.utils.swing.TaskExecutor;
-import de.codewave.utils.swing.TaskFinishedListener;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.concurrent.Callable;
 
-public class RefreshSmartPlaylistsAndLuceneIndexTask extends Task {
+public class RefreshSmartPlaylistsAndLuceneIndexCallable implements Callable<Void> {
 
     private String[] trackIds;
 
-    public static void execute(String[] trackIds) {
-        TaskExecutor.execute(new RefreshSmartPlaylistsAndLuceneIndexTask(trackIds), new TaskFinishedListener() {
-            public void taskFinished(Task task) {
-                // intentionally left blank
-            }
-        });
-    }
-
-    public RefreshSmartPlaylistsAndLuceneIndexTask(String[] trackIds) {
+    public RefreshSmartPlaylistsAndLuceneIndexCallable(String[] trackIds) {
         this.trackIds = trackIds;
     }
 
-    @Override
-    public void execute() throws IOException, SQLException {
+    public Void call() throws IOException, SQLException {
         MyTunesRss.LUCENE_TRACK_SERVICE.updateTracks(trackIds);
         DataStoreSession transaction = MyTunesRss.STORE.getTransaction();
         transaction.executeStatement(new RefreshSmartPlaylistsStatement());
         transaction.commit();
+        return null;
     }
 }

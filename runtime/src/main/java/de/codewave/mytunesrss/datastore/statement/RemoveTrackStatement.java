@@ -7,17 +7,14 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssEvent;
 import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.RemoveTrackStatement

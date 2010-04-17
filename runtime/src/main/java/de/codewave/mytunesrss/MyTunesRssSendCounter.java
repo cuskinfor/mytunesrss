@@ -20,7 +20,7 @@ public class MyTunesRssSendCounter implements StreamSender.ByteSentCounter {
 
     public void add(int count) {
         myCount += count;
-        ((StreamSender.ByteSentCounter)mySessionInfo).add(count);
+        ((StreamSender.ByteSentCounter) mySessionInfo).add(count);
     }
 
     public void notifyBegin() {

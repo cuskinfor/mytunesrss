@@ -24,7 +24,6 @@ public class RemoveStatisticEventsJob implements Job {
      * Execute the job.
      *
      * @param jobExecutionContext
-     *
      * @throws org.quartz.JobExecutionException
      *
      */

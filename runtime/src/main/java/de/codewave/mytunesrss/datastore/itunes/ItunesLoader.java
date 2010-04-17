@@ -60,13 +60,11 @@ public class ItunesLoader {
      * @param timeLastUpdate
      * @param trackIds
      * @param existsingPlaylistIds
-     *
      * @return Number of missing files.
-     *
      * @throws SQLException
      */
     public static long loadFromITunes(Thread executionThread, URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds,
-            Collection<String> existsingPlaylistIds) throws SQLException {
+                                      Collection<String> existsingPlaylistIds) throws SQLException {
         TrackListener trackListener = null;
         PlaylistListener playlistListener = null;
         if (iTunesLibraryXml != null) {

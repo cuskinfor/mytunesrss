@@ -58,9 +58,9 @@ public class Album {
     public int getYear() {
         return myYear;
     }
-    
+
     public void setYear(int year) {
         myYear = year;
     }
-    
+
 }

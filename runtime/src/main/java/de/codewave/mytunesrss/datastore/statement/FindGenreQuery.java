@@ -9,14 +9,13 @@ import de.codewave.mytunesrss.User;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.lang.StringUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -24,7 +23,8 @@ import java.util.Map;
  */
 public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Genre>> {
     private int myIndex;
-    private List<String> myRestrictedPlaylistIds = Collections.emptyList();;
+    private List<String> myRestrictedPlaylistIds = Collections.emptyList();
+    ;
 
     public FindGenreQuery(User user, int index) {
         myIndex = index;

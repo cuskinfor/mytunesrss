@@ -11,7 +11,7 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.mytunesrss.meta.TrackMetaData;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.io.FileProcessor;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.DataStoreSession;
@@ -105,7 +105,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             meta = parseMp4MetaData(file, statement, fileId);
                             if (meta.getMp4Codec() != null && ArrayUtils.contains(myDisabledMp4Codecs, meta.getMp4Codec().toLowerCase())) {
                                 myExistingIds.remove(fileId);
-                                DatabaseBuilderTask.doCheckpoint(myStoreSession, false);
+                                DatabaseBuilderCallable.doCheckpoint(myStoreSession, false);
                                 return; // early return!!!
                             }
                         } else {
@@ -125,7 +125,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                 myStoreSession.executeStatement(handleTrackImagesStatement);
                             }
                             myUpdatedCount++;
-                            DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
+                            DatabaseBuilderCallable.updateHelpTables(myStoreSession, myUpdatedCount);
                             myExistingIds.add(fileId);
                         } catch (SQLException e) {
                             if (LOGGER.isErrorEnabled()) {
@@ -133,7 +133,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             }
                         }
                     }
-                    DatabaseBuilderTask.doCheckpoint(myStoreSession, false);
+                    DatabaseBuilderCallable.doCheckpoint(myStoreSession, false);
                 }
             }
         } catch (IOException e) {
@@ -177,9 +177,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 }
                 String yearString;
                 if (tag.isId3v1()) {
-                    yearString = StringUtils.defaultIfEmpty(((Id3v1Tag)tag).getYear(), "-1");
+                    yearString = StringUtils.defaultIfEmpty(((Id3v1Tag) tag).getYear(), "-1");
                 } else {
-                    yearString = StringUtils.defaultIfEmpty(((Id3v2Tag)tag).getFrameBodyToString("TYE", "TYER"), "-1");
+                    yearString = StringUtils.defaultIfEmpty(((Id3v2Tag) tag).getFrameBodyToString("TYE", "TYER"), "-1");
                 }
                 try {
                     statement.setYear(Integer.parseInt(yearString));

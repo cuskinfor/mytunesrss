@@ -5,7 +5,7 @@
 package de.codewave.mytunesrss.network;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.settings.ServerInfo;
+import de.codewave.utils.network.NetworkUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +78,7 @@ public class MulticastService extends Thread {
                 }
                 try {
                     Collection<String> localAddresses =
-                            new ArrayList(Arrays.asList(ServerInfo.getLocalAddresses(String.valueOf(MyTunesRss.CONFIG.getPort()))));
+                            new ArrayList(Arrays.asList(getLocalAddresses(String.valueOf(MyTunesRss.CONFIG.getPort()))));
                     localAddresses.add("http://127.0.0.1:" + MyTunesRss.CONFIG.getPort());
                     socket.setSoTimeout(2000);
                     buffer = new byte[1024];
@@ -106,6 +106,14 @@ public class MulticastService extends Thread {
             }
         }
         return otherInstances;
+    }
+
+    public static String[] getLocalAddresses(String serverPort) {
+        String[] addresses = NetworkUtils.getLocalNetworkAddresses();
+        for (int i = 0; i < addresses.length; i++) {
+            addresses[i] = "http://" + addresses[i] + ":" + serverPort;
+        }
+        return addresses;
     }
 
     public void run() {

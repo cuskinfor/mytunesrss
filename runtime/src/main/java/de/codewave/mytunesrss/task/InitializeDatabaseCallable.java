@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssTask;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement;
@@ -20,17 +19,18 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.Callable;
 
 /**
- * de.codewave.mytunesrss.task.InitializeDatabaseTask
+ * de.codewave.mytunesrss.task.InitializeDatabaseCallable
  */
-public class InitializeDatabaseTask extends MyTunesRssTask {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InitializeDatabaseTask.class);
+public class InitializeDatabaseCallable implements Callable<Void> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InitializeDatabaseCallable.class);
 
     private Version myVersion;
     private Exception myException;
 
-    public void execute() throws IOException, SQLException {
+    public Void call() throws IOException, SQLException {
         try {
             LOGGER.debug("Initializing the database.");
             MyTunesRss.STORE.init();
@@ -39,13 +39,13 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
             if (myVersion == null) {
                 LOGGER.debug("No version found. Creating all tables.");
                 session.executeStatement(new CreateAllTablesStatement());
-                DatabaseBuilderTask.doCheckpoint(session, true);
+                DatabaseBuilderCallable.doCheckpoint(session, true);
                 loadVersion(session);
             } else {
                 LOGGER.debug("Version found.");
                 if (myVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0) {
                     session.executeStatement(new MigrationStatement());
-                    DatabaseBuilderTask.doCheckpoint(session, true);
+                    DatabaseBuilderCallable.doCheckpoint(session, true);
                 }
                 MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
             }
@@ -59,6 +59,7 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
             LOGGER.error("Could not initialize database.", e);
             myException = e;
         }
+        return null;
     }
 
     /**
@@ -89,7 +90,7 @@ public class InitializeDatabaseTask extends MyTunesRssTask {
                 }
             });
         } finally {
-            DatabaseBuilderTask.doCheckpoint(session, true);
+            DatabaseBuilderCallable.doCheckpoint(session, true);
         }
     }
 

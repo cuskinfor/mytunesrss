@@ -1,7 +1,7 @@
 package de.codewave.mytunesrss.quicktime;
 
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.utils.swing.SwingUtils;

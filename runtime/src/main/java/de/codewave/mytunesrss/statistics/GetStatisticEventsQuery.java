@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class GetStatisticEventsQuery extends DataStoreQuery<List<String>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetStatisticEventsQuery.class);
-    private static final String[] HEADERS = new String[] {"date", "user", "upBytes", "downBytes", "logins"};
+    private static final String[] HEADERS = new String[]{"date", "user", "upBytes", "downBytes", "logins"};
     private static final int IDX_UP_BYTES = 0;
     private static final int IDX_DOWN_BYTES = 1;
     private static final int IDX_LOGINS = 2;
@@ -46,7 +46,7 @@ public class GetStatisticEventsQuery extends DataStoreQuery<List<String>> {
         while (rs.next()) {
             try {
                 String date = myDateFormat.format(new Date(rs.getLong("ts")));
-                StatisticsEvent event = (StatisticsEvent)new ObjectInputStream(new ByteArrayInputStream(rs.getBytes("data"))).readObject();
+                StatisticsEvent event = (StatisticsEvent) new ObjectInputStream(new ByteArrayInputStream(rs.getBytes("data"))).readObject();
                 String key = date + "," + event.getUser().replace(',', '_');
                 LOGGER.debug("Processing entry with key \"" + key + "\".");
                 valuesMap.put(key, calcValues(valuesMap.get(key), event));
@@ -74,12 +74,12 @@ public class GetStatisticEventsQuery extends DataStoreQuery<List<String>> {
     private long[] calcValues(long[] values, StatisticsEvent event) {
         if (values == null) {
             // upload, download, logins
-            values = new long[] {0, 0, 0};
+            values = new long[]{0, 0, 0};
         }
         if (event instanceof UploadEvent) {
-            values[IDX_UP_BYTES] += ((UploadEvent)event).getBytes();
+            values[IDX_UP_BYTES] += ((UploadEvent) event).getBytes();
         } else if (event instanceof DownloadEvent) {
-            values[IDX_DOWN_BYTES] += ((DownloadEvent)event).getBytes();
+            values[IDX_DOWN_BYTES] += ((DownloadEvent) event).getBytes();
         } else if (event instanceof LoginEvent) {
             values[IDX_LOGINS]++;
         } else {

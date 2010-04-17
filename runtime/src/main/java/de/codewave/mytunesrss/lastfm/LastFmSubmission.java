@@ -49,6 +49,6 @@ public class LastFmSubmission implements Delayed {
     }
 
     public int compareTo(Delayed o) {
-        return (int)(getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));
+        return (int) (getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));
     }
 }

@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssEvent;
 import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.WebConfig;
@@ -14,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 /**
@@ -100,13 +100,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         getAuthUser().setLastFmUsername(username);
         if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
             if (StringUtils.equals(password1, password2)) {
-                try {
-                    getAuthUser().setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.digest(password1.getBytes("UTF-8")));
-                } catch (UnsupportedEncodingException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not get bytes from password string.", e);
-                    }
-                }
+                getAuthUser().setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(password1)));
             } else {
                 addError(new BundleError("error.settingsLastFmPasswordMismatch"));
                 return true;
@@ -120,16 +114,10 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         String password2 = getRequestParameter("password2", null);
         if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
             if (StringUtils.equals(password1, password2)) {
-                try {
-                    byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(password1.getBytes("UTF-8"));
-                    if (!Arrays.equals(passwordHash, getAuthUser().getPasswordHash())) {
-                        getAuthUser().setPasswordHash(passwordHash);
-                        MyTunesRss.ADMIN_NOTIFY.notifyPasswordChange(getAuthUser());
-                    }
-                } catch (UnsupportedEncodingException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not get bytes from password string.", e);
-                    }
+                byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(password1));
+                if (!Arrays.equals(passwordHash, getAuthUser().getPasswordHash())) {
+                    getAuthUser().setPasswordHash(passwordHash);
+                    MyTunesRss.ADMIN_NOTIFY.notifyPasswordChange(getAuthUser());
                 }
             } else {
                 addError(new BundleError("error.settingsPasswordMismatch"));

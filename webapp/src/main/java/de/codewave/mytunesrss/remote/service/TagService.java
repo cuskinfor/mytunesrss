@@ -5,7 +5,7 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
-import de.codewave.mytunesrss.task.RefreshSmartPlaylistsAndLuceneIndexTask;
+import de.codewave.mytunesrss.task.RefreshSmartPlaylistsAndLuceneIndexCallable;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -68,7 +68,7 @@ public class TagService {
             for (String tag : tags) {
                 TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(trackIds, tag));
             }
-            RefreshSmartPlaylistsAndLuceneIndexTask.execute(trackIds);
+            MyTunesRss.EXECUTOR.submit(new RefreshSmartPlaylistsAndLuceneIndexCallable(trackIds));
         } else {
             throw new IllegalAccessException("Unauthorized");
         }
@@ -80,7 +80,7 @@ public class TagService {
             for (String tag : tags) {
                 TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(trackIds, tag));
             }
-            RefreshSmartPlaylistsAndLuceneIndexTask.execute(trackIds);
+            MyTunesRss.EXECUTOR.submit(new RefreshSmartPlaylistsAndLuceneIndexCallable(trackIds));
         } else {
             throw new IllegalAccessException("Unauthorized");
         }

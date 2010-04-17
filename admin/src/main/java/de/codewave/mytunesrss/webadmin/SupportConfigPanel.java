@@ -8,7 +8,7 @@ package de.codewave.mytunesrss.webadmin;
 import com.vaadin.Application;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.task.SendSupportRequestTask;
+import de.codewave.mytunesrss.task.SendSupportRequestCallable;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import org.apache.commons.io.FileUtils;
@@ -107,9 +107,8 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == mySendSupport) {
             if (StringUtils.isNotBlank((String) myName.getValue()) && StringUtils.isNotBlank((String) myEmail.getValue()) && StringUtils.isNotBlank((String) myDescription.getValue())) {
-                SendSupportRequestTask requestTask = new SendSupportRequestTask((String) myName.getValue(), (String) myEmail.getValue(), (String) myDescription.getValue() + "\n\n\n", (Boolean) myIncludeItunesXml.getValue());
-                requestTask.execute();
-                if (requestTask.isSuccess()) {
+                SendSupportRequestCallable requestCallable = new SendSupportRequestCallable((String) myName.getValue(), (String) myEmail.getValue(), (String) myDescription.getValue() + "\n\n\n", (Boolean) myIncludeItunesXml.getValue());
+                if (requestCallable.call()) {
                     getApplication().showInfo("supportConfigPanel.info.supportRequestSent");
                 } else {
                     getApplication().showError("supportConfigPanel.error.supportRequestFailed");

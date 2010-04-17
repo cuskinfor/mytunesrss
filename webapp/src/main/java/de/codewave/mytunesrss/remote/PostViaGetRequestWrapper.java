@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.remote;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +24,7 @@ public class PostViaGetRequestWrapper extends HttpServletRequestWrapper {
         myBody = body;
         LOGGER.debug("Using body \"" + body + "\" for post-via-get request wrapper.");
         try {
-            final InputStream stream = new ByteArrayInputStream(myBody.getBytes("UTF-8"));
+            final InputStream stream = new ByteArrayInputStream(MyTunesRssUtils.getUtf8Bytes(myBody));
             myStream = new ServletInputStream() {
                 public int read() throws IOException {
                     return stream.read();

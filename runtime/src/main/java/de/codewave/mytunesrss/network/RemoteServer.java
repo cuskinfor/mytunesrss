@@ -38,6 +38,6 @@ public class RemoteServer {
 
     @Override
     public boolean equals(Object other) {
-        return (myAddress + ":" + myPort).equals(((RemoteServer)other).myAddress + ":" + ((RemoteServer)other).myPort);
+        return (myAddress + ":" + myPort).equals(((RemoteServer) other).myAddress + ":" + ((RemoteServer) other).myPort);
     }
 }

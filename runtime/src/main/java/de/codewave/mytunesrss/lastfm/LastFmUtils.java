@@ -1,9 +1,9 @@
 package de.codewave.mytunesrss.lastfm;
 
+import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
-import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -28,7 +28,6 @@ public class LastFmUtils {
      * Do the handshake an return a new session which can be used for further requests.
      *
      * @param user The mytunesrss user.
-     *
      * @return The last.fm session or <code>null</code> for any hard error.
      */
     public static LastFmSession doHandshake(User user) {
@@ -120,7 +119,7 @@ public class LastFmUtils {
                 postMethod.setParameter("s", session.getSessionId());
                 List<LastFmSubmission> submissions = new ArrayList<LastFmSubmission>();
                 for (LastFmSubmission submission = session.pollSubmission(); submission != null && index < 50;
-                        submission = session.pollSubmission()) {
+                     submission = session.pollSubmission()) {
                     if (submission.getTrack().getTime() >= 30 && submission.getTrack().getMediaType() == MediaType.Audio) {// only track with at least 30 seconds
                         submissions.add(submission);
                         postMethod.setParameter("a[" + index + "]", submission.getTrack().getOriginalArtist());

@@ -3,21 +3,16 @@ package de.codewave.mytunesrss;
 import com.ibm.icu.text.Normalizer;
 import de.codewave.mytunesrss.datastore.external.YouTubeLoader;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
-import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
-import de.codewave.mytunesrss.task.DeleteDatabaseFilesTask;
-import de.codewave.mytunesrss.settings.DialogLayout;
-import de.codewave.mytunesrss.settings.SettingsForm;
-import de.codewave.systray.SystrayUtils;
+import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
+import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.SmartStatement;
-import de.codewave.utils.swing.SwingUtils;
-import de.codewave.utils.swing.pleasewait.PleaseWaitTask;
-import de.codewave.utils.swing.pleasewait.PleaseWaitUtils;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -36,10 +31,14 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -47,11 +46,6 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.lang.reflect.Proxy;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -59,73 +53,52 @@ import java.lang.reflect.Method;
 public class MyTunesRssUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssUtils.class);
 
-    public static void showErrorMessage(String message) {
-        if (MyTunesRss.HEADLESS) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error(message);
-            }
-            System.err.println(message);
-            MyTunesRss.ERROR_QUEUE.setLastError(message);
-        } else {
-            showErrorMessage(MyTunesRss.ROOT_FRAME, message);
+    public static byte[] getUtf8Bytes(String s) {
+        try {
+            return s.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not found.", e);
         }
     }
 
-    public static void showErrorMessage(JFrame parent, String message) {
-        SwingUtils.showMessage(parent,
-                JOptionPane.ERROR_MESSAGE,
-                MyTunesRssUtils.getBundleString("error.title"),
-                message,
-                MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
+    public static String getUtf8String(byte[] bytes) {
+        try {
+            return new String(bytes, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not found.", e);
+        }
     }
 
-    public static Object showQuestionMessage(String message, Object... options) {
-        return showQuestionMessage(MyTunesRss.ROOT_FRAME, message, options);
+    public static String getUtf8UrlEncoded(String s) {
+        try {
+            return URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not found.", e);
+        }
     }
 
-    public static Object showQuestionMessage(JFrame parent, String message, Object... options) {
-        return SwingUtils.showOptionsMessage(parent,
-                JOptionPane.QUESTION_MESSAGE,
-                MyTunesRssUtils.getBundleString("question.title"),
-                message,
-                MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH, options);
+    public static String getUtf8UrlDecoded(String s) {
+        try {
+            return URLDecoder.decode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not found.", e);
+        }
+    }
 
+    public static void showErrorMessage(String message) {
+        if (LOGGER.isErrorEnabled()) {
+            LOGGER.error(message);
+        }
+        System.err.println(message);
     }
 
     public static void showInfoMessage(String message) {
-        if (MyTunesRss.HEADLESS) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info(message);
-            }
-            System.out.println(message);
-        } else {
-            showInfoMessage(MyTunesRss.ROOT_FRAME, message);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(message);
         }
+        System.out.println(message);
     }
 
-
-    public static void showInfoMessage(JFrame parent, String message) {
-        SwingUtils.showMessage(parent,
-                JOptionPane.INFORMATION_MESSAGE,
-                MyTunesRssUtils.getBundleString("info.title"),
-                message,
-                MyTunesRss.OPTION_PANE_MAX_MESSAGE_LENGTH);
-    }
-
-    public static void executeTask(String title, String text, String cancelButtonText, boolean progressBar, PleaseWaitTask task) {
-        if (MyTunesRss.HEADLESS) {
-            try {
-                task.execute();
-            } catch (Exception e) {
-                task.handleException(e);
-            }
-        } else {
-            if (title == null) {
-                title = MyTunesRssUtils.getBundleString("pleaseWait.defaultTitle");
-            }
-            PleaseWaitUtils.executeAndWait(MyTunesRss.ROOT_FRAME, MyTunesRss.PLEASE_WAIT_ICON, title, text, cancelButtonText, progressBar, task);
-        }
-    }
 
     public static String getBundleString(String key, Object... parameters) {
         if (parameters == null || parameters.length == 0) {
@@ -153,67 +126,52 @@ public class MyTunesRssUtils {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Shutting down gracefully.");
         }
-        DatabaseBuilderTask.interruptCurrentTask();
+        DatabaseBuilderCallable.interruptCurrentTask();
         if (MyTunesRss.WEBSERVER != null && MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRss.stopWebserver();
         }
         if (MyTunesRss.WEBSERVER == null || !MyTunesRss.WEBSERVER.isRunning()) {
-            if (!MyTunesRss.HEADLESS) {
-                MyTunesRss.CONFIG.setWindowX(MyTunesRss.ROOT_FRAME.getLocation().x);
-                MyTunesRss.CONFIG.setWindowY(MyTunesRss.ROOT_FRAME.getLocation().y);
-            }
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
-            if (DatabaseBuilderTask.isRunning()) {
+            if (DatabaseBuilderCallable.isRunning()) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Database still updating... waiting for it to finish.");
                 }
-                MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.finishingUpdate"), null, false, new MyTunesRssTask() {
-                    public void execute() {
-                        while (DatabaseBuilderTask.isRunning()) {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                // intentionally left blank
-                            }
-                        }
+                while (DatabaseBuilderCallable.isRunning()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        // intentionally left blank
                     }
-                });
+                }
             }
             if (MyTunesRss.STORE != null && MyTunesRss.STORE.isInitialized()) {
-                MyTunesRssUtils.executeTask(null, MyTunesRssUtils.getBundleString("pleaseWait.shutdownDatabase"), null, false, new MyTunesRssTask() {
-                    public void execute() {
-                        DataStoreSession session = MyTunesRss.STORE.getTransaction();
-                        try {
-                            LOGGER.debug("Removing old temporary playlists.");
-                            session.executeStatement(new RemoveOldTempPlaylistsStatement());
-                            session.commit();
-                        } catch (SQLException e) {
-                            LOGGER.error("Could not remove old temporary playlists.", e);
-                            try {
-                                session.rollback();
-                            } catch (SQLException e1) {
-                                LOGGER.error("Could not rollback transaction.", e1);
-                            }
-                        }
-                        try {
-                            LOGGER.debug("Removing old statistic events.");
-                            session.executeStatement(new RemoveOldEventsStatement());
-                            session.commit();
-                        } catch (SQLException e) {
-                            LOGGER.error("Could not remove old statistic events.", e);
-                            try {
-                                session.rollback();
-                            } catch (SQLException e1) {
-                                LOGGER.error("Could not rollback transaction.", e1);
-                            }
-                        }
-                        LOGGER.debug("Destroying store.");
-                        MyTunesRss.STORE.destroy();
+                DataStoreSession session = MyTunesRss.STORE.getTransaction();
+                try {
+                    LOGGER.debug("Removing old temporary playlists.");
+                    session.executeStatement(new RemoveOldTempPlaylistsStatement());
+                    session.commit();
+                } catch (SQLException e) {
+                    LOGGER.error("Could not remove old temporary playlists.", e);
+                    try {
+                        session.rollback();
+                    } catch (SQLException e1) {
+                        LOGGER.error("Could not rollback transaction.", e1);
                     }
-                });
-            }
-            if (!MyTunesRss.HEADLESS) {
-                MyTunesRss.ROOT_FRAME.dispose();
+                }
+                try {
+                    LOGGER.debug("Removing old statistic events.");
+                    session.executeStatement(new RemoveOldEventsStatement());
+                    session.commit();
+                } catch (SQLException e) {
+                    LOGGER.error("Could not remove old statistic events.", e);
+                    try {
+                        session.rollback();
+                    } catch (SQLException e1) {
+                        LOGGER.error("Could not rollback transaction.", e1);
+                    }
+                }
+                LOGGER.debug("Destroying store.");
+                MyTunesRss.STORE.destroy();
             }
         }
         if (LOGGER.isDebugEnabled()) {
@@ -233,15 +191,11 @@ public class MyTunesRssUtils {
         }
         if (MyTunesRss.CONFIG.isDefaultDatabase() && MyTunesRss.CONFIG.isDeleteDatabaseOnExit()) {
             try {
-                new DeleteDatabaseFilesTask().execute();
+                new DeleteDatabaseFilesCallable().call();
             } catch (IOException e) {
                 LOGGER.error("Could not delete default database files.");
             }
         }
-        if (MyTunesRss.SYSTRAY != null) {
-            SystrayUtils.remove(MyTunesRss.SYSTRAY.getUUID());
-        }
-        MyTunesRssJmxUtils.stopJmxServer();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Very last log message before shutdown.");
         }
@@ -296,21 +250,6 @@ public class MyTunesRssUtils {
         return BYTE_STREAMED_FORMAT.format(bytes) + " Byte";
     }
 
-    public static int getTextFieldInteger(JTextField textField, int defaultValue) {
-        try {
-            return Integer.parseInt(textField.getText());
-        } catch (NumberFormatException exception) {
-            return defaultValue;
-        }
-    }
-
-    public static String getTextFieldString(JTextField textField, String defaultValue, boolean trim) {
-        if (StringUtils.isBlank(textField.getText())) {
-            return defaultValue;
-        }
-        return trim ? textField.getText().trim() : textField.getText();
-    }
-
     public static boolean deleteRecursivly(File file) {
         if (file.isDirectory()) {
             for (File subFile : file.listFiles()) {
@@ -330,10 +269,10 @@ public class MyTunesRssUtils {
     }
 
     public static SmartStatement createStatement(Connection connection, String name, final Map<String, Boolean> conditionals) throws SQLException {
-        return MyTunesRss.STORE.getSmartStatementFactory().createStatement(connection, name, (Map<String, Boolean>)Proxy.newProxyInstance(MyTunesRss.class.getClassLoader(), new Class[] {Map.class}, new InvocationHandler() {
+        return MyTunesRss.STORE.getSmartStatementFactory().createStatement(connection, name, (Map<String, Boolean>) Proxy.newProxyInstance(MyTunesRss.class.getClassLoader(), new Class[]{Map.class}, new InvocationHandler() {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if ("get".equals(method.getName()) && args.length == 1 && args[0] instanceof String) {
-                    return conditionals.containsKey((String)args[0]) ? conditionals.get((String)args[0]) : Boolean.FALSE;
+                    return conditionals.containsKey(args[0]) ? conditionals.get(args[0]) : Boolean.FALSE;
                 } else {
                     return method.invoke(conditionals, args);
                 }
@@ -342,22 +281,16 @@ public class MyTunesRssUtils {
     }
 
     public static void executeDatabaseUpdate() {
-        if (!DatabaseBuilderTask.isRunning()) {
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        DatabaseBuilderTask task = new DatabaseBuilderTask();
-                        task.execute();
-                        if (!task.isExecuted()) {
-                            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateNotRun"));
-                        }
-                    } catch (Exception e) {
-                        if (LOGGER.isErrorEnabled()) {
-                            LOGGER.error("Error during database update", e);
-                        }
-                    }
+        if (!DatabaseBuilderCallable.isRunning()) {
+            try {
+                if (!new DatabaseBuilderCallable().call()) {
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateNotRun"));
                 }
-            }).start();
+            } catch (Exception e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Error during database update", e);
+                }
+            }
         } else {
             MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateAlreadyRunning"));
         }
@@ -382,58 +315,12 @@ public class MyTunesRssUtils {
         return StringUtils.isBlank(text) ? text : Normalizer.compose(text, false);
     }
 
-    public static Integer getStringInteger(String text, Integer defaultValue) {
-        if (StringUtils.isNotEmpty(text)) {
-            return Integer.parseInt(text);
-        }
-        return defaultValue;
-    }
-
-    public static String getValueString(Integer number, Integer minimum, Integer maximum, String defaultText) {
-        if (number != null) {
-            if (minimum == null || minimum <= number) {
-                if (maximum == null || maximum >= number) {
-                    return number.toString();
-                }
-            }
-        }
-        return StringUtils.trimToEmpty(defaultText);
-    }
-
-    public static String getValueString(Long number, Long minimum, Long maximum, String defaultText) {
-        if (number != null) {
-            if (minimum == null || minimum <= number) {
-                if (maximum == null || maximum >= number) {
-                    return number.toString();
-                }
-            }
-        }
-        return StringUtils.trimToEmpty(defaultText);
-    }
-
     public static String getBaseType(String contentType) {
         try {
             ContentType type = new ContentType(StringUtils.trimToEmpty(contentType));
             return type.getBaseType();
         } catch (ParseException e) {
             LOGGER.warn("Could not get base type from content type \"" + contentType + "\".", e);
-        }
-        return "application/octet-stream";
-    }
-
-    public static String getContentTypeFromUrl(String url) {
-        HttpClient client = new HttpClient();
-        GetMethod method = new GetMethod(url);
-        try {
-            if (client.executeMethod(method) == 200) {
-                return getBaseType(method.getResponseHeader("Content-Type").getValue());
-            }
-        } catch (HttpException e) {
-            LOGGER.warn("Could not get content type from url \"" + url + "\".", e);
-        } catch (IOException e) {
-            LOGGER.warn("Could not get content type from url \"" + url + "\".", e);
-        } finally {
-            method.releaseConnection();
         }
         return "application/octet-stream";
     }
@@ -494,24 +381,6 @@ public class MyTunesRssUtils {
         return PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
     }
 
-    public static void shutdownRemoteProcess(String baseUrl) {
-        try {
-            HttpClient httpClient = new HttpClient();
-            httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(1000);
-            httpClient.getHttpConnectionManager().getParams().setSoTimeout(1);
-            GetMethod getMethod = new GetMethod(baseUrl + "/invoke?objectname=" + URLEncoder.encode("MyTunesRSS:type=config,name=Application", "UTF-8") + "&operation=quit");
-            try {
-                httpClient.executeMethod(getMethod);
-            } catch (IOException e) {
-                // expected exception
-            } finally {
-                getMethod.releaseConnection();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Could not stop remote application.");
-        }
-    }
-
     public static boolean isOtherInstanceRunning(long timeoutMillis) {
         RandomAccessFile lockFile;
         try {
@@ -542,82 +411,11 @@ public class MyTunesRssUtils {
         return true;
     }
 
-    public static boolean isNumberRange(long check, long min, long max) {
-        return check >= min && check <= max;
-    }
-
-    public static void showSettingsForm(final SettingsForm form) {
-        form.initValues();
-        String dialogTitle = MyTunesRssUtils.getBundleString("dialog.settings.commonTitle", form.getDialogTitle());
-        final JDialog dialog = new JDialog(MyTunesRss.ROOT_FRAME, dialogTitle, true);
-        dialog.getRootPane().registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
-        dialog.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent windowEvent) {
-                DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
-                if (layout == null) {
-                    layout = MyTunesRss.CONFIG.createDialogLayout(form.getClass());
-                }
-                layout.setX((int) dialog.getLocation().getX());
-                layout.setY((int) dialog.getLocation().getY());
-                layout.setWidth((int) dialog.getSize().getWidth());
-                layout.setHeight((int) dialog.getSize().getHeight());
-                String messages = form.updateConfigFromGui();
-                if (messages != null) {
-                    String cont = MyTunesRssUtils.getBundleString("question.dialogErrors.continue");
-                    String canc = MyTunesRssUtils.getBundleString("question.dialogErrors.cancel");
-                    String[] options = new String[]{canc, cont};
-                    if (canc.equals(MyTunesRssUtils.showQuestionMessage(messages + MyTunesRssUtils.getBundleString("question.dialogErrors"), options))) {
-                        dialog.dispose();
-                    }
-                } else {
-                    dialog.dispose();
-                }
-            }
-        });
-        dialog.add(form.getRootPanel());
-        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        DialogLayout layout = MyTunesRss.CONFIG.getDialogLayout(form.getClass());
-        dialog.pack();
-        final Dimension minimalDimension = dialog.getSize();
-        dialog.setMinimumSize(minimalDimension);
-        dialog.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(final ComponentEvent e) {
-                Dimension d = e.getComponent().getSize();
-                boolean changed = false;
-                if (d.width < minimalDimension.width) {
-                    d.width = minimalDimension.width;
-                    changed = true;
-                }
-                if (d.height < minimalDimension.height) {
-                    d.height = minimalDimension.height;
-                    changed = true;
-                }
-                if (changed) {
-                    e.getComponent().setSize(d);
-                }
-            }
-        });
-        if (layout != null && layout.isValid()) {
-            dialog.setLocation(layout.getX(), layout.getY());
-            dialog.setSize(layout.getWidth(), layout.getHeight());
-            dialog.setVisible(true);
-        } else {
-            SwingUtils.packAndShowRelativeTo(dialog, MyTunesRss.ROOT_FRAME);
-        }
-    }
-
     /**
      * Check if the specified index is a valid letter pager index. A valid index is
      * in the range from 0 to 8.
      *
      * @param index An index.
-     *
      * @return TRUE if the index is a valid letter pager index or FALSE otherwise.
      */
     public static Boolean isLetterPagerIndex(int index) {

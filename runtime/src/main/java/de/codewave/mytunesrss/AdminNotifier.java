@@ -3,9 +3,9 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.mail.MailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.MailException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

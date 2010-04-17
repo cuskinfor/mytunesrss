@@ -1,7 +1,8 @@
 package de.codewave.mytunesrss;
 
-import static junit.framework.Assert.assertEquals;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
 
 /**
  * de.codewave.mytunesrss.CompiledPathReplacementTest

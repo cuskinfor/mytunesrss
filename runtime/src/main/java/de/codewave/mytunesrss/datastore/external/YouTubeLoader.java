@@ -4,14 +4,12 @@ import com.google.gdata.client.youtube.YouTubeService;
 import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
 import com.google.gdata.data.youtube.YouTubeMediaGroup;
-import com.google.gdata.data.media.mediarss.MediaThumbnail;
 import com.google.gdata.util.ServiceException;
 import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -146,7 +144,7 @@ public class YouTubeLoader {
                         myStoreSession.executeStatement(handleTrackImagesStatement);
                     }
                     myUpdatedCount++;
-                    DatabaseBuilderTask.updateHelpTables(myStoreSession, myUpdatedCount);
+                    DatabaseBuilderCallable.updateHelpTables(myStoreSession, myUpdatedCount);
                     myExistingIds.add(trackId);
                 } catch (SQLException e) {
                     if (LOGGER.isErrorEnabled()) {

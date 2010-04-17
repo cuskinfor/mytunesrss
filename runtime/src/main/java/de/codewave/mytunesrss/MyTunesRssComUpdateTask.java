@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
@@ -39,11 +38,7 @@ public class MyTunesRssComUpdateTask extends TimerTask {
 
     public void run() {
         String base64Hash = null;
-        try {
-            base64Hash = new String(Base64.encodeBase64(myPasswordHash), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            base64Hash = new String(Base64.encodeBase64(myPasswordHash));
-        }
+        base64Hash = MyTunesRssUtils.getUtf8String(Base64.encodeBase64(myPasswordHash));
         if (LOG.isDebugEnabled()) {
             LOG.debug("Updating mytunesrss.com: user=\"" + myUsername + "\", password=\"" + base64Hash + "\", port=\"" + MyTunesRss.CONFIG.getPort() +
                     "\".");

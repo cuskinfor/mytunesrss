@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssTask;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.DropAllTablesStatement;
 import de.codewave.utils.sql.DataStoreSession;
@@ -13,19 +12,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
+import java.util.concurrent.Callable;
 
 /**
- * de.codewave.mytunesrss.task.InitializeDatabaseTask
+ * de.codewave.mytunesrss.task.InitializeDatabaseCallable
  */
-public class DropAllTablesTask extends MyTunesRssTask {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DropAllTablesTask.class);
+public class DropAllTablesCallable implements Callable<Void> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DropAllTablesCallable.class);
 
-    public void execute() throws SQLException {
+    public Void call() throws SQLException {
         LOGGER.debug("Dropping all tables.");
         try {
             DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
             storeSession.executeStatement(new DropAllTablesStatement());
-            DatabaseBuilderTask.doCheckpoint(storeSession, true);
+            DatabaseBuilderCallable.doCheckpoint(storeSession, true);
         } catch (SQLException e) {
             LOGGER.error("Could not drop all tables.", e);
             if (MyTunesRss.CONFIG.isDefaultDatabase()) {
@@ -36,6 +36,7 @@ public class DropAllTablesTask extends MyTunesRssTask {
                 throw e;
             }
         }
+        return null;
     }
 
 }

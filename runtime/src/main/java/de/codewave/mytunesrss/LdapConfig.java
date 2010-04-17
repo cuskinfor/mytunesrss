@@ -1,11 +1,11 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.utils.xml.DOMUtils;
+import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
-import org.w3c.dom.Element;
 import org.w3c.dom.Document;
-import de.codewave.utils.xml.JXPathUtils;
-import de.codewave.utils.xml.DOMUtils;
+import org.w3c.dom.Element;
 
 /**
  * Configuration for LDAP server.

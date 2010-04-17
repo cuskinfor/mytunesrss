@@ -13,7 +13,6 @@ import java.sql.SQLException;
 public class MyTunesRssTestUtils {
 
     public static void initMyTunesRss() {
-        MyTunesRss.HEADLESS = true;
         MyTunesRss.VERSION = "1.0.0";
         MyTunesRss.CONFIG = new MyTunesRssConfig();
     }

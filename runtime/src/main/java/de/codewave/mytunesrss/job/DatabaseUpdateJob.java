@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.job;
 
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -21,14 +21,13 @@ public class DatabaseUpdateJob implements Job {
      * Execute the job.
      *
      * @param jobExecutionContext
-     *
      * @throws JobExecutionException
      */
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
-            DatabaseBuilderTask task = new DatabaseBuilderTask();
-            if (task.needsUpdate()) {
-                task.execute();
+            DatabaseBuilderCallable callable = new DatabaseBuilderCallable();
+            if (callable.needsUpdate()) {
+                callable.call();
             }
         } catch (Exception e) {
             if (LOG.isErrorEnabled()) {

@@ -7,16 +7,13 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.Version;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreStatement;
-import de.codewave.utils.sql.SmartStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement

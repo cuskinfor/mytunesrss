@@ -4,7 +4,6 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssTestUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.utils.sql.DataStoreSession;
-import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,6 +12,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * de.codewave.mytunesrss.statistics.RemoveOldEventsStatementTest

@@ -34,7 +34,7 @@ public class LibraryListener implements PListHandlerListener {
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
         if ("Library Persistent ID".equals(key)) {
-            myLibraryId = (String)value;
+            myLibraryId = (String) value;
         } else if ("Application Version".equals(key)) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("iTunes version " + value);

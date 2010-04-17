@@ -6,9 +6,9 @@ package de.codewave.mytunesrss.meta;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * de.codewave.mytunesrss.meta.Image

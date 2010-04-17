@@ -14,9 +14,9 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -27,7 +27,8 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
     private String myAlbum;
     private String myGenre;
     private int myIndex;
-    private List<String> myRestrictedPlaylistIds = Collections.emptyList();;
+    private List<String> myRestrictedPlaylistIds = Collections.emptyList();
+    ;
 
     public FindArtistQuery(User user, String filter, String album, String genre, int index) {
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + filter + "%" : null;

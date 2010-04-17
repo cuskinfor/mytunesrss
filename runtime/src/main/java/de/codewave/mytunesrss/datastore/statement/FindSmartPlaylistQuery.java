@@ -4,15 +4,11 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.lang.StringUtils;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**

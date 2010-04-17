@@ -73,7 +73,7 @@ public class TrackUtils {
             String sectionHash = null;
             if (sectionTracks.size() > 1) {// for more than 1 track in a section create a temporary section playlist
                 try {
-                    sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.digest(sectionIds.toString().getBytes("UTF-8")));
+                    sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(sectionIds.toString())));
                     final String finalSectionHash = sectionHash;
                     LOGGER.debug("Trying to create temporary playlist with id \"" + sectionHash + "\".");
                     transaction.executeStatement(new DataStoreStatement() {
@@ -91,8 +91,6 @@ public class TrackUtils {
                 } catch (SQLException e) {
                     LOGGER.error("Could not check for existing temporary playlist or could not insert missing temporary playlist.", e);
                     sectionHash = null;// do not use calculated section hash in case of an sql exception
-                } catch (UnsupportedEncodingException e) {
-                    LOGGER.error("Could not create section playlist hash.", e);
                 }
             }
             for (EnhancedTrack rememberedTrack : sectionTracks) {

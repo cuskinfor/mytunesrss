@@ -20,15 +20,15 @@ public class MyTunesRssJobUtils {
         try {
             MyTunesRss.QUARTZ_SCHEDULER.unscheduleJob("RemoveOldEvents", "StatisticEvents");
             MyTunesRss.QUARTZ_SCHEDULER.addJob(new JobDetail(RemoveStatisticEventsJob.class.getSimpleName(), null, RemoveStatisticEventsJob.class),
-                                               true);
+                    true);
             Trigger trigger = new SimpleTrigger("RemoveOldEvents",
-                                                "StatisticEvents",
-                                                RemoveStatisticEventsJob.class.getSimpleName(),
-                                                null,
-                                                new Date(),
-                                                null,
-                                                SimpleTrigger.REPEAT_INDEFINITELY,
-                                                MILLIS_PER_HOUR);
+                    "StatisticEvents",
+                    RemoveStatisticEventsJob.class.getSimpleName(),
+                    null,
+                    new Date(),
+                    null,
+                    SimpleTrigger.REPEAT_INDEFINITELY,
+                    MILLIS_PER_HOUR);
             MyTunesRss.QUARTZ_SCHEDULER.scheduleJob(trigger);
         } catch (SchedulerException e) {
             if (LOG.isWarnEnabled()) {
@@ -49,10 +49,10 @@ public class MyTunesRssJobUtils {
             for (String cronTrigger : MyTunesRss.CONFIG.getDatabaseCronTriggers()) {
                 try {
                     Trigger trigger = new CronTrigger("crontrigger[" + cronTrigger + "]",
-                                                      "DatabaseUpdate",
-                                                      DatabaseUpdateJob.class.getSimpleName(),
-                                                      null,
-                                                      cronTrigger);
+                            "DatabaseUpdate",
+                            DatabaseUpdateJob.class.getSimpleName(),
+                            null,
+                            cronTrigger);
                     MyTunesRss.QUARTZ_SCHEDULER.scheduleJob(trigger);
                 } catch (ParseException e) {
                     if (LOG.isWarnEnabled()) {
@@ -72,7 +72,7 @@ public class MyTunesRssJobUtils {
     }
 
     public static TriggerItem[] getDays() {
-        String[] keys = new String[] {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN", "MON-FRI", "SUN-SAT", "SAT,SUN"};
+        String[] keys = new String[]{"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN", "MON-FRI", "SUN-SAT", "SAT,SUN"};
         TriggerItem[] items = new TriggerItem[keys.length];
         for (int i = 0; i < keys.length; i++) {
             items[i] = new TriggerItem(keys[i], MyTunesRssUtils.getBundleString("settings.cron.day." + keys[i]));
@@ -131,7 +131,7 @@ public class MyTunesRssJobUtils {
 
         @Override
         public boolean equals(Object obj) {
-            return obj != null && obj instanceof TriggerItem && myKey.equals(((TriggerItem)obj).myKey);
+            return obj != null && obj instanceof TriggerItem && myKey.equals(((TriggerItem) obj).myKey);
         }
 
         @Override

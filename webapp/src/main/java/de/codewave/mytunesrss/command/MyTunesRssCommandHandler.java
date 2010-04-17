@@ -5,21 +5,18 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.mytunesrss.servlet.WebConfig;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.servlet.CommandHandler;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.swing.Task;
-import de.codewave.utils.swing.TaskExecutor;
-import de.codewave.utils.swing.TaskFinishedListener;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -28,13 +25,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
-import javax.naming.Context;
-import javax.naming.NamingEnumeration;
-import javax.naming.AuthenticationException;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,6 +32,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
@@ -56,13 +48,19 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected void runDatabaseUpdate() {
         SCHEDULE_DATABASE_UPDATE = false;
-        TaskExecutor.execute(new DatabaseBuilderTask(), new TaskFinishedListener() {
-            public void taskFinished(Task task) {
-                if (!((DatabaseBuilderTask) task).isExecuted()) {
+        final Future<Boolean> future = MyTunesRss.EXECUTOR.submit(new DatabaseBuilderCallable());
+        DatabaseBuilderCallable.setFuture(future);
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    SCHEDULE_DATABASE_UPDATE = !future.get();
+                } catch (InterruptedException e) {
+                    SCHEDULE_DATABASE_UPDATE = true;
+                } catch (ExecutionException e) {
                     SCHEDULE_DATABASE_UPDATE = true;
                 }
             }
-        });
+        }).start();
     }
 
     protected boolean isAuthorized(String userName, String password, byte[] passwordHash) {
@@ -106,7 +104,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected String createAuthToken(User user) {
         return MyTunesRssWebUtils.encryptPathInfo(getRequest(),
-                    "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" +
+                "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" +
                         MyTunesRssBase64Utils.encode(user.getPasswordHash()));
     }
 
@@ -204,9 +202,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("encryptionKey", MyTunesRss.CONFIG.getPathInfoKey());
         getRequest().setAttribute("globalConfig", MyTunesRss.CONFIG);
         setResourceBundle();
-        if (DatabaseBuilderTask.isRunning()) {
-            if (DatabaseBuilderTask.getState() == DatabaseBuilderTask.State.UpdatingTracksFromFolder ||
-                    DatabaseBuilderTask.getState() == DatabaseBuilderTask.State.UpdatingTracksFromItunes) {
+        if (DatabaseBuilderCallable.isRunning()) {
+            if (DatabaseBuilderCallable.getState() == DatabaseBuilderCallable.State.UpdatingTracksFromFolder ||
+                    DatabaseBuilderCallable.getState() == DatabaseBuilderCallable.State.UpdatingTracksFromItunes) {
                 addMessage(new BundleError("info.databaseUpdating"));
             } else {
                 addMessage(new BundleError("info.databaseUpdatingImages"));

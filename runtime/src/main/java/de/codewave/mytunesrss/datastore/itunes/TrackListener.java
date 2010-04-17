@@ -7,7 +7,7 @@ import de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.mytunesrss.datastore.statement.UpdateTrackStatement;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang.ArrayUtils;
@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.regex.Matcher;
 
 /**
  * de.codewave.mytunesrss.datastore.itunes.TrackListenerr
@@ -69,9 +68,9 @@ public class TrackListener implements PListHandlerListener {
         myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
         if (processTrack(track, myTrackIds.remove(trackId))) {
             myUpdatedCount++;
-            DatabaseBuilderTask.updateHelpTables(myDataStoreSession, myUpdatedCount);
+            DatabaseBuilderCallable.updateHelpTables(myDataStoreSession, myUpdatedCount);
         }
-        DatabaseBuilderTask.doCheckpoint(myDataStoreSession, false);
+        DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, false);
         return false;
     }
 
@@ -134,7 +133,7 @@ public class TrackListener implements PListHandlerListener {
                             statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Comments"))));
                             statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
                                     (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
-                            statement.setYear(track.get("Year") != null ? ((Long)track.get("Year")).intValue() : -1);
+                            statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);
                             statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, filename, 0) : mp4Codec);
                             myDataStoreSession.executeStatement(statement);
                             return true;

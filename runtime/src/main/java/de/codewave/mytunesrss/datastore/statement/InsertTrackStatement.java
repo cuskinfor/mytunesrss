@@ -5,8 +5,8 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.FileSupportUtils;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -96,7 +96,7 @@ public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
         myPosNumber = number;
         myPosSize = size;
     }
-    
+
     public void setYear(int year) {
         myYear = year;
     }

@@ -51,7 +51,7 @@ public class MyTunesRssDataStore extends DataStore {
             @Override
             public void destroyObject(Object object) throws Exception {
                 if (object instanceof Connection) {
-                    ((Connection)object).close();
+                    ((Connection) object).close();
                 }
             }
         }, 50, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 30000, 5, 2, false, false, 15000, 10, 300000, false, 60000));
@@ -94,19 +94,19 @@ public class MyTunesRssDataStore extends DataStore {
         }
         LOG.info("Using DML/DDL for database type \"" + databaseType + "\".");
         JXPathContext[] contexts =
-                new JXPathContext[] {JXPathUtils.getContext(getClass().getResource("ddl.xml")), JXPathUtils.getContext(getClass().getResource(
+                new JXPathContext[]{JXPathUtils.getContext(getClass().getResource("ddl.xml")), JXPathUtils.getContext(getClass().getResource(
                         "dml.xml")), JXPathUtils.getContext(getClass().getResource("migration.xml"))};
         URL url = getClass().getResource("ddl_" + databaseType + ".xml");
         if (url != null) {
-            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils.getContext(url));
+            contexts = (JXPathContext[]) ArrayUtils.add(contexts, JXPathUtils.getContext(url));
         }
         url = getClass().getResource("dml_" + databaseType + ".xml");
         if (url != null) {
-            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils.getContext(url));
+            contexts = (JXPathContext[]) ArrayUtils.add(contexts, JXPathUtils.getContext(url));
         }
         url = getClass().getResource("migration_" + databaseType + ".xml");
         if (url != null) {
-            contexts = (JXPathContext[])ArrayUtils.add(contexts, JXPathUtils.getContext(url));
+            contexts = (JXPathContext[]) ArrayUtils.add(contexts, JXPathUtils.getContext(url));
         }
         mySmartStatementFactory = SmartStatementFactory.getInstance(contexts);
     }

@@ -75,7 +75,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
         myPassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.password");
         myRetypePassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.retypePassword", new SameValidator(myPassword, getBundleString("editUserConfigPanel.error.retypePassword")));
         myPassword.addValidator(new ValidationTriggerValidator(myRetypePassword));
-        myEmail = getComponentFactory().createTextField("editUserConfigPanel.email", new EmailValidator("editUserConfigPanel.error.email"));
+        myEmail = getComponentFactory().createTextField("editUserConfigPanel.email", new EmailValidator(getBundleString("editUserConfigPanel.error.email")));
         myIdentificationForm = getComponentFactory().createForm(null, true);
         myIdentificationForm.addField("username", myUsername);
         myIdentificationForm.addField("password", myPassword);

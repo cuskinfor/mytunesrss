@@ -7,7 +7,7 @@ import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.datastore.statement.SaveITunesPlaylistStatement;
 import de.codewave.mytunesrss.datastore.statement.SavePlaylistStatement;
-import de.codewave.mytunesrss.task.DatabaseBuilderTask;
+import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang.StringUtils;
@@ -41,7 +41,7 @@ public class PlaylistListener implements PListHandlerListener {
     }
 
     public boolean beforeArrayAdd(List array, Object value) {
-        insertPlaylist((Map)value);
+        insertPlaylist((Map) value);
         return false;
     }
 
@@ -50,25 +50,25 @@ public class PlaylistListener implements PListHandlerListener {
             throw new ShutdownRequestedException();
         }
 
-        boolean master = playlist.get("Master") != null && ((Boolean)playlist.get("Master")).booleanValue();
-        boolean purchased = playlist.get("Purchased Music") != null && ((Boolean)playlist.get("Purchased Music")).booleanValue();
-        boolean partyShuffle = playlist.get("Party Shuffle") != null && ((Boolean)playlist.get("Party Shuffle")).booleanValue();
-        boolean podcasts = playlist.get("Podcasts") != null && ((Boolean)playlist.get("Podcasts")).booleanValue();
-        boolean folder = playlist.get("Folder") != null && ((Boolean)playlist.get("Folder")).booleanValue();
+        boolean master = playlist.get("Master") != null && ((Boolean) playlist.get("Master")).booleanValue();
+        boolean purchased = playlist.get("Purchased Music") != null && ((Boolean) playlist.get("Purchased Music")).booleanValue();
+        boolean partyShuffle = playlist.get("Party Shuffle") != null && ((Boolean) playlist.get("Party Shuffle")).booleanValue();
+        boolean podcasts = playlist.get("Podcasts") != null && ((Boolean) playlist.get("Podcasts")).booleanValue();
+        boolean folder = playlist.get("Folder") != null && ((Boolean) playlist.get("Folder")).booleanValue();
 
         if (!master && !purchased && !partyShuffle && !podcasts) {
             String playlistId = playlist.get("Playlist Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get(
                     "Playlist Persistent ID").toString() :
                     myLibraryListener.getLibraryId() + "_" + "PlaylistID" + playlist.get("Playlist ID").toString();
-            String name = (String)playlist.get("Name");
+            String name = (String) playlist.get("Name");
             String containerId = playlist.get("Parent Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get(
                     "Parent Persistent ID") : null;
-            List<Map> items = (List<Map>)playlist.get("Playlist Items");
+            List<Map> items = (List<Map>) playlist.get("Playlist Items");
             List<String> tracks = new ArrayList<String>();
             if (items != null && !items.isEmpty()) {
                 for (Iterator<Map> itemIterator = items.iterator(); itemIterator.hasNext();) {
                     Map item = itemIterator.next();
-                    Long trackId = (Long)item.get("Track ID");
+                    Long trackId = (Long) item.get("Track ID");
                     if (trackId != null && StringUtils.isNotEmpty(myTrackIdToPersId.get(trackId))) {
                         tracks.add(myTrackIdToPersId.get(trackId));
                     }
@@ -82,14 +82,14 @@ public class PlaylistListener implements PListHandlerListener {
                 statement.setContainerId(containerId);
                 try {
                     if (myDataStoreSession.executeQuery(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder),
-                                                                              playlistId,
-                                                                              null,
-                                                                              true)).getResultSize() > 0) {
+                            playlistId,
+                            null,
+                            true)).getResultSize() > 0) {
                         statement.setUpdate(true);
                     }
                     myDataStoreSession.executeStatement(statement);
                     myExistingIds.add(playlistId);
-                    DatabaseBuilderTask.doCheckpoint(myDataStoreSession, true);
+                    DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, true);
                     MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_PLAYLIST_UPDATED));
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {

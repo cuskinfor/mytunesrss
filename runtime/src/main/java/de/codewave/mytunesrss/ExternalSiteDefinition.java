@@ -43,11 +43,11 @@ public class ExternalSiteDefinition {
 
     @Override
     public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj, new String[] {"myUrl"});
+        return EqualsBuilder.reflectionEquals(this, obj, new String[]{"myUrl"});
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this, new String[] {"myUrl"});
+        return HashCodeBuilder.reflectionHashCode(this, new String[]{"myUrl"});
     }
 }

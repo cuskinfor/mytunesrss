@@ -14,7 +14,10 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
@@ -27,7 +30,8 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     private int myIndex;
     private int myMinYear;
     private int myMaxYear;
-    private List<String> myRestrictedPlaylistIds = Collections.emptyList();;
+    private List<String> myRestrictedPlaylistIds = Collections.emptyList();
+    ;
     private boolean mySortByYear;
 
     public FindAlbumQuery(User user, String filter, String artist, String genre, int index, int minYear, int maxYear, boolean sortByYear) {

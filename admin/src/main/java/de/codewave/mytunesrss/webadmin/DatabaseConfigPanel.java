@@ -9,13 +9,13 @@ import com.vaadin.Application;
 import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
+import de.codewave.mytunesrss.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
-import de.codewave.mytunesrss.settings.Database;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
-import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.VaadinUtils;
+import de.codewave.vaadin.component.OptionWindow;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     protected void init(Application application) {
-        myDatabaseType = getComponentFactory().createSelect("databaseConfigPanel.databaseType", Arrays.asList(Database.DatabaseType.h2, Database.DatabaseType.h2custom, Database.DatabaseType.postgres, Database.DatabaseType.mysql));
+        myDatabaseType = getComponentFactory().createSelect("databaseConfigPanel.databaseType", Arrays.asList(DatabaseType.h2, DatabaseType.h2custom, DatabaseType.postgres, DatabaseType.mysql));
         myDatabaseType.addListener(this);
         myDatabaseDriver = getComponentFactory().createTextField("databaseConfigPanel.databaseDriver");
         myDatabaseConnection = getComponentFactory().createTextField("databaseConfigPanel.databaseConnection");
@@ -80,14 +80,14 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     protected void initFromConfig(Application application) {
-        myDatabaseType.select(Database.DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
+        myDatabaseType.select(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
         myDatabaseDriver.setValue(MyTunesRss.CONFIG.getDatabaseDriver());
         myDatabaseConnection.setValue(MyTunesRss.CONFIG.getDatabaseConnection());
         myDatabaseUser.setValue(MyTunesRss.CONFIG.getDatabaseUser());
         myDatabasePassword.setValue(MyTunesRss.CONFIG.getDatabasePassword());
         myUpdateDatabaseOnServerStart.setValue(MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart());
         myItunesDeleteMissingFiles.setValue(MyTunesRss.CONFIG.isItunesDeleteMissingFiles());
-        showHideDatabaseDetails(Database.DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
+        showHideDatabaseDetails(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
         refreshCronTriggers();
     }
 
@@ -116,12 +116,12 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myCronTriggers.setPageLength(Math.min(myCronTriggers.getItemIds().size(), 10));
     }
 
-    private void showHideDatabaseDetails(Database.DatabaseType type) {
-        myDatabaseDriver.setEnabled(type != Database.DatabaseType.h2);
-        myDatabaseConnection.setEnabled(type != Database.DatabaseType.h2);
-        myDatabaseUser.setEnabled(type != Database.DatabaseType.h2);
-        myDatabasePassword.setEnabled(type != Database.DatabaseType.h2);
-        if (type == Database.DatabaseType.h2) {
+    private void showHideDatabaseDetails(DatabaseType type) {
+        myDatabaseDriver.setEnabled(type != DatabaseType.h2);
+        myDatabaseConnection.setEnabled(type != DatabaseType.h2);
+        myDatabaseUser.setEnabled(type != DatabaseType.h2);
+        myDatabasePassword.setEnabled(type != DatabaseType.h2);
+        if (type == DatabaseType.h2) {
             MyTunesRssWebAdminUtils.setOptional(myDatabaseDriver);
             MyTunesRssWebAdminUtils.setOptional(myDatabaseConnection);
             MyTunesRssWebAdminUtils.setOptional(myDatabaseUser);
@@ -136,7 +136,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
 
     protected void writeToConfig() {
         //noinspection OverlyStrongTypeCast
-        MyTunesRss.CONFIG.setDatabaseType(((Database.DatabaseType) myDatabaseType.getValue()).name());
+        MyTunesRss.CONFIG.setDatabaseType(((DatabaseType) myDatabaseType.getValue()).name());
         MyTunesRss.CONFIG.setDatabaseDriver(myDatabaseDriver.getStringValue(null));
         MyTunesRss.CONFIG.setDatabaseConnection(myDatabaseConnection.getStringValue(null));
         MyTunesRss.CONFIG.setDatabaseUser(myDatabaseUser.getStringValue(null));
@@ -202,12 +202,12 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
 
     public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
         if (((EventObject) valueChangeEvent).getSource() == myDatabaseType) {
-            showHideDatabaseDetails((Database.DatabaseType) valueChangeEvent.getProperty().getValue());
+            showHideDatabaseDetails((DatabaseType) valueChangeEvent.getProperty().getValue());
         }
     }
 
     private boolean isDatabaseChanged() {
-        Database.DatabaseType databaseType = (Database.DatabaseType) myDatabaseType.getValue();
+        DatabaseType databaseType = (DatabaseType) myDatabaseType.getValue();
         String newType = StringUtils.trimToEmpty(databaseType.name());
         String newDriver = StringUtils.trimToEmpty((String) myDatabaseDriver.getValue());
         String newConnect = StringUtils.trimToEmpty((String) myDatabaseConnection.getValue());

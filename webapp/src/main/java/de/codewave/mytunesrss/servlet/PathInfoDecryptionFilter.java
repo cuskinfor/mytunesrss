@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.servlet;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 /**
@@ -24,7 +24,7 @@ public class PathInfoDecryptionFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         if (MyTunesRss.CONFIG.getPathInfoKey() != null) {
-            servletRequest = new RequestWrapper((HttpServletRequest)servletRequest);
+            servletRequest = new RequestWrapper((HttpServletRequest) servletRequest);
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
@@ -45,15 +45,11 @@ public class PathInfoDecryptionFilter implements Filter {
         @Override
         public String getPathInfo() {
             SecretKey key = MyTunesRss.CONFIG.getPathInfoKey();
-            String pathInfo = ((HttpServletRequest)getRequest()).getPathInfo();
+            String pathInfo = ((HttpServletRequest) getRequest()).getPathInfo();
             if (StringUtils.isNotEmpty(pathInfo)) {
                 String[] splitted = StringUtils.split(pathInfo, "/");
                 for (int i = 0; i < splitted.length; i++) {
-                    try {
-                        splitted[i] = URLDecoder.decode(splitted[i], "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException("UTF-8 not found!", e);
-                    }
+                    splitted[i] = MyTunesRssUtils.getUtf8UrlDecoded(splitted[i]);
                 }
                 try {
                     Cipher cipher = Cipher.getInstance(key.getAlgorithm());
@@ -61,7 +57,7 @@ public class PathInfoDecryptionFilter implements Filter {
                     for (int i = 0; i < splitted.length; i++) {
                         if (splitted[i].startsWith("{") && splitted[i].endsWith("}")) {
                             splitted[i] = new String(cipher.doFinal(MyTunesRssBase64Utils.decode(splitted[i].substring(1, splitted[i].length() - 1))),
-                                                     "UTF-8");
+                                    "UTF-8");
                         }
                     }
                     String newPathInfo = "/" + StringUtils.join(splitted, "/");

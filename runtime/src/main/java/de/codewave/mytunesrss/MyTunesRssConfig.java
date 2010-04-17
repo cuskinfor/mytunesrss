@@ -4,7 +4,6 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.settings.DialogLayout;
 import de.codewave.utils.Version;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.xml.DOMUtils;
@@ -62,7 +61,6 @@ public class MyTunesRssConfig {
     private boolean myUpdateDatabaseOnServerStart = true;
     private String myArtistDropWords = "";
     private boolean myLocalTempArchive;
-    private boolean myQuitConfirmation;
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
     private String myWebLoginMessage = "";
@@ -72,8 +70,6 @@ public class MyTunesRssConfig {
     private BigDecimal myBandwidthLimitFactor;
     private boolean myIgnoreArtwork;
     private Level myCodewaveLogLevel;
-    private int myWindowX;
-    private int myWindowY;
     private String myLastNewVersionInfo;
     private boolean myDeleteDatabaseOnExit;
     private String myUpdateIgnoreVersion;
@@ -85,24 +81,18 @@ public class MyTunesRssConfig {
     private String myDatabaseDriver;
     private String myWebappContext;
     private String myId3v2TrackComment;
-    private String myJmxHost;
-    private int myJmxPort;
-    private String myJmxUser;
-    private String myJmxPassword;
     private String myTomcatMaxThreads;
     private int myTomcatAjpPort;
     private String mySslKeystoreFile;
     private String mySslKeystorePass;
     private int mySslPort;
     private String mySslKeystoreKeyAlias;
-    private List<String> myAdditionalContexts;
     private String myTomcatProxyHost;
     private int myTomcatProxyPort;
     private String myTomcatProxyScheme;
     private String myTomcatSslProxyHost;
     private int myTomcatSslProxyPort;
     private String myTomcatSslProxyScheme;
-    private Map<String, DialogLayout> myDialogLayouts;
     private List<FileType> myFileTypes = new ArrayList<FileType>();
     private String myMailHost;
     private int myMailPort;
@@ -125,16 +115,15 @@ public class MyTunesRssConfig {
     private String myDisabledMp4Codecs;
     private List<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
     private List<ExternalSiteDefinition> myExternalSites = new ArrayList<ExternalSiteDefinition>();
-    private boolean myMinimizeToSystray;
     private String myAutoLogin;
     private boolean myDisableBrowser;
     private boolean myServerBrowserActive;
-    private boolean myDisableGui;
     private boolean myDisableWebLogin;
-    private boolean myDisableJmxHtml;
     private boolean myQuicktime64BitWarned;
     private Set<PathReplacement> myPathReplacements = new HashSet<PathReplacement>();
     private LdapConfig myLdapConfig;
+    private byte[] myAdminPasswordHash = MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(""));
+    private int myAdminPort = 9090;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
@@ -148,55 +137,6 @@ public class MyTunesRssConfig {
             }
         }
         Collections.sort(myDatasources);
-    }
-
-    public String addDatasource(String datasource) {
-        if (new File(datasource).exists()) {
-            for (String eachDatasource : myDatasources) {
-                try {
-                    if (datasource.equals(eachDatasource)) {
-                        return MyTunesRssUtils.getBundleString("error.datasourceAlreadyExists", eachDatasource);
-                    } else if (IOUtils.isContained(new File(eachDatasource), new File(datasource))) {
-                        return MyTunesRssUtils.getBundleString("error.existingWatchFolderContainsNewOne", eachDatasource);
-                    } else if (IOUtils.isContained(new File(datasource), new File(eachDatasource))) {
-                        return MyTunesRssUtils.getBundleString("error.newWatchFolderContainsExistingOne", eachDatasource);
-                    }
-                } catch (IOException e) {
-                    LOGGER.error("Could not check if existing datasource contains new datasource or vice versa, assuming everything is okay.", e);
-                }
-            }
-            myDatasources.add(StringUtils.trim(datasource));
-            Collections.sort(myDatasources);
-            return null;
-        } else if (MyTunesRssUtils.isValidRemoteUrl(datasource)) {
-            for (String eachDatasource : myDatasources) {
-                if (datasource.equals(eachDatasource)) {
-                    return MyTunesRssUtils.getBundleString("error.datasourceAlreadyExists", eachDatasource);
-                }
-            }
-            myDatasources.add(StringUtils.trim(datasource));
-            Collections.sort(myDatasources);
-            return null;
-        }
-        return MyTunesRssUtils.getBundleString("error.datasourceDoesNotExist");
-    }
-
-    public String replaceDatasource(int index, String datasource) {
-        String oldDatasource = myDatasources.remove(index);
-        String result = addDatasource(datasource);
-        if (result != null) {
-            myDatasources.add(oldDatasource);
-        }
-        Collections.sort(myDatasources);
-        return result;
-    }
-
-    public String removeDatasource(String datasource) {
-        if (myDatasources.contains(StringUtils.trim(datasource))) {
-            myDatasources.remove(StringUtils.trim(datasource));
-            return null;
-        }
-        return MyTunesRssUtils.getBundleString("error.datasourceDoesNotExist");
     }
 
     public int getPort() {
@@ -315,14 +255,6 @@ public class MyTunesRssConfig {
 
     public void setLocalTempArchive(boolean localTempArchive) {
         myLocalTempArchive = localTempArchive;
-    }
-
-    public boolean isQuitConfirmation() {
-        return myQuitConfirmation;
-    }
-
-    public void setQuitConfirmation(boolean quitConfirmation) {
-        myQuitConfirmation = quitConfirmation;
     }
 
     public SecretKey getPathInfoKey() {
@@ -447,14 +379,6 @@ public class MyTunesRssConfig {
         myUsers.add(user);
     }
 
-    public void removeUser(String userName) {
-        myUsers.remove(new User(userName));
-    }
-
-    public void replaceUsers(Collection<User> users) {
-        myUsers = new HashSet<User>(users);
-    }
-
     public String getSupportEmail() {
         return mySupportEmail;
     }
@@ -539,26 +463,6 @@ public class MyTunesRssConfig {
         myWebLoginMessage = webLoginMessage;
     }
 
-    public int getWindowX() {
-        return myWindowX;
-    }
-
-    public void setWindowX(int windowX) {
-        myWindowX = windowX;
-    }
-
-    public int getWindowY() {
-        return myWindowY;
-    }
-
-    public void setWindowY(int windowY) {
-        myWindowY = windowY;
-    }
-
-    public String getLastNewVersionInfo() {
-        return myLastNewVersionInfo;
-    }
-
     public void setLastNewVersionInfo(String lastNewVersionInfo) {
         myLastNewVersionInfo = lastNewVersionInfo;
     }
@@ -569,10 +473,6 @@ public class MyTunesRssConfig {
 
     public void setDeleteDatabaseOnExit(boolean deleteDatabaseOnExit) {
         myDeleteDatabaseOnExit = deleteDatabaseOnExit;
-    }
-
-    public String getUpdateIgnoreVersion() {
-        return myUpdateIgnoreVersion;
     }
 
     public void setUpdateIgnoreVersion(String updateIgnoreVersion) {
@@ -643,38 +543,6 @@ public class MyTunesRssConfig {
         myId3v2TrackComment = id3v2TrackComment;
     }
 
-    public String getJmxHost() {
-        return myJmxHost;
-    }
-
-    public void setJmxHost(String jmxHost) {
-        myJmxHost = jmxHost;
-    }
-
-    public String getJmxPassword() {
-        return myJmxPassword;
-    }
-
-    public void setJmxPassword(String jmxPassword) {
-        myJmxPassword = jmxPassword;
-    }
-
-    public int getJmxPort() {
-        return myJmxPort;
-    }
-
-    public void setJmxPort(int jmxPort) {
-        myJmxPort = jmxPort;
-    }
-
-    public String getJmxUser() {
-        return myJmxUser;
-    }
-
-    public void setJmxUser(String jmxUser) {
-        myJmxUser = jmxUser;
-    }
-
     public String getTomcatMaxThreads() {
         return myTomcatMaxThreads;
     }
@@ -723,24 +591,6 @@ public class MyTunesRssConfig {
         mySslPort = sslPort;
     }
 
-    public List<String> getAdditionalContexts() {
-        return myAdditionalContexts;
-    }
-
-    public void setAdditionalContexts(List<String> additionalContexts) {
-        myAdditionalContexts = additionalContexts;
-    }
-
-    public DialogLayout getDialogLayout(Class clazz) {
-        return myDialogLayouts != null ? myDialogLayouts.get(clazz.getSimpleName()) : null;
-    }
-
-    public DialogLayout createDialogLayout(Class clazz) {
-        DialogLayout layout = new DialogLayout();
-        myDialogLayouts.put(clazz.getSimpleName(), layout);
-        return layout;
-    }
-
     public FileType getFileType(String suffix) {
         if (suffix != null) {
             for (FileType type : myFileTypes) {
@@ -750,10 +600,6 @@ public class MyTunesRssConfig {
             }
         }
         return null;
-    }
-
-    public boolean isValidMailConfig() {
-        return StringUtils.isNotEmpty(getMailHost()) && StringUtils.isNotEmpty(getMailSender());
     }
 
     public String getMailHost() {
@@ -904,10 +750,6 @@ public class MyTunesRssConfig {
         return myTranscoderConfigs;
     }
 
-    public void setTranscoderConfigs(List<TranscoderConfig> configs) {
-        myTranscoderConfigs = configs;
-    }
-
     public List<ExternalSiteDefinition> getExternalSites() {
         return new ArrayList<ExternalSiteDefinition>(myExternalSites);
     }
@@ -926,30 +768,13 @@ public class MyTunesRssConfig {
         myExternalSites.add(definition);
     }
 
-    public boolean hasExternalSite(ExternalSiteDefinition definitionToCheck, ExternalSiteDefinition excludeFromCheck) {
-        for (ExternalSiteDefinition definition : getExternalSites(definitionToCheck.getType())) {
-            if ((excludeFromCheck == null || definition != excludeFromCheck) && definition.getName().equals(definitionToCheck.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void removeExternalSite(ExternalSiteDefinition definition) {
-        for (Iterator<ExternalSiteDefinition> iter = myExternalSites.iterator(); iter.hasNext(); ) {
+        for (Iterator<ExternalSiteDefinition> iter = myExternalSites.iterator(); iter.hasNext();) {
             if (definition.equals(iter.next())) {
                 iter.remove();
                 break;
             }
         }
-    }
-
-    public boolean isMinimizeToSystray() {
-        return myMinimizeToSystray;
-    }
-
-    public void setMinimizeToSystray(boolean minimizeToSystray) {
-        myMinimizeToSystray = minimizeToSystray;
     }
 
     public String getAutoLogin() {
@@ -976,28 +801,12 @@ public class MyTunesRssConfig {
         myServerBrowserActive = serverBrowserActive;
     }
 
-    public boolean isDisableGui() {
-        return myDisableGui;
-    }
-
-    public void setDisableGui(boolean disableGui) {
-        myDisableGui = disableGui;
-    }
-
     public boolean isDisableWebLogin() {
         return myDisableWebLogin;
     }
 
     public void setDisableWebLogin(boolean disableWebLogin) {
         myDisableWebLogin = disableWebLogin;
-    }
-
-    public boolean isDisableJmxHtml() {
-        return myDisableJmxHtml;
-    }
-
-    public void setDisableJmxHtml(boolean disableJmxHtml) {
-        myDisableJmxHtml = disableJmxHtml;
     }
 
     public boolean isQuicktime64BitWarned() {
@@ -1020,16 +829,24 @@ public class MyTunesRssConfig {
         myPathReplacements.add(pathReplacement);
     }
 
-    public boolean removePathReplacement(PathReplacement pathReplacement) {
-        return myPathReplacements.remove(pathReplacement);
-    }
-
     public LdapConfig getLdapConfig() {
         return myLdapConfig;
     }
 
-    public void setLdapConfig(LdapConfig ldapConfig) {
-        myLdapConfig = ldapConfig;
+    public byte[] getAdminPasswordHash() {
+        return myAdminPasswordHash;
+    }
+
+    public void setAdminPasswordHash(byte[] adminPasswordHash) {
+        myAdminPasswordHash = adminPasswordHash;
+    }
+
+    public int getAdminPort() {
+        return myAdminPort;
+    }
+
+    public void setAdminPort(int adminPort) {
+        myAdminPort = adminPort;
     }
 
     private String encryptCreationTime(long creationTime) {
@@ -1095,13 +912,15 @@ public class MyTunesRssConfig {
         try {
             setVersion(MyTunesRss.VERSION);
             load(settings);
-        } catch(IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Could not read configuration file.", e);
         }
 
     }
 
     private void load(JXPathContext settings) throws IOException {
+        setAdminPasswordHash(JXPathUtils.getByteArray(settings, "adminPassword", getAdminPasswordHash()));
+        setAdminPort(JXPathUtils.getIntValue(settings, "adminPort", getAdminPort()));
         setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
         setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
         setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
@@ -1143,7 +962,6 @@ public class MyTunesRssConfig {
             myFileTypes.add(fileType);
         }
         setArtistDropWords(JXPathUtils.getStringValue(settings, "artistDropWords", getArtistDropWords()));
-        setQuitConfirmation(JXPathUtils.getBooleanValue(settings, "quitConfirmation", isQuitConfirmation()));
         setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
         setWebLoginMessage(JXPathUtils.getStringValue(settings, "webLoginMessage", getWebLoginMessage()));
         readPathInfoEncryptionKey(settings);
@@ -1153,8 +971,6 @@ public class MyTunesRssConfig {
         setBandwidthLimitFactor(new BigDecimal(JXPathUtils.getStringValue(settings, "bandwidthLimitFactor", "0")));
         setIgnoreArtwork(JXPathUtils.getBooleanValue(settings, "ignoreArtwork", false));
         setCodewaveLogLevel(Level.toLevel(JXPathUtils.getStringValue(settings, "codewaveLogLevel", Level.INFO.toString()).toUpperCase()));
-        setWindowX(JXPathUtils.getIntValue(settings, "window/x", Integer.MAX_VALUE));
-        setWindowY(JXPathUtils.getIntValue(settings, "window/y", Integer.MAX_VALUE));
         setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
         setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
         Iterator<JXPathContext> cronTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database");
@@ -1164,10 +980,6 @@ public class MyTunesRssConfig {
         }
         loadDatabaseSettings(settings);
         setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
-        setJmxHost(JXPathUtils.getStringValue(settings, "jmx/host", "0.0.0.0"));
-        setJmxPort(JXPathUtils.getIntValue(settings, "jmx/port", 8500));
-        setJmxUser(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/user", null)));
-        setJmxPassword(StringUtils.trimToNull(JXPathUtils.getStringValue(settings, "jmx/password", null)));
         setTomcatMaxThreads(JXPathUtils.getStringValue(settings, "tomcat/max-threads", "200"));
         setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/ajp-port", 0));
         String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
@@ -1182,26 +994,6 @@ public class MyTunesRssConfig {
         setTomcatSslProxyScheme(JXPathUtils.getStringValue(settings, "ssl/proxy-scheme", "HTTPS"));
         setTomcatSslProxyHost(JXPathUtils.getStringValue(settings, "ssl/proxy-host", null));
         setTomcatSslProxyPort(JXPathUtils.getIntValue(settings, "ssl/proxy-port", 0));
-        myAdditionalContexts = new ArrayList<String>();
-        Iterator<JXPathContext> additionalContextsIterator = JXPathUtils.getContextIterator(settings, "tomcat/additionalContexts/context");
-        while (additionalContextsIterator.hasNext()) {
-            JXPathContext additionalContext = additionalContextsIterator.next();
-            myAdditionalContexts.add(JXPathUtils.getStringValue(additionalContext, "name", "").trim() + ":" + JXPathUtils.getStringValue(
-                    additionalContext,
-                    "docbase",
-                    "").trim());
-        }
-        myDialogLayouts = new HashMap<String, DialogLayout>();
-        Iterator<JXPathContext> dialogLayoutsIterator = JXPathUtils.getContextIterator(settings, "dialogs/layout");
-        while (dialogLayoutsIterator.hasNext()) {
-            JXPathContext dialogLayout = dialogLayoutsIterator.next();
-            DialogLayout layout = new DialogLayout();
-            layout.setX(JXPathUtils.getIntValue(dialogLayout, "x", -1));
-            layout.setY(JXPathUtils.getIntValue(dialogLayout, "y", -1));
-            layout.setWidth(JXPathUtils.getIntValue(dialogLayout, "width", -1));
-            layout.setHeight(JXPathUtils.getIntValue(dialogLayout, "height", -1));
-            myDialogLayouts.put(JXPathUtils.getStringValue(dialogLayout, "class", "").trim(), layout);
-        }
         setMailHost(JXPathUtils.getStringValue(settings, "mail-host", null));
         setMailPort(JXPathUtils.getIntValue(settings, "mail-port", -1));
         setSmtpProtocol(SmtpProtocol.valueOf(JXPathUtils.getStringValue(settings, "smtp-protocol", SmtpProtocol.PLAINTEXT.name())));
@@ -1243,13 +1035,10 @@ public class MyTunesRssConfig {
             String type = JXPathUtils.getStringValue(externalSiteContext, "type", null);
             myExternalSites.add(new ExternalSiteDefinition(type, name, url));
         }
-        setMinimizeToSystray(JXPathUtils.getBooleanValue(settings, "minimizeToSystray", false));
         setServerBrowserActive(JXPathUtils.getBooleanValue(settings, "serverBrowserActive", true));
         setAutoLogin(JXPathUtils.getStringValue(settings, "autoLogin", null));
         setDisableBrowser(JXPathUtils.getBooleanValue(settings, "disableBrowser", false));
-        setDisableGui(JXPathUtils.getBooleanValue(settings, "disableGui", false));
         setDisableWebLogin(JXPathUtils.getBooleanValue(settings, "disableWebLogin", false));
-        setDisableJmxHtml(JXPathUtils.getBooleanValue(settings, "disableJmxHtml", false));
         setQuicktime64BitWarned(JXPathUtils.getBooleanValue(settings, "qt64BitWarned", false));
         Iterator<JXPathContext> pathReplacementsIterator = JXPathUtils.getContextIterator(settings, "path-replacements/replacement");
         myPathReplacements.clear();
@@ -1314,6 +1103,8 @@ public class MyTunesRssConfig {
             Document settings = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             Element root = settings.createElement("settings");
             settings.appendChild(root);
+            root.appendChild(DOMUtils.createByteArrayElement(settings, "adminPassword", myAdminPasswordHash));
+            root.appendChild(DOMUtils.createIntElement(settings, "adminPort", myAdminPort));
             root.appendChild(DOMUtils.createTextElement(settings, "version", myVersion));
             root.appendChild(DOMUtils.createIntElement(settings, "serverPort", myPort));
             root.appendChild(DOMUtils.createTextElement(settings, "serverName", myServerName));
@@ -1363,7 +1154,6 @@ public class MyTunesRssConfig {
             }
             root.appendChild(DOMUtils.createTextElement(settings, "artistDropWords", myArtistDropWords));
             root.appendChild(DOMUtils.createTextElement(settings, CREATION_TIME_KEY, myCryptedCreationTime));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "quitConfirmation", myQuitConfirmation));
             root.appendChild(DOMUtils.createTextElement(settings, "webWelcomeMessage", myWebWelcomeMessage));
             root.appendChild(DOMUtils.createTextElement(settings, "webLoginMessage", myWebLoginMessage));
             if (myPathInfoKey != null) {
@@ -1377,8 +1167,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "codewaveLogLevel", myCodewaveLogLevel.toString().toUpperCase()));
             Element window = settings.createElement("window");
             root.appendChild(window);
-            window.appendChild(DOMUtils.createIntElement(settings, "x", myWindowX));
-            window.appendChild(DOMUtils.createIntElement(settings, "y", myWindowY));
             root.appendChild(DOMUtils.createTextElement(settings, "lastNewVersionInfo", myLastNewVersionInfo));
             root.appendChild(DOMUtils.createTextElement(settings, "updateIgnoreVersion", myUpdateIgnoreVersion));
             if (myDatabaseCronTriggers != null && myDatabaseCronTriggers.size() > 0) {
@@ -1396,12 +1184,6 @@ public class MyTunesRssConfig {
             database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
             database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
             root.appendChild(DOMUtils.createTextElement(settings, "id3v2-track-comment", getId3v2TrackComment()));
-            Element jmx = settings.createElement("jmx");
-            root.appendChild(jmx);
-            jmx.appendChild(DOMUtils.createTextElement(settings, "host", getJmxHost()));
-            jmx.appendChild(DOMUtils.createIntElement(settings, "port", getJmxPort()));
-            jmx.appendChild(DOMUtils.createTextElement(settings, "user", getJmxUser()));
-            jmx.appendChild(DOMUtils.createTextElement(settings, "password", getJmxPassword()));
             Element tomcat = settings.createElement("tomcat");
             root.appendChild(tomcat);
             tomcat.appendChild(DOMUtils.createTextElement(settings, "max-threads", getTomcatMaxThreads()));
@@ -1418,29 +1200,6 @@ public class MyTunesRssConfig {
                 tomcat.appendChild(DOMUtils.createIntElement(settings, "proxy-port", getTomcatProxyPort()));
             }
             tomcat.appendChild(DOMUtils.createTextElement(settings, "webapp-context", getWebappContext()));
-            if (myAdditionalContexts != null && !myAdditionalContexts.isEmpty()) {
-                Element additionalContexts = settings.createElement("additionalContexts");
-                tomcat.appendChild(additionalContexts);
-                for (String contextInfo : myAdditionalContexts) {
-                    Element context = settings.createElement("context");
-                    additionalContexts.appendChild(context);
-                    context.appendChild(DOMUtils.createTextElement(settings, "name", contextInfo.split(":", 2)[0]));
-                    context.appendChild(DOMUtils.createTextElement(settings, "docbase", contextInfo.split(":", 2)[1]));
-                }
-            }
-            if (myDialogLayouts != null && !myDialogLayouts.isEmpty()) {
-                Element dialogLayouts = settings.createElement("dialogs");
-                root.appendChild(dialogLayouts);
-                for (Map.Entry<String, DialogLayout> layout : myDialogLayouts.entrySet()) {
-                    Element dialogLayout = settings.createElement("layout");
-                    dialogLayouts.appendChild(dialogLayout);
-                    dialogLayout.appendChild(DOMUtils.createTextElement(settings, "class", layout.getKey()));
-                    dialogLayout.appendChild(DOMUtils.createIntElement(settings, "x", layout.getValue().getX()));
-                    dialogLayout.appendChild(DOMUtils.createIntElement(settings, "y", layout.getValue().getY()));
-                    dialogLayout.appendChild(DOMUtils.createIntElement(settings, "width", layout.getValue().getWidth()));
-                    dialogLayout.appendChild(DOMUtils.createIntElement(settings, "height", layout.getValue().getHeight()));
-                }
-            }
             Element ssl = settings.createElement("ssl");
             root.appendChild(ssl);
             ssl.appendChild(DOMUtils.createIntElement(settings, "port", getSslPort()));
@@ -1496,7 +1255,6 @@ public class MyTunesRssConfig {
                     xmlSite.appendChild(DOMUtils.createTextElement(settings, "url", def.getUrl()));
                 }
             }
-            root.appendChild(DOMUtils.createBooleanElement(settings, "minimizeToSystray", isMinimizeToSystray()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "serverBrowserActive", isServerBrowserActive()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "qt64BitWarned", isQuicktime64BitWarned()));
             if (myPathReplacements != null && !myPathReplacements.isEmpty()) {
@@ -1533,14 +1291,6 @@ public class MyTunesRssConfig {
 
     public boolean isDefaultDatabase() {
         return StringUtils.isEmpty(myDatabaseType) || "h2".equalsIgnoreCase(myDatabaseType);
-    }
-
-    public List<FileType> getDeepFileTypesClone() {
-        List<FileType> clone = new ArrayList<FileType>(getFileTypes().size());
-        for (FileType type : getFileTypes()) {
-            clone.add(new FileType(type));
-        }
-        return clone;
     }
 
     public boolean isRemoteControl() {
