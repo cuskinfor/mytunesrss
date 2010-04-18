@@ -4,7 +4,7 @@
     <servlet>
         <servlet-name>VaadinServlet</servlet-name>
         <servlet-class>
-            de.codewave.mytunesrss.webadmin.MyTunesRssAdminServlet
+            com.vaadin.terminal.gwt.server.ApplicationServlet
         </servlet-class>
         <init-param>
             <param-name>application</param-name>
