@@ -27,10 +27,20 @@
         </moduleSet>
         <moduleSet>
             <includes>
-                <include>*:war:*</include>
+                <include>*:webapp:war:*</include>
             </includes>
             <binaries>
                 <outputDirectory>data/webapps/ROOT</outputDirectory>
+                <unpack>true</unpack>
+                <includeDependencies>false</includeDependencies>
+            </binaries>
+        </moduleSet>
+        <moduleSet>
+            <includes>
+                <include>*:admin:war:*</include>
+            </includes>
+            <binaries>
+                <outputDirectory>data/webapps/ADMIN</outputDirectory>
                 <unpack>true</unpack>
                 <includeDependencies>false</includeDependencies>
             </binaries>
