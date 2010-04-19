@@ -5,12 +5,11 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.Application;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Form;
+import com.vaadin.ui.GridLayout;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import org.slf4j.Logger;
@@ -33,14 +32,11 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myNotifyOnTranscodingFailure;
     private CheckBox myNotifyOnWebUpload;
 
-    public AdminNotificationsConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("adminNotificationsConfigPanel.caption"), componentFactory.createGridLayout(1, 3, true, true), componentFactory);
-    }
-
-    protected void init(Application application) {
+    public void attach() {
+        init(getBundleString("adminNotificationsConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
         myEmailForm = getComponentFactory().createForm(null, true);
         myNotificationsForm = getComponentFactory().createForm(null, true);
-        myAdminEmail = getComponentFactory().createTextField("adminNotificationsConfigPanel.adminEmail", ValidatorFactory.createEmailValidator());
+        myAdminEmail = getComponentFactory().createTextField("adminNotificationsConfigPanel.adminEmail", getApplication().getValidatorFactory().createEmailValidator());
         myNotifyOnDatabaseUpdate = getComponentFactory().createCheckBox("adminNotificationsConfigPanel.notifyOnDatabaseUpdate");
         myNotifyOnEmailChange = getComponentFactory().createCheckBox("adminNotificationsConfigPanel.notifyOnEmailChange");
         myNotifyOnInternalError = getComponentFactory().createCheckBox("adminNotificationsConfigPanel.notifyOnInternalError");
@@ -64,9 +60,11 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
         addComponent(getComponentFactory().surroundWithPanel(myNotificationsForm, FORM_PANEL_MARGIN_INFO, getBundleString("adminNotificationsConfigPanel.notifications.caption")));
 
         addMainButtons(0, 2, 0, 2);
+
+        initFromConfig();
     }
 
-    protected void initFromConfig(Application application) {
+    protected void initFromConfig() {
         myAdminEmail.setValue(MyTunesRss.CONFIG.getAdminEmail());
         myNotifyOnDatabaseUpdate.setValue(MyTunesRss.CONFIG.isNotifyOnDatabaseUpdate());
         myNotifyOnEmailChange.setValue(MyTunesRss.CONFIG.isNotifyOnEmailChange());

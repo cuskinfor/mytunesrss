@@ -8,17 +8,25 @@ package de.codewave.mytunesrss.webadmin;
 import de.codewave.vaadin.validation.EmailValidator;
 import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 
+import java.util.ResourceBundle;
+
 public class ValidatorFactory {
 
-    public static MinMaxIntegerValidator createPortValidator() {
-        return new MinMaxIntegerValidator(MyTunesRssWebAdminUtils.getBundleString("error.minMaxValue", 1, 65535), 1, 65535);
+    private ResourceBundle myBundle;
+
+    public ValidatorFactory(ResourceBundle bundle) {
+        myBundle = bundle;
     }
 
-    public static MinMaxIntegerValidator createMinMaxValidator(int minValue, int maxValue) {
-        return new MinMaxIntegerValidator(MyTunesRssWebAdminUtils.getBundleString("error.minMaxValue", minValue, maxValue), minValue, maxValue);
+    public MinMaxIntegerValidator createPortValidator() {
+        return new MinMaxIntegerValidator(MyTunesRssWebAdmin.getBundleString(myBundle, "error.minMaxValue", 1, 65535), 1, 65535);
     }
 
-    public static EmailValidator createEmailValidator() {
-        return new EmailValidator(MyTunesRssWebAdminUtils.getBundleString("error.invalidEmail"));
+    public MinMaxIntegerValidator createMinMaxValidator(int minValue, int maxValue) {
+        return new MinMaxIntegerValidator(MyTunesRssWebAdmin.getBundleString(myBundle, "error.minMaxValue", minValue, maxValue), minValue, maxValue);
+    }
+
+    public EmailValidator createEmailValidator() {
+        return new EmailValidator(MyTunesRssWebAdmin.getBundleString(myBundle, "error.invalidEmail"));
     }
 }

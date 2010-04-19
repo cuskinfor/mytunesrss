@@ -5,14 +5,12 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.Application;
 import com.vaadin.data.Validatable;
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.TranscoderConfig;
-import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -29,17 +27,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class StreamingConfigPanel extends MyTunesRssConfigPanel {
 
-    public static class TranscoderNameValidator extends AbstractStringValidator {
-        public TranscoderNameValidator() {
-            super(getBundleString("streamingConfigPanel.error.invalidName", 40));
-        }
-
-        @Override
-        protected boolean isValidString(String s) {
-            return StringUtils.isNotBlank(s) && StringUtils.isAlphanumericSpace(s) && s.length() <= 40;
-        }
-    }
-
     private Panel myTranscoderAccordionPanel;
     private Panel myTranscoderPanel;
     private Form myCacheForm;
@@ -48,11 +35,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myStreamingCacheMaxFiles;
     private AtomicLong myTranscoderNumberGenerator = new AtomicLong(1);
 
-    public StreamingConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("streamingConfigPanel.caption"), componentFactory.createGridLayout(1, 3, true, true), componentFactory);
-    }
-
-    protected void init(Application application) {
+    public void attach() {
+        init(getBundleString("streamingConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
         myTranscoderPanel = new Panel(getBundleString("streamingConfigPanel.caption.transcoder"));
         ((Layout) myTranscoderPanel.getContent()).setMargin(true);
         ((Layout.SpacingHandler) myTranscoderPanel.getContent()).setSpacing(true);
@@ -67,14 +51,15 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myTranscoderPanel.addComponent(myAddTranscoder);
         addComponent(myTranscoderPanel);
         myCacheForm = getComponentFactory().createForm(null, true);
-        myStreamingCacheTimeout = getComponentFactory().createTextField("streamingConfigPanel.cache.streamingCacheTimeout", ValidatorFactory.createMinMaxValidator(0, 1440));
-        myStreamingCacheMaxFiles = getComponentFactory().createTextField("streamingConfigPanel.cache.streamingCacheMaxFiles", ValidatorFactory.createMinMaxValidator(0, 10000));
+        myStreamingCacheTimeout = getComponentFactory().createTextField("streamingConfigPanel.cache.streamingCacheTimeout", getApplication().getValidatorFactory().createMinMaxValidator(0, 1440));
+        myStreamingCacheMaxFiles = getComponentFactory().createTextField("streamingConfigPanel.cache.streamingCacheMaxFiles", getApplication().getValidatorFactory().createMinMaxValidator(0, 10000));
         myCacheForm.addField("timeout", myStreamingCacheTimeout);
         myCacheForm.addField("limit", myStreamingCacheMaxFiles);
         addComponent(getComponentFactory().surroundWithPanel(myCacheForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.cache")));
 
         addMainButtons(0, 2, 0, 2);
 
+        initFromConfig();
     }
 
     private Form createTranscoder() {
@@ -97,7 +82,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         return form;
     }
 
-    protected void initFromConfig(Application application) {
+    protected void initFromConfig() {
         Iterator<Component> formsIterator = myTranscoderAccordionPanel.getComponentIterator();
         for (int i = 0; i < MyTunesRss.CONFIG.getTranscoderConfigs().size(); i++) {
             TranscoderConfig config = MyTunesRss.CONFIG.getTranscoderConfigs().get(i);
@@ -189,6 +174,18 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             }
         } else {
             super.buttonClick(clickEvent);
+        }
+    }
+
+    public class TranscoderNameValidator extends AbstractStringValidator {
+
+        public TranscoderNameValidator() {
+            super(getBundleString("streamingConfigPanel.error.invalidName", 40));
+        }
+
+        @Override
+        protected boolean isValidString(String s) {
+            return StringUtils.isNotBlank(s) && StringUtils.isAlphanumericSpace(s) && s.length() <= 40;
         }
     }
 }

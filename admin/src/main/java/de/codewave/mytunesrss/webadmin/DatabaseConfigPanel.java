@@ -37,11 +37,8 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     private Table myCronTriggers;
     private Button myAddSchedule;
 
-    public DatabaseConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("databaseConfigPanel.caption"), componentFactory.createGridLayout(1, 4, true, true), componentFactory);
-    }
-
-    protected void init(Application application) {
+    public void attach() {
+        init(getBundleString("databaseConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
         myDatabaseType = getComponentFactory().createSelect("databaseConfigPanel.databaseType", Arrays.asList(DatabaseType.h2, DatabaseType.h2custom, DatabaseType.postgres, DatabaseType.mysql));
         myDatabaseType.addListener(this);
         myDatabaseDriver = getComponentFactory().createTextField("databaseConfigPanel.databaseDriver");
@@ -77,9 +74,11 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         addComponent(schedulesPanel);
 
         addMainButtons(0, 3, 0, 3);
+
+        initFromConfig();
     }
 
-    protected void initFromConfig(Application application) {
+    protected void initFromConfig() {
         myDatabaseType.select(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
         myDatabaseDriver.setValue(MyTunesRss.CONFIG.getDatabaseDriver());
         myDatabaseConnection.setValue(MyTunesRss.CONFIG.getDatabaseConnection());
@@ -122,15 +121,15 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDatabaseUser.setEnabled(type != DatabaseType.h2);
         myDatabasePassword.setEnabled(type != DatabaseType.h2);
         if (type == DatabaseType.h2) {
-            MyTunesRssWebAdminUtils.setOptional(myDatabaseDriver);
-            MyTunesRssWebAdminUtils.setOptional(myDatabaseConnection);
-            MyTunesRssWebAdminUtils.setOptional(myDatabaseUser);
-            MyTunesRssWebAdminUtils.setOptional(myDatabasePassword);
+            setOptional(myDatabaseDriver);
+            setOptional(myDatabaseConnection);
+            setOptional(myDatabaseUser);
+            setOptional(myDatabasePassword);
         } else {
-            MyTunesRssWebAdminUtils.setRequired(myDatabaseDriver);
-            MyTunesRssWebAdminUtils.setRequired(myDatabaseConnection);
-            MyTunesRssWebAdminUtils.setRequired(myDatabaseUser);
-            MyTunesRssWebAdminUtils.setRequired(myDatabasePassword);
+            setRequired(myDatabaseDriver);
+            setRequired(myDatabaseConnection);
+            setRequired(myDatabaseUser);
+            setRequired(myDatabasePassword);
         }
     }
 

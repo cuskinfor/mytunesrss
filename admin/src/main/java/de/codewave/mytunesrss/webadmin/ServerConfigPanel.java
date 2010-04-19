@@ -55,12 +55,9 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField mySslKeystorePass;
     private SmartTextField mySslKeystoreKeyAlias;
 
-    public ServerConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("serverConfigPanel.caption"), componentFactory.createGridLayout(1, 6, true, true), componentFactory);
-    }
-
-    protected void init(Application application) {
-        myAdminPort = getComponentFactory().createTextField("serverConfigPanel.adminPort", ValidatorFactory.createPortValidator());
+    public void attach() {
+        init(getBundleString("serverConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));
+        myAdminPort = getComponentFactory().createTextField("serverConfigPanel.adminPort", getApplication().getValidatorFactory().createPortValidator());
         myAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.adminPassword");
         myRetypeAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.retypeAdminPassword", new SameValidator(myAdminPassword, getBundleString("serverConfigPanel.error.retypeAdminPassword")));
         myAdminPassword.addValidator(new ValidationTriggerValidator(myRetypeAdminPassword));
@@ -73,18 +70,18 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         });
         myServerName = getComponentFactory().createTextField("serverConfigPanel.serverName");
         myWebappContext = getComponentFactory().createTextField("serverConfigPanel.webappContext");
-        myTomcatMaxThreads = getComponentFactory().createTextField("serverConfigPanel.tomcatMaxThreads", ValidatorFactory.createMinMaxValidator(5, 1000));
-        MyTunesRssWebAdminUtils.setRequired(myTomcatMaxThreads);
-        myTomcatAjpPort = getComponentFactory().createTextField("serverConfigPanel.tomcatAjpPort", ValidatorFactory.createPortValidator());
-        myPort = getComponentFactory().createTextField("serverConfigPanel.port", ValidatorFactory.createPortValidator());
-        MyTunesRssWebAdminUtils.setRequired(myPort);
+        myTomcatMaxThreads = getComponentFactory().createTextField("serverConfigPanel.tomcatMaxThreads", getApplication().getValidatorFactory().createMinMaxValidator(5, 1000));
+        setRequired(myTomcatMaxThreads);
+        myTomcatAjpPort = getComponentFactory().createTextField("serverConfigPanel.tomcatAjpPort", getApplication().getValidatorFactory().createPortValidator());
+        myPort = getComponentFactory().createTextField("serverConfigPanel.port", getApplication().getValidatorFactory().createPortValidator());
+        setRequired(myPort);
         myTomcatProxyScheme = getComponentFactory().createSelect("serverConfigPanel.tomcatProxyScheme", Arrays.asList("HTTP", "HTTPS"));
         myTomcatProxyHost = getComponentFactory().createTextField("serverConfigPanel.tomcatProxyHost");
-        myTomcatProxyPort = getComponentFactory().createTextField("serverConfigPanel.tomcatProxyPort", ValidatorFactory.createPortValidator());
-        mySslPort = getComponentFactory().createTextField("serverConfigPanel.sslPort", ValidatorFactory.createPortValidator());
+        myTomcatProxyPort = getComponentFactory().createTextField("serverConfigPanel.tomcatProxyPort", getApplication().getValidatorFactory().createPortValidator());
+        mySslPort = getComponentFactory().createTextField("serverConfigPanel.sslPort", getApplication().getValidatorFactory().createPortValidator());
         myTomcatSslProxyScheme = getComponentFactory().createSelect("serverConfigPanel.tomcatSslProxyScheme", Arrays.asList("HTTPS", "HTTP"));
         myTomcatSslProxyHost = getComponentFactory().createTextField("serverConfigPanel.tomcatSslProxyHost");
-        myTomcatSslProxyPort = getComponentFactory().createTextField("serverConfigPanel.tomcatSslProxyPort", ValidatorFactory.createPortValidator());
+        myTomcatSslProxyPort = getComponentFactory().createTextField("serverConfigPanel.tomcatSslProxyPort", getApplication().getValidatorFactory().createPortValidator());
         mySslKeystoreFile = getComponentFactory().createTextField("serverConfigPanel.sslKeystoreFile", new FileValidator(getBundleString("serverConfigPanel.error.invalidKeystore"), null, FileValidator.PATTERN_ALL));
         mySslKeystoreFileSelect = getComponentFactory().createButton("serverConfigPanel.sslKeystoreFile.select", this);
         mySslKeystorePass = getComponentFactory().createPasswordTextField("serverConfigPanel.sslKeystorePass");
@@ -132,9 +129,11 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         addComponent(httpsPanel);
 
         addMainButtons(0, 5, 0, 5);
+
+        initFromConfig();
     }
 
-    protected void initFromConfig(Application application) {
+    protected void initFromConfig() {
         myAdminPort.setValue(MyTunesRss.CONFIG.getAdminPort(), 1, 65535, "");
         myAdminPassword.setValue(MyTunesRss.CONFIG.getAdminPasswordHash());
         myRetypeAdminPassword.setValue(MyTunesRss.CONFIG.getAdminPasswordHash());

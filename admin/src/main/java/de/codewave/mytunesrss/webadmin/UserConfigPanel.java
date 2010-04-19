@@ -5,23 +5,21 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.Application;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.LdapAuthMethod;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.User;
-import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickEvent.ItemClickListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserConfigPanel.class);
 
     private Panel myUserTreePanel;
     private Tree myUserTree;
@@ -37,11 +35,8 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
     private SmartTextField myLdapEmailAttribute;
     private Select myTemplateUser;
 
-    public UserConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("userConfigPanel.caption"), componentFactory.createGridLayout(1, 3, true, true), componentFactory);
-    }
-
-    protected void init(Application application) {
+    public void attach() {
+        init(getBundleString("userConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
         myUserTreePanel = new Panel(getBundleString("userConfigPanel.caption.themes"), getComponentFactory().createVerticalLayout(true, true));
         myUserTree = new Tree();
         myUserTree.addListener(this);
@@ -71,11 +66,13 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
         myLdapForm.addField("ldapEmailAttribute", myLdapEmailAttribute);
         myLdapForm.addField("templateUser", myTemplateUser);
         addComponent(getComponentFactory().surroundWithPanel(myLdapForm, FORM_PANEL_MARGIN_INFO, getBundleString("userConfigPanel.caption.ldap")));
+
         addMainButtons(0, 2, 0, 2);
 
+        initFromConfig();
     }
 
-    protected void initFromConfig(Application application) {
+    protected void initFromConfig() {
         initUserTree();
         myLdapHost.setValue(MyTunesRss.CONFIG.getLdapConfig().getHost());
         myLdapPort.setValue(MyTunesRss.CONFIG.getLdapConfig().getPort(), 1, 65535, "");
@@ -123,17 +120,17 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddUser) {
-            editUser(new User("new user"), true);
+            editUser(new User("new user"));
         } else {
             super.buttonClick(clickEvent);
         }
     }
 
     public void itemClick(ItemClickEvent itemClickEvent) {
-        editUser((User) itemClickEvent.getItemId(), false);
+        editUser((User) itemClickEvent.getItemId());
     }
 
-    private void editUser(User user, boolean newUser) {
-        getApplication().setMainComponent(new EditUserConfigPanel(getApplication(), getComponentFactory(), this, user, newUser));
+    private void editUser(User user) {
+        getApplication().setMainComponent(new EditUserConfigPanel(this, user));
     }
 }

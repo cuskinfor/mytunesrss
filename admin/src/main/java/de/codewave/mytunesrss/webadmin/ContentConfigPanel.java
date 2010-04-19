@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.Application;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Panel;
@@ -16,7 +15,6 @@ import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.datastore.statement.SavePlaylistAttributesStatement;
 import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.vaadin.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,11 +28,8 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
 
     private Table myPlaylists;
 
-    public ContentConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("contentsConfigPanel.caption"), componentFactory.createGridLayout(1, 2, true, true), componentFactory);
-    }
-
-    protected void init(Application application) {
+    public void attach() {
+        init(getBundleString("contentsConfigPanel.caption"), getComponentFactory().createGridLayout(1, 2, true, true));
         myPlaylists = new Table();
         myPlaylists.addContainerProperty("visible", CheckBox.class, null, getBundleString("contentsConfigPanel.playlists.visible"), null, null);
         myPlaylists.addContainerProperty("name", String.class, null, getBundleString("contentsConfigPanel.playlists.name"), null, null);
@@ -44,9 +39,11 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         addComponent(myPlaylists);
 
         addMainButtons(0, 1, 0, 1);
+
+        initFromConfig();
     }
 
-    protected void initFromConfig(Application application) {
+    protected void initFromConfig() {
         myPlaylists.removeAllItems();
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         List<Playlist> playlists = null;

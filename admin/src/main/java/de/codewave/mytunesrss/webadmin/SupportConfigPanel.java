@@ -5,11 +5,12 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.Application;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssRegistration;
+import de.codewave.mytunesrss.MyTunesRssRegistrationException;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.task.SendSupportRequestCallable;
-import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -39,11 +40,8 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
     private SmartTextField mySysInfo;
     private File myUploadDir;
 
-    public SupportConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("supportConfigPanel.caption"), componentFactory.createGridLayout(1, 4, true, true), componentFactory);
-    }
-
-    protected void init(Application application) {
+    public void attach() {
+        init(getBundleString("supportConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
         mySupportForm = getComponentFactory().createForm(null, true);
         myName = getComponentFactory().createTextField("supportConfigPanel.name");
         myEmail = getComponentFactory().createTextField("supportConfigPanel.email");
@@ -85,9 +83,11 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         addComponent(getComponentFactory().surroundWithPanel(mySysInfoForm, FORM_PANEL_MARGIN_INFO, getBundleString("supportConfigPanel.caption.sysInfo")));
 
         addMainButtons(0, 3, 0, 3);
+
+        initFromConfig();
     }
 
-    protected void initFromConfig(Application application) {
+    protected void initFromConfig() {
         myLogLevel.setValue(MyTunesRss.CONFIG.getCodewaveLogLevel());
         myName.setValue(MyTunesRss.CONFIG.getSupportName());
         myEmail.setValue(MyTunesRss.CONFIG.getSupportEmail());

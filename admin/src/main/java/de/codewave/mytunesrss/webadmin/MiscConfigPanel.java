@@ -37,11 +37,8 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myMailPassword;
     private SmartTextField myMailSender;
 
-    public MiscConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("miscConfigPanel.caption"), componentFactory.createGridLayout(1, 5, true, true), componentFactory);
-    }
-
-    protected void init(Application application) {
+    public void attach() {
+        init(getBundleString("miscConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
         myMyTunesRssComForm = getComponentFactory().createForm(null, true);
         myWebInterfaceForm = getComponentFactory().createForm(null, true);
         myProxyForm = getComponentFactory().createForm(null, true);
@@ -53,13 +50,13 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myWebWelcomeMessage = getComponentFactory().createTextField("miscConfigPanel.webWelcomeMessage");
         myServerBrowserActive = getComponentFactory().createCheckBox("miscConfigPanel.serverBrowserActive");
         myProxyHost = getComponentFactory().createTextField("miscConfigPanel.proxyHost");
-        myProxyPort = getComponentFactory().createTextField("miscConfigPanel.proxyPort", ValidatorFactory.createPortValidator());
+        myProxyPort = getComponentFactory().createTextField("miscConfigPanel.proxyPort", getApplication().getValidatorFactory().createPortValidator());
         myMailHost = getComponentFactory().createTextField("miscConfigPanel.mailHost");
-        myMailPort = getComponentFactory().createTextField("miscConfigPanel.mailPort", ValidatorFactory.createPortValidator());
+        myMailPort = getComponentFactory().createTextField("miscConfigPanel.mailPort", getApplication().getValidatorFactory().createPortValidator());
         mySmtpProtocol = getComponentFactory().createSelect("miscConfigPanel.smtpProtocol", Arrays.asList(SmtpProtocol.PLAINTEXT, SmtpProtocol.STARTTLS, SmtpProtocol.SSL));
         myMailLogin = getComponentFactory().createTextField("miscConfigPanel.mailLogin");
         myMailPassword = getComponentFactory().createPasswordTextField("miscConfigPanel.mailPassword");
-        myMailSender = getComponentFactory().createTextField("miscConfigPanel.mailSender", ValidatorFactory.createEmailValidator());
+        myMailSender = getComponentFactory().createTextField("miscConfigPanel.mailSender", getApplication().getValidatorFactory().createEmailValidator());
         myMyTunesRssComForm.addField(myMyTunesRssComUser, myMyTunesRssComUser);
         myMyTunesRssComForm.addField(myMyTunesRssComPassword, myMyTunesRssComPassword);
         myMyTunesRssComForm.addField(myMyTunesRssComSsl, myMyTunesRssComSsl);
@@ -84,9 +81,11 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         addComponent(webInterfacePanel);
 
         addMainButtons(0, 4, 0, 4);
+
+        initFromConfig();
     }
 
-    protected void initFromConfig(Application application) {
+    protected void initFromConfig() {
         myMyTunesRssComUser.setValue(MyTunesRss.CONFIG.getMyTunesRssComUser());
         myMyTunesRssComPassword.setValue(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash());
         myMyTunesRssComSsl.setValue(MyTunesRss.CONFIG.isMyTunesRssComSsl());

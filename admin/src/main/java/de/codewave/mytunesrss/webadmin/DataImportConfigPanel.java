@@ -5,13 +5,11 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.Application;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.FileType;
 import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -21,21 +19,8 @@ import java.util.List;
 
 public class DataImportConfigPanel extends MyTunesRssConfigPanel {
 
-    public static enum Protection {
-        Protected(), Unprotected();
-
-        @Override
-        public String toString() {
-            switch (this) {
-                case Protected:
-                    return getBundleString("dataimportConfigPanel.fileTypes.protection.true");
-                case Unprotected:
-                    return getBundleString("dataimportConfigPanel.fileTypes.protection.false");
-                default:
-                    throw new RuntimeException("Cannot happen!");
-            }
-        }
-    }
+    public final Protection PROTECTED = new Protection(true);
+    public final Protection UNPROTECTED = new Protection(false);
 
     private Table myFileTypes;
     private Button myAddFileType;
@@ -47,11 +32,8 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myIgnoreTimestamps;
     private Form myMiscForm;
 
-    public DataImportConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("dataimportConfigPanel.caption"), componentFactory.createGridLayout(1, 3, true, true), componentFactory);
-    }
-
-    protected void init(Application application) {
+    public void attach() {
+        init(getBundleString("dataimportConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
         Panel typesPanel = new Panel(getBundleString("dataimportConfigPanel.caption.types"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(typesPanel);
         myFileTypes = new Table();
@@ -81,9 +63,11 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myMiscForm.addField(myIgnoreTimestamps, myIgnoreTimestamps);
 
         addMainButtons(0, 2, 0, 2);
+
+        initFromConfig();
     }
 
-    protected void initFromConfig(Application application) {
+    protected void initFromConfig() {
         setFileTypes(MyTunesRss.CONFIG.getFileTypes());
         myArtistDropWords.setValue(MyTunesRss.CONFIG.getArtistDropWords());
         myId3v2TrackComment.setValue(MyTunesRss.CONFIG.getId3v2TrackComment());
@@ -109,8 +93,8 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         mimeType.setValue(fileType.getMimeType());
         Select mediaType = getComponentFactory().createSelect(null, Arrays.asList(MediaType.Audio, MediaType.Video, MediaType.Image, MediaType.Other));
         mediaType.setValue(fileType.getMediaType());
-        Select protection = getComponentFactory().createSelect(null, Arrays.asList(Protection.Protected, Protection.Unprotected));
-        protection.setValue(fileType.isProtected() ? Protection.Protected : Protection.Unprotected);
+        Select protection = getComponentFactory().createSelect(null, Arrays.asList(PROTECTED, UNPROTECTED));
+        protection.setValue(fileType.isProtected() ? PROTECTED : UNPROTECTED);
         Button delete = new Button(getBundleString("button.delete"), this);
         long id = myItemIdGenerator.getAndIncrement();
         delete.setData(id);
@@ -129,7 +113,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
             String mimeType = (String) getTableCellPropertyValue(myFileTypes, itemId, "mimeType");
             MediaType mediaType = (MediaType) getTableCellPropertyValue(myFileTypes, itemId, "mediaType");
             Protection protection = (Protection) getTableCellPropertyValue(myFileTypes, itemId, "protection");
-            MyTunesRss.CONFIG.getFileTypes().add(new FileType(active, suffix, mimeType, mediaType, protection == Protection.Protected));
+            MyTunesRss.CONFIG.getFileTypes().add(new FileType(active, suffix, mimeType, mediaType, protection == PROTECTED));
         }
         MyTunesRss.CONFIG.setArtistDropWords(myArtistDropWords.getStringValue(null));
         MyTunesRss.CONFIG.setId3v2TrackComment(myId3v2TrackComment.getStringValue(null));
@@ -176,5 +160,23 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
             return false;
         }
         return true;
+    }
+
+    public class Protection {
+
+        boolean myProtected;
+
+        public Protection(boolean aProtected) {
+            myProtected = aProtected;
+        }
+
+        @Override
+        public String toString() {
+            if (myProtected) {
+                return getBundleString("dataimportConfigPanel.fileTypes.protection.true");
+            } else {
+                return getBundleString("dataimportConfigPanel.fileTypes.protection.false");
+            }
+        }
     }
 }

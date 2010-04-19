@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.Application;
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
@@ -13,14 +12,11 @@ import de.codewave.mytunesrss.AddonsUtils;
 import de.codewave.mytunesrss.ExternalSiteDefinition;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,7 +27,6 @@ import java.net.URL;
 import java.util.*;
 
 public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.Receiver, Upload.SucceededListener, Upload.FailedListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AddonsConfigPanel.class);
 
     private Panel myThemesPanel;
     private Panel myLanguagesPanel;
@@ -44,11 +39,8 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private Button myAddSite;
     private File myUploadDir;
 
-    public AddonsConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("addonsConfigPanel.caption"), componentFactory.createGridLayout(1, 4, true, true), componentFactory);
-    }
-
-    protected void init(Application application) {
+    public void attach() {
+        init(getApplication().getBundleString("addonsConfigPanel.caption"), getApplication().getComponentFactory().createGridLayout(1, 4, true, true));
         myThemesPanel = new Panel(getBundleString("addonsConfigPanel.caption.themes"), getComponentFactory().createVerticalLayout(true, true));
         myThemesTable = new Table();
         myThemesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.themes.name"), null, null);
@@ -89,7 +81,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
     }
 
-    protected void initFromConfig(Application application) {
+    protected void initFromConfig() {
         refreshThemes();
         refreshLanguages();
         mySitesTable.removeAllItems();

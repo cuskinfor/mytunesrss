@@ -9,6 +9,7 @@ import com.vaadin.Application;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Form;
+import com.vaadin.ui.GridLayout;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.statistics.GetStatisticEventsQuery;
@@ -38,13 +39,10 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
     private DateField myReportToDate;
     private Button mySendButton;
 
-    public StatisticsConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("statisticsConfigPanel.caption"), componentFactory.createGridLayout(1, 3, true, true), componentFactory);
-    }
-
-    protected void init(Application application) {
+    public void attach() {
+        init(getBundleString("statisticsConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
         myConfigForm = getComponentFactory().createForm(null, true);
-        myStatisticsKeepTime = getComponentFactory().createTextField("statisticsConfigPanel.statisticsKeepTime", ValidatorFactory.createMinMaxValidator(1, 720));
+        myStatisticsKeepTime = getComponentFactory().createTextField("statisticsConfigPanel.statisticsKeepTime", getApplication().getValidatorFactory().createMinMaxValidator(1, 720));
         Calendar from = new GregorianCalendar();
         from.set(Calendar.DAY_OF_MONTH, from.getActualMinimum(Calendar.DAY_OF_MONTH));
         myReportFromDate = new DateField(getBundleString("statisticsConfigPanel.reportFrom"), from.getTime());
@@ -67,9 +65,11 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         addComponent(getComponentFactory().surroundWithPanel(sendForm, FORM_PANEL_MARGIN_INFO, getBundleString("statisticsConfigPanel.send.caption")));
 
         addMainButtons(0, 2, 0, 2);
+
+        initFromConfig();
     }
 
-    protected void initFromConfig(Application application) {
+    protected void initFromConfig() {
         myStatisticsKeepTime.setValue(MyTunesRss.CONFIG.getStatisticKeepTime(), 0, 365, 60);
     }
 

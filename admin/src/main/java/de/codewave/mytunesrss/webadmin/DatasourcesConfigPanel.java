@@ -47,11 +47,8 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     private Form myUploadForm;
     private static final Pattern XML_FILE_PATTERN = Pattern.compile("^.*\\.xml$", Pattern.CASE_INSENSITIVE);
 
-    public DatasourcesConfigPanel(Application application, ComponentFactory componentFactory) {
-        super(application, getBundleString("datasourcesConfigPanel.caption"), componentFactory.createGridLayout(1, 5, true, true), componentFactory);
-    }
-
-    protected void init(Application application) {
+    public void attach() {
+        init(getBundleString("datasourcesConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
         Panel sourcesPanel = new Panel(getBundleString("datasourcesConfigPanel.caption.sources"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(sourcesPanel);
         myDatasources = new Table();
@@ -94,12 +91,14 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         addComponent(getComponentFactory().surroundWithPanel(myUploadForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourcesConfigPanel.caption.upload")));
 
         addMainButtons(0, 4, 0, 4);
+
+        initFromConfig();
     }
 
-    protected void initFromConfig(Application application) {
+    protected void initFromConfig() {
         myDatasources.removeAllItems();
         for (String datasource : MyTunesRss.CONFIG.getDatasources()) {
-            addDatasource(application, datasource);
+            addDatasource(getApplication(), datasource);
         }
         myAlbumFallback.setValue(MyTunesRss.CONFIG.getAlbumFallback());
         myArtistFallback.setValue(MyTunesRss.CONFIG.getArtistFallback());
