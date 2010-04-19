@@ -40,27 +40,9 @@ import java.util.concurrent.Future;
  */
 public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssCommandHandler.class);
-    private static boolean SCHEDULE_DATABASE_UPDATE;
 
     protected MyTunesRssConfig getMyTunesRssConfig() {
         return (MyTunesRssConfig) getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
-    }
-
-    protected void runDatabaseUpdate() {
-        SCHEDULE_DATABASE_UPDATE = false;
-        final Future<Boolean> future = MyTunesRss.EXECUTOR.submit(new DatabaseBuilderCallable());
-        DatabaseBuilderCallable.setFuture(future);
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    SCHEDULE_DATABASE_UPDATE = !future.get();
-                } catch (InterruptedException e) {
-                    SCHEDULE_DATABASE_UPDATE = true;
-                } catch (ExecutionException e) {
-                    SCHEDULE_DATABASE_UPDATE = true;
-                }
-            }
-        }).start();
     }
 
     protected boolean isAuthorized(String userName, String password, byte[] passwordHash) {
@@ -202,7 +184,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getRequest().setAttribute("encryptionKey", MyTunesRss.CONFIG.getPathInfoKey());
         getRequest().setAttribute("globalConfig", MyTunesRss.CONFIG);
         setResourceBundle();
-        if (DatabaseBuilderCallable.isRunning()) {
+        if (MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning()) {
             if (DatabaseBuilderCallable.getState() == DatabaseBuilderCallable.State.UpdatingTracksFromFolder ||
                     DatabaseBuilderCallable.getState() == DatabaseBuilderCallable.State.UpdatingTracksFromItunes) {
                 addMessage(new BundleError("info.databaseUpdating"));
@@ -316,9 +298,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                     LOG.debug(msg.substring(0, msg.length() - 1));
                 }
             }
-        }
-        if (SCHEDULE_DATABASE_UPDATE) {
-            runDatabaseUpdate();
         }
         try {
             if (!isSessionAuthorized() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAutoLogin())) {

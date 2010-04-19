@@ -48,7 +48,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 StatisticsEventManager.getInstance().fireEvent(new UploadEvent(getAuthUser(), item.getSize()));
                 info.append(item.getName()).append("\n");
             }
-            runDatabaseUpdate();
+            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate();
             MyTunesRss.ADMIN_NOTIFY.notifyWebUpload(getAuthUser(), info.toString());
             forward(MyTunesRssResource.UploadFinished);
         } else {

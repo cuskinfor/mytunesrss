@@ -74,7 +74,7 @@ public class MyTunesRss {
     public static QuicktimePlayer QUICKTIME_PLAYER;
     public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
     public static String[] ORIGINAL_CMD_ARGS;
-    public static ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+    public static MyTunesRssExecutorService EXECUTOR_SERVICE = new MyTunesRssExecutorService();
     public static Server ADMIN_SERVER;
 
     private static void init() {

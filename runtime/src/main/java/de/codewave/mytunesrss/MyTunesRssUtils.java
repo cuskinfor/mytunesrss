@@ -154,17 +154,17 @@ public class MyTunesRssUtils {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Shutting down gracefully.");
         }
-        DatabaseBuilderCallable.interruptCurrentTask();
+        MyTunesRss.EXECUTOR_SERVICE.cancelDatabaseUpdate();
         if (MyTunesRss.WEBSERVER != null && MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRss.stopWebserver();
         }
         if (MyTunesRss.WEBSERVER == null || !MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
-            if (DatabaseBuilderCallable.isRunning()) {
+            if (MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning()) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Database still updating... waiting for it to finish.");
                 }
-                while (DatabaseBuilderCallable.isRunning()) {
+                while (MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning()) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -309,18 +309,15 @@ public class MyTunesRssUtils {
     }
 
     public static void executeDatabaseUpdate() {
-        if (!DatabaseBuilderCallable.isRunning()) {
-            try {
-                if (!new DatabaseBuilderCallable().call()) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateNotRun"));
-                }
-            } catch (Exception e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Error during database update", e);
-                }
+        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate();
+        try {
+            if (!MyTunesRss.EXECUTOR_SERVICE.getDatabaseUpdateResult()) {
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateNotRun"));
             }
-        } else {
-            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateAlreadyRunning"));
+        } catch (Exception e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Error during database update", e);
+            }
         }
     }
 

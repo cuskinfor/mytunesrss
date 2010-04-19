@@ -68,7 +68,7 @@ public class TagService {
             for (String tag : tags) {
                 TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(trackIds, tag));
             }
-            MyTunesRss.EXECUTOR.submit(new RefreshSmartPlaylistsAndLuceneIndexCallable(trackIds));
+            MyTunesRss.EXECUTOR_SERVICE.scheduleLuceneAndSmartPlaylistUpdate(trackIds);
         } else {
             throw new IllegalAccessException("Unauthorized");
         }
@@ -80,7 +80,7 @@ public class TagService {
             for (String tag : tags) {
                 TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(trackIds, tag));
             }
-            MyTunesRss.EXECUTOR.submit(new RefreshSmartPlaylistsAndLuceneIndexCallable(trackIds));
+            MyTunesRss.EXECUTOR_SERVICE.scheduleLuceneAndSmartPlaylistUpdate(trackIds);
         } else {
             throw new IllegalAccessException("Unauthorized");
         }
