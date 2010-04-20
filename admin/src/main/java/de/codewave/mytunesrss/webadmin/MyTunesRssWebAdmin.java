@@ -74,7 +74,13 @@ public class MyTunesRssWebAdmin extends Application {
     }
 
     public void handleException(Exception e) {
-        // TODO send support request dialog
-        getMainWindow().showNotification("An unexpected error has occured", ExceptionUtils.getFullStackTrace(e), Window.Notification.TYPE_ERROR_MESSAGE);
+        MyTunesRss.ERROR_QUEUE.add(e);
+        getMainWindow().showNotification("An unexpected error has occured. Please consider sending a support request now.", ExceptionUtils.getFullStackTrace(e), Window.Notification.TYPE_ERROR_MESSAGE);
+        getMainWindow().setContent(new SupportConfigPanel());
+    }
+
+    @Override
+    public String getLogoutURL() {
+        return "/";
     }
 }

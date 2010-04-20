@@ -11,10 +11,12 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.task.RecreateDatabaseCallable;
 import de.codewave.vaadin.SmartTextField;
+import org.vaadin.henrik.refresher.Refresher;
 
-public class StatusPanel extends Panel implements Button.ClickListener {
+public class StatusPanel extends Panel implements Button.ClickListener, MyTunesRssEventListener {
 
     private Label myServerStatus;
     private Button myStartServer;
@@ -37,8 +39,10 @@ public class StatusPanel extends Panel implements Button.ClickListener {
     private Button mySupportConfig;
     private Button myHelp;
     private Button myLogout;
+    private Refresher myRefresher;
 
     public void attach() {
+        MyTunesRssEventManager.getInstance().addListener(this);
         setContent(getApplication().getComponentFactory().createVerticalLayout(true, true));
         setCaption(getApplication().getBundleString("statusPanel.caption"));
         Embedded logo = new Embedded("", new ClassResource("mytunesrss.png", getApplication()));
@@ -112,12 +116,21 @@ public class StatusPanel extends Panel implements Button.ClickListener {
         myLogout = getApplication().getComponentFactory().createButton("statusPanel.logout", StatusPanel.this);
         buttons.addComponent(myHelp);
         buttons.addComponent(myLogout);
+        myRefresher = new Refresher();
+        addComponent(myRefresher);
+
         initFromConfig();
+    }
+
+    @Override
+    public void detach() {
+        MyTunesRssEventManager.getInstance().removeListener(this);
     }
 
     private void initFromConfig() {
         myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
         myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
+        myRefresher.setRefreshInterval(1000);
     }
 
     public MyTunesRssWebAdmin getApplication() {
@@ -152,6 +165,22 @@ public class StatusPanel extends Panel implements Button.ClickListener {
             application.setMainComponent(new AddonsConfigPanel());
         } else if (clickEvent.getButton() == mySupportConfig) {
             application.setMainComponent(new SupportConfigPanel());
+        } else if (clickEvent.getSource() == myUpdateDatabase) {
+            MyTunesRssExecutorService.scheduleDatabaseUpdate();
+        } else if (clickEvent.getSource() == myResetDatabase) {
+            try {
+                new RecreateDatabaseCallable().call();
+            } catch (Exception e) {
+                getApplication().handleException(e);
+            }
+        }
+    }
+
+    public void handleEvent(MyTunesRssEvent event) {
+        if (event.getType() == MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED) {
+            synchronized (getApplication()) {
+                myDatabaseStatus.setValue(MyTunesRssUtils.getBundleString(event.getMessageKey(), event.getMessageParams()));
+            }
         }
     }
 }

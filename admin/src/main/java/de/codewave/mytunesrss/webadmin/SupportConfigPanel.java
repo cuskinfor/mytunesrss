@@ -16,10 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -38,6 +35,8 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
     private DateField myExpirationDate;
     private Upload myUploadLicense;
     private SmartTextField mySysInfo;
+    private SmartTextField myErrors;
+    private Button myClearErrors;
     private File myUploadDir;
 
     public void attach() {
@@ -77,9 +76,15 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         myLogLevel = getComponentFactory().createSelect("supportConfigPanel.logLevel", Arrays.asList(Level.OFF, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG));
         mySysInfo = getComponentFactory().createTextField("supportConfigPanel.sysInfo");
         mySysInfo.setEnabled(false);
-        mySysInfo.setRows(10);
+        mySysInfo.setRows(5);
         mySysInfoForm.addField("logLevel", myLogLevel);
         mySysInfoForm.addField("sysInfo", mySysInfo);
+        myErrors = getComponentFactory().createTextField("supportConfigPanel.errors");
+        myErrors.setEnabled(false);
+        myErrors.setRows(10);
+        mySysInfoForm.addField("errors", myErrors);
+        myClearErrors = getComponentFactory().createButton("supportConfigPanel.clearErrors", this);
+        mySysInfoForm.addField("clearErrors", myClearErrors);
         addComponent(getComponentFactory().surroundWithPanel(mySysInfoForm, FORM_PANEL_MARGIN_INFO, getBundleString("supportConfigPanel.caption.sysInfo")));
 
         addMainButtons(0, 3, 0, 3);
@@ -96,6 +101,13 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
             myExpirationDate.setValue(new Date(MyTunesRss.REGISTRATION.getExpiration()));
         }
         mySysInfo.setValue(MyTunesRssUtils.getSystemInfo());
+        StringBuilder builder = new StringBuilder();
+        for (Throwable t : MyTunesRss.ERROR_QUEUE.toArray(new Throwable[MyTunesRss.ERROR_QUEUE.size()])) {
+            StringWriter sw = new StringWriter();
+            t.printStackTrace(new PrintWriter(sw));
+            builder.append(sw.toString()).append("\n");
+        }
+        myErrors.setValue(builder.toString(), null);
     }
 
     protected void writeToConfig() {
@@ -116,6 +128,9 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
             } else {
                 getApplication().showError("supportConfigPanel.error.allFieldsMandatoryForSupport");
             }
+        } else if (clickEvent.getSource() == myClearErrors) {
+            MyTunesRss.ERROR_QUEUE.clear();
+            myErrors.setValue(null);
         } else {
             super.buttonClick(clickEvent);
         }

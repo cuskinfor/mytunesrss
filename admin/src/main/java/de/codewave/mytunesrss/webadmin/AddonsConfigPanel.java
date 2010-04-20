@@ -79,6 +79,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
         addMainButtons(0, 3, 0, 3);
 
+        initFromConfig();
     }
 
     protected void initFromConfig() {
@@ -88,6 +89,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         for (ExternalSiteDefinition site : MyTunesRss.CONFIG.getExternalSites()) {
             addSite(site);
         }
+        setTablePageLengths();
     }
 
     private void refreshLanguages() {

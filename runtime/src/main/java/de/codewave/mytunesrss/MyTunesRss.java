@@ -42,6 +42,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -76,6 +77,7 @@ public class MyTunesRss {
     public static String[] ORIGINAL_CMD_ARGS;
     public static MyTunesRssExecutorService EXECUTOR_SERVICE = new MyTunesRssExecutorService();
     public static Server ADMIN_SERVER;
+    public static Queue<Throwable> ERROR_QUEUE = new ConcurrentLinkedQueue<Throwable>();
 
     private static void init() {
         try {
@@ -202,6 +204,7 @@ public class MyTunesRss {
             }
             LOGGER.info("--------------------------------------------------------------------------------");
         }
+        Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(false));
         if (System.getProperty("de.codewave.mytunesrss") == null) {
             String type = "generic";
             if (SystemUtils.IS_OS_WINDOWS) {
