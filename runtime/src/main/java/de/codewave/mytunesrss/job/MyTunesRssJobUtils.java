@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * de.codewave.mytunesrss.job.MyTunesRssJobUtils
@@ -75,7 +76,7 @@ public class MyTunesRssJobUtils {
         String[] keys = new String[]{"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN", "MON-FRI", "SUN-SAT", "SAT,SUN"};
         TriggerItem[] items = new TriggerItem[keys.length];
         for (int i = 0; i < keys.length; i++) {
-            items[i] = new TriggerItem(keys[i], MyTunesRssUtils.getBundleString("settings.cron.day." + keys[i]));
+            items[i] = new TriggerItem(keys[i], MyTunesRssUtils.getBundleString(Locale.getDefault(), "settings.cron.day." + keys[i]));
         }
         return items;
     }

@@ -4,7 +4,6 @@ import com.ibm.icu.text.Normalizer;
 import de.codewave.mytunesrss.datastore.external.YouTubeLoader;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
-import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreSession;
@@ -35,7 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -128,11 +126,12 @@ public class MyTunesRssUtils {
     }
 
 
-    public static String getBundleString(String key, Object... parameters) {
+    public static String getBundleString(Locale locale, String key, Object... parameters) {
+        ResourceBundle bundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss", locale, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
         if (parameters == null || parameters.length == 0) {
-            return MyTunesRss.BUNDLE.getString(key);
+            return bundle.getString(key);
         }
-        return MessageFormat.format(MyTunesRss.BUNDLE.getString(key), parameters);
+        return MessageFormat.format(bundle.getString(key), parameters);
     }
 
     public static HttpClient createHttpClient() {
@@ -154,7 +153,7 @@ public class MyTunesRssUtils {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Shutting down gracefully.");
         }
-        MyTunesRss.EXECUTOR_SERVICE.cancelDatabaseUpdate();
+        MyTunesRss.EXECUTOR_SERVICE.cancelDatabaseJob();
         if (MyTunesRss.WEBSERVER != null && MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRss.stopWebserver();
         }
@@ -312,7 +311,7 @@ public class MyTunesRssUtils {
         MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate();
         try {
             if (!MyTunesRss.EXECUTOR_SERVICE.getDatabaseUpdateResult()) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.updateNotRun"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.updateNotRun"));
             }
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
@@ -388,7 +387,7 @@ public class MyTunesRssUtils {
 
     public static String getSystemInfo() {
         StringBuilder systemInfo = new StringBuilder();
-        systemInfo.append(MyTunesRssUtils.getBundleString("sysinfo.quicktime." + Boolean.toString(MyTunesRss.QUICKTIME_PLAYER != null))).append(System.getProperty("line.separator"));
+        systemInfo.append(MyTunesRssUtils.getBundleString(Locale.getDefault(), "sysinfo.quicktime." + Boolean.toString(MyTunesRss.QUICKTIME_PLAYER != null))).append(System.getProperty("line.separator"));
         return systemInfo.toString();
     }
 

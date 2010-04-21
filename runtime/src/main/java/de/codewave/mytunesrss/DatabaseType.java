@@ -5,12 +5,14 @@
 
 package de.codewave.mytunesrss;
 
+import java.util.Locale;
+
 public enum DatabaseType {
     h2(), h2custom(), postgres(), mysql();
 
 
     @Override
     public String toString() {
-        return MyTunesRssUtils.getBundleString("settings.database.type." + name());
+        return MyTunesRssUtils.getBundleString(Locale.getDefault(), "settings.database.type." + name());
     }
 }

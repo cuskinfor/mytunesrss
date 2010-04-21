@@ -318,13 +318,13 @@ public class AddonsUtils {
             if (themeDir.isDirectory()) {
                 FileUtils.deleteDirectory(themeDir);
             } else {
-                return MyTunesRssUtils.getBundleString("error.deleteThemeNoDir");
+                return MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.deleteThemeNoDir");
             }
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not delete theme \"" + themeName + "\".", e);
             }
-            return MyTunesRssUtils.getBundleString("error.couldNotRemoveTheme");
+            return MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.couldNotRemoveTheme");
         }
         return null;
     }
@@ -342,13 +342,13 @@ public class AddonsUtils {
                     readmeFile.delete();
                 }
             } else {
-                return MyTunesRssUtils.getBundleString("error.deleteLanguageNoFile");
+                return MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.deleteLanguageNoFile");
             }
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not delete language \"" + languageCode + "\".", e);
             }
-            return MyTunesRssUtils.getBundleString("error.couldNotRemoveLanguage");
+            return MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.couldNotRemoveLanguage");
         }
         return null;
     }

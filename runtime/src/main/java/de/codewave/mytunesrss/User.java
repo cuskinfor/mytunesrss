@@ -47,7 +47,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
         @Override
         public String toString() {
-            return MyTunesRssUtils.getBundleString("editUser.quotaType." + name());
+            return MyTunesRssUtils.getBundleString(Locale.getDefault(), "editUser.quotaType." + name());
         }
     }
 

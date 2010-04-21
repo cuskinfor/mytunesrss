@@ -48,9 +48,9 @@ public class WebServer {
     public synchronized boolean start() {
         if (!myRunning.get()) {
             if (MyTunesRss.CONFIG.getPort() < MIN_PORT || MyTunesRss.CONFIG.getPort() > MAX_PORT) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.illegalServerPort"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.illegalServerPort"));
             } else if (MyTunesRss.CONFIG.getUsers() == null || MyTunesRss.CONFIG.getUsers().isEmpty()) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.noUsersFound"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.noUsersFound"));
             } else {
                 try {
                     final Map<String, Object> contextEntries = new HashMap<String, Object>();
@@ -74,9 +74,9 @@ public class WebServer {
                             myEmbeddedTomcat.stop();
                             myEmbeddedTomcat = null;
                             if (health == CheckHealthResult.NULL_DATA_STORE) {
-                                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverNullDataStore"));
+                                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverNullDataStore"));
                             } else {
-                                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverStart"));
+                                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart"));
                             }
                             myEmbeddedTomcat = null;
                             return false;
@@ -88,24 +88,24 @@ public class WebServer {
                         }
                         return true;
                     } else {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverStart"));
+                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart"));
                         myEmbeddedTomcat = null;
                         return false;
                     }
                 } catch (LifecycleException e) {
                     if (e.getMessage().contains("BindException")) {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverAddressBind"));
+                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverAddressBind"));
                     } else {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverStart") + e.getMessage());
+                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart") + e.getMessage());
                     }
                     myEmbeddedTomcat = null;
                     return false;
                 } catch (IOException e) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverStart") + e.getMessage());
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart") + e.getMessage());
                     myEmbeddedTomcat = null;
                     return false;
                 } catch (QuicktimePlayerException e) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.serverStart") + e.getMessage());
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart") + e.getMessage());
                     myEmbeddedTomcat = null;
                     return false;
                 }
@@ -321,7 +321,7 @@ public class WebServer {
                     health = checkServerHealth(MyTunesRss.CONFIG.getPort(), false);
                 }
             } catch (LifecycleException e) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.stopServer") + e.getMessage());
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.stopServer") + e.getMessage());
                 return false;
             }
         }

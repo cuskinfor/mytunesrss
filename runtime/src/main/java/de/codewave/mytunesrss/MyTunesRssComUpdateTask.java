@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -83,7 +84,7 @@ public class MyTunesRssComUpdateTask extends TimerTask {
                 event.setMessageKey("mytunesrsscom.invalidLogin");
             } else {
                 event.setMessageKey("mytunesrsscom.updateOk");
-                event.setMessageParams(new SimpleDateFormat(MyTunesRssUtils.getBundleString("settings.lastMyTunesRssComUpdateDateFormat")).format(new Date()));
+                event.setMessageParams(new SimpleDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "settings.lastMyTunesRssComUpdateDateFormat")).format(new Date()));
             }
             MyTunesRssEventManager.getInstance().fireEvent(event);
         } catch (IOException e) {

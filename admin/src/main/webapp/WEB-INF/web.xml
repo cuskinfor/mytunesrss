@@ -10,7 +10,12 @@
             <param-name>application</param-name>
             <param-value>de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin</param-value>
         </init-param>
-    </servlet>
+        <init-param>
+            <param-name>widgetset</param-name>
+            <param-value>
+                org.vaadin.henrik.refresher.RefresherApplicationWidgetset
+            </param-value>
+        </init-param>    </servlet>
     <servlet-mapping>
         <servlet-name>VaadinServlet</servlet-name>
         <url-pattern>/*</url-pattern>

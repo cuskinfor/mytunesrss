@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 /**
@@ -30,7 +31,7 @@ public class DropAllTablesCallable implements Callable<Void> {
             LOGGER.error("Could not drop all tables.", e);
             if (MyTunesRss.CONFIG.isDefaultDatabase()) {
                 MyTunesRss.CONFIG.setDeleteDatabaseOnExit(true);
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.shutdownAndDeleteDatabase"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.shutdownAndDeleteDatabase"));
                 MyTunesRssUtils.shutdownGracefully();
             } else {
                 throw e;

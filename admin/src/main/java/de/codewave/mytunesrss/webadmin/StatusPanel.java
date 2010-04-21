@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.Application;
 import com.vaadin.terminal.ClassResource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
@@ -12,17 +13,26 @@ import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.task.RecreateDatabaseCallable;
-import de.codewave.vaadin.SmartTextField;
+import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
+import de.codewave.mytunesrss.datastore.statement.SystemInformation;
+import de.codewave.utils.sql.DataStoreSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vaadin.henrik.refresher.Refresher;
 
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class StatusPanel extends Panel implements Button.ClickListener, MyTunesRssEventListener {
+    private static final Logger LOG = LoggerFactory.getLogger(StatusPanel.class);
 
     private Label myServerStatus;
+    private Label myDatabaseStatus;
+    private Label myMyTunesRssComStatus;
     private Button myStartServer;
     private Button myStopServer;
     private Button myServerInfo;
-    private Label myDatabaseStatus;
     private Button myUpdateDatabase;
     private Button myResetDatabase;
     private Button myServerConfig;
@@ -51,10 +61,10 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         addComponent(logo);
         Panel server = new Panel(getApplication().getBundleString("statusPanel.server.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
         addComponent(server);
-        SmartTextField textField = getApplication().getComponentFactory().createTextField("statusPanel.server.status"); // TODO status
-        textField.setEnabled(false);
-        textField.setWidth("100%");
-        server.addComponent(textField);
+        myServerStatus = new Label();
+        myServerStatus.setWidth("100%");
+        myServerStatus.setStyleName("statusmessage");
+        server.addComponent(myServerStatus);
         Panel serverButtons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
         serverButtons.addStyleName("light");
         server.addComponent(serverButtons);
@@ -66,10 +76,10 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         serverButtons.addComponent(myServerInfo);
         Panel database = new Panel(getApplication().getBundleString("statusPanel.database.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
         addComponent(database);
-        textField = getApplication().getComponentFactory().createTextField("statusPanel.database.status"); // TODO status
-        textField.setEnabled(false);
-        textField.setWidth("100%");
-        database.addComponent(textField);
+        myDatabaseStatus = new Label();
+        myDatabaseStatus.setWidth("100%");
+        myDatabaseStatus.setStyleName("statusmessage");
+        database.addComponent(myDatabaseStatus);
         Panel databaseButtons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
         databaseButtons.addStyleName("light");
         database.addComponent(databaseButtons);
@@ -79,10 +89,10 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         databaseButtons.addComponent(myResetDatabase);
         Panel mytunesrss = new Panel(getApplication().getBundleString("statusPanel.mytunesrss.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
         addComponent(mytunesrss);
-        textField = getApplication().getComponentFactory().createTextField("statusPanel.mytunesrss.status"); // TODO status
-        textField.setEnabled(false);
-        textField.setWidth("100%");
-        mytunesrss.addComponent(textField);
+        myMyTunesRssComStatus = new Label();
+        myMyTunesRssComStatus.setWidth("100%");
+        myMyTunesRssComStatus.setStyleName("statusmessage");
+        mytunesrss.addComponent(myMyTunesRssComStatus);
         Panel configButtons = new Panel(getApplication().getBundleString("statusPanel.config.caption"), getApplication().getComponentFactory().createGridLayout(4, 3, true, true));
         addComponent(configButtons);
         myServerConfig = getApplication().getComponentFactory().createButton("statusPanel.config.server", StatusPanel.this);
@@ -130,7 +140,10 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private void initFromConfig() {
         myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
         myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
-        myRefresher.setRefreshInterval(1000);
+        myServerStatus.setValue(MyTunesRss.WEBSERVER.isRunning() ? getApplication().getBundleString("statusPanel.serverRunning") : getApplication().getBundleString("statusPanel.serverStopped"));
+        myDatabaseStatus.setValue(MyTunesRssExecutorService.isDatabaseUpdateRunning() ? null : getLastDatabaseUpdateText());
+        myMyTunesRssComStatus.setValue(getApplication().getBundleString("statusPanel.myTunesRssComStateUnknown"));
+        myRefresher.setRefreshInterval(2500);
     }
 
     public MyTunesRssWebAdmin getApplication() {
@@ -165,22 +178,68 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             application.setMainComponent(new AddonsConfigPanel());
         } else if (clickEvent.getButton() == mySupportConfig) {
             application.setMainComponent(new SupportConfigPanel());
+        } else if (clickEvent.getSource() == myStartServer) {
+            myStartServer.setEnabled(false);
+            MyTunesRss.startWebserver();
+        } else if (clickEvent.getSource() == myStopServer) {
+            myStopServer.setEnabled(false);
+            MyTunesRss.stopWebserver();
         } else if (clickEvent.getSource() == myUpdateDatabase) {
+            myUpdateDatabase.setEnabled(false);
+            myResetDatabase.setEnabled(false);
             MyTunesRssExecutorService.scheduleDatabaseUpdate();
         } else if (clickEvent.getSource() == myResetDatabase) {
-            try {
-                new RecreateDatabaseCallable().call();
-            } catch (Exception e) {
-                getApplication().handleException(e);
-            }
+            myUpdateDatabase.setEnabled(false);
+            myResetDatabase.setEnabled(false);
+            MyTunesRssExecutorService.scheduleDatabaseReset();
         }
     }
 
     public void handleEvent(MyTunesRssEvent event) {
-        if (event.getType() == MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED) {
-            synchronized (getApplication()) {
-                myDatabaseStatus.setValue(MyTunesRssUtils.getBundleString(event.getMessageKey(), event.getMessageParams()));
+        Application application = getApplication();
+        if (application != null) {
+            synchronized (application) {
+                if (event.getType() == MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED) {
+                    myUpdateDatabase.setEnabled(false);
+                    myResetDatabase.setEnabled(false);
+                    myDatabaseStatus.setValue(MyTunesRssUtils.getBundleString(getLocale(), event.getMessageKey(), event.getMessageParams()));
+                } else if (event.getType() == MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED) {
+                    myUpdateDatabase.setEnabled(true);
+                    myResetDatabase.setEnabled(true);
+                    myDatabaseStatus.setValue(getLastDatabaseUpdateText());
+                } else if (event.getType() == MyTunesRssEvent.EventType.SERVER_STARTED) {
+                    myStartServer.setEnabled(false);
+                    myStopServer.setEnabled(true);
+                    myServerStatus.setValue(getApplication().getBundleString("statusPanel.serverRunning"));
+                } else if (event.getType() == MyTunesRssEvent.EventType.SERVER_STOPPED) {
+                    myStartServer.setEnabled(true);
+                    myStopServer.setEnabled(false);
+                    myServerStatus.setValue(getApplication().getBundleString("statusPanel.serverStopped"));
+                } else if (event.getType() == MyTunesRssEvent.EventType.MYTUNESRSS_COM_UPDATED) {
+                    myMyTunesRssComStatus.setValue(MyTunesRssUtils.getBundleString(getLocale(), event.getMessageKey(), event.getMessageParams()));
+                }
             }
         }
+    }
+
+    private String getLastDatabaseUpdateText() {
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
+        try {
+            final SystemInformation systemInformation = session.executeQuery(new GetSystemInformationQuery());
+            if (systemInformation.getLastUpdate() > 0) {
+                Date date = new Date(systemInformation.getLastUpdate());
+                return getApplication().getBundleString("statusPanel.lastDatabaseUpdate") + " " + new SimpleDateFormat(
+                        getApplication().getBundleString("statusPanel.lastDatabaseUpdateDateFormat")).format(date);
+            } else {
+                return getApplication().getBundleString("statusPanel.databaseNotYetCreated");
+            }
+        } catch (SQLException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Could not get last update time from database.", e);
+            }
+        } finally {
+            session.commit();
+        }
+        return getApplication().getBundleString("statusPanel.databaseStatusUnknown");
     }
 }

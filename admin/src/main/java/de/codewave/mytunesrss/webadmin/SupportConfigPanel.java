@@ -19,6 +19,7 @@ import org.apache.log4j.Level;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 
 public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.Receiver, Upload.SucceededListener, Upload.FailedListener {
 
@@ -59,7 +60,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         myRegName = getComponentFactory().createTextField("supportConfigPanel.regName");
         myRegName.setEnabled(false);
         myExpirationDate = new DateField(getBundleString("supportConfigPanel.expirationDate"));
-        myExpirationDate.setDateFormat(MyTunesRssUtils.getBundleString("common.dateFormat"));
+        myExpirationDate.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
         myExpirationDate.setResolution(DateField.RESOLUTION_DAY);
         myExpirationDate.setEnabled(false);
         myUploadLicense = new Upload(null, this);

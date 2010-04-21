@@ -5,17 +5,14 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.Application;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Form;
-import com.vaadin.ui.GridLayout;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.statistics.GetStatisticEventsQuery;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.lang.StringUtils;
@@ -24,10 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
 
@@ -47,13 +41,13 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         from.set(Calendar.DAY_OF_MONTH, from.getActualMinimum(Calendar.DAY_OF_MONTH));
         myReportFromDate = new DateField(getBundleString("statisticsConfigPanel.reportFrom"), from.getTime());
         myReportFromDate.setLenient(false);
-        myReportFromDate.setDateFormat(MyTunesRssUtils.getBundleString("common.dateFormat"));
+        myReportFromDate.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
         myReportFromDate.setResolution(DateField.RESOLUTION_DAY);
         Calendar to = new GregorianCalendar();
         to.set(Calendar.DAY_OF_MONTH, to.getActualMaximum(Calendar.DAY_OF_MONTH));
         myReportToDate = new DateField(getBundleString("statisticsConfigPanel.reportTo"), to.getTime());
         myReportToDate.setLenient(false);
-        myReportToDate.setDateFormat(MyTunesRssUtils.getBundleString("common.dateFormat"));
+        myReportToDate.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
         myReportToDate.setResolution(DateField.RESOLUTION_DAY);
         myConfigForm.addField(myStatisticsKeepTime, myStatisticsKeepTime);
         mySendButton = getComponentFactory().createButton("statisticsConfigPanel.send", this);
@@ -113,7 +107,7 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
             tx.commit();
             String statisticsMailBody = StringUtils.join(csv, System.getProperty("line.separator"));
             try {
-                MyTunesRss.MAILER.sendMail(MyTunesRss.CONFIG.getAdminEmail(), MyTunesRssUtils.getBundleString("email.subject.statistics",
+                MyTunesRss.MAILER.sendMail(MyTunesRss.CONFIG.getAdminEmail(), MyTunesRssUtils.getBundleString(Locale.getDefault(), "email.subject.statistics",
                         Integer.toString(from.get(Calendar.DAY_OF_MONTH)),
                         Integer.toString(from.get(Calendar.MONTH) + 1),
                         Integer.toString(from.get(Calendar.YEAR)),

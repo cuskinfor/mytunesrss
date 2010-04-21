@@ -25,7 +25,6 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +41,8 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -59,7 +57,6 @@ public class MyTunesRss {
     public static URL UPDATE_URL;
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
     public static MyTunesRssConfig CONFIG;
-    public static ResourceBundle BUNDLE = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss");
     public static WebServer WEBSERVER = new WebServer();
     public static Timer SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
     public static MessageDigest SHA1_DIGEST;
@@ -212,30 +209,30 @@ public class MyTunesRss {
             } else if (SystemUtils.IS_OS_MAC_OSX) {
                 type = "osx";
             }
-            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.missingSystemProperty." + type));
+            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.missingSystemProperty." + type));
         }
         if (MyTunesRssUtils.isOtherInstanceRunning(3000)) {
-            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.otherInstanceRunning"));
+            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.otherInstanceRunning"));
             MyTunesRssUtils.shutdownGracefully();
         }
         if (new Version(CONFIG.getVersion()).compareTo(new Version(VERSION)) > 0) {
-            MyTunesRssUtils.showErrorMessage(MessageFormat.format(BUNDLE.getString("error.configVersionMismatch"), VERSION, CONFIG.getVersion()));
+            MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.configVersionMismatch"), VERSION, CONFIG.getVersion()));
             MyTunesRssUtils.shutdownGracefully();
         }
         if (REGISTRATION.isExpiredPreReleaseVersion()) {
-            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.preReleaseVersionExpired"));
+            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.preReleaseVersionExpired"));
             MyTunesRssUtils.shutdownGracefully();
         } else if (REGISTRATION.isExpired()) {
-            MyTunesRssUtils.showErrorMessage(BUNDLE.getString("error.registrationExpiredHeadless"));
+            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.registrationExpiredHeadless"));
             MyTunesRssUtils.shutdownGracefully();
         } else if (REGISTRATION.isExpirationDate() && !REGISTRATION.isReleaseVersion()) {
-            MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.preReleaseExpiration",
+            MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "info.preReleaseExpiration",
                     REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
-                            "common.dateFormat"))));
+                            Locale.getDefault(), "common.dateFormat"))));
         } else if (REGISTRATION.isExpirationDate() && !REGISTRATION.isExpired()) {
-            MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString("info.expirationInfo",
+            MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "info.expirationInfo",
                     REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
-                            "common.dateFormat"))));
+                            Locale.getDefault(), "common.dateFormat"))));
         }
         QUARTZ_SCHEDULER = new StdSchedulerFactory().getScheduler();
         if (LOGGER.isInfoEnabled()) {
@@ -356,7 +353,7 @@ public class MyTunesRss {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Database driver class not found.", e);
                 }
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.databaseDriverNotFound",
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseDriverNotFound",
                         driverClassName,
                         libDir.getAbsolutePath()));
                 MyTunesRssUtils.shutdownGracefully();
@@ -373,7 +370,7 @@ public class MyTunesRss {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Database driver class not found.", e);
                 }
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.databaseDriverNotFound",
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseDriverNotFound",
                         driverClassName,
                         libDir.getAbsolutePath()));
                 MyTunesRssUtils.shutdownGracefully();
@@ -390,7 +387,7 @@ public class MyTunesRss {
             InitializeDatabaseCallable callable = new InitializeDatabaseCallable();
             callable.call();
             if (callable.getException() != null) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.databaseInitError"));
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitError"));
                 if (isAutoResetDatabaseOnError()) {
                     LOGGER.info("Recreating default database.");
                     CONFIG.setDefaultDatabaseSettings();
@@ -406,7 +403,7 @@ public class MyTunesRss {
                 MyTunesRssUtils.shutdownGracefully();
             }
             if (callable.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
-                MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString("error.databaseVersionMismatch"), MyTunesRss.VERSION, callable.getDatabaseVersion().toString()));
+                MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatch"), MyTunesRss.VERSION, callable.getDatabaseVersion().toString()));
                 if (isAutoResetDatabaseOnError()) {
                     LOGGER.info("Recreating default database.");
                     CONFIG.setDefaultDatabaseSettings();

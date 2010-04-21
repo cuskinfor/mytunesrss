@@ -25,6 +25,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * de.codewave.mytunesrss.quicktime.QuicktimePlayer
@@ -61,7 +62,7 @@ public class QuicktimePlayer {
                 MyTunesRss.QUICKTIME_PLAYER = null;
                 if (!MyTunesRss.CONFIG.isQuicktime64BitWarned()) {
                     MyTunesRss.CONFIG.setQuicktime64BitWarned(true);
-                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.quicktimeUnsatisfiedLink"));
+                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.quicktimeUnsatisfiedLink"));
                 }
             }
         }

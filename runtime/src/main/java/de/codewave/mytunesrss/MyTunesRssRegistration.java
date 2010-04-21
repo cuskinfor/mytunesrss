@@ -13,6 +13,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssRegistration
@@ -167,7 +168,7 @@ public class MyTunesRssRegistration {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Registration data:");
                 LOG.debug("name=" + getName());
-                LOG.debug("expiration=" + getExpiration(MyTunesRssUtils.getBundleString("common.dateFormat")));
+                LOG.debug("expiration=" + getExpiration(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat")));
                 LOG.debug("max-version=" + myMaxVersion);
             }
         }
