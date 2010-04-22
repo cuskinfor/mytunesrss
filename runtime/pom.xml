@@ -30,6 +30,19 @@
             </snapshots>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>codewave-nexus</id>
+            <name>Codewave Maven Repository</name>
+            <url>http://nexus.codewave.dyn-o-saur.com/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
     <properties>
         <tomcat.version>5.5.23</tomcat.version>
         <uidesigner/>

@@ -29,6 +29,19 @@
             </snapshots>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>codewave-nexus</id>
+            <name>Codewave Maven Repository</name>
+            <url>http://nexus.codewave.dyn-o-saur.com/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
     <dependencies>
         <dependency>
             <groupId>de.codewave.mytunesrss</groupId>
