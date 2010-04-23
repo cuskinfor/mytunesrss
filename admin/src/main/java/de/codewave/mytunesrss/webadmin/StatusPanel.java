@@ -50,100 +50,97 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private Button myHelp;
     private Button myLogout;
     private Refresher myRefresher;
+    private boolean myInitialized;
 
     public void attach() {
-        MyTunesRssEventManager.getInstance().addListener(this);
-        setContent(getApplication().getComponentFactory().createVerticalLayout(true, true));
-        setCaption(getApplication().getBundleString("statusPanel.caption"));
-        Embedded logo = new Embedded("", new ClassResource("mytunesrss.png", getApplication()));
-        logo.setWidth(241, Sizeable.UNITS_PIXELS);
-        logo.setHeight(88, Sizeable.UNITS_PIXELS);
-        addComponent(logo);
-        Panel server = new Panel(getApplication().getBundleString("statusPanel.server.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
-        addComponent(server);
-        myServerStatus = new Label();
-        myServerStatus.setWidth("100%");
-        myServerStatus.setStyleName("statusmessage");
-        server.addComponent(myServerStatus);
-        Panel serverButtons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
-        serverButtons.addStyleName("light");
-        server.addComponent(serverButtons);
-        myStartServer = getApplication().getComponentFactory().createButton("statusPanel.server.start", StatusPanel.this);
-        myStopServer = getApplication().getComponentFactory().createButton("statusPanel.server.stop", StatusPanel.this);
-        myServerInfo = getApplication().getComponentFactory().createButton("statusPanel.server.info", StatusPanel.this);
-        serverButtons.addComponent(myStartServer);
-        serverButtons.addComponent(myStopServer);
-        serverButtons.addComponent(myServerInfo);
-        Panel database = new Panel(getApplication().getBundleString("statusPanel.database.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
-        addComponent(database);
-        myDatabaseStatus = new Label();
-        myDatabaseStatus.setWidth("100%");
-        myDatabaseStatus.setStyleName("statusmessage");
-        database.addComponent(myDatabaseStatus);
-        Panel databaseButtons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
-        databaseButtons.addStyleName("light");
-        database.addComponent(databaseButtons);
-        myUpdateDatabase = getApplication().getComponentFactory().createButton("statusPanel.database.update", StatusPanel.this);
-        myResetDatabase = getApplication().getComponentFactory().createButton("statusPanel.database.reset", StatusPanel.this);
-        databaseButtons.addComponent(myUpdateDatabase);
-        databaseButtons.addComponent(myResetDatabase);
-        Panel mytunesrss = new Panel(getApplication().getBundleString("statusPanel.mytunesrss.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
-        addComponent(mytunesrss);
-        myMyTunesRssComStatus = new Label();
-        myMyTunesRssComStatus.setWidth("100%");
-        myMyTunesRssComStatus.setStyleName("statusmessage");
-        mytunesrss.addComponent(myMyTunesRssComStatus);
-        Panel configButtons = new Panel(getApplication().getBundleString("statusPanel.config.caption"), getApplication().getComponentFactory().createGridLayout(4, 3, true, true));
-        addComponent(configButtons);
-        myServerConfig = getApplication().getComponentFactory().createButton("statusPanel.config.server", StatusPanel.this);
-        myDatabaseConfig = getApplication().getComponentFactory().createButton("statusPanel.config.database", StatusPanel.this);
-        myDatasourcesConfig = getApplication().getComponentFactory().createButton("statusPanel.config.datasources", StatusPanel.this);
-        myDataimportConfig = getApplication().getComponentFactory().createButton("statusPanel.config.dataimport", StatusPanel.this);
-        myContentConfig = getApplication().getComponentFactory().createButton("statusPanel.config.contents", StatusPanel.this);
-        myUsersConfig = getApplication().getComponentFactory().createButton("statusPanel.config.users", StatusPanel.this);
-        myNotificationsConfig = getApplication().getComponentFactory().createButton("statusPanel.config.notifications", StatusPanel.this);
-        myStatisticsConfig = getApplication().getComponentFactory().createButton("statusPanel.config.statistics", StatusPanel.this);
-        myMiscConfig = getApplication().getComponentFactory().createButton("statusPanel.config.misc", StatusPanel.this);
-        myStreamingConfig = getApplication().getComponentFactory().createButton("statusPanel.config.streaming", StatusPanel.this);
-        myAddonsConfig = getApplication().getComponentFactory().createButton("statusPanel.config.addons", StatusPanel.this);
-        mySupportConfig = getApplication().getComponentFactory().createButton("statusPanel.config.support", StatusPanel.this);
-        configButtons.addComponent(myServerConfig);
-        configButtons.addComponent(myDatabaseConfig);
-        configButtons.addComponent(myDatasourcesConfig);
-        configButtons.addComponent(myDataimportConfig);
-        configButtons.addComponent(myContentConfig);
-        configButtons.addComponent(myUsersConfig);
-        configButtons.addComponent(myNotificationsConfig);
-        configButtons.addComponent(myStatisticsConfig);
-        configButtons.addComponent(myMiscConfig);
-        configButtons.addComponent(myStreamingConfig);
-        configButtons.addComponent(myAddonsConfig);
-        configButtons.addComponent(mySupportConfig);
-        Panel buttons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
-        buttons.addStyleName("light");
-        addComponent(buttons);
-        myHelp = getApplication().getComponentFactory().createButton("statusPanel.help", StatusPanel.this);
-        myLogout = getApplication().getComponentFactory().createButton("statusPanel.logout", StatusPanel.this);
-        buttons.addComponent(myHelp);
-        buttons.addComponent(myLogout);
-        myRefresher = new Refresher();
-        addComponent(myRefresher);
-
-        initFromConfig();
-    }
-
-    @Override
-    public void detach() {
-        MyTunesRssEventManager.getInstance().removeListener(this);
-    }
-
-    private void initFromConfig() {
-        myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
-        myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
-        myServerStatus.setValue(MyTunesRss.WEBSERVER.isRunning() ? getApplication().getBundleString("statusPanel.serverRunning") : getApplication().getBundleString("statusPanel.serverStopped"));
-        myDatabaseStatus.setValue(MyTunesRssExecutorService.isDatabaseUpdateRunning() ? null : getLastDatabaseUpdateText());
-        myMyTunesRssComStatus.setValue(getApplication().getBundleString("statusPanel.myTunesRssComStateUnknown"));
-        myRefresher.setRefreshInterval(2500);
+        if (!myInitialized) {
+            setContent(getApplication().getComponentFactory().createVerticalLayout(true, true));
+            setCaption(getApplication().getBundleString("statusPanel.caption"));
+            Embedded logo = new Embedded("", new ClassResource("mytunesrss.png", getApplication()));
+            logo.setWidth(241, Sizeable.UNITS_PIXELS);
+            logo.setHeight(88, Sizeable.UNITS_PIXELS);
+            addComponent(logo);
+            Panel server = new Panel(getApplication().getBundleString("statusPanel.server.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
+            addComponent(server);
+            myServerStatus = new Label();
+            myServerStatus.setWidth("100%");
+            myServerStatus.setStyleName("statusmessage");
+            server.addComponent(myServerStatus);
+            Panel serverButtons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
+            serverButtons.addStyleName("light");
+            server.addComponent(serverButtons);
+            myStartServer = getApplication().getComponentFactory().createButton("statusPanel.server.start", StatusPanel.this);
+            myStopServer = getApplication().getComponentFactory().createButton("statusPanel.server.stop", StatusPanel.this);
+            myServerInfo = getApplication().getComponentFactory().createButton("statusPanel.server.info", StatusPanel.this);
+            serverButtons.addComponent(myStartServer);
+            serverButtons.addComponent(myStopServer);
+            serverButtons.addComponent(myServerInfo);
+            Panel database = new Panel(getApplication().getBundleString("statusPanel.database.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
+            addComponent(database);
+            myDatabaseStatus = new Label();
+            myDatabaseStatus.setWidth("100%");
+            myDatabaseStatus.setStyleName("statusmessage");
+            database.addComponent(myDatabaseStatus);
+            Panel databaseButtons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
+            databaseButtons.addStyleName("light");
+            database.addComponent(databaseButtons);
+            myUpdateDatabase = getApplication().getComponentFactory().createButton("statusPanel.database.update", StatusPanel.this);
+            myResetDatabase = getApplication().getComponentFactory().createButton("statusPanel.database.reset", StatusPanel.this);
+            databaseButtons.addComponent(myUpdateDatabase);
+            databaseButtons.addComponent(myResetDatabase);
+            Panel mytunesrss = new Panel(getApplication().getBundleString("statusPanel.mytunesrss.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
+            addComponent(mytunesrss);
+            myMyTunesRssComStatus = new Label();
+            myMyTunesRssComStatus.setWidth("100%");
+            myMyTunesRssComStatus.setStyleName("statusmessage");
+            mytunesrss.addComponent(myMyTunesRssComStatus);
+            Panel configButtons = new Panel(getApplication().getBundleString("statusPanel.config.caption"), getApplication().getComponentFactory().createGridLayout(4, 3, true, true));
+            addComponent(configButtons);
+            myServerConfig = getApplication().getComponentFactory().createButton("statusPanel.config.server", StatusPanel.this);
+            myDatabaseConfig = getApplication().getComponentFactory().createButton("statusPanel.config.database", StatusPanel.this);
+            myDatasourcesConfig = getApplication().getComponentFactory().createButton("statusPanel.config.datasources", StatusPanel.this);
+            myDataimportConfig = getApplication().getComponentFactory().createButton("statusPanel.config.dataimport", StatusPanel.this);
+            myContentConfig = getApplication().getComponentFactory().createButton("statusPanel.config.contents", StatusPanel.this);
+            myUsersConfig = getApplication().getComponentFactory().createButton("statusPanel.config.users", StatusPanel.this);
+            myNotificationsConfig = getApplication().getComponentFactory().createButton("statusPanel.config.notifications", StatusPanel.this);
+            myStatisticsConfig = getApplication().getComponentFactory().createButton("statusPanel.config.statistics", StatusPanel.this);
+            myMiscConfig = getApplication().getComponentFactory().createButton("statusPanel.config.misc", StatusPanel.this);
+            myStreamingConfig = getApplication().getComponentFactory().createButton("statusPanel.config.streaming", StatusPanel.this);
+            myAddonsConfig = getApplication().getComponentFactory().createButton("statusPanel.config.addons", StatusPanel.this);
+            mySupportConfig = getApplication().getComponentFactory().createButton("statusPanel.config.support", StatusPanel.this);
+            configButtons.addComponent(myServerConfig);
+            configButtons.addComponent(myDatabaseConfig);
+            configButtons.addComponent(myDatasourcesConfig);
+            configButtons.addComponent(myDataimportConfig);
+            configButtons.addComponent(myContentConfig);
+            configButtons.addComponent(myUsersConfig);
+            configButtons.addComponent(myNotificationsConfig);
+            configButtons.addComponent(myStatisticsConfig);
+            configButtons.addComponent(myMiscConfig);
+            configButtons.addComponent(myStreamingConfig);
+            configButtons.addComponent(myAddonsConfig);
+            configButtons.addComponent(mySupportConfig);
+            Panel buttons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
+            buttons.addStyleName("light");
+            addComponent(buttons);
+            myHelp = getApplication().getComponentFactory().createButton("statusPanel.help", StatusPanel.this);
+            myLogout = getApplication().getComponentFactory().createButton("statusPanel.logout", StatusPanel.this);
+            buttons.addComponent(myHelp);
+            buttons.addComponent(myLogout);
+            myRefresher = new Refresher();
+            addComponent(myRefresher);
+            myInitialized = true;
+            myServerStatus.setValue(MyTunesRss.WEBSERVER.isRunning() ? getApplication().getBundleString("statusPanel.serverRunning") : getApplication().getBundleString("statusPanel.serverStopped"));
+            myDatabaseStatus.setValue(MyTunesRssExecutorService.isDatabaseUpdateRunning() ? null : getLastDatabaseUpdateText());
+            if (MyTunesRssComUpdateTask.LAST_UPDATE_EVENT == null) {
+                myMyTunesRssComStatus.setValue(getApplication().getBundleString("statusPanel.myTunesRssComStateUnknown"));
+            } else {
+                handleEvent(MyTunesRssComUpdateTask.LAST_UPDATE_EVENT);
+            }
+            myRefresher.setRefreshInterval(2500);
+            myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
+            myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
+        }
     }
 
     public MyTunesRssWebAdmin getApplication() {

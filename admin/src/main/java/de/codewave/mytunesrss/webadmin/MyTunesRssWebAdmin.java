@@ -10,6 +10,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.vaadin.ComponentFactory;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
@@ -32,10 +33,14 @@ public class MyTunesRssWebAdmin extends Application {
 
     private ValidatorFactory myValidatorFactory;
 
+    private StatusPanel myStatusPanel;
+
     public void init() {
         myBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.webadmin.MyTunesRssAdmin", getLocale());
         myComponentFactory = new ComponentFactory(myBundle);
         myValidatorFactory = new ValidatorFactory(myBundle);
+        myStatusPanel = new StatusPanel();
+        MyTunesRssEventManager.getInstance().addListener(myStatusPanel);
         setTheme("mytunesrss");
         Window main = new Window(getBundleString("mainWindowTitle", MyTunesRss.VERSION));
         main.getContent().setWidth(100, Sizeable.UNITS_PERCENTAGE);
@@ -77,6 +82,10 @@ public class MyTunesRssWebAdmin extends Application {
         MyTunesRss.ERROR_QUEUE.add(e);
         getMainWindow().showNotification("An unexpected error has occured. Please consider sending a support request now.", ExceptionUtils.getFullStackTrace(e), Window.Notification.TYPE_ERROR_MESSAGE);
         getMainWindow().setContent(new SupportConfigPanel());
+    }
+
+    public StatusPanel getStatusPanel() {
+        return myStatusPanel;
     }
 
     @Override

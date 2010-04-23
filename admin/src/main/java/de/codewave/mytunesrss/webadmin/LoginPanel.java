@@ -30,7 +30,7 @@ public class LoginPanel extends Panel implements Button.ClickListener {
 
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST))) {
-            getApplication().setMainComponent(new StatusPanel());
+            getApplication().setMainComponent(getApplication().getStatusPanel());
         } else {
             getApplication().showError("loginPanel.error.invalidLogin");
         }

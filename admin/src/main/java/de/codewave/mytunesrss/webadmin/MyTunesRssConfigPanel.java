@@ -101,11 +101,11 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
     }
 
     protected Component getSaveFollowUpComponent() {
-        return new StatusPanel();
+        return getApplication().getStatusPanel();
     }
 
     protected Component getCancelFollowUpComponent() {
-        return new StatusPanel();
+        return getApplication().getStatusPanel();
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {

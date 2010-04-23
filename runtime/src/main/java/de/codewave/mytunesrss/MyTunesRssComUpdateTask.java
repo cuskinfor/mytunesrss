@@ -24,6 +24,7 @@ import java.util.TimerTask;
 public class MyTunesRssComUpdateTask extends TimerTask {
     private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssComUpdateTask.class);
     private static final String MYTUNESRSSCOM_URL = MyTunesRss.MYTUNESRSSCOM_TOOLS_URL + "/save_ip.php";
+    public static MyTunesRssEvent LAST_UPDATE_EVENT;
 
     private int myInterval;
     private Timer myTimer;
@@ -76,6 +77,7 @@ public class MyTunesRssComUpdateTask extends TimerTask {
         HttpClient client = MyTunesRssUtils.createHttpClient();
         try {
             MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.MYTUNESRSS_COM_UPDATED);
+            LAST_UPDATE_EVENT = event;
             int responseCode = client.executeMethod(postMethod);
             if (responseCode != 200) {
                 if (LOG.isInfoEnabled()) {
