@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
+import java.util.Map;
 
 public class SmartTextField extends TextField {
 
@@ -98,5 +99,10 @@ public class SmartTextField extends TextField {
         } else {
             return digest.digest(MyTunesRssUtils.getUtf8Bytes(StringUtils.trimToEmpty(o.toString())));
         }
+    }
+
+    @Override
+    public void changeVariables(Object source, Map<String, Object> variables) {
+        super.changeVariables(source, variables);    //To change body of overridden methods use File | Settings | File Templates.
     }
 }

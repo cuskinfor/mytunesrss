@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
@@ -16,7 +17,7 @@ import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.validation.EmailValidator;
 import de.codewave.vaadin.validation.SameValidator;
-import de.codewave.vaadin.validation.ValidationTriggerValidator;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,10 +74,9 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
 
     public void attach() {
         init(getBundleString("editUserConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
-        myUsername = getComponentFactory().createTextField("editUserConfigPanel.username"); // TODO unique username validation
+        myUsername = getComponentFactory().createTextField("editUserConfigPanel.username", new UniqueUsernameValidator());
         myPassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.password");
         myRetypePassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.retypePassword", new SameValidator(myPassword, getBundleString("editUserConfigPanel.error.retypePassword")));
-        myPassword.addValidator(new ValidationTriggerValidator(myRetypePassword));
         myEmail = getComponentFactory().createTextField("editUserConfigPanel.email", new EmailValidator(getBundleString("editUserConfigPanel.error.email")));
         myIdentificationForm = getComponentFactory().createForm(null, true);
         myIdentificationForm.addField("username", myUsername);
@@ -275,5 +275,22 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
         super.buttonClick(clickEvent);
+    }
+
+    public class UniqueUsernameValidator extends AbstractStringValidator {
+
+        public UniqueUsernameValidator() {
+            super(getBundleString("editUserConfigPanel.error.usernameMustBeUnique"));
+        }
+
+        @Override
+        protected boolean isValidString(String s) {
+            for (User user : MyTunesRss.CONFIG.getUsers()) {
+                if (user != myUser && StringUtils.equalsIgnoreCase(user.getName(), s)) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

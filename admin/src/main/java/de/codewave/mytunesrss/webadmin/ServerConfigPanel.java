@@ -11,15 +11,12 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.server.WebServer;
-import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.ServerSideFileChooser;
 import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import de.codewave.vaadin.validation.FileValidator;
 import de.codewave.vaadin.validation.SameValidator;
-import de.codewave.vaadin.validation.ValidationTriggerValidator;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
@@ -60,7 +57,6 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myAdminPort = getComponentFactory().createTextField("serverConfigPanel.adminPort", getApplication().getValidatorFactory().createPortValidator());
         myAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.adminPassword");
         myRetypeAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.retypeAdminPassword", new SameValidator(myAdminPassword, getBundleString("serverConfigPanel.error.retypeAdminPassword")));
-        myAdminPassword.addValidator(new ValidationTriggerValidator(myRetypeAdminPassword));
         myLocalTempArchive = getComponentFactory().createCheckBox("serverConfigPanel.localTempArchive");
         myAvailableOnLocalNet = getComponentFactory().createCheckBox("serverConfigPanel.availableOnLocalNet");
         myAvailableOnLocalNet.addListener(new Property.ValueChangeListener() {
