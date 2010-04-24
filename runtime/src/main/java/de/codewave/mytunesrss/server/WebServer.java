@@ -49,8 +49,6 @@ public class WebServer {
         if (!myRunning.get()) {
             if (MyTunesRss.CONFIG.getPort() < MIN_PORT || MyTunesRss.CONFIG.getPort() > MAX_PORT) {
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.illegalServerPort"));
-            } else if (MyTunesRss.CONFIG.getUsers() == null || MyTunesRss.CONFIG.getUsers().isEmpty()) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.noUsersFound"));
             } else {
                 try {
                     final Map<String, Object> contextEntries = new HashMap<String, Object>();
