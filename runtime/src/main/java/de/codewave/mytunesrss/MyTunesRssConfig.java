@@ -356,6 +356,26 @@ public class MyTunesRssConfig {
         return new HashSet<User>(myUsers);
     }
 
+    public Collection<User> getUserClones() {
+        Map<User, User> originalToClone = new HashMap<User, User>();
+        List<User> clones = new ArrayList<User>();
+        for (User user : MyTunesRss.CONFIG.getUsers()) {
+            User clone = (User) user.clone();
+            clones.add(clone);
+            originalToClone.put(user, clone);
+        }
+        for (User clone : clones) {
+            if (clone.getParent() != null) {
+                clone.setParent(originalToClone.get(clone.getParent()));
+            }
+        }
+        return clones;
+    }
+
+    public void setUsers(Collection<User> users) {
+        myUsers = new HashSet<User>(users);
+    }
+
     public User getUser(String name) {
         for (User user : getUsers()) {
             if (user.getName().equalsIgnoreCase(name)) {

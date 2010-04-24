@@ -261,6 +261,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
             }
         }
         myUser.setPlaylistIds(ids);
+        myUserConfigPanel.saveUser(myUser);
     }
 
     @Override
@@ -285,7 +286,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
 
         @Override
         protected boolean isValidString(String s) {
-            for (User user : MyTunesRss.CONFIG.getUsers()) {
+            for (User user : myUserConfigPanel.getUsers()) {
                 if (user != myUser && StringUtils.equalsIgnoreCase(user.getName(), s)) {
                     return false;
                 }
