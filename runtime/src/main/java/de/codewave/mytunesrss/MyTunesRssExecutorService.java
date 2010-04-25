@@ -7,10 +7,7 @@
  */
 package de.codewave.mytunesrss;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.mytunesrss.task.RecreateDatabaseCallable;
@@ -21,6 +18,8 @@ public class MyTunesRssExecutorService {
     private static final ExecutorService DATABASE_JOB_EXECUTOR = Executors.newSingleThreadExecutor();
 
     private static final ExecutorService LUCENE_UPDATE_EXECUTOR = Executors.newSingleThreadExecutor();
+
+    private static final ScheduledExecutorService GENERAL_EXECUTOR = Executors.newScheduledThreadPool(10);
 
     private static Future<Boolean> DATABASE_UPDATE_FUTURE;
 
@@ -56,5 +55,9 @@ public class MyTunesRssExecutorService {
 
     public static synchronized void scheduleLuceneAndSmartPlaylistUpdate(String[] trackIds) {
         LUCENE_UPDATE_EXECUTOR.submit(new RefreshSmartPlaylistsAndLuceneIndexCallable(trackIds));
+    }
+
+    public static synchronized void scheduleExternalAddressUpdate() {
+        GENERAL_EXECUTOR.scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 1, TimeUnit.MINUTES);
     }
 }

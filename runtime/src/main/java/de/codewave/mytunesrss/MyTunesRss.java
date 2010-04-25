@@ -172,7 +172,6 @@ public class MyTunesRss {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Starting admin server on port " + MyTunesRss.CONFIG.getAdminPort() + ".");
         }
-
         startAdminServer();
 
         REGISTRATION = new MyTunesRssRegistration();
@@ -424,6 +423,7 @@ public class MyTunesRss {
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
         startWebserver();
+        MyTunesRssExecutorService.scheduleExternalAddressUpdate(); // must only be scheduled once
         while (!QUIT_REQUEST) {
             try {
                 Thread.sleep(1000);

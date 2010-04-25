@@ -8,14 +8,14 @@ package de.codewave.mytunesrss.webadmin;
 import com.vaadin.Application;
 import com.vaadin.terminal.ClassResource;
 import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Embedded;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
+import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
+import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
+import de.codewave.utils.network.NetworkUtils;
 import de.codewave.utils.sql.DataStoreSession;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.henrik.refresher.Refresher;
@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class StatusPanel extends Panel implements Button.ClickListener, MyTunesRssEventListener {
+public class StatusPanel extends Panel implements Button.ClickListener, MyTunesRssEventListener, Refresher.RefreshListener {
     private static final Logger LOG = LoggerFactory.getLogger(StatusPanel.class);
 
     private Label myServerStatus;
@@ -32,7 +32,9 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private Label myMyTunesRssComStatus;
     private Button myStartServer;
     private Button myStopServer;
-    private Button myServerInfo;
+    private Table myInternalAddresses;
+    private Table myExternalAddresses;
+    private Table myConnections;
     private Button myUpdateDatabase;
     private Button myResetDatabase;
     private Button myServerConfig;
@@ -62,19 +64,45 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             addComponent(logo);
             Panel server = new Panel(getApplication().getBundleString("statusPanel.server.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
             addComponent(server);
+            ((Layout) server.getContent()).setMargin(true);
+            ((Layout.SpacingHandler) server.getContent()).setSpacing(true);
+            Panel serverAccordionPanel = new Panel();
+            Accordion accordion = new Accordion();
+            serverAccordionPanel.setContent(accordion);
+            server.addComponent(serverAccordionPanel);
+            Panel serverGeneral = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
+            accordion.addTab(serverGeneral, getApplication().getBundleString("statusPanel.serverGeneral.caption"), null);
             myServerStatus = new Label();
             myServerStatus.setWidth("100%");
             myServerStatus.setStyleName("statusmessage");
-            server.addComponent(myServerStatus);
+            serverGeneral.addComponent(myServerStatus);
             Panel serverButtons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
             serverButtons.addStyleName("light");
-            server.addComponent(serverButtons);
+            serverGeneral.addComponent(serverButtons);
             myStartServer = getApplication().getComponentFactory().createButton("statusPanel.server.start", StatusPanel.this);
             myStopServer = getApplication().getComponentFactory().createButton("statusPanel.server.stop", StatusPanel.this);
-            myServerInfo = getApplication().getComponentFactory().createButton("statusPanel.server.info", StatusPanel.this);
             serverButtons.addComponent(myStartServer);
             serverButtons.addComponent(myStopServer);
-            serverButtons.addComponent(myServerInfo);
+            Panel serverAddresses = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
+            myInternalAddresses = new Table();
+            myInternalAddresses.addContainerProperty("address", String.class, null, getApplication().getBundleString("statusPanel.internalServerAddresses"), null, null);
+            myInternalAddresses.setPageLength(0);
+            myExternalAddresses = new Table();
+            myExternalAddresses.addContainerProperty("address", String.class, null, getApplication().getBundleString("statusPanel.externalServerAddress"), null, null);
+            myExternalAddresses.setPageLength(0);
+            serverAddresses.addComponent(myInternalAddresses);
+            serverAddresses.addComponent(myExternalAddresses);
+            accordion.addTab(serverAddresses, getApplication().getBundleString("statusPanel.serverAddresses.caption"), null);
+            Panel serverConnections = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
+            myConnections = new Table();
+            myConnections.addContainerProperty("remoteAddress", String.class, null, getApplication().getBundleString("statusPanel.connectionRemoteAddress"), null, null);
+            myConnections.addContainerProperty("user", String.class, null, getApplication().getBundleString("statusPanel.connectionUser"), null, null);
+            myConnections.addContainerProperty("connectTime", Date.class, null, getApplication().getBundleString("statusPanel.connectionConnectTime"), null, null);
+            myConnections.addContainerProperty("accessTime", Date.class, null, getApplication().getBundleString("statusPanel.connectionAccessTime"), null, null);
+            myConnections.addContainerProperty("bytesStreamed", String.class, null, getApplication().getBundleString("statusPanel.connectionDownBytes"), null, null);
+            myConnections.setPageLength(0);
+            serverConnections.addComponent(myConnections);
+            accordion.addTab(serverConnections, getApplication().getBundleString("statusPanel.serverConnections.caption"), null);
             Panel database = new Panel(getApplication().getBundleString("statusPanel.database.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
             addComponent(database);
             myDatabaseStatus = new Label();
@@ -132,15 +160,12 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myInitialized = true;
             myServerStatus.setValue(MyTunesRss.WEBSERVER.isRunning() ? getApplication().getBundleString("statusPanel.serverRunning") : getApplication().getBundleString("statusPanel.serverStopped"));
             myDatabaseStatus.setValue(MyTunesRssExecutorService.isDatabaseUpdateRunning() ? null : getLastDatabaseUpdateText());
-            if (MyTunesRssComUpdateTask.LAST_UPDATE_EVENT == null) {
-                myMyTunesRssComStatus.setValue(getApplication().getBundleString("statusPanel.myTunesRssComStateUnknown"));
-            } else {
-                handleEvent(MyTunesRssComUpdateTask.LAST_UPDATE_EVENT);
-            }
             myRefresher.setRefreshInterval(2500);
+            myRefresher.addListener(this);
             myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
             myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
         }
+        refreshMyTunesRssComUpdateState();
     }
 
     public MyTunesRssWebAdmin getApplication() {
@@ -212,8 +237,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                     myStartServer.setEnabled(true);
                     myStopServer.setEnabled(false);
                     myServerStatus.setValue(getApplication().getBundleString("statusPanel.serverStopped"));
-                } else if (event.getType() == MyTunesRssEvent.EventType.MYTUNESRSS_COM_UPDATED) {
-                    myMyTunesRssComStatus.setValue(MyTunesRssUtils.getBundleString(getLocale(), event.getMessageKey(), event.getMessageParams()));
                 }
             }
         }
@@ -238,5 +261,51 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             session.commit();
         }
         return getApplication().getBundleString("statusPanel.databaseStatusUnknown");
+    }
+
+    public void refresh(Refresher source) {
+        refreshMyTunesRssComUpdateState();
+        // refresh internal addresses
+        myInternalAddresses.removeAllItems();
+        if (MyTunesRss.WEBSERVER.isRunning()) {
+            for (String address : getLocalAddresses()) {
+                myInternalAddresses.addItem(new Object[]{address}, address);
+            }
+        }
+        myInternalAddresses.setPageLength(Math.min(myInternalAddresses.getItemIds().size(), 10));
+        // refresh external address
+        myExternalAddresses.removeAllItems();
+        if (MyTunesRss.WEBSERVER.isRunning()) {
+            String address = FetchExternalAddressRunnable.EXTERNAL_ADDRESS;
+            if (StringUtils.isNotEmpty(address) && !"unreachable".equals(address)) {
+                myExternalAddresses.addItem(new Object[]{address}, address);
+            } else {
+                myExternalAddresses.addItem(new Object[]{getApplication().getBundleString("statusPanel.externalAddressUnavailable")}, "unavailable");
+            }
+        }
+        myExternalAddresses.setPageLength(myExternalAddresses.getItemIds().size());
+        // refresh active connections
+        myConnections.removeAllItems();
+        for (MyTunesRssSessionInfo session : MyTunesRss.WEBSERVER.getSessionInfos()) {
+            myConnections.addItem(new Object[]{session.getBestRemoteAddress(), session.getUser() != null ? session.getUser().getName() : "", new Date(session.getConnectTime()), new Date(session.getLastAccessTime()), MyTunesRssUtils.getMemorySizeForDisplay(session.getBytesStreamed())}, session.getSessionId());
+        }
+        myConnections.setPageLength(Math.min(myConnections.getItemIds().size(), 15));
+    }
+
+    private void refreshMyTunesRssComUpdateState() {
+        MyTunesRssEvent lastMyTunesRssComEvent = MyTunesRssComUpdateTask.LAST_UPDATE_EVENT;
+        if (lastMyTunesRssComEvent == null) {
+            myMyTunesRssComStatus.setValue(getApplication().getBundleString("statusPanel.myTunesRssComStateUnknown"));
+        } else {
+            myMyTunesRssComStatus.setValue(MyTunesRssUtils.getBundleString(getLocale(), lastMyTunesRssComEvent.getMessageKey(), lastMyTunesRssComEvent.getMessageParams()));
+        }
+    }
+
+    private String[] getLocalAddresses() {
+        String[] addresses = NetworkUtils.getLocalNetworkAddresses();
+        for (int i = 0; i < addresses.length; i++) {
+            addresses[i] = "http://" + addresses[i] + ":" + MyTunesRss.CONFIG.getPort();
+        }
+        return addresses;
     }
 }
