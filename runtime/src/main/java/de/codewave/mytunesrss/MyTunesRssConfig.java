@@ -121,7 +121,7 @@ public class MyTunesRssConfig {
     private boolean myQuicktime64BitWarned;
     private Set<PathReplacement> myPathReplacements = new HashSet<PathReplacement>();
     private LdapConfig myLdapConfig;
-    private byte[] myAdminPasswordHash = MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(""));
+    private byte[] myAdminPasswordHash;
     private int myAdminPort = 9090;
 
     public String[] getDatasources() {
@@ -845,7 +845,7 @@ public class MyTunesRssConfig {
     }
 
     public byte[] getAdminPasswordHash() {
-        return myAdminPasswordHash;
+        return myAdminPasswordHash != null ? myAdminPasswordHash : MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(""));
     }
 
     public void setAdminPasswordHash(byte[] adminPasswordHash) {
@@ -1113,7 +1113,7 @@ public class MyTunesRssConfig {
             Document settings = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             Element root = settings.createElement("settings");
             settings.appendChild(root);
-            root.appendChild(DOMUtils.createByteArrayElement(settings, "adminPassword", myAdminPasswordHash));
+            root.appendChild(DOMUtils.createByteArrayElement(settings, "adminPassword", getAdminPasswordHash()));
             root.appendChild(DOMUtils.createIntElement(settings, "adminPort", myAdminPort));
             root.appendChild(DOMUtils.createTextElement(settings, "version", myVersion));
             root.appendChild(DOMUtils.createIntElement(settings, "serverPort", myPort));
