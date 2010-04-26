@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
 import com.vaadin.terminal.ClassResource;
+import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
@@ -214,6 +215,8 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myUpdateDatabase.setEnabled(false);
             myResetDatabase.setEnabled(false);
             MyTunesRssExecutorService.scheduleDatabaseReset();
+        } else if (clickEvent.getSource() == myHelp) {
+            getApplication().getMainWindow().open(new ExternalResource("http://docs.codewave.de/mytunesrss3"));
         }
     }
 
