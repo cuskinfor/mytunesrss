@@ -216,4 +216,8 @@ public class MyTunesRssRegistration {
     private boolean isExpiredVersion() {
         return myMaxVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0;
     }
+
+    public boolean isValidVersion(Version version) {
+        return myMaxVersion.compareTo(version) >= 0;
+    }
 }

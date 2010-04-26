@@ -25,6 +25,8 @@ public class MyTunesRssExecutorService {
 
     private static Future<Void> DATABASE_RESET_FUTURE;
 
+    private static ScheduledFuture MYTUNESRSSCOM_UPDATE_FUTURE;
+
     public static synchronized void scheduleDatabaseUpdate() {
         cancelDatabaseJob();
         DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable());
@@ -57,7 +59,21 @@ public class MyTunesRssExecutorService {
         LUCENE_UPDATE_EXECUTOR.submit(new RefreshSmartPlaylistsAndLuceneIndexCallable(trackIds));
     }
 
+    public static synchronized void scheduleMyTunesRssComUpdate() {
+        MYTUNESRSSCOM_UPDATE_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(new MyTunesRssComUpdateRunnable(), 0, 5, TimeUnit.MINUTES);
+    }
+
+    public static synchronized void cancelMyTunesRssComUpdate() {
+        if (MYTUNESRSSCOM_UPDATE_FUTURE != null && !MYTUNESRSSCOM_UPDATE_FUTURE.isDone() && !MYTUNESRSSCOM_UPDATE_FUTURE.isCancelled()) {
+            MYTUNESRSSCOM_UPDATE_FUTURE.cancel(true);
+        }
+    }
+
     public static synchronized void scheduleExternalAddressUpdate() {
         GENERAL_EXECUTOR.scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 1, TimeUnit.MINUTES);
+    }
+
+    public static synchronized void scheduleUpdateCheck() {
+        GENERAL_EXECUTOR.scheduleWithFixedDelay(new CheckUpdateRunnable(), 0, 1, TimeUnit.HOURS);
     }
 }

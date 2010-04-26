@@ -8,3 +8,7 @@ td.v-table-cell-content {
     font-size: 1.5em;
     line-height: normal;
 }
+
+div.v-panel-content-updatePanel > div {
+    background-color: #ffffe0;
+}

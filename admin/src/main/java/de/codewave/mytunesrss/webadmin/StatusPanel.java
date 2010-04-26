@@ -14,13 +14,17 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
+import de.codewave.utils.Version;
 import de.codewave.utils.network.NetworkUtils;
+import de.codewave.utils.network.UpdateInfo;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.henrik.refresher.Refresher;
 
+import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,6 +58,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private Button myLogout;
     private Refresher myRefresher;
     private boolean myInitialized;
+    private Panel myUpdatePanel;
 
     public void attach() {
         if (!myInitialized) {
@@ -149,6 +154,8 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             configButtons.addComponent(myStreamingConfig);
             configButtons.addComponent(myAddonsConfig);
             configButtons.addComponent(mySupportConfig);
+            myUpdatePanel = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
+            addComponent(myUpdatePanel);
             Panel buttons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
             buttons.addStyleName("light");
             addComponent(buttons);
@@ -167,6 +174,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
         }
         refreshMyTunesRssComUpdateState();
+        refreshMyTunesUpdateInfo();
     }
 
     public MyTunesRssWebAdmin getApplication() {
@@ -268,6 +276,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
 
     public void refresh(Refresher source) {
         refreshMyTunesRssComUpdateState();
+        refreshMyTunesUpdateInfo();
         // refresh internal addresses
         myInternalAddresses.removeAllItems();
         if (MyTunesRss.WEBSERVER.isRunning()) {
@@ -296,11 +305,49 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     }
 
     private void refreshMyTunesRssComUpdateState() {
-        MyTunesRssEvent lastMyTunesRssComEvent = MyTunesRssComUpdateTask.LAST_UPDATE_EVENT;
+        MyTunesRssEvent lastMyTunesRssComEvent = MyTunesRssComUpdateRunnable.LAST_UPDATE_EVENT;
         if (lastMyTunesRssComEvent == null) {
             myMyTunesRssComStatus.setValue(getApplication().getBundleString("statusPanel.myTunesRssComStateUnknown"));
         } else {
             myMyTunesRssComStatus.setValue(MyTunesRssUtils.getBundleString(getLocale(), lastMyTunesRssComEvent.getMessageKey(), lastMyTunesRssComEvent.getMessageParams()));
+        }
+    }
+
+    private void refreshMyTunesUpdateInfo() {
+        UpdateInfo updateInfo = CheckUpdateRunnable.UPDATE_INFO;
+        myUpdatePanel.removeAllComponents();
+        Label updateStatusLabel = new Label();
+        myUpdatePanel.addComponent(updateStatusLabel);
+        updateStatusLabel.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+        updateStatusLabel.setStyleName("statusmessage");
+        myUpdatePanel.setVisible(false);
+        if (updateInfo != null) {
+            Version updateVersion = new Version(updateInfo.getVersion());
+            if (updateVersion.compareTo(new Version(MyTunesRss.VERSION)) > 0) {
+                try {
+                    String osIdentifier = "Unknown";
+                    if (SystemUtils.IS_OS_MAC_OSX) {
+                        osIdentifier = "MacOSX";
+                    } else if (SystemUtils.IS_OS_WINDOWS) {
+                        osIdentifier = "Windows";
+                    }
+                    Link downloadLink = new Link(getApplication().getBundleString("statusPanel.update.download"), new ExternalResource(updateInfo.getUrl(osIdentifier)));
+                    updateStatusLabel.setValue(getApplication().getBundleString("statusPanel.updates.info", MyTunesRss.VERSION, updateInfo.getVersion()));
+                    myUpdatePanel.addComponent(new Label(updateInfo.getInfo(getApplication().getLocale()), Label.CONTENT_PREFORMATTED));
+                    if (MyTunesRss.REGISTRATION.isValidVersion(updateVersion)) {
+                        myUpdatePanel.addComponent(downloadLink);
+                    } else {
+                        Label maxVersionInfoLabel = new Label(getApplication().getBundleString("statusPanel.updates.maxVersionLimit"));
+                        maxVersionInfoLabel.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+                        maxVersionInfoLabel.setStyleName("statusmessage");
+                        myUpdatePanel.addComponent(maxVersionInfoLabel);
+                    }
+                    myUpdatePanel.setStyleName("updatePanel");
+                    myUpdatePanel.setVisible(true);
+                } catch (MalformedURLException e) {
+                    // ignore, panel remains invisible
+                }
+            }
         }
     }
 

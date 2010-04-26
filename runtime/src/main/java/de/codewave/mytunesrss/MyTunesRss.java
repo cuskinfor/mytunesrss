@@ -41,7 +41,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -424,6 +424,7 @@ public class MyTunesRss {
         MyTunesRssJobUtils.scheduleDatabaseJob();
         startWebserver();
         MyTunesRssExecutorService.scheduleExternalAddressUpdate(); // must only be scheduled once
+        MyTunesRssExecutorService.scheduleUpdateCheck(); // must only be scheduled once
         while (!QUIT_REQUEST) {
             try {
                 Thread.sleep(1000);
@@ -446,13 +447,7 @@ public class MyTunesRss {
         }
         WEBSERVER.start();
         if (WEBSERVER.isRunning()) {
-            if (MyTunesRss.CONFIG.isMyTunesRssComActive()) {
-                MyTunesRssComUpdateTask myTunesRssComUpdater = new MyTunesRssComUpdateTask(SERVER_RUNNING_TIMER,
-                        300000,
-                        CONFIG.getMyTunesRssComUser(),
-                        CONFIG.getMyTunesRssComPasswordHash());
-                SERVER_RUNNING_TIMER.schedule(myTunesRssComUpdater, 0);
-            }
+            MyTunesRssExecutorService.scheduleMyTunesRssComUpdate();
             if (MyTunesRss.CONFIG.isAvailableOnLocalNet()) {
                 MulticastService.startListener();
             }
@@ -466,6 +461,7 @@ public class MyTunesRss {
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
             MulticastService.stopListener();
+            MyTunesRssExecutorService.cancelMyTunesRssComUpdate();
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STOPPED));
         }
     }
