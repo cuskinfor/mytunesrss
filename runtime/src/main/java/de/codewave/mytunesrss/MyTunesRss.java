@@ -13,6 +13,7 @@ import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.task.InitializeDatabaseCallable;
+import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.io.FileCache;
@@ -25,6 +26,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +50,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * de.codewave.mytunesrss.MyTunesRss
  */
 public class MyTunesRss {
-    public static final String APPLICATION_IDENTIFIER = "MyTunesRSS3";
+    public static final String APPLICATION_IDENTIFIER = "MyTunesRSS4";
+    public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS3"};
     public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<String, String[]>();
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRss.class);
     public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
@@ -76,40 +79,60 @@ public class MyTunesRss {
     public static Server ADMIN_SERVER;
     public static Queue<Throwable> ERROR_QUEUE = new ConcurrentLinkedQueue<Throwable>();
 
-    private static void init() {
-        try {
-            SHA1_DIGEST = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not create SHA-1 digest.", e);
-            }
-        }
-        try {
-            MD5_DIGEST = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not create MD5 digest.", e);
-            }
-        }
-        try {
-            System.setProperty("MyTunesRSS.logDir", MyTunesRssUtils.getCacheDataPath());
-        } catch (IOException e) {
-            System.setProperty("MyTunesRSS.logDir", ".");
-        }
-        try {
-            for (Iterator<File> iter =
-                    (Iterator<File>) FileUtils.iterateFiles(new File(MyTunesRssUtils.getCacheDataPath()),
-                            new String[]{"log"},
-                            false); iter.hasNext();) {
-                iter.next().delete();
-            }
-        } catch (Exception e) {
-            // ignore exceptions when deleting log files
-        }
-        DOMConfigurator.configure(MyTunesRss.class.getResource("/mytunesrss-log4j.xml"));
+    public static void main(final String[] args) throws Exception {
+        registerShutdownHook();
+        processArguments(args);
+        copyOldPrefsAndCache();
+        createDigests();
+        prepareLogging();
+        LOGGER.info("Command line: " + StringUtils.join(args, " "));
         WEBSERVER = new WebServer();
         MAILER = new MailSender();
         ADMIN_NOTIFY = new AdminNotifier();
+        loadSystemProperties();
+        prepareUpdateUrl();
+        readVersion();
+        loadConfig();
+        handleRegistration();
+        startAdminServer();
+        MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
+        initializeQuicktimePlayer();
+        logSystemInfo();
+        Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(false));
+        validateWrapperStartSystemProperty();
+        processSanityChecks();
+        startQuartzScheduler();
+        initializeCaches();
+        StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
+        initializeDatabase();
+        MyTunesRssJobUtils.scheduleStatisticEventsJob();
+        MyTunesRssJobUtils.scheduleDatabaseJob();
+        startWebserver();
+        MyTunesRssExecutorService.scheduleExternalAddressUpdate(); // must only be scheduled once
+        MyTunesRssExecutorService.scheduleUpdateCheck(); // must only be scheduled once
+        while (!QUIT_REQUEST) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                LOGGER.debug("Main thread was interrupted in headless mode.", e);
+                QUIT_REQUEST = true;
+            }
+        }
+        LOGGER.debug("Quit request was TRUE.");
+        MyTunesRssUtils.shutdownGracefully();
+    }
+
+    private static void prepareUpdateUrl() {
+        try {
+            UPDATE_URL = new URL("http://www.codewave.de/download/versions/mytunesrss.xml");
+        } catch (MalformedURLException e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not create update external.", e);
+            }
+        }
+    }
+
+    private static void loadSystemProperties() {
         try {
             File file = new File(MyTunesRssUtils.getPreferencesDataPath() + "/system.properties");
             if (file.isFile()) {
@@ -127,89 +150,134 @@ public class MyTunesRss {
                 LOGGER.warn("Could not load user system properties: " + e.getMessage());
             }
         }
+    }
+
+    private static void prepareLogging() {
         try {
-            UPDATE_URL = new URL("http://www.codewave.de/download/versions/mytunesrss.xml");
-        } catch (MalformedURLException e) {
+            System.setProperty("MyTunesRSS.logDir", MyTunesRssUtils.getCacheDataPath());
+        } catch (IOException e) {
+            System.setProperty("MyTunesRSS.logDir", ".");
+        }
+        try {
+            for (Iterator<File> iter =
+                    (Iterator<File>) FileUtils.iterateFiles(new File(MyTunesRssUtils.getCacheDataPath()),
+                            new String[]{"log"},
+                            false); iter.hasNext();) {
+                iter.next().delete();
+            }
+        } catch (Exception e) {
+            // ignore exceptions when deleting log files
+        }
+        DOMConfigurator.configure(MyTunesRss.class.getResource("/mytunesrss-log4j.xml"));
+    }
+
+    private static void createDigests() {
+        try {
+            SHA1_DIGEST = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
             if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not create update external.", e);
+                LOGGER.error("Could not create SHA-1 digest.", e);
+            }
+        }
+        try {
+            MD5_DIGEST = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not create MD5 digest.", e);
             }
         }
     }
 
-    public static void main(final String[] args) throws Exception {
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            public void run() {
-                MyTunesRssUtils.onShutdown();
+    private static void copyOldPrefsAndCache() {
+        try {
+            File cacheDataPath = new File(MyTunesRssUtils.getCacheDataPath());
+            File prefsDataPath = new File(MyTunesRssUtils.getPreferencesDataPath());
+            if (prefsDataPath.list().length == 0) {
+                for (String prevVersionAppIdentifier : APPLICATION_IDENTIFIER_PREV_VERSIONS) {
+                    File oldPrefsDir = new File(PrefsUtils.getPreferencesDataPath(prevVersionAppIdentifier));
+                    if (oldPrefsDir.isDirectory() && oldPrefsDir.list().length > 0) {
+                        FileUtils.copyDirectory(oldPrefsDir, prefsDataPath);
+                        File oldCacheDir = new File(PrefsUtils.getCacheDataPath(prevVersionAppIdentifier));
+                        if (oldCacheDir.isDirectory() && oldCacheDir.list().length > 0) {
+                            FileUtils.copyDirectory(oldCacheDir, cacheDataPath);
+                        }
+                    }
+                }
             }
-        }));
-        ORIGINAL_CMD_ARGS = args;
-        Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
-        if (arguments != null) {
-            COMMAND_LINE_ARGS.putAll(arguments);
-        }
-        if (System.getProperty("de.codewave.mytunesrss.shutdown") == null) {
-            init();
-        }
-        LOGGER.info("Command line: " + StringUtils.join(args, " "));
-        VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
-        if (StringUtils.isEmpty(VERSION)) {
-            VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");
-        }
-
-        CONFIG = new MyTunesRssConfig();
-        MyTunesRss.CONFIG.load();
-        File license = null;
-        if (arguments.containsKey("license")) {
-            license = new File(arguments.get("license")[0]);
-            if (!license.isFile()) {
-                LOGGER.error("License file \"" + license.getAbsolutePath() + "\" specified on command line does not exist.");
-                license = null;
-            } else {
-                LOGGER.info("Using license file \"" + license.getAbsolutePath() + "\" specified on command line.");
+        } catch (IOException e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not copy old preferences/caches.");
             }
         }
+    }
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Starting admin server on port " + MyTunesRss.CONFIG.getAdminPort() + ".");
+    private static void initializeDatabase() throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        while (true) {
+            registerDatabaseDriver();
+            InitializeDatabaseCallable callable = new InitializeDatabaseCallable();
+            callable.call();
+            if (callable.getException() != null) {
+                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitError"));
+                if (isAutoResetDatabaseOnError()) {
+                    LOGGER.info("Recreating default database.");
+                    CONFIG.setDefaultDatabaseSettings();
+                    try {
+                        new DeleteDatabaseFilesCallable().call();
+                        LOGGER.info("Starting retry.");
+                        continue; // retry
+                    } catch (IOException e) {
+                        LOGGER.error("Could not delete database files.");
+                        CONFIG.setDeleteDatabaseOnExit(true);
+                    }
+                }
+                MyTunesRssUtils.shutdownGracefully();
+            }
+            if (callable.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
+                MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatch"), MyTunesRss.VERSION, callable.getDatabaseVersion().toString()));
+                if (isAutoResetDatabaseOnError()) {
+                    LOGGER.info("Recreating default database.");
+                    CONFIG.setDefaultDatabaseSettings();
+                    try {
+                        STORE.destroy();
+                        new DeleteDatabaseFilesCallable().call();
+                        LOGGER.info("Starting retry.");
+                        continue; // retry
+                    } catch (IOException e) {
+                        LOGGER.error("Could not delete database files.");
+                        CONFIG.setDeleteDatabaseOnExit(true);
+                    }
+                }
+                MyTunesRssUtils.shutdownGracefully();
+            }
+            break; // ok, continue with main flow
         }
-        startAdminServer();
+    }
 
-        REGISTRATION = new MyTunesRssRegistration();
-        REGISTRATION.init(license, true);
-        if (REGISTRATION.getSettings() != null) {
-            LOGGER.info("Loading configuration from license.");
-            MyTunesRssConfig configFromFile = MyTunesRss.CONFIG;
-            MyTunesRss.CONFIG = new MyTunesRssConfig();
-            MyTunesRss.CONFIG.loadFromContext(REGISTRATION.getSettings());
-            if (configFromFile.getPathInfoKey() != null) {
-                MyTunesRss.CONFIG.setPathInfoKey(configFromFile.getPathInfoKey());
+    private static void initializeCaches() throws IOException {
+        STREAMING_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER + "_Streaming", 10000, CONFIG.getStreamingCacheMaxFiles());
+        File streamingCacheFile = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache.xml");
+        if (streamingCacheFile.isFile()) {
+            try {
+                STREAMING_CACHE.setContent(JXPathUtils.getContext(streamingCacheFile.toURL()));
+            } catch (Exception e) {
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("Could not read streaming cache file. Starting with empty cache.", e);
+                }
+                STREAMING_CACHE.clearCache();
             }
         }
-        MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
-        initializeQuicktimePlayer();
+        ARCHIVE_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER + "_Archives", 10000, 50); // TODO max size config?
+    }
+
+    private static void startQuartzScheduler() throws SchedulerException {
+        QUARTZ_SCHEDULER = new StdSchedulerFactory().getScheduler();
         if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Operating system: " + SystemUtils.OS_NAME + ", " + SystemUtils.OS_VERSION + ", " + SystemUtils.OS_ARCH);
-            LOGGER.info("Java: " + SystemUtils.JAVA_VERSION + "(" + SystemUtils.JAVA_HOME + ")");
-            LOGGER.info("Maximum heap size: " + MyTunesRssUtils.getMemorySizeForDisplay(Runtime.getRuntime().maxMemory()));
-            LOGGER.info("Application version: " + VERSION);
-            LOGGER.info("Cache data path: " + MyTunesRssUtils.getCacheDataPath());
-            LOGGER.info("Preferences data path: " + MyTunesRssUtils.getPreferencesDataPath());
-            LOGGER.info("--------------------------------------------------------------------------------");
-            for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
-                LOGGER.info(entry.getKey() + "=" + entry.getValue());
-            }
-            LOGGER.info("--------------------------------------------------------------------------------");
+            LOGGER.info("Starting quartz scheduler.");
         }
-        Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(false));
-        if (System.getProperty("de.codewave.mytunesrss") == null) {
-            String type = "generic";
-            if (SystemUtils.IS_OS_WINDOWS) {
-                type = "windows";
-            } else if (SystemUtils.IS_OS_MAC_OSX) {
-                type = "osx";
-            }
-            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.missingSystemProperty." + type));
-        }
+        QUARTZ_SCHEDULER.start();
+    }
+
+    private static void processSanityChecks() {
         if (MyTunesRssUtils.isOtherInstanceRunning(3000)) {
             MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.otherInstanceRunning"));
             MyTunesRssUtils.shutdownGracefully();
@@ -233,29 +301,92 @@ public class MyTunesRss {
                     REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
                             Locale.getDefault(), "common.dateFormat"))));
         }
-        QUARTZ_SCHEDULER = new StdSchedulerFactory().getScheduler();
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Starting quartz scheduler.");
+    }
+
+    private static void validateWrapperStartSystemProperty() {
+        if (System.getProperty("de.codewave.mytunesrss") == null) {
+            String type = "generic";
+            if (SystemUtils.IS_OS_WINDOWS) {
+                type = "windows";
+            } else if (SystemUtils.IS_OS_MAC_OSX) {
+                type = "osx";
+            }
+            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.missingSystemProperty." + type));
         }
-        QUARTZ_SCHEDULER.start();
-        STREAMING_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER + "_Streaming", 10000, CONFIG.getStreamingCacheMaxFiles());
-        File streamingCacheFile = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache.xml");
-        if (streamingCacheFile.isFile()) {
-            try {
-                STREAMING_CACHE.setContent(JXPathUtils.getContext(streamingCacheFile.toURL()));
-            } catch (Exception e) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("Could not read streaming cache file. Starting with empty cache.", e);
-                }
-                STREAMING_CACHE.clearCache();
+    }
+
+    private static void logSystemInfo() throws IOException {
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Operating system: " + SystemUtils.OS_NAME + ", " + SystemUtils.OS_VERSION + ", " + SystemUtils.OS_ARCH);
+            LOGGER.info("Java: " + SystemUtils.JAVA_VERSION + "(" + SystemUtils.JAVA_HOME + ")");
+            LOGGER.info("Maximum heap size: " + MyTunesRssUtils.getMemorySizeForDisplay(Runtime.getRuntime().maxMemory()));
+            LOGGER.info("Application version: " + VERSION);
+            LOGGER.info("Cache data path: " + MyTunesRssUtils.getCacheDataPath());
+            LOGGER.info("Preferences data path: " + MyTunesRssUtils.getPreferencesDataPath());
+            LOGGER.info("--------------------------------------------------------------------------------");
+            for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
+                LOGGER.info(entry.getKey() + "=" + entry.getValue());
+            }
+            LOGGER.info("--------------------------------------------------------------------------------");
+        }
+    }
+
+    private static void handleRegistration() throws IOException {
+        File license = null;
+        if (COMMAND_LINE_ARGS.containsKey("license")) {
+            license = new File(COMMAND_LINE_ARGS.get("license")[0]);
+            if (!license.isFile()) {
+                LOGGER.error("License file \"" + license.getAbsolutePath() + "\" specified on command line does not exist.");
+                license = null;
+            } else {
+                LOGGER.info("Using license file \"" + license.getAbsolutePath() + "\" specified on command line.");
             }
         }
-        ARCHIVE_CACHE = FileCache.createCache(APPLICATION_IDENTIFIER + "_Archives", 10000, 50); // TODO max size config?
-        StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
-        executeHeadlessMode();
+        REGISTRATION = new MyTunesRssRegistration();
+        REGISTRATION.init(license, true);
+        if (REGISTRATION.getSettings() != null) {
+            LOGGER.info("Loading configuration from license.");
+            MyTunesRssConfig configFromFile = MyTunesRss.CONFIG;
+            MyTunesRss.CONFIG = new MyTunesRssConfig();
+            MyTunesRss.CONFIG.loadFromContext(REGISTRATION.getSettings());
+            if (configFromFile.getPathInfoKey() != null) {
+                MyTunesRss.CONFIG.setPathInfoKey(configFromFile.getPathInfoKey());
+            }
+        }
+    }
+
+    private static void loadConfig() {
+        CONFIG = new MyTunesRssConfig();
+        MyTunesRss.CONFIG.load();
+    }
+
+    private static void readVersion() {
+        VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
+        if (StringUtils.isEmpty(VERSION)) {
+            VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");
+        }
+    }
+
+    private static void processArguments(String[] args) {
+        ORIGINAL_CMD_ARGS = args;
+        Map<String, String[]> arguments = ProgramUtils.getCommandLineArguments(args);
+        if (arguments != null) {
+            COMMAND_LINE_ARGS.putAll(arguments);
+        }
+    }
+
+    private static void registerShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+                MyTunesRssUtils.onShutdown();
+            }
+        }));
     }
 
     public static boolean startAdminServer() {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Starting admin server on port " + MyTunesRss.CONFIG.getAdminPort() + ".");
+        }
         try {
             ADMIN_SERVER = new Server(MyTunesRss.CONFIG.getAdminPort());
             WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
@@ -375,66 +506,6 @@ public class MyTunesRss {
                 MyTunesRssUtils.shutdownGracefully();
             }
         }
-    }
-
-    private static void executeHeadlessMode() throws IOException, SQLException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Headless mode");
-        }
-        while (true) {
-            registerDatabaseDriver();
-            InitializeDatabaseCallable callable = new InitializeDatabaseCallable();
-            callable.call();
-            if (callable.getException() != null) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitError"));
-                if (isAutoResetDatabaseOnError()) {
-                    LOGGER.info("Recreating default database.");
-                    CONFIG.setDefaultDatabaseSettings();
-                    try {
-                        new DeleteDatabaseFilesCallable().call();
-                        LOGGER.info("Starting retry.");
-                        continue; // retry
-                    } catch (IOException e) {
-                        LOGGER.error("Could not delete database files.");
-                        CONFIG.setDeleteDatabaseOnExit(true);
-                    }
-                }
-                MyTunesRssUtils.shutdownGracefully();
-            }
-            if (callable.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
-                MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatch"), MyTunesRss.VERSION, callable.getDatabaseVersion().toString()));
-                if (isAutoResetDatabaseOnError()) {
-                    LOGGER.info("Recreating default database.");
-                    CONFIG.setDefaultDatabaseSettings();
-                    try {
-                        STORE.destroy();
-                        new DeleteDatabaseFilesCallable().call();
-                        LOGGER.info("Starting retry.");
-                        continue; // retry
-                    } catch (IOException e) {
-                        LOGGER.error("Could not delete database files.");
-                        CONFIG.setDeleteDatabaseOnExit(true);
-                    }
-                }
-                MyTunesRssUtils.shutdownGracefully();
-            }
-            break; // ok, continue with main flow
-        }
-        MyTunesRssJobUtils.scheduleStatisticEventsJob();
-        MyTunesRssJobUtils.scheduleDatabaseJob();
-        startWebserver();
-        MyTunesRssExecutorService.scheduleExternalAddressUpdate(); // must only be scheduled once
-        MyTunesRssExecutorService.scheduleUpdateCheck(); // must only be scheduled once
-        while (!QUIT_REQUEST) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                LOGGER.debug("Main thread was interrupted in headless mode.", e);
-                QUIT_REQUEST = true;
-            }
-        }
-        LOGGER.debug("Quit request was TRUE.");
-        MyTunesRssUtils.shutdownGracefully();
     }
 
     private static boolean isAutoResetDatabaseOnError() {

@@ -89,10 +89,5 @@
             <outputDirectory>.</outputDirectory>
             <destName>MyTunesRSS.exe</destName>
         </file>
-        <file>
-            <source>etc/MyTunesRSS-jre-shutdown.exe</source>
-            <outputDirectory>.</outputDirectory>
-            <destName>ShutdownMyTunesRSS.exe</destName>
-        </file>
     </files>
 </assembly>

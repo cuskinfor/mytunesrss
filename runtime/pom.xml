@@ -4,7 +4,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
-    <version>3.9.0-EAP-1-SNAPSHOT</version>
+    <version>4.0.0-EAP-1-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Runtime</name>
     <distributionManagement>
         <site>
@@ -246,7 +246,7 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>codewave-utils</artifactId>
-            <version>0.59-SNAPSHOT</version>
+            <version>0.59</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
