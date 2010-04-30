@@ -135,7 +135,9 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
     }
 
     public void itemClick(ItemClickEvent itemClickEvent) {
-        editUser((User) itemClickEvent.getItemId());
+        if (itemClickEvent.getButton() == ItemClickEvent.BUTTON_LEFT) {
+            editUser((User) itemClickEvent.getItemId());
+        }
     }
 
     private void editUser(User user) {
