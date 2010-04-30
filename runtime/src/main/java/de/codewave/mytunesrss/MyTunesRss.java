@@ -111,7 +111,9 @@ public class MyTunesRss {
         initializeDatabase();
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
-        startWebserver();
+        if (MyTunesRss.CONFIG.getPort() > 0) {
+            startWebserver();
+        }
         MyTunesRssExecutorService.scheduleExternalAddressUpdate(); // must only be scheduled once
         MyTunesRssExecutorService.scheduleUpdateCheck(); // must only be scheduled once
         while (!QUIT_REQUEST) {
