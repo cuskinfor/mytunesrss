@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>admin</artifactId>
     <packaging>war</packaging>
-    <version>4.0.0-EAP-1-SNAPSHOT</version>
+    <version>4.0.0-EAP-1</version>
     <name>Codewave MyTunesRSS Admin Application</name>
     <distributionManagement>
         <site>
@@ -58,7 +56,7 @@
         <dependency>
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>runtime</artifactId>
-            <version>4.0.0-EAP-1-SNAPSHOT</version>
+            <version>4.0.0-EAP-1</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -88,7 +86,7 @@
         </dependency>
     </dependencies>
     <scm>
-        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/trunk</developerConnection>
+        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/tags/mytunesrss-4.0.0-EAP-1</developerConnection>
     </scm>
     <build>
         <plugins>
