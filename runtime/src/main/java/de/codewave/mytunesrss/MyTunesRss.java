@@ -5,6 +5,8 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.desktop.DesktopWrapper;
+import de.codewave.mytunesrss.desktop.DesktopWrapperFactory;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.mytunesrss.quicktime.QuicktimePlayer;
@@ -36,6 +38,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.MessageDigest;
@@ -78,6 +81,7 @@ public class MyTunesRss {
     public static MyTunesRssExecutorService EXECUTOR_SERVICE = new MyTunesRssExecutorService();
     public static Server ADMIN_SERVER;
     public static Queue<Throwable> ERROR_QUEUE = new ConcurrentLinkedQueue<Throwable>();
+    public static boolean HEADLESS = GraphicsEnvironment.isHeadless();
 
     public static void main(final String[] args) throws Exception {
         registerShutdownHook();
@@ -384,17 +388,36 @@ public class MyTunesRss {
     }
 
     public static boolean startAdminServer() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Starting admin server on port " + MyTunesRss.CONFIG.getAdminPort() + ".");
-        }
         try {
-            ADMIN_SERVER = new Server(MyTunesRss.CONFIG.getAdminPort());
+            int adminPort = MyTunesRss.CONFIG.getAdminPort();
+            if (COMMAND_LINE_ARGS.get("adminPort") != null) {
+                try {
+                    adminPort = Integer.parseInt(COMMAND_LINE_ARGS.get("adminPort").toString());
+                } catch (NumberFormatException e) {
+                    if (LOGGER.isErrorEnabled()) {
+                        LOGGER.error("Invalid admin port " + COMMAND_LINE_ARGS.get("adminPort") + " specified on commmand line.");
+                    }
+                }
+            }
+            if (adminPort > 0) {
+                ADMIN_SERVER = new Server(adminPort);
+            } else {
+                ADMIN_SERVER = new Server(0);
+            }
             WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
             ADMIN_SERVER.setHandler(adminContext);
             ADMIN_SERVER.start();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort() + ".");
+            }
+            System.out.println("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort());
+            DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
+            if (!HEADLESS && desktopWrapper.isSupported()) {
+                desktopWrapper.openBrowser(new URI("http://127.0.0.1:" + ADMIN_SERVER.getConnectors()[0].getLocalPort()));
+            }
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Cannot start admin server.", e);
+                LOGGER.error("Could start admin server.", e);
             }
             return false;
         }
