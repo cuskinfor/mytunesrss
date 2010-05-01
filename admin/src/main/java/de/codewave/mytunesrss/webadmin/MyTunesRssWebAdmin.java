@@ -7,13 +7,17 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
 import com.vaadin.terminal.Sizeable;
+import com.vaadin.terminal.ThemeResource;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.component.MessageWindow;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
+import javax.swing.*;
 import java.text.MessageFormat;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -67,15 +71,30 @@ public class MyTunesRssWebAdmin extends Application {
     }
 
     public void showError(String messageKey, Object... parameters) {
-        getMainWindow().showNotification(null, getBundleString(messageKey, parameters), Window.Notification.TYPE_ERROR_MESSAGE);
+        new MessageWindow(50, Sizeable.UNITS_EM, null, null, getBundleString(messageKey, parameters), new Button(getBundleString("button.ok"))) {
+            @Override
+            protected void onClick(Button button) {
+                // intentionally left blank
+            }
+        }.show(getMainWindow());
     }
 
     public void showWarning(String messageKey, Object... parameters) {
-        getMainWindow().showNotification(null, getBundleString(messageKey, parameters), Window.Notification.TYPE_WARNING_MESSAGE);
+        new MessageWindow(50, Sizeable.UNITS_EM, null, null, getBundleString(messageKey, parameters), new Button(getBundleString("button.ok"))) {
+            @Override
+            protected void onClick(Button button) {
+                // intentionally left blank
+            }
+        }.show(getMainWindow());
     }
 
     public void showInfo(String messageKey, Object... parameters) {
-        getMainWindow().showNotification(null, getBundleString(messageKey, parameters), Window.Notification.TYPE_HUMANIZED_MESSAGE);
+        new MessageWindow(50, Sizeable.UNITS_EM, null, null, getBundleString(messageKey, parameters), new Button(getBundleString("button.ok"))) {
+            @Override
+            protected void onClick(Button button) {
+                // intentionally left blank
+            }
+        }.show(getMainWindow());
     }
 
     public void handleException(Exception e) {

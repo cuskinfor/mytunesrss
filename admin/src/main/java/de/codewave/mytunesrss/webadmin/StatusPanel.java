@@ -18,6 +18,7 @@ import de.codewave.utils.Version;
 import de.codewave.utils.network.NetworkUtils;
 import de.codewave.utils.network.UpdateInfo;
 import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.vaadin.component.OptionWindow;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
@@ -28,10 +29,13 @@ import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class StatusPanel extends Panel implements Button.ClickListener, MyTunesRssEventListener, Refresher.RefreshListener {
     private static final Logger LOG = LoggerFactory.getLogger(StatusPanel.class);
 
+    private Panel myAlertPanel;
+    private Label myAlertLabel;
     private Label myServerStatus;
     private Label myDatabaseStatus;
     private Label myMyTunesRssComStatus;
@@ -59,6 +63,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private Refresher myRefresher;
     private boolean myInitialized;
     private Panel myUpdatePanel;
+    private Button myQuitMyTunesRss;
 
     public void attach() {
         if (!myInitialized) {
@@ -68,6 +73,12 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             logo.setWidth(241, Sizeable.UNITS_PIXELS);
             logo.setHeight(88, Sizeable.UNITS_PIXELS);
             addComponent(logo);
+            myAlertPanel = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
+            myAlertPanel.setStyleName("alertPanel");
+            myAlertLabel = new Label();
+            myAlertPanel.addComponent(myAlertLabel);
+            myAlertPanel.setVisible(false);
+            addComponent(myAlertPanel);
             Panel server = new Panel(getApplication().getBundleString("statusPanel.server.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
             addComponent(server);
             ((Layout) server.getContent()).setMargin(true);
@@ -161,8 +172,10 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             addComponent(buttons);
             myHelp = getApplication().getComponentFactory().createButton("statusPanel.help", StatusPanel.this);
             myLogout = getApplication().getComponentFactory().createButton("statusPanel.logout", StatusPanel.this);
+            myQuitMyTunesRss = getApplication().getComponentFactory().createButton("statusPanel.quitMyTunesRss", StatusPanel.this);
             buttons.addComponent(myHelp);
             buttons.addComponent(myLogout);
+            buttons.addComponent(myQuitMyTunesRss);
             myRefresher = new Refresher();
             addComponent(myRefresher);
             myInitialized = true;
@@ -175,6 +188,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         }
         refreshMyTunesRssComUpdateState();
         refreshMyTunesUpdateInfo();
+        refreshAlert();
     }
 
     public MyTunesRssWebAdmin getApplication() {
@@ -225,6 +239,21 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             MyTunesRssExecutorService.scheduleDatabaseReset();
         } else if (clickEvent.getSource() == myHelp) {
             getApplication().getMainWindow().open(new ExternalResource("http://docs.codewave.de/mytunesrss3"));
+        } else if (clickEvent.getSource() == myQuitMyTunesRss) {
+            final Button yes = new Button(getApplication().getBundleString("button.yes"));
+            Button no = new Button(getApplication().getBundleString("button.no"));
+            new OptionWindow(30, Sizeable.UNITS_EM, null, getApplication().getBundleString("statusPanel.warn.quit.caption"), getApplication().getBundleString("statusPanel.warn.quit.message"), yes, no) {
+                public void clicked(Button button) {
+                    if (button == yes) {
+                        MyTunesRssExecutorService.schedule(new Runnable() {
+                            public void run() {
+                                MyTunesRssUtils.shutdownGracefully();
+                            }
+                        }, 2, TimeUnit.SECONDS);
+                        StatusPanel.this.getApplication().showInfo("statusPanel.info.quitMyTunesRss");
+                    }
+                }
+            }.show(getApplication().getMainWindow());
         }
     }
 
@@ -277,6 +306,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     public void refresh(Refresher source) {
         refreshMyTunesRssComUpdateState();
         refreshMyTunesUpdateInfo();
+        refreshAlert();
         // refresh internal addresses
         myInternalAddresses.removeAllItems();
         if (MyTunesRss.WEBSERVER.isRunning()) {
@@ -348,6 +378,26 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                     // ignore, panel remains invisible
                 }
             }
+        }
+    }
+
+    private void refreshAlert() {
+        RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(getLocale());
+        if (feedback != null && feedback.getMessage() != null) {
+            myAlertPanel.setVisible(true);
+            myAlertLabel.setValue(feedback.getMessage());
+            if (!feedback.isValid()) {
+                myStartServer.setEnabled(false);
+                myStopServer.setEnabled(false);
+                MyTunesRss.stopWebserver();
+            } else {
+                myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
+                myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
+            }
+        } else {
+            myAlertPanel.setVisible(false);
+            myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
+            myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
         }
     }
 

@@ -10,6 +10,7 @@ import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssExecutorService;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -22,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import java.io.File;
 import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class ServerConfigPanel extends MyTunesRssConfigPanel {
 
@@ -176,15 +178,14 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setSslKeystorePass(mySslKeystorePass.getStringValue(null));
         MyTunesRss.CONFIG.setSslKeystoreKeyAlias(mySslKeystoreKeyAlias.getStringValue(null));
         if (adminServerConfigChanged) {
-            if (MyTunesRss.stopAdminServer()) {
-                if (MyTunesRss.startAdminServer()) {
-                    getApplication().showInfo("serverConfigPanel.info.adminServerRestarted");
-                } else {
-                    getApplication().showInfo("serverConfigPanel.error.adminServerStartFailed");
+            getApplication().showInfo("serverConfigPanel.info.adminServerRestart");
+            MyTunesRssExecutorService.schedule(new Runnable() {
+                public void run() {
+                    if (MyTunesRss.stopAdminServer()) {
+                        MyTunesRss.startAdminServer();
+                    }
                 }
-            } else {
-                getApplication().showInfo("serverConfigPanel.error.adminServerStopFailed");
-            }
+            }, 2, TimeUnit.SECONDS);
         }
         if (musicServerConfigChanged) {
             if (!MyTunesRss.WEBSERVER.isRunning() || MyTunesRss.WEBSERVER.stop()) {

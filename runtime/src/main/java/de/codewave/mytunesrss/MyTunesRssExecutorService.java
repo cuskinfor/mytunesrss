@@ -76,4 +76,8 @@ public class MyTunesRssExecutorService {
     public static synchronized void scheduleUpdateCheck() {
         GENERAL_EXECUTOR.scheduleWithFixedDelay(new CheckUpdateRunnable(), 0, 1, TimeUnit.HOURS);
     }
+
+    public static synchronized void schedule(Runnable runnable, int delay, TimeUnit timeUnit) {
+        GENERAL_EXECUTOR.schedule(runnable, delay, timeUnit);
+    }
 }

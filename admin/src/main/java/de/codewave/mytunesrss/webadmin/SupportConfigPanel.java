@@ -63,15 +63,20 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         myExpirationDate.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
         myExpirationDate.setResolution(DateField.RESOLUTION_DAY);
         myExpirationDate.setEnabled(false);
-        myUploadLicense = new Upload(null, this);
-        myUploadLicense.setButtonCaption(getBundleString("supportConfigPanel.uploadLicense"));
-        myUploadLicense.setImmediate(true);
-        myUploadLicense.addListener((Upload.SucceededListener) this);
-        myUploadLicense.addListener((Upload.FailedListener) this);
         myRegistrationForm.addField("regName", myRegName);
         myRegistrationForm.addField("expirationDate", myExpirationDate);
         Panel registrationPanel = getComponentFactory().surroundWithPanel(myRegistrationForm, new Layout.MarginInfo(false, true, true, true), getBundleString("supportConfigPanel.caption.registration"));
-        registrationPanel.addComponent(myUploadLicense);
+        if (!MyTunesRss.REGISTRATION.isReleaseVersion()) {
+            Label label = new Label(getBundleString("supportConfigPanel.prereleaseCannotBeRegistered"));
+            registrationPanel.addComponent(label);
+        } else {
+            myUploadLicense = new Upload(null, this);
+            myUploadLicense.setButtonCaption(getBundleString("supportConfigPanel.uploadLicense"));
+            myUploadLicense.setImmediate(true);
+            myUploadLicense.addListener((Upload.SucceededListener) this);
+            myUploadLicense.addListener((Upload.FailedListener) this);
+            registrationPanel.addComponent(myUploadLicense);
+        }
         addComponent(registrationPanel);
         mySysInfoForm = getComponentFactory().createForm(null, true);
         myLogLevel = getComponentFactory().createSelect("supportConfigPanel.logLevel", Arrays.asList(Level.OFF, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG));

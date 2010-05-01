@@ -499,4 +499,22 @@ public class MyTunesRssUtils {
         }
         return false;
     }
+
+    public static RegistrationFeedback getRegistrationFeedback(Locale locale) {
+        if (MyTunesRss.REGISTRATION.isExpiredPreReleaseVersion()) {
+            return new RegistrationFeedback(MyTunesRssUtils.getBundleString(locale, "error.preReleaseVersionExpired"), false);
+        } else if (MyTunesRss.REGISTRATION.isExpired()) {
+            return new RegistrationFeedback(MyTunesRssUtils.getBundleString(locale, "error.registrationExpired"), false);
+        } else if (MyTunesRss.REGISTRATION.isExpirationDate() && !MyTunesRss.REGISTRATION.isReleaseVersion()) {
+            return new RegistrationFeedback(MyTunesRssUtils.getBundleString(locale, "info.preReleaseExpiration",
+                    MyTunesRss.REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
+                            locale, "common.dateFormat"))), true);
+        } else if (MyTunesRss.REGISTRATION.isExpirationDate() && !MyTunesRss.REGISTRATION.isExpired()) {
+            return new RegistrationFeedback(MyTunesRssUtils.getBundleString(locale, "info.expirationInfo",
+                    MyTunesRss.REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
+                            locale, "common.dateFormat"))), true);
+        }
+        return null;
+    }
+
 }

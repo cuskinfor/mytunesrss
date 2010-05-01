@@ -4,8 +4,17 @@ td.v-table-cell-content {
     vertical-align: middle;
 }
 
-.v-label-statusmessage {
-    font-size: 1.5em;
+div.v-label-statusmessage {
+    font-size: 1.2em;
+    line-height: normal;
+}
+
+div.v-panel-content-alertPanel > div {
+    background-color: #f08080;
+}
+
+div.v-panel-content-alertPanel div.v-label {
+    font-size: 1.2em;
     line-height: normal;
 }
 

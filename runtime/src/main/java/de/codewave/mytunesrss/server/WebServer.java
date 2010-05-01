@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.server;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssConfig;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.RegistrationFeedback;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.quicktime.QuicktimePlayerException;
 import de.codewave.utils.servlet.SessionManager;
@@ -46,7 +47,8 @@ public class WebServer {
     private StandardManager mySessionManager;
 
     public synchronized boolean start() {
-        if (!myRunning.get()) {
+        RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
+        if (!myRunning.get() && feedback != null && feedback.isValid()) {
             if (MyTunesRss.CONFIG.getPort() < MIN_PORT || MyTunesRss.CONFIG.getPort() > MAX_PORT) {
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.illegalServerPort"));
             } else {

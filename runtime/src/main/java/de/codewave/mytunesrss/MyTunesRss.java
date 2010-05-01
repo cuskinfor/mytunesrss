@@ -53,6 +53,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * de.codewave.mytunesrss.MyTunesRss
  */
 public class MyTunesRss {
+    // Specify admin server port on command line (e.g. -adminPort 9090)
+    public static final String CMD_ADMIN_PORT = "adminPort";
+
+    // Do not start browser when starting admin server on an non-headless system (e.g. -noBrowser)
+    public static final String CMD_NO_BROWSER = "noBrowser";
+
     public static final String APPLICATION_IDENTIFIER = "MyTunesRSS4";
     public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS3"};
     public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<String, String[]>();
@@ -292,20 +298,9 @@ public class MyTunesRss {
             MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.configVersionMismatch"), VERSION, CONFIG.getVersion()));
             MyTunesRssUtils.shutdownGracefully();
         }
-        if (REGISTRATION.isExpiredPreReleaseVersion()) {
-            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.preReleaseVersionExpired"));
-            MyTunesRssUtils.shutdownGracefully();
-        } else if (REGISTRATION.isExpired()) {
-            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.registrationExpiredHeadless"));
-            MyTunesRssUtils.shutdownGracefully();
-        } else if (REGISTRATION.isExpirationDate() && !REGISTRATION.isReleaseVersion()) {
-            MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "info.preReleaseExpiration",
-                    REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
-                            Locale.getDefault(), "common.dateFormat"))));
-        } else if (REGISTRATION.isExpirationDate() && !REGISTRATION.isExpired()) {
-            MyTunesRssUtils.showInfoMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "info.expirationInfo",
-                    REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
-                            Locale.getDefault(), "common.dateFormat"))));
+        RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
+        if (feedback != null && feedback.getMessage() != null) {
+            MyTunesRssUtils.showErrorMessage(feedback.getMessage());
         }
     }
 
@@ -392,12 +387,12 @@ public class MyTunesRss {
     public static boolean startAdminServer() {
         try {
             int adminPort = MyTunesRss.CONFIG.getAdminPort();
-            if (COMMAND_LINE_ARGS.get("adminPort") != null) {
+            if (COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT) != null) {
                 try {
-                    adminPort = Integer.parseInt(COMMAND_LINE_ARGS.get("adminPort").toString());
+                    adminPort = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT).toString());
                 } catch (NumberFormatException e) {
                     if (LOGGER.isErrorEnabled()) {
-                        LOGGER.error("Invalid admin port " + COMMAND_LINE_ARGS.get("adminPort") + " specified on commmand line.");
+                        LOGGER.error("Invalid admin port " + COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT) + " specified on commmand line.");
                     }
                 }
             }
@@ -407,6 +402,7 @@ public class MyTunesRss {
                 ADMIN_SERVER = new Server(0);
             }
             WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
+            adminContext.setServerClasses(new String[]{"-org.mortbay.jetty.plus.jaas.", "org.mortbay.jetty."});
             ADMIN_SERVER.setHandler(adminContext);
             ADMIN_SERVER.start();
             if (LOGGER.isDebugEnabled()) {
@@ -414,7 +410,7 @@ public class MyTunesRss {
             }
             System.out.println("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort());
             DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
-            if (!HEADLESS && desktopWrapper.isSupported()) {
+            if (!HEADLESS && desktopWrapper.isSupported() && !COMMAND_LINE_ARGS.containsKey(CMD_NO_BROWSER)) {
                 desktopWrapper.openBrowser(new URI("http://127.0.0.1:" + ADMIN_SERVER.getConnectors()[0].getLocalPort()));
             }
         } catch (Exception e) {
