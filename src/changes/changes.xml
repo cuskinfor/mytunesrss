@@ -7,7 +7,22 @@
 
     <body>
 
-        <release version="4.0.0-EAP-1" date="2010-xx-xx">
+        <release version="4.0.0-EAP-2" date="2010-xx-xx">
+            <action dev="mdescher" type="add">
+                Added button for shutting down MyTunesRSS with a delay of 2 seconds.
+            </action>
+            <action dev="mdescher" type="update">
+                Schedule admin restart with a delay of 2 seconds to allow page to redisplay correctly.
+            </action>
+            <action dev="mdescher" type="update">
+                Better info/warn/error dialogs
+            </action>
+            <action dev="mdescher" type="fix">
+                Removed slf4j libraries from admin module.
+            </action>
+        </release>
+
+        <release version="4.0.0-EAP-1" date="2010-04-30">
             <action dev="mdescher" type="add">
                 Copy old config and cache to new one on first start.
             </action>
