@@ -122,7 +122,7 @@ public class MyTunesRssConfig {
     private Set<PathReplacement> myPathReplacements = new HashSet<PathReplacement>();
     private LdapConfig myLdapConfig;
     private byte[] myAdminPasswordHash;
-    private int myAdminPort = 9090;
+    private int myAdminPort;
 
     public String[] getDatasources() {
         return myDatasources.toArray(new String[myDatasources.size()]);
