@@ -299,6 +299,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 }
             }
         }
+        setResourceBundle();
         try {
             if (!isSessionAuthorized() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAutoLogin())) {
                 authorize(WebAppScope.Session, MyTunesRss.CONFIG.getAutoLogin());
