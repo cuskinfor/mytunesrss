@@ -9,6 +9,9 @@
 
         <release version="3.8.10" date="2010-05-02">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-135] Language change does not affect playlist names on portal page
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-142] "first" and "previous" pager button images interchanged
             </action>
             <action dev="mdescher" type="fix">
