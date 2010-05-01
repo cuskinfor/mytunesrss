@@ -2,6 +2,7 @@ package de.codewave.mytunesrss;
 
 import com.ibm.icu.text.Normalizer;
 import de.codewave.mytunesrss.datastore.external.YouTubeLoader;
+import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
@@ -517,4 +518,22 @@ public class MyTunesRssUtils {
         return null;
     }
 
+    public static Playlist[] getPlaylistPath(Playlist playlist, List<Playlist> playlists) {
+        List<Playlist> path = new ArrayList<Playlist>();
+        for (; playlist != null; playlist = findPlaylistWithId(playlists, playlist.getContainerId())) {
+            if (playlist != null) {
+                path.add(0, playlist);
+            }
+        }
+        return path.toArray(new Playlist[path.size()]);
+    }
+
+    private static Playlist findPlaylistWithId(List<Playlist> playlists, String containerId) {
+        for (Playlist playlist : playlists) {
+            if (StringUtils.equals(playlist.getId(), containerId)) {
+                return playlist;
+            }
+        }
+        return null;
+    }
 }

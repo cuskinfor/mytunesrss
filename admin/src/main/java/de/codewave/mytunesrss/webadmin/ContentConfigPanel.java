@@ -10,6 +10,7 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
@@ -33,6 +34,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         myPlaylists = new Table();
         myPlaylists.addContainerProperty("visible", CheckBox.class, null, getBundleString("contentsConfigPanel.playlists.visible"), null, null);
         myPlaylists.addContainerProperty("name", String.class, null, getBundleString("contentsConfigPanel.playlists.name"), null, null);
+        myPlaylists.setSortContainerPropertyId("name");
         myPlaylists.setEditable(false);
         Panel panel = new Panel(getBundleString("contentsConfigPanel.visiblePlaylists.caption"));
         panel.addComponent(myPlaylists);
@@ -52,11 +54,16 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
             for (Playlist playlist : playlists) {
                 CheckBox visible = new CheckBox();
                 visible.setValue(!playlist.isHidden());
-                myPlaylists.addItem(new Object[]{visible, playlist.getName()}, playlist);
+                StringBuilder name = new StringBuilder();
+                for (Playlist pathElement : MyTunesRssUtils.getPlaylistPath(playlist, playlists)) {
+                    name.append(" \u21E8 ").append(pathElement.getName());
+                }
+                myPlaylists.addItem(new Object[]{visible, name.substring(3)}, playlist);
             }
         } catch (SQLException e) {
             getApplication().handleException(e);
         }
+        myPlaylists.sort();
         myPlaylists.setPageLength(Math.min(playlists.size(), 20));
     }
 

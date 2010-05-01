@@ -9,6 +9,7 @@ import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
@@ -130,6 +131,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
         myPlaylistsRestrictions.addContainerProperty("name", String.class, null, getBundleString("editUserConfigPanel.playlists.name"), null, null);
         myPlaylistsRestrictions.setColumnExpandRatio("name", 1);
         myPlaylistsRestrictions.setEditable(false);
+        myPlaylistsRestrictions.setSortContainerPropertyId("name");
         panel = new Panel(getBundleString("editUserConfigPanel.caption.restrictedPlaylists"));
         panel.addComponent(myPlaylistsRestrictions);
         addComponent(panel);
@@ -206,10 +208,15 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
             try {
                 playlists = session.executeQuery(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder, PlaylistType.M3uFile), null, null, true)).getResults();
                 for (Playlist playlist : playlists) {
-                    CheckBox restricted = new CheckBox();
-                    restricted.setValue(myUser.getPlaylistIds().contains(playlist.getId()));
-                    myPlaylistsRestrictions.addItem(new Object[]{restricted, playlist.getName()}, playlist);
+                    CheckBox visible = new CheckBox();
+                    visible.setValue(!playlist.isHidden());
+                    StringBuilder name = new StringBuilder();
+                    for (Playlist pathElement : MyTunesRssUtils.getPlaylistPath(playlist, playlists)) {
+                        name.append(" \u21E8 ").append(pathElement.getName());
+                    }
+                    myPlaylistsRestrictions.addItem(new Object[]{visible, name.substring(3)}, playlist);
                 }
+                myPlaylistsRestrictions.sort();
             } catch (SQLException e) {
                 getApplication().handleException(e);
             }
