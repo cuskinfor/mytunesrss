@@ -1006,12 +1006,12 @@ div.pager a {
 }
 
 div.pager .first {
-	background-position: 0 0;
+	background-position: 0 -16px;
 	text-indent: -9999px;
 }
 
 div.pager .previous {
-	background-position: 0 -16px;
+	background-position: 0 0;
 	text-indent: -9999px;
 }
 
@@ -1098,10 +1098,14 @@ div.playlistbottom {
 /* Remote Control */
 
 .remote .navigation {
-	padding-bottom: 15px;
+	padding-bottom: 50px;
 	border-bottom: 1px solid #666;
 	text-align: center;
 	text-shadow: #fff 0 1px 0;
+}
+
+.remote .ui-slider .ui-slider-handle {
+    height: 0.7em;
 }
 
 .remotecontrolPanel {

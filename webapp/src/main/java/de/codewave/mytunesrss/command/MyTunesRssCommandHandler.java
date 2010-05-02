@@ -322,6 +322,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         if (SCHEDULE_DATABASE_UPDATE) {
             runDatabaseUpdate();
         }
+        setResourceBundle();
         try {
             if (!isSessionAuthorized() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAutoLogin())) {
                 authorize(WebAppScope.Session, MyTunesRss.CONFIG.getAutoLogin());
