@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.0.0-EAP-2" date="2010-xx-xx">
+        <release version="4.0.0-EAP-2" date="2010-05-03">
             <action dev="mdescher" type="fix">
                 When using the default H2 database, never read connect string or user info from config and never
 				write anything to config. This makes MyTunesRSS always use the correct calculated settings depending
