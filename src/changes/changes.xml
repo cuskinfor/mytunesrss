@@ -9,6 +9,11 @@
 
         <release version="4.0.0-EAP-2" date="2010-xx-xx">
             <action dev="mdescher" type="fix">
+                When using the default H2 database, never read connect string or user info from config and never
+				write anything to config. This makes MyTunesRSS always use the correct calculated settings depending
+				on the base data path of the current version.
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-138] Display playlists in admin (restriction, content) with folders
             </action>
             <action dev="mdescher" type="add">

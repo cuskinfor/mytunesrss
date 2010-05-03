@@ -13,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
+import org.h2.value.DataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -1071,10 +1072,13 @@ public class MyTunesRssConfig {
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
         setDefaultDatabaseSettings();
         setDatabaseType(JXPathUtils.getStringValue(settings, "database/type", getDatabaseType()));
-        setDatabaseDriver(JXPathUtils.getStringValue(settings, "database/driver", getDatabaseDriver()));
-        setDatabaseConnection(JXPathUtils.getStringValue(settings, "database/connection", getDatabaseConnection()));
-        setDatabaseUser(JXPathUtils.getStringValue(settings, "database/user", getDatabaseUser()));
-        setDatabasePassword(JXPathUtils.getStringValue(settings, "database/password", getDatabasePassword()));
+        // for default h2, always use calculated defaults
+        if (!StringUtils.equals(myDatabaseType, DatabaseType.h2.name())) {
+            setDatabaseDriver(JXPathUtils.getStringValue(settings, "database/driver", getDatabaseDriver()));
+            setDatabaseConnection(JXPathUtils.getStringValue(settings, "database/connection", getDatabaseConnection()));
+            setDatabaseUser(JXPathUtils.getStringValue(settings, "database/user", getDatabaseUser()));
+            setDatabasePassword(JXPathUtils.getStringValue(settings, "database/password", getDatabasePassword()));
+        }
     }
 
     public void setDefaultDatabaseSettings() throws IOException {
@@ -1185,13 +1189,16 @@ public class MyTunesRssConfig {
                     cronTriggers.appendChild(DOMUtils.createTextElement(settings, "database", databaseCronTrigger));
                 }
             }
-            Element database = settings.createElement("database");
-            root.appendChild(database);
-            database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType()));
-            database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
-            database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
-            database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
-            database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
+            // for default h2 database we shoud not save anything to the config
+            if (!StringUtils.equals(getDatabaseType(), DatabaseType.h2.name())) {
+                Element database = settings.createElement("database");
+                root.appendChild(database);
+                database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType()));
+                database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
+                database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
+                database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
+                database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
+            }
             root.appendChild(DOMUtils.createTextElement(settings, "id3v2-track-comment", getId3v2TrackComment()));
             Element tomcat = settings.createElement("tomcat");
             root.appendChild(tomcat);
