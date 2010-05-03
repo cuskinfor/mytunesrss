@@ -100,7 +100,7 @@
                 <artifactId>gwt-maven-plugin</artifactId>
                 <version>1.2</version>
                 <configuration>
-                    <webappDirectory>src/main/webapp/VAADIN/widgetsets</webappDirectory>
+                    <webappDirectory>${project.build.directory}/${project.build.finalName}/VAADIN/widgetsets</webappDirectory>
                     <extraJvmArgs>-Dgwt.style=PRETTY -Xmx512M -Xss1024k</extraJvmArgs>
                 </configuration>
                 <executions>
