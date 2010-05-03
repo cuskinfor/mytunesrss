@@ -48,11 +48,11 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin</artifactId>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>org.vaadin.henrik.refresher</groupId>
             <artifactId>refresher</artifactId>
             <version>1.0.0</version>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>runtime</artifactId>
