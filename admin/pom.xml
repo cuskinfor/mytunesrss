@@ -48,11 +48,11 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin</artifactId>
         </dependency>
-        <!--dependency>
+        <dependency>
             <groupId>org.vaadin.henrik.refresher</groupId>
             <artifactId>refresher</artifactId>
             <version>1.0.0</version>
-        </dependency-->
+        </dependency>
         <dependency>
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>runtime</artifactId>
@@ -81,8 +81,21 @@
     </scm>
     <build>
         <plugins>
+            <!-- Updates Vaadin 6.2 widgetset definitions based on project dependencies -->
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>update-widgetset</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Compiles your custom GWT components with the GWT compiler -->
-            <!--plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <version>1.3-SNAPSHOT</version>
@@ -98,20 +111,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin-->
-            <!-- Updates Vaadin 6.2 widgetset definitions based on project dependencies -->
-            <!--plugin>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>update-widgetset</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin-->
+            </plugin>
         </plugins>
     </build>
 </project>

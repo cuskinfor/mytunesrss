@@ -1,0 +1,25 @@
+<module>
+
+    <!--
+        This file is automatically updated based on new dependencies by the
+        goal "vaadin:update-widgetset".
+
+        Running the goals "gwt:clean gwt:compile" may be required to compile
+        the widgetset until http://jira.codehaus.org/browse/MGWT-148 is
+        resolved.
+    -->
+
+    <!--
+        This is needed because of a bug in gwt-maven-plugin 1.2
+        (http://jira.codehaus.org/browse/MGWT-147):
+        modules without entry points are never compiled.
+    -->
+
+    <entry-point class="com.vaadin.terminal.gwt.client.DefaultWidgetSet"/>
+
+    <!-- Inherit DefaultWidgetSet -->
+
+    <inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet"/>
+    <inherits name="org.vaadin.henrik.refresher.RefresherApplicationWidgetset" />
+
+</module>

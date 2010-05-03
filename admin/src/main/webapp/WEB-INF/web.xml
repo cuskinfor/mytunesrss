@@ -13,7 +13,7 @@
         <init-param>
             <param-name>widgetset</param-name>
             <param-value>
-                org.vaadin.henrik.refresher.RefresherApplicationWidgetset
+                de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin
             </param-value>
         </init-param>    </servlet>
     <servlet-mapping>
