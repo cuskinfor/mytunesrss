@@ -1,30 +1,32 @@
 <html>
 <head>
-<script src="${appUrl}/iphone/js/prototype.js" type="text/javascript"></script>
+<script src="${appUrl}/js/jquery.js" type="text/javascript"></script>
+<script src="${appUrl}/js/jquery.json.js" type="text/javascript"></script>
 <script src="${appUrl}/iphone/js/dynamic-html.js" type="text/javascript"></script>
 <script type="text/javascript">
-var first;
-var pageSize = 10;
-function play(id) {
-    top.mytunesrss("PlaylistService.getTracks", [id, null], function(json) {top.createIphonePlaylist('${appUrl}', json, 'top.loadContent(\"${appUrl}/iphone/playlists.jsp?first=' + first + '\")')});
-}
-function showTracklist(id) {
-    top.mytunesrss("PlaylistService.getTracks", [id, null], function(json) {top.json=json;top.loadContent("${appUrl}/iphone/tracklist.jsp?first=0")});
-}
-function buildList() {
-    var json = top.json;
-    var html = "<table cellspacing='3px' cellpadding='1px' width='100%'>";
-    var list = json.result.results;
-    for (var i = first; i < list.length && i < first + pageSize; i++) {
-        var map = list[i];
-        var col = (i % 2 == 0) ? "#CCCCCC" : "#EEEEEE";
-        html += "<tr style='background-color:" + col + "'><td height='42px' valign='middle' width='100%' style='padding:5px' onclick=\"showTracklist('" + map.id + "')\"><b>" + getDisplayName(map.name) + "</td></tr>";
+    var $jQ = jQuery.noConflict();
+    var first;
+    var pageSize = 10;
+    function play(id) {
+        top.mytunesrss("PlaylistService.getTracks", [id, null], function(json) {top.createIphonePlaylist('${appUrl}', json, 'top.loadContent(\"${appUrl}/iphone/playlists.jsp?first=' + first + '\")')});
     }
-    html += "</table>";
-    $('playlists').innerHTML = html;
-    $('pager1').innerHTML = createPager("<td align='center' onclick='top.loadContent(\"${appUrl}/iphone/portal.jsp\")'><input type=submit style='font-size:14px; width:64px' value='menu'></td>", json.result.results.length, pageSize);
-    $('pager2').innerHTML = createPager("<td align='center' onclick='document.location.href=\"#top\"'><input type=submit style='font-size:14px; width:64px' value='top'></td>", json.result.results.length, pageSize);
-}
+    function showTracklist(id) {
+        top.mytunesrss("PlaylistService.getTracks", [id, null], function(json) {top.json=json;top.loadContent("${appUrl}/iphone/tracklist.jsp?first=0")});
+    }
+    function buildList() {
+        var json = top.json;
+        var html = "<table cellspacing='3px' cellpadding='1px' width='100%'>";
+        var list = json.result.results;
+        for (var i = first; i < list.length && i < first + pageSize; i++) {
+            var map = list[i];
+            var col = (i % 2 == 0) ? "#CCCCCC" : "#EEEEEE";
+            html += "<tr style='background-color:" + col + "'><td height='42px' valign='middle' width='100%' style='padding:5px' onclick=\"showTracklist('" + map.id + "')\"><b>" + getDisplayName(map.name) + "</td></tr>";
+        }
+        html += "</table>";
+        $jQ('#playlists').html(html);
+        $jQ('#pager1').html(createPager("<td align='center' onclick='top.loadContent(\"${appUrl}/iphone/portal.jsp\")'><input type=submit style='font-size:14px; width:64px' value='menu'></td>", json.result.results.length, pageSize));
+        $jQ('#pager2').html(createPager("<td align='center' onclick='document.location.href=\"#top\"'><input type=submit style='font-size:14px; width:64px' value='top'></td>", json.result.results.length, pageSize));
+    }
 </script>
 </head>
 <body onload="top.initScroll();first=parseInt(top.getRequestParameter(this.location.search, 'first'));buildList()">

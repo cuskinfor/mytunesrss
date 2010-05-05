@@ -3,7 +3,7 @@ var json;
 var handleError = true;
 
 function mytunesrss(func, parameterArray, callbackFunction) {
-    var jsonString = $H({version : "1.1", method : func, id : "" + reqId, params : $A(parameterArray)}).toJSON();
+    var jsonString = jQuery.JSON.encode({version : "1.1", method : func, id : "" + reqId, params : $jQ.makeArray(parameterArray)});
     reqId++;
     jsonCallbackFunction = callbackFunction;
     var srcString = mytunesrssServer + "/jsonrpc" + sid + "?body=" + encodeURIComponent(jsonString) + "&jsonp=top.mytunesrssCallback";

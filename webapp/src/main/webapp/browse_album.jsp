@@ -180,7 +180,7 @@
 
                         </c:when>
                         <c:otherwise>
-                            <a class="add" onclick="addAlbumsToPlaylist($A(['${mtfn:escapeJs(album.name)}']))" title="<fmt:message key="playlist.addAlbum"/>"><span><fmt:message key="playlist.addAlbum"/></span></a>
+                            <a class="add" onclick="addAlbumsToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(album.name)}']))" title="<fmt:message key="playlist.addAlbum"/>"><span><fmt:message key="playlist.addAlbum"/></span></a>
                             <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}/name=${cwfn:encodeUrl(album.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="playlist.oneclickAlbum"/>"><span><fmt:message key="playlist.oneclickAlbum"/></span></a>
                         </c:otherwise>
                     </c:choose>
@@ -205,7 +205,7 @@
                                            zipFileCount="${allAlbumsTrackCount}" />
                         </c:when>
                         <c:otherwise>
-                            <a class="add" onclick="addToPlaylist(null, $A(['${mtfn:escapeJs(cwfn:decode64(param.artist))}']), $A(['${mtfn:escapeJs(cwfn:decode64(param.genre))}']), null, true)"><span>Add</span></a>
+                            <a class="add" onclick="addToPlaylist(null, jQuery.makeArray(['${mtfn:escapeJs(cwfn:decode64(param.artist))}']), jQuery.makeArray(['${mtfn:escapeJs(cwfn:decode64(param.genre))}']), null, true)"><span>Add</span></a>
                             <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/name=${cwfn:encodeUrl(param.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Add</span></a>
                         </c:otherwise>
                     </c:choose>
@@ -242,7 +242,7 @@
                                            zipFileCount="${allArtistGenreTrackCount}" />
                         </c:when>
                         <c:otherwise>
-                            <a class="add" onclick="addToPlaylist(null, $A(['${mtfn:escapeJs(cwfn:decode64(param.artist))}']), $A(['${mtfn:escapeJs(cwfn:decode64(param.genre))}']), null, false)"><span>Add</span></a>
+                            <a class="add" onclick="addToPlaylist(null, jQuery.makeArray(['${mtfn:escapeJs(cwfn:decode64(param.artist))}']), jQuery.makeArray(['${mtfn:escapeJs(cwfn:decode64(param.genre))}']), null, false)"><span>Add</span></a>
                             <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/name=${cwfn:encodeUrl(param.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Add</span></a>
                         </c:otherwise>
                     </c:choose>

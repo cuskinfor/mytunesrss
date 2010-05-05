@@ -88,7 +88,7 @@
         }
 
         function removeTrack(index, id) {
-            jsonRpc('${servletUrl}', "EditPlaylistService.removeTracks", [$A([id])], function() {
+            jsonRpc('${servletUrl}', "EditPlaylistService.removeTracks", [jQuery.makeArray([id])], function() {
                 if (index == 0 && firstItem == totalCount - 1) {
                     firstItem -= itemsPerPage;
                     loadView();

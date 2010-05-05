@@ -69,25 +69,24 @@ function hideTooltipElement(element) {
 }
 
 function jsonRpc(serverUrl, func, parameterArray, resultCallback, sessionId) {
-    var headers;
-    if (sessionId != undefined) {
-        headers = $H({
-            "X-MyTunesRSS-ID" : sessionId
-        })
-    } else {
-        headers = $H()
-    }
-    new Ajax.Request(serverUrl + "/../jsonrpc", {
-        requestHeaders : headers,
-        postBody : $H({
+    new $jQ.ajax({
+        url : serverUrl + "/../jsonrpc",
+        type : "POST",
+        beforeSend : function(req) {
+            if (sessionId != undefined) {
+                req.setRequestHeader("X-MyTunesRSS-ID", sessionId);
+            }
+        },
+        processData : false,
+        data : jQuery.JSON.encode({
             "version" : "1.1",
             "method" : func,
             "id" : "0",
             "params" : parameterArray
-        }).toJSON(),
-        onSuccess : function(result) {
+        }),
+        success : function(data) {
             if (resultCallback != undefined) {
-                resultCallback(result.responseJSON.result, result.responseJSON.error);
+                resultCallback(data.result, data.error);
             }
         }
     });
