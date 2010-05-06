@@ -6,7 +6,7 @@
     <script src="${appUrl}/js/jquery.json.js" type="text/javascript"></script>
     <script src="${appUrl}/iphone/js/mytunesrss-remote-api.js" type="text/javascript"></script>
     <script type="text/javascript">
-        var $jQ=jQuery.noConflict();        
+        var $jQ = jQuery.noConflict();        
         var sid = "/${remoteApiSession}";
         var reqId = 0;
         var mytunesrssServer = "${appUrl}";
