@@ -58,10 +58,9 @@ jQuery.JSON = {
     encode : function(o) {
         if (typeof o == "undefined" || o === null) {
             return "null";
-        } else if (o.toJSON) {
-            return o.toJSON();
+
         } else if (o instanceof Array) {
-            return this.encodeArray(o);
+            return o.toJSON();
         } else if (o instanceof Date) {
             return this.encodeDate(o);
         } else if (typeof o == "string") {
