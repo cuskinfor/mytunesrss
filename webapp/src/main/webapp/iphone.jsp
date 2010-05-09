@@ -195,7 +195,7 @@
                         $jQ(this).bind(clickEvent, function() {
                             var qtHtml = '<embed src="${appUrl}/images/movie_poster.png" autoplay="true" href="' + list[index].playbackUrl + '" type="' + list[index].contentType + '" target="myself"\n';
                             for (var i = index + 1; i < list.length; i++) {
-                                qtHtml += 'qtnext' + i + '="<' + list[i].playbackUrl + '> T<myself>"\n';
+                                qtHtml += 'qtnext' + (i - index) + '="<' + list[i].playbackUrl + '> T<myself>"\n';
                             }
                             qtHtml += 'qtnext' + list.length + '="GOTO0" />';
                             $jQ('#qtPlugin').html(qtHtml);
