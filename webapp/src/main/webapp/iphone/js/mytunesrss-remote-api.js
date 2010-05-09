@@ -55,7 +55,7 @@ function createIphonePlaylist(appUrl, tracks, startIndex, backCall) {
     html += "<tr><td align='center' onclick='" + backCall + "'><input type=submit style='font-size:14px; width:64px' value='back'></td></tr></table>";
     html += "<div style='margin-top:60px;align:center'><embed src='" + appUrl + "/iphone/img/movie_poster.png' autoplay='false' href='" + tracks[startIndex].playbackUrl + "' type='" + tracks[startIndex].contentType + "' target='myself'\n";
     for (var i = startIndex + 1; i < tracks.length; i++) {
-        html += "qtnext" + i + "='<" + tracks[i].playbackUrl + "> T<myself>'\n";
+        html += "qtnext" + (i - startindex) + "='<" + tracks[i].playbackUrl + "> T<myself>'\n";
     }
     html += "qtnext" + tracks.length + "='GOTO0' /></div>";
     html += "</body></html>";

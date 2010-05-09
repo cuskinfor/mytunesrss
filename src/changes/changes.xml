@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.8.11" date="2010-xx-xx">
+            <action dev="mdescher" type="fix">
+                Fixed iPhone playlist when not starting with the first track.
+            </action>
+        </release>
+
         <release version="3.8.10" date="2010-05-02">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-135] Language change does not affect playlist names on portal page
