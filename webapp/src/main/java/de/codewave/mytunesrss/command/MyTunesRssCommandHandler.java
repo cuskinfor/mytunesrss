@@ -86,8 +86,8 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected String createAuthToken(User user) {
         return MyTunesRssWebUtils.encryptPathInfo(getRequest(),
-                "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + "%20" +
-                        MyTunesRssBase64Utils.encode(user.getPasswordHash()));
+                "auth=" + MyTunesRssUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " +
+                        MyTunesRssBase64Utils.encode(user.getPasswordHash())));
     }
 
     protected User getAuthUser() {

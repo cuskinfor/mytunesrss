@@ -71,7 +71,7 @@ public class MyTunesRssUtils {
 
     public static String getUtf8UrlEncoded(String s) {
         try {
-            return URLEncoder.encode(s, "UTF-8");
+            return URLEncoder.encode(s, "UTF-8").replace("+", "%20");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("UTF-8 not found.", e);
         }

@@ -24,6 +24,8 @@
             var isIphone = (userAgent.indexOf('iphone') != -1 || userAgent.indexOf('ipod') != -1);
             var clickEvent = isIphone ? 'tap' : 'click';
             var sessionId = '';
+            var currentJukeboxList;
+            var currentJukeboxIndex;
             var $jQ = jQuery.noConflict();
             var jQT = new $jQ.jQTouch({
                 icon: '${appUrl}/images/iphone_icon.png',
@@ -73,6 +75,16 @@
                     $jQ(this).bind(clickEvent, function(event, info) {
                         loadArtists('ArtistService.getArtists', [null, null, null, index, -1, -1]);
                     });
+                });
+                $jQ('#jukeboxAudio').bind('ended', function() {
+                    jukeboxPlay(currentJukeboxIndex + 1);
+                });
+                $jQ('#jukeboxImageLink').bind('swipe', function(event, info) {
+                    if (info.direction === 'right') {
+                        jukeboxPlay(currentJukeboxIndex - 1);
+                    } else if (info.direction === 'left') {
+                        jukeboxPlay(currentJukeboxIndex + 1);
+                    }
                 });
             });
 
@@ -185,6 +197,7 @@
                 ajaxCall(method, params, function(result, error) {
                     var html = '';
                     var list = result.results ? result.results : result.tracks;
+                    currentJukeboxList = list;
                     for (var i = 0; i < list.length; i++) {
                         html += '<li><a class="<%= animation %>" href="#jukebox">' + getDisplayName(list[i].name);
                         html += '<h5>' + getDisplayName(list[i].artist) + '</h5>';
@@ -193,15 +206,30 @@
                     $jQ('#tracklist > ul').html(html);
                     $jQ('#tracklist > ul > li > a').each(function(index) {
                         $jQ(this).bind(clickEvent, function() {
-                            var qtHtml = '<embed src="${appUrl}/images/movie_poster.png" autoplay="true" href="' + list[index].playbackUrl + '" type="' + list[index].contentType + '" target="myself"\n';
-                            for (var i = index + 1; i < list.length; i++) {
-                                qtHtml += 'qtnext' + (i - index) + '="<' + list[i].playbackUrl + '> T<myself>"\n';
-                            }
-                            qtHtml += 'qtnext' + list.length + '="GOTO0" />';
-                            $jQ('#qtPlugin').html(qtHtml);
+                            jukeboxPlay(index);
                         })
                     });
                 });
+            }
+
+            function jukeboxPlay(index) {
+                if (index >= 0 && index < currentJukeboxList.length) {
+                    currentJukeboxIndex = index;
+                    $jQ('#jukeboxAudio').attr('src', currentJukeboxList[index].playbackUrl);
+                    $jQ('#jukeboxTitle').html(currentJukeboxList[index].name);
+                    $jQ('#jukeboxArtist').html(currentJukeboxList[index].artist);
+                    if (currentJukeboxList[index].imageUrl) {
+                        $jQ('#jukeboxImage').attr('src', currentJukeboxList[index].imageUrl + '/size=128');
+                        $jQ('#jukeboxImage').css('display', 'block');
+                    } else {
+                        $jQ('#jukeboxImage').css('display', 'none');
+                    }
+                    //$jQ('#jukeboxAudio').play();
+                }
+            }
+
+            function jukeboxPause(index) {
+                //$jQ('#jukeboxAudio').pause();
             }
 
         </script>
@@ -317,6 +345,7 @@
                 <a class="back" href="#">Back</a>
             </div>
             <ul class="edgetoedge"></ul>
+            <div id="audioplayer"></div>
         </div>
 
         <div id="jukebox">
@@ -324,7 +353,12 @@
                 <h1>Jukebox</h1>
                 <a class="back" href="#">Back</a>
             </div>
-            <div id="qtPlugin" style="padding-top: 60px"></div>
+            <ul class="edgetoedge">
+                <li><a id="jukeboxImageLink" href="#"><center><img id="jukeboxImage" /></center></a></li>
+                <li><center id="jukeboxTitle"></center></li>
+                <li><center><h5 id="jukeboxArtist"></h5></center></li>
+            </ul>
+            <audio id="jukeboxAudio"></audio>
         </div>
 
     </body>
