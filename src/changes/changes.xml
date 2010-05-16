@@ -11,6 +11,9 @@
             <action dev="mdescher" type="fix">
                 Fixed iPhone playlist when not starting with the first track.
             </action>
+            <action dev="mdescher" type="fix">
+                Fixed NullPointerException when no filename was decoded from the iTunes XML location element.
+            </action>
         </release>
 
         <release version="3.8.10" date="2010-05-02">
