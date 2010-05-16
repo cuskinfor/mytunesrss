@@ -104,46 +104,48 @@ public class TrackListener implements PListHandlerListener {
         String trackType = (String) track.get("Track Type");
         if (trackType == null || "File".equals(trackType)) {
             String filename = ItunesLoader.getFileNameForLocation((String) track.get("Location"));
-            String mp4Codec = getMp4Codec(track, filename, myLibraryListener.getTimeLastUpate());
-            if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && FileSupportUtils.isSupported(filename) && !isMp4CodecDisabled(mp4Codec)) {
-                if (!new File(filename).isFile()) {
-                    myMissingFiles++;
-                }
-                if (!MyTunesRss.CONFIG.isItunesDeleteMissingFiles() || new File(filename).isFile()) {
-                    Date dateModified = ((Date) track.get("Date Modified"));
-                    long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
-                    Date dateAdded = ((Date) track.get("Date Added"));
-                    long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
-                    if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() ||
-                            dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
-                        try {
-                            InsertOrUpdateTrackStatement statement =
-                                    existing ? new UpdateTrackStatement(TrackSource.ITunes) : new InsertTrackStatement(TrackSource.ITunes);
-                            statement.clear();
-                            statement.setId(trackId);
-                            statement.setName(MyTunesRssUtils.normalize(name.trim()));
-                            statement.setArtist(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Artist"))));
-                            statement.setAlbum(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Album"))));
-                            statement.setTime((int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0));
-                            statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
-                            statement.setFileName(applyReplacements(filename));
-                            statement.setProtected(FileSupportUtils.isProtected(filename));
-                            statement.setMediaType(track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue() ? MediaType.Video : MediaType.Audio);
-                            statement.setGenre(StringUtils.trimToNull((String) track.get("Genre")));
-                            statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Comments"))));
-                            statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
-                                    (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
-                            statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);
-                            statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, filename, 0) : mp4Codec);
-                            myDataStoreSession.executeStatement(statement);
-                            return true;
-                        } catch (SQLException e) {
-                            if (LOG.isErrorEnabled()) {
-                                LOG.error("Could not insert track \"" + name + "\" into database", e);
+            if (StringUtils.isNotBlank(filename)) {
+                String mp4Codec = getMp4Codec(track, filename, myLibraryListener.getTimeLastUpate());
+                if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && FileSupportUtils.isSupported(filename) && !isMp4CodecDisabled(mp4Codec)) {
+                    if (!new File(filename).isFile()) {
+                        myMissingFiles++;
+                    }
+                    if (!MyTunesRss.CONFIG.isItunesDeleteMissingFiles() || new File(filename).isFile()) {
+                        Date dateModified = ((Date) track.get("Date Modified"));
+                        long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
+                        Date dateAdded = ((Date) track.get("Date Added"));
+                        long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
+                        if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() ||
+                                dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
+                            try {
+                                InsertOrUpdateTrackStatement statement =
+                                        existing ? new UpdateTrackStatement(TrackSource.ITunes) : new InsertTrackStatement(TrackSource.ITunes);
+                                statement.clear();
+                                statement.setId(trackId);
+                                statement.setName(MyTunesRssUtils.normalize(name.trim()));
+                                statement.setArtist(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Artist"))));
+                                statement.setAlbum(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Album"))));
+                                statement.setTime((int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0));
+                                statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
+                                statement.setFileName(applyReplacements(filename));
+                                statement.setProtected(FileSupportUtils.isProtected(filename));
+                                statement.setMediaType(track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue() ? MediaType.Video : MediaType.Audio);
+                                statement.setGenre(StringUtils.trimToNull((String) track.get("Genre")));
+                                statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Comments"))));
+                                statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
+                                        (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
+                                statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);
+                                statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, filename, 0) : mp4Codec);
+                                myDataStoreSession.executeStatement(statement);
+                                return true;
+                            } catch (SQLException e) {
+                                if (LOG.isErrorEnabled()) {
+                                    LOG.error("Could not insert track \"" + name + "\" into database", e);
+                                }
                             }
                         }
+                        return false;
                     }
-                    return false;
                 }
             }
         }
