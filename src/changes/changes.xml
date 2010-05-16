@@ -14,9 +14,6 @@
             <action dev="mdescher" type="update">
                 jQuery 1.4.2
             </action>
-            <action dev="mdescher" type="fix">
-                Fixed NullPointerException when no filename was decoded from the iTunes XML location element.
-            </action>
         </release>
 
         <release version="4.0.0-EAP-2" date="2010-05-03">
@@ -54,6 +51,27 @@
             </action>
             <action dev="mdescher" type="remove">
                 Removed shutdown option.
+            </action>
+        </release>
+
+        <release version="3.8.11" date="2010-xx-xx">
+            <action dev="mdescher" type="fix">
+                Fixed iPhone playlist when not starting with the first track.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed NullPointerException when no filename was decoded from the iTunes XML location element.
+            </action>
+        </release>
+
+        <release version="3.8.10" date="2010-05-02">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-135] Language change does not affect playlist names on portal page
+            </action>
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-142] "first" and "previous" pager button images interchanged
+            </action>
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-132] Remote control page completely broken
             </action>
         </release>
 
