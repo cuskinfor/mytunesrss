@@ -176,12 +176,12 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             buttons.addComponent(myHelp);
             buttons.addComponent(myLogout);
             buttons.addComponent(myQuitMyTunesRss);
-            myRefresher = new Refresher();
-            addComponent(myRefresher);
             myInitialized = true;
             myServerStatus.setValue(MyTunesRss.WEBSERVER.isRunning() ? getApplication().getBundleString("statusPanel.serverRunning") : getApplication().getBundleString("statusPanel.serverStopped"));
             myDatabaseStatus.setValue(MyTunesRssExecutorService.isDatabaseUpdateRunning() ? null : getLastDatabaseUpdateText());
-            myRefresher.setRefreshInterval(2500);
+            myRefresher = new Refresher();
+            addComponent(myRefresher);
+            myRefresher.setRefreshInterval(MyTunesRssWebAdmin.ADMIN_REFRESHER_INTERVAL_MILLIS);
             myRefresher.addListener(this);
             myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
             myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
@@ -332,6 +332,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myConnections.addItem(new Object[]{session.getBestRemoteAddress(), session.getUser() != null ? session.getUser().getName() : "", new Date(session.getConnectTime()), new Date(session.getLastAccessTime()), MyTunesRssUtils.getMemorySizeForDisplay(session.getBytesStreamed())}, session.getSessionId());
         }
         myConnections.setPageLength(Math.min(myConnections.getItemIds().size(), 15));
+        getApplication().pollNotifications();
     }
 
     private void refreshMyTunesRssComUpdateState() {

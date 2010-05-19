@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.Application;
 import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
@@ -21,7 +20,6 @@ import de.codewave.vaadin.validation.SameValidator;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
-import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -126,7 +124,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         Panel httpsPanel = getComponentFactory().surroundWithPanel(myHttpsForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.https"));
         addComponent(httpsPanel);
 
-        addMainButtons(0, 5, 0, 5);
+        attach(0, 5, 0, 5);
 
         initFromConfig();
     }

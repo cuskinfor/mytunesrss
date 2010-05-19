@@ -20,7 +20,7 @@ public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandle
             LOG.error("Handling uncaught exception.", e);
         }
         MyTunesRss.ADMIN_NOTIFY.notifyInternalError(e);
-        MyTunesRss.ERROR_QUEUE.add(e);
+        MyTunesRss.NOTIFICATION_QUEUE.add(new MyTunesRssNotification("Uncaught Exception", "An unexpected error occured.", e)); // TODO i18n
         if (myTerminate) {
             MyTunesRssUtils.shutdownGracefully();
         }

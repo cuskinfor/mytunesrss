@@ -8,7 +8,6 @@ package de.codewave.mytunesrss.webadmin;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Form;
-import com.vaadin.ui.GridLayout;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -59,7 +58,7 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
         addComponent(getComponentFactory().surroundWithPanel(myEmailForm, FORM_PANEL_MARGIN_INFO, getBundleString("adminNotificationsConfigPanel.email.caption")));
         addComponent(getComponentFactory().surroundWithPanel(myNotificationsForm, FORM_PANEL_MARGIN_INFO, getBundleString("adminNotificationsConfigPanel.notifications.caption")));
 
-        addMainButtons(0, 2, 0, 2);
+        attach(0, 2, 0, 2);
 
         initFromConfig();
     }

@@ -86,10 +86,13 @@ public class MyTunesRss {
     public static String[] ORIGINAL_CMD_ARGS;
     public static MyTunesRssExecutorService EXECUTOR_SERVICE = new MyTunesRssExecutorService();
     public static Server ADMIN_SERVER;
-    public static Queue<Throwable> ERROR_QUEUE = new ConcurrentLinkedQueue<Throwable>();
+    public static Queue<MyTunesRssNotification> NOTIFICATION_QUEUE = new ConcurrentLinkedQueue<MyTunesRssNotification>();
     public static boolean HEADLESS = GraphicsEnvironment.isHeadless();
 
     public static void main(final String[] args) throws Exception {
+        NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Test1", "This is a test",  null));
+        NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Second Info", "Wow, it works!",  null));
+        NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Error No. 3", "Mambo NO. 5",  null));
         registerShutdownHook();
         processArguments(args);
         copyOldPrefsAndCache();

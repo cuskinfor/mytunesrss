@@ -14,7 +14,6 @@ import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.PathReplacement;
-import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -90,7 +89,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myUploadForm.addField(myUploadCreateUserDir, myUploadCreateUserDir);
         addComponent(getComponentFactory().surroundWithPanel(myUploadForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourcesConfigPanel.caption.upload")));
 
-        addMainButtons(0, 4, 0, 4);
+        attach(0, 4, 0, 4);
 
         initFromConfig();
     }

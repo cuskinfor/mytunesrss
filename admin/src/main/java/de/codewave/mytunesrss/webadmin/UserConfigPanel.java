@@ -11,13 +11,11 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.LdapAuthMethod;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SelectWindow;
-import de.codewave.vaadin.component.TextFieldWindow;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
@@ -72,7 +70,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
             myLdapForm.addField("ldapEmailAttribute", myLdapEmailAttribute);
             myLdapForm.addField("templateUser", myTemplateUser);
             addComponent(getComponentFactory().surroundWithPanel(myLdapForm, FORM_PANEL_MARGIN_INFO, getBundleString("userConfigPanel.caption.ldap")));
-            addMainButtons(0, 2, 0, 2);
+            attach(0, 2, 0, 2);
             initFromConfig();
             myInitialized = true;
         }

@@ -5,12 +5,9 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.Application;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.SmtpProtocol;
-import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 
@@ -80,7 +77,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         Panel webInterfacePanel = getComponentFactory().surroundWithPanel(myWebInterfaceForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.webInterface"));
         addComponent(webInterfacePanel);
 
-        addMainButtons(0, 4, 0, 4);
+        attach(0, 4, 0, 4);
 
         initFromConfig();
     }

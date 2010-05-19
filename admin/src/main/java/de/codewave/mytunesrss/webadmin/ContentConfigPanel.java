@@ -40,7 +40,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         panel.addComponent(myPlaylists);
         addComponent(myPlaylists);
 
-        addMainButtons(0, 1, 0, 1);
+        attach(0, 1, 0, 1);
 
         initFromConfig();
     }

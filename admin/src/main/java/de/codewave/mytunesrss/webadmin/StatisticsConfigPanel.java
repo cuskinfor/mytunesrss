@@ -58,7 +58,7 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         sendForm.addField(mySendButton, mySendButton);
         addComponent(getComponentFactory().surroundWithPanel(sendForm, FORM_PANEL_MARGIN_INFO, getBundleString("statisticsConfigPanel.send.caption")));
 
-        addMainButtons(0, 2, 0, 2);
+        attach(0, 2, 0, 2);
 
         initFromConfig();
     }

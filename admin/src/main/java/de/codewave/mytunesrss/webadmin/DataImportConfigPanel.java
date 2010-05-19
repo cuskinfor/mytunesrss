@@ -62,7 +62,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myMiscForm.addField(myIgnoreArtwork, myIgnoreArtwork);
         myMiscForm.addField(myIgnoreTimestamps, myIgnoreTimestamps);
 
-        addMainButtons(0, 2, 0, 2);
+        attach(0, 2, 0, 2);
 
         initFromConfig();
     }

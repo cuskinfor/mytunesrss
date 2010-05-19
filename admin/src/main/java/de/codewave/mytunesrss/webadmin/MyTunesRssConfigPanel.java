@@ -9,17 +9,28 @@ import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.*;
+import de.codewave.mytunesrss.FetchExternalAddressRunnable;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssNotification;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
 import de.codewave.vaadin.ComponentFactory;
+import org.apache.commons.lang.StringUtils;
+import org.vaadin.henrik.refresher.Refresher;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-public abstract class MyTunesRssConfigPanel extends Panel implements Button.ClickListener {
+public abstract class MyTunesRssConfigPanel extends Panel implements Button.ClickListener, Refresher.RefreshListener {
     protected static final Layout.MarginInfo FORM_PANEL_MARGIN_INFO = new Layout.MarginInfo(false, true, false, true);
 
     private Button mySave;
     private Button myReset;
     private Button myCancel;
     protected AtomicLong myItemIdGenerator = new AtomicLong(0);
+    private Refresher myRefresher;
 
     protected void init(String caption, GridLayout content) {
         setCaption(caption);
@@ -30,7 +41,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         }
     }
 
-    protected void addMainButtons(int columnn1, int row1, int column2, int row2) {
+    protected void attach(int columnn1, int row1, int column2, int row2) {
         mySave = getApplication().getComponentFactory().createButton("button.save", this);
         myReset = getApplication().getComponentFactory().createButton("button.reset", this);
         myCancel = getApplication().getComponentFactory().createButton("button.cancel", this);
@@ -42,6 +53,10 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         mainButtons.addComponent(myCancel);
         getGridLayout().addComponent(mainButtons, columnn1, row1, column2, row2);
         getGridLayout().setComponentAlignment(mainButtons, Alignment.MIDDLE_RIGHT);
+        myRefresher = new Refresher();
+        addComponent(myRefresher);
+        myRefresher.setRefreshInterval(MyTunesRssWebAdmin.ADMIN_REFRESHER_INTERVAL_MILLIS);
+        myRefresher.addListener(this);
     }
 
     protected abstract void writeToConfig();
@@ -133,5 +148,9 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
 
     protected Button createTableRowButton(String textKey, Button.ClickListener listener, Object itemId, Object action) {
         return new TableRowButton(getBundleString(textKey), listener, itemId, action);
+    }
+
+    public void refresh(Refresher source) {
+        getApplication().pollNotifications();
     }
 }

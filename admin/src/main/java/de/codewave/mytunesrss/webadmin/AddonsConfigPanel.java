@@ -77,7 +77,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         addComponent(myLanguagesPanel);
         addComponent(mySitesPanel);
 
-        addMainButtons(0, 3, 0, 3);
+        attach(0, 3, 0, 3);
 
         initFromConfig();
     }

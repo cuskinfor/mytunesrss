@@ -5,14 +5,12 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.Application;
 import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
-import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -73,7 +71,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         schedulesPanel.addComponent(myAddSchedule);
         addComponent(schedulesPanel);
 
-        addMainButtons(0, 3, 0, 3);
+        attach(0, 3, 0, 3);
 
         initFromConfig();
     }

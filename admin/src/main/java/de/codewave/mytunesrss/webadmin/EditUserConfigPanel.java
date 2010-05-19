@@ -159,7 +159,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
         myOptionsForm.addField("encryptUrls", myEncryptUrls);
         addComponent(getComponentFactory().surroundWithPanel(myOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("editUserConfigPanel.caption.options")));
 
-        addMainButtons(0, 4, 0, 4);
+        attach(0, 4, 0, 4);
 
         initFromConfig();
     }
