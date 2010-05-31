@@ -5,16 +5,24 @@
 
 package de.codewave.vaadin.component;
 
+import com.vaadin.data.Property;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
+import de.codewave.utils.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.regex.Pattern;
 
 public abstract class ServerSideFileChooser extends CustomComponent implements Button.ClickListener, ItemClickEvent.ItemClickListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerSideFileChooser.class);
 
     public static Pattern PATTERN_ALL = Pattern.compile("^.*$");
 
@@ -26,8 +34,10 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
     private Pattern myAllowedDirPattern;
     private Pattern myAllowedFilePattern;
     private Label myCurrentDirLabel;
+    private Select myRootsInput;
+    private File[] myRootFiles;
 
-    public ServerSideFileChooser(File currentDir, Pattern allowedDirPattern, Pattern allowedFilePattern, boolean allowCreateDir) {
+    public ServerSideFileChooser(File currentDir, Pattern allowedDirPattern, Pattern allowedFilePattern, boolean allowCreateDir, String rootsLabel) {
         myAllowedDirPattern = allowedDirPattern;
         myAllowedFilePattern = allowedFilePattern;
         if (currentDir.exists()) {
@@ -38,6 +48,17 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         Panel panel = new Panel();
         ((Layout) panel.getContent()).setMargin(true);
         ((Layout.SpacingHandler) panel.getContent()).setSpacing(true);
+        myRootFiles = File.listRoots();
+        if (myRootFiles != null && myRootFiles.length > 1) {
+            myRootsInput = new Select(rootsLabel, Arrays.asList(myRootFiles));
+            myRootsInput.addListener(new Property.ValueChangeListener() {
+                public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                    myCurrentDir = (File) myRootsInput.getValue();
+                    setFiles();
+                }
+            });
+            panel.addComponent(myRootsInput);
+        }
         myCurrentDirLabel = new Label();
         panel.addComponent(myCurrentDirLabel);
         myChooser = new Table();
@@ -67,6 +88,21 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
 
     private void setFiles() {
         myCurrentDirLabel.setValue(myCurrentDir.getAbsolutePath());
+        if (myRootsInput != null) {
+            for (File root : myRootFiles) {
+                try {
+                    if (IOUtils.isContained(root, myCurrentDir)) {
+                        myRootsInput.setValue(root);
+                        break;
+                    }
+                } catch (IOException e) {
+                    if (LOGGER.isErrorEnabled()) {
+                        LOGGER.error("Could not check if file is root.", e);
+                    }
+
+                }
+            }
+        }
         myOk.setEnabled(false);
         myChooser.removeAllItems();
         if (myCurrentDir.getParentFile() != null) {

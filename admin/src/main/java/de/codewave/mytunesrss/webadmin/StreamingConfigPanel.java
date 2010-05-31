@@ -154,7 +154,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         } else if (VaadinUtils.isChild(myTranscoderAccordionPanel, clickEvent.getButton())) {
             final Form buttonForm = (Form) clickEvent.getButton().getData();
             if (buttonForm.getField("selectBinary") == clickEvent.getButton()) {
-                new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.caption.selectBinary"), new File((String) buttonForm.getField("binary").getValue()), null, ServerSideFileChooser.PATTERN_ALL, false) {
+                new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.caption.selectBinary"), new File((String) buttonForm.getField("binary").getValue()), null, ServerSideFileChooser.PATTERN_ALL, false, "Roots") { // TODO i18n
                     @Override
                     protected void onFileSelected(File file) {
                         buttonForm.getField("binary").setValue(file.getAbsolutePath());
