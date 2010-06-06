@@ -90,9 +90,9 @@ public class MyTunesRss {
     public static boolean HEADLESS = GraphicsEnvironment.isHeadless();
 
     public static void main(final String[] args) throws Exception {
-        NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Test1", "This is a test",  null));
+        /*NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Test1", "This is a test",  null));
         NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Second Info", "Wow, it works!",  null));
-        NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Error No. 3", "Mambo NO. 5",  null));
+        NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Error No. 3", "Mambo NO. 5",  null));*/
         registerShutdownHook();
         processArguments(args);
         copyOldPrefsAndCache();

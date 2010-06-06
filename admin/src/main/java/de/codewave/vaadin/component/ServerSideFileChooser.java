@@ -36,6 +36,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
     private Label myCurrentDirLabel;
     private Select myRootsInput;
     private File[] myRootFiles;
+    private Property.ValueChangeListener myRootSelectionListener;
 
     public ServerSideFileChooser(File currentDir, Pattern allowedDirPattern, Pattern allowedFilePattern, boolean allowCreateDir, String rootsLabel) {
         myAllowedDirPattern = allowedDirPattern;
@@ -49,14 +50,17 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         ((Layout) panel.getContent()).setMargin(true);
         ((Layout.SpacingHandler) panel.getContent()).setSpacing(true);
         myRootFiles = File.listRoots();
+        //myRootFiles = new File[] {new File("/Applications"), new File("/Users"), new File("/Volumes")};
         if (myRootFiles != null && myRootFiles.length > 1) {
             myRootsInput = new Select(rootsLabel, Arrays.asList(myRootFiles));
-            myRootsInput.addListener(new Property.ValueChangeListener() {
+            myRootsInput.setNullSelectionAllowed(false);
+            myRootSelectionListener = new Property.ValueChangeListener() {
                 public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                     myCurrentDir = (File) myRootsInput.getValue();
                     setFiles();
                 }
-            });
+            };
+            myRootsInput.addListener(myRootSelectionListener);
             panel.addComponent(myRootsInput);
         }
         myCurrentDirLabel = new Label();
@@ -87,12 +91,25 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
     }
 
     private void setFiles() {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Setting files.");
+        }
+
         myCurrentDirLabel.setValue(myCurrentDir.getAbsolutePath());
         if (myRootsInput != null) {
             for (File root : myRootFiles) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Checking root \"" + root.getAbsolutePath() + "\".");
+                }
                 try {
-                    if (IOUtils.isContained(root, myCurrentDir)) {
+                    if (root.equals(myCurrentDir) || IOUtils.isContained(root, myCurrentDir)) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Selecting root \"" + root.getAbsolutePath() + "\".");
+                        }
+                        // make sure changing the root does not trigger the listener
+                        myRootsInput.removeListener(myRootSelectionListener);
                         myRootsInput.setValue(root);
+                        myRootsInput.addListener(myRootSelectionListener);
                         break;
                     }
                 } catch (IOException e) {
