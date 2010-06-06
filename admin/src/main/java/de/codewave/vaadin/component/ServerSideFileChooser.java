@@ -102,7 +102,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
                     LOGGER.debug("Checking root \"" + root.getAbsolutePath() + "\".");
                 }
                 try {
-                    if (root.equals(myCurrentDir) || IOUtils.isContained(root, myCurrentDir)) {
+                    if (IOUtils.isContainedOrSame(root, myCurrentDir)) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Selecting root \"" + root.getAbsolutePath() + "\".");
                         }
@@ -125,8 +125,11 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         if (myCurrentDir.getParentFile() != null) {
             myChooser.addItem(new Object[]{"[..]", null}, myCurrentDir.getParentFile());
         }
-        for (File file : myCurrentDir.listFiles()) {
-            myChooser.addItem(new Object[]{file.getName(), new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date(file.lastModified()))}, file);
+        File[] files = myCurrentDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                myChooser.addItem(new Object[]{file.getName(), new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date(file.lastModified()))}, file);
+            }
         }
     }
 

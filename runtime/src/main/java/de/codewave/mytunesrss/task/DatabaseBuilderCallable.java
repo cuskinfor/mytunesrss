@@ -113,7 +113,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 File each = iter.next();
                 if (each.isDirectory()) {
                     try {
-                        if (each.equals(file) || de.codewave.utils.io.IOUtils.isContained(each, file)) {
+                        if (de.codewave.utils.io.IOUtils.isContainedOrSame(each, file)) {
                             if (LOGGER.isInfoEnabled()) {
                                 LOGGER
                                         .info("Not adding \"" + file.getAbsolutePath()
