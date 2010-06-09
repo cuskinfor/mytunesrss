@@ -413,7 +413,7 @@ public class MyTunesRss {
             }
             System.out.println("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort());
             DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
-            if (!HEADLESS && desktopWrapper.isSupported() && !COMMAND_LINE_ARGS.containsKey(CMD_NO_BROWSER)) {
+            if (!HEADLESS && desktopWrapper.isSupported() && !COMMAND_LINE_ARGS.containsKey(CMD_NO_BROWSER) && CONFIG.isStartAdminBrowser()) {
                 desktopWrapper.openBrowser(new URI("http://127.0.0.1:" + ADMIN_SERVER.getConnectors()[0].getLocalPort()));
             }
         } catch (Exception e) {

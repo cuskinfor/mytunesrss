@@ -9,7 +9,10 @@
 
         <release version="4.0.0-EAP-4" date="xxxx-xx-xx">
             <action dev="mdescher" type="update">
-                [MYTUNESRSS-155] Display a user only once in the connected users info 
+                [MYTUNESRSS-148] Option for not starting browser on admin login page 
+            </action>
+            <action dev="mdescher" type="update">
+                [MYTUNESRSS-155] Display a user only once in the connected users info
             </action>
         </release>
 

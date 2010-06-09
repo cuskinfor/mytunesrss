@@ -33,6 +33,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myAdminPort;
     private SmartTextField myAdminPassword;
     private SmartTextField myRetypeAdminPassword;
+    private CheckBox myStartAdminBrowser;
     private CheckBox myLocalTempArchive;
     private CheckBox myAvailableOnLocalNet;
     private SmartTextField myServerName;
@@ -57,6 +58,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myAdminPort = getComponentFactory().createTextField("serverConfigPanel.adminPort", getApplication().getValidatorFactory().createPortValidator());
         myAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.adminPassword");
         myRetypeAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.retypeAdminPassword", new SameValidator(myAdminPassword, getBundleString("serverConfigPanel.error.retypeAdminPassword")));
+        myStartAdminBrowser = getComponentFactory().createCheckBox("serverConfigPanel.startAdminBrowser");
         myLocalTempArchive = getComponentFactory().createCheckBox("serverConfigPanel.localTempArchive");
         myAvailableOnLocalNet = getComponentFactory().createCheckBox("serverConfigPanel.availableOnLocalNet");
         myAvailableOnLocalNet.addListener(new Property.ValueChangeListener() {
@@ -87,6 +89,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myAdminForm.addField(myAdminPort, myAdminPort);
         myAdminForm.addField(myAdminPassword, myAdminPassword);
         myAdminForm.addField(myRetypeAdminPassword, myRetypeAdminPassword);
+        myAdminForm.addField(myStartAdminBrowser, myStartAdminBrowser);
         Panel adminPanel = getComponentFactory().surroundWithPanel(myAdminForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.admin"));
         addComponent(adminPanel);
 
@@ -133,6 +136,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myAdminPort.setValue(MyTunesRss.CONFIG.getAdminPort(), 1, 65535, "");
         myAdminPassword.setValue(MyTunesRss.CONFIG.getAdminPasswordHash());
         myRetypeAdminPassword.setValue(MyTunesRss.CONFIG.getAdminPasswordHash());
+        myStartAdminBrowser.setValue(MyTunesRss.CONFIG.isStartAdminBrowser());
         myLocalTempArchive.setValue(MyTunesRss.CONFIG.isLocalTempArchive());
         myAvailableOnLocalNet.setValue(MyTunesRss.CONFIG.isAvailableOnLocalNet());
         myServerName.setValue(MyTunesRss.CONFIG.getServerName());
@@ -158,6 +162,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         boolean musicServerConfigChanged = isMusicServerConfigChanged();
         MyTunesRss.CONFIG.setAdminPort(myAdminPort.getIntegerValue(0));
         MyTunesRss.CONFIG.setAdminPasswordHash(myAdminPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
+        MyTunesRss.CONFIG.setStartAdminBrowser(myStartAdminBrowser.booleanValue());
         MyTunesRss.CONFIG.setLocalTempArchive(myLocalTempArchive.booleanValue());
         MyTunesRss.CONFIG.setAvailableOnLocalNet(myAvailableOnLocalNet.booleanValue());
         MyTunesRss.CONFIG.setServerName(myServerName.getStringValue(null));
@@ -206,21 +211,21 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
 
     private boolean isMusicServerConfigChanged() {
         boolean changed = !MyTunesRssUtils.equals(MyTunesRss.CONFIG.isAvailableOnLocalNet(), myAvailableOnLocalNet.booleanValue());
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getServerName(), myServerName.getStringValue(null));
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getWebappContext(), myWebappContext.getStringValue(null));
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatMaxThreads(), myTomcatMaxThreads.getStringValue(null));
+        changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getServerName()), myServerName.getStringValue(null));
+        changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getWebappContext()), myWebappContext.getStringValue(null));
+        changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getTomcatMaxThreads()), myTomcatMaxThreads.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatAjpPort(), myTomcatAjpPort.getIntegerValue(0));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getPort(), myPort.getIntegerValue(0));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatProxyScheme(), myTomcatProxyScheme.toString());
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatProxyHost(), myTomcatProxyHost.getStringValue(null));
+        changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getTomcatProxyHost()), myTomcatProxyHost.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatProxyPort(), myTomcatProxyPort.getIntegerValue(0));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getSslPort(), mySslPort.getIntegerValue(0));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatSslProxyScheme(), myTomcatSslProxyScheme.toString());
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatSslProxyHost(), myTomcatSslProxyHost.getStringValue(null));
+        changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getTomcatSslProxyHost()), myTomcatSslProxyHost.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatSslProxyPort(), myTomcatSslProxyPort.getIntegerValue(0));
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getSslKeystoreFile(), mySslKeystoreFile.getStringValue(null));
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getSslKeystorePass(), mySslKeystorePass.getStringValue(null));
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getSslKeystoreKeyAlias(), mySslKeystoreKeyAlias.getStringValue(null));
+        changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getSslKeystoreFile()), mySslKeystoreFile.getStringValue(null));
+        changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getSslKeystorePass()), mySslKeystorePass.getStringValue(null));
+        changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getSslKeystoreKeyAlias()), mySslKeystoreKeyAlias.getStringValue(null));
         return changed;
     }
 
