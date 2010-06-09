@@ -15,7 +15,7 @@
     <parent>
         <groupId>de.codewave</groupId>
         <artifactId>codewave-maven2-base</artifactId>
-        <version>3.0.3</version>
+        <version>3.0.4</version>
     </parent>
     <repositories>
         <repository>
@@ -81,7 +81,7 @@
     </scm>
     <build>
         <plugins>
-            <!-- Updates Vaadin 6.2 widgetset definitions based on project dependencies -->
+            <!-- Updates Vaadin widgetset definitions based on project dependencies -->
             <plugin>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-maven-plugin</artifactId>

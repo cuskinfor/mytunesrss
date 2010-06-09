@@ -29,6 +29,9 @@ import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class StatusPanel extends Panel implements Button.ClickListener, MyTunesRssEventListener, Refresher.RefreshListener {
@@ -114,7 +117,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myConnections = new Table();
             myConnections.addContainerProperty("remoteAddress", String.class, null, getApplication().getBundleString("statusPanel.connectionRemoteAddress"), null, null);
             myConnections.addContainerProperty("user", String.class, null, getApplication().getBundleString("statusPanel.connectionUser"), null, null);
-            myConnections.addContainerProperty("connectTime", Date.class, null, getApplication().getBundleString("statusPanel.connectionConnectTime"), null, null);
+            myConnections.addContainerProperty("sessions", Long.class, null, getApplication().getBundleString("statusPanel.connectionSessions"), null, null);
             myConnections.addContainerProperty("accessTime", Date.class, null, getApplication().getBundleString("statusPanel.connectionAccessTime"), null, null);
             myConnections.addContainerProperty("bytesStreamed", String.class, null, getApplication().getBundleString("statusPanel.connectionDownBytes"), null, null);
             myConnections.setPageLength(0);
@@ -328,8 +331,24 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         myExternalAddresses.setPageLength(myExternalAddresses.getItemIds().size());
         // refresh active connections
         myConnections.removeAllItems();
+        Map<String, SessionInfo> infos = new HashMap<String, SessionInfo>();
         for (MyTunesRssSessionInfo session : MyTunesRss.WEBSERVER.getSessionInfos()) {
-            myConnections.addItem(new Object[]{session.getBestRemoteAddress(), session.getUser() != null ? session.getUser().getName() : "", new Date(session.getConnectTime()), new Date(session.getLastAccessTime()), MyTunesRssUtils.getMemorySizeForDisplay(session.getBytesStreamed())}, session.getSessionId());
+            if (session.getUser() != null) {
+                String key = session.getBestRemoteAddress() + session.getUser().getName();
+                SessionInfo info = infos.get(key);
+                if (info == null) {
+                    info = new SessionInfo();
+                    info.remoteAddress = session.getBestRemoteAddress();
+                    info.userName = session.getUser().getName();
+                    infos.put(key, info);
+                }
+                info.lastAccessTime = Math.max(info.lastAccessTime, session.getLastAccessTime());
+                info.bytesStreamed += session.getBytesStreamed();
+                info.sessions++;
+            }
+        }
+        for (SessionInfo info : infos.values()) {
+            myConnections.addItem(new Object[]{info.remoteAddress, info.userName, info.sessions, new Date(info.lastAccessTime), MyTunesRssUtils.getMemorySizeForDisplay(info.bytesStreamed)}, info.remoteAddress + info.userName);
         }
         myConnections.setPageLength(Math.min(myConnections.getItemIds().size(), 15));
         getApplication().pollNotifications();
@@ -408,5 +427,13 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             addresses[i] = "http://" + addresses[i] + ":" + MyTunesRss.CONFIG.getPort();
         }
         return addresses;
+    }
+
+    public static class SessionInfo {
+        public String remoteAddress;
+        public String userName;
+        public long sessions;
+        public long lastAccessTime;
+        public long bytesStreamed;
     }
 }
