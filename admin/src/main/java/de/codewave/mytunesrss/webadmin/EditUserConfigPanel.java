@@ -10,6 +10,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
@@ -32,7 +33,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(EditUserConfigPanel.class);
 
     private Form myIdentificationForm;
-    private Form myPermissionsForm;
     private Form myOptionsForm;
     private SmartTextField myUsername;
     private SmartTextField myPassword;
@@ -55,6 +55,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myPermEditPlaylists;
     private Table myPermissions;
     private Table myPlaylistsRestrictions;
+    private Table myForceTranscoders;
     private SmartTextField mySearchFuzziness;
     private Select myDownloadLimitType;
     private SmartTextField myDownloadLimitSize;
@@ -74,7 +75,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
     }
 
     public void attach() {
-        init(getBundleString("editUserConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
+        init(getBundleString("editUserConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));
         myUsername = getComponentFactory().createTextField("editUserConfigPanel.username", new UniqueUsernameValidator());
         myPassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.password");
         myRetypePassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.retypePassword", new SameValidator(myPassword, getBundleString("editUserConfigPanel.error.retypePassword")));
@@ -135,6 +136,16 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
         panel = new Panel(getBundleString("editUserConfigPanel.caption.restrictedPlaylists"));
         panel.addComponent(myPlaylistsRestrictions);
         addComponent(panel);
+        myForceTranscoders = new Table();
+        myForceTranscoders.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+        myForceTranscoders.addContainerProperty("active", CheckBox.class, null, "", null, null);
+        myForceTranscoders.addContainerProperty("name", String.class, null, getBundleString("editUserConfigPanel.forceTranscoders.name"), null, null);
+        myForceTranscoders.setColumnExpandRatio("name", 1);
+        myForceTranscoders.setEditable(false);
+        myForceTranscoders.setSortContainerPropertyId("name");
+        panel = new Panel(getBundleString("editUserConfigPanel.caption.forceTranscoders"));
+        panel.addComponent(myForceTranscoders);
+        addComponent(panel);
         mySearchFuzziness = getComponentFactory().createTextField("editUserConfigPanel.searchFuzziness", getApplication().getValidatorFactory().createMinMaxValidator(0, 100));
         myDownloadLimitType = getComponentFactory().createSelect("editUserConfigPanel.downloadLimitType", Arrays.asList(User.QuotaType.values()));
         myDownloadLimitType.setNewItemsAllowed(false);
@@ -159,7 +170,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
         myOptionsForm.addField("encryptUrls", myEncryptUrls);
         addComponent(getComponentFactory().surroundWithPanel(myOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("editUserConfigPanel.caption.options")));
 
-        attach(0, 4, 0, 4);
+        attach(0, 5, 0, 5);
 
         initFromConfig();
     }
@@ -221,6 +232,14 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
                 getApplication().handleException(e);
             }
             myPlaylistsRestrictions.setPageLength(Math.min(playlists.size(), 10));
+            myForceTranscoders.removeAllItems();
+            for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+                CheckBox active = new CheckBox();
+                active.setValue(myUser.getForceTranscoders().contains(config.getName()));
+                myForceTranscoders.addItem(new Object[]{active, config.getName()}, config.getName());
+            }
+            myForceTranscoders.sort();
+            myForceTranscoders.setPageLength(Math.min(MyTunesRss.CONFIG.getTranscoderConfigs().size(), 10));
         }
     }
 
@@ -268,6 +287,12 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
             }
         }
         myUser.setPlaylistIds(ids);
+        myUser.clearForceTranscoders();
+        for (Object transcoderName : myForceTranscoders.getItemIds()) {
+            if ((Boolean) getTableCellPropertyValue(myForceTranscoders, transcoderName, "active")) {
+                myUser.addForceTranscoder((String)transcoderName);
+            }
+        }
         myUserConfigPanel.saveUser(myUser);
     }
 
