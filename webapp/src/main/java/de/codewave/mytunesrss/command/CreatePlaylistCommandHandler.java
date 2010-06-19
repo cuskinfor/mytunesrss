@@ -28,9 +28,9 @@ public class CreatePlaylistCommandHandler extends CreatePlaylistBaseCommandHandl
         if (getAuthUser().isPlaylist() || Boolean.parseBoolean(getRequestParameter("playerRequest", "false"))) {
             DataStoreQuery.QueryResult<Track> tracks = getTracks();
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Found " + tracks.getResultSize() + " tracks for playlist.");
+                LOGGER.debug("Found " + (tracks != null ? tracks.getResultSize() : 0) + " tracks for playlist.");
             }
-            if (tracks.getResultSize() > 0) {
+            if (tracks != null && tracks.getResultSize() > 0) {
                 getRequest().setAttribute("tracks", tracks.getResults());
                 String playlistType = getRequestParameter("type", null);
                 if (StringUtils.isEmpty(playlistType)) {
