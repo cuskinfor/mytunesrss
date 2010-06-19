@@ -64,7 +64,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         if (transcoder != null) {
                             streamSender = transcoder.getStreamSender();
                         } else {
-                            streamSender = new FileSender(file, contentType, (int)file.length());
+                            streamSender = new FileSender(file, contentType, file.length());
                         }
                         getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
                         streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));

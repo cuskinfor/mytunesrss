@@ -9,7 +9,10 @@
 
         <release version="4.0.0-EAP-4" date="xxxx-xx-xx">
             <action dev="mdescher" type="update">
-                [MYTUNESRSS-149] Track info button for flash player does not work 
+                [MYTUNESRSS-153] Download of files > 2 GB fails 
+            </action>
+            <action dev="mdescher" type="update">
+                [MYTUNESRSS-149] Track info button for flash player does not work
             </action>
             <action dev="mdescher" type="update">
                 [MYTUNESRSS-156] Force transcoders missing in admin interface

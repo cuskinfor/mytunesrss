@@ -83,7 +83,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                         LOGGER.debug("Using archive with ID \"" + fileIdentifier + "\" from cache.");
                     }
                     File sendFile = cachedFile != null && cachedFile.isFile() ? cachedFile : tempFile;
-                    FileSender fileSender = new FileSender(sendFile, "application/zip", (int) sendFile.length());
+                    FileSender fileSender = new FileSender(sendFile, "application/zip", sendFile.length());
                     fileSender.setCounter(new MyTunesRssSendCounter(user, sessionInfo));
                     fileSender.setOutputStreamWrapper(user.getOutputStreamWrapper(0));
                     fileSender.sendGetResponse(getRequest(), getResponse(), false);
