@@ -219,13 +219,13 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
             try {
                 playlists = session.executeQuery(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder, PlaylistType.M3uFile), null, null, true)).getResults();
                 for (Playlist playlist : playlists) {
-                    CheckBox visible = new CheckBox();
-                    visible.setValue(!playlist.isHidden());
+                    CheckBox restricted = new CheckBox();
+                    restricted.setValue(myUser.getPlaylistIds().contains(playlist.getId()));
                     StringBuilder name = new StringBuilder();
                     for (Playlist pathElement : MyTunesRssUtils.getPlaylistPath(playlist, playlists)) {
                         name.append(" \u21E8 ").append(pathElement.getName());
                     }
-                    myPlaylistsRestrictions.addItem(new Object[]{visible, name.substring(3)}, playlist);
+                    myPlaylistsRestrictions.addItem(new Object[]{restricted, name.substring(3)}, playlist);
                 }
                 myPlaylistsRestrictions.sort();
             } catch (SQLException e) {
