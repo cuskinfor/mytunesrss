@@ -7,6 +7,9 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.Validatable;
 import com.vaadin.data.validator.AbstractStringValidator;
+import com.vaadin.data.validator.CompositeValidator;
+import com.vaadin.data.validator.NullValidator;
+import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
@@ -26,6 +29,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class StreamingConfigPanel extends MyTunesRssConfigPanel {
+
+    private static final String TRANSCODER_NAME_REGEXP = "[a-zA-Z0-9 ]{1,40}";
 
     private Panel myTranscoderAccordionPanel;
     private Panel myTranscoderPanel;
@@ -64,7 +69,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
 
     private Form createTranscoder() {
         Form form = getComponentFactory().createForm(null, true);
-        form.addField("name", getComponentFactory().createTextField("streamingConfigPanel.transcoder.name", new TranscoderNameValidator()));
+        form.addField("name", getComponentFactory().createTextField("streamingConfigPanel.transcoder.name", VaadinUtils.createCompositeValidator(CompositeValidator.MODE_AND, null, new NullValidator(getBundleString("error.requiredField"), false), new RegexpValidator(TRANSCODER_NAME_REGEXP, true, getBundleString("streamingConfigPanel.error.invalidName", 40)))));
         form.addField("pattern", getComponentFactory().createTextField("streamingConfigPanel.transcoder.pattern", new ValidRegExpValidator("streamingConfigPanel.error.invalidPattern")));
         form.addField("codecs", getComponentFactory().createTextField("streamingConfigPanel.transcoder.codecs"));
         form.addField("suffix", getComponentFactory().createTextField("streamingConfigPanel.transcoder.suffix"));
@@ -83,12 +88,12 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void initFromConfig() {
-        Iterator<Component> formsIterator = myTranscoderAccordionPanel.getComponentIterator();
+        Iterator<Component> componentIterator = myTranscoderAccordionPanel.getComponentIterator();
         for (int i = 0; i < MyTunesRss.CONFIG.getTranscoderConfigs().size(); i++) {
             TranscoderConfig config = MyTunesRss.CONFIG.getTranscoderConfigs().get(i);
-            Panel panel = (Panel) formsIterator.next();
+            Panel panel = (Panel) componentIterator.next();
             VaadinUtils.getAncestor(panel, TabSheet.class).getTab(panel).setCaption(config.getName());
-            Form form = (Form) panel.getComponentIterator().next();
+            Form form = getTranscoderForm(panel);
             form.getField("name").setValue(config.getName());
             form.getField("pattern").setValue(config.getPattern());
             form.getField("codecs").setValue(config.getMp4Codecs());
@@ -104,9 +109,9 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     protected void writeToConfig() {
         List<TranscoderConfig> configs = MyTunesRss.CONFIG.getTranscoderConfigs();
         configs.clear();
-        Iterator<Component> formIterator = myTranscoderAccordionPanel.getComponentIterator();
-        while (formIterator.hasNext()) {
-            Form form = (Form) formIterator.next();
+        Iterator<Component> componentIterator = myTranscoderAccordionPanel.getComponentIterator();
+        while (componentIterator.hasNext()) {
+            Form form = getTranscoderForm((Panel) componentIterator.next());
             TranscoderConfig conf = new TranscoderConfig();
             conf.setName(((SmartTextField) form.getField("name")).getStringValue(null));
             conf.setPattern(((SmartTextField) form.getField("pattern")).getStringValue(null));
@@ -126,12 +131,24 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         boolean valid = VaadinUtils.isValid(myCacheForm);
         Iterator<Component> formIterator = myTranscoderAccordionPanel.getComponentIterator();
         while (formIterator.hasNext()) {
-            valid &= VaadinUtils.isValid((Validatable) formIterator.next());
+            Panel panel = (Panel)formIterator.next();
+            Form form = getTranscoderForm(panel);
+            valid &= VaadinUtils.isValid(form);
         }
         if (!valid) {
             getApplication().showError("error.formInvalid");
         }
         return valid;
+    }
+
+    private Form getTranscoderForm(Panel panel) {
+        for (Iterator<Component> componentIterator = panel.getComponentIterator(); componentIterator.hasNext(); ) {
+            Component component = componentIterator.next();
+            if (component instanceof Form) {
+                return (Form)component;
+            }
+        }
+        throw new IllegalArgumentException("No transcoder form found in panel.");
     }
 
     @Override
@@ -174,18 +191,6 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             }
         } else {
             super.buttonClick(clickEvent);
-        }
-    }
-
-    public class TranscoderNameValidator extends AbstractStringValidator {
-
-        public TranscoderNameValidator() {
-            super(getBundleString("streamingConfigPanel.error.invalidName", 40));
-        }
-
-        @Override
-        protected boolean isValidString(String s) {
-            return StringUtils.isNotBlank(s) && StringUtils.isAlphanumericSpace(s) && s.length() <= 40;
         }
     }
 }

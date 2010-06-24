@@ -8,6 +8,8 @@ package de.codewave.vaadin;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validatable;
+import com.vaadin.data.Validator;
+import com.vaadin.data.validator.CompositeValidator;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Table;
@@ -82,5 +84,25 @@ public class VaadinUtils {
             }
         }
         return count;
+    }
+
+    /**
+     * Convenience method for creating a composite validator.
+     *
+     * @param mode Composite validator mode.
+     * @param errorMessage Error message.
+     * @param validators One or more validators.
+     *
+     * @return A composite validator.
+     */
+    public static CompositeValidator createCompositeValidator(int mode, String errorMessage, Validator... validators) {
+        if (validators == null || validators.length  == 0) {
+            throw new IllegalArgumentException("At least one validator must be specified!");
+        }
+        CompositeValidator compositeValidator = new CompositeValidator(mode, errorMessage);
+        for (Validator validator : validators) {
+            compositeValidator.addValidator(validator);
+        }
+        return compositeValidator;
     }
 }
