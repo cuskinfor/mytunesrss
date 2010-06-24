@@ -69,12 +69,24 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
 
     private Form createTranscoder() {
         Form form = getComponentFactory().createForm(null, true);
-        form.addField("name", getComponentFactory().createTextField("streamingConfigPanel.transcoder.name", VaadinUtils.createCompositeValidator(CompositeValidator.MODE_AND, null, new NullValidator(getBundleString("error.requiredField"), false), new RegexpValidator(TRANSCODER_NAME_REGEXP, true, getBundleString("streamingConfigPanel.error.invalidName", 40)))));
-        form.addField("pattern", getComponentFactory().createTextField("streamingConfigPanel.transcoder.pattern", new ValidRegExpValidator("streamingConfigPanel.error.invalidPattern")));
-        form.addField("codecs", getComponentFactory().createTextField("streamingConfigPanel.transcoder.codecs"));
-        form.addField("suffix", getComponentFactory().createTextField("streamingConfigPanel.transcoder.suffix"));
-        form.addField("contentType", getComponentFactory().createTextField("streamingConfigPanel.transcoder.contentType"));
-        form.addField("binary", getComponentFactory().createTextField("streamingConfigPanel.transcoder.binary", new FileValidator(getBundleString("streamingConfigPanel.error.invalidBinary"), null, FileValidator.PATTERN_ALL)));
+        SmartTextField nameTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.name", new RegexpValidator(TRANSCODER_NAME_REGEXP, true, getBundleString("streamingConfigPanel.error.invalidName", 40)));
+        nameTextField.setRequired(true);
+        form.addField("name", nameTextField);
+        SmartTextField patternTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.pattern", new ValidRegExpValidator("streamingConfigPanel.error.invalidPattern"));
+        patternTextField.setRequired(true);
+        form.addField("pattern", patternTextField);
+        SmartTextField codecsTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.codecs");
+        codecsTextField.setRequired(true);
+        form.addField("codecs", codecsTextField);
+        SmartTextField suffixTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.suffix");
+        suffixTextField.setRequired(true);
+        form.addField("suffix", suffixTextField);
+        SmartTextField contentTypeTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.contentType");
+        contentTypeTextField.setRequired(true);
+        form.addField("contentType", contentTypeTextField);
+        SmartTextField binaryTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.binary", new FileValidator(getBundleString("streamingConfigPanel.error.invalidBinary"), null, FileValidator.PATTERN_ALL));
+        binaryTextField.setRequired(true);
+        form.addField("binary", binaryTextField);
         Button selectBinary = getComponentFactory().createButton("streamingConfigPanel.transcoder.select", this);
         selectBinary.setData(form);
         form.addField("selectBinary", selectBinary);
