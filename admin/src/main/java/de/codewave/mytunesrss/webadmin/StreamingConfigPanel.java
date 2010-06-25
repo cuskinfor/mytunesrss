@@ -75,9 +75,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         SmartTextField patternTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.pattern", new ValidRegExpValidator("streamingConfigPanel.error.invalidPattern"));
         patternTextField.setRequired(true);
         form.addField("pattern", patternTextField);
-        SmartTextField codecsTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.codecs");
-        codecsTextField.setRequired(true);
-        form.addField("codecs", codecsTextField);
+        form.addField("codecs", getComponentFactory().createTextField("streamingConfigPanel.transcoder.codecs"));
         SmartTextField suffixTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.suffix");
         suffixTextField.setRequired(true);
         form.addField("suffix", suffixTextField);
