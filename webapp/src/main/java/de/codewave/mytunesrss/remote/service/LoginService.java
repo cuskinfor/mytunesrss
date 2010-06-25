@@ -42,7 +42,7 @@ public class LoginService {
         if (MyTunesRssUtils.loginLDAP(username, password)){
             return handleLogin(user, sessionTimeoutMinutes);
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     private String handleLogin(User user, int sessionTimeoutMinutes) {
@@ -57,7 +57,7 @@ public class LoginService {
         if (user != null) {
             MyTunesRssRemoteEnv.getSession().invalidate();
         } else {
-            throw new IllegalAccessException("Unauthorized");
+            throw new IllegalAccessException("UNAUTHORIZED");
         }
     }
 
@@ -70,7 +70,7 @@ public class LoginService {
         if (user != null) {
             return RenderMachine.getInstance().render(user);
         } else {
-            throw new IllegalAccessException("Unauthorized");
+            throw new IllegalAccessException("UNAUTHORIZED");
         }
     }
 
@@ -93,7 +93,7 @@ public class LoginService {
                 }
             }
         } else {
-            throw new IllegalAccessException("Unauthorized");
+            throw new IllegalAccessException("UNAUTHORIZED");
         }
     }
 }

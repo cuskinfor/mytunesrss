@@ -70,7 +70,7 @@ public class TrackService {
                 throw new IllegalArgumentException("Track with ID \"" + trackId + "\" not found.");
             }
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     public Object search(String searchTerm, int fuzziness, String sortOrderName, int firstItem, int maxItems) throws IllegalAccessException, SQLException, IOException, ParseException {
@@ -101,7 +101,7 @@ public class TrackService {
                 throw new IllegalArgumentException("Search term must not be NULL ot empty!");
             }
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     public Object expertSearch(String searchTerm, String sortOrderName, int firstItem, int maxItems) throws IllegalAccessException, SQLException, IOException, ParseException, LuceneQueryParserException {
@@ -121,7 +121,7 @@ public class TrackService {
                 throw new IllegalArgumentException("Search term must not be NULL ot empty!");
             }
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     public Object getTracks(String[] ids) throws SQLException, IllegalAccessException {
@@ -130,6 +130,6 @@ public class TrackService {
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForIds(
                     ids)), 0, -1));
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 }

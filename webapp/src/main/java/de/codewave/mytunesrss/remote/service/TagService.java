@@ -27,7 +27,7 @@ public class TagService {
         if (user != null) {
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(new FindAllTagsQuery()), 0, 0));
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     public Object getTagsForTrack(String trackId) throws IllegalAccessException, SQLException {
@@ -35,7 +35,7 @@ public class TagService {
         if (user != null) {
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(new FindAllTagsForTrackQuery(trackId)), 0, 0));
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     public Object getTagsForPlaylist(String playlistId) throws IllegalAccessException, SQLException {
@@ -43,7 +43,7 @@ public class TagService {
         if (user != null) {
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(new FindAllTagsForPlaylistQuery(playlistId)), 0, 0));
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     public Object getTagsForAlbum(String album) throws IllegalAccessException, SQLException {
@@ -51,7 +51,7 @@ public class TagService {
         if (user != null) {
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(new FindAllTagsForAlbumQuery(album)), 0, 0));
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     public Object getTagsForArtist(String artist) throws IllegalAccessException, SQLException {
@@ -59,7 +59,7 @@ public class TagService {
         if (user != null) {
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(new FindAllTagsForArtistQuery(artist)), 0, 0));
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     public void setTagsToTracks(String[] trackIds, String[] tags) throws IllegalAccessException, SQLException, IOException {
@@ -70,7 +70,7 @@ public class TagService {
             }
             MyTunesRss.EXECUTOR_SERVICE.scheduleLuceneAndSmartPlaylistUpdate(trackIds);
         } else {
-            throw new IllegalAccessException("Unauthorized");
+            throw new IllegalAccessException("UNAUTHORIZED");
         }
     }
 
@@ -82,7 +82,7 @@ public class TagService {
             }
             MyTunesRss.EXECUTOR_SERVICE.scheduleLuceneAndSmartPlaylistUpdate(trackIds);
         } else {
-            throw new IllegalAccessException("Unauthorized");
+            throw new IllegalAccessException("UNAUTHORIZED");
         }
     }
 
@@ -101,7 +101,7 @@ public class TagService {
             List<Track> tracks = TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(playlistId, SortOrder.KeepOrder)).getResults();
             setTagsToTracks(TrackUtils.getTrackIds(tracks), tags);
         } else {
-            throw new IllegalAccessException("Unauthorized");
+            throw new IllegalAccessException("UNAUTHORIZED");
         }
     }
 
@@ -111,7 +111,7 @@ public class TagService {
             List<Track> tracks = TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(playlistId, SortOrder.KeepOrder)).getResults();
             removeTagsFromTracks(TrackUtils.getTrackIds(tracks), tags);
         } else {
-            throw new IllegalAccessException("Unauthorized");
+            throw new IllegalAccessException("UNAUTHORIZED");
         }
     }
 
@@ -121,7 +121,7 @@ public class TagService {
             List<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(user, new String[]{album}, SortOrder.KeepOrder)).getResults();
             setTagsToTracks(TrackUtils.getTrackIds(tracks), tags);
         } else {
-            throw new IllegalAccessException("Unauthorized");
+            throw new IllegalAccessException("UNAUTHORIZED");
         }
     }
 
@@ -131,7 +131,7 @@ public class TagService {
             List<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(user, new String[]{album}, SortOrder.KeepOrder)).getResults();
             removeTagsFromTracks(TrackUtils.getTrackIds(tracks), tags);
         } else {
-            throw new IllegalAccessException("Unauthorized");
+            throw new IllegalAccessException("UNAUTHORIZED");
         }
     }
 
@@ -141,7 +141,7 @@ public class TagService {
             List<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForArtist(user, new String[]{artist}, SortOrder.KeepOrder)).getResults();
             setTagsToTracks(TrackUtils.getTrackIds(tracks), tags);
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     public void removeTagsFromArtist(String artist, String[] tags) throws IllegalAccessException, SQLException, IOException {
@@ -150,7 +150,7 @@ public class TagService {
             List<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForArtist(user, new String[]{artist}, SortOrder.KeepOrder)).getResults();
             removeTagsFromTracks(TrackUtils.getTrackIds(tracks), tags);
         } else {
-            throw new IllegalAccessException("Unauthorized");
+            throw new IllegalAccessException("UNAUTHORIZED");
         }
     }
 }

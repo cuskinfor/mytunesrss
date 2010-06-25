@@ -50,7 +50,7 @@ public class EditPlaylistService {
             session.setAttribute(KEY_EDIT_PLAYLIST, playlist);
             session.setAttribute(KEY_EDIT_PLAYLIST_TRACKS, tracks);
         } else {
-            throw new IllegalAccessException("Unauthorized");
+            throw new IllegalAccessException("UNAUTHORIZED");
         }
     }
 
@@ -68,7 +68,7 @@ public class EditPlaylistService {
         if (user != null) {
             return addTracks(trackIds.length > 0 ? FindTrackQuery.getForIds(trackIds) : null);
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**
@@ -112,7 +112,7 @@ public class EditPlaylistService {
         if (user != null) {
             return addTracks(albums.length > 0 ? FindTrackQuery.getForAlbum(user, albums, SortOrder.Album) : null);
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**
@@ -137,7 +137,7 @@ public class EditPlaylistService {
                 return addTracks(artists.length > 0 ? FindTrackQuery.getForArtist(user, artists, SortOrder.Album) : null);
             }
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**
@@ -178,7 +178,7 @@ public class EditPlaylistService {
                 return addTracks(genres.length > 0 ? FindTrackQuery.getForGenre(user, genres, SortOrder.Album) : null);
             }
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**
@@ -208,7 +208,7 @@ public class EditPlaylistService {
                 throw new IllegalStateException("Not currently editing a playlist.");
             }
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**
@@ -225,7 +225,7 @@ public class EditPlaylistService {
         if (user != null) {
             return removeTracks(albums.length > 0 ? FindTrackQuery.getForAlbum(user, albums, SortOrder.Album) : null);
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**
@@ -242,7 +242,7 @@ public class EditPlaylistService {
         if (user != null) {
             return removeTracks(artists.length > 0 ? FindTrackQuery.getForArtist(user, artists, SortOrder.Album) : null);
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**
@@ -259,7 +259,7 @@ public class EditPlaylistService {
         if (user != null) {
             return removeTracks(genres.length > 0 ? FindTrackQuery.getForGenre(user, genres, SortOrder.Album) : null);
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**
@@ -308,7 +308,7 @@ public class EditPlaylistService {
                 throw new IllegalStateException("Not currently editing a playlist.");
             }
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**
@@ -375,7 +375,7 @@ public class EditPlaylistService {
                 throw new IllegalStateException("Not currently editing a playlist.");
             }
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**
@@ -403,7 +403,7 @@ public class EditPlaylistService {
             }
             return count;
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**

@@ -21,6 +21,6 @@ public class TranscodingService {
 
             return "tc=" + MyTunesRssWebUtils.createTranscodingParamValue(transcoderNames, transcodeOnTheFlyIfPossible);
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 }

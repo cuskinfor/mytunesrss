@@ -25,7 +25,7 @@ public class ArtistService {
                                                                              startItem,
                                                                              maxItems));
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     public Object getTracks(String[] artists) throws IllegalAccessException, SQLException {
@@ -34,6 +34,6 @@ public class ArtistService {
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter
                     .getTransaction().executeQuery(FindTrackQuery.getForArtist(user, artists, SortOrder.Album)), 0, -1));
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 }

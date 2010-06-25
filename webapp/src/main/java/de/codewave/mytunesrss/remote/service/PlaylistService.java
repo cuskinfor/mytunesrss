@@ -29,7 +29,7 @@ public class PlaylistService {
             FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, null, false, false);
             return RenderMachine.getInstance().render(TransactionFilter.getTransaction().executeQuery(query));
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**
@@ -46,7 +46,7 @@ public class PlaylistService {
             FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, null, false, true);
             return RenderMachine.getInstance().render(TransactionFilter.getTransaction().executeQuery(query));
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     /**
@@ -74,6 +74,6 @@ public class PlaylistService {
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter
                     .getTransaction().executeQuery(new FindPlaylistTracksQuery(user, playlistId, sortOrderEnum)), 0, -1));
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 }

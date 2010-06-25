@@ -30,7 +30,7 @@ public class ServerService {
             });
             return RenderMachine.getInstance().render(servers);
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     public Object getDatabaseStatistics() throws IllegalAccessException, SQLException {
@@ -44,7 +44,7 @@ public class ServerService {
             statistics.put("genres", sysInfo.getGenreCount());
             return statistics;
         }
-        throw new IllegalAccessException("Unauthorized");
+        throw new IllegalAccessException("UNAUTHORIZED");
     }
 
     public Object getServerInfo() throws IllegalAccessException, SQLException {
