@@ -145,16 +145,14 @@ public class MyTunesRssWebUtils {
     }
 
     public static String createTranscodingPathInfo(WebConfig config) {
-        return createTranscodingParamValue(StringUtils.split(StringUtils.trimToEmpty(config.getActiveTranscoders()), ','),
-                config.isTranscodeOnTheFlyIfPossible());
+        return createTranscodingParamValue(StringUtils.split(StringUtils.trimToEmpty(config.getActiveTranscoders()), ','));
     }
 
-    public static String createTranscodingParamValue(String[] transcoderNames, boolean transcodeOnTheFlyIfPossible) {
+    public static String createTranscodingParamValue(String[] transcoderNames) {
         StringBuilder tc = new StringBuilder();
         for (String tcName : transcoderNames) {
             tc.append("N").append(tcName).append("_");
         }
-        tc.append("O").append(transcodeOnTheFlyIfPossible ? "1" : "0");
         return tc.toString();
     }
 
@@ -168,9 +166,6 @@ public class MyTunesRssWebUtils {
                 switch (key) {
                     case 'N':
                         names.append(",").append(tc.substring(1));
-                        break;
-                    case 'O':
-                        config.setTranscodeOnTheFlyIfPossible("1".equals(value));
                         break;
                     default:
                         LOGGER.warn("Illegal transcodig parameter \"" + tc + "\" ignored.");

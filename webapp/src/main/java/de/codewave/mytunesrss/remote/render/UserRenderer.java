@@ -33,7 +33,7 @@ public class UserRenderer implements Renderer<Map<String, Object>, User> {
         permissions.put("rss", user.isRss());
         permissions.put("transcoder", user.isTranscoder());
         permissions.put("upload", user.isUpload());
-        if (user.isTranscoder()) {
+        if (user.isTranscoder() && !user.isForceTranscoders()) {
             List<String> transcoderNames = new ArrayList<String>();
             for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
                 transcoderNames.add(config.getName());

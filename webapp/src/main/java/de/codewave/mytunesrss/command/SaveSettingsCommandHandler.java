@@ -21,8 +21,6 @@ import java.util.Arrays;
  * de.codewave.mytunesrss.command.SaveSettingsCommandHandler
  */
 public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(SaveSettingsCommandHandler.class);
-
     @Override
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized() && getAuthUser().isEditWebSettings()) {
@@ -52,7 +50,6 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setPlaylistType(getRequestParameter("playlistType", "m3u"));
         webConfig.setShowPlayer(getBooleanRequestParameter("showPlayer", false));
         webConfig.setTheme(getRequest().getParameter("theme"));
-        webConfig.setTranscodeOnTheFlyIfPossible(getBooleanRequestParameter("transcodeOnTheFlyIfPossible", false));
         webConfig.setRandomSource(getRequestParameter("randomSource", ""));
         webConfig.setFlashplayerType(getRequestParameter("flashplayerType", "jw"));
         webConfig.setYahooMediaPlayer(getBooleanRequestParameter("showYahooMediaPlayer", false));

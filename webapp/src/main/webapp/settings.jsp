@@ -7,6 +7,15 @@
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
+<%--@elvariable id="appUrl" type="java.lang.String"--%>
+<%--@elvariable id="servletUrl" type="java.lang.String"--%>
+<%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
+<%--@elvariable id="auth" type="java.lang.String"--%>
+<%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
+<%--@elvariable id="authUser" type="de.codewave.mytunesrss.User"--%>
+<%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.MyTunesRssConfig"--%>
+<%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -368,7 +377,7 @@
                                 </td>
                             </tr>
                         </c:if>
-                        <c:if test="${authUser.transcoder && !empty globalConfig.transcoderConfigs}">
+                        <c:if test="${authUser.transcoder && !empty globalConfig.transcoderConfigs && !authUser.forceTranscoders}">
                             <c:forEach var="tc" items="${globalConfig.transcoderConfigs}">
                                 <tr <mt:flipFlop/>>
                                     <td class="label"><fmt:message key="settings.transcoder" />: <c:out value="${tc.name}" /></td>
@@ -377,12 +386,6 @@
                                     </td>
                                 </tr>
                             </c:forEach>
-                            <tr <mt:flipFlop/>>
-                                <td class="label"><fmt:message key="settings.transcodeOnTheFlyIfPossible" /></td>
-                                <td>
-                                    <input type="checkbox" name="transcodeOnTheFlyIfPossible" value="true" <c:if test="${config.transcodeOnTheFlyIfPossible}">checked="checked"</c:if> />
-                                </td>
-                            </tr>
                         </c:if>
                     </table>
                     <div class="buttons">

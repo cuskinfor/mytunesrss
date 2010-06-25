@@ -50,8 +50,7 @@ public class Transcoder {
     protected Transcoder(TranscoderConfig transcoderConfig, Track track, WebConfig webConfig, HttpServletRequest request) {
         myTrack = track;
         myPlayerRequest = "true".equalsIgnoreCase(request.getParameter("playerRequest"));
-        myTempFile = (ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request) || !webConfig.isTranscodeOnTheFlyIfPossible()) &&
-                !myPlayerRequest;
+        myTempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
         myTranscoderConfig = transcoderConfig;
         myActive = webConfig.isActiveTranscoder(transcoderConfig.getName());
     }

@@ -41,7 +41,6 @@ public class WebConfig {
     private static final String CFG_MOST_PLAYED_PLAYLIST_SIZE = "mostPlayedPlaylistSize";
     private static final String CFG_PLAYLIST_TYPE = "playlistType";
     private static final String CFG_THEME = "theme";
-    private static final String CFG_TRANSCODE_OTF_IF_POSSIBLE = "transcodeOnTheFlyIfPossible";
     private static final String CFG_RANDOM_SOURCE = "rndSrc";
     private static final String CFG_FLASH_PLAYER_TYPE = "flashplayerType";
     private static final String CFG_YAHOO_MEDIAPLAYER = "yahooMediaPlayer";
@@ -63,7 +62,7 @@ public class WebConfig {
 
     private static final String[] VALID_NAMES = {CFG_USER_NAME, CFG_PASSWORD_HASH, CFG_LOGIN_STORED, CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE,
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
-            CFG_PLAYLIST_TYPE, CFG_THEME, CFG_TRANSCODE_OTF_IF_POSSIBLE, CFG_RANDOM_SOURCE,
+            CFG_PLAYLIST_TYPE, CFG_THEME, CFG_RANDOM_SOURCE,
             CFG_FLASH_PLAYER_TYPE, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
             CFG_ALBUM_IMAGE_SIZE, CFG_LANGUAGE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS, CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS};
 
@@ -143,7 +142,6 @@ public class WebConfig {
         myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.M3u.name());
-        myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, "false");
         myConfigValues.put(CFG_RANDOM_SOURCE, "");
         myConfigValues.put(CFG_FLASH_PLAYER_TYPE, "jw");
         myConfigValues.put(CFG_YAHOO_MEDIAPLAYER, "false");
@@ -434,14 +432,6 @@ public class WebConfig {
 
     public MyTunesRssResource getPlaylistTemplateResource() {
         return PlaylistType.valueOf(getPlaylistType()).getTemplateResource();
-    }
-
-    public boolean isTranscodeOnTheFlyIfPossible() {
-        return Boolean.parseBoolean(myConfigValues.get(CFG_TRANSCODE_OTF_IF_POSSIBLE));
-    }
-
-    public void setTranscodeOnTheFlyIfPossible(boolean transcodeOnTheFlyIfPossible) {
-        myConfigValues.put(CFG_TRANSCODE_OTF_IF_POSSIBLE, Boolean.toString(transcodeOnTheFlyIfPossible));
     }
 
     public String getRandomSource() {
