@@ -396,17 +396,19 @@ public class MyTunesRssUtils {
     }
 
     public static String getCacheDataPath() throws IOException {
-        if (MyTunesRss.COMMAND_LINE_ARGS.containsKey("cacheDataPath")) {
-            return MyTunesRss.COMMAND_LINE_ARGS.get("cacheDataPath")[0];
+        if (MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_CACHE_PATH)) {
+            return MyTunesRss.COMMAND_LINE_ARGS.get(MyTunesRss.CMD_CACHE_PATH)[0];
+        } else {
+            return PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
         }
-        return PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
     }
 
     public static String getPreferencesDataPath() throws IOException {
-        if (MyTunesRss.COMMAND_LINE_ARGS.containsKey("preferencesDataPath")) {
-            return MyTunesRss.COMMAND_LINE_ARGS.get("preferencesDataPath")[0];
+        if (MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_PREFS_PATH)) {
+            return MyTunesRss.COMMAND_LINE_ARGS.get(MyTunesRss.CMD_PREFS_PATH)[0];
+        } else {
+            return PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
         }
-        return PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
     }
 
     public static boolean isOtherInstanceRunning(long timeoutMillis) {

@@ -59,6 +59,12 @@ public class MyTunesRss {
     // Do not start browser when starting admin server on an non-headless system (e.g. -noBrowser)
     public static final String CMD_NO_BROWSER = "noBrowser";
 
+    // Location of the cache data path, can be combined with the instance parameter (e.g. -cacheDataPath /var/mytunesrss/cache)
+    public static final String CMD_CACHE_PATH = "cacheDataPath";
+
+    // Location of the preferfences data path, can be combined with the instance parameter (e.g. -prefDataPath /var/mytunesrss/prefs)
+    public static final String CMD_PREFS_PATH = "prefsDataPath";
+
     public static final String APPLICATION_IDENTIFIER = "MyTunesRSS4";
     public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS3"};
     public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<String, String[]>();

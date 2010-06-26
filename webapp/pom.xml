@@ -14,7 +14,7 @@
     <parent>
         <groupId>de.codewave</groupId>
         <artifactId>codewave-maven2-base</artifactId>
-        <version>3.0.4</version>
+        <version>3.0.5</version>
     </parent>
     <repositories>
         <repository>

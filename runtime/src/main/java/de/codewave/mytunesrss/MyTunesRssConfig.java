@@ -1100,7 +1100,7 @@ public class MyTunesRssConfig {
     }
 
     private static File getSettingsFile() throws IOException {
-        String filename = System.getProperty("settings-file", "settings.xml");
+        String filename = "settings.xml";
         return new File(MyTunesRssUtils.getPreferencesDataPath() + "/" + filename);
     }
 
