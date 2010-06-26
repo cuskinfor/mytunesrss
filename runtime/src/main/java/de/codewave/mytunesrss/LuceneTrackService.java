@@ -37,7 +37,7 @@ public class LuceneTrackService {
     private static final int MAX_RESULTS = 10000;
 
     private Directory getDirectory() throws IOException {
-        return FSDirectory.open(new File(PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER) + "/lucene/track"));
+        return FSDirectory.open(new File(MyTunesRssUtils.getCacheDataPath() + "/lucene/track"));
     }
 
     public void indexAllTracks() throws IOException, SQLException {
