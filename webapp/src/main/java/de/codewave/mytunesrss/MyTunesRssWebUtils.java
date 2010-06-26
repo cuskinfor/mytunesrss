@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.jstl.core.Config;
+import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import java.util.*;
 
 /**
@@ -93,7 +95,7 @@ public class MyTunesRssWebUtils {
             synchronized (request.getSession()) {
                 errors = (Set<Error>) request.getSession().getAttribute(holderName);
                 if (errors == null) {
-                    errors = new HashSet<Error>();
+                    errors = new LinkedHashSet<Error>();
                     request.getSession().setAttribute(holderName, errors);
                 }
             }
@@ -233,5 +235,12 @@ public class MyTunesRssWebUtils {
                 }
             }
         }
+    }
+
+    public static String getBundleString(HttpServletRequest request, String key) {
+        LocalizationContext context = (LocalizationContext) request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+        ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb",
+                request.getLocale());
+        return bundle.getString(key);
     }
 }

@@ -43,8 +43,13 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                     forward(MyTunesRssCommand.ShowPortal);
                 }
             } else {
-                addError(new BundleError("error.loginDenied"));
-                MyTunesRss.ADMIN_NOTIFY.notifyLoginFailure(userName, ServletUtils.getBestRemoteAddress(getRequest()));
+                if (MyTunesRss.CONFIG.getUser(userName) != null && !MyTunesRss.CONFIG.getUser(userName).isActive()) {
+                    addError(new BundleError("error.loginExpired"));
+                    MyTunesRss.ADMIN_NOTIFY.notifyLoginExpired(userName, ServletUtils.getBestRemoteAddress(getRequest()));
+                } else {
+                    addError(new BundleError("error.loginDenied"));
+                    MyTunesRss.ADMIN_NOTIFY.notifyLoginFailure(userName, ServletUtils.getBestRemoteAddress(getRequest()));
+                }
                 forward(MyTunesRssResource.Login);
             }
         } else if (!isSessionAuthorized()) {

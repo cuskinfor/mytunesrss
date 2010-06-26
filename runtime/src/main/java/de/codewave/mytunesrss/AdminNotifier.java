@@ -60,6 +60,14 @@ public class AdminNotifier {
         }
     }
 
+    public void notifyLoginExpired(String username, String remoteAddress) {
+        if (MyTunesRss.CONFIG.isNotifyOnLoginFailure() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
+            String subject = "Expired login failure";
+            String body = "There was login attempt for expired user name \"" + username + "\" from remote address \"" + remoteAddress + "\".";
+            sendAdminMail(subject, body);
+        }
+    }
+
     public void notifyPasswordChange(User user) {
         if (MyTunesRss.CONFIG.isNotifyOnPasswordChange() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
             String subject = "User has changed his password";

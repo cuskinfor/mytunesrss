@@ -51,7 +51,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         }
     }
 
-    private boolean myActive = true;
     private String myName;
     private byte[] myPasswordHash;
     private boolean myDownload;
@@ -93,6 +92,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private int mySearchFuzziness;
     private boolean myEditTags;
     private Set<String> myForceTranscoders = new HashSet<String>();
+    private long myExpiration;
 
     public User(String name) {
         myName = name;
@@ -103,11 +103,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public boolean isActive() {
-        return myActive;
-    }
-
-    public void setActive(boolean active) {
-        myActive = active;
+        return myExpiration == 0 || myExpiration >= System.currentTimeMillis();
     }
 
     public String getName() {
@@ -414,8 +410,12 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         myForceTranscoders.add(transcoder);
     }
 
-    public void removeForceTranscoder(String transcoder) {
-        myForceTranscoders.remove(transcoder);
+    public long getExpiration() {
+        return myExpiration;
+    }
+
+    public void setExpiration(long expiration) {
+        myExpiration = expiration;
     }
 
     @Override
@@ -503,7 +503,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public void loadFromPreferences(JXPathContext settings) {
-        setActive(JXPathUtils.getBooleanValue(settings, "active", true));
         setPasswordHash(JXPathUtils.getByteArray(settings, "password", null));
         setRss(JXPathUtils.getBooleanValue(settings, "featureRss", false));
         setPlaylist(JXPathUtils.getBooleanValue(settings, "featurePlaylist", false));
@@ -553,6 +552,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
                 myForceTranscoders.add(name);
             }
         }
+        setExpiration(JXPathUtils.getLongValue(settings, "expiration", 0));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -565,7 +565,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         if (getPasswordHash() != null && getPasswordHash().length > 0) {
             users.appendChild(DOMUtils.createByteArrayElement(settings, "password", getPasswordHash()));
         }
-        users.appendChild(DOMUtils.createBooleanElement(settings, "active", isActive()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureRss", isRss()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featurePlaylist", isPlaylist()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureDownload", isDownload()));
@@ -616,6 +615,9 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
             for (String transcoder : myForceTranscoders) {
                 forceTranscoders.appendChild(DOMUtils.createTextElement(settings, "name", transcoder));
             }
+        }
+        if (getExpiration() > 0) {
+            users.appendChild(DOMUtils.createLongElement(settings, "expiration", getExpiration()));
         }
     }
 

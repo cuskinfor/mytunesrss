@@ -385,10 +385,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected String getBundleString(String key) {
-        LocalizationContext context = (LocalizationContext) getRequest().getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
-        ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb",
-                getRequest().getLocale());
-        return bundle.getString(key);
+        return MyTunesRssWebUtils.getBundleString(getRequest(), key);
     }
 
     protected String getBundleString(String key, Object... params) {

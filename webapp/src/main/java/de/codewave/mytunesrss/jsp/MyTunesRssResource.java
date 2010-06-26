@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 public enum MyTunesRssResource {
@@ -67,8 +68,15 @@ public enum MyTunesRssResource {
         if (this == Login) {
             handleLoginMessage(request);
         }
-        if (this == Portal && !Boolean.TRUE.equals(request.getSession().getAttribute("welcomeMessageDone"))) {
-            handleWelcomeMessage(request);
+        if (this == Portal) {
+            if (!Boolean.TRUE.equals(request.getSession().getAttribute("welcomeMessageDone"))) {
+                handleWelcomeMessage(request);
+            }
+            long expiration = MyTunesRssWebUtils.getAuthUser(request).getExpiration();
+            if (expiration > 0) {
+                Error error = new BundleError("accountExpirationWarning", new SimpleDateFormat(MyTunesRssWebUtils.getBundleString(request, "dateFormat")).format(expiration));
+                MyTunesRssWebUtils.addError(request, error, "messages");
+            }
         }
         if (this == PlaylistManager) {
             request.setAttribute("deleteConfirmation", MyTunesRssWebUtils.getUserAgent(request) != UserAgent.Psp);

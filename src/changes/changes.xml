@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.0.0-EAP-4" date="xxxx-xx-xx">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-151] Expiring user accounts
+            </action>
             <action dev="mdescher" type="update">
                 Support for system properties cacheDataPath and preferencesDataPath removed. Added command line
                 parameters cacheDataPath and prefsDataPath instead.

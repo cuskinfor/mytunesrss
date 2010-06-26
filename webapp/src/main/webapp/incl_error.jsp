@@ -45,15 +45,17 @@
 				<div class="inner">
 					<div class="icon"></div>
 			        <c:forEach items="${messages}" var="message">
-			            <c:choose>
-			                <c:when test="${message.localized}">
-			                    <c:set var="localizedMessage" value="${message.message}" />
-			                </c:when>
-			                <c:otherwise>
-			                    <fmt:message var="localizedMessage" key="${message.key}" />
-			                </c:otherwise>
-			            </c:choose>
-			            <c:out value="${cwfn:message(localizedMessage, message.parameters)}" escapeXml="${message.escapeXml}"/>
+                        <div>
+                            <c:choose>
+                                <c:when test="${message.localized}">
+                                    <c:set var="localizedMessage" value="${message.message}" />
+                                </c:when>
+                                <c:otherwise>
+                                    <fmt:message var="localizedMessage" key="${message.key}" />
+                                </c:otherwise>
+                            </c:choose>
+                            <c:out value="${cwfn:message(localizedMessage, message.parameters)}" escapeXml="${message.escapeXml}"/>
+                        </div>
 			        </c:forEach>
 				</div>
 			</div>

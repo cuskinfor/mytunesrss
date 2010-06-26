@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.data.Property;
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
@@ -24,12 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class EditUserConfigPanel extends MyTunesRssConfigPanel {
+public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Property.ValueChangeListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(EditUserConfigPanel.class);
 
     private Form myIdentificationForm;
@@ -68,6 +66,8 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myEncryptUrls;
     private User myUser;
     private UserConfigPanel myUserConfigPanel;
+    private CheckBox myExpire;
+    private DateField myExpiration;
 
     public EditUserConfigPanel(UserConfigPanel userConfigPanel, User user) {
         myUserConfigPanel = userConfigPanel;
@@ -80,11 +80,19 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
         myPassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.password");
         myRetypePassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.retypePassword", new SameValidator(myPassword, getBundleString("editUserConfigPanel.error.retypePassword")));
         myEmail = getComponentFactory().createTextField("editUserConfigPanel.email", new EmailValidator(getBundleString("editUserConfigPanel.error.email")));
+        myExpire = getComponentFactory().createCheckBox("editUserConfigPanel.expire");
+        myExpire.addListener((Property.ValueChangeListener)this);
+        myExpiration = new DateField(getBundleString("editUserConfigPanel.expiration"), new Date(0));
+        myExpiration.setLenient(false);
+        myExpiration.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
+        myExpiration.setResolution(DateField.RESOLUTION_DAY);
         myIdentificationForm = getComponentFactory().createForm(null, true);
         myIdentificationForm.addField("username", myUsername);
         myIdentificationForm.addField("password", myPassword);
         myIdentificationForm.addField("retypePassword", myRetypePassword);
         myIdentificationForm.addField("email", myEmail);
+        myIdentificationForm.addField("expireCheck", myExpire);
+        myIdentificationForm.addField("expiration", myExpiration);
         addComponent(getComponentFactory().surroundWithPanel(myIdentificationForm, FORM_PANEL_MARGIN_INFO, getBundleString("editUserConfigPanel.caption.identification")));
         myPermRss = new CheckBox();
         myPermPlaylist = new CheckBox();
@@ -240,6 +248,22 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
             }
             myForceTranscoders.sort();
             myForceTranscoders.setPageLength(Math.min(MyTunesRss.CONFIG.getTranscoderConfigs().size(), 10));
+            if (myUser.getExpiration() > 0) {
+                myExpire.setValue(true);
+                myExpiration.setVisible(true);
+                myExpiration.setValue(new Date(myUser.getExpiration()));
+            } else {
+                myExpire.setValue(false);
+                myExpiration.setVisible(false);
+                GregorianCalendar calendar = new GregorianCalendar();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
+                calendar.set(GregorianCalendar.MINUTE, 59);
+                calendar.set(GregorianCalendar.SECOND, 59);
+                calendar.set(GregorianCalendar.MILLISECOND, 999);
+                calendar.add(GregorianCalendar.MONTH, 1); // default: expire one month later
+                myExpiration.setValue(calendar.getTime());
+            }
         }
     }
 
@@ -290,8 +314,19 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
         myUser.clearForceTranscoders();
         for (Object transcoderName : myForceTranscoders.getItemIds()) {
             if ((Boolean) getTableCellPropertyValue(myForceTranscoders, transcoderName, "active")) {
-                myUser.addForceTranscoder((String)transcoderName);
+                myUser.addForceTranscoder((String) transcoderName);
             }
+        }
+        if (myExpire.booleanValue()) {
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime((Date) myExpiration.getValue());
+            calendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
+            calendar.set(GregorianCalendar.MINUTE, 59);
+            calendar.set(GregorianCalendar.SECOND, 59);
+            calendar.set(GregorianCalendar.MILLISECOND, 999);
+            myUser.setExpiration(calendar.getTime().getTime());
+        } else {
+            myUser.setExpiration(0);
         }
         myUserConfigPanel.saveUser(myUser);
     }
@@ -308,6 +343,12 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel {
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
         super.buttonClick(clickEvent);
+    }
+
+    public void valueChange(Property.ValueChangeEvent event) {
+        if (((EventObject)event).getSource() == myExpire) {
+            myExpiration.setVisible((Boolean) event.getProperty().getValue());
+        }
     }
 
     public class UniqueUsernameValidator extends AbstractStringValidator {

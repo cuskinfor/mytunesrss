@@ -493,7 +493,7 @@ public class MyTunesRssUtils {
                         user.setEmail(email);
                     }
                 }
-                return true;
+                return user.isActive();
             } catch (AuthenticationException e) {
                 LOGGER.info("LDAP login failed for \"" + userName + "\".");
             } catch (Exception e) {
