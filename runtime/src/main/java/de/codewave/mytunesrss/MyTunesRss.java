@@ -213,7 +213,8 @@ public class MyTunesRss {
         try {
             File cacheDataPath = new File(MyTunesRssUtils.getCacheDataPath());
             File prefsDataPath = new File(MyTunesRssUtils.getPreferencesDataPath());
-            if (prefsDataPath.list().length == 0) {
+            String[] prefsDataPathContents = prefsDataPath.list();
+            if (prefsDataPathContents == null || prefsDataPathContents.length == 0) {
                 for (String prevVersionAppIdentifier : APPLICATION_IDENTIFIER_PREV_VERSIONS) {
                     File oldPrefsDir = new File(PrefsUtils.getPreferencesDataPath(prevVersionAppIdentifier));
                     if (oldPrefsDir.isDirectory() && oldPrefsDir.list().length > 0) {
