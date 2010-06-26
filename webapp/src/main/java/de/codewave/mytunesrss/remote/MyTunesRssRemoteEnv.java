@@ -1,9 +1,6 @@
 package de.codewave.mytunesrss.remote;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
@@ -58,7 +55,7 @@ public class MyTunesRssRemoteEnv {
 
     public static String getServerCall(MyTunesRssCommand command, String pathInfo) {
         HttpServletRequest request = MyTunesRssRemoteEnv.getRequest();
-        String auth = MyTunesRssWebUtils.encryptPathInfo(request, getAuth());
+        String auth = getAuth();
         String url = MyTunesRssWebUtils.getServletUrl(request) + "/" + command.getName() + "/" + auth;
         if (StringUtils.isNotEmpty(pathInfo)) {
             url += "/" + MyTunesRssWebUtils.encryptPathInfo(request, pathInfo);
@@ -69,8 +66,8 @@ public class MyTunesRssRemoteEnv {
     private static String getAuth() {
         User user = getSession().getUser();
         if (user != null) {
-            return "auth=" + MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(
-                    user.getPasswordHash());
+            return MyTunesRssWebUtils.encryptPathInfo(getRequest(), "auth=" + MyTunesRssUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(
+                    user.getPasswordHash())));
         }
         return null;
     }

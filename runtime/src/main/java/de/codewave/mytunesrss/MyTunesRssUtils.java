@@ -40,6 +40,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -58,6 +59,14 @@ import java.lang.reflect.Method;
  */
 public class MyTunesRssUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssUtils.class);
+
+    public static String getUtf8UrlEncoded(String s) {
+        try {
+            return URLEncoder.encode(s, "UTF-8").replace("+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not found.", e);
+        }
+    }
 
     public static void showErrorMessage(String message) {
         if (MyTunesRss.HEADLESS) {
