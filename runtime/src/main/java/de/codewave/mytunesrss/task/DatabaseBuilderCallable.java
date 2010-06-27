@@ -230,6 +230,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             if (!MyTunesRss.CONFIG.isIgnoreArtwork() && !Thread.currentThread().isInterrupted()) {
                 runImageUpdate(storeSession, systemInformation.getLastUpdate(), timeUpdateStart);
             }
+            updateHelpTables(storeSession, 0); // update image references for albums
             DatabaseBuilderCallable.doCheckpoint(storeSession, true);
             if (!Thread.currentThread().isInterrupted()) {
                 if (LOGGER.isInfoEnabled()) {
@@ -402,7 +403,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         }
         if (!Thread.currentThread().isInterrupted()) {
             // ensure the help tables are created with all the data
-            storeSession.executeStatement(new RecreateHelpTablesStatement());
+            updateHelpTables(storeSession, 0);
             DatabaseBuilderCallable.doCheckpoint(storeSession, true);
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Removing " + (itunesPlaylistIds.size() + m3uPlaylistIds.size())
