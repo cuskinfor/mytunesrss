@@ -215,6 +215,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
             if (!MyTunesRss.CONFIG.isIgnoreArtwork() && !getExecutionThread().isInterrupted()) {
                 runImageUpdate(storeSession, systemInformation.getLastUpdate(), timeUpdateStart);
             }
+            updateHelpTables(storeSession, 0); // update image references in albums
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
             if (!getExecutionThread().isInterrupted()) {
                 if (LOGGER.isInfoEnabled()) {
@@ -380,7 +381,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         }
         if (!getExecutionThread().isInterrupted()) {
             // ensure the help tables are created with all the data
-            storeSession.executeStatement(new RecreateHelpTablesStatement());
+            updateHelpTables(storeSession, 0);
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Removing " + (itunesPlaylistIds.size() + m3uPlaylistIds.size()) + " playlists from database.");
