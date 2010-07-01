@@ -675,7 +675,12 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     @Override
     public Object clone() {
         try {
-            return super.clone();
+            User clone = (User)super.clone();
+            clone.setDownBytes(0);
+            clone.setQuotaDownBytes(0);
+            clone.setResetTime(0);
+            clone.setQuotaResetTime(0);
+            return clone;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("Cloning user \"" + myName + "\" failed.", e);
 

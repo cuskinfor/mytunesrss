@@ -9,6 +9,12 @@
 
         <release version="4.0.0-EAP-4" date="2010-06-27">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-87] Copy user in addition to create user
+            </action>
+        </release>
+
+        <release version="4.0.0-EAP-4" date="2010-06-27">
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-151] Expiring user accounts
             </action>
             <action dev="mdescher" type="update">

@@ -19,6 +19,7 @@ import de.codewave.vaadin.component.SelectWindow;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickEvent.ItemClickListener, Action.Handler {
 
@@ -36,10 +37,12 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
     private SmartTextField myLdapEmailAttribute;
     private Select myTemplateUser;
     private boolean myInitialized;
+    private User myNoTemplateUser;
 
     public void attach() {
         if (!myInitialized) {
             init(getBundleString("userConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
+            myNoTemplateUser = new User(getBundleString("userConfigPanel.selectTemplateUser.noTemplateOption"));
             myUserTreePanel = new Panel(getBundleString("userConfigPanel.caption.themes"), getComponentFactory().createVerticalLayout(true, true));
             myUserTree = new Tree();
             myUserTree.addListener(this);
@@ -126,10 +129,30 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddUser) {
-            editUser(new User("new user"));
+            createUser(null);
         } else {
             super.buttonClick(clickEvent);
         }
+    }
+
+    private void createUser(final User parentUser) {
+        List<User> users = new ArrayList<User>(MyTunesRss.CONFIG.getUsers());
+        Collections.sort(users);
+        users.add(0, myNoTemplateUser);
+        new SelectWindow<User>(50, Sizeable.UNITS_EM, users, users.get(0), null, getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.buttonCreate"), getBundleString("button.cancel")) {
+            @Override
+            protected void onOk(User template) {
+                getApplication().getMainWindow().removeWindow(this);
+                User user = (User) template.clone();
+                user.setName(getBundleString("userConfigPanel.newUserName"));
+                if (parentUser != null) {
+                    user.setParent(parentUser);
+                }
+                editUser(user);
+            }
+        }.show(getApplication().getMainWindow());
+
+
     }
 
     public void itemClick(ItemClickEvent itemClickEvent) {
@@ -143,18 +166,16 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
     }
 
     public Action[] getActions(Object target, Object sender) {
-        if (getMoveTargetUsers((User)target).isEmpty()) {
+        if (getMoveTargetUsers((User) target).isEmpty()) {
             return new Action[]{new AddUserAction((User) target), new RemoveUserAction((User) target)};
         } else {
-            return new Action[] {new AddUserAction((User)target), new MoveUserAction((User) target), new RemoveUserAction((User) target)};
+            return new Action[]{new AddUserAction((User) target), new MoveUserAction((User) target), new RemoveUserAction((User) target)};
         }
     }
 
     public void handleAction(Action action, Object sender, final Object target) {
         if (action instanceof AddUserAction) {
-            User user = new User("new user");
-            user.setParent((User)target);
-            editUser(user);
+            createUser((User) target);
         } else if (action instanceof MoveUserAction) {
             final User user = (User) target;
             final List<User> targetUsers = getMoveTargetUsers(user);
@@ -216,20 +237,19 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
     /**
      * Check if the other user is a child user of the user.
      *
-     * @param user Parent user.
+     * @param user      Parent user.
      * @param otherUser Other user.
-     *
      * @return TRUE if the other user is a child of the parent user or FALSE otherwise.
      */
     private boolean isChildUser(User user, User otherUser) {
-        for (; otherUser != null && otherUser != user; otherUser = otherUser.getParent());
+        for (; otherUser != null && otherUser != user; otherUser = otherUser.getParent()) ;
         return otherUser == user;
     }
 
     public Set<User> getUsers() {
         Set<User> users = new HashSet<User>();
         for (Object itemId : myUserTree.getItemIds()) {
-            users.add((User)itemId);
+            users.add((User) itemId);
         }
         return users;
     }

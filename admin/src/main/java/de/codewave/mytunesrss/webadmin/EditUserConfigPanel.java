@@ -187,11 +187,10 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         if (myUser != null) {
             //myUser.setActive(); // TODO activation
             myBandwidthLimit.setValue(myUser.getBandwidthLimit(), 1, Integer.MAX_VALUE, "");
-            myDownloadLimitSize.setValue(myUser.getQuotaDownBytes(), 1, Integer.MAX_VALUE, "");
+            myDownloadLimitSize.setValue(myUser.getBytesQuota(), 1, Integer.MAX_VALUE, "");
             myPermChangeEmail.setValue(myUser.isChangeEmail());
             myPermChangePassword.setValue(myUser.isChangePassword());
             myPermEditPlaylists.setValue(myUser.isCreatePlaylists());
-            //myUser.setDownBytes();
             myPermDownload.setValue(myUser.isDownload());
             myPermEditLastFm.setValue(myUser.isEditLastFmAccount());
             myPermEditTags.setValue(myUser.isEditTags());
@@ -207,11 +206,8 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myRetypePassword.setValue(myUser.getPasswordHash());
             myPermFlashPlayer.setValue(myUser.isPlayer());
             myPermPlaylist.setValue(myUser.isPlaylist());
-            //myUser.setQuotaDownBytes();
-            //myUser.setQuotaResetTime();
             myDownloadLimitType.setValue(myUser.getQuotaType());
             myPermRemote.setValue(myUser.isRemoteControl());
-            //myUser.setResetTime();
             myPermRss.setValue(myUser.isRss());
             mySaveSettingsInProfile.setValue(myUser.isSaveWebSettings());
             mySearchFuzziness.setValue(myUser.getSearchFuzziness(), 0, 100, "");
