@@ -13,6 +13,7 @@ import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.MyTunesRssNotification;
+import de.codewave.mytunesrss.ResourceBundleManager;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.component.MessageWindow;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -24,6 +25,9 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 public class MyTunesRssWebAdmin extends Application {
+
+    public static final ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRssWebAdmin.class.getClassLoader());
+
     public static final int ADMIN_REFRESHER_INTERVAL_MILLIS = 2500;
 
     public static String getBundleString(ResourceBundle bundle, String key, Object... parameters) {
@@ -42,7 +46,7 @@ public class MyTunesRssWebAdmin extends Application {
     private StatusPanel myStatusPanel;
 
     public void init() {
-        myBundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.webadmin.MyTunesRssAdmin", getLocale());
+        myBundle = RESOURCE_BUNDLE_MANAGER.getBundle("de.codewave.mytunesrss.webadmin.MyTunesRssAdmin", getLocale());
         myComponentFactory = new ComponentFactory(myBundle);
         myValidatorFactory = new ValidatorFactory(myBundle);
         myStatusPanel = new StatusPanel();

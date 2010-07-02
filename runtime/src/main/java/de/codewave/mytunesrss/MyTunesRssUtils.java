@@ -15,6 +15,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
@@ -31,10 +32,7 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -119,19 +117,11 @@ public class MyTunesRssUtils {
         System.err.println(message);
     }
 
-    public static void showInfoMessage(String message) {
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info(message);
-        }
-        System.out.println(message);
-    }
-
-
     public static String getBundleString(Locale locale, String key, Object... parameters) {
         if (key == null) {
             return "";
         }
-        ResourceBundle bundle = PropertyResourceBundle.getBundle("de.codewave.mytunesrss.MyTunesRss", locale, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+        ResourceBundle bundle = MyTunesRss.RESOURCE_BUNDLE_MANAGER.getBundle("de.codewave.mytunesrss.MyTunesRss", locale);
         if (parameters == null || parameters.length == 0) {
             return bundle.getString(key);
         }

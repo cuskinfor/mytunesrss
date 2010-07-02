@@ -94,6 +94,7 @@ public class MyTunesRss {
     public static Server ADMIN_SERVER;
     public static Queue<MyTunesRssNotification> NOTIFICATION_QUEUE = new ConcurrentLinkedQueue<MyTunesRssNotification>();
     public static boolean HEADLESS = GraphicsEnvironment.isHeadless();
+    public static ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRss.class.getClassLoader());
 
     public static void main(final String[] args) throws Exception {
         /*NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Test1", "This is a test",  null));
