@@ -397,7 +397,7 @@ public class MyTunesRssUtils {
         if (MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_PREFS_PATH)) {
             return MyTunesRss.COMMAND_LINE_ARGS.get(MyTunesRss.CMD_PREFS_PATH)[0];
         } else {
-            return PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
+            return PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
         }
     }
 
