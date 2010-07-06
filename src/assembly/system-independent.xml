@@ -64,6 +64,14 @@
             <outputDirectory>.</outputDirectory>
             <directory>etc</directory>
             <includes>
+                <include>startup.sh</include>
+            </includes>
+            <filemode>755</filemode>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>.</outputDirectory>
+            <directory>etc</directory>
+            <includes>
                 <include>readme.*</include>
             </includes>
         </fileSet>
