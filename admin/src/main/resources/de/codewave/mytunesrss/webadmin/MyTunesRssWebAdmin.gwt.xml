@@ -15,7 +15,7 @@
         modules without entry points are never compiled.
     -->
 
-    <entry-point class="com.vaadin.terminal.gwt.client.DefaultWidgetSet"/>
+    <entry-point class="com.vaadin.terminal.gwt.client.ApplicationConfiguration"/>
 
     <!-- Inherit DefaultWidgetSet -->
 
