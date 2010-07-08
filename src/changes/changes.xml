@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.0.0-EAP-6" date="2010-xx-xx">
+            <action dev="mdescher" type="fix">
+                Fixed YouTube video playback.
+            </action>
+        </release>
+
         <release version="4.0.0-EAP-5" date="2010-07-06">
             <action dev="mdescher" type="add">
                 Fixed wrong preferences data path.
