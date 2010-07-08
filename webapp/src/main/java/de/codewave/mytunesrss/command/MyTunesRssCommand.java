@@ -46,7 +46,6 @@ public enum MyTunesRssCommand implements Command {
     ShowResource("showResource", ShowResourceCommandHandler.class),
     KeepSessionAlive("keepSessionAlive", KeepSessionAliveCommandHandler.class),
     Upload("upload", UploadCommandHandler.class),
-    ShowIphoneIndex("showIphoneIndex", ShowIphoneIndexCommandHandler.class),
     GetTagsForAutocomplete("getTagsForAutocomplete", GetTagsForAutocompleteCommandHandler.class),
     OpenSearch("openSearch", OpenSearchCommandHandler.class);
 

@@ -17,12 +17,6 @@ import java.net.URLEncoder;
  */
 public class StartCommandHandler extends MyTunesRssCommandHandler {
     public void execute() throws IOException, ServletException {
-        if ("iphone".equals(getRequest().getParameter("interface"))) {
-            redirect(MyTunesRssWebUtils.getServletUrl(getRequest()) + "/" + MyTunesRssCommand.ShowIphoneIndex.getName());
-        } else if ("default".equals(getRequest().getParameter("interface")) || MyTunesRssWebUtils.getUserAgent(getRequest()) != UserAgent.Iphone) {
-            redirect(MyTunesRssWebUtils.getServletUrl(getRequest()) + "/" + MyTunesRssCommand.ShowPortal.getName());
-        } else {
-            redirect(MyTunesRssWebUtils.getServletUrl(getRequest()) + "/" + MyTunesRssCommand.ShowIphoneIndex.getName());
-        }
+        forward(MyTunesRssCommand.ShowPortal);
     }
 }

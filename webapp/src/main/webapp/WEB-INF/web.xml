@@ -99,11 +99,6 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
-    <!-- Filter for setting the application url in the request scope -->
-    <filter>
-        <filter-name>IphoneAppFilter</filter-name>
-        <filter-class>de.codewave.mytunesrss.servlet.IphoneAppFilter</filter-class>
-    </filter>
     <!-- Filter mappings -->
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
@@ -156,12 +151,6 @@
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
         <url-pattern>/xmlrpc/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>IphoneAppFilter</filter-name>
-        <url-pattern>/iphone/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     <servlet>
         <description>Command dispatcher servlet</description>
