@@ -1,4 +1,4 @@
-Fvar tooltipElement;
+var tooltipElement;
 var mouseX;
 var mouseY;
 

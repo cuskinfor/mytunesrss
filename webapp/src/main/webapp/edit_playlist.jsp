@@ -17,6 +17,8 @@
 
     <jsp:include page="incl_service_messages.jsp" />
 
+    <script src="${appUrl}/js/prototype.js?ts=${sessionCreationTime}" type="text/javascript"></script>
+
     <script type="text/javascript">
         var unknownName = "<fmt:message key="unknown"/>";
         var firstItem = 0;
