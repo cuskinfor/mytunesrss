@@ -27,18 +27,23 @@
 
 <c:if test="${externalSitesFlag}">
     <a id="fn_externalsites${index}" class="links" title="<fmt:message key="tooltip.externalSites"/>" <c:if test="${!config.showExternalSites}">style="display:none"</c:if> onclick="openExternalSitesDialog($jQ('#functionsDialogName${index}').text()); return false;"><span>External Sites</span></a>
+    <c:if test="${!config.showExternalSites}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
 	<a id="fn_remotecontrol${index}" class="remote" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/backUrl=${backUrl}" <c:if test="${!config.remoteControl}">style="display:none"</c:if> title="<fmt:message key="tooltip.remotecontrol"/>"><span>Remote</span></a>
+    <c:if test="${!config.remoteControl}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.rss}">
 	<a id="fn_rss${index}" class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.xml" <c:if test="${!config.showRss}">style="display:none"</c:if> title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
+    <c:if test="${!config.showRss}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.playlist}">
 	<a id="fn_playlist${index}" class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.${config.playlistFileSuffix}" <c:if test="${!config.showPlaylist}">style="display:none"</c:if> title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
+    <c:if test="${!config.showPlaylist}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.player}">
 	<a id="fn_player${index}" class="flash" <c:if test="${!config.showPlayer}">style="display:none"</c:if> onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${linkFragment}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${filename}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+    <c:if test="${!config.showPlayer}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.download}">
     <c:choose>
@@ -62,8 +67,12 @@
 			<a id="fn_download${index}" class="download" <c:if test="${!config.showDownload}">style="display:none"</c:if> onclick="alert('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>'); return false;" title="<fmt:message key="tooltip.downloadzip"/>"><span>Download</span></a>
         </c:otherwise>
     </c:choose>
+    <c:if test="${!config.showDownload}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.editTags && !empty editTagsType && !empty editTagsId}">
 	<a id="fn_edittags${index}" class="tags" <c:if test="${!config.showEditTags}">style="display:none"</c:if> onclick="jsonRpc('${servletUrl}', 'TagService.getTagsFor${editTagsType}', ['${editTagsId}'], function(json) {openEditTagsDialog(json, '${editTagsType}', '${editTagsId}', $jQ('#functionsDialogName${index}').text());}, '${remoteApiSessionId}');return false;"  onmouseover="showEditTagsTooltip(this, '${editTagsType}', '${editTagsId}');" onmouseout="hideTooltipElement(document.getElementById('tooltip_edittags'));"><span>Edit Tags</span></a>
+    <c:if test="${!config.showEditTags}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
-<a onclick="openFunctionsMenu(${index}, $jQ('#functionsDialogName${index}').text());" class="menu" title="<fmt:message key="tooltip.functionsMenu"/>"><span>Menu</span></a>
+<c:if test="${displayMenu}">
+    <a onclick="openFunctionsMenu(${index}, $jQ('#functionsDialogName${index}').text());" class="menu" title="<fmt:message key="tooltip.functionsMenu"/>"><span>Menu</span></a>
+</c:if>

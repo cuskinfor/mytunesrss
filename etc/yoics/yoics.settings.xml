@@ -32,6 +32,7 @@
 <featureSpecialPlaylists>false</featureSpecialPlaylists>
 <featureCreatePlaylists>false</featureCreatePlaylists>
 <featureEditWebSettings>true</featureEditWebSettings>
+<searchFuzziness>30</searchFuzziness>
 <resetTime>1247864323564</resetTime>
 <quotaResetTime>1247864323564</quotaResetTime>
 <downBytes>0</downBytes>
@@ -62,8 +63,6 @@
 <artistDropWords/>
 <playmode/>
 <quitConfirmation>false</quitConfirmation>
-<lameBinary/>
-<lameTargetOptions>--quiet -r -b {bitrate} --resample {samplerate} - -</lameTargetOptions>
 <streamingCacheTimeout>20</streamingCacheTimeout>
 <streamingCacheMaxFiles>300</streamingCacheMaxFiles>
 <bandwidthLimit>false</bandwidthLimit>
@@ -116,18 +115,12 @@
 <missing-file>false</missing-file>
 </admin-notify>
 <statistics-keep-time>0</statistics-keep-time>
-<remote-control>
-<type>None</type>
-<vlc>
-<host/>
-<port>0</port>
-</vlc>
-</remote-control>
 <disabled-mp4-codecs/>
 <transcoders/>
 <autoLogin>yoics</autoLogin>
 <disableBrowser>true</disableBrowser>
 <serverBrowserActive>false</serverBrowserActive>
+<qt64BitWarned>true</qt64BitWarned>
 <disableGui>true</disableGui>
 <disableWebLogin>true</disableWebLogin>
 <disableJmxHtml>true</disableJmxHtml>
