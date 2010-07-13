@@ -155,7 +155,7 @@ public class MyTunesRssWebUtils {
         for (String tcName : transcoderNames) {
             tc.append("N").append(tcName).append("_");
         }
-        return tc.toString();
+        return tc.length() > 0 ? tc.substring(0, tc.length() - 1) : "";
     }
 
     public static void setTranscodingFromRequest(WebConfig config, HttpServletRequest request) {
