@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="3.8.13" date="2010-xx-xx">
+            <action dev="mdescher" type="update">
+                LoginService#getUserInfo returns transcoder names.
+            </action>
+        </release>
+
         <release version="3.8.12" date="2010-07-10">
             <action dev="mdescher" type="remove">
                 Hide actions menu if all entries are visible directly.

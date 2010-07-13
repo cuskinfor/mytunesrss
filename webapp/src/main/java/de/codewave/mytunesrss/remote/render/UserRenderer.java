@@ -1,8 +1,12 @@
 package de.codewave.mytunesrss.remote.render;
 
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.mytunesrss.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +33,15 @@ public class UserRenderer implements Renderer<Map<String, Object>, User> {
         permissions.put("rss", user.isRss());
         permissions.put("transcoder", user.isTranscoder());
         permissions.put("upload", user.isUpload());
+        if (user.isTranscoder() && !user.isForceTranscoders()) {
+            List<String> transcoderNames = new ArrayList<String>();
+            for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+                transcoderNames.add(config.getName());
+            }
+            if (!transcoderNames.isEmpty()) {
+                result.put("transcoderNames", transcoderNames);
+            }
+        }
         return result;
     }
 }
