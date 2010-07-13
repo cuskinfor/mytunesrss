@@ -8,6 +8,9 @@
     <body>
 
         <release version="3.8.13" date="2010-xx-xx">
+            <action dev="mdescher" type="fix">
+                TranscodingService#getTranscodingParameter return non-url-encoded value.
+            </action>
             <action dev="mdescher" type="update">
                 LoginService#getUserInfo returns transcoder names.
             </action>
