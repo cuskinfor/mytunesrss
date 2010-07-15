@@ -11,26 +11,23 @@ import com.vaadin.terminal.ClassResource;
 import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.PathReplacement;
+import de.codewave.mytunesrss.*;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
-import de.codewave.vaadin.component.OptionWindow;
-import de.codewave.vaadin.component.ServerSideFileChooser;
-import de.codewave.vaadin.component.ServerSideFileChooserWindow;
-import de.codewave.vaadin.component.TextFieldWindow;
+import de.codewave.vaadin.component.*;
 import de.codewave.vaadin.validation.FileValidator;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
+
+    private static final Pattern XML_FILE_PATTERN = Pattern.compile("^.*\\.xml$", Pattern.CASE_INSENSITIVE);
 
     private Table myDatasources;
     private Button myAddLocalDatasource;
@@ -44,7 +41,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myUploadCreateUserDir;
     private Form myFallbackForm;
     private Form myUploadForm;
-    private static final Pattern XML_FILE_PATTERN = Pattern.compile("^.*\\.xml$", Pattern.CASE_INSENSITIVE);
+    private Map<Long, DatasourceConfig> myConfigs = new HashMap<Long, DatasourceConfig>();
 
     public void attach() {
         init(getBundleString("datasourcesConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
@@ -55,6 +52,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myDatasources.addContainerProperty("path", String.class, null, getBundleString("datasourcesConfigPanel.sourcePath"), null, null);
         myDatasources.addContainerProperty("edit", Button.class, null, "", null, null);
         myDatasources.addContainerProperty("delete", Button.class, null, "", null, null);
+        myDatasources.addContainerProperty("options", Button.class, null, "", null, null);
         myDatasources.setEditable(false);
         sourcesPanel.addComponent(myDatasources);
         myAddLocalDatasource = getComponentFactory().createButton("datasourcesConfigPanel.addLocalDatasource", this);
@@ -96,7 +94,8 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     protected void initFromConfig() {
         myDatasources.removeAllItems();
-        for (String datasource : MyTunesRss.CONFIG.getDatasources()) {
+        myConfigs.clear();
+        for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
             addDatasource(getApplication(), datasource);
         }
         myAlbumFallback.setValue(MyTunesRss.CONFIG.getAlbumFallback());
@@ -110,8 +109,13 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         setTablePageLengths();
     }
 
-    private void addDatasource(Application application, String datasource) {
-        myDatasources.addItem(new Object[]{new Embedded("", getDatasourceImage(application, datasource)), datasource, getComponentFactory().createButton("button.edit", this), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
+    private void addDatasource(Application application, DatasourceConfig datasource) {
+        Button editButton = getComponentFactory().createButton("button.edit", this);
+        Button deleteButton = getComponentFactory().createButton("button.delete", this);
+        Button optionsButton = getComponentFactory().createButton("button.options", this);
+        long id = myItemIdGenerator.getAndIncrement();
+        myDatasources.addItem(new Object[]{new Embedded("", getDatasourceImage(application, datasource.getType())), datasource.getDefinition(), editButton, deleteButton, optionsButton}, id);
+        myConfigs.put(id, datasource);
     }
 
     private void addPathReplacement(PathReplacement replacement) {
@@ -122,10 +126,10 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myPathReplacements.addItem(new Object[]{searchTextField, new SmartTextField(null, replacement.getReplacement()), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
     }
 
-    private Resource getDatasourceImage(Application application, String datasource) {
-        if (MyTunesRssUtils.isValidRemoteUrl(datasource)) {
+    private Resource getDatasourceImage(Application application, DatasourceType type) {
+        if (type == DatasourceType.Remote) {
             return new ClassResource("http.gif", application);
-        } else if (StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(datasource), "xml")) {
+        } else if (type == DatasourceType.Itunes) {
             return new ClassResource("itunes.gif", application);
         } else {
             return new ClassResource("folder.gif", application);
@@ -133,11 +137,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void writeToConfig() {
-        List<String> datasources = new ArrayList<String>();
-        for (Object itemId : myDatasources.getItemIds()) {
-            datasources.add((String) myDatasources.getItem(itemId).getItemProperty("path").getValue());
-        }
-        MyTunesRss.CONFIG.setDatasources(datasources.toArray(new String[datasources.size()]));
+        MyTunesRss.CONFIG.setDatasources(new ArrayList<DatasourceConfig>(myConfigs.values()));
         MyTunesRss.CONFIG.setAlbumFallback(myAlbumFallback.getStringValue(null));
         MyTunesRss.CONFIG.setArtistFallback(myArtistFallback.getStringValue(null));
         MyTunesRss.CONFIG.clearPathReplacements();
@@ -169,17 +169,34 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 } else {
                     addOrEditLocalDataSource(findTableItemWithObject(myDatasources, clickEvent.getSource()), new File((String) item.getItemProperty("path").getValue()));
                 }
-            } else {
+            } else if (item.getItemProperty("delete").getValue() == clickEvent.getSource()) {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
                 new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigDialog.optionWindowDeleteDatasource.caption"), getBundleString("datasourcesConfigDialog.optionWindowDeleteDatasource.message"), yes, no) {
                     public void clicked(Button button) {
                         if (button == yes) {
-                            myDatasources.removeItem(findTableItemWithObject(myDatasources, clickEvent.getSource()));
+                            Object id = findTableItemWithObject(myDatasources, clickEvent.getSource());
+                            myDatasources.removeItem(id);
+                            myConfigs.remove(id);
                             setTablePageLengths();
                         }
                     }
                 }.show(getApplication().getMainWindow());
+            } else {
+                DatasourceConfig datasourceConfig = myConfigs.get(findTableItemWithObject(myDatasources, clickEvent.getSource()));
+                switch (datasourceConfig.getType()) {
+                    case Remote:
+                        break;
+                    case Itunes:
+                        break;
+                    case Watchfolder:
+                        WatchfolderDatasourceOptionsPanel panel = new WatchfolderDatasourceOptionsPanel((WatchfolderDatasourceConfig) datasourceConfig);
+                        SinglePanelWindow window = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.caption"), panel);
+                        window.show(getWindow());
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unknown datasource type!");
+                }
             }
         } else if (findTableItemWithObject(myPathReplacements, clickEvent.getSource()) != null) {
             final Button yes = new Button(getBundleString("button.yes"));
@@ -194,6 +211,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
             }.show(getApplication().getMainWindow());
         } else if (clickEvent.getSource() == mySelectUploadDir) {
             new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectUploadDir"), new File((String) myUploadDir.getValue()), ServerSideFileChooser.PATTERN_ALL, null, true, "Roots") { // TODO i18n
+
                 @Override
                 protected void onFileSelected(File file) {
                     myUploadDir.setValue(file.getAbsolutePath());
@@ -213,8 +231,9 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 if (MyTunesRssUtils.isValidRemoteUrl(text)) {
                     if (itemId != null) {
                         myDatasources.getItem(itemId).getItemProperty("path").setValue(text);
+                        myConfigs.get(itemId).setDefinition(text);
                     } else {
-                        addDatasource(getApplication(), text);
+                        addDatasource(getApplication(), new RemoteDatasourceConfig(text));
                         setTablePageLengths();
                     }
                     getApplication().getMainWindow().removeWindow(this);
@@ -227,12 +246,22 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     private void addOrEditLocalDataSource(final Object itemId, File file) {
         new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectLocalDatasource"), file, ServerSideFileChooser.PATTERN_ALL, XML_FILE_PATTERN, false, "Roots") { // TODO i18n
+
             @Override
             protected void onFileSelected(File file) {
                 if (itemId != null) {
                     myDatasources.getItem(itemId).getItemProperty("path").setValue(file.getAbsolutePath());
+                    DatasourceConfig newConfig = DatasourceConfig.create(file.getAbsolutePath());
+                    DatasourceConfig oldConfig = myConfigs.get(itemId);
+                    if (oldConfig.getType() == newConfig.getType()) {
+                        // same local type
+                        oldConfig.setDefinition(file.getAbsolutePath());
+                    } else {
+                        // local type has changed
+                        myConfigs.put((Long) itemId, newConfig);
+                    }
                 } else {
-                    addDatasource(getApplication(), file.getAbsolutePath());
+                    addDatasource(getApplication(), DatasourceConfig.create(file.getAbsolutePath()));
                     setTablePageLengths();
                 }
                 getApplication().getMainWindow().removeWindow(this);

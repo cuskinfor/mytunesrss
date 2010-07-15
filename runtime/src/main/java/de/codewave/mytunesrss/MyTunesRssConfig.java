@@ -10,10 +10,10 @@ import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
-import org.h2.value.DataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -41,7 +41,7 @@ public class MyTunesRssConfig {
     private int myPort = 8080;
     private String myServerName = "MyTunesRSS";
     private boolean myAvailableOnLocalNet = true;
-    private List<String> myDatasources = new ArrayList<String>();
+    private List<DatasourceConfig> myDatasources = new ArrayList<DatasourceConfig>();
     private boolean myCheckUpdateOnStart = true;
     private String myVersion;
     private boolean myIgnoreTimestamps;
@@ -126,17 +126,12 @@ public class MyTunesRssConfig {
     private int myAdminPort;
     private boolean myStartAdminBrowser = true;
 
-    public String[] getDatasources() {
-        return myDatasources.toArray(new String[myDatasources.size()]);
+    public List<DatasourceConfig> getDatasources() {
+        return new ArrayList<DatasourceConfig>(myDatasources);
     }
 
-    public void setDatasources(String[] datasources) {
-        myDatasources = new ArrayList<String>();
-        for (String datasource : datasources) {
-            if (StringUtils.isNotBlank(datasource)) {
-                myDatasources.add(StringUtils.trim(datasource));
-            }
-        }
+    public void setDatasources(List<DatasourceConfig> datasources) {
+        myDatasources = new ArrayList<DatasourceConfig>(datasources);
         Collections.sort(myDatasources);
     }
 
@@ -949,12 +944,7 @@ public class MyTunesRssConfig {
         setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
         setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
         setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
-        List<String> dataSources = new ArrayList<String>();
-        Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
-        while (contextIterator.hasNext()) {
-            dataSources.add(JXPathUtils.getStringValue(contextIterator.next(), ".", null));
-        }
-        setDatasources(dataSources.toArray(new String[dataSources.size()]));
+        readDataSources(settings);
         setAlbumFallback(JXPathUtils.getStringValue(settings, "albumFallback", "[dir:0]"));
         setArtistFallback(JXPathUtils.getStringValue(settings, "artistFallback", "[dir:1]"));
         setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(settings, "iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
@@ -1079,6 +1069,45 @@ public class MyTunesRssConfig {
         }
     }
 
+    private void readDataSources(JXPathContext settings) {
+        List<DatasourceConfig> dataSources = new ArrayList<DatasourceConfig>();
+        Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
+        while (contextIterator.hasNext()) {
+            JXPathContext datasourceContext = contextIterator.next();
+            if (JXPathUtils.getContext(datasourceContext, "type") == null) {
+                // read pre-4.0.0-EAP-6 data source definitions
+                String definition = JXPathUtils.getStringValue(datasourceContext, ".", null);
+                dataSources.add(DatasourceConfig.create(definition));
+            } else {
+                DatasourceType type = DatasourceType.valueOf(JXPathUtils.getStringValue(datasourceContext, "type", DatasourceType.Itunes.name()));
+                String definition = JXPathUtils.getStringValue(datasourceContext, "definition", "");
+                switch (type) {
+                    case Watchfolder:
+                        WatchfolderDatasourceConfig watchfolderDatasourceConfig = new WatchfolderDatasourceConfig(definition);
+                        watchfolderDatasourceConfig.setMinFileSize(JXPathUtils.getLongValue(datasourceContext, "minFileSize", 0));
+                        watchfolderDatasourceConfig.setMaxFileSize(JXPathUtils.getLongValue(datasourceContext, "maxFileSize", 0));
+                        watchfolderDatasourceConfig.setIncludePattern(JXPathUtils.getStringValue(datasourceContext, "include", null));
+                        watchfolderDatasourceConfig.setExcludePattern(JXPathUtils.getStringValue(datasourceContext, "exclude", null));
+                        dataSources.add(watchfolderDatasourceConfig);
+                        break;
+                    case Itunes:
+                        ItunesDatasourceConfig itunesDatasourceConfig = new ItunesDatasourceConfig(definition);
+                        // TODO set additional values
+                        dataSources.add(itunesDatasourceConfig);
+                        break;
+                    case Remote:
+                        RemoteDatasourceConfig remoteDatasourceConfig = new RemoteDatasourceConfig(definition);
+                        // TODO set additional values
+                        dataSources.add(remoteDatasourceConfig);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unknown datasource type!");
+                }
+            }
+        }
+        setDatasources(dataSources);
+    }
+
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
         setDefaultDatabaseSettings();
         setDatabaseType(JXPathUtils.getStringValue(settings, "database/type", getDatabaseType()));
@@ -1138,11 +1167,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "updateDatabaseOnServerStart", myUpdateDatabaseOnServerStart));
             root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreTimestamps", myIgnoreTimestamps));
             root.appendChild(DOMUtils.createIntElement(settings, "baseDirCount", myDatasources.size()));
-            Element dataSources = settings.createElement("datasources");
-            root.appendChild(dataSources);
-            for (int i = 0; i < myDatasources.size(); i++) {
-                dataSources.appendChild(DOMUtils.createTextElement(settings, "datasource", myDatasources.get(i)));
-            }
+            writeDataSources(settings, root);
             root.appendChild(DOMUtils.createTextElement(settings, "artistFallback", myArtistFallback));
             root.appendChild(DOMUtils.createTextElement(settings, "albumFallback", myAlbumFallback));
             root.appendChild(DOMUtils.createBooleanElement(settings, "iTunesDeleteMissingFiles", myItunesDeleteMissingFiles));
@@ -1306,6 +1331,33 @@ public class MyTunesRssConfig {
             }
         } catch (Exception e) {
             LOGGER.error("Could not write settings file.", e);
+        }
+    }
+
+    private void writeDataSources(Document settings, Element root) {
+        Element dataSources = settings.createElement("datasources");
+        root.appendChild(dataSources);
+        for (int i = 0; i < myDatasources.size(); i++) {
+            Element dataSource = settings.createElement("datasource");
+            dataSources.appendChild(dataSource);
+            dataSource.appendChild(DOMUtils.createTextElement(settings, "type", myDatasources.get(i).getType().name()));
+            dataSource.appendChild(DOMUtils.createTextElement(settings, "definition", myDatasources.get(i).getDefinition()));
+            switch (myDatasources.get(i).getType()) {
+                case Watchfolder:
+                    dataSource.appendChild(DOMUtils.createLongElement(settings, "minFileSize", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getMinFileSize()));
+                    dataSource.appendChild(DOMUtils.createLongElement(settings, "maxFileSize", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getMaxFileSize()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "include", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getIncludePattern()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "exclude", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getExcludePattern()));
+                    break;
+                case Itunes:
+                    // TODO write additional values
+                    break;
+                case Remote:
+                    // TODO write additional values
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown datasource type!");
+            }
         }
     }
 

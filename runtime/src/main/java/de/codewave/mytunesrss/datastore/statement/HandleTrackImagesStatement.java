@@ -7,6 +7,7 @@ import de.codewave.camel.CamelUtils;
 import de.codewave.camel.Endianness;
 import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.camel.mp4.Mp4Utils;
+import de.codewave.mytunesrss.DatasourceConfig;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
@@ -220,8 +221,8 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
 
     private Image findItunesArtwork() throws IOException {
         LOGGER.debug("Looking for iTunes cover for track \"" + myTrackId + "\".");
-        for (String datasource : MyTunesRss.CONFIG.getDatasources()) {
-            File file = new File(datasource);
+        for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
+            File file = new File(datasource.getDefinition());
             if (file.isFile()) {
                 // assume itunes xml
                 LOGGER.debug("Trying directory \"" + file.getParentFile().getAbsolutePath() + "/Album Artwork\".");

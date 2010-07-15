@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.task;
 
+import de.codewave.mytunesrss.DatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.io.ZipUtils;
@@ -46,9 +47,9 @@ public class SendSupportRequestCallable implements Callable<Boolean> {
             ZipUtils.addToZip(archiveName + "/MyTunesRSS.log", new File(MyTunesRssUtils.getCacheDataPath() + "/MyTunesRSS.log"), zipOutput);
             if (myIncludeItunesXml) {
                 int index = 0;
-                for (String dataSource : MyTunesRss.CONFIG.getDatasources()) {
-                    File file = new File(dataSource);
-                    if (file.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(dataSource))) {
+                for (DatasourceConfig dataSource : MyTunesRss.CONFIG.getDatasources()) {
+                    File file = new File(dataSource.getDefinition());
+                    if (file.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(dataSource.getDefinition()))) {
                         if (index == 0) {
                             ZipUtils.addToZip(archiveName + "/iTunes Music Library.xml", file, zipOutput);
                         } else {

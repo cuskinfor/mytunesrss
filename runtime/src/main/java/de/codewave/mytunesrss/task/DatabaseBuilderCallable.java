@@ -19,16 +19,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import de.codewave.mytunesrss.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssEvent;
-import de.codewave.mytunesrss.MyTunesRssEventManager;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.datastore.external.ExternalLoader;
 import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
@@ -87,11 +83,11 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
     private static long TX_BEGIN;
 
     public DatabaseBuilderCallable() {
-        if (MyTunesRss.CONFIG.getDatasources() != null && MyTunesRss.CONFIG.getDatasources().length > 0) {
-            for (String datasource : MyTunesRss.CONFIG.getDatasources()) {
-                File file = new File(datasource);
+        if (MyTunesRss.CONFIG.getDatasources() != null && MyTunesRss.CONFIG.getDatasources().size() > 0) {
+            for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
+                File file = new File(datasource.getDefinition());
                 if (!file.exists()) {
-                    addToDatasources(datasource);
+                    addToDatasources(datasource.getDefinition());
                 } else {
                     addToDatasources(file);
                 }

@@ -9,7 +9,7 @@
 <ignoreTimestamps>false</ignoreTimestamps>
 <baseDirCount>0</baseDirCount>
 <datasources>
-<datasource><!-- CFG_ITUNES_XML_PATH --></datasource>
+<definition><!-- CFG_ITUNES_XML_PATH --></definition>
 </datasources>
 <artistFallback>[dir:1]</artistFallback>
 <albumFallback>[dir:0]</albumFallback>
