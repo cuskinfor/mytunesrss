@@ -37,11 +37,12 @@ public class ServerService {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             SystemInformation sysInfo = TransactionFilter.getTransaction().executeQuery(new GetSystemInformationQuery());
-            Map<String, Integer> statistics = new HashMap<String, Integer>();
-            statistics.put("tracks", sysInfo.getTrackCount());
-            statistics.put("albums", sysInfo.getAlbumCount());
-            statistics.put("artists", sysInfo.getArtistCount());
-            statistics.put("genres", sysInfo.getGenreCount());
+            Map<String, Long> statistics = new HashMap<String, Long>();
+            statistics.put("tracks", Long.valueOf(sysInfo.getTrackCount()));
+            statistics.put("albums", Long.valueOf(sysInfo.getAlbumCount()));
+            statistics.put("artists", Long.valueOf(sysInfo.getArtistCount()));
+            statistics.put("genres", Long.valueOf(sysInfo.getGenreCount()));
+            statistics.put("lastUpdate", Long.valueOf(sysInfo.getLastUpdate()));
             return statistics;
         }
         throw new IllegalAccessException("UNAUTHORIZED");
