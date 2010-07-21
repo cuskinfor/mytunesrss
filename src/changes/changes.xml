@@ -9,6 +9,9 @@
 
         <release version="3.8.13" date="2010-xx-xx">
             <action dev="mdescher" type="fix">
+                ServerService#getDatabaseStatistics returns time of last update.
+            </action>
+            <action dev="mdescher" type="fix">
                 TranscodingService#getTranscodingParameter return non-url-encoded value.
             </action>
             <action dev="mdescher" type="update">
