@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.datastore.itunes;
 
+import de.codewave.mytunesrss.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandler;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -55,7 +57,7 @@ public class ItunesLoader {
     /**
      * Load tracks from an iTunes XML file.
      *
-     * @param iTunesLibraryXml
+     * @param config
      * @param storeSession
      * @param timeLastUpdate
      * @param trackIds
@@ -63,15 +65,16 @@ public class ItunesLoader {
      * @return Number of missing files.
      * @throws SQLException
      */
-    public static long loadFromITunes(Thread executionThread, URL iTunesLibraryXml, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds,
-                                      Collection<String> existsingPlaylistIds) throws SQLException {
+    public static long loadFromITunes(Thread executionThread, ItunesDatasourceConfig config, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds,
+                                      Collection<String> existsingPlaylistIds) throws SQLException, MalformedURLException {
         TrackListener trackListener = null;
         PlaylistListener playlistListener = null;
+        URL iTunesLibraryXml = new File(config.getDefinition()).toURL();
         if (iTunesLibraryXml != null) {
             PListHandler handler = new PListHandler();
             Map<Long, String> trackIdToPersId = new HashMap<Long, String>();
             LibraryListener libraryListener = new LibraryListener(timeLastUpdate);
-            trackListener = new TrackListener(executionThread, storeSession, libraryListener, trackIdToPersId, trackIds);
+            trackListener = new TrackListener(config, executionThread, storeSession, libraryListener, trackIdToPersId, trackIds);
             playlistListener = new PlaylistListener(executionThread, storeSession, libraryListener, trackIdToPersId);
             handler.addListener("/plist/dict", libraryListener);
             handler.addListener("/plist/dict[Tracks]/dict", trackListener);

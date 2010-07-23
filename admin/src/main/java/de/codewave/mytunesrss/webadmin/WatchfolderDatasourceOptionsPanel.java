@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.ui.Form;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.WatchfolderDatasourceConfig;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -75,14 +76,18 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
             getApplication().showError("error.formInvalid");
         } else {
             writeToConfig();
-            // TODO close window
+            closeWindow();
         }
         return false; // make sure the default operation is not used
     }
 
     @Override
     protected boolean beforeCancel() {
-        // TODO close window
+        closeWindow();
         return false; // make sure the default operation is not used
+    }
+
+    private void closeWindow() {
+        getWindow().getParent().getWindow().removeWindow(getWindow());
     }
 }

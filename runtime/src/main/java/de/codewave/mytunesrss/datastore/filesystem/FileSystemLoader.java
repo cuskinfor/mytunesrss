@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.ShutdownRequestedException;
+import de.codewave.mytunesrss.WatchfolderDatasourceConfig;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FilenameUtils;
@@ -20,9 +21,10 @@ import java.util.Collection;
 public class FileSystemLoader {
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(final Thread watchdogThread, File baseDir, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds,
+    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds,
                                           Collection<String> playlistIds) throws IOException, SQLException {
         MyTunesRssFileProcessor fileProcessor = null;
+        File baseDir = new File(datasource.getDefinition());
         if (baseDir != null && baseDir.isDirectory()) {
             fileProcessor = new MyTunesRssFileProcessor(storeSession, lastUpdateTime, trackIds);
             if (LOG.isInfoEnabled()) {
@@ -33,7 +35,7 @@ public class FileSystemLoader {
                     if (watchdogThread.isInterrupted()) {
                         throw new ShutdownRequestedException();
                     }
-                    return file.isDirectory() || FileSupportUtils.isSupported(file.getName());
+                    return file.isDirectory() || (datasource.isIncluded(file) && FileSupportUtils.isSupported(file.getName()));
                 }
             });
             PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(storeSession, fileProcessor.getExistingIds());
@@ -42,7 +44,7 @@ public class FileSystemLoader {
                     if (watchdogThread.isInterrupted()) {
                         throw new ShutdownRequestedException();
                     }
-                    return file.isDirectory() || "m3u".equals(FilenameUtils.getExtension(file.getName().toLowerCase()));
+                    return file.isDirectory() || (datasource.isIncluded(file) && "m3u".equals(FilenameUtils.getExtension(file.getName().toLowerCase())));
                 }
             });
             if (LOG.isInfoEnabled()) {

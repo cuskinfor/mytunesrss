@@ -120,7 +120,6 @@ public class MyTunesRssConfig {
     private boolean myServerBrowserActive;
     private boolean myDisableWebLogin;
     private boolean myQuicktime64BitWarned;
-    private Set<PathReplacement> myPathReplacements = new HashSet<PathReplacement>();
     private LdapConfig myLdapConfig;
     private byte[] myAdminPasswordHash;
     private int myAdminPort;
@@ -825,18 +824,6 @@ public class MyTunesRssConfig {
         myQuicktime64BitWarned = quicktime64BitWarned;
     }
 
-    public Set<PathReplacement> getPathReplacements() {
-        return new HashSet<PathReplacement>(myPathReplacements);
-    }
-
-    public void clearPathReplacements() {
-        myPathReplacements.clear();
-    }
-
-    public void addPathReplacement(PathReplacement pathReplacement) {
-        myPathReplacements.add(pathReplacement);
-    }
-
     public LdapConfig getLdapConfig() {
         return myLdapConfig;
     }
@@ -1051,14 +1038,6 @@ public class MyTunesRssConfig {
         setDisableBrowser(JXPathUtils.getBooleanValue(settings, "disableBrowser", false));
         setDisableWebLogin(JXPathUtils.getBooleanValue(settings, "disableWebLogin", false));
         setQuicktime64BitWarned(JXPathUtils.getBooleanValue(settings, "qt64BitWarned", false));
-        Iterator<JXPathContext> pathReplacementsIterator = JXPathUtils.getContextIterator(settings, "path-replacements/replacement");
-        myPathReplacements.clear();
-        while (pathReplacementsIterator.hasNext()) {
-            JXPathContext pathReplacementContext = pathReplacementsIterator.next();
-            String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
-            String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
-            myPathReplacements.add(new PathReplacement(search, replacement));
-        }
         myLdapConfig = new LdapConfig(settings);
         Iterator<JXPathContext> users = JXPathUtils.getContextIterator(settings, "users/user");
         while (users != null && users.hasNext()) {
@@ -1092,7 +1071,14 @@ public class MyTunesRssConfig {
                         break;
                     case Itunes:
                         ItunesDatasourceConfig itunesDatasourceConfig = new ItunesDatasourceConfig(definition);
-                        // TODO set additional values
+                        Iterator<JXPathContext> pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
+                        itunesDatasourceConfig.clearPathReplacements();
+                        while (pathReplacementsIterator.hasNext()) {
+                            JXPathContext pathReplacementContext = pathReplacementsIterator.next();
+                            String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
+                            String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
+                            itunesDatasourceConfig.addPathReplacement(new PathReplacement(search, replacement));
+                        }
                         dataSources.add(itunesDatasourceConfig);
                         break;
                     case Remote:
@@ -1309,16 +1295,6 @@ public class MyTunesRssConfig {
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "serverBrowserActive", isServerBrowserActive()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "qt64BitWarned", isQuicktime64BitWarned()));
-            if (myPathReplacements != null && !myPathReplacements.isEmpty()) {
-                Element pathReplacementsElement = settings.createElement("path-replacements");
-                root.appendChild(pathReplacementsElement);
-                for (PathReplacement pathReplacement : myPathReplacements) {
-                    Element pathReplacementElement = settings.createElement("replacement");
-                    pathReplacementsElement.appendChild(pathReplacementElement);
-                    pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "search", pathReplacement.getSearchPattern()));
-                    pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "replacement", pathReplacement.getReplacement()));
-                }
-            }
             root.appendChild(myLdapConfig.createSettingsElement(settings));
             FileOutputStream outputStream = null;
             try {
@@ -1350,7 +1326,17 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "exclude", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getExcludePattern()));
                     break;
                 case Itunes:
-                    // TODO write additional values
+                    ItunesDatasourceConfig itunesDatasourceConfig = (ItunesDatasourceConfig) myDatasources.get(i);
+                    if (itunesDatasourceConfig.getPathReplacements() != null && !itunesDatasourceConfig.getPathReplacements().isEmpty()) {
+                        Element pathReplacementsElement = settings.createElement("path-replacements");
+                        dataSource.appendChild(pathReplacementsElement);
+                        for (PathReplacement pathReplacement : itunesDatasourceConfig.getPathReplacements()) {
+                            Element pathReplacementElement = settings.createElement("replacement");
+                            pathReplacementsElement.appendChild(pathReplacementElement);
+                            pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "search", pathReplacement.getSearchPattern()));
+                            pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "replacement", pathReplacement.getReplacement()));
+                        }
+                    }
                     break;
                 case Remote:
                     // TODO write additional values

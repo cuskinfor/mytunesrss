@@ -11,6 +11,10 @@ public class RemoteDatasourceConfig extends DatasourceConfig {
         super(definition);
     }
 
+    public RemoteDatasourceConfig(RemoteDatasourceConfig source) {
+        super(source);
+    }
+
     @Override
     public DatasourceType getType() {
         return DatasourceType.Remote;

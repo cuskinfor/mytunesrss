@@ -76,9 +76,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
 
     private static final long MAX_TX_DURATION = 2500;
 
-    private List<File> myFileDatasources = new ArrayList<File>();
+    private List<DatasourceConfig> myFileDatasources = new ArrayList<DatasourceConfig>();
 
-    private List<String> myExternalDatasources = new ArrayList<String>();
+    private List<DatasourceConfig> myExternalDatasources = new ArrayList<DatasourceConfig>();
 
     private static long TX_BEGIN;
 
@@ -87,26 +87,23 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
                 File file = new File(datasource.getDefinition());
                 if (!file.exists()) {
-                    addToDatasources(datasource.getDefinition());
+                    LOGGER.debug("Adding non-file datasource \"" + datasource.getDefinition() + "\" to database update sources.");
+                    myExternalDatasources.add(datasource);
                 } else {
-                    addToDatasources(file);
+                    addToDatasources(datasource);
                 }
             }
         }
         if (StringUtils.isNotBlank(MyTunesRss.CONFIG.getUploadDir())) {
-            addToDatasources(new File(StringUtils.trim(MyTunesRss.CONFIG.getUploadDir())));
+            addToDatasources(new WatchfolderDatasourceConfig(MyTunesRss.CONFIG.getUploadDir()));
         }
     }
 
-    private void addToDatasources(String external) {
-        LOGGER.debug("Adding non-file datasource \"" + external + "\" to database update sources.");
-        myExternalDatasources.add(external);
-    }
-
-    private void addToDatasources(File file) {
+    private void addToDatasources(DatasourceConfig datasource) {
+        File file = new File(datasource.getDefinition());
         if (file.isDirectory()) {
-            for (Iterator<File> iter = myFileDatasources.iterator(); iter.hasNext();) {
-                File each = iter.next();
+            for (Iterator<DatasourceConfig> iter = myFileDatasources.iterator(); iter.hasNext();) {
+                File each = new File(iter.next().getDefinition());
                 if (each.isDirectory()) {
                     try {
                         if (de.codewave.utils.io.IOUtils.isContainedOrSame(each, file)) {
@@ -134,18 +131,19 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Adding folder \"" + file.getAbsolutePath() + "\" to database update sources.");
             }
-            myFileDatasources.add(file);
+            myFileDatasources.add(datasource);
         } else if (file.isFile()) {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Adding iTunes XML file \"" + file.getAbsolutePath() + "\" to database update sources.");
             }
-            myFileDatasources.add(file);
+            myFileDatasources.add(datasource);
         }
     }
 
     public boolean needsUpdate() throws SQLException {
         if (myFileDatasources != null) {
-            for (File baseDir : myFileDatasources) {
+            for (DatasourceConfig datasource : myFileDatasources) {
+                File baseDir = new File(datasource.getDefinition());
                 if (baseDir.isDirectory()) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Database update needed.");
@@ -353,26 +351,27 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
         });
         if (myFileDatasources != null && !Thread.currentThread().isInterrupted()) {
-            for (File datasource : myFileDatasources) {
+            for (DatasourceConfig datasource : myFileDatasources) {
+                File file = new File(datasource.getDefinition());
                 doCheckpoint(storeSession, false);
-                if (datasource.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(datasource.getName()))
+                if (file.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))
                         && !Thread.currentThread().isInterrupted()) {
                     myState = State.UpdatingTracksFromItunes;
                     MyTunesRssEvent event = MyTunesRssEvent
                             .create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
                     event.setMessageKey("settings.databaseUpdateRunningItunes");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
-                    missingItunesFiles.put(datasource.getCanonicalPath(), ItunesLoader.loadFromITunes(Thread
-                            .currentThread(), datasource.toURL(), storeSession, timeLastUpdate, trackIds,
+                    missingItunesFiles.put(file.getCanonicalPath(), ItunesLoader.loadFromITunes(Thread
+                            .currentThread(), (ItunesDatasourceConfig) datasource, storeSession, timeLastUpdate, trackIds,
                             itunesPlaylistIds));
-                } else if (datasource.isDirectory() && !Thread.currentThread().isInterrupted()) {
+                } else if (file.isDirectory() && !Thread.currentThread().isInterrupted()) {
                     try {
                         myState = State.UpdatingTracksFromFolder;
                         MyTunesRssEvent event = MyTunesRssEvent
                                 .create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
                         event.setMessageKey("settings.databaseUpdateRunningFolder");
                         MyTunesRssEventManager.getInstance().fireEvent(event);
-                        FileSystemLoader.loadFromFileSystem(Thread.currentThread(), datasource, storeSession,
+                        FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig)datasource, storeSession,
                                 timeLastUpdate, trackIds, m3uPlaylistIds);
                     } catch (ShutdownRequestedException e) {
                         // intentionally left blank
@@ -382,12 +381,12 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             DatabaseBuilderCallable.doCheckpoint(storeSession, true);
         }
         if (myExternalDatasources != null && !Thread.currentThread().isInterrupted()) {
-            for (String external : myExternalDatasources) {
+            for (DatasourceConfig external : myExternalDatasources) {
                 doCheckpoint(storeSession, false);
                 MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
                 event.setMessageKey("settings.databaseUpdateRunningExternal");
                 MyTunesRssEventManager.getInstance().fireEvent(event);
-                ExternalLoader.process(StringUtils.trim(external), storeSession, timeLastUpdate, trackIds);
+                ExternalLoader.process(StringUtils.trim(external.getDefinition()), storeSession, timeLastUpdate, trackIds);
             }
         }
         if (!Thread.currentThread().isInterrupted()) {

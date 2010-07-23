@@ -17,6 +17,14 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     private Pattern myIncludePattern;
     private Pattern myExcludePattern;
 
+    public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
+        super(source);
+        myMinFileSize = source.getMinFileSize();
+        myMaxFileSize = source.getMaxFileSize();
+        myIncludePattern = source.myIncludePattern;
+        myExcludePattern = source.myExcludePattern;
+    }
+
     public WatchfolderDatasourceConfig(String definition) {
         super(definition);
     }

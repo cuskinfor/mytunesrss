@@ -22,6 +22,10 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
     private String myDefinition;
 
+    public DatasourceConfig(DatasourceConfig source) {
+        myDefinition = source.getDefinition();
+    }
+
     public DatasourceConfig(String definition) {
         setDefinition(definition);
     }
@@ -41,5 +45,18 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
     public int compareTo(DatasourceConfig other) {
         return getDefinition().compareTo(other.getDefinition());
+    }
+
+    public static DatasourceConfig copy(DatasourceConfig config) {
+        switch (config.getType()) {
+            case Remote:
+                return new RemoteDatasourceConfig((RemoteDatasourceConfig)config);
+            case Itunes:
+                return new ItunesDatasourceConfig((ItunesDatasourceConfig)config);
+            case Watchfolder:
+                return new WatchfolderDatasourceConfig((WatchfolderDatasourceConfig)config);
+            default:
+                throw new IllegalArgumentException("Illegal datasource type.");
+        }
     }
 }

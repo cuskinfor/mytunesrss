@@ -39,9 +39,11 @@ public class TrackListener implements PListHandlerListener {
     private String[] myDisabledMp4Codecs;
     private Thread myWatchdogThread;
     private Set<CompiledPathReplacement> myPathReplacements;
+    private ItunesDatasourceConfig myDatasourceConfig;
 
-    public TrackListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
+    public TrackListener(ItunesDatasourceConfig datasourceConfig, Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
                          Collection<String> trackIds) throws SQLException {
+        myDatasourceConfig = datasourceConfig;
         myWatchdogThread = watchdogThread;
         myDataStoreSession = dataStoreSession;
         myLibraryListener = libraryListener;
@@ -49,7 +51,7 @@ public class TrackListener implements PListHandlerListener {
         myTrackIds = trackIds;
         myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDisabledMp4Codecs())), ",");
         myPathReplacements = new HashSet<CompiledPathReplacement>();
-        for (PathReplacement pathReplacement : MyTunesRss.CONFIG.getPathReplacements()) {
+        for (PathReplacement pathReplacement : myDatasourceConfig.getPathReplacements()) {
             myPathReplacements.add(new CompiledPathReplacement(pathReplacement));
         }
     }
