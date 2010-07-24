@@ -238,7 +238,10 @@ public class MyTunesFunctions {
         }
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (command != MyTunesRssCommand.YouTubeRedirect) {
-            pathInfo.append("/tc=").append(tcParamValue(request, user));
+            String tcParam = tcParamValue(request, user);
+            if (StringUtils.isNotBlank(tcParam)) {
+                pathInfo.append("/tc=").append(tcParam);
+            }
             pathInfo.append("/playerRequest=").append(request.getParameter("playerRequest"));
             if (StringUtils.isNotBlank(extraPathInfo)) {
                 pathInfo.append("/").append(extraPathInfo);

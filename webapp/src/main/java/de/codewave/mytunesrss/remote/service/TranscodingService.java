@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.remote.service;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
@@ -18,8 +19,7 @@ public class TranscodingService {
     public String getTranscodingParameter(String[] transcoderNames, boolean transcodeOnTheFlyIfPossible) throws IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-
-            return "tc=" + MyTunesRssWebUtils.createTranscodingParamValue(transcoderNames, transcodeOnTheFlyIfPossible);
+            return "tc=" + MyTunesRssUtils.getUtf8UrlEncoded(MyTunesRssWebUtils.createTranscodingParamValue(transcoderNames, transcodeOnTheFlyIfPossible));
         }
         throw new IllegalAccessException("Unauthorized");
     }

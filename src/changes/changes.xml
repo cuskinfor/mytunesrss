@@ -7,6 +7,18 @@
 
     <body>
 
+        <release version="3.8.13" date="2010-07-24">
+            <action dev="mdescher" type="fix">
+                ServerService#getDatabaseStatistics returns time of last update.
+            </action>
+            <action dev="mdescher" type="fix">
+                TranscodingService#getTranscodingParameter return non-url-encoded value.
+            </action>
+            <action dev="mdescher" type="update">
+                LoginService#getUserInfo returns transcoder names.
+            </action>
+        </release>
+
         <release version="3.8.12" date="2010-07-10">
             <action dev="mdescher" type="remove">
                 Hide actions menu if all entries are visible directly.
