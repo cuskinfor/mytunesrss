@@ -31,7 +31,6 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     private SmartTextField myDatabaseUser;
     private SmartTextField myDatabasePassword;
     private CheckBox myUpdateDatabaseOnServerStart;
-    private CheckBox myItunesDeleteMissingFiles;
     private Table myCronTriggers;
     private Button myAddSchedule;
 
@@ -44,7 +43,6 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDatabaseUser = getComponentFactory().createTextField("databaseConfigPanel.databaseUser");
         myDatabasePassword = getComponentFactory().createPasswordTextField("databaseConfigPanel.databasePassword");
         myUpdateDatabaseOnServerStart = getComponentFactory().createCheckBox("databaseConfigPanel.updateDatabaseOnServerStart");
-        myItunesDeleteMissingFiles = getComponentFactory().createCheckBox("databaseConfigPanel.itunesDeleteMissingFiles");
         myCronTriggers = new Table();
         myCronTriggers.addContainerProperty("day", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.day"), null, null);
         myCronTriggers.addContainerProperty("hour", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.hour"), null, null);
@@ -63,7 +61,6 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
 
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
         myMiscOptionsForm.addField(myUpdateDatabaseOnServerStart, myUpdateDatabaseOnServerStart);
-        myMiscOptionsForm.addField(myItunesDeleteMissingFiles, myItunesDeleteMissingFiles);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("databaseConfigPanel.caption.misc")));
 
         Panel schedulesPanel = new Panel(getBundleString("databaseConfigPanel.caption.cronTriggers"), getComponentFactory().createVerticalLayout(true, true));
@@ -83,7 +80,6 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDatabaseUser.setValue(MyTunesRss.CONFIG.getDatabaseUser());
         myDatabasePassword.setValue(MyTunesRss.CONFIG.getDatabasePassword());
         myUpdateDatabaseOnServerStart.setValue(MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart());
-        myItunesDeleteMissingFiles.setValue(MyTunesRss.CONFIG.isItunesDeleteMissingFiles());
         showHideDatabaseDetails(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
         refreshCronTriggers();
     }
@@ -139,7 +135,6 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         MyTunesRss.CONFIG.setDatabaseUser(myDatabaseUser.getStringValue(null));
         MyTunesRss.CONFIG.setDatabasePassword(myDatabasePassword.getStringValue(null));
         MyTunesRss.CONFIG.setUpdateDatabaseOnServerStart(myUpdateDatabaseOnServerStart.booleanValue());
-        MyTunesRss.CONFIG.setItunesDeleteMissingFiles(myItunesDeleteMissingFiles.booleanValue());
         List<String> databaseCronTriggers = new ArrayList<String>();
         for (Object itemId : myCronTriggers.getItemIds()) {
             databaseCronTriggers.add("0 " + getTableCellString(itemId, "minute") + " " + getTableCellString(itemId, "hour") + " ? * " + getTableCellString(itemId, "day"));

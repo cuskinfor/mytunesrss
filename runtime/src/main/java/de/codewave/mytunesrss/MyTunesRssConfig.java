@@ -52,7 +52,6 @@ public class MyTunesRssConfig {
     private String mySupportEmail = "";
     private String myProxyHost = "";
     private int myProxyPort = -1;
-    private boolean myItunesDeleteMissingFiles = true;
     private String myUploadDir = "";
     private boolean myUploadCreateUserDir = true;
     private String myMyTunesRssComUser = "";
@@ -198,14 +197,6 @@ public class MyTunesRssConfig {
 
     public void setArtistFallback(String artistFallback) {
         myArtistFallback = artistFallback;
-    }
-
-    public boolean isItunesDeleteMissingFiles() {
-        return myItunesDeleteMissingFiles;
-    }
-
-    public void setItunesDeleteMissingFiles(boolean itunesDeleteMissingFiles) {
-        myItunesDeleteMissingFiles = itunesDeleteMissingFiles;
     }
 
     public boolean isUploadCreateUserDir() {
@@ -934,7 +925,6 @@ public class MyTunesRssConfig {
         readDataSources(settings);
         setAlbumFallback(JXPathUtils.getStringValue(settings, "albumFallback", "[dir:0]"));
         setArtistFallback(JXPathUtils.getStringValue(settings, "artistFallback", "[dir:1]"));
-        setItunesDeleteMissingFiles(JXPathUtils.getBooleanValue(settings, "iTunesDeleteMissingFiles", isItunesDeleteMissingFiles()));
         setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
         setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
         setLocalTempArchive(JXPathUtils.getBooleanValue(settings, "localTempArchive", isLocalTempArchive()));
@@ -1079,6 +1069,7 @@ public class MyTunesRssConfig {
                             String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
                             itunesDatasourceConfig.addPathReplacement(new PathReplacement(search, replacement));
                         }
+                        itunesDatasourceConfig.setDeleteMissingFiles(JXPathUtils.getBooleanValue(datasourceContext, "deleteMissingFiles", true));
                         dataSources.add(itunesDatasourceConfig);
                         break;
                     case Remote:
@@ -1156,7 +1147,6 @@ public class MyTunesRssConfig {
             writeDataSources(settings, root);
             root.appendChild(DOMUtils.createTextElement(settings, "artistFallback", myArtistFallback));
             root.appendChild(DOMUtils.createTextElement(settings, "albumFallback", myAlbumFallback));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "iTunesDeleteMissingFiles", myItunesDeleteMissingFiles));
             root.appendChild(DOMUtils.createTextElement(settings, "uploadDir", myUploadDir));
             root.appendChild(DOMUtils.createBooleanElement(settings, "uploadCreateUserDir", myUploadCreateUserDir));
             root.appendChild(DOMUtils.createBooleanElement(settings, "localTempArchive", myLocalTempArchive));
@@ -1337,6 +1327,7 @@ public class MyTunesRssConfig {
                             pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "replacement", pathReplacement.getReplacement()));
                         }
                     }
+                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "deleteMissingFiles", itunesDatasourceConfig.isDeleteMissingFiles()));
                     break;
                 case Remote:
                     // TODO write additional values

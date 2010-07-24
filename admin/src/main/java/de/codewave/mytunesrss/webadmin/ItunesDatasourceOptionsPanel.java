@@ -6,11 +6,9 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.*;
 import de.codewave.mytunesrss.ItunesDatasourceConfig;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.PathReplacement;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -19,6 +17,8 @@ import de.codewave.vaadin.validation.ValidRegExpValidator;
 
 public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
+    private Form myMiscOptionsForm;
+    private CheckBox myDeleteMissingFiles;
     private Table myPathReplacements;
     private Button myAddPathReplacement;
     private ItunesDatasourceConfig myConfig;
@@ -29,7 +29,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     @Override
     public void attach() {
-        init(null, getComponentFactory().createGridLayout(1, 2, true, true));
+        init(null, getComponentFactory().createGridLayout(1, 3, true, true));
 
         Panel replacementsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.replacements"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(replacementsPanel);
@@ -42,13 +42,19 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myAddPathReplacement = getComponentFactory().createButton("datasourceOptionsPanel.addReplacement", this);
         replacementsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddPathReplacement));
 
-        attach(0, 1, 0, 1);
+        myMiscOptionsForm = getComponentFactory().createForm(null, true);
+        myDeleteMissingFiles = getComponentFactory().createCheckBox("datasourceOptionsPanel.itunesDeleteMissingFiles");
+        myMiscOptionsForm.addField(myDeleteMissingFiles, myDeleteMissingFiles);
+        addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.itunesMisc")));
+
+        attach(0, 2, 0, 2);
 
         initFromConfig();
     }
 
     @Override
     protected void writeToConfig() {
+        myConfig.setDeleteMissingFiles(myDeleteMissingFiles.booleanValue());
         myConfig.clearPathReplacements();
         for (Object itemId : myPathReplacements.getItemIds()) {
             myConfig.addPathReplacement(new PathReplacement((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));
@@ -57,6 +63,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     @Override
     protected void initFromConfig() {
+        myDeleteMissingFiles.setValue(myConfig.isDeleteMissingFiles());
         myPathReplacements.removeAllItems();
         for (PathReplacement replacement : myConfig.getPathReplacements()) {
             addPathReplacement(replacement);
@@ -77,7 +84,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myPathReplacements)) {
+        if (!VaadinUtils.isValid(myPathReplacements, myMiscOptionsForm)) {
             getApplication().showError("error.formInvalid");
         } else {
             writeToConfig();

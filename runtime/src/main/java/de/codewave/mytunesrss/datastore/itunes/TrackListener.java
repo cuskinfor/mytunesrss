@@ -112,7 +112,7 @@ public class TrackListener implements PListHandlerListener {
                     if (!new File(filename).isFile()) {
                         myMissingFiles++;
                     }
-                    if (!MyTunesRss.CONFIG.isItunesDeleteMissingFiles() || new File(filename).isFile()) {
+                    if (!myDatasourceConfig.isDeleteMissingFiles() || new File(filename).isFile()) {
                         Date dateModified = ((Date) track.get("Date Modified"));
                         long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
                         Date dateAdded = ((Date) track.get("Date Added"));

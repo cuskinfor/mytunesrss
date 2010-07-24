@@ -11,6 +11,7 @@ import java.util.Set;
 public class ItunesDatasourceConfig extends DatasourceConfig {
 
     private Set<PathReplacement> myPathReplacements = new HashSet<PathReplacement>();
+    private boolean myDeleteMissingFiles = true;
 
     public ItunesDatasourceConfig(String definition) {
         super(definition);
@@ -19,6 +20,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig {
     public ItunesDatasourceConfig(ItunesDatasourceConfig source) {
         super(source);
         myPathReplacements = new HashSet<PathReplacement>(source.getPathReplacements());
+        myDeleteMissingFiles = source.isDeleteMissingFiles();
     }
 
     @Override
@@ -38,4 +40,11 @@ public class ItunesDatasourceConfig extends DatasourceConfig {
         myPathReplacements.add(pathReplacement);
     }
 
+    public boolean isDeleteMissingFiles() {
+        return myDeleteMissingFiles;
+    }
+
+    public void setDeleteMissingFiles(boolean deleteMissingFiles) {
+        myDeleteMissingFiles = deleteMissingFiles;
+    }
 }
