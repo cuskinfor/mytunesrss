@@ -1053,7 +1053,7 @@ public class MyTunesRssConfig {
         Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
         while (contextIterator.hasNext()) {
             JXPathContext datasourceContext = contextIterator.next();
-            if (JXPathUtils.getContext(datasourceContext, "type") == null) {
+            if (JXPathUtils.getStringValue(datasourceContext, "type", null) == null) {
                 // read pre-4.0.0-EAP-6 data source definitions
                 String definition = JXPathUtils.getStringValue(datasourceContext, ".", null);
                 dataSources.add(DatasourceConfig.create(definition));
