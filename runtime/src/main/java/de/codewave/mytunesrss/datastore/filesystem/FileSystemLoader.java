@@ -26,7 +26,7 @@ public class FileSystemLoader {
         MyTunesRssFileProcessor fileProcessor = null;
         File baseDir = new File(datasource.getDefinition());
         if (baseDir != null && baseDir.isDirectory()) {
-            fileProcessor = new MyTunesRssFileProcessor(storeSession, lastUpdateTime, trackIds);
+            fileProcessor = new MyTunesRssFileProcessor(datasource, storeSession, lastUpdateTime, trackIds);
             if (LOG.isInfoEnabled()) {
                 LOG.info("Processing files from: \"" + baseDir + "\".");
             }

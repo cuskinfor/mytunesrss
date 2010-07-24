@@ -16,6 +16,8 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     private long myMaxFileSize;
     private Pattern myIncludePattern;
     private Pattern myExcludePattern;
+    private String myAlbumFallback = "[dir:0]";
+    private String myArtistFallback = "[dir:1]";
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);
@@ -23,6 +25,8 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
         myMaxFileSize = source.getMaxFileSize();
         myIncludePattern = source.myIncludePattern;
         myExcludePattern = source.myExcludePattern;
+        myAlbumFallback = source.getAlbumFallback();
+        myArtistFallback = source.getArtistFallback();
     }
 
     public WatchfolderDatasourceConfig(String definition) {
@@ -55,7 +59,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     }
 
     public void setIncludePattern(String includePattern) {
-        myIncludePattern = StringUtils.isNotBlank(includePattern) ? Pattern.compile(includePattern) : null;
+        myIncludePattern = StringUtils.isNotBlank(includePattern) ? Pattern.compile(includePattern, Pattern.CASE_INSENSITIVE) : null;
     }
 
     public String getExcludePattern() {
@@ -63,7 +67,23 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     }
 
     public void setExcludePattern(String excludePattern) {
-        myExcludePattern = StringUtils.isNotBlank(excludePattern) ? Pattern.compile(excludePattern) : null;
+        myExcludePattern = StringUtils.isNotBlank(excludePattern) ? Pattern.compile(excludePattern, Pattern.CASE_INSENSITIVE) : null;
+    }
+
+    public String getAlbumFallback() {
+        return myAlbumFallback;
+    }
+
+    public void setAlbumFallback(String albumFallback) {
+        myAlbumFallback = albumFallback;
+    }
+
+    public String getArtistFallback() {
+        return myArtistFallback;
+    }
+
+    public void setArtistFallback(String artistFallback) {
+        myArtistFallback = artistFallback;
     }
 
     public boolean isIncluded(File file) {

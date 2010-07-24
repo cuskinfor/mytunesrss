@@ -49,9 +49,11 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private long myLastEventTime;
     private long myStartTime;
     private String[] myDisabledMp4Codecs;
+    WatchfolderDatasourceConfig myDatasourceConfig;
 
-    public MyTunesRssFileProcessor(DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds)
+    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds)
             throws SQLException {
+        myDatasourceConfig = datasourceConfig;
         myStoreSession = storeSession;
         myLastUpdateTime = lastUpdateTime;
         myTrackIds = trackIds;
@@ -346,7 +348,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     }
 
     private String getFallbackAlbumName(File file) {
-        return getFallbackName(file, new String(MyTunesRss.CONFIG.getAlbumFallback()));
+        return getFallbackName(file, new String(myDatasourceConfig.getAlbumFallback()));
     }
 
     private String getFallbackName(File file, String pattern) {
@@ -374,6 +376,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     }
 
     private String getFallbackArtistName(File file) {
-        return getFallbackName(file, new String(MyTunesRss.CONFIG.getArtistFallback()));
+        return getFallbackName(file, new String(myDatasourceConfig.getArtistFallback()));
     }
 }

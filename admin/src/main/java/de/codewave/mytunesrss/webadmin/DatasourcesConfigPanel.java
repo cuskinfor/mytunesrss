@@ -32,12 +32,9 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     private Table myDatasources;
     private Button myAddLocalDatasource;
     private Button myAddRemoteDatasource;
-    private SmartTextField myAlbumFallback;
-    private SmartTextField myArtistFallback;
     private SmartTextField myUploadDir;
     private Button mySelectUploadDir;
     private CheckBox myUploadCreateUserDir;
-    private Form myFallbackForm;
     private Form myUploadForm;
     private Map<Long, DatasourceConfig> myConfigs = new HashMap<Long, DatasourceConfig>();
 
@@ -56,13 +53,6 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myAddLocalDatasource = getComponentFactory().createButton("datasourcesConfigPanel.addLocalDatasource", this);
         myAddRemoteDatasource = getComponentFactory().createButton("datasourcesConfigPanel.addRemoteDatasource", this);
         sourcesPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddLocalDatasource, myAddRemoteDatasource));
-
-        myFallbackForm = getComponentFactory().createForm(null, true);
-        myAlbumFallback = getComponentFactory().createTextField("datasourcesConfigPanel.albumFallback");
-        myArtistFallback = getComponentFactory().createTextField("datasourcesConfigPanel.artistFallback");
-        myFallbackForm.addField(myAlbumFallback, myAlbumFallback);
-        myFallbackForm.addField(myArtistFallback, myArtistFallback);
-        addComponent(getComponentFactory().surroundWithPanel(myFallbackForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourcesConfigPanel.caption.fallbacks")));
 
         myUploadForm = getComponentFactory().createForm(null, true);
         myUploadDir = getComponentFactory().createTextField("datasourcesConfigPanel.uploadDir", new FileValidator(getBundleString("datasourcesConfigPanel.error.invalidUploadDir"), FileValidator.PATTERN_ALL, null));
@@ -85,8 +75,6 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
             addDatasource(getApplication(), datasource);
         }
-        myAlbumFallback.setValue(MyTunesRss.CONFIG.getAlbumFallback());
-        myArtistFallback.setValue(MyTunesRss.CONFIG.getArtistFallback());
         myUploadDir.setValue(MyTunesRss.CONFIG.getUploadDir());
         myUploadCreateUserDir.setValue(MyTunesRss.CONFIG.isUploadCreateUserDir());
         setTablePageLengths();
@@ -113,8 +101,6 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     protected void writeToConfig() {
         MyTunesRss.CONFIG.setDatasources(new ArrayList<DatasourceConfig>(myConfigs.values()));
-        MyTunesRss.CONFIG.setAlbumFallback(myAlbumFallback.getStringValue(null));
-        MyTunesRss.CONFIG.setArtistFallback(myArtistFallback.getStringValue(null));
         MyTunesRss.CONFIG.setUploadDir(myUploadDir.getStringValue(null));
         MyTunesRss.CONFIG.setUploadCreateUserDir(myUploadCreateUserDir.booleanValue());
     }
@@ -229,7 +215,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myFallbackForm, myUploadForm)) {
+        if (!VaadinUtils.isValid(myUploadForm)) {
             getApplication().showError("error.formInvalid");
             return false;
         }

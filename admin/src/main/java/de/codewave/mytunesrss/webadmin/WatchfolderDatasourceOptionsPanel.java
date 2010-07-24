@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.ui.Form;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.WatchfolderDatasourceConfig;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -15,11 +14,14 @@ import de.codewave.vaadin.validation.ValidRegExpValidator;
 
 public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
-    private Form myForm;
+    private Form myIncludeExcludeForm;
     private SmartTextField myIncludePattern;
     private SmartTextField myExcludePattern;
     private SmartTextField myMinFileSize;
     private SmartTextField myMaxFileSize;
+    private Form myFallbackForm;
+    private SmartTextField myAlbumFallback;
+    private SmartTextField myArtistFallback;
     private WatchfolderDatasourceConfig myConfig;
 
     public WatchfolderDatasourceOptionsPanel(WatchfolderDatasourceConfig config) {
@@ -28,21 +30,28 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     @Override
     public void attach() {
-        init(null, getComponentFactory().createGridLayout(1, 2, true, true));
+        init(null, getComponentFactory().createGridLayout(1, 3, true, true));
 
-        myForm = getComponentFactory().createForm(null, true);
+        myIncludeExcludeForm = getComponentFactory().createForm(null, true);
         myIncludePattern = getComponentFactory().createTextField("datasourceOptionsPanel.includePattern", new ValidRegExpValidator("datasourceOptionsPanel.error.invalidIncludePattern"));
         myExcludePattern = getComponentFactory().createTextField("datasourceOptionsPanel.excludePattern", new ValidRegExpValidator("datasourceOptionsPanel.error.invalidExcludePattern"));
         myMinFileSize = getComponentFactory().createTextField("datasourceOptionsPanel.minFileSize", getValidatorFactory().createMinMaxValidator(0, Integer.MAX_VALUE));
         myMaxFileSize = getComponentFactory().createTextField("datasourceOptionsPanel.maxFileSize", getValidatorFactory().createMinMaxValidator(0, Integer.MAX_VALUE));
-        myForm.addField(myIncludePattern, myIncludePattern);
-        myForm.addField(myExcludePattern, myExcludePattern);
-        myForm.addField(myMinFileSize, myMinFileSize);
-        myForm.addField(myMaxFileSize, myMaxFileSize);
-        Panel panel = getComponentFactory().surroundWithPanel(myForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.options"));
+        myIncludeExcludeForm.addField(myIncludePattern, myIncludePattern);
+        myIncludeExcludeForm.addField(myExcludePattern, myExcludePattern);
+        myIncludeExcludeForm.addField(myMinFileSize, myMinFileSize);
+        myIncludeExcludeForm.addField(myMaxFileSize, myMaxFileSize);
+        Panel panel = getComponentFactory().surroundWithPanel(myIncludeExcludeForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.options"));
         addComponent(panel);
 
-        attach(0, 1, 0, 1);
+        myFallbackForm = getComponentFactory().createForm(null, true);
+        myAlbumFallback = getComponentFactory().createTextField("datasourceOptionsPanel.albumFallback");
+        myArtistFallback = getComponentFactory().createTextField("datasourceOptionsPanel.artistFallback");
+        myFallbackForm.addField(myAlbumFallback, myAlbumFallback);
+        myFallbackForm.addField(myArtistFallback, myArtistFallback);
+        addComponent(getComponentFactory().surroundWithPanel(myFallbackForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.fallbacks")));
+
+        attach(0, 2, 0, 2);
 
         initFromConfig();
     }
@@ -53,6 +62,8 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myConfig.setMaxFileSize(myMaxFileSize.getLongValue(0));
         myConfig.setIncludePattern(myIncludePattern.getStringValue(null));
         myConfig.setExcludePattern(myExcludePattern.getStringValue(null));
+        myConfig.setAlbumFallback(myAlbumFallback.getStringValue(null));
+        myConfig.setArtistFallback(myArtistFallback.getStringValue(null));
     }
 
     @Override
@@ -69,10 +80,12 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         }
         myIncludePattern.setValue(myConfig.getIncludePattern(), "");
         myExcludePattern.setValue(myConfig.getExcludePattern(), "");
+        myAlbumFallback.setValue(myConfig.getAlbumFallback());
+        myArtistFallback.setValue(myConfig.getArtistFallback());
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myForm)) {
+        if (!VaadinUtils.isValid(myFallbackForm, myIncludeExcludeForm)) {
             getApplication().showError("error.formInvalid");
         } else {
             writeToConfig();

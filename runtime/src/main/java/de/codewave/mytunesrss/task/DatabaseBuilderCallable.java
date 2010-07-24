@@ -85,8 +85,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
     public DatabaseBuilderCallable() {
         if (MyTunesRss.CONFIG.getDatasources() != null && MyTunesRss.CONFIG.getDatasources().size() > 0) {
             for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
-                File file = new File(datasource.getDefinition());
-                if (!file.exists()) {
+                if (datasource.getType() == DatasourceType.Remote) {
                     LOGGER.debug("Adding non-file datasource \"" + datasource.getDefinition() + "\" to database update sources.");
                     myExternalDatasources.add(datasource);
                 } else {
@@ -101,22 +100,23 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
 
     private void addToDatasources(DatasourceConfig datasource) {
         File file = new File(datasource.getDefinition());
-        if (file.isDirectory()) {
+        if (datasource.getType() == DatasourceType.Watchfolder && file.exists()) {
             for (Iterator<DatasourceConfig> iter = myFileDatasources.iterator(); iter.hasNext();) {
-                File each = new File(iter.next().getDefinition());
-                if (each.isDirectory()) {
+                DatasourceConfig eachDatasource = iter.next();
+                File eachFile = new File(eachDatasource.getDefinition());
+                if (eachDatasource.getType() == DatasourceType.Watchfolder && eachFile.exists()) {
                     try {
-                        if (de.codewave.utils.io.IOUtils.isContainedOrSame(each, file)) {
+                        if (de.codewave.utils.io.IOUtils.isContainedOrSame(eachFile, file)) {
                             if (LOGGER.isInfoEnabled()) {
                                 LOGGER
                                         .info("Not adding \"" + file.getAbsolutePath()
                                                 + "\" to database update sources.");
                             }
                             return; // new dir is already scanned through other dir
-                        } else if (de.codewave.utils.io.IOUtils.isContained(file, each)) {
+                        } else if (de.codewave.utils.io.IOUtils.isContained(file, eachFile)) {
                             // existing one will be scanned by adding new one, so remove existing one
                             if (LOGGER.isInfoEnabled()) {
-                                LOGGER.info("Removing folder \"" + each.getAbsolutePath()
+                                LOGGER.info("Removing folder \"" + eachFile.getAbsolutePath()
                                         + "\" from database update sources.");
                             }
                             iter.remove();
@@ -132,7 +132,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 LOGGER.info("Adding folder \"" + file.getAbsolutePath() + "\" to database update sources.");
             }
             myFileDatasources.add(datasource);
-        } else if (file.isFile()) {
+        } else if (datasource.getType() == DatasourceType.Itunes && file.exists()) {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Adding iTunes XML file \"" + file.getAbsolutePath() + "\" to database update sources.");
             }

@@ -45,8 +45,6 @@ public class MyTunesRssConfig {
     private boolean myCheckUpdateOnStart = true;
     private String myVersion;
     private boolean myIgnoreTimestamps;
-    private String myAlbumFallback;
-    private String myArtistFallback;
     private Collection<User> myUsers = new HashSet<User>();
     private String mySupportName = "";
     private String mySupportEmail = "";
@@ -181,22 +179,6 @@ public class MyTunesRssConfig {
 
     public void setIgnoreTimestamps(boolean ignoreTimestamps) {
         myIgnoreTimestamps = ignoreTimestamps;
-    }
-
-    public String getAlbumFallback() {
-        return myAlbumFallback;
-    }
-
-    public void setAlbumFallback(String albumFallback) {
-        myAlbumFallback = albumFallback;
-    }
-
-    public String getArtistFallback() {
-        return myArtistFallback;
-    }
-
-    public void setArtistFallback(String artistFallback) {
-        myArtistFallback = artistFallback;
     }
 
     public boolean isUploadCreateUserDir() {
@@ -923,8 +905,6 @@ public class MyTunesRssConfig {
         setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
         setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
         readDataSources(settings);
-        setAlbumFallback(JXPathUtils.getStringValue(settings, "albumFallback", "[dir:0]"));
-        setArtistFallback(JXPathUtils.getStringValue(settings, "artistFallback", "[dir:1]"));
         setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
         setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
         setLocalTempArchive(JXPathUtils.getBooleanValue(settings, "localTempArchive", isLocalTempArchive()));
@@ -1057,6 +1037,8 @@ public class MyTunesRssConfig {
                         watchfolderDatasourceConfig.setMaxFileSize(JXPathUtils.getLongValue(datasourceContext, "maxFileSize", 0));
                         watchfolderDatasourceConfig.setIncludePattern(JXPathUtils.getStringValue(datasourceContext, "include", null));
                         watchfolderDatasourceConfig.setExcludePattern(JXPathUtils.getStringValue(datasourceContext, "exclude", null));
+                        watchfolderDatasourceConfig.setAlbumFallback(JXPathUtils.getStringValue(datasourceContext, "albumFallback", "[dir:0]"));
+                        watchfolderDatasourceConfig.setArtistFallback(JXPathUtils.getStringValue(datasourceContext, "artistFallback", "[dir:1]"));
                         dataSources.add(watchfolderDatasourceConfig);
                         break;
                     case Itunes:
@@ -1145,8 +1127,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreTimestamps", myIgnoreTimestamps));
             root.appendChild(DOMUtils.createIntElement(settings, "baseDirCount", myDatasources.size()));
             writeDataSources(settings, root);
-            root.appendChild(DOMUtils.createTextElement(settings, "artistFallback", myArtistFallback));
-            root.appendChild(DOMUtils.createTextElement(settings, "albumFallback", myAlbumFallback));
             root.appendChild(DOMUtils.createTextElement(settings, "uploadDir", myUploadDir));
             root.appendChild(DOMUtils.createBooleanElement(settings, "uploadCreateUserDir", myUploadCreateUserDir));
             root.appendChild(DOMUtils.createBooleanElement(settings, "localTempArchive", myLocalTempArchive));
@@ -1314,6 +1294,8 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createLongElement(settings, "maxFileSize", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getMaxFileSize()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "include", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getIncludePattern()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "exclude", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getExcludePattern()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "artistFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getArtistFallback()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "albumFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getAlbumFallback()));
                     break;
                 case Itunes:
                     ItunesDatasourceConfig itunesDatasourceConfig = (ItunesDatasourceConfig) myDatasources.get(i);
