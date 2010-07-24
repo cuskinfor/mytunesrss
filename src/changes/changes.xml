@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="3.8.13" date="2010-xx-xx">
+        <release version="3.8.13" date="2010-07-24">
             <action dev="mdescher" type="fix">
                 ServerService#getDatabaseStatistics returns time of last update.
             </action>
