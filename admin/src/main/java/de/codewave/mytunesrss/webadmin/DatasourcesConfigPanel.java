@@ -103,6 +103,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setDatasources(new ArrayList<DatasourceConfig>(myConfigs.values()));
         MyTunesRss.CONFIG.setUploadDir(myUploadDir.getStringValue(null));
         MyTunesRss.CONFIG.setUploadCreateUserDir(myUploadCreateUserDir.booleanValue());
+        MyTunesRss.CONFIG.save();
     }
 
     private void setTablePageLengths() {

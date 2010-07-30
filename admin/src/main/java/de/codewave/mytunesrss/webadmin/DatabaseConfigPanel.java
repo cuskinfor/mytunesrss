@@ -141,6 +141,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         }
         MyTunesRss.CONFIG.setDatabaseCronTriggers(databaseCronTriggers);
         MyTunesRssJobUtils.scheduleDatabaseJob();
+        MyTunesRss.CONFIG.save();
     }
 
     private String getTableCellString(Object itemId, String property) {

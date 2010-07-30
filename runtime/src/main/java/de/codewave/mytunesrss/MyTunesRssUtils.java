@@ -224,7 +224,6 @@ public class MyTunesRssUtils {
     }
 
     public static void onShutdown() {
-        MyTunesRss.CONFIG.save();
         if (MyTunesRss.STREAMING_CACHE != null) {
             try {
                 if (LOGGER.isDebugEnabled()) {

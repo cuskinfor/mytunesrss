@@ -67,7 +67,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private long myResetTime;
     private long myQuotaResetTime;
     private int myMaximumZipEntries;
-    private String myFileTypes;
     private int mySessionTimeout = 10;
     private boolean mySpecialPlaylists;
     private boolean myTranscoder;
@@ -242,14 +241,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         myMaximumZipEntries = maximumZipEntries;
     }
 
-    public String getFileTypes() {
-        return getParent() != null ? getParent().getFileTypes() : myFileTypes;
-    }
-
-    public void setFileTypes(String fileTypes) {
-        myFileTypes = fileTypes;
-    }
-
     public int getSessionTimeout() {
         return getParent() != null ? getParent().getSessionTimeout() : mySessionTimeout;
     }
@@ -399,7 +390,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public Set<String> getForceTranscoders() {
-        return new HashSet<String>(myForceTranscoders);
+        return getParent() != null ? getParent().getForceTranscoders() : new HashSet<String>(myForceTranscoders);
     }
 
     public void clearForceTranscoders() {
@@ -521,7 +512,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setBytesQuota(JXPathUtils.getLongValue(settings, "bytesQuota", 0));
         setQuotaType(QuotaType.valueOf(JXPathUtils.getStringValue(settings, "quotaType", QuotaType.None.name())));
         setMaximumZipEntries(JXPathUtils.getIntValue(settings, "maximumZipEntries", 0));
-        setFileTypes(JXPathUtils.getStringValue(settings, "fileTypes", null));
         setTranscoder(JXPathUtils.getBooleanValue(settings, "featureTranscoder", false));
         setSessionTimeout(JXPathUtils.getIntValue(settings, "sessionTimeout", 10));
         setBandwidthLimit(JXPathUtils.getIntValue(settings, "bandwidthLimit", 0));
@@ -582,7 +572,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createLongElement(settings, "bytesQuota", getBytesQuota()));
         users.appendChild(DOMUtils.createTextElement(settings, "quotaType", getQuotaType().name()));
         users.appendChild(DOMUtils.createIntElement(settings, "maximumZipEntries", getMaximumZipEntries()));
-        users.appendChild(DOMUtils.createTextElement(settings, "fileTypes", getFileTypes() != null ? getFileTypes() : ""));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureTranscoder", isTranscoder()));
         users.appendChild(DOMUtils.createIntElement(settings, "sessionTimeout", getSessionTimeout()));
         users.appendChild(DOMUtils.createIntElement(settings, "bandwidthLimit", getBandwidthLimit()));

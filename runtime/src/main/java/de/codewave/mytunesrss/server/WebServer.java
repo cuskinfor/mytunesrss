@@ -81,7 +81,6 @@ public class WebServer {
                             myEmbeddedTomcat = null;
                             return false;
                         }
-                        MyTunesRss.CONFIG.save();// save on successful server start
                         myRunning.set(true);
                         if (MyTunesRss.QUICKTIME_PLAYER != null) {
                             MyTunesRss.QUICKTIME_PLAYER.init();
@@ -325,7 +324,6 @@ public class WebServer {
                 return false;
             }
         }
-        MyTunesRss.CONFIG.save();// save on successful server stop
         myRunning.set(false);
         try {
             if (MyTunesRss.QUICKTIME_PLAYER != null) {

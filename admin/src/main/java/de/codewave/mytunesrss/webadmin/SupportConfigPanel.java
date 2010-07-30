@@ -105,6 +105,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         MyTunesRss.CONFIG.setCodewaveLogLevel((Level) myLogLevel.getValue());
         MyTunesRss.CONFIG.setSupportName((String) myName.getValue());
         MyTunesRss.CONFIG.setSupportEmail((String) myEmail.getValue());
+        MyTunesRss.CONFIG.save();
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {

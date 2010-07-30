@@ -181,11 +181,49 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         attach(0, 5, 0, 5);
 
         initFromConfig();
+
+        if (myUser.getParent() != null) {
+            disableReadOnlyComponents();
+        }
+    }
+
+    private void disableReadOnlyComponents() {
+        for (Object itemId : myPermissions.getItemIds()) {
+            for (Object itemPropertyId : myPermissions.getItem(itemId).getItemPropertyIds()) {
+                if (myPermissions.getItem(itemId).getItemProperty(itemPropertyId).getValue() instanceof Component) {
+                    ((Component) myPermissions.getItem(itemId).getItemProperty(itemPropertyId).getValue()).setEnabled(false);
+                }
+            }
+        }
+        for (Object itemId : myPlaylistsRestrictions.getItemIds()) {
+            for (Object itemPropertyId : myPlaylistsRestrictions.getItem(itemId).getItemPropertyIds()) {
+                if (myPlaylistsRestrictions.getItem(itemId).getItemProperty(itemPropertyId).getValue() instanceof Component) {
+                    ((Component) myPlaylistsRestrictions.getItem(itemId).getItemProperty(itemPropertyId).getValue()).setEnabled(false);
+                }
+            }
+        }
+        for (Object itemId : myForceTranscoders.getItemIds()) {
+            for (Object itemPropertyId : myForceTranscoders.getItem(itemId).getItemPropertyIds()) {
+                if (myForceTranscoders.getItem(itemId).getItemProperty(itemPropertyId).getValue() instanceof Component) {
+                    ((Component) myForceTranscoders.getItem(itemId).getItemProperty(itemPropertyId).getValue()).setEnabled(false);
+                }
+            }
+        }
+        /*myPermissions.setEnabled(false);
+        myPlaylistsRestrictions.setEnabled(false);
+        myForceTranscoders.setEnabled(false);*/
+        mySearchFuzziness.setEnabled(false);
+        myDownloadLimitType.setEnabled(false);
+        myDownloadLimitSize.setEnabled(false);
+        myMaxFilesPerArchive.setEnabled(false);
+        mySessionTimeout.setEnabled(false);
+        myBandwidthLimit.setEnabled(false);
+        mySaveSettingsInProfile.setEnabled(false);
+        myEncryptUrls.setEnabled(false);
     }
 
     protected void initFromConfig() {
         if (myUser != null) {
-            //myUser.setActive(); // TODO activation
             myBandwidthLimit.setValue(myUser.getBandwidthLimit(), 1, Integer.MAX_VALUE, "");
             myDownloadLimitSize.setValue(myUser.getBytesQuota(), 1, Integer.MAX_VALUE, "");
             myPermChangeEmail.setValue(myUser.isChangeEmail());
@@ -197,7 +235,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myPermEditSettings.setValue(myUser.isEditWebSettings());
             myEmail.setValue(myUser.getEmail());
             myPermExternalLinks.setValue(myUser.isExternalSites());
-            //myUser.setFileTypes(...);
             myLastFmPassword.setValue(myUser.getLastFmPasswordHash());
             myLastFmUsername.setValue(myUser.getLastFmUsername());
             myMaxFilesPerArchive.setValue(myUser.getMaximumZipEntries(), 1, Integer.MAX_VALUE, "");
@@ -216,7 +253,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myPermTranscoder.setValue(myUser.isTranscoder());
             myPermUpload.setValue(myUser.isUpload());
             myEncryptUrls.setValue(myUser.isUrlEncryption());
-            //myUser.setWebSettings();
             myPlaylistsRestrictions.removeAllItems();
             DataStoreSession session = MyTunesRss.STORE.getTransaction();
             List<Playlist> playlists = null;
@@ -264,7 +300,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     protected void writeToConfig() {
-        //myUser.setActive();
         myUser.setBandwidthLimit(myBandwidthLimit.getIntegerValue(-1));
         myUser.setBytesQuota(myDownloadLimitSize.getLongValue(-1));
         myUser.setChangeEmail(myPermChangeEmail.booleanValue());
@@ -277,7 +312,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setEditWebSettings(myPermEditSettings.booleanValue());
         myUser.setEmail((String) myEmail.getValue());
         myUser.setExternalSites(myPermExternalLinks.booleanValue());
-        //myUser.setFileTypes(...);
         myUser.setLastFmPasswordHash(myLastFmPassword.getStringHashValue(MyTunesRss.MD5_DIGEST));
         myUser.setLastFmUsername((String) myLastFmUsername.getValue());
         myUser.setMaximumZipEntries(myMaxFilesPerArchive.getIntegerValue(-1));
@@ -298,7 +332,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setTranscoder(myPermTranscoder.booleanValue());
         myUser.setUpload(myPermUpload.booleanValue());
         myUser.setUrlEncryption(myEncryptUrls.booleanValue());
-        //myUser.setWebSettings();
         Set<String> ids = new HashSet<String>();
         for (Object itemId : myPlaylistsRestrictions.getItemIds()) {
             Playlist playlist = (Playlist) itemId;

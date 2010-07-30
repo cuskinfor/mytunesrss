@@ -69,6 +69,7 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
 
     protected void writeToConfig() {
         MyTunesRss.CONFIG.setStatisticKeepTime(myStatisticsKeepTime.getIntegerValue(60));
+        MyTunesRss.CONFIG.save();
     }
 
     @Override

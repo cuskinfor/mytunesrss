@@ -120,6 +120,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(null));
         MyTunesRss.CONFIG.setIgnoreArtwork(myIgnoreArtwork.booleanValue());
         MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestamps.booleanValue());
+        MyTunesRss.CONFIG.save();
     }
 
     public void buttonClick(final Button.ClickEvent clickEvent) {

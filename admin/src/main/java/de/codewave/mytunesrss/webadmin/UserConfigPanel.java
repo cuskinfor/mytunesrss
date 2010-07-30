@@ -120,6 +120,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
         MyTunesRss.CONFIG.getLdapConfig().setSearchExpression(myLdapSearchExpression.getStringValue(null));
         MyTunesRss.CONFIG.getLdapConfig().setSearchTimeout(myLdapSearchTimeout.getIntegerValue(0));
         MyTunesRss.CONFIG.getLdapConfig().setMailAttributeName(myLdapEmailAttribute.getStringValue(null));
+        MyTunesRss.CONFIG.save();
     }
 
     @Override

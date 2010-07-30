@@ -87,6 +87,7 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setNotifyOnQuotaExceeded((Boolean) myNotifyOnQuotaExceeded.getValue());
         MyTunesRss.CONFIG.setNotifyOnTranscodingFailure((Boolean) myNotifyOnTranscodingFailure.getValue());
         MyTunesRss.CONFIG.setNotifyOnWebUpload((Boolean) myNotifyOnWebUpload.getValue());
+        MyTunesRss.CONFIG.save();
     }
 
     @Override

@@ -134,6 +134,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         }
         MyTunesRss.CONFIG.setStreamingCacheTimeout(myStreamingCacheTimeout.getIntegerValue(0));
         MyTunesRss.CONFIG.setStreamingCacheMaxFiles(myStreamingCacheMaxFiles.getIntegerValue(0));
+        MyTunesRss.CONFIG.save();
     }
 
     @Override

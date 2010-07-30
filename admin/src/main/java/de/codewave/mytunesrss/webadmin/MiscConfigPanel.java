@@ -114,6 +114,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setMailLogin(myMailLogin.getStringValue(null));
         MyTunesRss.CONFIG.setMailPassword(myMailPassword.getStringValue(null));
         MyTunesRss.CONFIG.setMailSender(myMailSender.getStringValue(null));
+        MyTunesRss.CONFIG.save();
     }
 
     @Override

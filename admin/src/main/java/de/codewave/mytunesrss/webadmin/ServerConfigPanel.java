@@ -201,6 +201,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
                 getApplication().showInfo("serverConfigPanel.error.serverStopFailed");
             }
         }
+        MyTunesRss.CONFIG.save();
     }
 
     private boolean isAdminServerConfigChanged() {
