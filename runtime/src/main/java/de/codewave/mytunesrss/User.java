@@ -72,8 +72,8 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private boolean myTranscoder;
     private int myBandwidthLimit;
     private Set<String> myPlaylistIds = new HashSet<String>();
-    private boolean mySaveWebSettings;
-    private String myWebSettings;
+    private boolean mySharedUser;
+    private Map<String, String> myWebConfigs = new HashMap<String, String>();
     private boolean myCreatePlaylists;
     private boolean myEditWebSettings;
     private String myLastFmUsername;
@@ -289,12 +289,12 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         myPlaylistIds = new HashSet<String>(playlistIds);
     }
 
-    public boolean isSaveWebSettings() {
-        return getParent() != null ? getParent().isSaveWebSettings() : mySaveWebSettings;
+    public boolean isSharedUser() {
+        return getParent() != null ? getParent().isSharedUser() : mySharedUser;
     }
 
-    public void setSaveWebSettings(boolean saveWebSettings) {
-        mySaveWebSettings = saveWebSettings;
+    public void setSharedUser(boolean sharedUser) {
+        mySharedUser = sharedUser;
     }
 
     public boolean isCreatePlaylists() {
@@ -485,12 +485,16 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         };
     }
 
-    public String getWebSettings() {
-        return myWebSettings;
+    public String getWebConfig(UserAgent userAgent) {
+        return myWebConfigs.get(userAgent.toConfigKey());
     }
 
-    public void setWebSettings(String webSettings) {
-        myWebSettings = webSettings;
+    public void setWebConfig(UserAgent userAgent, String webConfig) {
+        if (webConfig == null) {
+            myWebConfigs.remove(userAgent.toConfigKey());
+        } else {
+            myWebConfigs.put(userAgent.toConfigKey(), webConfig);
+        }
     }
 
     public void loadFromPreferences(JXPathContext settings) {
@@ -519,8 +523,13 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         while (playlistIdIterator.hasNext()) {
             addPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), ".", null));
         }
-        setSaveWebSettings(JXPathUtils.getBooleanValue(settings, "saveWebSettings", false));
-        setWebSettings(JXPathUtils.getStringValue(settings, "webSettings", null));
+        setSharedUser(JXPathUtils.getBooleanValue(settings, "shared", false));
+        Iterator<JXPathContext> webConfigIterator = JXPathUtils.getContextIterator(settings, "webConfigs");
+        myWebConfigs.clear();
+        while (webConfigIterator.hasNext()) {
+            JXPathContext webConfigContext = webConfigIterator.next();
+            myWebConfigs.put(JXPathUtils.getStringValue(webConfigContext, "userAgent", UserAgent.Unknown.toConfigKey()), JXPathUtils.getStringValue(webConfigContext, "config", null));
+        }
         setLastFmUsername(JXPathUtils.getStringValue(settings, "lastFmUser", null));
         setLastFmPasswordHash(JXPathUtils.getByteArray(settings, "lastFmPassword", null));
         setUrlEncryption(JXPathUtils.getBooleanValue(settings, "urlEncryption", true));
@@ -583,9 +592,13 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
                 playlists.appendChild(DOMUtils.createTextElement(settings, "id", playlistId));
             }
         }
-        users.appendChild(DOMUtils.createBooleanElement(settings, "saveWebSettings", isSaveWebSettings()));
-        if (StringUtils.isNotEmpty(getWebSettings())) {
-            users.appendChild(DOMUtils.createTextElement(settings, "webSettings", getWebSettings()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "shared", isSharedUser()));
+        Element webConfigs = settings.createElement("webConfigs");
+        for (Map.Entry<String, String> webConfig : myWebConfigs.entrySet()) {
+            if (webConfig.getValue() != null) {
+                webConfigs.appendChild(DOMUtils.createTextElement(settings, "userAgent", webConfig.getKey()));
+                webConfigs.appendChild(DOMUtils.createTextElement(settings, "config", webConfig.getValue()));
+            }
         }
         if (StringUtils.isNotEmpty(getLastFmUsername()) && getLastFmPasswordHash() != null && getLastFmPasswordHash().length > 0) {
             users.appendChild(DOMUtils.createTextElement(settings, "lastFmUser", getLastFmUsername()));

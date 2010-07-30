@@ -210,8 +210,7 @@ public class MyTunesFunctions {
 
     public static Locale preferredLocale(PageContext pageContext, boolean requestFallback) {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        WebConfig config = MyTunesRssWebUtils.getWebConfig(request);
-        return StringUtils.isBlank(config.getLanguage()) ? (requestFallback ? pageContext.getRequest().getLocale() : null) : new Locale(config.getLanguage());
+        return StringUtils.isBlank(MyTunesRssWebUtils.getCookieLanguage(request)) ? (requestFallback ? pageContext.getRequest().getLocale() : null) : new Locale(MyTunesRssWebUtils.getCookieLanguage(request));
     }
 
     public static String playbackUrl(PageContext pageContext, Track track, String extraPathInfo) {

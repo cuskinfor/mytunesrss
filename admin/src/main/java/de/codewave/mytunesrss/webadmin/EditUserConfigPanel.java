@@ -60,7 +60,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private SmartTextField myMaxFilesPerArchive;
     private SmartTextField mySessionTimeout;
     private SmartTextField myBandwidthLimit;
-    private CheckBox mySaveSettingsInProfile;
+    private CheckBox mySharedUser;
     private SmartTextField myLastFmUsername;
     private SmartTextField myLastFmPassword;
     private CheckBox myEncryptUrls;
@@ -161,7 +161,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myMaxFilesPerArchive = getComponentFactory().createTextField("editUserConfigPanel.maxFilesPerArchive", getApplication().getValidatorFactory().createMinMaxValidator(1, Integer.MAX_VALUE));
         mySessionTimeout = getComponentFactory().createTextField("editUserConfigPanel.sessionTimeout", getApplication().getValidatorFactory().createMinMaxValidator(1, Integer.MAX_VALUE));
         myBandwidthLimit = getComponentFactory().createTextField("editUserConfigPanel.bandwidthLimit", getApplication().getValidatorFactory().createMinMaxValidator(1, Integer.MAX_VALUE));
-        mySaveSettingsInProfile = getComponentFactory().createCheckBox("editUserConfigPanel.saveSettingsInProfile");
+        mySharedUser = getComponentFactory().createCheckBox("editUserConfigPanel.sharedUser");
         myLastFmUsername = getComponentFactory().createTextField("editUserConfigPanel.lastFmUsername");
         myLastFmPassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.lastFmPassword");
         myEncryptUrls = getComponentFactory().createCheckBox("editUserConfigPanel.encryptUrls");
@@ -172,7 +172,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myOptionsForm.addField("maxFilesPerArchive", myMaxFilesPerArchive);
         myOptionsForm.addField("sessionTimeout", mySessionTimeout);
         myOptionsForm.addField("bandwidthLimit", myBandwidthLimit);
-        myOptionsForm.addField("saveSettingsInProfile", mySaveSettingsInProfile);
+        myOptionsForm.addField("sharedUser", mySharedUser);
         myOptionsForm.addField("lastFmUsername", myLastFmUsername);
         myOptionsForm.addField("lastFmPassword", myLastFmPassword);
         myOptionsForm.addField("encryptUrls", myEncryptUrls);
@@ -218,7 +218,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myMaxFilesPerArchive.setEnabled(false);
         mySessionTimeout.setEnabled(false);
         myBandwidthLimit.setEnabled(false);
-        mySaveSettingsInProfile.setEnabled(false);
+        mySharedUser.setEnabled(false);
         myEncryptUrls.setEnabled(false);
     }
 
@@ -246,7 +246,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myDownloadLimitType.setValue(myUser.getQuotaType());
             myPermRemote.setValue(myUser.isRemoteControl());
             myPermRss.setValue(myUser.isRss());
-            mySaveSettingsInProfile.setValue(myUser.isSaveWebSettings());
+            mySharedUser.setValue(myUser.isSharedUser());
             mySearchFuzziness.setValue(myUser.getSearchFuzziness(), 0, 100, "");
             mySessionTimeout.setValue(myUser.getSessionTimeout(), 1, Integer.MAX_VALUE, 10);
             myPermStandardPlaylist.setValue(myUser.isSpecialPlaylists());
@@ -325,7 +325,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setRemoteControl(myPermRemote.booleanValue());
         //myUser.setResetTime();
         myUser.setRss(myPermRss.booleanValue());
-        myUser.setSaveWebSettings(mySaveSettingsInProfile.booleanValue());
+        myUser.setSharedUser(mySharedUser.booleanValue());
         myUser.setSearchFuzziness(mySearchFuzziness.getIntegerValue(-1));
         myUser.setSessionTimeout(mySessionTimeout.getIntegerValue(10));
         myUser.setSpecialPlaylists(myPermStandardPlaylist.booleanValue());

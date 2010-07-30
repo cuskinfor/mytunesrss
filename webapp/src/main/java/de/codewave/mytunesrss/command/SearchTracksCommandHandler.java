@@ -1,5 +1,8 @@
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.servlet.WebConfig;
+
 /**
  * de.codewave.mytunesrss.command.SearchTracksCommandHandler
  */
@@ -14,8 +17,9 @@ public class SearchTracksCommandHandler extends BrowseTrackCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         getRequest().getSession().setAttribute("lastSearchTerm", getRequestParameter("searchTerm", null));
-        getWebConfig().setSearchFuzziness(getIntegerRequestParameter("searchFuzziness", 0));
-        getWebConfig().save(getRequest(), getResponse());
+        WebConfig webConfig = getWebConfig();
+        webConfig.setSearchFuzziness(getIntegerRequestParameter("searchFuzziness", 0));
+        MyTunesRssWebUtils.saveWebConfig(getRequest(), getResponse(), getAuthUser(), webConfig);
         super.executeAuthorized();
     }
 }

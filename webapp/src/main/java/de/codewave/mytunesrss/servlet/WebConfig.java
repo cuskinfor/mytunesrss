@@ -49,7 +49,6 @@ public class WebConfig {
     private static final String CFG_RANDOM_MEDIATYPE = "rndMedia";
     private static final String CFG_RANDOM_PROTECTED = "rndProt";
     private static final String CFG_ALBUM_IMAGE_SIZE = "albImgSize";
-    private static final String CFG_LANGUAGE = "lc";
     private static final String CFG_SHOW_REMOTE_CONTROL = "rmCtrl";
     private static final String CFG_ACTIVE_TRANSCODERS = "actTra";
     private static final String CFG_KEEP_ALIVE = "keepAlive";
@@ -64,7 +63,7 @@ public class WebConfig {
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
             CFG_PLAYLIST_TYPE, CFG_THEME, CFG_RANDOM_SOURCE,
             CFG_FLASH_PLAYER_TYPE, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
-            CFG_ALBUM_IMAGE_SIZE, CFG_LANGUAGE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS, CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS};
+            CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS, CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS};
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
     public static final String MYTUNESRSS_COM_COOKIE = "mytunesrss_com_cookie";
@@ -107,15 +106,6 @@ public class WebConfig {
 
     public void clear() {
         myConfigValues.clear();
-    }
-
-    public void clearFileSuffixes() {
-        for (Iterator<String> iterator = myConfigValues.keySet().iterator(); iterator.hasNext();) {
-            String key = iterator.next();
-            if (key.startsWith("CFG_SUFFIX")) {
-                iterator.remove();
-            }
-        }
     }
 
     public void initWithDefaults(HttpServletRequest request) {
@@ -184,9 +174,15 @@ public class WebConfig {
         myConfigValues.put(CFG_FLASH_PLAYER_TYPE, "jw3");
     }
 
-    public void load(User user) {
-        if (user != null && StringUtils.isNotEmpty(user.getWebSettings())) {
-            initFromString(MyTunesRssBase64Utils.decodeToString(user.getWebSettings()));
+    /**
+     * Load web config from server-side user profile.
+     *
+     * @param request Servlet request.
+     * @param user User.
+     */
+    public void load(HttpServletRequest request, User user) {
+        if (user != null && StringUtils.isNotEmpty(user.getWebConfig(MyTunesRssWebUtils.getUserAgent(request)))) {
+            initFromString(MyTunesRssBase64Utils.decodeToString(user.getWebConfig(MyTunesRssWebUtils.getUserAgent(request))));
         }
     }
 
@@ -195,6 +191,11 @@ public class WebConfig {
         initWithDefaults(request);
     }
 
+    /**
+     * Load web config from request parameter or cookie.
+     *
+     * @param request Servlet request.
+     */
     public void load(HttpServletRequest request) {
         if (StringUtils.isNotEmpty(request.getParameter(WebConfig.MYTUNESRSS_COM_COOKIE))) {
             if (LOG.isDebugEnabled()) {
@@ -496,18 +497,6 @@ public class WebConfig {
 
     public void setAlbumImageSize(int imageSize) {
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, Integer.toString(imageSize));
-    }
-
-    public String getLanguage() {
-        return myConfigValues.get(CFG_LANGUAGE);
-    }
-
-    public void setLanguage(String lc) {
-        if (StringUtils.isNotBlank(lc)) {
-            myConfigValues.put(CFG_LANGUAGE, lc);
-        } else {
-            myConfigValues.remove(CFG_LANGUAGE);
-        }
     }
 
     public boolean isRemoteControl() {

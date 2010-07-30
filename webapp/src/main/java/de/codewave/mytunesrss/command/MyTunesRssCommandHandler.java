@@ -75,10 +75,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             getSession().setAttribute("authUser", user);
             getSession().setAttribute("auth", createAuthToken(user));
         }
-        if (getAuthUser() != null && StringUtils.isNotEmpty(getAuthUser().getWebSettings())) {
+        if (getAuthUser() != null && !getAuthUser().isSharedUser()) {
             getWebConfig().clearWithDefaults(getRequest());
-            getWebConfig().load(getAuthUser());
-            getWebConfig().load(getRequest());
+            getWebConfig().load(getRequest(), getAuthUser());
         }
         ((MyTunesRssSessionInfo) SessionManager.getSessionInfo(getRequest())).setUser(user);
         getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);
@@ -196,7 +195,8 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     private void setResourceBundle() {
-        Locale locale = StringUtils.isNotBlank(getWebConfig().getLanguage()) ? new Locale(getWebConfig().getLanguage()) : getRequest().getLocale();
+        String cookieLanguage = MyTunesRssWebUtils.getCookieLanguage(getRequest());
+        Locale locale = StringUtils.isNotBlank(cookieLanguage) ? new Locale(cookieLanguage) : getRequest().getLocale();
         LocalizationContext context = (LocalizationContext) getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
         if (context == null || !ObjectUtils.equals(context.getLocale(), locale)) {
             File language = AddonsUtils.getBestLanguageFile(locale);

@@ -9,6 +9,9 @@
 
         <release version="4.0.0-EAP-6" date="2010-xx-xx">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-86] Store settings on server and cookie
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-159] Most options for child users must not be editable
             </action>
             <action dev="mdescher" type="fix">

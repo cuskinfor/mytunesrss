@@ -5,15 +5,12 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssEvent;
-import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
@@ -26,10 +23,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         if (isSessionAuthorized() && getAuthUser().isEditWebSettings()) {
             WebConfig webConfig = getWebConfig();
             if (transferAndValidate(webConfig)) {
-                webConfig.save(getRequest(), getResponse());
-                if (getAuthUser().isSaveWebSettings()) {
-                    getAuthUser().setWebSettings(webConfig.createCookieValue());
-                }
+                MyTunesRssWebUtils.saveWebConfig(getRequest(), getResponse(), getAuthUser(), webConfig);
                 if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
                     restartMyTunesRssCom();
                 } else {

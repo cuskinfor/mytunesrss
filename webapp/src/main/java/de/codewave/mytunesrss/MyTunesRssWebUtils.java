@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import java.util.*;
@@ -133,8 +135,6 @@ public class MyTunesRssWebUtils {
             return UserAgent.Psp;
         } else if (isUserAgentIphone(request)) {
             return UserAgent.Iphone;
-        } else if (isUserAgentSafari(request)) {
-            return UserAgent.Safari;
         } else if (isUserAgentNintendoWii(request)) {
             return UserAgent.NintendoWii;
         }
@@ -242,5 +242,53 @@ public class MyTunesRssWebUtils {
         ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb",
                 request.getLocale());
         return bundle.getString(key);
+    }
+
+    /**
+     * Get language from cookie.
+     *
+     * @param request Servlet request.
+     *
+     * @return Language from cookie or NULL if no cookie was found.
+     */
+    public static String getCookieLanguage(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (int i = 0; i < cookies.length; i++) {
+                Cookie cookie = cookies[i];
+                if ("MyTunesRSS_Language".equals(cookie.getName())) {
+                    return StringUtils.trimToNull(cookie.getValue());
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Set the language cookie.
+     *
+     * @param request Servlet request.
+     * @param response Servlet response.
+     * @param languageCode Language code.
+     */
+    public static void setCookieLanguage(HttpServletRequest request, HttpServletResponse response, String languageCode) {
+        if (StringUtils.isNotBlank(languageCode)) {
+            Cookie cookie = new Cookie("MyTunesRSS_Language", StringUtils.trim(languageCode));
+            cookie.setComment("MyTunesRSS language cookie");
+            cookie.setMaxAge(3600 * 24 * 365); // one year
+            String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
+            cookie.setPath(servletUrl.substring(servletUrl.lastIndexOf("/")));
+            response.addCookie(cookie);
+        }
+    }
+
+    public static void saveWebConfig(HttpServletRequest request, HttpServletResponse response, User user, WebConfig webConfig) {
+        if (user != null && !user.isSharedUser()) {
+            // save in user profile on server
+            user.setWebConfig(MyTunesRssWebUtils.getUserAgent(request), webConfig.createCookieValue());
+        } else {
+            // save in cookie
+            webConfig.save(request, response);
+        }
     }
 }

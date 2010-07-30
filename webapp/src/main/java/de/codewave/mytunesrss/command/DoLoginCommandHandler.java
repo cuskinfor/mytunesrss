@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.WebConfig;
@@ -31,11 +32,11 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                 WebConfig webConfig = getWebConfig();
                 Boolean rememberLogin = getBooleanRequestParameter("rememberLogin", false);
                 String lc = getRequest().getParameter("lc");
-                webConfig.setLanguage(lc);
+                MyTunesRssWebUtils.setCookieLanguage(getRequest(), getResponse(), lc);
                 webConfig.setLoginStored(rememberLogin);
                 webConfig.setUserName(userName);
                 webConfig.setPasswordHash(passwordHash);
-                webConfig.save(getRequest(), getResponse());
+                MyTunesRssWebUtils.saveWebConfig(getRequest(), getResponse(), getWebConfig().getUser(), webConfig);
                 StatisticsEventManager.getInstance().fireEvent(new LoginEvent(getAuthUser()));
                 if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
                     restartMyTunesRssCom();
