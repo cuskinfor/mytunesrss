@@ -121,6 +121,7 @@ public class MyTunesRssConfig {
     private byte[] myAdminPasswordHash;
     private int myAdminPort;
     private boolean myStartAdminBrowser = true;
+    private boolean myImportOriginalImageSize = false;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -825,6 +826,14 @@ public class MyTunesRssConfig {
         myStartAdminBrowser = startAdminBrowser;
     }
 
+    public boolean isImportOriginalImageSize() {
+        return myImportOriginalImageSize;
+    }
+
+    public void setImportOriginalImageSize(boolean importOriginalImageSize) {
+        myImportOriginalImageSize = importOriginalImageSize;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -898,6 +907,7 @@ public class MyTunesRssConfig {
         setAdminPasswordHash(JXPathUtils.getByteArray(settings, "adminPassword", getAdminPasswordHash()));
         setAdminPort(JXPathUtils.getIntValue(settings, "adminPort", getAdminPort()));
         setStartAdminBrowser(JXPathUtils.getBooleanValue(settings, "startAdminBrowser", isStartAdminBrowser()));
+        setImportOriginalImageSize(JXPathUtils.getBooleanValue(settings, "importOriginalImageSize", isImportOriginalImageSize()));
         setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
         setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
         setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
@@ -1118,6 +1128,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createByteArrayElement(settings, "adminPassword", getAdminPasswordHash()));
             root.appendChild(DOMUtils.createIntElement(settings, "adminPort", myAdminPort));
             root.appendChild(DOMUtils.createBooleanElement(settings, "startAdminBrowser", myStartAdminBrowser));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "importOriginalImageSize", myImportOriginalImageSize));
             root.appendChild(DOMUtils.createTextElement(settings, "version", myVersion));
             root.appendChild(DOMUtils.createIntElement(settings, "serverPort", myPort));
             root.appendChild(DOMUtils.createTextElement(settings, "serverName", myServerName));

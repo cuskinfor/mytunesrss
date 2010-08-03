@@ -73,7 +73,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     public void executeAuthorized() throws Exception {
         Image image = null;
         String hash = getRequest().getParameter("hash");
-        int size = getIntegerRequestParameter("size", 256);
+        int size = getIntegerRequestParameter("size", -1);
         if (!isRequestAuthorized()) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("Not authorized to request image, sending default MyTunesRSS image.");

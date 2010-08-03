@@ -8,6 +8,8 @@ import de.codewave.utils.sql.SmartStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertImageStatement
@@ -22,7 +24,7 @@ public class FindImageQuery extends DataStoreQuery<byte[]> {
     }
 
     public byte[] execute(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findImage");
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, mySize > 0 ? "findImage" : "findMaxSizeImage");
         statement.setString("hash", myHash);
         statement.setInt("size", mySize);
         QueryResult<byte[]> results = execute(statement, new ResultBuilder<byte[]>() {

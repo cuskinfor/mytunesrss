@@ -23,7 +23,7 @@
                            type="${mtfn:contentType(config, authUser, track)}"
                            <c:if test="${!mtfn:transcoding(pageContext, authUser, track)}">length="${track.contentLength}"</c:if>
                         />
-                <c:if test="${!empty(track.imageHash)}"><media:thumbnail url="${permServletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=256</mt:encrypt>"/></c:if>
+                <c:if test="${!empty(track.imageHash)}"><media:thumbnail url="${permServletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}</mt:encrypt>"/></c:if>
             </item></c:forEach>
     </channel>
 </rss>

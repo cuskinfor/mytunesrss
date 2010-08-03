@@ -109,7 +109,7 @@ public class TranscoderStream extends InputStream {
             DataStoreSession transaction = MyTunesRss.STORE.getTransaction();
             byte[] data = new byte[0];
             try {
-                data = transaction.executeQuery(new FindTrackImageQuery(track.getId(), 128));
+                data = transaction.executeQuery(new FindTrackImageQuery(track.getId(), -1));
                 if (data != null && data.length > 0) {
                     Image image = new Image("image/jpeg", data);
                     FileOutputStream fos = null;

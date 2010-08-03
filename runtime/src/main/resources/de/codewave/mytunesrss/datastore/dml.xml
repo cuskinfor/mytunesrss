@@ -232,6 +232,14 @@
         </sql>
     </statement>
 
+    <statement name="findMaxSizeImage">
+        <sql>
+            SELECT im1.data AS data FROM image im1
+            LEFT OUTER JOIN image im2 ON (im1.hash = im2.hash AND im1.size &lt; im2.size)
+            WHERE im1.hash = :hash AND im2.hash IS NULL
+        </sql>
+    </statement>
+
     <statement name="findTrackImage">
         <sql>
             SELECT i.data AS data FROM image AS i, track AS t WHERE i.hash = t.image_hash AND size = :size AND t.id = :track_id

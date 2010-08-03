@@ -48,7 +48,6 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandleTrackImagesStatement.class);
     private static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
     private static final Image IMAGE_UP_TO_DATE = new Image(null, (byte[]) null);
-    private static final int MAX_IMAGE_DATA_SIZE = 1024 * 1000 * 2; // maximum image size is 2 MB
 
     static {
         IMAGE_TO_MIME.put("jpg", "image/jpeg");
@@ -80,12 +79,6 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         try {
             Image image = getImage();
             if (image != IMAGE_UP_TO_DATE) {
-//                if (image != null && image.getData() != null && image.getData().length > MAX_IMAGE_DATA_SIZE) {
-//                    if (LOGGER.isInfoEnabled()) {
-//                        LOGGER.info("Ignoring overly large image for file \"" + myFile.getAbsolutePath() + "\" (size = " + image.getData().length + ").");
-//                    }
-//                    image = null;
-//                }
                 String imageHash =
                         image != null && image.getData() != null ? MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData())) : null;
                 if (imageHash != null) {
@@ -100,10 +93,14 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Original image size is " + image.getData().length + " bytes.");
                         }
+                        int maxSize = ImageUtils.getMaxSize(image.getData());
                         new InsertImageStatement(imageHash, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
                         new InsertImageStatement(imageHash, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
                         new InsertImageStatement(imageHash, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
                         new InsertImageStatement(imageHash, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
+                        if (maxSize > 256 && MyTunesRss.CONFIG.isImportOriginalImageSize()) {
+                            new InsertImageStatement(imageHash, maxSize, image.getData()).execute(connection);
+                        }
                     }
                 }
                 new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);

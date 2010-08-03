@@ -291,6 +291,7 @@
                                     <option value="64" <c:if test="${config.albumImageSize == 64}">selected="selected"</c:if>>64</option>
                                     <option value="128" <c:if test="${config.albumImageSize == 128}">selected="selected"</c:if>>128</option>
                                     <option value="256" <c:if test="${config.albumImageSize == 256}">selected="selected"</c:if>>256</option>
+                                    <option value="-1" <c:if test="${config.albumImageSize == -1}">selected="selected"</c:if>><fmt:message key="settings.albumImageSizeMaximum" /></option>
                                 </select>
                             </td>
                         </tr>

@@ -29,6 +29,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myId3v2TrackComment;
     private SmartTextField myDisabledMp4Codecs;
     private CheckBox myIgnoreArtwork;
+    private CheckBox myImportOriginalImageSize;
     private CheckBox myIgnoreTimestamps;
     private Form myMiscForm;
 
@@ -55,11 +56,13 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myId3v2TrackComment = getComponentFactory().createTextField("dataimportConfigPanel.id3v2TrackComment");
         myDisabledMp4Codecs = getComponentFactory().createTextField("dataimportConfigPanel.disabledMp4Codecs");
         myIgnoreArtwork = getComponentFactory().createCheckBox("dataimportConfigPanel.ignoreArtwork");
+        myImportOriginalImageSize = getComponentFactory().createCheckBox("dataimportConfigPanel.importOriginalImageSize");
         myIgnoreTimestamps = getComponentFactory().createCheckBox("dataimportConfigPanel.ignoreTimestamps");
         myMiscForm.addField(myArtistDropWords, myArtistDropWords);
         myMiscForm.addField(myId3v2TrackComment, myId3v2TrackComment);
         myMiscForm.addField(myDisabledMp4Codecs, myDisabledMp4Codecs);
         myMiscForm.addField(myIgnoreArtwork, myIgnoreArtwork);
+        myMiscForm.addField(myImportOriginalImageSize, myImportOriginalImageSize);
         myMiscForm.addField(myIgnoreTimestamps, myIgnoreTimestamps);
 
         attach(0, 2, 0, 2);
@@ -73,6 +76,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myId3v2TrackComment.setValue(MyTunesRss.CONFIG.getId3v2TrackComment());
         myDisabledMp4Codecs.setValue(MyTunesRss.CONFIG.getDisabledMp4Codecs());
         myIgnoreArtwork.setValue(MyTunesRss.CONFIG.isIgnoreArtwork());
+        myImportOriginalImageSize.setValue(MyTunesRss.CONFIG.isImportOriginalImageSize());
         myIgnoreTimestamps.setValue(MyTunesRss.CONFIG.isIgnoreTimestamps());
         setTablePageLength();
     }
@@ -119,6 +123,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setId3v2TrackComment(myId3v2TrackComment.getStringValue(null));
         MyTunesRss.CONFIG.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(null));
         MyTunesRss.CONFIG.setIgnoreArtwork(myIgnoreArtwork.booleanValue());
+        MyTunesRss.CONFIG.setImportOriginalImageSize(myImportOriginalImageSize.booleanValue());
         MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestamps.booleanValue());
         MyTunesRss.CONFIG.save();
     }
