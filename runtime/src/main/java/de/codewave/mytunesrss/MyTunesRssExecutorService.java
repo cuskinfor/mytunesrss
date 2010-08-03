@@ -10,6 +10,7 @@ package de.codewave.mytunesrss;
 import java.util.concurrent.*;
 
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
+import de.codewave.mytunesrss.task.ForcedImageUpdateCallable;
 import de.codewave.mytunesrss.task.RecreateDatabaseCallable;
 import de.codewave.mytunesrss.task.RefreshSmartPlaylistsAndLuceneIndexCallable;
 
@@ -30,6 +31,11 @@ public class MyTunesRssExecutorService {
     public static synchronized void scheduleDatabaseUpdate() {
         cancelDatabaseJob();
         DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable());
+    }
+
+    public static void scheduleImageUpdate() {
+        cancelDatabaseJob();
+        DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new ForcedImageUpdateCallable());
     }
 
     public static synchronized void scheduleDatabaseReset() {

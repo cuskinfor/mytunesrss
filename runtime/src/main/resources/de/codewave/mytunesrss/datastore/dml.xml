@@ -183,6 +183,14 @@
         </sql>
     </statement>
 
+    <statement name="resetLastImageUpdateForAllTracks">
+        <sql>UPDATE track SET last_image_update = NULL</sql>
+    </statement>
+
+    <statement name="getImageSizes">
+        <sql>SELECT size FROM image WHERE hash = :hash ORDER BY size</sql>
+    </statement>
+
     <statement name="findTrackIdsForSource">
         <sql>
             SELECT id AS id FROM track WHERE source = :source

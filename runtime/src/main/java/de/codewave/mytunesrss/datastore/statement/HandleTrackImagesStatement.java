@@ -36,10 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackImagesStatement
@@ -78,30 +75,42 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
         try {
             Image image = getImage();
-            if (image != IMAGE_UP_TO_DATE) {
-                String imageHash =
-                        image != null && image.getData() != null ? MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData())) : null;
-                if (imageHash != null) {
-                    LOGGER.debug("Image hash is \"" + imageHash + "\".");
-                    boolean existing = new FindImageQuery(imageHash, 32).execute(connection) != null;
-                    if (existing) {
-                        LOGGER.debug("Image with hash \"" + imageHash + "\" already exists in database.");
-                    } else {
-                        LOGGER.debug("Image with hash \"" + imageHash + "\" does not exist in database.");
+            if (image != IMAGE_UP_TO_DATE && image != null && image.getData() != null && image.getData().length > 0) {
+                String imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData()));
+                List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
+                }
+                if (!imageSizes.contains(Integer.valueOf(32))) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Inserting image with size 32.");
                     }
-                    if (image != null && image.getData() != null && image.getData().length > 0 && !existing) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Original image size is " + image.getData().length + " bytes.");
-                        }
-                        int maxSize = ImageUtils.getMaxSize(image.getData());
-                        new InsertImageStatement(imageHash, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
-                        new InsertImageStatement(imageHash, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
-                        new InsertImageStatement(imageHash, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
-                        new InsertImageStatement(imageHash, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
-                        if (maxSize > 256 && MyTunesRss.CONFIG.isImportOriginalImageSize()) {
-                            new InsertImageStatement(imageHash, maxSize, image.getData()).execute(connection);
-                        }
+                    new InsertImageStatement(imageHash, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
+                }
+                if (!imageSizes.contains(Integer.valueOf(64))) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Inserting image with size 64.");
                     }
+                    new InsertImageStatement(imageHash, 64, ImageUtils.resizeImageWithMaxSize(image.getData(), 64)).execute(connection);
+                }
+                if (!imageSizes.contains(Integer.valueOf(128))) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Inserting image with size 128.");
+                    }
+                    new InsertImageStatement(imageHash, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
+                }
+                if (!imageSizes.contains(Integer.valueOf(256))) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Inserting image with size 256.");
+                    }
+                    new InsertImageStatement(imageHash, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
+                }
+                int originalSize = ImageUtils.getMaxSize(image.getData());
+                if (originalSize > 256 && MyTunesRss.CONFIG.isImportOriginalImageSize() && !imageSizes.contains(Integer.valueOf(originalSize))) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Inserting image with size " + originalSize + ".");
+                    }
+                    new InsertImageStatement(imageHash, originalSize, image.getData()).execute(connection);
                 }
                 new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
             }

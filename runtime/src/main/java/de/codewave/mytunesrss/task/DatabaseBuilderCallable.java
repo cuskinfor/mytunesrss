@@ -222,7 +222,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 DatabaseBuilderCallable.doCheckpoint(storeSession, true);
             }
             if (!MyTunesRss.CONFIG.isIgnoreArtwork() && !Thread.currentThread().isInterrupted()) {
-                runImageUpdate(storeSession, systemInformation.getLastUpdate(), timeUpdateStart);
+                runImageUpdate(storeSession, timeUpdateStart);
             }
             updateHelpTables(storeSession, 0); // update image references for albums
             DatabaseBuilderCallable.doCheckpoint(storeSession, true);
@@ -250,7 +250,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         }
     }
 
-    private void runImageUpdate(DataStoreSession storeSession, long lastUpdateTime, final long timeUpdateStart)
+    protected void runImageUpdate(DataStoreSession storeSession, final long timeUpdateStart)
             throws SQLException {
         myState = State.UpdatingTrackImages;
         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
@@ -294,8 +294,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     MyTunesRssEventManager.getInstance().fireEvent(event);
                     lastEventTime = System.currentTimeMillis();
                 }
-                long timeLastImageUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : track
-                        .getLastImageUpdate();
+                long timeLastImageUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : track.getLastImageUpdate();
                 storeSession.executeStatement(new HandleTrackImagesStatement(track.getSource(), track.getFile(), track
                         .getId(), timeLastImageUpdate));
                 doCheckpoint(storeSession, false);
