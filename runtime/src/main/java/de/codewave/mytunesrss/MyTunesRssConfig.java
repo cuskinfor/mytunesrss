@@ -4,13 +4,13 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
 import de.codewave.utils.Version;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -1061,7 +1061,18 @@ public class MyTunesRssConfig {
                             String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
                             itunesDatasourceConfig.addPathReplacement(new PathReplacement(search, replacement));
                         }
+                        Iterator<JXPathContext> ignorePlaylistsIterator = JXPathUtils.getContextIterator(datasourceContext, "ignore-playlists/type");
+                        itunesDatasourceConfig.clearIgnorePlaylists();
+                        while (ignorePlaylistsIterator.hasNext()) {
+                            JXPathContext ignorePlaylistsContext = ignorePlaylistsIterator.next();
+                            try {
+                                itunesDatasourceConfig.addIgnorePlaylist(ItunesPlaylistType.valueOf(JXPathUtils.getStringValue(ignorePlaylistsContext, ".", ItunesPlaylistType.Master.name())));
+                            } catch (IllegalArgumentException e) {
+                                // ignore illegal config entry
+                            }
+                        }
                         itunesDatasourceConfig.setDeleteMissingFiles(JXPathUtils.getBooleanValue(datasourceContext, "deleteMissingFiles", true));
+
                         dataSources.add(itunesDatasourceConfig);
                         break;
                     case Remote:
@@ -1318,6 +1329,13 @@ public class MyTunesRssConfig {
                             pathReplacementsElement.appendChild(pathReplacementElement);
                             pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "search", pathReplacement.getSearchPattern()));
                             pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "replacement", pathReplacement.getReplacement()));
+                        }
+                    }
+                    if (itunesDatasourceConfig.getIgnorePlaylists() != null && !itunesDatasourceConfig.getIgnorePlaylists().isEmpty()) {
+                        Element ignorePlaylistsElement = settings.createElement("ignore-playlists");
+                        dataSource.appendChild(ignorePlaylistsElement);
+                        for (ItunesPlaylistType type : itunesDatasourceConfig.getIgnorePlaylists()) {
+                            ignorePlaylistsElement.appendChild(DOMUtils.createTextElement(settings, "type", type.name()));
                         }
                     }
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "deleteMissingFiles", itunesDatasourceConfig.isDeleteMissingFiles()));

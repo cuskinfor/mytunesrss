@@ -111,8 +111,12 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         return true;
     }
 
+    protected Object getTableCellItemValue(Table table, Object itemId, Object itemPropertyId) {
+        return table.getItem(itemId).getItemProperty(itemPropertyId).getValue();
+    }
+
     protected Object getTableCellPropertyValue(Table table, Object itemId, Object itemPropertyId) {
-        return ((Property) table.getItem(itemId).getItemProperty(itemPropertyId).getValue()).getValue();
+        return ((Property) getTableCellItemValue(table, itemId, itemPropertyId)).getValue();
     }
 
     protected Component getSaveFollowUpComponent() {

@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
+import de.codewave.mytunesrss.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRssEvent;
 import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.ShutdownRequestedException;
@@ -28,12 +29,15 @@ public class PlaylistListener implements PListHandlerListener {
     private Set<String> myExistingIds = new HashSet<String>();
     private LibraryListener myLibraryListener;
     private Thread myWatchdogThread;
+    private Set<ItunesPlaylistType> myIgnores;
 
-    public PlaylistListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId) {
+    public PlaylistListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId, ItunesDatasourceConfig config) {
         myWatchdogThread = watchdogThread;
         myDataStoreSession = dataStoreSession;
         myTrackIdToPersId = trackIdToPersId;
         myLibraryListener = libraryListener;
+        myIgnores = config.getIgnorePlaylists();
+        myIgnores.add(ItunesPlaylistType.Master); // always ignore "Master" playlist
     }
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
@@ -50,13 +54,17 @@ public class PlaylistListener implements PListHandlerListener {
             throw new ShutdownRequestedException();
         }
 
-        boolean master = playlist.get("Master") != null && ((Boolean) playlist.get("Master")).booleanValue();
-        boolean purchased = playlist.get("Purchased Music") != null && ((Boolean) playlist.get("Purchased Music")).booleanValue();
-        boolean partyShuffle = playlist.get("Party Shuffle") != null && ((Boolean) playlist.get("Party Shuffle")).booleanValue();
-        boolean podcasts = playlist.get("Podcasts") != null && ((Boolean) playlist.get("Podcasts")).booleanValue();
+        boolean ignore = false;
+        for (ItunesPlaylistType type : myIgnores) {
+            ignore = playlist.get(type.toString()) != null && ((Boolean) playlist.get(type.toString())).booleanValue();
+            if (ignore) {
+                break;
+            }
+        }
         boolean folder = playlist.get("Folder") != null && ((Boolean) playlist.get("Folder")).booleanValue();
+        boolean smart = playlist.get("Smart Info") != null;
 
-        if (!master && !purchased && !partyShuffle && !podcasts) {
+        if (!ignore && (!smart || !myIgnores.contains(ItunesPlaylistType.SmartPlaylists))) {
             String playlistId = playlist.get("Playlist Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get(
                     "Playlist Persistent ID").toString() :
                     myLibraryListener.getLibraryId() + "_" + "PlaylistID" + playlist.get("Playlist ID").toString();

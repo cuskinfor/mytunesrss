@@ -5,15 +5,18 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.ItunesDatasourceConfig;
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.PathReplacement;
+import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
+
+import java.util.*;
 
 public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
@@ -21,6 +24,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private CheckBox myDeleteMissingFiles;
     private Table myPathReplacements;
     private Button myAddPathReplacement;
+    private Table myIgnoreItunesPlaylists;
     private ItunesDatasourceConfig myConfig;
 
     public ItunesDatasourceOptionsPanel(ItunesDatasourceConfig config) {
@@ -29,7 +33,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     @Override
     public void attach() {
-        init(null, getComponentFactory().createGridLayout(1, 3, true, true));
+        init(null, getComponentFactory().createGridLayout(1, 4, true, true));
 
         Panel replacementsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.replacements"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(replacementsPanel);
@@ -41,13 +45,30 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         replacementsPanel.addComponent(myPathReplacements);
         myAddPathReplacement = getComponentFactory().createButton("datasourceOptionsPanel.addReplacement", this);
         replacementsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddPathReplacement));
+        Panel ignorePlaylistsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.ignoreItunesPlaylists"), getComponentFactory().createVerticalLayout(true, true));
+        addComponent(ignorePlaylistsPanel);
+        myIgnoreItunesPlaylists = new Table();
+        myIgnoreItunesPlaylists.addContainerProperty("check", CheckBox.class, null, "", null, null);
+        myIgnoreItunesPlaylists.addContainerProperty("type", ItunesPlaylistType.class, null, getBundleString("datasourceOptionsPanel.ignoreItunesPlaylistType"), null, null);
+        myIgnoreItunesPlaylists.setEditable(false);
+        List<ItunesPlaylistType> types = new ArrayList<ItunesPlaylistType>(Arrays.asList(ItunesPlaylistType.values()));
+        types.remove(ItunesPlaylistType.Master); // "Master" type is always ignored
+        Collections.sort(types, new Comparator<ItunesPlaylistType>() {
+            public int compare(ItunesPlaylistType o1, ItunesPlaylistType o2) {
+                return o1.toString().compareTo(o2.toString());
+            }
+        });
+        for (ItunesPlaylistType type : types) {
+            myIgnoreItunesPlaylists.addItem(new Object[] {new CheckBox(), type}, type.name());
+        }
+        ignorePlaylistsPanel.addComponent(myIgnoreItunesPlaylists);
 
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
         myDeleteMissingFiles = getComponentFactory().createCheckBox("datasourceOptionsPanel.itunesDeleteMissingFiles");
         myMiscOptionsForm.addField(myDeleteMissingFiles, myDeleteMissingFiles);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.itunesMisc")));
 
-        attach(0, 2, 0, 2);
+        attach(0, 3, 0, 3);
 
         initFromConfig();
     }
@@ -59,6 +80,14 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         for (Object itemId : myPathReplacements.getItemIds()) {
             myConfig.addPathReplacement(new PathReplacement((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));
         }
+        myConfig.clearIgnorePlaylists();
+        for (Object itemId : myIgnoreItunesPlaylists.getItemIds()) {
+            boolean checked = (Boolean)getTableCellPropertyValue(myIgnoreItunesPlaylists, itemId, "check");
+            if (checked) {
+                ItunesPlaylistType type = ((ItunesPlaylistType) getTableCellItemValue(myIgnoreItunesPlaylists, itemId, "type"));
+                myConfig.addIgnorePlaylist(type);
+            }
+        }
     }
 
     @Override
@@ -67,6 +96,13 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myPathReplacements.removeAllItems();
         for (PathReplacement replacement : myConfig.getPathReplacements()) {
             addPathReplacement(replacement);
+        }
+        Set<ItunesPlaylistType> itunesPlaylists = myConfig.getIgnorePlaylists();
+        for (Object itemId : myIgnoreItunesPlaylists.getItemIds()) {
+            ItunesPlaylistType type = ((ItunesPlaylistType) getTableCellItemValue(myIgnoreItunesPlaylists, itemId, "type"));
+            if (itunesPlaylists.contains(type)) {
+                ((Property) getTableCellItemValue(myIgnoreItunesPlaylists, itemId, "check")).setValue(true);
+            }
         }
         setTablePageLengths();
     }
@@ -80,11 +116,12 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     }
 
     private void setTablePageLengths() {
-        myPathReplacements.setPageLength(Math.min(myPathReplacements.getItemIds().size(), 10));
+        myPathReplacements.setPageLength(Math.min(myPathReplacements.getItemIds().size(), 5));
+        myIgnoreItunesPlaylists.setPageLength(Math.min(myIgnoreItunesPlaylists.getItemIds().size(), 10));
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myPathReplacements, myMiscOptionsForm)) {
+        if (!VaadinUtils.isValid(myPathReplacements, myIgnoreItunesPlaylists, myMiscOptionsForm)) {
             getApplication().showError("error.formInvalid");
         } else {
             writeToConfig();

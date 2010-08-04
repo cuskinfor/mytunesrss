@@ -75,7 +75,7 @@ public class ItunesLoader {
             Map<Long, String> trackIdToPersId = new HashMap<Long, String>();
             LibraryListener libraryListener = new LibraryListener(timeLastUpdate);
             trackListener = new TrackListener(config, executionThread, storeSession, libraryListener, trackIdToPersId, trackIds);
-            playlistListener = new PlaylistListener(executionThread, storeSession, libraryListener, trackIdToPersId);
+            playlistListener = new PlaylistListener(executionThread, storeSession, libraryListener, trackIdToPersId, config);
             handler.addListener("/plist/dict", libraryListener);
             handler.addListener("/plist/dict[Tracks]/dict", trackListener);
             handler.addListener("/plist/dict[Playlists]/array", playlistListener);
