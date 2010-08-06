@@ -5,13 +5,12 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssRegistration;
-import de.codewave.mytunesrss.MyTunesRssRegistrationException;
-import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.task.SendSupportRequestCallable;
 import de.codewave.vaadin.SmartTextField;
+import de.codewave.vaadin.component.SinglePanelWindow;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -27,6 +26,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
     private Form myRegistrationForm;
     private Form mySysInfoForm;
     private Select myLogLevel;
+    private Button myShowLog;
     private SmartTextField myName;
     private SmartTextField myEmail;
     private SmartTextField myDescription;
@@ -47,7 +47,6 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         myDescription.setRows(10);
         myIncludeItunesXml = getComponentFactory().createCheckBox("supportConfigPanel.includeItunesXml");
         mySendSupport = getComponentFactory().createButton("supportConfigPanel.sendSupport", this);
-        mySupportForm.addField("logLevel", myLogLevel);
         mySupportForm.addField("name", myName);
         mySupportForm.addField("email", myEmail);
         mySupportForm.addField("description", myDescription);
@@ -78,10 +77,12 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         addComponent(registrationPanel);
         mySysInfoForm = getComponentFactory().createForm(null, true);
         myLogLevel = getComponentFactory().createSelect("supportConfigPanel.logLevel", Arrays.asList(Level.OFF, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG));
+        myShowLog = getComponentFactory().createButton("supportConfigPanel.showLog", this);
         mySysInfo = getComponentFactory().createTextField("supportConfigPanel.sysInfo");
         mySysInfo.setEnabled(false);
         mySysInfo.setRows(5);
         mySysInfoForm.addField("logLevel", myLogLevel);
+        mySysInfoForm.addField("showLog", myShowLog);
         mySysInfoForm.addField("sysInfo", mySysInfo);
         addComponent(getComponentFactory().surroundWithPanel(mySysInfoForm, FORM_PANEL_MARGIN_INFO, getBundleString("supportConfigPanel.caption.sysInfo")));
 
@@ -120,6 +121,14 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
             } else {
                 getApplication().showError("supportConfigPanel.error.allFieldsMandatoryForSupport");
             }
+        } else if (clickEvent.getSource() == myShowLog) {
+            LogPanel logPanel = new LogPanel();
+            SinglePanelWindow logWindow = new SinglePanelWindow(80, Sizeable.UNITS_PERCENTAGE, null, getBundleString("supportConfigPanel.logWindowTitle"), logPanel);
+            logWindow.setHeight(80, Sizeable.UNITS_PERCENTAGE);
+            logWindow.setClosable(true);
+            logWindow.setResizable(true);
+            logWindow.setDraggable(true);
+            logWindow.show(getWindow());
         } else {
             super.buttonClick(clickEvent);
         }

@@ -263,7 +263,10 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                                 MyTunesRssUtils.shutdownGracefully();
                             }
                         }, 2, TimeUnit.SECONDS);
-                        StatusPanel.this.getApplication().showInfo("statusPanel.info.quitMyTunesRss");
+                        Label label = new Label(StatusPanel.this.getApplication().getBundleString("statusPanel.info.quitMyTunesRss"));
+                        label.setSizeFull();
+                        label.setStyleName("goodbye");
+                        StatusPanel.this.getApplication().setMainComponent(label);
                     }
                 }
             }.show(getApplication().getMainWindow());

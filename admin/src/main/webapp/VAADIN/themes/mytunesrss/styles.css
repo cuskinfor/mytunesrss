@@ -21,3 +21,8 @@ div.v-panel-content-alertPanel div.v-label {
 div.v-panel-content-updatePanel > div {
     background-color: #ffffe0;
 }
+
+div.v-label-goodbye {
+    font-size: 3em;
+    line-height: normal;
+}

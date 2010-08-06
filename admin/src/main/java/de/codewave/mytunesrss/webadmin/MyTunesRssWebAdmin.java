@@ -30,6 +30,8 @@ public class MyTunesRssWebAdmin extends Application {
 
     public static final int ADMIN_REFRESHER_INTERVAL_MILLIS = 2500;
 
+    public static final int LOG_REFRESHER_INTERVAL_MILLIS = 500;
+
     public static String getBundleString(ResourceBundle bundle, String key, Object... parameters) {
         if (parameters == null || parameters.length == 0) {
             return bundle.getString(key);

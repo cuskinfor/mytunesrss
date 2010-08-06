@@ -34,7 +34,7 @@ public class ComponentFactory {
     }
 
     public SmartTextField createTextField(String labelKey, Validator validator) {
-        SmartTextField textField = new SmartTextField(getBundleString(labelKey));
+        SmartTextField textField = new SmartTextField(labelKey != null ? getBundleString(labelKey) : null);
         textField.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         if (validator != null) {
             textField.addValidator(validator);
