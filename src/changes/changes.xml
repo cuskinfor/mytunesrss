@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.0.0-EAP-6" date="2010-xx-xx">
+        <release version="4.0.0-EAP-6" date="2010-08-07">
             <action dev="mdescher" type="update">
                 [MYTUNESRSS-171] Display log file in admin interface
             </action>
