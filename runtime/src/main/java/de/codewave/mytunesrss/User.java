@@ -53,52 +53,49 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     private String myName;
     private byte[] myPasswordHash;
-    private boolean myDownload;
-    private boolean myRss;
-    private boolean myPlaylist;
+    private boolean myDownload = true;
+    private boolean myRss = true;
+    private boolean myPlaylist = true;
     private boolean myUpload;
-    private boolean myPlayer;
-    private boolean myChangePassword;
-    private boolean myEditLastFmAccount;
-    private QuotaType myQuotaType;
+    private boolean myPlayer = true;
+    private boolean myChangePassword = true;
+    private boolean myEditLastFmAccount = true;
+    private QuotaType myQuotaType = QuotaType.None;
     private long myDownBytes;
     private long myQuotaDownBytes;
     private long myBytesQuota;
-    private long myResetTime;
-    private long myQuotaResetTime;
+    private long myResetTime = System.currentTimeMillis();
+    private long myQuotaResetTime = System.currentTimeMillis();
     private int myMaximumZipEntries;
     private int mySessionTimeout = 10;
-    private boolean mySpecialPlaylists;
+    private boolean mySpecialPlaylists = true;
     private boolean myTranscoder;
     private int myBandwidthLimit;
     private Set<String> myPlaylistIds = new HashSet<String>();
     private boolean mySharedUser;
     private Map<String, String> myWebConfigs = new HashMap<String, String>();
     private boolean myCreatePlaylists;
-    private boolean myEditWebSettings;
+    private boolean myEditWebSettings = true;
     private String myLastFmUsername;
     private byte[] myLastFmPasswordHash;
     private LastFmSession myLastFmSession;
     private int myLastFmHardFailureCount;
     private long myLastFmHandshakeTime;
     private long myLastFmHandshakeWaitTime;
-    private boolean myUrlEncryption;
+    private boolean myUrlEncryption = true;
     private String myEmail;
-    private boolean myChangeEmail;
+    private boolean myChangeEmail = true;
     private boolean myRemoteControl;
     private User myParent;
-    private boolean myExternalSites;
-    private int mySearchFuzziness;
+    private boolean myExternalSites = true;
+    private int mySearchFuzziness = -1;
     private boolean myEditTags;
     private Set<String> myForceTranscoders = new HashSet<String>();
     private long myExpiration;
+    private boolean myYahooPlayer = true;
 
     public User(String name) {
         myName = name;
-        myResetTime = System.currentTimeMillis();
-        myQuotaResetTime = myResetTime;
-        myQuotaType = QuotaType.None;
-        mySearchFuzziness = -1;
     }
 
     public boolean isActive() {
@@ -409,6 +406,14 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         myExpiration = expiration;
     }
 
+    public boolean isYahooPlayer() {
+        return myYahooPlayer;
+    }
+
+    public void setYahooPlayer(boolean yahooPlayer) {
+        myYahooPlayer = yahooPlayer;
+    }
+
     @Override
     public String toString() {
         return getName();
@@ -498,27 +503,27 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public void loadFromPreferences(JXPathContext settings) {
-        setPasswordHash(JXPathUtils.getByteArray(settings, "password", null));
-        setRss(JXPathUtils.getBooleanValue(settings, "featureRss", false));
-        setPlaylist(JXPathUtils.getBooleanValue(settings, "featurePlaylist", false));
-        setDownload(JXPathUtils.getBooleanValue(settings, "featureDownload", false));
-        setUpload(JXPathUtils.getBooleanValue(settings, "featureUpload", false));
-        setPlayer(JXPathUtils.getBooleanValue(settings, "featurePlayer", false));
-        setChangePassword(JXPathUtils.getBooleanValue(settings, "featureChangePassword", false));
-        setEditLastFmAccount(JXPathUtils.getBooleanValue(settings, "featureLastFmAccount", true));
-        setSpecialPlaylists(JXPathUtils.getBooleanValue(settings, "featureSpecialPlaylists", false));
-        setCreatePlaylists(JXPathUtils.getBooleanValue(settings, "featureCreatePlaylists", false));
-        setEditWebSettings(JXPathUtils.getBooleanValue(settings, "featureEditWebSettings", false));
+        setPasswordHash(JXPathUtils.getByteArray(settings, "password", myPasswordHash));
+        setRss(JXPathUtils.getBooleanValue(settings, "featureRss", myRss));
+        setPlaylist(JXPathUtils.getBooleanValue(settings, "featurePlaylist", myPlaylist));
+        setDownload(JXPathUtils.getBooleanValue(settings, "featureDownload", myDownload));
+        setUpload(JXPathUtils.getBooleanValue(settings, "featureUpload", myUpload));
+        setPlayer(JXPathUtils.getBooleanValue(settings, "featurePlayer", myPlayer));
+        setChangePassword(JXPathUtils.getBooleanValue(settings, "featureChangePassword", myChangePassword));
+        setEditLastFmAccount(JXPathUtils.getBooleanValue(settings, "featureLastFmAccount", myEditLastFmAccount));
+        setSpecialPlaylists(JXPathUtils.getBooleanValue(settings, "featureSpecialPlaylists", mySpecialPlaylists));
+        setCreatePlaylists(JXPathUtils.getBooleanValue(settings, "featureCreatePlaylists", myCreatePlaylists));
+        setEditWebSettings(JXPathUtils.getBooleanValue(settings, "featureEditWebSettings", myEditWebSettings));
         setResetTime(JXPathUtils.getLongValue(settings, "resetTime", System.currentTimeMillis()));
         setQuotaResetTime(JXPathUtils.getLongValue(settings, "quotaResetTime", System.currentTimeMillis()));
-        setDownBytes(JXPathUtils.getLongValue(settings, "downBytes", 0));
-        setQuotaDownBytes(JXPathUtils.getLongValue(settings, "quotaDownBytes", 0));
-        setBytesQuota(JXPathUtils.getLongValue(settings, "bytesQuota", 0));
-        setQuotaType(QuotaType.valueOf(JXPathUtils.getStringValue(settings, "quotaType", QuotaType.None.name())));
-        setMaximumZipEntries(JXPathUtils.getIntValue(settings, "maximumZipEntries", 0));
-        setTranscoder(JXPathUtils.getBooleanValue(settings, "featureTranscoder", false));
-        setSessionTimeout(JXPathUtils.getIntValue(settings, "sessionTimeout", 10));
-        setBandwidthLimit(JXPathUtils.getIntValue(settings, "bandwidthLimit", 0));
+        setDownBytes(JXPathUtils.getLongValue(settings, "downBytes", myDownBytes));
+        setQuotaDownBytes(JXPathUtils.getLongValue(settings, "quotaDownBytes", myQuotaDownBytes));
+        setBytesQuota(JXPathUtils.getLongValue(settings, "bytesQuota", myBytesQuota));
+        setQuotaType(QuotaType.valueOf(JXPathUtils.getStringValue(settings, "quotaType", myQuotaType.name())));
+        setMaximumZipEntries(JXPathUtils.getIntValue(settings, "maximumZipEntries", myMaximumZipEntries));
+        setTranscoder(JXPathUtils.getBooleanValue(settings, "featureTranscoder", myTranscoder));
+        setSessionTimeout(JXPathUtils.getIntValue(settings, "sessionTimeout", mySessionTimeout));
+        setBandwidthLimit(JXPathUtils.getIntValue(settings, "bandwidthLimit", myBandwidthLimit));
         Iterator<JXPathContext> playlistIdIterator = JXPathUtils.getContextIterator(settings, "playlists/id");
         while (playlistIdIterator.hasNext()) {
             addPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), ".", null));
@@ -530,16 +535,16 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
             JXPathContext webConfigContext = webConfigIterator.next();
             myWebConfigs.put(JXPathUtils.getStringValue(webConfigContext, "userAgent", UserAgent.Unknown.toConfigKey()), JXPathUtils.getStringValue(webConfigContext, "config", null));
         }
-        setLastFmUsername(JXPathUtils.getStringValue(settings, "lastFmUser", null));
-        setLastFmPasswordHash(JXPathUtils.getByteArray(settings, "lastFmPassword", null));
-        setUrlEncryption(JXPathUtils.getBooleanValue(settings, "urlEncryption", true));
-        setEmail(JXPathUtils.getStringValue(settings, "email", null));
-        setRemoteControl(JXPathUtils.getBooleanValue(settings, "remoteControl", false));
+        setLastFmUsername(JXPathUtils.getStringValue(settings, "lastFmUser", myLastFmUsername));
+        setLastFmPasswordHash(JXPathUtils.getByteArray(settings, "lastFmPassword", myLastFmPasswordHash));
+        setUrlEncryption(JXPathUtils.getBooleanValue(settings, "urlEncryption", myUrlEncryption));
+        setEmail(JXPathUtils.getStringValue(settings, "email", myEmail));
+        setRemoteControl(JXPathUtils.getBooleanValue(settings, "remoteControl", myRemoteControl));
         myParent = new UserProxy(JXPathUtils.getStringValue(settings, "parent", null));
-        setExternalSites(JXPathUtils.getBooleanValue(settings, "externalSites", false));
-        setChangeEmail(JXPathUtils.getBooleanValue(settings, "changeEmail", false));
-        setSearchFuzziness(JXPathUtils.getIntValue(settings, "searchFuzziness", -1));
-        setEditTags(JXPathUtils.getBooleanValue(settings, "editTags", false));
+        setExternalSites(JXPathUtils.getBooleanValue(settings, "externalSites", myExternalSites));
+        setChangeEmail(JXPathUtils.getBooleanValue(settings, "changeEmail", myChangeEmail));
+        setSearchFuzziness(JXPathUtils.getIntValue(settings, "searchFuzziness", mySearchFuzziness));
+        setEditTags(JXPathUtils.getBooleanValue(settings, "editTags", myEditTags));
         Set<String> availableTranscoders = new HashSet<String>();
         for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
             availableTranscoders.add(config.getName());
@@ -551,7 +556,8 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
                 myForceTranscoders.add(name);
             }
         }
-        setExpiration(JXPathUtils.getLongValue(settings, "expiration", 0));
+        setExpiration(JXPathUtils.getLongValue(settings, "expiration", myExpiration));
+        setYahooPlayer(JXPathUtils.getBooleanValue(settings, "yahooPlayer", myYahooPlayer));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -620,6 +626,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         }
         if (getExpiration() > 0) {
             users.appendChild(DOMUtils.createLongElement(settings, "expiration", getExpiration()));
+            users.appendChild(DOMUtils.createBooleanElement(settings, "yahooPlayer", isYahooPlayer()));
         }
     }
 

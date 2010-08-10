@@ -39,6 +39,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private CheckBox myPermRss;
     private CheckBox myPermPlaylist;
     private CheckBox myPermDownload;
+    private CheckBox myPermYahooPlayer;
     private CheckBox myPermStandardPlaylist;
     private CheckBox myPermFlashPlayer;
     private CheckBox myPermRemote;
@@ -97,6 +98,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermRss = new CheckBox();
         myPermPlaylist = new CheckBox();
         myPermDownload = new CheckBox();
+        myPermYahooPlayer = new CheckBox();
         myPermStandardPlaylist = new CheckBox();
         myPermFlashPlayer = new CheckBox();
         myPermRemote = new CheckBox();
@@ -118,6 +120,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermissions.addItem(new Object[]{myPermRss, getBundleString("editUserConfigPanel.permRss")}, myPermRss);
         myPermissions.addItem(new Object[]{myPermPlaylist, getBundleString("editUserConfigPanel.permPlaylist")}, myPermPlaylist);
         myPermissions.addItem(new Object[]{myPermDownload, getBundleString("editUserConfigPanel.permDownload")}, myPermDownload);
+        myPermissions.addItem(new Object[]{myPermYahooPlayer, getBundleString("editUserConfigPanel.permYahooPlayer")}, myPermYahooPlayer);
         myPermissions.addItem(new Object[]{myPermStandardPlaylist, getBundleString("editUserConfigPanel.permStandardPlaylist")}, myPermStandardPlaylist);
         myPermissions.addItem(new Object[]{myPermFlashPlayer, getBundleString("editUserConfigPanel.permFlashPlayer")}, myPermFlashPlayer);
         myPermissions.addItem(new Object[]{myPermRemote, getBundleString("editUserConfigPanel.permRemote")}, myPermRemote);
@@ -230,6 +233,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myPermChangePassword.setValue(myUser.isChangePassword());
             myPermEditPlaylists.setValue(myUser.isCreatePlaylists());
             myPermDownload.setValue(myUser.isDownload());
+            myPermYahooPlayer.setValue(myUser.isYahooPlayer());
             myPermEditLastFm.setValue(myUser.isEditLastFmAccount());
             myPermEditTags.setValue(myUser.isEditTags());
             myPermEditSettings.setValue(myUser.isEditWebSettings());
@@ -307,6 +311,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setCreatePlaylists(myPermEditPlaylists.booleanValue());
         //myUser.setDownBytes();
         myUser.setDownload(myPermDownload.booleanValue());
+        myUser.setYahooPlayer(myPermYahooPlayer.booleanValue());
         myUser.setEditLastFmAccount(myPermEditLastFm.booleanValue());
         myUser.setEditTags(myPermEditTags.booleanValue());
         myUser.setEditWebSettings(myPermEditSettings.booleanValue());

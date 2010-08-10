@@ -215,7 +215,7 @@
                                                editTagsId="${track.id}" />
                             </c:when>
                             <c:otherwise>
-                                <c:if test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && config.showDownload && authUser.download && config.yahooMediaPlayer}">
+                                <c:if test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && authUser.yahooMediaPlayer && config.yahooMediaPlayer}">
                                     <c:set var="yahoo" value="true"/>
                                     <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>">
                                         <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=64</mt:encrypt>" style="display:none" alt=""/>

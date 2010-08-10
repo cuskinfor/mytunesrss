@@ -327,6 +327,8 @@
                                     <img src="${appUrl}/images/action-download.png" alt="playlist" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
+                        </c:if>
+                        <c:if test="${authUser.yahooPlayer}">
                             <tr <mt:flipFlop/>>
                                 <td class="label"><fmt:message key="settings.showYahooMediaPlayer" /></td>
                                 <td>
