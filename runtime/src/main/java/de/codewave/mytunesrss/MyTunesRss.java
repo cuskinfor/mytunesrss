@@ -33,6 +33,8 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,6 +49,7 @@ import java.sql.*;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.Queue;
+import java.util.Timer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -419,10 +422,20 @@ public class MyTunesRss {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort() + ".");
             }
-            System.out.println("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort());
+
             DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
-            if (!HEADLESS && desktopWrapper.isSupported() && !COMMAND_LINE_ARGS.containsKey(CMD_NO_BROWSER) && CONFIG.isStartAdminBrowser()) {
-                desktopWrapper.openBrowser(new URI("http://127.0.0.1:" + ADMIN_SERVER.getConnectors()[0].getLocalPort()));
+            if (!HEADLESS) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        JOptionPane.showMessageDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "info.adminServerPortInfo", String.valueOf(ADMIN_SERVER.getConnectors()[0].getLocalPort())), MyTunesRssUtils.getBundleString(Locale.getDefault(), "info.title"), JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }.start();
+                if (desktopWrapper.isSupported() && !COMMAND_LINE_ARGS.containsKey(CMD_NO_BROWSER) && CONFIG.isStartAdminBrowser()) {
+                    desktopWrapper.openBrowser(new URI("http://127.0.0.1:" + ADMIN_SERVER.getConnectors()[0].getLocalPort()));
+                }
+            } else {
+                System.out.println("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort());
             }
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
