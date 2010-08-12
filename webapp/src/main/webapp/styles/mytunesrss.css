@@ -530,11 +530,6 @@ table.navigation {
     height: 16px;
 }
 
-.tracklist a.youtube {
-	padding-left: 24px;
-	background: url("../images/youtube.png") left center no-repeat;
-}
-
 .tracklist a.movie {
 	padding-left: 24px;
 	background: url("../images/movie.gif") left center no-repeat;
