@@ -44,7 +44,6 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
     private JScrollPane myScrollPane;
     private JTextField myArtistFallbackInput;
     private JTextField myAlbumFallbackInput;
-    private JButton myAddRemoteButton;
     private JTable myReplacementsTable;
     private JScrollPane myReplacementsScrollPane;
     private JButton myAddReplacementButton;
@@ -69,9 +68,7 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 String text = value.toString();
-                if (MyTunesRssUtils.isValidRemoteUrl(text)) {
-                    label.setIcon(new ImageIcon(getClass().getResource("http.gif")));
-                } else if (StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(text), "xml")) {
+                if (StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(text), "xml")) {
                     label.setIcon(new ImageIcon(getClass().getResource("itunes.gif")));
                 } else {
                     label.setIcon(new ImageIcon(getClass().getResource("folder.gif")));
@@ -105,7 +102,6 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
                 myUploadDirInput.setText(file.getCanonicalPath());
             }
         });
-        myAddRemoteButton.addActionListener(new AddRemoteActionListener());
         myAddReplacementButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 myPathReplacementsTableModel.getPathReplacements().add(new PathReplacement("search expression", "replacement")); // TODO i18n
@@ -206,7 +202,6 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
                 mode == GuiMode.ServerRunning;
         myBaseDirsList.setEnabled(!databaseOrServerActive);
         myAddBaseDirButton.setEnabled(!databaseOrServerActive);
-        myAddRemoteButton.setEnabled(!databaseOrServerActive);
         myDeleteBaseDirButton.setEnabled(!databaseOrServerActive && myBaseDirsList.getSelectedIndex() > -1);
         myUploadDirInput.setEnabled(!databaseOrServerActive);
         myUploadDirLookupButton.setEnabled(!databaseOrServerActive);
@@ -226,8 +221,6 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
     protected void editDataSource(int index) {
         if (new File(myListModel.get(index).toString()).exists()) {
             new AddWatchFolderButtonListener(index).actionPerformed(null);
-        } else {
-            new AddRemoteActionListener(index).actionPerformed(null);
         }
     }
 
@@ -290,44 +283,6 @@ public class DataSources implements MyTunesRssEventListener, SettingsForm {
                 } else {
                     MyTunesRssUtils.showErrorMessage(error);
                 }
-            }
-        }
-    }
-
-    public class AddRemoteActionListener implements ActionListener {
-        private int myEditIndex;
-
-        public AddRemoteActionListener() {
-            myEditIndex = -1;
-        }
-
-        public AddRemoteActionListener(int editIndex) {
-            myEditIndex = editIndex;
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            EnterTextLineDialog dialog = new EnterTextLineDialog();
-            dialog.setResizable(false);
-            dialog.setTitle(MyTunesRssUtils.getBundleString("dialog.title.addRemoteDataSource"));
-            if (myEditIndex != -1) {
-                dialog.setTextLine(myListModel.get(myEditIndex).toString());
-            }
-            while (true) {
-                SwingUtils.packAndShowRelativeTo(dialog, myRootPanel.getParent());
-                if (dialog.isCancelled()) {
-                    return;
-                }
-                if (MyTunesRssUtils.isValidRemoteUrl(dialog.getTextLine())) {
-                    break;
-                }
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString("error.invalidRemoteUrl"));
-            }
-            String error = myEditIndex == -1 ? MyTunesRss.CONFIG.addDatasource(dialog.getTextLine()) : MyTunesRss.CONFIG.replaceDatasource(myEditIndex, dialog.getTextLine());
-            if (error == null) {
-                myListModel.clear();
-                addAllToListModel();
-            } else {
-                MyTunesRssUtils.showErrorMessage(error);
             }
         }
     }
