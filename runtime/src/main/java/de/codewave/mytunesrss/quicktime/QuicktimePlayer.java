@@ -385,8 +385,7 @@ public class QuicktimePlayer {
     }
 
     /**
-     * Get a new movie instance from either the track's file or (for a you tube remote file) from the external
-     * url.
+     * Get a new movie instance from the track's file.
      *
      * @param track The track.
      * @return The corresponding movie.
@@ -394,12 +393,8 @@ public class QuicktimePlayer {
      */
     private synchronized Movie getMovie(Track track) {
         try {
-            if (track.getSource() == TrackSource.YouTube) {
-                return Movie.fromDataRef(new DataRef(MyTunesRssUtils.getYouTubeUrl(track.getId())), StdQTConstants.newMovieActive);
-            } else {
-                if (track.getFile().isFile()) {
-                    return Movie.fromFile(OpenMovieFile.asRead(new QTFile(track.getFile())));
-                }
+            if (track.getFile().isFile()) {
+                return Movie.fromFile(OpenMovieFile.asRead(new QTFile(track.getFile())));
             }
         } catch (QTException e) {
             LOGGER.error("Could not create movie from track \"" + track.getName() + "\".", e);

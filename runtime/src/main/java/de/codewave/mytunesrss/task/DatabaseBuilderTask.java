@@ -6,7 +6,6 @@ package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
-import de.codewave.mytunesrss.datastore.external.ExternalLoader;
 import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
 import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -52,7 +51,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     }
 
     public enum State {
-        UpdatingTracksFromItunes(), UpdatingTracksFromFolder(), UpdatingTrackImages(), Idle();
+        UpdatingTracksFromItunes(), UpdatingTracksFromFolder(), UpdatingTrackImages(), Idle()
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseBuilderTask.class);
@@ -61,7 +60,6 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     private static State myState = State.Idle;
     private static final long MAX_TX_DURATION = 2500;
     private List<File> myFileDatasources = new ArrayList<File>();
-    private List<String> myExternalDatasources = new ArrayList<String>();
     private boolean myExecuted;
     private static long TX_BEGIN;
 
@@ -83,7 +81,6 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
 
     private void addToDatasources(String external) {
         LOGGER.debug("Adding non-file datasource \"" + external + "\" to database update sources.");
-        myExternalDatasources.add(external);
     }
 
     private void addToDatasources(File file) {
@@ -148,12 +145,6 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 }
             }
         }
-        if (myExternalDatasources != null) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Database update needed (externals have to be checked).");
-            }
-            return true;
-        }
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Database update not necessary.");
         }
@@ -213,7 +204,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 DatabaseBuilderTask.doCheckpoint(storeSession, true);
             }
             if (!MyTunesRss.CONFIG.isIgnoreArtwork() && !getExecutionThread().isInterrupted()) {
-                runImageUpdate(storeSession, systemInformation.getLastUpdate(), timeUpdateStart);
+                runImageUpdate(storeSession, timeUpdateStart);
             }
             updateHelpTables(storeSession, 0); // update image references in albums
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
@@ -242,7 +233,7 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
         }
     }
 
-    private void runImageUpdate(DataStoreSession storeSession, long lastUpdateTime, final long timeUpdateStart) throws SQLException {
+    private void runImageUpdate(DataStoreSession storeSession, final long timeUpdateStart) throws SQLException {
         myState = State.UpdatingTrackImages;
         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
         event.setMessageKey("settings.databaseUpdateRunningImages");
@@ -308,13 +299,6 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
     }
 
 
-    /**
-     * @param systemInformation
-     * @param storeSession
-     * @return Map with the number of missing files per iTunes XML.
-     * @throws SQLException
-     * @throws IOException
-     */
     private Map<String, Long> runUpdate(SystemInformation systemInformation, DataStoreSession storeSession) throws SQLException, IOException {
         Map<String, Long> missingItunesFiles = new HashMap<String, Long>();
         long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation.getLastUpdate();
@@ -358,15 +342,6 @@ public class DatabaseBuilderTask extends MyTunesRssTask {
                 }
             }
             DatabaseBuilderTask.doCheckpoint(storeSession, true);
-        }
-        if (myExternalDatasources != null && !getExecutionThread().isInterrupted()) {
-            for (String external : myExternalDatasources) {
-                doCheckpoint(storeSession, false);
-                MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
-                event.setMessageKey("settings.databaseUpdateRunningExternal");
-                MyTunesRssEventManager.getInstance().fireEvent(event);
-                ExternalLoader.process(StringUtils.trim(external), storeSession, timeLastUpdate, trackIds);
-            }
         }
         if (!getExecutionThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {

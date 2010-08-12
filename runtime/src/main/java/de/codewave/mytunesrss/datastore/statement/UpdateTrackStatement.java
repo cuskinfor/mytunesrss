@@ -126,13 +126,7 @@ public class UpdateTrackStatement implements InsertOrUpdateTrackStatement {
             myStatement.setBoolean("protected", myProtected);
             myStatement.setString("mediatype", myMediaType.name());
             myStatement.setString("genre", myGenre);
-            if (mySource == TrackSource.YouTube) {
-                myStatement.setString("suffix", "swf");
-            } else if (mySource.isExternal()) {
-                myStatement.setString("suffix", "");
-            } else {
-                myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
-            }
+            myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
             myStatement.setString("mp4codec", myMp4Codec);
             myStatement.setLong("ts_updated", System.currentTimeMillis());
             myStatement.setString("comment", myComment);

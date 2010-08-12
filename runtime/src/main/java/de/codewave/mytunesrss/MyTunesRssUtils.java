@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss;
 
 import com.ibm.icu.text.Normalizer;
-import de.codewave.mytunesrss.datastore.external.YouTubeLoader;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
 import de.codewave.mytunesrss.jmx.MyTunesRssJmxUtils;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
@@ -472,11 +471,6 @@ public class MyTunesRssUtils {
             host = StringUtils.substringAfter(url, "://");
         }
         return StringUtils.trimToNull(host);
-    }
-
-    public static String getYouTubeUrl(String trackId) {
-        String videoId = StringUtils.substringAfter(trackId, "youtube_");
-        return "http://youtube.com/get_video?video_id=" + videoId + "&t=" + YouTubeLoader.retrieveAdditionalParam(videoId) + "&fmt=18";
     }
 
     public static String getBuiltinAddonsPath() {
