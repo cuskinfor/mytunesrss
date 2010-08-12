@@ -50,6 +50,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myDatasources.setEditable(false);
         sourcesPanel.addComponent(myDatasources);
         myAddLocalDatasource = getComponentFactory().createButton("datasourcesConfigPanel.addLocalDatasource", this);
+        sourcesPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddLocalDatasource));
 
         myUploadForm = getComponentFactory().createForm(null, true);
         myUploadDir = getComponentFactory().createTextField("datasourcesConfigPanel.uploadDir", new FileValidator(getBundleString("datasourcesConfigPanel.error.invalidUploadDir"), FileValidator.PATTERN_ALL, null));

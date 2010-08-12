@@ -195,4 +195,8 @@
         <sql>ALTER TABLE smart_info ADD COLUMN comment_pattern VARCHAR(100)</sql>
     </statement>
 
+    <statement name="migrate_4.0.0_eap_7">
+        <sql>DELETE FROM track WHERE source = 'YouTube'</sql>
+    </statement>
+
 </statements>
