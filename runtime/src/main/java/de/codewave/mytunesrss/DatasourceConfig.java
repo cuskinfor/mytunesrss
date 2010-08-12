@@ -11,9 +11,7 @@ import org.apache.commons.lang.StringUtils;
 public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
     public static DatasourceConfig create(String definition) {
-        if (MyTunesRssUtils.isValidRemoteUrl(definition)) {
-            return new RemoteDatasourceConfig(definition);
-        } else if (StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(definition), "xml")) {
+        if (StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(definition), "xml")) {
             return new ItunesDatasourceConfig(definition);
         } else {
             return new WatchfolderDatasourceConfig(definition);
@@ -49,8 +47,6 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
     public static DatasourceConfig copy(DatasourceConfig config) {
         switch (config.getType()) {
-            case Remote:
-                return new RemoteDatasourceConfig((RemoteDatasourceConfig)config);
             case Itunes:
                 return new ItunesDatasourceConfig((ItunesDatasourceConfig)config);
             case Watchfolder:

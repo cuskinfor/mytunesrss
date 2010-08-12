@@ -31,7 +31,6 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     private Table myDatasources;
     private Button myAddLocalDatasource;
-    private Button myAddRemoteDatasource;
     private SmartTextField myUploadDir;
     private Button mySelectUploadDir;
     private CheckBox myUploadCreateUserDir;
@@ -51,8 +50,6 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myDatasources.setEditable(false);
         sourcesPanel.addComponent(myDatasources);
         myAddLocalDatasource = getComponentFactory().createButton("datasourcesConfigPanel.addLocalDatasource", this);
-        myAddRemoteDatasource = getComponentFactory().createButton("datasourcesConfigPanel.addRemoteDatasource", this);
-        sourcesPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddLocalDatasource, myAddRemoteDatasource));
 
         myUploadForm = getComponentFactory().createForm(null, true);
         myUploadDir = getComponentFactory().createTextField("datasourcesConfigPanel.uploadDir", new FileValidator(getBundleString("datasourcesConfigPanel.error.invalidUploadDir"), FileValidator.PATTERN_ALL, null));
@@ -90,9 +87,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private Resource getDatasourceImage(Application application, DatasourceType type) {
-        if (type == DatasourceType.Remote) {
-            return new ClassResource("http.gif", application);
-        } else if (type == DatasourceType.Itunes) {
+        if (type == DatasourceType.Itunes) {
             return new ClassResource("itunes.gif", application);
         } else {
             return new ClassResource("folder.gif", application);
@@ -113,16 +108,10 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddLocalDatasource) {
             addOrEditLocalDataSource(null, new File(""));
-        } else if (clickEvent.getSource() == myAddRemoteDatasource) {
-            addOrEditRemoteDataSource(null, "");
         } else if (findTableItemWithObject(myDatasources, clickEvent.getSource()) != null) {
             Item item = myDatasources.getItem(findTableItemWithObject(myDatasources, clickEvent.getSource()));
             if (item.getItemProperty("edit").getValue() == clickEvent.getSource()) {
-                if (MyTunesRssUtils.isValidRemoteUrl((String) item.getItemProperty("path").getValue())) {
-                    addOrEditRemoteDataSource(findTableItemWithObject(myDatasources, clickEvent.getSource()), (String) item.getItemProperty("path").getValue());
-                } else {
-                    addOrEditLocalDataSource(findTableItemWithObject(myDatasources, clickEvent.getSource()), new File((String) item.getItemProperty("path").getValue()));
-                }
+                addOrEditLocalDataSource(findTableItemWithObject(myDatasources, clickEvent.getSource()), new File((String) item.getItemProperty("path").getValue()));
             } else if (item.getItemProperty("delete").getValue() == clickEvent.getSource()) {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
@@ -139,8 +128,6 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
             } else {
                 DatasourceConfig datasourceConfig = myConfigs.get(findTableItemWithObject(myDatasources, clickEvent.getSource()));
                 switch (datasourceConfig.getType()) {
-                    case Remote:
-                        break;
                     case Itunes:
                         ItunesDatasourceOptionsPanel itunesOptionsPanel = new ItunesDatasourceOptionsPanel((ItunesDatasourceConfig) datasourceConfig);
                         SinglePanelWindow itunesOptionsWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.caption"), itunesOptionsPanel);
@@ -167,27 +154,6 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         } else {
             super.buttonClick(clickEvent);
         }
-    }
-
-    private void addOrEditRemoteDataSource(final Object itemId, String url) {
-        String okButtonLabel = itemId == null ? getBundleString("datasourcesConfigPanel.addRemoteDatasource.ok") : getBundleString("datasourcesConfigPanel.updateRemoteDatasource.ok");
-        new TextFieldWindow(50, Sizeable.UNITS_EM, url, null, getBundleString("datasourcesConfigPanel.addRemoteDatasource.caption"), getBundleString("datasourcesConfigPanel.addRemoteDatasource.message"), okButtonLabel, getBundleString("button.cancel")) {
-            @Override
-            protected void onOk(String text) {
-                if (MyTunesRssUtils.isValidRemoteUrl(text)) {
-                    if (itemId != null) {
-                        myDatasources.getItem(itemId).getItemProperty("path").setValue(text);
-                        myConfigs.get(itemId).setDefinition(text);
-                    } else {
-                        addDatasource(getApplication(), new RemoteDatasourceConfig(text));
-                        setTablePageLengths();
-                    }
-                    getApplication().getMainWindow().removeWindow(this);
-                } else {
-                    DatasourcesConfigPanel.this.getApplication().showWarning("datasourcesConfigPanel.warning.illegalRemoteUrl");
-                }
-            }
-        }.show(getApplication().getMainWindow());
     }
 
     private void addOrEditLocalDataSource(final Object itemId, File file) {

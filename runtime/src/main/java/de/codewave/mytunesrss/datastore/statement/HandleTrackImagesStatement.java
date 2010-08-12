@@ -1,8 +1,5 @@
 package de.codewave.mytunesrss.datastore.statement;
 
-import com.google.gdata.data.media.mediarss.MediaThumbnail;
-import com.google.gdata.data.youtube.VideoEntry;
-import com.google.gdata.util.ServiceException;
 import de.codewave.camel.CamelUtils;
 import de.codewave.camel.Endianness;
 import de.codewave.camel.mp4.Mp4Atom;
@@ -11,17 +8,13 @@ import de.codewave.mytunesrss.DatasourceConfig;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.datastore.external.YouTubeLoader;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.mytunesrss.meta.MyTunesRssMp4Utils;
 import de.codewave.utils.graphics.ImageUtils;
 import de.codewave.utils.sql.DataStoreStatement;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -31,7 +24,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -125,11 +117,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         if (myImage != null) {
             return myImage;
         }
-        if (mySource == TrackSource.YouTube) {
-            return getYouTubeImage();
-        } else {
-            return getLocalFileImage();
-        }
+        return getLocalFileImage();
     }
 
     private Image getLocalFileImage() throws IOException {
@@ -183,31 +171,6 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
             image = IMAGE_UP_TO_DATE;
         }
         return image;
-    }
-
-    private Image getYouTubeImage() throws IOException {
-        try {
-            VideoEntry videoEntry = YouTubeLoader.getVideoEntry(StringUtils.substringAfter(myTrackId, "youtube_"));
-            if (videoEntry.getUpdated().getValue() >= myLastUpdateTime) {
-                MediaThumbnail thumbnail = videoEntry.getOrCreateMediaGroup().getThumbnails().get(0);
-                GetMethod method = new GetMethod(thumbnail.getUrl());
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                try {
-                    if (new HttpClient().executeMethod(method) == 200) {
-                        IOUtils.copy(method.getResponseBodyAsStream(), baos);
-                        return new Image(IMAGE_TO_MIME.get(StringUtils.lowerCase(StringUtils.substringAfterLast(thumbnail.getUrl(), "/"))), baos.toByteArray());
-                    }
-                } finally {
-                    IOUtils.closeQuietly(baos);
-                    method.releaseConnection();
-                }
-            } else {
-                return IMAGE_UP_TO_DATE;
-            }
-        } catch (ServiceException e) {
-            LOGGER.error("Could not read youtube image.", e);
-        }
-        return null;
     }
 
     private File findImageFile(File file) {

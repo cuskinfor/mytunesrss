@@ -40,7 +40,6 @@ public enum MyTunesRssCommand implements Command {
     CreateOneClickPlaylist("createOneClickPlaylist", CreateOneClickPlaylistCommandHandler.class),
     EditSmartPlaylist("editSmartPlaylist", EditSmartPlaylistCommandHandler.class),
     SaveSmartPlaylist("saveSmartPlaylist", SaveSmartPlaylistCommandHandler.class),
-    YouTubeRedirect("youTubeRedirect", YouTubeRedirectCommandHandler.class),
     ShowRemoteControl("showRemoteControl", ShowRemoteControlHandler.class),
     SearchTracks("searchTracks", SearchTracksCommandHandler.class),
     ShowResource("showResource", ShowResourceCommandHandler.class),

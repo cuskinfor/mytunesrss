@@ -219,9 +219,6 @@ public class MyTunesFunctions {
 
     public static String playbackUrl(HttpServletRequest request, Track track, String extraPathInfo) {
         MyTunesRssCommand command = MyTunesRssCommand.PlayTrack;
-        if (track.getSource() == TrackSource.YouTube) {
-            command = MyTunesRssCommand.YouTubeRedirect;
-        }
         HttpSession session = request.getSession();
         StringBuilder builder = new StringBuilder((String) request.getAttribute("downloadPlaybackServletUrl"));
         String auth = (String) request.getAttribute("auth");
@@ -232,15 +229,13 @@ public class MyTunesFunctions {
         StringBuilder pathInfo = new StringBuilder("track=");
         pathInfo.append(MyTunesRssUtils.getUtf8UrlEncoded(track.getId()));
         User user = MyTunesRssWebUtils.getAuthUser(request);
-        if (command != MyTunesRssCommand.YouTubeRedirect) {
-            String tcParam = tcParamValue(request, user);
-            if (StringUtils.isNotBlank(tcParam)) {
-                pathInfo.append("/tc=").append(tcParam);
-            }
-            pathInfo.append("/playerRequest=").append(request.getParameter("playerRequest"));
-            if (StringUtils.isNotBlank(extraPathInfo)) {
-                pathInfo.append("/").append(extraPathInfo);
-            }
+        String tcParam = tcParamValue(request, user);
+        if (StringUtils.isNotBlank(tcParam)) {
+            pathInfo.append("/tc=").append(tcParam);
+        }
+        pathInfo.append("/playerRequest=").append(request.getParameter("playerRequest"));
+        if (StringUtils.isNotBlank(extraPathInfo)) {
+            pathInfo.append("/").append(extraPathInfo);
         }
         builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
         builder.append("/").append(virtualTrackName(track)).append(".").append(suffix(MyTunesRssWebUtils.getWebConfig(request), user, track));
@@ -253,9 +248,6 @@ public class MyTunesFunctions {
 
     public static String downloadUrl(HttpServletRequest request, Track track, String extraPathInfo) {
         MyTunesRssCommand command = MyTunesRssCommand.DownloadTrack;
-        if (track.getSource() == TrackSource.YouTube) {
-            command = MyTunesRssCommand.YouTubeRedirect;
-        }
         HttpSession session = request.getSession();
         StringBuilder builder = new StringBuilder((String) request.getAttribute("downloadPlaybackServletUrl"));
         String auth = (String) request.getAttribute("auth");
@@ -265,7 +257,7 @@ public class MyTunesFunctions {
         builder.append("/").append(command.getName()).append("/").append(auth);
         StringBuilder pathInfo = new StringBuilder("track=");
         pathInfo.append(MyTunesRssUtils.getUtf8UrlEncoded(track.getId()));
-        if (StringUtils.isNotBlank(extraPathInfo) && command != MyTunesRssCommand.YouTubeRedirect) {
+        if (StringUtils.isNotBlank(extraPathInfo)) {
             pathInfo.append("/").append(extraPathInfo);
         }
         builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));

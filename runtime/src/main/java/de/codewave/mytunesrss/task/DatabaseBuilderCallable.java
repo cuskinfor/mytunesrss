@@ -4,48 +4,24 @@
 
 package de.codewave.mytunesrss.task;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
+import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
+import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.utils.sql.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
-import de.codewave.mytunesrss.datastore.external.ExternalLoader;
-import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
-import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
-import de.codewave.mytunesrss.datastore.statement.DeletePlaylistStatement;
-import de.codewave.mytunesrss.datastore.statement.FindPlaylistIdsQuery;
-import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
-import de.codewave.mytunesrss.datastore.statement.HandleTrackImagesStatement;
-import de.codewave.mytunesrss.datastore.statement.PlaylistType;
-import de.codewave.mytunesrss.datastore.statement.RecreateHelpTablesStatement;
-import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
-import de.codewave.mytunesrss.datastore.statement.RemoveTrackStatement;
-import de.codewave.mytunesrss.datastore.statement.SystemInformation;
-import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.datastore.statement.TrackSource;
-import de.codewave.mytunesrss.datastore.statement.UpdateStatisticsStatement;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.DataStoreStatement;
-import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.SmartStatement;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * de.codewave.mytunesrss.task.DatabaseBuilderTaskk
@@ -78,19 +54,12 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
 
     private List<DatasourceConfig> myFileDatasources = new ArrayList<DatasourceConfig>();
 
-    private List<DatasourceConfig> myExternalDatasources = new ArrayList<DatasourceConfig>();
-
     private static long TX_BEGIN;
 
     public DatabaseBuilderCallable() {
         if (MyTunesRss.CONFIG.getDatasources() != null && MyTunesRss.CONFIG.getDatasources().size() > 0) {
             for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
-                if (datasource.getType() == DatasourceType.Remote) {
-                    LOGGER.debug("Adding non-file datasource \"" + datasource.getDefinition() + "\" to database update sources.");
-                    myExternalDatasources.add(datasource);
-                } else {
-                    addToDatasources(datasource);
-                }
+                addToDatasources(datasource);
             }
         }
         if (StringUtils.isNotBlank(MyTunesRss.CONFIG.getUploadDir())) {
@@ -166,12 +135,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     }
                 }
             }
-        }
-        if (myExternalDatasources != null) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Database update needed (externals have to be checked).");
-            }
-            return true;
         }
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Database update not necessary.");
@@ -370,7 +333,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                                 .create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
                         event.setMessageKey("settings.databaseUpdateRunningFolder");
                         MyTunesRssEventManager.getInstance().fireEvent(event);
-                        FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig)datasource, storeSession,
+                        FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig) datasource, storeSession,
                                 timeLastUpdate, trackIds, m3uPlaylistIds);
                     } catch (ShutdownRequestedException e) {
                         // intentionally left blank
@@ -378,15 +341,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 }
             }
             DatabaseBuilderCallable.doCheckpoint(storeSession, true);
-        }
-        if (myExternalDatasources != null && !Thread.currentThread().isInterrupted()) {
-            for (DatasourceConfig external : myExternalDatasources) {
-                doCheckpoint(storeSession, false);
-                MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
-                event.setMessageKey("settings.databaseUpdateRunningExternal");
-                MyTunesRssEventManager.getInstance().fireEvent(event);
-                ExternalLoader.process(StringUtils.trim(external.getDefinition()), storeSession, timeLastUpdate, trackIds);
-            }
         }
         if (!Thread.currentThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {

@@ -1038,50 +1038,52 @@ public class MyTunesRssConfig {
                 String definition = JXPathUtils.getStringValue(datasourceContext, ".", null);
                 dataSources.add(DatasourceConfig.create(definition));
             } else {
-                DatasourceType type = DatasourceType.valueOf(JXPathUtils.getStringValue(datasourceContext, "type", DatasourceType.Itunes.name()));
-                String definition = JXPathUtils.getStringValue(datasourceContext, "definition", "");
-                switch (type) {
-                    case Watchfolder:
-                        WatchfolderDatasourceConfig watchfolderDatasourceConfig = new WatchfolderDatasourceConfig(definition);
-                        watchfolderDatasourceConfig.setMinFileSize(JXPathUtils.getLongValue(datasourceContext, "minFileSize", 0));
-                        watchfolderDatasourceConfig.setMaxFileSize(JXPathUtils.getLongValue(datasourceContext, "maxFileSize", 0));
-                        watchfolderDatasourceConfig.setIncludePattern(JXPathUtils.getStringValue(datasourceContext, "include", null));
-                        watchfolderDatasourceConfig.setExcludePattern(JXPathUtils.getStringValue(datasourceContext, "exclude", null));
-                        watchfolderDatasourceConfig.setAlbumFallback(JXPathUtils.getStringValue(datasourceContext, "albumFallback", "[dir:0]"));
-                        watchfolderDatasourceConfig.setArtistFallback(JXPathUtils.getStringValue(datasourceContext, "artistFallback", "[dir:1]"));
-                        dataSources.add(watchfolderDatasourceConfig);
-                        break;
-                    case Itunes:
-                        ItunesDatasourceConfig itunesDatasourceConfig = new ItunesDatasourceConfig(definition);
-                        Iterator<JXPathContext> pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
-                        itunesDatasourceConfig.clearPathReplacements();
-                        while (pathReplacementsIterator.hasNext()) {
-                            JXPathContext pathReplacementContext = pathReplacementsIterator.next();
-                            String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
-                            String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
-                            itunesDatasourceConfig.addPathReplacement(new PathReplacement(search, replacement));
-                        }
-                        Iterator<JXPathContext> ignorePlaylistsIterator = JXPathUtils.getContextIterator(datasourceContext, "ignore-playlists/type");
-                        itunesDatasourceConfig.clearIgnorePlaylists();
-                        while (ignorePlaylistsIterator.hasNext()) {
-                            JXPathContext ignorePlaylistsContext = ignorePlaylistsIterator.next();
-                            try {
-                                itunesDatasourceConfig.addIgnorePlaylist(ItunesPlaylistType.valueOf(JXPathUtils.getStringValue(ignorePlaylistsContext, ".", ItunesPlaylistType.Master.name())));
-                            } catch (IllegalArgumentException e) {
-                                // ignore illegal config entry
+                try {
+                    DatasourceType type = DatasourceType.valueOf(JXPathUtils.getStringValue(datasourceContext, "type", DatasourceType.Itunes.name()));
+                    String definition = JXPathUtils.getStringValue(datasourceContext, "definition", "");
+                    switch (type) {
+                        case Watchfolder:
+                            WatchfolderDatasourceConfig watchfolderDatasourceConfig = new WatchfolderDatasourceConfig(definition);
+                            watchfolderDatasourceConfig.setMinFileSize(JXPathUtils.getLongValue(datasourceContext, "minFileSize", 0));
+                            watchfolderDatasourceConfig.setMaxFileSize(JXPathUtils.getLongValue(datasourceContext, "maxFileSize", 0));
+                            watchfolderDatasourceConfig.setIncludePattern(JXPathUtils.getStringValue(datasourceContext, "include", null));
+                            watchfolderDatasourceConfig.setExcludePattern(JXPathUtils.getStringValue(datasourceContext, "exclude", null));
+                            watchfolderDatasourceConfig.setAlbumFallback(JXPathUtils.getStringValue(datasourceContext, "albumFallback", "[dir:0]"));
+                            watchfolderDatasourceConfig.setArtistFallback(JXPathUtils.getStringValue(datasourceContext, "artistFallback", "[dir:1]"));
+                            dataSources.add(watchfolderDatasourceConfig);
+                            break;
+                        case Itunes:
+                            ItunesDatasourceConfig itunesDatasourceConfig = new ItunesDatasourceConfig(definition);
+                            Iterator<JXPathContext> pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
+                            itunesDatasourceConfig.clearPathReplacements();
+                            while (pathReplacementsIterator.hasNext()) {
+                                JXPathContext pathReplacementContext = pathReplacementsIterator.next();
+                                String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
+                                String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
+                                itunesDatasourceConfig.addPathReplacement(new PathReplacement(search, replacement));
                             }
-                        }
-                        itunesDatasourceConfig.setDeleteMissingFiles(JXPathUtils.getBooleanValue(datasourceContext, "deleteMissingFiles", true));
+                            Iterator<JXPathContext> ignorePlaylistsIterator = JXPathUtils.getContextIterator(datasourceContext, "ignore-playlists/type");
+                            itunesDatasourceConfig.clearIgnorePlaylists();
+                            while (ignorePlaylistsIterator.hasNext()) {
+                                JXPathContext ignorePlaylistsContext = ignorePlaylistsIterator.next();
+                                try {
+                                    itunesDatasourceConfig.addIgnorePlaylist(ItunesPlaylistType.valueOf(JXPathUtils.getStringValue(ignorePlaylistsContext, ".", ItunesPlaylistType.Master.name())));
+                                } catch (IllegalArgumentException e) {
+                                    // ignore illegal config entry
+                                }
+                            }
+                            itunesDatasourceConfig.setDeleteMissingFiles(JXPathUtils.getBooleanValue(datasourceContext, "deleteMissingFiles", true));
 
-                        dataSources.add(itunesDatasourceConfig);
-                        break;
-                    case Remote:
-                        RemoteDatasourceConfig remoteDatasourceConfig = new RemoteDatasourceConfig(definition);
-                        // TODO set additional values
-                        dataSources.add(remoteDatasourceConfig);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unknown datasource type!");
+                            dataSources.add(itunesDatasourceConfig);
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Unknown datasource type!");
+                    }
+                } catch (IllegalArgumentException e) {
+                    if (LOGGER.isWarnEnabled()) {
+                        LOGGER.warn("Illegal data source of type \"" + JXPathUtils.getStringValue(datasourceContext, "type", DatasourceType.Itunes.name()) + "\" ignored.");
+                    }
+
                 }
             }
         }
@@ -1339,9 +1341,6 @@ public class MyTunesRssConfig {
                         }
                     }
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "deleteMissingFiles", itunesDatasourceConfig.isDeleteMissingFiles()));
-                    break;
-                case Remote:
-                    // TODO write additional values
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown datasource type!");
