@@ -13,7 +13,7 @@ import java.sql.SQLException;
  */
 public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
     @Override
-    public void executeAuthorized() throws IOException, SQLException {
+    public void executeAuthorized() throws Exception {
         if (!isRequestAuthorized() || !getAuthUser().isDownload()) {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         } else {

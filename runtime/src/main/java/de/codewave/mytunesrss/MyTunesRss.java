@@ -133,8 +133,8 @@ public class MyTunesRss {
         if (MyTunesRss.CONFIG.getPort() > 0) {
             startWebserver();
         }
-        MyTunesRssExecutorService.scheduleExternalAddressUpdate(); // must only be scheduled once
-        MyTunesRssExecutorService.scheduleUpdateCheck(); // must only be scheduled once
+        MyTunesRss.EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
+        MyTunesRss.EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
         while (!QUIT_REQUEST) {
             try {
                 Thread.sleep(1000);
@@ -563,7 +563,7 @@ public class MyTunesRss {
         }
         WEBSERVER.start();
         if (WEBSERVER.isRunning()) {
-            MyTunesRssExecutorService.scheduleMyTunesRssComUpdate();
+            MyTunesRss.EXECUTOR_SERVICE.scheduleMyTunesRssComUpdate();
             if (MyTunesRss.CONFIG.isAvailableOnLocalNet()) {
                 MulticastService.startListener();
             }
@@ -577,7 +577,7 @@ public class MyTunesRss {
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
             MulticastService.stopListener();
-            MyTunesRssExecutorService.cancelMyTunesRssComUpdate();
+            MyTunesRss.EXECUTOR_SERVICE.cancelMyTunesRssComUpdate();
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STOPPED));
         }
     }

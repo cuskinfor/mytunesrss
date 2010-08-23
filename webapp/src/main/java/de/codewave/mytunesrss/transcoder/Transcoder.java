@@ -23,34 +23,30 @@ import java.util.Set;
  */
 public class Transcoder {
     private boolean myTempFile;
-    private boolean myPlayerRequest;
     private Track myTrack;
     private boolean myActive;
     private TranscoderConfig myTranscoderConfig;
 
-    public static Transcoder createTranscoder(Track track, User user, WebConfig webConfig, HttpServletRequest request) {
+    public static Transcoder createTranscoder(Track track, User user, WebConfig webConfig, HttpServletRequest request, boolean tempFile) {
         TranscoderConfig transcoderConfig = user.getTranscoder(track);
-        Transcoder transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, request) : null;
+        Transcoder transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, tempFile) : null;
         if (transcoder == null) {
             transcoderConfig = webConfig.getTranscoder(track);
-            transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, webConfig, request) : null;
+            transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, webConfig, tempFile) : null;
         }
         return transcoder != null && transcoder.isAvailable() && transcoder.isActive() ? transcoder : null;
     }
 
-    protected Transcoder(TranscoderConfig transcoderConfig, Track track, HttpServletRequest request) {
+    protected Transcoder(TranscoderConfig transcoderConfig, Track track, boolean tempFile) {
         myTrack = track;
-        myPlayerRequest = "true".equalsIgnoreCase(request.getParameter("playerRequest"));
-        myTempFile = (ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request)) &&
-                !myPlayerRequest;
+        myTempFile = tempFile;
         myTranscoderConfig = transcoderConfig;
         myActive = true;
     }
 
-    protected Transcoder(TranscoderConfig transcoderConfig, Track track, WebConfig webConfig, HttpServletRequest request) {
+    protected Transcoder(TranscoderConfig transcoderConfig, Track track, WebConfig webConfig, boolean tempFile) {
         myTrack = track;
-        myPlayerRequest = "true".equalsIgnoreCase(request.getParameter("playerRequest"));
-        myTempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
+        myTempFile = tempFile;
         myTranscoderConfig = transcoderConfig;
         myActive = webConfig.isActiveTranscoder(transcoderConfig.getName());
     }
@@ -97,10 +93,6 @@ public class Transcoder {
         return myTrack;
     }
 
-    protected void setTempFile(boolean tempFile) {
-        myTempFile = tempFile;
-    }
-
     public boolean isAvailable() {
         return myTranscoderConfig.isValidBinary();
     }
@@ -119,5 +111,9 @@ public class Transcoder {
 
     public String getTargetContentType() {
         return myTranscoderConfig.getTargetContentType();
+    }
+
+    public void setTempFile(boolean tempFile) {
+        myTempFile = tempFile;
     }
 }

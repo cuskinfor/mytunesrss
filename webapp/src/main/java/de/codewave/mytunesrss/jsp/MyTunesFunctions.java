@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.command.HttpLiveStreamCommandHandler;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.WebConfig;
@@ -20,8 +21,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
@@ -262,6 +261,33 @@ public class MyTunesFunctions {
         }
         builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
         builder.append("/").append(virtualTrackName(track)).append(".").append(FilenameUtils.getExtension(track.getFilename()));
+        return builder.toString();
+    }
+
+    public static String httpLiveStreamUrl(PageContext pageContext, Track track, String extraPathInfo) {
+        return httpLiveStreamUrl((HttpServletRequest) pageContext.getRequest(), track, extraPathInfo);
+    }
+
+    public static String httpLiveStreamUrl(HttpServletRequest request, Track track, String extraPathInfo) {
+        MyTunesRssCommand command = MyTunesRssCommand.HttpLiveStream;
+        HttpSession session = request.getSession();
+        StringBuilder builder = new StringBuilder((String) request.getAttribute("downloadPlaybackServletUrl"));
+        String auth = (String) request.getAttribute("auth");
+        if (StringUtils.isBlank(auth)) {
+            auth = (String) session.getAttribute("auth");
+        }
+        builder.append("/").append(command.getName()).append("/").append(auth);
+        StringBuilder pathInfo = new StringBuilder("track=");
+        pathInfo.append(MyTunesRssUtils.getUtf8UrlEncoded(track.getId()));
+        User user = MyTunesRssWebUtils.getAuthUser(request);
+        String tcParam = tcParamValue(request, user);
+        if (StringUtils.isNotBlank(tcParam)) {
+            pathInfo.append("/tc=").append(tcParam);
+        }
+        if (StringUtils.isNotBlank(extraPathInfo)) {
+            pathInfo.append("/").append(extraPathInfo);
+        }
+        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
         return builder.toString();
     }
 

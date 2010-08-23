@@ -252,8 +252,7 @@
         </description>
         <name>tcParamValue</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String tcParamValue(javax.servlet.jsp.PageContext, de.codewave.mytunesrss.User,
-            de.codewave.mytunesrss.datastore.statement.Track)
+        <function-signature>java.lang.String tcParamValue(javax.servlet.jsp.PageContext, de.codewave.mytunesrss.User)
         </function-signature>
         <example>
             &lt;c:out value="${mtfn:tcParamValue(pageContext, config, user, track)}"/&gt;
@@ -316,6 +315,17 @@
         <name>downloadLink</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>java.lang.String downloadUrl(javax.servlet.jsp.PageContext,
+            de.codewave.mytunesrss.datastore.statement.Track, java.lang.String)
+        </function-signature>
+    </function>
+
+    <function>
+        <description>
+            Get the http live stream link for a track.
+        </description>
+        <name>httpLiveStream</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String httpLiveStreamUrl(javax.servlet.jsp.PageContext,
             de.codewave.mytunesrss.datastore.statement.Track, java.lang.String)
         </function-signature>
     </function>

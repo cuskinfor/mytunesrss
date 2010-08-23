@@ -182,7 +182,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setSslKeystoreKeyAlias(mySslKeystoreKeyAlias.getStringValue(null));
         if (adminServerConfigChanged) {
             getApplication().showInfo("serverConfigPanel.info.adminServerRestart");
-            MyTunesRssExecutorService.schedule(new Runnable() {
+            MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
                 public void run() {
                     if (MyTunesRss.stopAdminServer()) {
                         MyTunesRss.startAdminServer();

@@ -184,7 +184,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             buttons.addComponent(myQuitMyTunesRss);
             myInitialized = true;
             myServerStatus.setValue(MyTunesRss.WEBSERVER.isRunning() ? getApplication().getBundleString("statusPanel.serverRunning") : getApplication().getBundleString("statusPanel.serverStopped"));
-            myDatabaseStatus.setValue(MyTunesRssExecutorService.isDatabaseUpdateRunning() ? null : getLastDatabaseUpdateText());
+            myDatabaseStatus.setValue(MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning() ? null : getLastDatabaseUpdateText());
             myRefresher = new Refresher();
             addComponent(myRefresher);
             myRefresher.setRefreshInterval(MyTunesRssWebAdmin.ADMIN_REFRESHER_INTERVAL_MILLIS);
@@ -239,17 +239,17 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myUpdateDatabase.setEnabled(false);
             myUpdateImages.setEnabled(false);
             myResetDatabase.setEnabled(false);
-            MyTunesRssExecutorService.scheduleDatabaseUpdate();
+            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate();
         } else if (clickEvent.getSource() == myUpdateImages) {
             myUpdateDatabase.setEnabled(false);
             myUpdateImages.setEnabled(false);
             myResetDatabase.setEnabled(false);
-            MyTunesRssExecutorService.scheduleImageUpdate();
+            MyTunesRss.EXECUTOR_SERVICE.scheduleImageUpdate();
         } else if (clickEvent.getSource() == myResetDatabase) {
             myUpdateDatabase.setEnabled(false);
             myUpdateImages.setEnabled(false);
             myResetDatabase.setEnabled(false);
-            MyTunesRssExecutorService.scheduleDatabaseReset();
+            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseReset();
         } else if (clickEvent.getSource() == myHelp) {
             getApplication().getMainWindow().open(new ExternalResource("http://docs.codewave.de/mytunesrss3"));
         } else if (clickEvent.getSource() == myQuitMyTunesRss) {
@@ -258,7 +258,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             new OptionWindow(30, Sizeable.UNITS_EM, null, getApplication().getBundleString("statusPanel.warn.quit.caption"), getApplication().getBundleString("statusPanel.warn.quit.message"), yes, no) {
                 public void clicked(Button button) {
                     if (button == yes) {
-                        MyTunesRssExecutorService.schedule(new Runnable() {
+                        MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
                             public void run() {
                                 MyTunesRssUtils.shutdownGracefully();
                             }

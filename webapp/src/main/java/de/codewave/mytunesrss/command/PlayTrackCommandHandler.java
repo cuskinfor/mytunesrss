@@ -8,9 +8,8 @@ import de.codewave.camel.mp3.Id3Tag;
 import de.codewave.camel.mp3.Id3v2Tag;
 import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.camel.mp3.exception.IllegalHeaderException;
-import de.codewave.mytunesrss.FileSupportUtils;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssSendCounter;
+import de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatement;
@@ -27,6 +26,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
+import java.util.UUID;
+import java.util.concurrent.Executors;
 
 /**
  * de.codewave.mytunesrss.command.PlayTrackCommandHandler
@@ -35,84 +36,99 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(PlayTrackCommandHandler.class);
 
     @Override
-    public void executeAuthorized() throws IOException, SQLException {
+    public void executeAuthorized() throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug(ServletUtils.getRequestInfo(getRequest()));
         }
         StreamSender streamSender;
         Track track = null;
-        if (!isRequestAuthorized()) {
-            streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
-        } else {
-            String trackId = getRequest().getParameter("track");
-            DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {trackId}));
-            if (tracks.getResultSize() > 0) {
-                track = tracks.nextResult();
-                if (!getAuthUser().isQuotaExceeded()) {
-                    File file = track.getFile();
-                    String contentType = track.getContentType();
-                    if (!file.exists()) {
-                        if (LOG.isWarnEnabled()) {
-                            LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");
-                        }
-                        MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
-                        streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
-                    } else {
-                        boolean notranscode = "true".equals(getRequestParameter("notranscode", "false"));
-                        Transcoder transcoder = getAuthUser().isForceTranscoders() || !notranscode ? Transcoder.createTranscoder(track, getAuthUser(), getWebConfig(), getRequest()) :
-                                null;
-                        if (transcoder != null) {
-                            streamSender = transcoder.getStreamSender();
-                        } else {
-                            streamSender = new FileSender(file, contentType, file.length());
-                        }
-                        getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
-                        streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
-                        getAuthUser().playLastFmTrack(track);
-                    }
-                } else {
+        String trackId = getRequest().getParameter("track");
+        DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {trackId}));
+        if (tracks.getResultSize() > 0) {
+            track = tracks.nextResult();
+            if (!getAuthUser().isQuotaExceeded()) {
+                File file = track.getFile();
+                String contentType = track.getContentType();
+                if (!file.exists()) {
                     if (LOG.isWarnEnabled()) {
-                        LOG.warn("User limit exceeded, sending response code SC_NO_CONTENT instead.");
+                        LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");
                     }
-                    MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(getAuthUser());
+                    MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
                     streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
+                } else {
+                    Transcoder transcoder = getTranscoder(track);
+                    if (transcoder != null) {
+                        streamSender = transcoder.getStreamSender();
+                    } else {
+                        streamSender = new FileSender(file, contentType, file.length());
+                    }
+                    getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
+                    streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
+                    getAuthUser().playLastFmTrack(track);
                 }
             } else {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("No tracks recognized in request, sending response code SC_NO_CONTENT instead.");
+                    LOG.warn("User limit exceeded, sending response code SC_NO_CONTENT instead.");
                 }
+                MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(getAuthUser());
                 streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
             }
+        } else {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("No tracks recognized in request, sending response code SC_NO_CONTENT instead.");
+            }
+            streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
         }
         getTransaction().commit();
         if (ServletUtils.isHeadRequest(getRequest())) {
-            streamSender.sendHeadResponse(getRequest(), getResponse());
+            sendHeadResponse(streamSender);
         } else {
-            int bitrate = 0;
-            int dataOffset = 0;
-            if (track != null && track.getFile().exists() && FileSupportUtils.isMp3(track.getFile())) {
-                bitrate = Mp3Utils.getMp3Info(new FileInputStream(track.getFile())).getAvgBitrate();
-                Id3Tag tag = null;
-                try {
-                    tag = Mp3Utils.readId3Tag(track.getFile());
-                    if (tag != null && tag.isId3v2()) {
-                        dataOffset = ((Id3v2Tag)tag).getHeader().getBodySize();
-                    }
-                } catch (IllegalHeaderException e) {
-                    if (LOG.isWarnEnabled()) {
-                        LOG.warn("Could not read ID3 information.", e);
-                    }
-                }
-            }
-            double factor = MyTunesRss.CONFIG.isBandwidthLimit() ? MyTunesRss.CONFIG.getBandwidthLimitFactor().doubleValue() : 0;
-            streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper((int)(bitrate * factor),
-                                                                                     dataOffset,
-                                                                                     new RangeHeader(getRequest())));
-            streamSender.sendGetResponse(getRequest(), getResponse(), false);
+            handleBandwidthLimit(streamSender, track);
+            sendGetResponse(streamSender);
         }
     }
 
-    private static class StatusCodeSender extends StreamSender {
+    protected Transcoder getTranscoder(Track track) {
+        boolean notranscode = "true".equals(getRequestParameter("notranscode", "false"));
+        return getAuthUser().isForceTranscoders() || !notranscode ? Transcoder.createTranscoder(track, getAuthUser(), getWebConfig(), getRequest(), isTranscoderTempFile()) : null;
+    }
+
+    protected boolean isTranscoderTempFile() {
+        return (ServletUtils.isRangeRequest(getRequest()) || ServletUtils.isHeadRequest(getRequest())) && !"true".equalsIgnoreCase(getRequestParameter("playerRequest", "false"));
+    }
+
+    protected void handleBandwidthLimit(StreamSender streamSender, Track track) throws IOException {
+        int bitrate = 0;
+        int dataOffset = 0;
+        if (track != null && track.getFile().exists() && FileSupportUtils.isMp3(track.getFile())) {
+            bitrate = Mp3Utils.getMp3Info(new FileInputStream(track.getFile())).getAvgBitrate();
+            Id3Tag tag = null;
+            try {
+                tag = Mp3Utils.readId3Tag(track.getFile());
+                if (tag != null && tag.isId3v2()) {
+                    dataOffset = ((Id3v2Tag)tag).getHeader().getBodySize();
+                }
+            } catch (IllegalHeaderException e) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Could not read ID3 information.", e);
+                }
+            }
+        }
+        double factor = MyTunesRss.CONFIG.isBandwidthLimit() ? MyTunesRss.CONFIG.getBandwidthLimitFactor().doubleValue() : 0;
+        streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper((int)(bitrate * factor),
+                                                                                 dataOffset,
+                                                                                 new RangeHeader(getRequest())));
+    }
+
+    protected void sendGetResponse(StreamSender streamSender) throws IOException {
+        streamSender.sendGetResponse(getRequest(), getResponse(), false);
+    }
+
+    protected void sendHeadResponse(StreamSender streamSender) {
+        streamSender.sendHeadResponse(getRequest(), getResponse());
+    }
+
+    protected static class StatusCodeSender extends StreamSender {
         private int myStatusCode;
 
         public StatusCodeSender(int statusCode) throws MalformedURLException {

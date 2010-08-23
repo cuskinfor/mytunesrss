@@ -16,34 +16,34 @@ import de.codewave.mytunesrss.task.RefreshSmartPlaylistsAndLuceneIndexCallable;
 
 public class MyTunesRssExecutorService {
 
-    private static final ExecutorService DATABASE_JOB_EXECUTOR = Executors.newSingleThreadExecutor();
+    private final ExecutorService DATABASE_JOB_EXECUTOR = Executors.newSingleThreadExecutor();
 
-    private static final ExecutorService LUCENE_UPDATE_EXECUTOR = Executors.newSingleThreadExecutor();
+    private final ExecutorService LUCENE_UPDATE_EXECUTOR = Executors.newSingleThreadExecutor();
 
-    private static final ScheduledExecutorService GENERAL_EXECUTOR = Executors.newScheduledThreadPool(10);
+    private final ScheduledExecutorService GENERAL_EXECUTOR = Executors.newScheduledThreadPool(50);
 
-    private static Future<Boolean> DATABASE_UPDATE_FUTURE;
+    private Future<Boolean> DATABASE_UPDATE_FUTURE;
 
-    private static Future<Void> DATABASE_RESET_FUTURE;
+    private Future<Void> DATABASE_RESET_FUTURE;
 
-    private static ScheduledFuture MYTUNESRSSCOM_UPDATE_FUTURE;
+    private ScheduledFuture MYTUNESRSSCOM_UPDATE_FUTURE;
 
-    public static synchronized void scheduleDatabaseUpdate() {
+    public synchronized void scheduleDatabaseUpdate() {
         cancelDatabaseJob();
         DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable());
     }
 
-    public static void scheduleImageUpdate() {
+    public void scheduleImageUpdate() {
         cancelDatabaseJob();
         DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new ForcedImageUpdateCallable());
     }
 
-    public static synchronized void scheduleDatabaseReset() {
+    public synchronized void scheduleDatabaseReset() {
         cancelDatabaseJob();
         DATABASE_RESET_FUTURE = DATABASE_JOB_EXECUTOR.submit(new RecreateDatabaseCallable());
     }
 
-    public static synchronized void cancelDatabaseJob() {
+    public synchronized void cancelDatabaseJob() {
         if (DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone() && !DATABASE_UPDATE_FUTURE.isCancelled()) {
             DATABASE_UPDATE_FUTURE.cancel(true);
         }
@@ -52,38 +52,38 @@ public class MyTunesRssExecutorService {
         }
     }
 
-    public static synchronized boolean isDatabaseUpdateRunning() {
+    public synchronized boolean isDatabaseUpdateRunning() {
         return DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone()
                 && !DATABASE_UPDATE_FUTURE.isCancelled();
     }
 
-    public static synchronized boolean getDatabaseUpdateResult() throws InterruptedException, ExecutionException {
+    public synchronized boolean getDatabaseUpdateResult() throws InterruptedException, ExecutionException {
         return DATABASE_UPDATE_FUTURE != null ? DATABASE_UPDATE_FUTURE.get() : false;
     }
 
-    public static synchronized void scheduleLuceneAndSmartPlaylistUpdate(String[] trackIds) {
+    public synchronized void scheduleLuceneAndSmartPlaylistUpdate(String[] trackIds) {
         LUCENE_UPDATE_EXECUTOR.submit(new RefreshSmartPlaylistsAndLuceneIndexCallable(trackIds));
     }
 
-    public static synchronized void scheduleMyTunesRssComUpdate() {
+    public synchronized void scheduleMyTunesRssComUpdate() {
         MYTUNESRSSCOM_UPDATE_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(new MyTunesRssComUpdateRunnable(), 0, 5, TimeUnit.MINUTES);
     }
 
-    public static synchronized void cancelMyTunesRssComUpdate() {
+    public synchronized void cancelMyTunesRssComUpdate() {
         if (MYTUNESRSSCOM_UPDATE_FUTURE != null && !MYTUNESRSSCOM_UPDATE_FUTURE.isDone() && !MYTUNESRSSCOM_UPDATE_FUTURE.isCancelled()) {
             MYTUNESRSSCOM_UPDATE_FUTURE.cancel(true);
         }
     }
 
-    public static synchronized void scheduleExternalAddressUpdate() {
+    public synchronized void scheduleExternalAddressUpdate() {
         GENERAL_EXECUTOR.scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 1, TimeUnit.MINUTES);
     }
 
-    public static synchronized void scheduleUpdateCheck() {
+    public synchronized void scheduleUpdateCheck() {
         GENERAL_EXECUTOR.scheduleWithFixedDelay(new CheckUpdateRunnable(), 0, 1, TimeUnit.HOURS);
     }
 
-    public static synchronized void schedule(Runnable runnable, int delay, TimeUnit timeUnit) {
+    public synchronized void schedule(Runnable runnable, int delay, TimeUnit timeUnit) {
         GENERAL_EXECUTOR.schedule(runnable, delay, timeUnit);
     }
 }
