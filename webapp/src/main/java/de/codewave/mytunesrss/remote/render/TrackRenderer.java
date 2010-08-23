@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.remote.render;
 
+import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.UserAgent;
 import de.codewave.mytunesrss.command.HttpLiveStreamCommandHandler;
@@ -34,7 +35,7 @@ public class TrackRenderer implements Renderer<Map<String, Object>, Track> {
         result.put("trackNumber", track.getTrackNumber());
         result.put("tsPlayed", track.getTsPlayed());
         result.put("tsUpdated", track.getTsUpdated());
-        if (MyTunesRssWebUtils.getUserAgent(MyTunesRssRemoteEnv.getRequest()) == UserAgent.Iphone) {
+        if (MyTunesRssWebUtils.getUserAgent(MyTunesRssRemoteEnv.getRequest()) == UserAgent.Iphone && track.getMediaType() == MediaType.Video) {
             result.put("playbackUrl", MyTunesFunctions.httpLiveStreamUrl(MyTunesRssRemoteEnv.getRequest(), track, null));
         } else {
             result.put("playbackUrl", MyTunesFunctions.playbackUrl(MyTunesRssRemoteEnv.getRequest(), track, null));
