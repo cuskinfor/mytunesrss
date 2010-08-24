@@ -7,12 +7,12 @@
  */
 package de.codewave.mytunesrss;
 
-import java.util.concurrent.*;
-
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.mytunesrss.task.ForcedImageUpdateCallable;
 import de.codewave.mytunesrss.task.RecreateDatabaseCallable;
 import de.codewave.mytunesrss.task.RefreshSmartPlaylistsAndLuceneIndexCallable;
+
+import java.util.concurrent.*;
 
 public class MyTunesRssExecutorService {
 
@@ -66,7 +66,7 @@ public class MyTunesRssExecutorService {
     }
 
     public synchronized void scheduleMyTunesRssComUpdate() {
-        MYTUNESRSSCOM_UPDATE_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(new MyTunesRssComUpdateRunnable(), 0, 5, TimeUnit.MINUTES);
+        MYTUNESRSSCOM_UPDATE_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(new MyTunesRssComUpdateRunnable(), 0, 300, TimeUnit.SECONDS);
     }
 
     public synchronized void cancelMyTunesRssComUpdate() {
@@ -76,11 +76,11 @@ public class MyTunesRssExecutorService {
     }
 
     public synchronized void scheduleExternalAddressUpdate() {
-        GENERAL_EXECUTOR.scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 1, TimeUnit.MINUTES);
+        GENERAL_EXECUTOR.scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 60, TimeUnit.SECONDS);
     }
 
     public synchronized void scheduleUpdateCheck() {
-        GENERAL_EXECUTOR.scheduleWithFixedDelay(new CheckUpdateRunnable(), 0, 1, TimeUnit.HOURS);
+        GENERAL_EXECUTOR.scheduleWithFixedDelay(new CheckUpdateRunnable(), 0, 3600, TimeUnit.SECONDS);
     }
 
     public synchronized void schedule(Runnable runnable, int delay, TimeUnit timeUnit) {

@@ -9,6 +9,9 @@
 
         <release version="4.0.0-EAP-7" date="2010-xx-xx">
             <action dev="mdescher" type="remove">
+                [MYTUNESRSS-180] TimeUnit.MINUTES not available in JDK 1.5
+            </action>
+            <action dev="mdescher" type="remove">
                 [MYTUNESRSS-182] Button to stop a running database update
             </action>
             <action dev="mdescher" type="remove">
