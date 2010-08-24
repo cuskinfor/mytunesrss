@@ -261,7 +261,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             DataStoreSession session = MyTunesRss.STORE.getTransaction();
             List<Playlist> playlists = null;
             try {
-                playlists = session.executeQuery(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder, PlaylistType.M3uFile), null, null, true)).getResults();
+                playlists = session.executeQuery(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder, PlaylistType.M3uFile, PlaylistType.MyTunes, PlaylistType.MyTunesSmart), null, null, true)).getResults();
                 for (Playlist playlist : playlists) {
                     CheckBox restricted = new CheckBox();
                     restricted.setValue(myUser.getPlaylistIds().contains(playlist.getId()));
