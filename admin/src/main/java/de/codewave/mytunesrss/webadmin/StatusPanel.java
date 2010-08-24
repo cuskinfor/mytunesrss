@@ -49,6 +49,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private Table myConnections;
     private Button myUpdateDatabase;
     private Button myUpdateImages;
+    private Button myStopDatabaseUpdate;
     private Button myResetDatabase;
     private Button myServerConfig;
     private Button myDatabaseConfig;
@@ -135,9 +136,11 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             database.addComponent(databaseButtons);
             myUpdateDatabase = getApplication().getComponentFactory().createButton("statusPanel.database.update", StatusPanel.this);
             myUpdateImages = getApplication().getComponentFactory().createButton("statusPanel.database.imageUpdate", StatusPanel.this);
+            myStopDatabaseUpdate = getApplication().getComponentFactory().createButton("statusPanel.database.stopUpdate", StatusPanel.this);
             myResetDatabase = getApplication().getComponentFactory().createButton("statusPanel.database.reset", StatusPanel.this);
             databaseButtons.addComponent(myUpdateDatabase);
             databaseButtons.addComponent(myUpdateImages);
+            databaseButtons.addComponent(myStopDatabaseUpdate);
             databaseButtons.addComponent(myResetDatabase);
             Panel mytunesrss = new Panel(getApplication().getBundleString("statusPanel.mytunesrss.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
             addComponent(mytunesrss);
@@ -191,6 +194,10 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myRefresher.addListener(this);
             myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
             myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
+            myUpdateDatabase.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning());
+            myUpdateImages.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning());
+            myStopDatabaseUpdate.setEnabled(MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning());
+            myResetDatabase.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning());
         }
         refreshMyTunesRssComUpdateState();
         refreshMyTunesUpdateInfo();
@@ -238,16 +245,25 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         } else if (clickEvent.getSource() == myUpdateDatabase) {
             myUpdateDatabase.setEnabled(false);
             myUpdateImages.setEnabled(false);
+            myStopDatabaseUpdate.setEnabled(true);
             myResetDatabase.setEnabled(false);
             MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate();
         } else if (clickEvent.getSource() == myUpdateImages) {
             myUpdateDatabase.setEnabled(false);
             myUpdateImages.setEnabled(false);
+            myStopDatabaseUpdate.setEnabled(true);
             myResetDatabase.setEnabled(false);
             MyTunesRss.EXECUTOR_SERVICE.scheduleImageUpdate();
+        } else if (clickEvent.getSource() == myStopDatabaseUpdate) {
+            myUpdateDatabase.setEnabled(false);
+            myUpdateImages.setEnabled(false);
+            myStopDatabaseUpdate.setEnabled(false);
+            myResetDatabase.setEnabled(false);
+            MyTunesRss.EXECUTOR_SERVICE.cancelDatabaseJob();
         } else if (clickEvent.getSource() == myResetDatabase) {
             myUpdateDatabase.setEnabled(false);
             myUpdateImages.setEnabled(false);
+            myStopDatabaseUpdate.setEnabled(false);
             myResetDatabase.setEnabled(false);
             MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseReset();
         } else if (clickEvent.getSource() == myHelp) {
@@ -280,11 +296,13 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                 if (event.getType() == MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED) {
                     myUpdateDatabase.setEnabled(false);
                     myUpdateImages.setEnabled(false);
+                    myStopDatabaseUpdate.setEnabled(true);
                     myResetDatabase.setEnabled(false);
                     myDatabaseStatus.setValue(MyTunesRssUtils.getBundleString(getLocale(), event.getMessageKey(), event.getMessageParams()));
                 } else if (event.getType() == MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED) {
                     myUpdateDatabase.setEnabled(true);
                     myUpdateImages.setEnabled(true);
+                    myStopDatabaseUpdate.setEnabled(false);
                     myResetDatabase.setEnabled(true);
                     myDatabaseStatus.setValue(getLastDatabaseUpdateText());
                 } else if (event.getType() == MyTunesRssEvent.EventType.SERVER_STARTED) {
