@@ -34,14 +34,18 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
         MyTunesRssUtils.createStatement(connection, "createSearchTempTables").execute(); // create if not exists
         for (SmartPlaylist smartPlaylist : smartPlaylists) {
             try {
-                Collection<String> trackIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(smartPlaylist.getSmartInfo(), 0);
-                MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
-                if (!CollectionUtils.isEmpty(trackIds)) {
-                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
-                    statement.setObject("track_id", trackIds);
-                    statement.execute();
+                if (smartPlaylist.getSmartInfo().isLuceneCriteria()) {
+                    Collection<String> trackIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(smartPlaylist.getSmartInfo(), 0);
+                    MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
+                    if (!CollectionUtils.isEmpty(trackIds)) {
+                        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
+                        statement.setObject("track_id", trackIds);
+                        statement.execute();
+                    }
                 }
                 Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+                conditionals.put("lucene", smartPlaylist.getSmartInfo().isLuceneCriteria());
+                conditionals.put("nolucene", !smartPlaylist.getSmartInfo().isLuceneCriteria());
                 conditionals.put("mintime", smartPlaylist.getSmartInfo().getTimeMin() != null);
                 conditionals.put("maxtime", smartPlaylist.getSmartInfo().getTimeMax() != null);
                 conditionals.put("mediatype", smartPlaylist.getSmartInfo().getMediaType() != null);

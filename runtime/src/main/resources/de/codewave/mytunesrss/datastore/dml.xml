@@ -472,8 +472,9 @@
             INSERT INTO
                 link_track_playlist (playlist_id, track_id)
                 SELECT :id, t.id
-                FROM track t, temp_lucene_tracks tluc
-                WHERE t.id = tluc.track_id
+                FROM track t
+                <lucene>, temp_lucene_tracks tluc WHERE t.id = tluc.track_id</lucene>
+                <nolucene>WHERE t.id IS NOT NULL</nolucene>
                 <mintime>AND t.time >= :time_min</mintime>
                 <maxtime>AND t.time <= :time_max</maxtime>
                 <mediatype>AND t.mediatype = :mediatype</mediatype>

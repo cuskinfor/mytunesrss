@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MediaType;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.SmartInfo
@@ -104,5 +105,9 @@ public class SmartInfo {
 
     public void setMediaType(MediaType mediaType) {
         myMediaType = mediaType;
+    }
+
+    public boolean isLuceneCriteria() {
+        return StringUtils.isNotEmpty(myAlbumPattern) || StringUtils.isNotEmpty(myArtistPattern) || StringUtils.isNotEmpty(myCommentPattern) || StringUtils.isNotEmpty(myFilePattern) || StringUtils.isNotEmpty(myGenrePattern) || StringUtils.isNotEmpty(myTagPattern) || StringUtils.isNotEmpty(myTitlePattern);
     }
 }
