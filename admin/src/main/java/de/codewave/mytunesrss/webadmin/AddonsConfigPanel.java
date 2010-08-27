@@ -91,7 +91,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     }
 
     protected void initFromConfig() {
-        myFlashPlayers = MyTunesRss.CONFIG.getFlashPlayer();
+        myFlashPlayers = MyTunesRss.CONFIG.getFlashPlayers();
         refreshThemes();
         refreshLanguages();
         refreshExternalSites();

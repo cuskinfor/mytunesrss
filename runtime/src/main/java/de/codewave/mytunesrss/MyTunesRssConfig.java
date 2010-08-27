@@ -122,7 +122,7 @@ public class MyTunesRssConfig {
     private int myAdminPort;
     private boolean myStartAdminBrowser = true;
     private boolean myImportOriginalImageSize = false;
-    private Set<FlashPlayerConfig> myFlashPlayer = new HashSet<FlashPlayerConfig>();
+    private Set<FlashPlayerConfig> myFlashPlayers = new HashSet<FlashPlayerConfig>();
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -835,28 +835,25 @@ public class MyTunesRssConfig {
         myImportOriginalImageSize = importOriginalImageSize;
     }
 
-    public Set<FlashPlayerConfig> getFlashPlayer() {
-        return new HashSet<FlashPlayerConfig>(myFlashPlayer);
+    public Set<FlashPlayerConfig> getFlashPlayers() {
+        return new HashSet<FlashPlayerConfig>(myFlashPlayers);
     }
 
     public FlashPlayerConfig getFlashPlayer(String id) {
-        if (myFlashPlayer.isEmpty()) {
-            return FlashPlayerConfig.DUMMY;
-        }
-        for (FlashPlayerConfig flashPlayer : myFlashPlayer) {
+        for (FlashPlayerConfig flashPlayer : myFlashPlayers) {
             if (flashPlayer.getId().equals(id)) {
                 return flashPlayer;
             }
         }
-        return myFlashPlayer.iterator().next();
+        return null;
     }
 
     public void addFlashPlayer(FlashPlayerConfig flashPlayer) {
-        myFlashPlayer.add(flashPlayer);
+        myFlashPlayers.add(flashPlayer);
     }
 
     public void clearFlashPlayer() {
-        myFlashPlayer.clear();
+        myFlashPlayers.clear();
     }
 
     private String encryptCreationTime(long creationTime) {
@@ -1051,7 +1048,7 @@ public class MyTunesRssConfig {
             user.loadFromPreferences(userContext);
             addUser(user);
         }
-        myFlashPlayer.clear();
+        myFlashPlayers.clear();
         Iterator<JXPathContext> flashPlayerIterator = JXPathUtils.getContextIterator(settings, "flash-players/player");
         while (flashPlayerIterator.hasNext()) {
             JXPathContext flashPlayerContext = flashPlayerIterator.next();
@@ -1326,10 +1323,10 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "serverBrowserActive", isServerBrowserActive()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "qt64BitWarned", isQuicktime64BitWarned()));
             root.appendChild(myLdapConfig.createSettingsElement(settings));
-            if (!getFlashPlayer().isEmpty()) {
+            if (!getFlashPlayers().isEmpty()) {
                 Element flashPlayers = settings.createElement("flash-players");
                 root.appendChild(flashPlayers);
-                for (FlashPlayerConfig flashPlayerConfig : getFlashPlayer()) {
+                for (FlashPlayerConfig flashPlayerConfig : getFlashPlayers()) {
                     Element player = settings.createElement("player");
                     flashPlayers.appendChild(player);
                     player.appendChild(DOMUtils.createTextElement(settings, "id", flashPlayerConfig.getId()));

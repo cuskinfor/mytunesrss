@@ -344,7 +344,7 @@
                                     <input type="checkbox" name="showPlayer" value="true" <c:if test="${config.showPlayer}">checked="checked"</c:if> />
                                     <img src="${appUrl}/images/action-flash.png" alt="player" style="vertical-align:text-top;" />
                                     <select name="flashplayer">
-                                        <c:forEach items="${globalConfig.flashPlayer}" var="player">
+                                        <c:forEach items="${flashplayers}" var="player">
                                             <option value="${player.id}" <c:if test="${config.flashplayer eq player.id}">selected="selected"</c:if>><c:out value="${player.name}"/></option>
                                         </c:forEach>
                                     </select>
