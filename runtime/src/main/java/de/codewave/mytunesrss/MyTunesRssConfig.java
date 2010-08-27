@@ -122,6 +122,7 @@ public class MyTunesRssConfig {
     private int myAdminPort;
     private boolean myStartAdminBrowser = true;
     private boolean myImportOriginalImageSize = false;
+    private Set<FlashPlayerConfig> myFlashPlayer = new HashSet<FlashPlayerConfig>();
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -834,6 +835,18 @@ public class MyTunesRssConfig {
         myImportOriginalImageSize = importOriginalImageSize;
     }
 
+    public Set<FlashPlayerConfig> getFlashPlayer() {
+        return new HashSet<FlashPlayerConfig>(myFlashPlayer);
+    }
+
+    public void addFlashPlayer(FlashPlayerConfig flashPlayer) {
+        myFlashPlayer.add(flashPlayer);
+    }
+
+    public void clearFlashPlayer() {
+        myFlashPlayer.clear();
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1025,6 +1038,16 @@ public class MyTunesRssConfig {
             User user = new User(JXPathUtils.getStringValue(userContext, "name", null));
             user.loadFromPreferences(userContext);
             addUser(user);
+        }
+        myFlashPlayer.clear();
+        Iterator<JXPathContext> flashPlayerIterator = JXPathUtils.getContextIterator(settings, "flash-players/player");
+        while (flashPlayerIterator.hasNext()) {
+            JXPathContext flashPlayerContext = flashPlayerIterator.next();
+            FlashPlayerConfig flashPlayerConfig = new FlashPlayerConfig();
+            flashPlayerConfig.setId(JXPathUtils.getStringValue(flashPlayerContext, "id", UUID.randomUUID().toString()));
+            flashPlayerConfig.setName(JXPathUtils.getStringValue(flashPlayerContext, "name", "Unknown Flash Player"));
+            flashPlayerConfig.setHtml(new String(JXPathUtils.getByteArray(flashPlayerContext, "html", "<!-- missing flash player html -->".getBytes("UTF-8")), "UTF-8"));
+            addFlashPlayer(flashPlayerConfig);
         }
     }
 
@@ -1290,6 +1313,17 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "serverBrowserActive", isServerBrowserActive()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "qt64BitWarned", isQuicktime64BitWarned()));
             root.appendChild(myLdapConfig.createSettingsElement(settings));
+            if (!getFlashPlayer().isEmpty()) {
+                Element flashPlayers = settings.createElement("flash-players");
+                root.appendChild(flashPlayers);
+                for (FlashPlayerConfig flashPlayerConfig : getFlashPlayer()) {
+                    Element player = settings.createElement("player");
+                    flashPlayers.appendChild(player);
+                    player.appendChild(DOMUtils.createTextElement(settings, "id", flashPlayerConfig.getId()));
+                    player.appendChild(DOMUtils.createTextElement(settings, "name", flashPlayerConfig.getName()));
+                    player.appendChild(DOMUtils.createByteArrayElement(settings, "html", flashPlayerConfig.getHtml().getBytes("UTF-8")));
+                }
+            }
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
