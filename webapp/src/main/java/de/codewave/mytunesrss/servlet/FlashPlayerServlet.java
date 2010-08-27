@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss.servlet;
 
+import de.codewave.mytunesrss.FlashPlayerConfig;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import org.apache.commons.io.IOUtils;
@@ -33,7 +35,7 @@ public class FlashPlayerServlet extends HttpServlet {
             LOG.debug("Flash player file \"" + httpServletRequest.getPathInfo() + "\" requested.");
         }
         try {
-            File file = new File(MyTunesRssUtils.getPreferencesDataPath() + "/flashplayer/" + resourcePath);
+            File file = new File(MyTunesRssUtils.getPreferencesDataPath() + resourcePath);
             if (file.exists()) {
                 return file;
             }
@@ -50,14 +52,25 @@ public class FlashPlayerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-        File file = getFile(httpServletRequest);
-        String contentType = URLConnection.guessContentTypeFromName(file.getName());
-        httpServletResponse.setContentType(contentType);
-        int length = (int) file.length();
-        httpServletResponse.setContentLength(length);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending flash player file \"" + file.getAbsolutePath() + "\" with content-type \"" + contentType + "\" and length \"" + length + "\".");
+        String[] pathInfo = StringUtils.split(httpServletRequest.getPathInfo(), "/");
+        if (pathInfo.length == 1) {
+            FlashPlayerConfig playerConfig = MyTunesRss.CONFIG.getFlashPlayer(pathInfo[0]);
+            if (playerConfig == null) {
+                playerConfig = FlashPlayerConfig.getDefault(pathInfo[0]);
+            }
+            httpServletResponse.setContentType("text/html");
+            httpServletResponse.getWriter().println(playerConfig.getHtml().replace("{PLAYLIST_URL}", httpServletRequest.getParameter("url")));
+        } else {
+            File file = getFile(httpServletRequest);
+            String contentType = URLConnection.guessContentTypeFromName(file.getName());
+            httpServletResponse.setContentType(contentType);
+            int length = (int) file.length();
+            httpServletResponse.setContentLength(length);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending flash player file \"" + file.getAbsolutePath() + "\" with content-type \"" + contentType + "\" and length \"" + length + "\".");
+            }
+            IOUtils.copy(new FileInputStream(file), httpServletResponse.getOutputStream());
         }
-        IOUtils.copy(new FileReader(file), httpServletResponse.getWriter());
     }
+
 }

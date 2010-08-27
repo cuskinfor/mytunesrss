@@ -1,18 +1,29 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.ui.Form;
+import com.vaadin.ui.Upload;
+import de.codewave.mytunesrss.AddonsUtils;
 import de.codewave.mytunesrss.FlashPlayerConfig;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.io.ZipUtils;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
+import org.apache.commons.io.FileUtils;
 
-public class FlashPlayerEditPanel extends MyTunesRssConfigPanel {
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Upload.SucceededListener, Upload.FailedListener, Upload.Receiver {
 
     private AddonsConfigPanel myAddonsConfigPanel;
     private FlashPlayerConfig myFlashPlayerConfig;
     private Form myForm;
     private SmartTextField myName;
     private SmartTextField myHtml;
-    // TODO Upload for player files. Subdir with UUID? How to reference in HTML?
+    private Upload myUpload;
+    private File myUploadDir;
 
     public FlashPlayerEditPanel(AddonsConfigPanel addonsConfigPanel, FlashPlayerConfig flashPlayerConfig) {
         myAddonsConfigPanel = addonsConfigPanel;
@@ -20,7 +31,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel {
     }
 
     public void attach() {
-        init(null, getComponentFactory().createGridLayout(1, 2, true, true));
+        init(null, getComponentFactory().createGridLayout(1, 3, true, true));
 
         myForm = getComponentFactory().createForm(null, true);
         myName = getComponentFactory().createTextField("flashPlayerEditPanel.name");
@@ -30,10 +41,17 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel {
         setRequired(myHtml);
         myHtml.setRows(10);
         myForm.addField("html", myHtml);
+        myUpload = new Upload(null, this);
+        myUpload.setButtonCaption(getBundleString("flashPlayerEditPanel.upload"));
+        myUpload.setImmediate(true);
+        myUpload.addListener((Upload.SucceededListener) this);
+        myUpload.addListener((Upload.FailedListener) this);
 
         addComponent(getComponentFactory().surroundWithPanel(myForm, FORM_PANEL_MARGIN_INFO, getBundleString("flashPlayerEditPanel.caption.form")));
 
-        attach(0, 1, 0, 1);
+        addComponent(getComponentFactory().surroundWithPanel(myUpload, FORM_PANEL_MARGIN_INFO, getBundleString("flashPlayerEditPanel.caption.form")));
+
+        attach(0, 2, 0, 2);
 
         initFromConfig();
     }
@@ -54,9 +72,15 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel {
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myForm)) {
             getApplication().showError("error.formInvalid");
-        } else {
-            writeToConfig();
-            closeWindow();
+        } else try {
+            if (!myFlashPlayerConfig.getBaseDir().isDirectory()) {
+                getApplication().showError("flashPlayerEditPanel.error.missingFiles");
+            } else {
+                writeToConfig();
+                closeWindow();
+            }
+        } catch (IOException e) {
+            getApplication().showError("flashPlayerEditPanel.error.missingFiles");
         }
         return false; // make sure the default operation is not used
     }
@@ -69,5 +93,40 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel {
 
     private void closeWindow() {
         getWindow().getParent().getWindow().removeWindow(getWindow());
+    }
+
+    public void uploadFailed(Upload.FailedEvent event) {
+        FileUtils.deleteQuietly(myUploadDir);
+        getApplication().showError("flashPlayerEditPanel.error.uploadFailed");
+    }
+
+    public OutputStream receiveUpload(String filename, String MIMEType) {
+        try {
+            myUploadDir = new File(MyTunesRssUtils.getCacheDataPath() + "/flashplayer-upload");
+            if (!myUploadDir.isDirectory()) {
+                myUploadDir.mkdir();
+            }
+            return new FileOutputStream(new File(myUploadDir, filename));
+        } catch (IOException e) {
+            throw new RuntimeException("Could not receive upload.", e);
+        }
+    }
+
+    public void uploadSucceeded(Upload.SucceededEvent event) {
+        try {
+            File uploadFile = new File(myUploadDir, event.getFilename());
+            File targetDir = myFlashPlayerConfig.getBaseDir();
+            targetDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/flashplayer", myFlashPlayerConfig.getId());
+            targetDir.mkdirs();
+            if (event.getFilename().toLowerCase().endsWith(".zip")) {
+                if (!ZipUtils.unzip(uploadFile, targetDir)) {
+                    getApplication().showError("flashPlayerEditPanel.error.extractFailed");
+                }
+            } else {
+                FileUtils.copyFileToDirectory(uploadFile, targetDir);
+            }
+        } catch (IOException e) {
+            getApplication().showError("flashPlayerEditPanel.error.uploadFailed");
+        }
     }
 }

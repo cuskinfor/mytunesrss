@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,7 +9,7 @@ import java.util.Set;
  * Configuration for a flash player.
  */
 public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneable {
-    private static final FlashPlayerConfig DEFAULT = new FlashPlayerConfig("mytunesrss_jwmediaplayer", "JW Media Player 4.6", "<embed src=\"{SWF_BASE_URL}/mediaplayer-4-6.swf\" width=\"100%\" height=\"100%\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"file={PLAYLIST_URL}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list\"/>");
+    private static final FlashPlayerConfig DEFAULT = new FlashPlayerConfig("mytunesrss_jwmediaplayer", "JW Media Player 4.6", "<embed src=\"mediaplayer-4-6.swf\" width=\"100%\" height=\"100%\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"file={PLAYLIST_URL}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list\"/>");
 
     private static final Set<FlashPlayerConfig> DEFAULTS = new HashSet<FlashPlayerConfig>();
 
@@ -93,4 +95,9 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
     public Object clone() {
         return new FlashPlayerConfig(myId, myName, myHtml);
     }
+
+    public File getBaseDir() throws IOException {
+        return new File(MyTunesRssUtils.getPreferencesDataPath() + "/flashplayer", myId);
+    }
+
 }

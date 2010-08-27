@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.FlashPlayerConfig;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.StringUtils;
@@ -17,17 +18,11 @@ public class ShowJukeboxCommandHandler extends MyTunesRssCommandHandler {
         if (flashPlayerConfig == null) {
             flashPlayerConfig = FlashPlayerConfig.getDefault(id);
         }
-        getRequest().setAttribute("playerName", flashPlayerConfig.getName());
-        getRequest().setAttribute("playerHtml", flashPlayerConfig.getHtml().replace("{PLAYLIST_URL}", getPlaylistUrl()).replace("{SWF_BASE_URL}", getSwfBasePath(id)));
-        forward(MyTunesRssResource.Jukebox);
-    }
-
-    private String getSwfBasePath(String id) {
-        return getRequest().getAttribute("appUrl") + "/flashplayer/" + id;
+        redirect(MyTunesRssWebUtils.getApplicationUrl(getRequest()) + "/flashplayer/" + flashPlayerConfig.getId() + "/?url=" + MyTunesRssUtils.getUtf8UrlEncoded(getPlaylistUrl()));
     }
 
     private String getPlaylistUrl() {
-        StringBuilder playlistUrl = new StringBuilder((String) getRequest().getAttribute("servletUrl"));
+        StringBuilder playlistUrl = new StringBuilder(MyTunesRssWebUtils.getServletUrl(getRequest()));
         String auth = (String) getRequest().getAttribute("auth");
         if (StringUtils.isBlank(auth)) {
             auth = (String) getSession().getAttribute("auth");
