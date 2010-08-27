@@ -8,13 +8,11 @@ package de.codewave.mytunesrss.webadmin;
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.AddonsUtils;
-import de.codewave.mytunesrss.ExternalSiteDefinition;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.*;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
+import de.codewave.vaadin.component.SinglePanelWindow;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -31,16 +29,20 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private Panel myThemesPanel;
     private Panel myLanguagesPanel;
     private Panel mySitesPanel;
+    private Panel myFlashPlayersPanel;
     private Table myThemesTable;
     private Table myLanguagesTable;
     private Table mySitesTable;
+    private Table myFlashPlayersTable;
     private Upload myUploadTheme;
     private Upload myUploadLanguage;
     private Button myAddSite;
+    private Button myAddFlashPlayer;
     private File myUploadDir;
+    private Set<FlashPlayerConfig> myFlashPlayers;
 
     public void attach() {
-        init(getApplication().getBundleString("addonsConfigPanel.caption"), getApplication().getComponentFactory().createGridLayout(1, 4, true, true));
+        init(getApplication().getBundleString("addonsConfigPanel.caption"), getApplication().getComponentFactory().createGridLayout(1, 5, true, true));
         myThemesPanel = new Panel(getBundleString("addonsConfigPanel.caption.themes"), getComponentFactory().createVerticalLayout(true, true));
         myThemesTable = new Table();
         myThemesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.themes.name"), null, null);
@@ -72,24 +74,45 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         mySitesPanel.addComponent(mySitesTable);
         myAddSite = getComponentFactory().createButton("addonsConfigPanel.addSite", this);
         mySitesPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddSite));
-
+        myFlashPlayersPanel = new Panel(getBundleString("addonsConfigPanel.caption.flash"), getComponentFactory().createVerticalLayout(true, true));
+        myFlashPlayersTable = new Table();
+        myFlashPlayersTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.flash.name"), null, null);
+        myFlashPlayersTable.addContainerProperty("edit", Button.class, null, "", null, null);
+        myFlashPlayersTable.addContainerProperty("delete", Button.class, null, "", null, null);
+        myFlashPlayersPanel.addComponent(myFlashPlayersTable);
         addComponent(myThemesPanel);
         addComponent(myLanguagesPanel);
         addComponent(mySitesPanel);
+        addComponent(myFlashPlayersPanel);
 
-        attach(0, 3, 0, 3);
+        attach(0, 4, 0, 4);
 
         initFromConfig();
     }
 
     protected void initFromConfig() {
+        myFlashPlayers = MyTunesRss.CONFIG.getFlashPlayer();
         refreshThemes();
         refreshLanguages();
+        refreshExternalSites();
+        refreshFlashPlayers();
+        setTablePageLengths();
+    }
+
+    private void refreshExternalSites() {
         mySitesTable.removeAllItems();
         for (ExternalSiteDefinition site : MyTunesRss.CONFIG.getExternalSites()) {
             addSite(site);
         }
-        setTablePageLengths();
+    }
+
+    private void refreshFlashPlayers() {
+        myFlashPlayersTable.removeAllItems();
+        List<FlashPlayerConfig> flashPlayers = new ArrayList<FlashPlayerConfig>(myFlashPlayers);
+        Collections.sort(flashPlayers);
+        for (FlashPlayerConfig flashPlayer : flashPlayers) {
+            myFlashPlayersTable.addItem(new Object[]{flashPlayer.getName(), createTableRowButton("button.edit", this, flashPlayer.getId(), "EditPlayer"), createTableRowButton("button.delete", this, flashPlayer.getId(), "DeletePlayer")}, flashPlayer.getId());
+        }
     }
 
     private void refreshLanguages() {
@@ -142,6 +165,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myThemesTable.setPageLength(Math.min(myThemesTable.getItemIds().size(), 10));
         myLanguagesTable.setPageLength(Math.min(myLanguagesTable.getItemIds().size(), 10));
         mySitesTable.setPageLength(Math.min(mySitesTable.getItemIds().size(), 10));
+        myFlashPlayersTable.setPageLength(Math.min(myFlashPlayersTable.getItemIds().size(), 10));
     }
 
     protected void writeToConfig() {
@@ -165,28 +189,52 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() instanceof TableRowButton) {
             final TableRowButton tableRowButton = (TableRowButton) clickEvent.getSource();
-            final Button yes = new Button(getBundleString("button.yes"));
-            Button no = new Button(getBundleString("button.no"));
-            final String name = tableRowButton.getItem().getItemProperty("name").getValue().toString();
-            new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData().toString() + ".caption"), getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData().toString() + ".message", name), yes, no) {
-                public void clicked(Button button) {
-                    if (button == yes) {
-                        tableRowButton.deleteTableRow();
-                        if (tableRowButton.getData().toString().equals("DeleteTheme")) {
-                            AddonsUtils.deleteTheme(name);
-                        } else if (tableRowButton.getData().toString().equals("DeleteLanguage")) {
-                            AddonsUtils.deleteLanguage(name);
+            if ("EditPlayer".equals(tableRowButton.getData())) {
+                FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, (FlashPlayerConfig) getFlashPlayerConfig((String) tableRowButton.getItemId()).clone());
+                SinglePanelWindow flashPlayerEditWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("flashPlayerEditPanel.caption"), flashPlayerEditPanel);
+                flashPlayerEditWindow.show(getWindow());
+            } else {
+                final Button yes = new Button(getBundleString("button.yes"));
+                Button no = new Button(getBundleString("button.no"));
+                final String name = tableRowButton.getItem().getItemProperty("name").getValue().toString();
+                new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData().toString() + ".caption"), getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData().toString() + ".message", name), yes, no) {
+                    public void clicked(Button button) {
+                        if (button == yes) {
+                            tableRowButton.deleteTableRow();
+                            if (tableRowButton.getData().toString().equals("DeleteTheme")) {
+                                AddonsUtils.deleteTheme(name);
+                            } else if (tableRowButton.getData().toString().equals("DeleteLanguage")) {
+                                AddonsUtils.deleteLanguage(name);
+                            } else if (tableRowButton.getData().toString().equals("DeleteSite")) {
+                                mySitesTable.removeItem(tableRowButton.getItemId());
+                            } else if (tableRowButton.getData().toString().equals("DeletePlayer")) {
+                                myFlashPlayersTable.removeItem(tableRowButton.getItemId());
+                                myFlashPlayers.remove(new FlashPlayerConfig((String) tableRowButton.getItemId(), null, null));
+                            }
+                            setTablePageLengths();
                         }
-                        setTablePageLengths();
                     }
-                }
-            }.show(getApplication().getMainWindow());
+                }.show(getApplication().getMainWindow());
+            }
         } else if (clickEvent.getSource() == myAddSite) {
             addSite(new ExternalSiteDefinition("album", "new site", "http://"));
             setTablePageLengths();
+        } else if (clickEvent.getSource() == myAddFlashPlayer) {
+            FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, new FlashPlayerConfig(UUID.randomUUID().toString(), "", ""));
+            SinglePanelWindow flashPlayerEditWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("flashPlayerEditPanel.caption"), flashPlayerEditPanel);
+            flashPlayerEditWindow.show(getWindow());
         } else {
             super.buttonClick(clickEvent);
         }
+    }
+
+    private FlashPlayerConfig getFlashPlayerConfig(String itemId) {
+        for (FlashPlayerConfig flashPlayerConfig : myFlashPlayers) {
+            if (flashPlayerConfig.getId().equals(itemId)) {
+                return flashPlayerConfig;
+            }
+        }
+        return null;
     }
 
     public OutputStream receiveUpload(String filename, String mimeType) {
@@ -229,6 +277,11 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             }
         }
         FileUtils.deleteQuietly(myUploadDir);
+    }
+
+    void addOrUpdatePlayer(FlashPlayerConfig flashPlayerConfig) {
+        myFlashPlayers.remove(flashPlayerConfig);
+        myFlashPlayers.add(flashPlayerConfig);
     }
 
     public class SiteValidator extends AbstractStringValidator {
