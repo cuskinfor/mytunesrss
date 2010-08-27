@@ -839,6 +839,18 @@ public class MyTunesRssConfig {
         return new HashSet<FlashPlayerConfig>(myFlashPlayer);
     }
 
+    public FlashPlayerConfig getFlashPlayer(String id) {
+        if (myFlashPlayer.isEmpty()) {
+            return FlashPlayerConfig.DUMMY;
+        }
+        for (FlashPlayerConfig flashPlayer : myFlashPlayer) {
+            if (flashPlayer.getId().equals(id)) {
+                return flashPlayer;
+            }
+        }
+        return myFlashPlayer.iterator().next();
+    }
+
     public void addFlashPlayer(FlashPlayerConfig flashPlayer) {
         myFlashPlayer.add(flashPlayer);
     }
@@ -1043,10 +1055,11 @@ public class MyTunesRssConfig {
         Iterator<JXPathContext> flashPlayerIterator = JXPathUtils.getContextIterator(settings, "flash-players/player");
         while (flashPlayerIterator.hasNext()) {
             JXPathContext flashPlayerContext = flashPlayerIterator.next();
-            FlashPlayerConfig flashPlayerConfig = new FlashPlayerConfig();
-            flashPlayerConfig.setId(JXPathUtils.getStringValue(flashPlayerContext, "id", UUID.randomUUID().toString()));
-            flashPlayerConfig.setName(JXPathUtils.getStringValue(flashPlayerContext, "name", "Unknown Flash Player"));
-            flashPlayerConfig.setHtml(new String(JXPathUtils.getByteArray(flashPlayerContext, "html", "<!-- missing flash player html -->".getBytes("UTF-8")), "UTF-8"));
+            FlashPlayerConfig flashPlayerConfig = new FlashPlayerConfig(
+                    JXPathUtils.getStringValue(flashPlayerContext, "id", UUID.randomUUID().toString()),
+                    JXPathUtils.getStringValue(flashPlayerContext, "name", "Unknown Flash Player"),
+                    new String(JXPathUtils.getByteArray(flashPlayerContext, "html", "<!-- missing flash player html -->".getBytes("UTF-8")), "UTF-8")
+            );
             addFlashPlayer(flashPlayerConfig);
         }
     }

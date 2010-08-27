@@ -38,20 +38,20 @@
 <body class="settings">
 
     <div class="body">
-    
+
         <div class="head">
             <h1>
                 <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal" /></span></a>
                 <span><fmt:message key="myTunesRss" /></span>
             </h1>
         </div>
-        
+
         <div class="content">
-        
+
             <div class="content-inner">
-    
+
                 <jsp:include page="/incl_error.jsp" />
-            
+
                 <form action="${servletUrl}/saveSettings/${auth}" method="post" onsubmit="document.getElementById('yahooPlayerCheckbox').disabled=false;return true">
                     <table cellspacing="0" class="settings">
                         <tr>
@@ -343,12 +343,10 @@
                                 <td>
                                     <input type="checkbox" name="showPlayer" value="true" <c:if test="${config.showPlayer}">checked="checked"</c:if> />
                                     <img src="${appUrl}/images/action-flash.png" alt="player" style="vertical-align:text-top;" />
-                                    <!--<fmt:message key="settings.flashplayerType" />-->
-                                    <select name="flashplayerType">
-                                        <option value="jw" <c:if test="${config.flashplayerType eq 'jw'}">selected="selected"</c:if>><fmt:message key="flashplayer.jw"/></option>
-                                        <option value="jw43" <c:if test="${config.flashplayerType eq 'jw43'}">selected="selected"</c:if>><fmt:message key="flashplayer.jw43"/></option>
-                                        <option value="jw3" <c:if test="${config.flashplayerType eq 'jw3'}">selected="selected"</c:if>><fmt:message key="flashplayer.jw3"/></option>
-                                        <option value="xspf" <c:if test="${config.flashplayerType eq 'xspf'}">selected="selected"</c:if>><fmt:message key="flashplayer.xspf"/></option>
+                                    <select name="flashplayer">
+                                        <c:forEach items="${globalConfig.flashPlayer}" var="player">
+                                            <option value="${player.id}" <c:if test="${config.flashplayer eq player.id}">selected="selected"</c:if>><c:out value="${player.name}"/></option>
+                                        </c:forEach>
                                     </select>
                                 </td>
                             </tr>
@@ -396,15 +394,15 @@
                         <input type="button" value="<fmt:message key="doCancel"/>" onclick="document.location.href='${servletUrl}/showPortal/${auth}'" />
                     </div>
                 </form>
-                
+
             </div>
-            
+
         </div>
-        
+
         <div class="footer">
             <div class="inner"></div>
         </div>
-        
+
     </div>
 
 </body>

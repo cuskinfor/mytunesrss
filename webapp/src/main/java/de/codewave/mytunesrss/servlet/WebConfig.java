@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -42,7 +41,7 @@ public class WebConfig {
     private static final String CFG_PLAYLIST_TYPE = "playlistType";
     private static final String CFG_THEME = "theme";
     private static final String CFG_RANDOM_SOURCE = "rndSrc";
-    private static final String CFG_FLASH_PLAYER_TYPE = "flashplayerType";
+    private static final String CFG_FLASH_PLAYER = "flashplayer";
     private static final String CFG_YAHOO_MEDIAPLAYER = "yahooMediaPlayer";
     private static final String CFG_BROWSER_START_INDEX = "browserStartIndex";
     private static final String CFG_MYTUNESRSSCOM_ADDRESS = "myTunesRssComAddress";
@@ -62,7 +61,7 @@ public class WebConfig {
     private static final String[] VALID_NAMES = {CFG_USER_NAME, CFG_PASSWORD_HASH, CFG_LOGIN_STORED, CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE,
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
             CFG_PLAYLIST_TYPE, CFG_THEME, CFG_RANDOM_SOURCE,
-            CFG_FLASH_PLAYER_TYPE, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
+            CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
             CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS, CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS};
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
@@ -133,7 +132,6 @@ public class WebConfig {
         myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.M3u.name());
         myConfigValues.put(CFG_RANDOM_SOURCE, "");
-        myConfigValues.put(CFG_FLASH_PLAYER_TYPE, "jw");
         myConfigValues.put(CFG_YAHOO_MEDIAPLAYER, "false");
         myConfigValues.put(CFG_BROWSER_START_INDEX, "1");
         myConfigValues.put(CFG_MYTUNESRSSCOM_ADDRESS, "true");
@@ -171,7 +169,6 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "false");
         myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
-        myConfigValues.put(CFG_FLASH_PLAYER_TYPE, "jw3");
     }
 
     /**
@@ -443,12 +440,12 @@ public class WebConfig {
         myConfigValues.put(CFG_RANDOM_SOURCE, source);
     }
 
-    public String getFlashplayerType() {
-        return myConfigValues.get(CFG_FLASH_PLAYER_TYPE);
+    public String getFlashplayer() {
+        return myConfigValues.get(CFG_FLASH_PLAYER);
     }
 
-    public void setFlashplayerType(String type) {
-        myConfigValues.put(CFG_FLASH_PLAYER_TYPE, type);
+    public void setFlashplayer(String type) {
+        myConfigValues.put(CFG_FLASH_PLAYER, type);
     }
 
     public boolean isYahooMediaPlayer() {

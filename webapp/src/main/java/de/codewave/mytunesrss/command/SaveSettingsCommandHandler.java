@@ -45,7 +45,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setShowPlayer(getBooleanRequestParameter("showPlayer", false));
         webConfig.setTheme(getRequest().getParameter("theme"));
         webConfig.setRandomSource(getRequestParameter("randomSource", ""));
-        webConfig.setFlashplayerType(getRequestParameter("flashplayerType", "jw"));
+        webConfig.setFlashplayer(getRequestParameter("flashplayer", null));
         webConfig.setYahooMediaPlayer(getBooleanRequestParameter("showYahooMediaPlayer", false));
         webConfig.setBrowserStartIndex(getRequest().getParameter("browserStartIndex"));
         if (getAuthUser().isChangeEmail() && !StringUtils.equals(getAuthUser().getEmail(), getRequest().getParameter("email"))) {

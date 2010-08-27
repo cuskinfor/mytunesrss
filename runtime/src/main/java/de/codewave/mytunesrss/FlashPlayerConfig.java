@@ -4,6 +4,8 @@ package de.codewave.mytunesrss;
  * Configuration for a flash player.
  */
 public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneable {
+    public static final FlashPlayerConfig DUMMY = new FlashPlayerConfig("mytunesrss_jwmediaplayer", "JW Media Player", "<embed src=\"{SWF_BASE_URL}/mediaplayer-4-6.swf\" width=\"100%\" height=\"100%\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"file={PLAYLIST_URL}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list\"/>");
+
     private String myId;
     private String myName;
     private String myHtml;

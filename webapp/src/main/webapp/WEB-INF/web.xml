@@ -165,6 +165,12 @@
         <servlet-class>de.codewave.mytunesrss.servlet.ThemeServlet</servlet-class>
     </servlet>
     <servlet>
+        <description>Flash player resource retrieval servlet</description>
+        <display-name>FlashPlayerServlet</display-name>
+        <servlet-name>FlashPlayerServlet</servlet-name>
+        <servlet-class>de.codewave.mytunesrss.servlet.FlashPlayerServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>XmlRpcServlet</servlet-name>
         <servlet-class>de.codewave.mytunesrss.remote.MyTunesRssXmlRpcServlet</servlet-class>
         <init-param>
@@ -191,6 +197,10 @@
     <servlet-mapping>
         <servlet-name>ThemeServlet</servlet-name>
         <url-pattern>/images/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FlashPlayerServlet</servlet-name>
+        <url-pattern>/flashplayer/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>XmlRpcServlet</servlet-name>
