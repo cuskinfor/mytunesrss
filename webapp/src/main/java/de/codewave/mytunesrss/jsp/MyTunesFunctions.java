@@ -95,8 +95,17 @@ public class MyTunesFunctions {
     }
 
     public static String suffix(WebConfig config, User user, Track track) {
-        if (config != null && user != null && user.isTranscoder() && config.getTranscoder(track) != null) {
-            return config.getTranscoder(track).getTargetSuffix();
+        if (config != null && user != null) {
+            TranscoderConfig transcoderConfig = user.getForceTranscoder(track);
+            if (transcoderConfig != null) {
+                return transcoderConfig.getTargetSuffix();
+            }
+            if (user.isTranscoder()) {
+                transcoderConfig = config.getTranscoder(track);
+                if (transcoderConfig != null) {
+                    return transcoderConfig.getTargetSuffix();
+                }
+            }
         }
         return FilenameUtils.getExtension(track.getFile().getName());
     }
@@ -232,7 +241,6 @@ public class MyTunesFunctions {
         if (StringUtils.isNotBlank(tcParam)) {
             pathInfo.append("/tc=").append(tcParam);
         }
-        pathInfo.append("/playerRequest=").append(request.getParameter("playerRequest"));
         if (StringUtils.isNotBlank(extraPathInfo)) {
             pathInfo.append("/").append(extraPathInfo);
         }

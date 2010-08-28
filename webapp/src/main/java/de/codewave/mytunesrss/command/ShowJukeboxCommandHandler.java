@@ -28,7 +28,7 @@ public class ShowJukeboxCommandHandler extends MyTunesRssCommandHandler {
             auth = (String) getSession().getAttribute("auth");
         }
         playlistUrl.append("/").append(MyTunesRssCommand.CreatePlaylist.getName()).append("/").append(auth);
-        playlistUrl.append("/").append(MyTunesRssWebUtils.encryptPathInfo(getRequest(), getRequestParameter("playlistParams", null) + "/playerRequest=true/type=Xspf"));
+        playlistUrl.append("/").append(MyTunesRssWebUtils.encryptPathInfo(getRequest(), getRequestParameter("playlistParams", null) + "/type=Xspf"));
         return playlistUrl.toString();
     }
 }

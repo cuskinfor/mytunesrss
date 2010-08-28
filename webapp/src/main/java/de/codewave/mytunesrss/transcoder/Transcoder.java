@@ -7,16 +7,13 @@ import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.servlet.FileSender;
-import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.StreamSender;
 import org.apache.commons.io.IOUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
 
 /**
  * de.codewave.mytunesrss.transcoder.Transcoder
@@ -27,8 +24,8 @@ public class Transcoder {
     private boolean myActive;
     private TranscoderConfig myTranscoderConfig;
 
-    public static Transcoder createTranscoder(Track track, User user, WebConfig webConfig, HttpServletRequest request, boolean tempFile) {
-        TranscoderConfig transcoderConfig = user.getTranscoder(track);
+    public static Transcoder createTranscoder(Track track, User user, WebConfig webConfig, boolean tempFile) {
+        TranscoderConfig transcoderConfig = user.getForceTranscoder(track);
         Transcoder transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, tempFile) : null;
         if (transcoder == null) {
             transcoderConfig = webConfig.getTranscoder(track);

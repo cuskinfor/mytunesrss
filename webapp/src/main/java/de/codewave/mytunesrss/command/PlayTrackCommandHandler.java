@@ -90,11 +90,11 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
 
     protected Transcoder getTranscoder(Track track) {
         boolean notranscode = "true".equals(getRequestParameter("notranscode", "false"));
-        return getAuthUser().isForceTranscoders() || !notranscode ? Transcoder.createTranscoder(track, getAuthUser(), getWebConfig(), getRequest(), isTranscoderTempFile()) : null;
+        return getAuthUser().isForceTranscoders() || !notranscode ? Transcoder.createTranscoder(track, getAuthUser(), getWebConfig(), isTranscoderTempFile()) : null;
     }
 
     protected boolean isTranscoderTempFile() {
-        return (ServletUtils.isRangeRequest(getRequest()) || ServletUtils.isHeadRequest(getRequest())) && !"true".equalsIgnoreCase(getRequestParameter("playerRequest", "false"));
+        return ServletUtils.isRangeRequest(getRequest()) || ServletUtils.isHeadRequest(getRequest());
     }
 
     protected void handleBandwidthLimit(StreamSender streamSender, Track track) throws IOException {

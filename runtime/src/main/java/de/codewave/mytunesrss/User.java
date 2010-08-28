@@ -696,16 +696,14 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         }
     }
 
-    public TranscoderConfig getTranscoder(Track track) {
-        for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
-            if ((isActiveTranscoder(config.getName()) || getForceTranscoders().contains(config.getName())) && config.isValidFor(track.getFilename(), track.getMp4Codec())) {
-                return config;
+    public TranscoderConfig getForceTranscoder(Track track) {
+        if (isForceTranscoders()) {
+            for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+                if (getForceTranscoders().contains(config.getName()) && config.isValidFor(track.getFilename(), track.getMp4Codec())) {
+                    return config;
+                }
             }
         }
         return null;
-    }
-
-    public boolean isActiveTranscoder(String name) {
-        return myForceTranscoders != null && myForceTranscoders.contains(name);
     }
 }
