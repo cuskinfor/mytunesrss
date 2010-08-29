@@ -49,11 +49,7 @@ public class Transcoder {
     }
 
     public File getTranscodedFile() throws IOException {
-        File cacheDir = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache");
-        if (!cacheDir.exists()) {
-            cacheDir.mkdirs();
-        }
-        File file = File.createTempFile("mytunesrss_transcoded_", ".tmp", cacheDir);
+        File file = File.createTempFile("mytunesrss_", null, new File(MyTunesRssUtils.getCacheDataPath() + "/" + MyTunesRss.CACHEDIR_TRANSCODER));
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             InputStream inputStream = getStream();
@@ -70,7 +66,7 @@ public class Transcoder {
     public StreamSender getStreamSender() throws IOException {
         final String identifier = myTrack.getId() + "_" + getTranscoderId();
         if (myTempFile) {
-            File transcodedFile = MyTunesRss.STREAMING_CACHE.lock(identifier);
+            File transcodedFile = MyTunesRss.STREAMING_CACHE.lock(identifier).getFile();
             if (transcodedFile == null) {
                 transcodedFile = getTranscodedFile();
                 MyTunesRss.STREAMING_CACHE.add(identifier, transcodedFile, MyTunesRss.CONFIG.getStreamingCacheTimeout() * 60000);

@@ -2,8 +2,8 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.ui.Form;
 import com.vaadin.ui.Upload;
-import de.codewave.mytunesrss.AddonsUtils;
 import de.codewave.mytunesrss.FlashPlayerConfig;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.vaadin.SmartTextField;
@@ -17,13 +17,14 @@ import java.io.OutputStream;
 
 public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Upload.SucceededListener, Upload.FailedListener, Upload.Receiver {
 
+    private static final String PREFIX = "upload_flashplayer_";
+
     private AddonsConfigPanel myAddonsConfigPanel;
     private FlashPlayerConfig myFlashPlayerConfig;
     private Form myForm;
     private SmartTextField myName;
     private SmartTextField myHtml;
     private Upload myUpload;
-    private File myUploadDir;
 
     public FlashPlayerEditPanel(AddonsConfigPanel addonsConfigPanel, FlashPlayerConfig flashPlayerConfig) {
         myAddonsConfigPanel = addonsConfigPanel;
@@ -96,17 +97,21 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     }
 
     public void uploadFailed(Upload.FailedEvent event) {
-        FileUtils.deleteQuietly(myUploadDir);
         getApplication().showError("flashPlayerEditPanel.error.uploadFailed");
+        FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
+    }
+
+    private String getUploadDir() {
+        try {
+            return MyTunesRssUtils.getCacheDataPath() + "/" + MyTunesRss.CACHEDIR_TEMP;
+        } catch (IOException e) {
+            throw new RuntimeException("Could not get cache path.");
+        }
     }
 
     public OutputStream receiveUpload(String filename, String MIMEType) {
         try {
-            myUploadDir = new File(MyTunesRssUtils.getCacheDataPath() + "/flashplayer-upload");
-            if (!myUploadDir.isDirectory()) {
-                myUploadDir.mkdir();
-            }
-            return new FileOutputStream(new File(myUploadDir, filename));
+            return new FileOutputStream(new File(getUploadDir(), PREFIX + filename));
         } catch (IOException e) {
             throw new RuntimeException("Could not receive upload.", e);
         }
@@ -114,7 +119,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
 
     public void uploadSucceeded(Upload.SucceededEvent event) {
         try {
-            File uploadFile = new File(myUploadDir, event.getFilename());
+            File uploadFile = new File(getUploadDir(), event.getFilename());
             File targetDir = myFlashPlayerConfig.getBaseDir();
             targetDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/flashplayer", myFlashPlayerConfig.getId());
             targetDir.mkdirs();
@@ -127,6 +132,8 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
             }
         } catch (IOException e) {
             getApplication().showError("flashPlayerEditPanel.error.uploadFailed");
+        } finally {
+            FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
         }
     }
 }

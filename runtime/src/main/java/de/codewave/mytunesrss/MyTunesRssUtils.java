@@ -13,8 +13,6 @@ import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
@@ -43,6 +41,7 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -224,24 +223,22 @@ public class MyTunesRssUtils {
 
     public static void onShutdown() {
         if (MyTunesRss.STREAMING_CACHE != null) {
-            try {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Cleaning up streamig cache.");
-                }
-                File destinationFile = new File(MyTunesRssUtils.getCacheDataPath() + "/transcoder/cache.xml");
-                FileUtils.writeStringToFile(destinationFile, MyTunesRss.STREAMING_CACHE.getContent());
-            } catch (IOException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not write streaming cache contents, all files will be lost on next start.", e);
-                }
-                MyTunesRss.STREAMING_CACHE.clearCache();
-            }
-        }
-        if (MyTunesRss.ARCHIVE_CACHE != null) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Cleaning up archive cache.");
+                LOGGER.debug("Cleaning up streaming cache.");
             }
-            MyTunesRss.ARCHIVE_CACHE.clearCache();
+            MyTunesRss.STREAMING_CACHE.clearCache();
+        }
+        if (MyTunesRss.TEMP_CACHE != null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Cleaning up temp cache.");
+            }
+            MyTunesRss.TEMP_CACHE.clearCache();
+        }
+        if (MyTunesRss.HTTP_LIVE_STREAMING_CACHE != null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Cleaning up HTTP Live Streaming cache.");
+            }
+            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.clearCache();
         }
     }
 
@@ -371,7 +368,6 @@ public class MyTunesRssUtils {
         RandomAccessFile lockFile;
         try {
             File file = new File(MyTunesRssUtils.getCacheDataPath() + "/MyTunesRSS.lck");
-            file.deleteOnExit();
             lockFile = new RandomAccessFile(file, "rw");
         } catch (IOException e) {
             if (LOGGER.isErrorEnabled()) {
@@ -493,5 +489,21 @@ public class MyTunesRssUtils {
             }
         }
         return null;
+    }
+
+    public static File createTempFile(String suffix) throws IOException {
+        return createTempFile(suffix, 300000); // default timeout is 5 minutes
+    }
+
+    private static AtomicLong TEMP_FILE_COUNTER = new AtomicLong();
+
+    public static File createTempFile(String suffix, long timeout) throws IOException {
+        File tmpDir = new File(MyTunesRssUtils.getCacheDataPath(), MyTunesRss.CACHEDIR_TEMP);
+        if (!tmpDir.exists()) {
+            tmpDir.mkdirs();
+        }
+        File tmpFile = File.createTempFile("mytunesrss_", suffix, tmpDir);
+        MyTunesRss.TEMP_CACHE.add("tmp_" + TEMP_FILE_COUNTER.incrementAndGet(), tmpFile, timeout);
+        return tmpFile;
     }
 }

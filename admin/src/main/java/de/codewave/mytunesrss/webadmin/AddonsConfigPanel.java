@@ -30,6 +30,8 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
     private static final Logger LOG = LoggerFactory.getLogger(AddonsConfigPanel.class);
 
+    private static final String PREFIX = "upload_addon_";
+
     private Panel myThemesPanel;
     private Panel myLanguagesPanel;
     private Panel mySitesPanel;
@@ -42,7 +44,6 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private Upload myUploadLanguage;
     private Button myAddSite;
     private Button myAddFlashPlayer;
-    private File myUploadDir;
     private Set<FlashPlayerConfig> myFlashPlayers;
 
     public void attach() {
@@ -257,24 +258,20 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
     public OutputStream receiveUpload(String filename, String mimeType) {
         try {
-            myUploadDir = new File(MyTunesRssUtils.getCacheDataPath() + "/addon-upload");
-            if (!myUploadDir.isDirectory()) {
-                myUploadDir.mkdir();
-            }
-            return new FileOutputStream(new File(myUploadDir, filename));
+            return new FileOutputStream(new File(getUploadDir(), PREFIX + filename));
         } catch (IOException e) {
             throw new RuntimeException("Could not receive upload.", e);
         }
     }
 
     public void uploadFailed(Upload.FailedEvent event) {
-        FileUtils.deleteQuietly(myUploadDir);
         getApplication().showError("addonsConfigPanel.error.uploadFailed");
+        FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
     }
 
     public void uploadSucceeded(Upload.SucceededEvent event) {
         if (event.getSource() == myUploadTheme) {
-            AddonsUtils.AddFileResult result = AddonsUtils.addTheme(new File(myUploadDir, event.getFilename()));
+            AddonsUtils.AddFileResult result = AddonsUtils.addTheme(new File(getUploadDir(), PREFIX + event.getFilename()));
             if (result == AddonsUtils.AddFileResult.InvalidFile) {
                 getApplication().showError("addonsConfigPanel.error.invalidTheme");
             } else if (result == AddonsUtils.AddFileResult.ExtractFailed) {
@@ -284,7 +281,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 refreshThemes();
             }
         } else {
-            AddonsUtils.AddFileResult result = AddonsUtils.addLanguage(new File(myUploadDir, event.getFilename()));
+            AddonsUtils.AddFileResult result = AddonsUtils.addLanguage(new File(getUploadDir(), PREFIX + event.getFilename()));
             if (result == AddonsUtils.AddFileResult.InvalidFile) {
                 getApplication().showError("addonsConfigPanel.error.invalidLanguage");
             } else if (result == AddonsUtils.AddFileResult.ExtractFailed) {
@@ -294,7 +291,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 refreshLanguages();
             }
         }
-        FileUtils.deleteQuietly(myUploadDir);
+        FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
     }
 
     void addOrUpdatePlayer(FlashPlayerConfig flashPlayerConfig) {
@@ -327,6 +324,14 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 }
             }
             return true;
+        }
+    }
+
+    private String getUploadDir() {
+        try {
+            return MyTunesRssUtils.getCacheDataPath() + "/" + MyTunesRss.CACHEDIR_TEMP;
+        } catch (IOException e) {
+            throw new RuntimeException("Could not get cache path.");
         }
     }
 }

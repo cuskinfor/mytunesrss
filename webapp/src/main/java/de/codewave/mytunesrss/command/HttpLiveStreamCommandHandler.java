@@ -11,30 +11,27 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatement;
+import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class HttpLiveStreamCommandHandler extends PlayTrackCommandHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpLiveStreamCommandHandler.class);
-
-    public static ConcurrentHashMap<String, HttpLiveStreamingSegmenter> SEGMENTS = new ConcurrentHashMap<String, HttpLiveStreamingSegmenter>();
 
     @Override
     public void executeAuthorized() throws Exception {
@@ -49,7 +46,7 @@ public class HttpLiveStreamCommandHandler extends PlayTrackCommandHandler {
         } else {
             synchronized (HttpLiveStreamCommandHandler.class) {
                 String trackId = getRequest().getParameter("track");
-                if (SEGMENTS.containsKey(trackId)) {
+                if (MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(trackId) != null) {
                     sendPlaylistFile(trackId);
                 } else {
                     startSegmenter(trackId);
@@ -59,7 +56,7 @@ public class HttpLiveStreamCommandHandler extends PlayTrackCommandHandler {
         }
     }
 
-    private void startSegmenter(String key) throws SQLException, IOException {
+    private void startSegmenter(String cacheKey) throws SQLException, IOException {
         InputStream mediaStream = null;
         Track track = null;
         String trackId = getRequest().getParameter("track");
@@ -96,29 +93,51 @@ public class HttpLiveStreamCommandHandler extends PlayTrackCommandHandler {
             }
         }
         getTransaction().commit();
-        HttpLiveStreamingSegmenter httpLiveStreamingSegmenter = new HttpLiveStreamingSegmenter(mediaStream, MyTunesRssUtils.getCacheDataPath() + "/httplivestream", UUID.randomUUID().toString(), 10);
-        MyTunesRss.EXECUTOR_SERVICE.schedule(httpLiveStreamingSegmenter, 0, TimeUnit.MILLISECONDS);
-        HttpLiveStreamCommandHandler.SEGMENTS.put(key, httpLiveStreamingSegmenter);
+        String targetDir = MyTunesRssUtils.getCacheDataPath() + "/" + MyTunesRss.CACHEDIR_HTTPLIVESTREAMING;
+        if (new File(targetDir).isDirectory()) {
+            HttpLiveStreamingSegmenter httpLiveStreamingSegmenter = new HttpLiveStreamingSegmenter(mediaStream, targetDir, UUID.randomUUID().toString(), 10);
+            MyTunesRss.EXECUTOR_SERVICE.schedule(httpLiveStreamingSegmenter, 0, TimeUnit.MILLISECONDS);
+            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.add(new HttpLiveStreamingCacheItem(cacheKey, 300000, httpLiveStreamingSegmenter));
+        } else {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("HTTP Live Streaming directory \"" + targetDir + "\" did not exist and could not be created.");
+            }
+        }
     }
 
     private void sendSequenceFile(String filename) throws IOException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending HTTP Live Streaming file \"" + filename + "\".");
         }
-        File file = new File(MyTunesRssUtils.getCacheDataPath() + "/httplivestream/" + filename);
+        File file = new File(MyTunesRssUtils.getCacheDataPath() + "/" + MyTunesRss.CACHEDIR_HTTPLIVESTREAMING + "/" + filename);
         new FileSender(file, "video/MP2T", (int) file.length()).sendGetResponse(getRequest(), getResponse(), false);
     }
 
-    private void sendPlaylistFile(String uuid) throws IOException {
+    private void sendPlaylistFile(String trackId) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending HTTP Live Streaming playlist \"" + uuid + "\".");
+            LOG.debug("Sending HTTP Live Streaming playlist \"" + trackId + "\".");
         }
-        String playlistString = SEGMENTS.get(uuid).getPlaylist();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending m3u8 playlist: " + playlistString);
-        }
+        HttpLiveStreamingCacheItem liveStreamingCacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(trackId);
+        if (liveStreamingCacheItem != null) {
+            HttpLiveStreamingSegmenter segmenter = liveStreamingCacheItem.getSegmenter();
+            // wait for segemnter to finish or at least one file appear
+            while (!segmenter.isDone() && segmenter.getFiles().size() == 0) {
+                Thread.sleep(500);
+            }
+            if (!segmenter.isFailed()) {
+                String playlistString = segmenter.getPlaylist();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sending m3u8 playlist: " + playlistString);
+                }
 
-        byte[] playlist = playlistString.getBytes("ISO-8859-1");
-        new StreamSender(new ByteArrayInputStream(playlist), "application/x-mpegURL", playlist.length).sendGetResponse(getRequest(), getResponse(), false);
+                byte[] playlist = playlistString.getBytes("ISO-8859-1");
+                new StreamSender(new ByteArrayInputStream(playlist), "application/x-mpegURL", playlist.length).sendGetResponse(getRequest(), getResponse(), false);
+            } else {
+                MyTunesRss.HTTP_LIVE_STREAMING_CACHE.remove(trackId);
+                new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } else {
+            new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 }

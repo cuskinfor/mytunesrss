@@ -24,11 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import java.sql.SQLException;
@@ -62,7 +58,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 if (tracks.getResultSize() < 10000) {
                     fileIdentifier = calculateIdentifier(tracks);
                     LOGGER.debug("Archive file ID is \"" + fileIdentifier + "\".");
-                    cachedFile = MyTunesRss.ARCHIVE_CACHE.getFile(fileIdentifier);
+                    cachedFile = MyTunesRss.TEMP_CACHE.get(fileIdentifier).getFile();
                 } else {
                     LOGGER.debug("Result set has \"" + tracks.getResultSize() + "\" results which is too much for archive file ID generation.");
                 }
@@ -70,15 +66,14 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 try {
                     if (cachedFile == null || !cachedFile.isFile()) {
                         LOGGER.debug("No archive with ID \"" + fileIdentifier + "\" found in cache.");
-                        tempFile = File.createTempFile("mytunesrss_archive_", ".zip");
-                        tempFile.deleteOnExit();
+                        tempFile = File.createTempFile("mytunesrss_", ".zip", new File(MyTunesRssUtils.getCacheDataPath(), MyTunesRss.CACHEDIR_TEMP));
                         try {
                             createZipArchive(user, new FileOutputStream(tempFile), tracks, baseName, null);
                         } catch (Exception e) {
                             tempFile.delete();
                             throw e;
                         }
-                        MyTunesRss.ARCHIVE_CACHE.add(fileIdentifier, tempFile, ARCHIVE_CACHE_TIMEOUT); // TODO timeout from config?
+                        MyTunesRss.TEMP_CACHE.add(fileIdentifier, tempFile, ARCHIVE_CACHE_TIMEOUT); // TODO timeout from config?
                     } else {
                         LOGGER.debug("Using archive with ID \"" + fileIdentifier + "\" from cache.");
                     }

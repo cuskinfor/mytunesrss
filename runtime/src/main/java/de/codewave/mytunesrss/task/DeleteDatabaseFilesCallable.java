@@ -14,7 +14,7 @@ public class DeleteDatabaseFilesCallable implements Callable<Void> {
     public Void call() throws IOException {
         String filename = "h2";
         String pathname = MyTunesRssUtils.getCacheDataPath();
-        FileUtils.deleteDirectory(new File(pathname + "/" + filename));
+        FileUtils.deleteQuietly(new File(pathname + "/" + filename));
         return null;
     }
 }

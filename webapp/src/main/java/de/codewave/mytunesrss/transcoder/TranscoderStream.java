@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.transcoder;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.FindTrackImageQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -104,8 +105,7 @@ public class TranscoderStream extends InputStream {
 
     private void replaceImageToken(Track track, String[] command, int i) {
         try {
-            myImageFile = File.createTempFile("mytunesrss_img_", ".jpg");
-            myImageFile.deleteOnExit();
+            myImageFile = MyTunesRssUtils.createTempFile("jpg");
             DataStoreSession transaction = MyTunesRss.STORE.getTransaction();
             byte[] data = new byte[0];
             try {
