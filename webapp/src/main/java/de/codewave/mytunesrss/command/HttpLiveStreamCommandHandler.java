@@ -17,7 +17,6 @@ import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

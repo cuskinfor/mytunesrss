@@ -8,6 +8,15 @@
             <param name="ConversionPattern" value="%d [%t] %-5p %c - %m%n"/>
         </layout>
     </appender>
+    <logger name="avformat">
+        <level value="debug"/>
+    </logger>
+    <logger name="avcodec">
+        <level value="debug"/>
+    </logger>
+    <logger name="avutil">
+        <level value="debug"/>
+    </logger>
     <root>
         <level value="error"/>
         <appender-ref ref="console"/>
