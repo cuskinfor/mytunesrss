@@ -55,7 +55,7 @@ public class HttpLiveStreamCommandHandler extends PlayTrackCommandHandler {
         }
     }
 
-    private void startSegmenter(String cacheKey) throws SQLException, IOException {
+    private void startSegmenter(final String cacheKey) throws SQLException, IOException {
         InputStream mediaStream = null;
         Track track = null;
         String trackId = getRequest().getParameter("track");
@@ -94,9 +94,19 @@ public class HttpLiveStreamCommandHandler extends PlayTrackCommandHandler {
         getTransaction().commit();
         String targetDir = MyTunesRssUtils.getCacheDataPath() + "/" + MyTunesRss.CACHEDIR_HTTPLIVESTREAMING;
         if (new File(targetDir).isDirectory()) {
-            HttpLiveStreamingSegmenter httpLiveStreamingSegmenter = new HttpLiveStreamingSegmenter(mediaStream, targetDir, UUID.randomUUID().toString(), 10);
-            MyTunesRss.EXECUTOR_SERVICE.schedule(httpLiveStreamingSegmenter, 0, TimeUnit.MILLISECONDS);
-            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.add(new HttpLiveStreamingCacheItem(cacheKey, 300000, httpLiveStreamingSegmenter));
+            final HttpLiveStreamingSegmenter httpLiveStreamingSegmenter = new HttpLiveStreamingSegmenter(mediaStream, targetDir, UUID.randomUUID().toString(), 10);
+            MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
+                public void run() {
+                    try {
+                        httpLiveStreamingSegmenter.run();
+                    } finally {
+                        if (httpLiveStreamingSegmenter.isFailed()) {
+                            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.remove(cacheKey);
+                        }
+                    }
+                }
+            }, 0, TimeUnit.MILLISECONDS);
+            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.add(new HttpLiveStreamingCacheItem(cacheKey, 3600000, httpLiveStreamingSegmenter));
         } else {
             if (LOG.isErrorEnabled()) {
                 LOG.error("HTTP Live Streaming directory \"" + targetDir + "\" did not exist and could not be created.");
