@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -37,11 +36,10 @@ public class HttpLiveStreamCommandHandler extends PlayTrackCommandHandler {
         if (LOG.isDebugEnabled()) {
             LOG.debug(ServletUtils.getRequestInfo(getRequest()));
         }
-        String pathInfo = getRequest().getPathInfo();
-        int lastSlash = StringUtils.lastIndexOf(pathInfo, '/');
-        String filename = StringUtils.substring(pathInfo, lastSlash + 1);
-        if (filename.toLowerCase(Locale.US).endsWith(".ts")) {
-            sendSequenceFile(filename);
+        String[] pathInfo = StringUtils.split(getRequest().getPathInfo(), "/");
+        if (pathInfo.length >= 2 && StringUtils.endsWithIgnoreCase(pathInfo[pathInfo.length - 1], ".ts")) {
+            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(pathInfo[pathInfo.length - 2]);
+            sendSequenceFile(pathInfo[pathInfo.length - 1]);
         } else {
             synchronized (HttpLiveStreamCommandHandler.class) {
                 String trackId = getRequest().getParameter("track");
@@ -134,7 +132,7 @@ public class HttpLiveStreamCommandHandler extends PlayTrackCommandHandler {
                 Thread.sleep(500);
             }
             if (!segmenter.isFailed()) {
-                String playlistString = segmenter.getPlaylist();
+                String playlistString = segmenter.getPlaylist(trackId + "/{FILENAME}");
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Sending m3u8 playlist: " + playlistString);
                 }

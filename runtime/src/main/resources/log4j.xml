@@ -9,13 +9,13 @@
         </layout>
     </appender>
     <logger name="avformat">
-        <level value="debug"/>
+        <level value="warn"/>
     </logger>
     <logger name="avcodec">
-        <level value="debug"/>
+        <level value="warn"/>
     </logger>
     <logger name="avutil">
-        <level value="debug"/>
+        <level value="warn"/>
     </logger>
     <root>
         <level value="error"/>
