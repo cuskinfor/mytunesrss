@@ -8,7 +8,6 @@ import de.codewave.camel.mp3.Id3Tag;
 import de.codewave.camel.mp3.Id3v2Tag;
 import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.camel.mp3.exception.IllegalHeaderException;
-import de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -25,9 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.sql.SQLException;
-import java.util.UUID;
-import java.util.concurrent.Executors;
 
 /**
  * de.codewave.mytunesrss.command.PlayTrackCommandHandler

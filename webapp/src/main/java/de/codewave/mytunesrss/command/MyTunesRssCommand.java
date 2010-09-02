@@ -46,7 +46,6 @@ public enum MyTunesRssCommand implements Command {
     KeepSessionAlive("keepSessionAlive", KeepSessionAliveCommandHandler.class),
     Upload("upload", UploadCommandHandler.class),
     GetTagsForAutocomplete("getTagsForAutocomplete", GetTagsForAutocompleteCommandHandler.class),
-    HttpLiveStream("httpLiveStream", HttpLiveStreamCommandHandler.class),
     OpenSearch("openSearch", OpenSearchCommandHandler.class);
 
     private String myName;

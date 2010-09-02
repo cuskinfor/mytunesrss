@@ -234,12 +234,6 @@ public class MyTunesRssUtils {
             }
             MyTunesRss.TEMP_CACHE.clearCache();
         }
-        if (MyTunesRss.HTTP_LIVE_STREAMING_CACHE != null) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Cleaning up HTTP Live Streaming cache.");
-            }
-            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.clearCache();
-        }
     }
 
     private static final double KBYTE = 1024;
