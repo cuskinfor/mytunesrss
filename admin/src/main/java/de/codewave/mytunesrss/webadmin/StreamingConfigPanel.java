@@ -32,6 +32,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private Form myHttpLiveStreamingForm;
     private SmartTextField myHttpLiveStreamingBinary;
     private Button mySelectHttpLiveStreamingBinary;
+    private SmartTextField myHttpLiveStreamingOptions;
     private Form myCacheForm;
     private Button myAddTranscoder;
     private SmartTextField myStreamingCacheTimeout;
@@ -56,6 +57,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myHttpLiveStreamingForm = getComponentFactory().createForm(null, true);
         myHttpLiveStreamingBinary = getComponentFactory().createTextField("streamingConfigPanel.httpLiveStreaming.binary", new FileValidator(getBundleString("streamingConfigPanel.error.invalidBinary", null), FileValidator.PATTERN_ALL, FileValidator.PATTERN_ALL));
         mySelectHttpLiveStreamingBinary = getComponentFactory().createButton("streamingConfigPanel.httpLiveStreaming.selectBinary", this);
+        myHttpLiveStreamingOptions = getComponentFactory().createTextField("streamingConfigPanel.httpLiveStreaming.options");
         myHttpLiveStreamingForm.addField("binary", myHttpLiveStreamingBinary);
         myHttpLiveStreamingForm.addField("select", mySelectHttpLiveStreamingBinary);
         addComponent(getComponentFactory().surroundWithPanel(myHttpLiveStreamingForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.httpLiveStreaming")));
@@ -117,6 +119,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             form.getField("options").setValue(config.getOptions());
         }
         myHttpLiveStreamingBinary.setValue(MyTunesRss.CONFIG.getHttpLiveStreamingBinary());
+        myHttpLiveStreamingOptions.setValue(MyTunesRss.CONFIG.getHttpLiveStreamingOptions());
         myStreamingCacheTimeout.setValue(MyTunesRss.CONFIG.getStreamingCacheTimeout(), 0, 1440, "0");
         myStreamingCacheMaxFiles.setValue(MyTunesRss.CONFIG.getStreamingCacheMaxFiles(), 0, 10000, "0");
     }
@@ -138,6 +141,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             configs.add(conf);
         }
         MyTunesRss.CONFIG.setHttpLiveStreamingBinary(myHttpLiveStreamingBinary.getStringValue(null));
+        MyTunesRss.CONFIG.setHttpLiveStreamingOptions(myHttpLiveStreamingOptions.getStringValue(null));
         MyTunesRss.CONFIG.setStreamingCacheTimeout(myStreamingCacheTimeout.getIntegerValue(0));
         MyTunesRss.CONFIG.setStreamingCacheMaxFiles(myStreamingCacheMaxFiles.getIntegerValue(0));
         MyTunesRss.CONFIG.save();

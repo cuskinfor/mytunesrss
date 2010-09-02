@@ -7,6 +7,7 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.desktop.DesktopWrapper;
 import de.codewave.mytunesrss.desktop.DesktopWrapperFactory;
+import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.mytunesrss.quicktime.QuicktimePlayer;
@@ -18,6 +19,7 @@ import de.codewave.mytunesrss.task.InitializeDatabaseCallable;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
+import de.codewave.utils.io.ExpiringCache;
 import de.codewave.utils.io.FileCache;
 import de.codewave.utils.maven.MavenUtils;
 import org.apache.commons.io.FileUtils;
@@ -69,6 +71,7 @@ public class MyTunesRss {
     // Cache directory names
     public static final String CACHEDIR_TEMP = "tmp";
     public static final String CACHEDIR_TRANSCODER = "transcoder";
+    public static final String CACHEDIR_HTTP_LIVE_STREAMING = "http_live_streaming";
 
     public static final String APPLICATION_IDENTIFIER = "MyTunesRSS4";
     public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS3"};
@@ -89,6 +92,7 @@ public class MyTunesRss {
     public static boolean QUIT_REQUEST;
     public static FileCache STREAMING_CACHE;
     public static FileCache TEMP_CACHE;
+    public static ExpiringCache<HttpLiveStreamingCacheItem> HTTP_LIVE_STREAMING_CACHE;
     public static Scheduler QUARTZ_SCHEDULER;
     public static MailSender MAILER = new MailSender();
     public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
@@ -153,15 +157,20 @@ public class MyTunesRss {
     private static void prepareCacheDirs() throws IOException {
         File tempDir = new File(MyTunesRssUtils.getCacheDataPath(), CACHEDIR_TEMP);
         File transcoderDir = new File(MyTunesRssUtils.getCacheDataPath(), CACHEDIR_TRANSCODER);
+        File httpLiveStreamingDir = new File(MyTunesRssUtils.getCacheDataPath(), CACHEDIR_HTTP_LIVE_STREAMING);
 
         FileUtils.deleteQuietly(tempDir);
         FileUtils.deleteQuietly(transcoderDir);
+        FileUtils.deleteQuietly(httpLiveStreamingDir);
 
         if (!tempDir.exists()) {
             tempDir.mkdirs();
         }
         if (!transcoderDir.exists()) {
             transcoderDir.mkdirs();
+        }
+        if (!httpLiveStreamingDir.exists()) {
+            httpLiveStreamingDir.mkdirs();
         }
 
     }
@@ -301,6 +310,7 @@ public class MyTunesRss {
     private static void initializeCaches() throws IOException {
         STREAMING_CACHE = new FileCache(APPLICATION_IDENTIFIER + "_Streaming", 10000, CONFIG.getStreamingCacheMaxFiles());
         TEMP_CACHE = new FileCache(APPLICATION_IDENTIFIER + "_Temp", 10000, 10000); // TODO max size config?
+        HTTP_LIVE_STREAMING_CACHE = new ExpiringCache(APPLICATION_IDENTIFIER + "_HttpLiveStreaming", 10000, 10000); // TODO max size config?
     }
 
     private static void startQuartzScheduler() throws SchedulerException {
