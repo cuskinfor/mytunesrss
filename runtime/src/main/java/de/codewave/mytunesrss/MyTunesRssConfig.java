@@ -123,6 +123,7 @@ public class MyTunesRssConfig {
     private boolean myStartAdminBrowser = true;
     private boolean myImportOriginalImageSize = false;
     private Set<FlashPlayerConfig> myFlashPlayers = new HashSet<FlashPlayerConfig>();
+    private String myHttpLiveStreamingBinary;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -856,6 +857,14 @@ public class MyTunesRssConfig {
         myFlashPlayers.clear();
     }
 
+    public String getHttpLiveStreamingBinary() {
+        return myHttpLiveStreamingBinary;
+    }
+
+    public void setHttpLiveStreamingBinary(String httpLiveStreamingBinary) {
+        myHttpLiveStreamingBinary = httpLiveStreamingBinary;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1059,6 +1068,7 @@ public class MyTunesRssConfig {
             );
             addFlashPlayer(flashPlayerConfig);
         }
+        myHttpLiveStreamingBinary = JXPathUtils.getStringValue(settings, "httpLiveStreamingBinary", null);
     }
 
     private void readDataSources(JXPathContext settings) {
@@ -1334,6 +1344,7 @@ public class MyTunesRssConfig {
                     player.appendChild(DOMUtils.createByteArrayElement(settings, "html", flashPlayerConfig.getHtml().getBytes("UTF-8")));
                 }
             }
+            root.appendChild(DOMUtils.createTextElement(settings, "httpLiveStreamingBinary", getHttpLiveStreamingBinary()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

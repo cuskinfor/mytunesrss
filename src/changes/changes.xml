@@ -8,25 +8,31 @@
     <body>
 
         <release version="4.0.0-EAP-7" date="2010-08-28">
-            <action dev="mdescher" type="remove">
+            <action dev="mdescher" type="add">
+                Added configuration for an HTTP live streaming binary in the streaming config panel.
+            </action>
+        </release>
+
+        <release version="4.0.0-EAP-7" date="2010-08-28">
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-188] Force transcoders not working correctly (original suffix?)
             </action>
-            <action dev="mdescher" type="remove">
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-157] Freely configurable Flash players
             </action>
-            <action dev="mdescher" type="remove">
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-177] [file info page] error downloading original file
             </action>
-            <action dev="mdescher" type="remove">
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-178] Smart playlist problem?
             </action>
-            <action dev="mdescher" type="remove">
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-181] Restriction playlists must include all playlists
             </action>
-            <action dev="mdescher" type="remove">
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-180] TimeUnit.MINUTES not available in JDK 1.5
             </action>
-            <action dev="mdescher" type="remove">
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-182] Button to stop a running database update
             </action>
             <action dev="mdescher" type="remove">
