@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.servlet.WebConfig;
+import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.servlet.ServletUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -15,6 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -289,6 +293,21 @@ public class MyTunesRssWebUtils {
         } else {
             // save in cookie
             webConfig.save(request, response);
+        }
+    }
+
+    public static Transcoder getTranscoder(HttpServletRequest request, Track track) {
+        boolean notranscode = "true".equals(request.getParameter("notranscode"));
+        boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
+        return getAuthUser(request).isForceTranscoders() || !notranscode ? Transcoder.createTranscoder(track, getAuthUser(request), getWebConfig(request), tempFile) : null;
+    }
+
+    public static InputStream getMediaStream(HttpServletRequest request, Track track) throws IOException {
+        Transcoder transcoder = getTranscoder(request, track);
+        if (transcoder != null) {
+            return transcoder.getStream();
+        } else {
+            return new FileInputStream(track.getFile());
         }
     }
 }

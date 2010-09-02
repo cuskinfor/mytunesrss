@@ -220,6 +220,34 @@ public class MyTunesFunctions {
         return StringUtils.isBlank(MyTunesRssWebUtils.getCookieLanguage(request)) ? (requestFallback ? pageContext.getRequest().getLocale() : null) : new Locale(MyTunesRssWebUtils.getCookieLanguage(request));
     }
 
+    public static String httpLiveStreamUrl(PageContext pageContext, Track track, String extraPathInfo) {
+        return httpLiveStreamUrl((HttpServletRequest) pageContext.getRequest(), track, extraPathInfo);
+    }
+
+    public static String httpLiveStreamUrl(HttpServletRequest request, Track track, String extraPathInfo) {
+        MyTunesRssCommand command = MyTunesRssCommand.HttpLiveStream;
+        HttpSession session = request.getSession();
+        StringBuilder builder = new StringBuilder((String) request.getAttribute("downloadPlaybackServletUrl"));
+        String auth = (String) request.getAttribute("auth");
+        if (StringUtils.isBlank(auth)) {
+            auth = (String) session.getAttribute("auth");
+        }
+        builder.append("/").append(command.getName()).append("/").append(auth);
+        StringBuilder pathInfo = new StringBuilder("track=");
+        pathInfo.append(MyTunesRssUtils.getUtf8UrlEncoded(track.getId()));
+        User user = MyTunesRssWebUtils.getAuthUser(request);
+        String tcParam = tcParamValue(request, user);
+        if (StringUtils.isNotBlank(tcParam)) {
+            pathInfo.append("/tc=").append(tcParam);
+        }
+        if (StringUtils.isNotBlank(extraPathInfo)) {
+            pathInfo.append("/").append(extraPathInfo);
+        }
+        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
+        builder.append("/").append(virtualTrackName(track)).append(".m3u8");
+        return builder.toString();
+    }
+
     public static String playbackUrl(PageContext pageContext, Track track, String extraPathInfo) {
         return playbackUrl((HttpServletRequest) pageContext.getRequest(), track, extraPathInfo);
     }

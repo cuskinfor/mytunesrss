@@ -15,6 +15,7 @@ import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatemen
 import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.servlet.*;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,11 @@ import java.net.MalformedURLException;
  */
 public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(PlayTrackCommandHandler.class);
+
+    @Override
+    protected DataStoreSession getTransaction() {
+        return super.getTransaction();    //To change body of overridden methods use File | Settings | File Templates.
+    }
 
     @Override
     public void executeAuthorized() throws Exception {
@@ -52,7 +58,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                     MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
                     streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                 } else {
-                    Transcoder transcoder = getTranscoder(track);
+                    Transcoder transcoder = MyTunesRssWebUtils.getTranscoder(getRequest(), track);
                     if (transcoder != null) {
                         streamSender = transcoder.getStreamSender();
                     } else {
@@ -82,15 +88,6 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             handleBandwidthLimit(streamSender, track);
             sendGetResponse(streamSender);
         }
-    }
-
-    protected Transcoder getTranscoder(Track track) {
-        boolean notranscode = "true".equals(getRequestParameter("notranscode", "false"));
-        return getAuthUser().isForceTranscoders() || !notranscode ? Transcoder.createTranscoder(track, getAuthUser(), getWebConfig(), isTranscoderTempFile()) : null;
-    }
-
-    protected boolean isTranscoderTempFile() {
-        return ServletUtils.isRangeRequest(getRequest()) || ServletUtils.isHeadRequest(getRequest());
     }
 
     protected void handleBandwidthLimit(StreamSender streamSender, Track track) throws IOException {

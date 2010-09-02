@@ -5,15 +5,14 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.MediaType;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssSendCounter;
-import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatement;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
+import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.io.LogStreamCopyThread;
+import de.codewave.utils.io.StreamCopyThread;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -23,10 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
@@ -66,8 +62,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         if (cacheItem == null) {
             getResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "media file not found");
         } else {
-            File basedir = new File(MyTunesRssUtils.getCacheDataPath(), MyTunesRss.CACHEDIR_HTTP_LIVE_STREAMING);
-            File mediaFile = new File(basedir, filename);
+            File mediaFile = new File(getBaseDir(), filename);
             if (mediaFile.isFile()) {
                 if (getAuthUser().isQuotaExceeded()) {
                     getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -82,6 +77,14 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
+    private File getBaseDir() {
+        try {
+            return new File(MyTunesRssUtils.getCacheDataPath(), MyTunesRss.CACHEDIR_HTTP_LIVE_STREAMING);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not get cache data path.");
+        }
+    }
+
     private void sendPlaylist(String trackId) throws SQLException, IOException {
         HttpLiveStreamingCacheItem cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(trackId);
         if (cacheItem == null) {
@@ -90,7 +93,8 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                 Track track = tracks.nextResult();
                 if (track.getMediaType() == MediaType.Video) {
                     cacheItem = new HttpLiveStreamingCacheItem(trackId, 3600000); // TODO: timeout configuration?
-                    MyTunesRss.EXECUTOR_SERVICE.schedule(new HttpLiveStreamingSegmenterRunnable(cacheItem, trackId), 0, TimeUnit.MILLISECONDS);
+                    InputStream mediaStream = MyTunesRssWebUtils.getMediaStream(getRequest(), track);
+                    MyTunesRss.EXECUTOR_SERVICE.schedule(new HttpLiveStreamingSegmenterRunnable(cacheItem, mediaStream), 0, TimeUnit.MILLISECONDS);
                     MyTunesRss.HTTP_LIVE_STREAMING_CACHE.add(cacheItem);
                     getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
                     getAuthUser().playLastFmTrack(track);
@@ -122,45 +126,71 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    public static class HttpLiveStreamingSegmenterRunnable implements Runnable {
+    public class HttpLiveStreamingSegmenterRunnable implements Runnable {
 
         private HttpLiveStreamingCacheItem myCacheItem;
 
-        private String myFile;
+        private InputStream myStream;
 
-        public HttpLiveStreamingSegmenterRunnable(HttpLiveStreamingCacheItem cacheItem, String file) {
+        public HttpLiveStreamingSegmenterRunnable(HttpLiveStreamingCacheItem cacheItem, InputStream stream) {
             myCacheItem = cacheItem;
-            myFile = file;
+            myStream = stream;
         }
 
         public void run() {
-            String liveStreamingOptions = MyTunesRss.CONFIG.getHttpLiveStreamingOptions();
-            String[] transcoderCommand = new String[liveStreamingOptions.split(" ").length + 1];
-            transcoderCommand[0] = MyTunesRss.CONFIG.getHttpLiveStreamingBinary();
-            int i = 1;
-            for (String part : liveStreamingOptions.split(" ")) {
-                transcoderCommand[i++] = part.replace("{infile}", myFile);
+            String[] command = new String[7];
+            command[0] = getJavaExecutablePath();
+            try {
+                command[1] = "-Djna.library.path=" + MyTunesRssUtils.getPreferencesDataPath() + "/lib";
+            } catch (IOException e) {
+                throw new RuntimeException("Could not get prefs data path.", e);
             }
+            command[2] = getJavaExecutablePath();
+            command[3] = "-cp";
+            command[4] = getClasspath();
+            command[5] = "de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter";
+            command[6] = getBaseDir().getAbsolutePath();
             if (LOG.isDebugEnabled()) {
-                LOG.debug("executing HTTP Live Streaming command \"" + StringUtils.join(transcoderCommand, " ") + "\".");
+                LOG.debug("Executing HTTP Live Streaming command \"" + StringUtils.join(command, " ") + "\".");
             }
             BufferedReader reader = null;
             try {
-                Process process = Runtime.getRuntime().exec(transcoderCommand);
+                Process process = Runtime.getRuntime().exec(command);
                 new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
+                new StreamCopyThread(myStream, true, process.getOutputStream(), true).start();
                 reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 for (String responseLine = reader.readLine(); responseLine != null; responseLine = reader.readLine()) {
-                    if (responseLine.startsWith("segmenter_file:")) {
-                        myCacheItem.addFile(new File(StringUtils.trimToEmpty(responseLine.substring("segmenter_file:".length()))));
-                    } else if ("segmenter_done".equals(responseLine)) {
-                        myCacheItem.setDone(true);
+                    if (responseLine.startsWith(getBaseDir().getAbsolutePath())) {
+                        myCacheItem.addFile(new File(StringUtils.trimToEmpty(responseLine)));
                     }
                 }
+                process.waitFor();
+                if (process.exitValue() == 0) {
+                    myCacheItem.setDone(true);
+                } else {
+                    myCacheItem.setFailed(true);
+                }
             } catch (IOException e) {
+                myCacheItem.setFailed(true);
+            } catch (InterruptedException e) {
                 myCacheItem.setFailed(true);
             } finally {
                 IOUtils.closeQuietly(reader);
             }
+        }
+
+        private String getJavaExecutablePath() {
+            return System.getProperty("java.home") + "/bin/java";
+        }
+
+        private String getClasspath() {
+            StringBuilder sb = new StringBuilder();
+            for (String cpElement : StringUtils.split(System.getProperty("java.class.path"), System.getProperty("path.separator"))) {
+                if (!cpElement.startsWith(System.getProperty("java.home"))) {
+                    sb.append(cpElement).append(System.getProperty("path.separator"));
+                }
+            }
+            return sb.substring(0, sb.length() - 1);
         }
     }
 }
