@@ -32,21 +32,16 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws IOException, SQLException {
-        if (!MyTunesRss.CONFIG.isValidHttpLiveStreamingBinary()) {
-            getResponse().sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "missing http live streaming configuration");
-        }
         String trackId = getRequestParameter("track", null);
         if (StringUtils.isBlank(trackId)) {
             getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, "missing track id");
         }
         String[] pathInfo = StringUtils.split(getRequest().getPathInfo(), '/');
         if (pathInfo.length > 1) {
-            if (StringUtils.endsWithIgnoreCase(pathInfo[pathInfo.length - 1], ".m3u8")) {
-                sendPlaylist(trackId);
-            } else if (StringUtils.endsWithIgnoreCase(pathInfo[pathInfo.length - 1], ".ts")) {
+            if (StringUtils.endsWithIgnoreCase(pathInfo[pathInfo.length - 1], ".ts")) {
                 sendMediaFile(trackId, pathInfo[pathInfo.length - 1]);
             } else {
-                getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
+                sendPlaylist(trackId);
             }
         } else {
             getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -85,7 +80,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    private void sendPlaylist(String trackId) throws SQLException, IOException {
+    private synchronized void sendPlaylist(String trackId) throws SQLException, IOException {
         HttpLiveStreamingCacheItem cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(trackId);
         if (cacheItem == null) {
             DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId}));
@@ -107,9 +102,9 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                 return;
             }
         }
-        // wait for at least 3 playlist items
+        // wait for at least 1 playlist item
         try {
-            while (!cacheItem.isFailed() && !cacheItem.isDone() && cacheItem.getPlaylistSize() < 3) {
+            while (!cacheItem.isFailed() && !cacheItem.isDone() && cacheItem.getPlaylistSize() == 0) {
                 Thread.sleep(500);
             }
         } catch (InterruptedException e) {
@@ -119,8 +114,8 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
             MyTunesRss.HTTP_LIVE_STREAMING_CACHE.remove(trackId);
             getResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "playlist file not found");
         } else {
-            byte[] playlistBytes = cacheItem.getPlaylist().getBytes("UTF-8");
-            getResponse().setContentType("application/x-mpegURL; charset=UTF-8");
+            byte[] playlistBytes = cacheItem.getPlaylist().getBytes("ISO-8859-1");
+            getResponse().setContentType("application/x-mpegURL");
             getResponse().setContentLength(playlistBytes.length);
             getResponse().getOutputStream().write(playlistBytes);
         }
@@ -138,18 +133,17 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         }
 
         public void run() {
-            String[] command = new String[7];
+            String[] command = new String[6];
             command[0] = getJavaExecutablePath();
             try {
                 command[1] = "-Djna.library.path=" + MyTunesRssUtils.getPreferencesDataPath() + "/lib";
             } catch (IOException e) {
                 throw new RuntimeException("Could not get prefs data path.", e);
             }
-            command[2] = getJavaExecutablePath();
-            command[3] = "-cp";
-            command[4] = getClasspath();
-            command[5] = "de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter";
-            command[6] = getBaseDir().getAbsolutePath();
+            command[2] = "-cp";
+            command[3] = getClasspath();
+            command[4] = "de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter";
+            command[5] = getBaseDir().getAbsolutePath();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Executing HTTP Live Streaming command \"" + StringUtils.join(command, " ") + "\".");
             }

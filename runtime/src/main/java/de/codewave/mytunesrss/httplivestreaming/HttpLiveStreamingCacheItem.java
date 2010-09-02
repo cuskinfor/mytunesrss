@@ -51,7 +51,15 @@ public class HttpLiveStreamingCacheItem extends ExpiringCacheItem {
 
     public String getPlaylist() {
         StringBuilder sb = new StringBuilder();
-        // TODO
+        sb.append("#EXTM3U\n");
+        sb.append("#EXT-X-TARGETDURATION:10\n");
+        for (File file : myFiles) {
+            sb.append("#EXTINF:10,\n");
+            sb.append(file.getName()).append("\n");
+        }
+        if (isDone()) {
+            sb.append("#EXT-X-ENDLIST\n");
+        }
         return sb.toString();
     }
 

@@ -29,10 +29,6 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
 
     private Panel myTranscoderAccordionPanel;
     private Panel myTranscoderPanel;
-    private Form myHttpLiveStreamingForm;
-    private SmartTextField myHttpLiveStreamingBinary;
-    private Button mySelectHttpLiveStreamingBinary;
-    private SmartTextField myHttpLiveStreamingOptions;
     private Form myCacheForm;
     private Button myAddTranscoder;
     private SmartTextField myStreamingCacheTimeout;
@@ -54,13 +50,6 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myAddTranscoder = getComponentFactory().createButton("streamingConfigPanel.transcoder.add", this);
         myTranscoderPanel.addComponent(myAddTranscoder);
         addComponent(myTranscoderPanel);
-        myHttpLiveStreamingForm = getComponentFactory().createForm(null, true);
-        myHttpLiveStreamingBinary = getComponentFactory().createTextField("streamingConfigPanel.httpLiveStreaming.binary", new FileValidator(getBundleString("streamingConfigPanel.error.invalidBinary", null), FileValidator.PATTERN_ALL, FileValidator.PATTERN_ALL));
-        mySelectHttpLiveStreamingBinary = getComponentFactory().createButton("streamingConfigPanel.httpLiveStreaming.selectBinary", this);
-        myHttpLiveStreamingOptions = getComponentFactory().createTextField("streamingConfigPanel.httpLiveStreaming.options");
-        myHttpLiveStreamingForm.addField("binary", myHttpLiveStreamingBinary);
-        myHttpLiveStreamingForm.addField("select", mySelectHttpLiveStreamingBinary);
-        addComponent(getComponentFactory().surroundWithPanel(myHttpLiveStreamingForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.httpLiveStreaming")));
         myCacheForm = getComponentFactory().createForm(null, true);
         myStreamingCacheTimeout = getComponentFactory().createTextField("streamingConfigPanel.cache.streamingCacheTimeout", getApplication().getValidatorFactory().createMinMaxValidator(0, 1440));
         myStreamingCacheMaxFiles = getComponentFactory().createTextField("streamingConfigPanel.cache.streamingCacheMaxFiles", getApplication().getValidatorFactory().createMinMaxValidator(0, 10000));
@@ -118,8 +107,6 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             form.getField("binary").setValue(config.getBinary());
             form.getField("options").setValue(config.getOptions());
         }
-        myHttpLiveStreamingBinary.setValue(MyTunesRss.CONFIG.getHttpLiveStreamingBinary());
-        myHttpLiveStreamingOptions.setValue(MyTunesRss.CONFIG.getHttpLiveStreamingOptions());
         myStreamingCacheTimeout.setValue(MyTunesRss.CONFIG.getStreamingCacheTimeout(), 0, 1440, "0");
         myStreamingCacheMaxFiles.setValue(MyTunesRss.CONFIG.getStreamingCacheMaxFiles(), 0, 10000, "0");
     }
@@ -140,8 +127,6 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             conf.setOptions(((SmartTextField) form.getField("options")).getStringValue(null));
             configs.add(conf);
         }
-        MyTunesRss.CONFIG.setHttpLiveStreamingBinary(myHttpLiveStreamingBinary.getStringValue(null));
-        MyTunesRss.CONFIG.setHttpLiveStreamingOptions(myHttpLiveStreamingOptions.getStringValue(null));
         MyTunesRss.CONFIG.setStreamingCacheTimeout(myStreamingCacheTimeout.getIntegerValue(0));
         MyTunesRss.CONFIG.setStreamingCacheMaxFiles(myStreamingCacheMaxFiles.getIntegerValue(0));
         MyTunesRss.CONFIG.save();
@@ -149,7 +134,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
 
     @Override
     protected boolean beforeSave() {
-        boolean valid = VaadinUtils.isValid(myHttpLiveStreamingForm, myCacheForm);
+        boolean valid = VaadinUtils.isValid(myCacheForm);
         Iterator<Component> formIterator = myTranscoderAccordionPanel.getComponentIterator();
         while (formIterator.hasNext()) {
             Panel panel = (Panel) formIterator.next();
@@ -189,15 +174,6 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             form.getField("name").setValue(name);
             Panel panel = VaadinUtils.getAncestor(form, Panel.class);
             ((TabSheet) panel.getParent()).getTab(panel).setCaption(name);
-        } else if (clickEvent.getButton() == mySelectHttpLiveStreamingBinary) {
-            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.caption.selectHttpLiveStreamingBinary"), new File((String) myHttpLiveStreamingBinary.getValue()), null, ServerSideFileChooser.PATTERN_ALL, false, "Roots") { // TODO i18n
-
-                @Override
-                protected void onFileSelected(File file) {
-                    myHttpLiveStreamingBinary.setValue(file.getAbsolutePath());
-                    getApplication().getMainWindow().removeWindow(this);
-                }
-            }.show(getApplication().getMainWindow());
         } else if (VaadinUtils.isChild(myTranscoderAccordionPanel, clickEvent.getButton())) {
             final Form buttonForm = (Form) clickEvent.getButton().getData();
             if (buttonForm.getField("selectBinary") == clickEvent.getButton()) {

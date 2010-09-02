@@ -123,8 +123,6 @@ public class MyTunesRssConfig {
     private boolean myStartAdminBrowser = true;
     private boolean myImportOriginalImageSize = false;
     private Set<FlashPlayerConfig> myFlashPlayers = new HashSet<FlashPlayerConfig>();
-    private String myHttpLiveStreamingBinary;
-    private String myHttpLiveStreamingOptions;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -858,26 +856,6 @@ public class MyTunesRssConfig {
         myFlashPlayers.clear();
     }
 
-    public String getHttpLiveStreamingBinary() {
-        return myHttpLiveStreamingBinary;
-    }
-
-    public void setHttpLiveStreamingBinary(String httpLiveStreamingBinary) {
-        myHttpLiveStreamingBinary = httpLiveStreamingBinary;
-    }
-
-    public String getHttpLiveStreamingOptions() {
-        return myHttpLiveStreamingOptions;
-    }
-
-    public void setHttpLiveStreamingOptions(String httpLiveStreamingOptions) {
-        myHttpLiveStreamingOptions = httpLiveStreamingOptions;
-    }
-
-    public boolean isValidHttpLiveStreamingBinary() {
-        return StringUtils.isNotBlank(getHttpLiveStreamingBinary()) && new File(getHttpLiveStreamingBinary()).isFile();
-    }
-
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1081,8 +1059,6 @@ public class MyTunesRssConfig {
             );
             addFlashPlayer(flashPlayerConfig);
         }
-        myHttpLiveStreamingBinary = JXPathUtils.getStringValue(settings, "httpLiveStreamingBinary", null);
-        myHttpLiveStreamingOptions = JXPathUtils.getStringValue(settings, "httpLiveStreamingOptions", null);
     }
 
     private void readDataSources(JXPathContext settings) {
@@ -1358,8 +1334,6 @@ public class MyTunesRssConfig {
                     player.appendChild(DOMUtils.createByteArrayElement(settings, "html", flashPlayerConfig.getHtml().getBytes("UTF-8")));
                 }
             }
-            root.appendChild(DOMUtils.createTextElement(settings, "httpLiveStreamingBinary", getHttpLiveStreamingBinary()));
-            root.appendChild(DOMUtils.createTextElement(settings, "httpLiveStreamingOptions", getHttpLiveStreamingOptions()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

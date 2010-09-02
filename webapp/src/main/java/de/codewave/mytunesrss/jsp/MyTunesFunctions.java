@@ -244,7 +244,6 @@ public class MyTunesFunctions {
             pathInfo.append("/").append(extraPathInfo);
         }
         builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
-        builder.append("/").append(virtualTrackName(track)).append(".m3u8");
         return builder.toString();
     }
 
