@@ -865,6 +865,10 @@ public class MyTunesRssConfig {
         myHttpLiveStreamingBinary = httpLiveStreamingBinary;
     }
 
+    public boolean isValidHttpLiveStreamingBinary() {
+        return StringUtils.isNotBlank(getHttpLiveStreamingBinary()) && new File(getHttpLiveStreamingBinary()).isFile();
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
