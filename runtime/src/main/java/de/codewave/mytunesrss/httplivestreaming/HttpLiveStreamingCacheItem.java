@@ -37,7 +37,7 @@ public class HttpLiveStreamingCacheItem extends ExpiringCacheItem {
     @Override
     protected synchronized void onItemExpired() {
         for (HttpLiveStreamingPlaylist playlist : myPlaylists.values()) {
-            playlist.deleteFiles();
+            playlist.destroy();
         }
     }
 

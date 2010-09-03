@@ -10,6 +10,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.TranscoderConfig;
+import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -120,12 +121,18 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
 
     protected void writeToConfig() {
         List<TranscoderConfig> configs = MyTunesRss.CONFIG.getTranscoderConfigs();
+        Set<String> obsoleteTranscoderNames = new HashSet<String>();
+        for (TranscoderConfig config : configs) {
+            obsoleteTranscoderNames.add(config.getName());
+        }
         configs.clear();
         Iterator<Component> componentIterator = myTranscoderAccordionPanel.getComponentIterator();
         while (componentIterator.hasNext()) {
             Form form = getTranscoderForm((Panel) componentIterator.next());
             TranscoderConfig conf = new TranscoderConfig();
-            conf.setName(((SmartTextField) form.getField("name")).getStringValue(null));
+            String name = ((SmartTextField) form.getField("name")).getStringValue(null);
+            conf.setName(name);
+            obsoleteTranscoderNames.remove(name);
             conf.setPattern(((SmartTextField) form.getField("pattern")).getStringValue(null));
             conf.setMp4Codecs(((SmartTextField) form.getField("codecs")).getStringValue(null));
             conf.setTargetSuffix(((SmartTextField) form.getField("suffix")).getStringValue(null));
@@ -134,9 +141,25 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             conf.setOptions(((SmartTextField) form.getField("options")).getStringValue(null));
             configs.add(conf);
         }
+        truncateHttpLiveStreamingCache(obsoleteTranscoderNames);
         MyTunesRss.CONFIG.setStreamingCacheTimeout(myStreamingCacheTimeout.getIntegerValue(0));
         MyTunesRss.CONFIG.setStreamingCacheMaxFiles(myStreamingCacheMaxFiles.getIntegerValue(0));
         MyTunesRss.CONFIG.save();
+    }
+
+    /**
+     * Remove cached http live stream files for obsolete transcoder names.
+     *
+     * @param obsoleteTranscoderNames Set with the obsolete transcoder names.
+     */
+    private void truncateHttpLiveStreamingCache(Set<String> obsoleteTranscoderNames) {
+        for (String key : MyTunesRss.HTTP_LIVE_STREAMING_CACHE.keySet()) {
+            HttpLiveStreamingCacheItem cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(key);
+            for (String transcoderName : obsoleteTranscoderNames) {
+                cacheItem.getPlaylist(transcoderName).destroy();
+                cacheItem.removePlaylist(transcoderName);
+            }
+        }
     }
 
     @Override

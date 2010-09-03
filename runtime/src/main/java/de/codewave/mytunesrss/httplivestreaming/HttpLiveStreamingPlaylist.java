@@ -37,10 +37,15 @@ public class HttpLiveStreamingPlaylist {
     }
 
     public void addFile(File file) {
-        myFiles.add(file);
+        if (myFailed.get() || myDone.get()) {
+            FileUtils.deleteQuietly(file);
+        } else {
+            myFiles.add(file);
+        }
     }
 
-    public void deleteFiles() {
+    public void destroy() {
+        myFailed.set(true);
         for (File file : myFiles) {
             FileUtils.deleteQuietly(file);
         }
@@ -58,7 +63,7 @@ public class HttpLiveStreamingPlaylist {
             sb.append("#EXTINF:10,\n");
             sb.append(file.getName()).append("\n");
         }
-        if (isDone()) {
+        if (isDone() || isFailed()) {
             sb.append("#EXT-X-ENDLIST\n");
         }
         return sb.toString();
