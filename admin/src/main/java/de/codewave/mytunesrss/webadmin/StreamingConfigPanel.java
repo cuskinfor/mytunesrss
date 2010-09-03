@@ -19,8 +19,8 @@ import de.codewave.vaadin.validation.FileValidator;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.List;
+import java.text.Collator;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class StreamingConfigPanel extends MyTunesRssConfigPanel {
@@ -94,7 +94,14 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
 
     protected void initFromConfig() {
         Iterator<Component> componentIterator = myTranscoderAccordionPanel.getComponentIterator();
-        for (int i = 0; i < MyTunesRss.CONFIG.getTranscoderConfigs().size(); i++) {
+        List<TranscoderConfig> transcoderConfigs = new ArrayList<TranscoderConfig>(MyTunesRss.CONFIG.getTranscoderConfigs());
+        Collections.sort(transcoderConfigs, new Comparator<TranscoderConfig>() {
+            Collator myCollator = Collator.getInstance(getLocale());
+            public int compare(TranscoderConfig o1, TranscoderConfig o2) {
+                return myCollator.compare(o1.getName(), o2.getName());
+            }
+        });
+        for (int i = 0; i < transcoderConfigs.size(); i++) {
             TranscoderConfig config = MyTunesRss.CONFIG.getTranscoderConfigs().get(i);
             Panel panel = (Panel) componentIterator.next();
             VaadinUtils.getAncestor(panel, TabSheet.class).getTab(panel).setCaption(config.getName());
