@@ -25,7 +25,7 @@ public class Transcoder {
     private TranscoderConfig myTranscoderConfig;
 
     public static Transcoder createTranscoder(Track track, User user, WebConfig webConfig, boolean tempFile) {
-        TranscoderConfig transcoderConfig = user.getForceTranscoder(track);
+        TranscoderConfig transcoderConfig = user != null ? user.getForceTranscoder(track) : null;
         Transcoder transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, tempFile) : null;
         if (transcoder == null) {
             transcoderConfig = webConfig.getTranscoder(track);

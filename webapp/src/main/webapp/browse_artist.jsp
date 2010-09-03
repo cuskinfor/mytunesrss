@@ -179,7 +179,7 @@
     
     <c:set var="externalSiteDefinitions" scope="request" value="${mtfn:externalSiteDefinitions('artist')}"/>
     <jsp:include page="incl_external_sites_dialog.jsp"/>
-    <jsp:include page="incl_functions_menu.jsp" />
+    <jsp:include page="incl_functions_menu.jsp"/>
     <jsp:include page="incl_edit_tags.jsp" />
 
 </body>

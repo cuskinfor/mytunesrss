@@ -252,6 +252,9 @@ public class MyTunesFunctions {
     }
 
     public static String playbackUrl(HttpServletRequest request, Track track, String extraPathInfo) {
+        if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Iphone && MyTunesRssWebUtils.isHttpLiveStreaming(request, track)) {
+            return httpLiveStreamUrl(request, track, extraPathInfo);
+        }
         MyTunesRssCommand command = MyTunesRssCommand.PlayTrack;
         HttpSession session = request.getSession();
         StringBuilder builder = new StringBuilder((String) request.getAttribute("downloadPlaybackServletUrl"));

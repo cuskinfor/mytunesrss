@@ -169,7 +169,7 @@
     </div>
     
     <jsp:include page="incl_edit_playlist_dialog.jsp"/>
-    <jsp:include page="incl_functions_menu.jsp" />
+    <jsp:include page="incl_functions_menu.jsp"/>
 
 </body>
 

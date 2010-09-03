@@ -248,7 +248,7 @@
     
     <c:set var="externalSiteDefinitions" scope="request" value="${mtfn:externalSiteDefinitions('title')}"/>
     <jsp:include page="incl_external_sites_dialog.jsp"/>
-    <jsp:include page="incl_functions_menu.jsp" />
+    <jsp:include page="incl_functions_menu.jsp"/>
     <jsp:include page="incl_edit_tags.jsp" />
     
     <c:if test="${yahoo}"><script type="text/javascript" src="http://mediaplayer.yahoo.com/js"></script></c:if>

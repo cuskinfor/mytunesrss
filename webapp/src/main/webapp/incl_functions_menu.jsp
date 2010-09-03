@@ -2,37 +2,31 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
-<%--@elvariable id="appUrl" type="java.lang.String"--%>
+<!-- TTT: ${track} -->
 
 <div id="functions" style="display:none" class="actionsMenu">
-    <a id="functions_externalsites" class="links" onclick="functionMenuClick('externalsites');">
-        <fmt:message key="tooltip.externalSites"/>
-    </a>
-    <a id="functions_edittags" class="tags" onclick="functionMenuClick('edittags');">
-        <fmt:message key="tooltip.editTags"/>
-    </a>
-    <a id="functions_remotecontrol" class="remote" onclick="functionMenuClick('remotecontrol');">
-        <fmt:message key="tooltip.remotecontrol"/>
-    </a>
-    <a id="functions_rss" class="rss" onclick="functionMenuClick('rss');">
-        <fmt:message key="tooltip.rssfeed"/>
-    </a>
-    <a id="functions_playlist" class="playlist" onclick="functionMenuClick('playlist');">
-        <fmt:message key="tooltip.playlist"/>
-    </a>
-    <a id="functions_player" class="flash" onclick="functionMenuClick('player');">
-        <fmt:message key="tooltip.flashplayer"/>
-    </a>
-    <a id="functions_download" class="download" onclick="functionMenuClick('download');">
-        <fmt:message key="tooltip.downloadzip"/>
-    </a>
+    <a id="functions_externalsites" class="links" onclick="functionMenuClick('externalsites');">dummy</a>
+    <a id="functions_edittags" class="tags" onclick="functionMenuClick('edittags');">dummy</a>
+    <a id="functions_remotecontrol" class="remote" onclick="functionMenuClick('remotecontrol');">dummy</a>
+    <a id="functions_rss" class="rss" onclick="functionMenuClick('rss');">dummy</a>
+    <a id="functions_playlist" class="playlist" onclick="functionMenuClick('playlist');">dummy</a>
+    <a id="functions_player" class="flash" onclick="functionMenuClick('player');">dummy</a>
+    <a id="functions_download" class="download" onclick="functionMenuClick('download');">dummy</a>
 </div>
 
 <script type="text/javascript">
     function openFunctionsMenu(index, title) {
         $jQ('#functions').dialog('option', 'functionIndex', index);
         $jQ('#functions').dialog('option', 'title', title);
+        $jQ('#functions_externalsites').text($jQ('#fn_externalsites' + index).attr('title'));
+        $jQ('#functions_edittags').text($jQ('#fn_edittags' + index).attr('title'));
+        $jQ('#functions_remotecontrol').text($jQ('#fn_remotecontrol' + index).attr('title'));
+        $jQ('#functions_rss').text($jQ('#fn_rss' + index).attr('title'));
+        $jQ('#functions_playlist').text($jQ('#fn_playlist' + index).attr('title'));
+        $jQ('#functions_player').text($jQ('#fn_player' + index).attr('title'));
+        $jQ('#functions_download').text($jQ('#fn_download' + index).attr('title'));
         $jQ('#functions').dialog('open');
     }
     function functionMenuClick(name) {

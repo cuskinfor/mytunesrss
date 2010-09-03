@@ -3,6 +3,8 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.Error;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.remote.Session;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.servlet.ServletUtils;
@@ -47,6 +49,10 @@ public class MyTunesRssWebUtils {
         User user = (User) request.getSession().getAttribute("authUser");
         if (user == null) {
             user = (User) request.getAttribute("authUser");
+            if (user == null) {
+                Session session = MyTunesRssRemoteEnv.getSession();
+                user = session != null ? session.getUser() : null;
+            }
         }
         return user;
     }
@@ -299,7 +305,8 @@ public class MyTunesRssWebUtils {
     public static Transcoder getTranscoder(HttpServletRequest request, Track track) {
         boolean notranscode = "true".equals(request.getParameter("notranscode"));
         boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
-        return getAuthUser(request).isForceTranscoders() || !notranscode ? Transcoder.createTranscoder(track, getAuthUser(request), getWebConfig(request), tempFile) : null;
+        User authUser = getAuthUser(request);
+        return (authUser != null && authUser.isForceTranscoders()) || !notranscode ? Transcoder.createTranscoder(track, authUser, getWebConfig(request), tempFile) : null;
     }
 
     public static InputStream getMediaStream(HttpServletRequest request, Track track) throws IOException {
@@ -309,5 +316,13 @@ public class MyTunesRssWebUtils {
         } else {
             return new FileInputStream(track.getFile());
         }
+    }
+
+    public static boolean isHttpLiveStreaming(HttpServletRequest request, Track track) {
+        if (getUserAgent(request) == UserAgent.Iphone && track.getMediaType() == MediaType.Video) {
+            Transcoder transcoder = getTranscoder(request, track);
+            return transcoder != null && "video/MP2T".equalsIgnoreCase(transcoder.getTargetContentType());
+        }
+        return false;
     }
 }

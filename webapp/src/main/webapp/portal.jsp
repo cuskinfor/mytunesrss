@@ -219,7 +219,7 @@
 
 </div>
 
-<jsp:include page="incl_functions_menu.jsp" />
+<jsp:include page="incl_functions_menu.jsp"/>
 <jsp:include page="incl_edit_tags.jsp" />
 
 </body>
