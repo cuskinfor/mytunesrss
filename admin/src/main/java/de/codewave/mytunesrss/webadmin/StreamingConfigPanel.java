@@ -18,6 +18,8 @@ import de.codewave.vaadin.component.ServerSideFileChooser;
 import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import de.codewave.vaadin.validation.FileValidator;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.text.Collator;
@@ -25,6 +27,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class StreamingConfigPanel extends MyTunesRssConfigPanel {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StreamingConfigPanel.class);
 
     private static final String TRANSCODER_NAME_REGEXP = "[a-zA-Z0-9 ]{1,40}";
 
@@ -98,6 +102,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         List<TranscoderConfig> transcoderConfigs = new ArrayList<TranscoderConfig>(MyTunesRss.CONFIG.getTranscoderConfigs());
         Collections.sort(transcoderConfigs, new Comparator<TranscoderConfig>() {
             Collator myCollator = Collator.getInstance(getLocale());
+
             public int compare(TranscoderConfig o1, TranscoderConfig o2) {
                 return myCollator.compare(o1.getName(), o2.getName());
             }
@@ -142,6 +147,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             configs.add(conf);
         }
         truncateHttpLiveStreamingCache(obsoleteTranscoderNames);
+        truncateTranscodingCache(obsoleteTranscoderNames);
         MyTunesRss.CONFIG.setStreamingCacheTimeout(myStreamingCacheTimeout.getIntegerValue(0));
         MyTunesRss.CONFIG.setStreamingCacheMaxFiles(myStreamingCacheMaxFiles.getIntegerValue(0));
         MyTunesRss.CONFIG.save();
@@ -153,11 +159,38 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
      * @param obsoleteTranscoderNames Set with the obsolete transcoder names.
      */
     private void truncateHttpLiveStreamingCache(Set<String> obsoleteTranscoderNames) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Truncating http live streaming cache.");
+        }
         for (String key : MyTunesRss.HTTP_LIVE_STREAMING_CACHE.keySet()) {
             HttpLiveStreamingCacheItem cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(key);
             for (String transcoderName : obsoleteTranscoderNames) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Removing playlist with key \"" + transcoderName + "\" from cache item with key \"" + key + "\".");
+                }
                 cacheItem.getPlaylist(transcoderName).destroy();
                 cacheItem.removePlaylist(transcoderName);
+            }
+        }
+    }
+
+    /**
+     * Remove cached transcoded files for obsolete transcoder names.
+     *
+     * @param obsoleteTranscoderNames Set with the obsolete transcoder names.
+     */
+    private void truncateTranscodingCache(Set<String> obsoleteTranscoderNames) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Truncating streaming cache.");
+        }
+        for (String transcoderName : obsoleteTranscoderNames) {
+            for (String key : MyTunesRss.STREAMING_CACHE.keySet()) {
+                if (key.endsWith("_" + transcoderName)) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Removing cache item with key \"" + key + "\".");
+                    }
+                    MyTunesRss.STREAMING_CACHE.remove(key);
+                }
             }
         }
     }
