@@ -4,10 +4,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.mytunesrss.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.remote.render.UserRenderer
@@ -38,6 +35,7 @@ public class UserRenderer implements Renderer<Map<String, Object>, User> {
             for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
                 transcoderNames.add(config.getName());
             }
+            Collections.sort(transcoderNames);
             if (!transcoderNames.isEmpty()) {
                 result.put("transcoderNames", transcoderNames);
             }
