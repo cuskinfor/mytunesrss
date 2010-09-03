@@ -42,6 +42,10 @@ public class HttpLiveStreamingCacheItem extends ExpiringCacheItem {
     }
 
     public synchronized void removePlaylist(String playlistIdentifier) {
-        myPlaylists.remove(playlistIdentifier);
+        HttpLiveStreamingPlaylist playlist = myPlaylists.get(playlistIdentifier);
+        if (playlist != null) {
+            playlist.destroy();
+            myPlaylists.remove(playlistIdentifier);
+        }
     }
 }
