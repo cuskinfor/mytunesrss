@@ -102,7 +102,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             }
         });
         for (int i = 0; i < transcoderConfigs.size(); i++) {
-            TranscoderConfig config = MyTunesRss.CONFIG.getTranscoderConfigs().get(i);
+            TranscoderConfig config = transcoderConfigs.get(i);
             Panel panel = (Panel) componentIterator.next();
             VaadinUtils.getAncestor(panel, TabSheet.class).getTab(panel).setCaption(config.getName());
             Form form = getTranscoderForm(panel);
