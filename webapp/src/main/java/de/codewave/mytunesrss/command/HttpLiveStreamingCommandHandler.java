@@ -10,12 +10,13 @@ import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatement;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
-import de.codewave.mytunesrss.jsp.MyTunesFunctions;
+import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingPlaylist;
 import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.io.LogStreamCopyThread;
 import de.codewave.utils.io.StreamCopyThread;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
+import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -34,46 +35,37 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws IOException, SQLException {
         String trackId = getRequestParameter("track", null);
-        String cacheKey = getRequestParameter("cacheKey", null);
         if (StringUtils.isBlank(trackId)) {
             getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, "missing track id");
         }
         String[] pathInfo = StringUtils.split(getRequest().getPathInfo(), '/');
         if (pathInfo.length > 1) {
             if (StringUtils.endsWithIgnoreCase(pathInfo[pathInfo.length - 1], ".ts")) {
-                sendMediaFile(cacheKey, pathInfo[pathInfo.length - 1]);
-            } else if (StringUtils.isNotBlank(cacheKey)) {
-                sendPlaylist(cacheKey, trackId);
+                sendMediaFile(trackId, pathInfo[pathInfo.length - 1]);
             } else {
-                redirectToPlaylist(trackId);
+                sendPlaylist(trackId);
             }
         } else {
             getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
-    private void sendMediaFile(String cacheKey, String filename) throws IOException {
-        HttpLiveStreamingCacheItem cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(cacheKey);
-        if (cacheItem.isFailed()) {
-            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.remove(cacheKey);
-            cacheItem = null;
-        }
-        if (cacheItem == null) {
-            getResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "media file not found");
-        } else {
-            File mediaFile = new File(getBaseDir(), filename);
-            if (mediaFile.isFile()) {
-                if (getAuthUser().isQuotaExceeded()) {
-                    getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
-                } else {
-                    FileSender fileSender = new FileSender(mediaFile, "video/MP2T", mediaFile.length());
-                    fileSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
-                    fileSender.sendGetResponse(getRequest(), getResponse(), false);
-                }
+    private void sendMediaFile(String trackId, String filename) throws IOException {
+        StreamSender sender;
+        MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
+        File mediaFile = new File(getBaseDir(), filename);
+        if (mediaFile.isFile()) {
+            if (getAuthUser().isQuotaExceeded()) {
+                sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_FORBIDDEN);
             } else {
-                getResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "media file not found");
+                sender = new FileSender(mediaFile, "video/MP2T", mediaFile.length());
+                sender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
+                sender.sendGetResponse(getRequest(), getResponse(), false);
             }
+        } else {
+            sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
         }
+        sender.sendGetResponse(getRequest(), getResponse(), false);
     }
 
     private File getBaseDir() {
@@ -84,77 +76,61 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    private synchronized void sendPlaylist(String cacheKey, String trackId) throws SQLException, IOException {
-        HttpLiveStreamingCacheItem cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(cacheKey);
-        if (cacheItem == null) {
-            DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId}));
-            if (tracks.getResultSize() > 0) {
-                Track track = tracks.nextResult();
-                if (track.getMediaType() == MediaType.Video) {
-                    cacheItem = new HttpLiveStreamingCacheItem(cacheKey, 3600000); // TODO: timeout configuration?
+    private void sendPlaylist(String trackId) throws SQLException, IOException {
+        StreamSender sender;
+        DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId}));
+        if (tracks.getResultSize() > 0) {
+            Track track = tracks.nextResult();
+            if (track.getMediaType() == MediaType.Video) {
+                Transcoder transcoder = MyTunesRssWebUtils.getTranscoder(getRequest(), track);
+                String playlistIdentifier = transcoder != null ? transcoder.getTranscoderId() : "";
+                HttpLiveStreamingCacheItem cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(trackId);
+                if (cacheItem == null) {
+                    MyTunesRss.HTTP_LIVE_STREAMING_CACHE.putIfAbsent(new HttpLiveStreamingCacheItem(trackId, 3600000)); // TODO: timeout configuration?
+                    cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(trackId);
+                }
+                HttpLiveStreamingPlaylist playlist = cacheItem.getPlaylist(playlistIdentifier);
+                if (playlist == null && cacheItem.putIfAbsent(playlistIdentifier, new HttpLiveStreamingPlaylist())) {
                     InputStream mediaStream = MyTunesRssWebUtils.getMediaStream(getRequest(), track);
-                    MyTunesRss.EXECUTOR_SERVICE.schedule(new HttpLiveStreamingSegmenterRunnable(cacheItem, mediaStream), 0, TimeUnit.MILLISECONDS);
+                    MyTunesRss.EXECUTOR_SERVICE.schedule(new HttpLiveStreamingSegmenterRunnable(cacheItem.getPlaylist(playlistIdentifier), mediaStream), 0, TimeUnit.MILLISECONDS);
                     MyTunesRss.HTTP_LIVE_STREAMING_CACHE.add(cacheItem);
                     getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
                     getAuthUser().playLastFmTrack(track);
-                } else {
-                    getResponse().sendError(HttpServletResponse.SC_FORBIDDEN, "requested track is not a video");
-                    return;
                 }
-            } else {
-                getResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "track not found");
-                return;
-            }
-        }
-        // wait for at least 1 playlist item
-        try {
-            while (!cacheItem.isFailed() && !cacheItem.isDone() && cacheItem.getPlaylistSize() == 0) {
-                Thread.sleep(500);
-            }
-        } catch (InterruptedException e) {
-            // we have been interrupted, so send the playlist file or an error now
-        }
-        if (cacheItem.isFailed()) {
-            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.remove(cacheKey);
-            getResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "playlist file not found");
-        } else {
-            byte[] playlistBytes = cacheItem.getPlaylist().getBytes("ISO-8859-1");
-            getResponse().setContentType("application/x-mpegURL");
-            getResponse().setContentLength(playlistBytes.length);
-            getResponse().getOutputStream().write(playlistBytes);
-        }
-    }
-
-    private void redirectToPlaylist(String trackId) throws SQLException, IOException {
-            DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId}));
-            if (tracks.getResultSize() > 0) {
-                Track track = tracks.nextResult();
-                if (track.getMediaType() == MediaType.Video) {
-                    Transcoder transcoder = MyTunesRssWebUtils.getTranscoder(getRequest(), track);
-                    String contentType = transcoder != null ? transcoder.getTargetContentType() : track.getContentType();
-                    if (contentType.equalsIgnoreCase("video/MP2T")) {
-                        String cacheKey = transcoder != null ? transcoder.getTranscoderId() + "_" + trackId : trackId;
-                        redirect(MyTunesFunctions.httpLiveStreamUrl(getRequest(), track, "cacheKey=" + cacheKey));
-                    } else {
-                        getResponse().sendError(HttpServletResponse.SC_FORBIDDEN, "video content-type is not \"video/MP2T\"");
+                playlist = cacheItem.getPlaylist(playlistIdentifier);
+                // wait for at least 1 playlist item
+                try {
+                    while (!playlist.isFailed() && !playlist.isDone() && playlist.getSize() == 0) {
+                        Thread.sleep(500);
                     }
+                } catch (InterruptedException e) {
+                    // we have been interrupted, so send the playlist file or an error now
+                }
+
+                if (playlist.isFailed()) {
+                    cacheItem.removePlaylist(playlistIdentifier);
+                    sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
                 } else {
-                    getResponse().sendError(HttpServletResponse.SC_FORBIDDEN, "requested track is not a video");
+                    byte[] playlistBytes = playlist.getAsString().getBytes("ISO-8859-1");
+                    sender = new StreamSender(new ByteArrayInputStream(playlistBytes), "application/x-mpegURL", playlistBytes.length);
                 }
             } else {
-                getResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "track not found");
+                sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_FORBIDDEN);
             }
+        } else {
+            sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
+        }
+        sender.sendGetResponse(getRequest(), getResponse(), false);
     }
-
 
     public class HttpLiveStreamingSegmenterRunnable implements Runnable {
 
-        private HttpLiveStreamingCacheItem myCacheItem;
+        private HttpLiveStreamingPlaylist myPlaylist;
 
         private InputStream myStream;
 
-        public HttpLiveStreamingSegmenterRunnable(HttpLiveStreamingCacheItem cacheItem, InputStream stream) {
-            myCacheItem = cacheItem;
+        public HttpLiveStreamingSegmenterRunnable(HttpLiveStreamingPlaylist playlist, InputStream stream) {
+            myPlaylist = playlist;
             myStream = stream;
         }
 
@@ -181,19 +157,19 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                 reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 for (String responseLine = reader.readLine(); responseLine != null; responseLine = reader.readLine()) {
                     if (responseLine.startsWith(getBaseDir().getAbsolutePath())) {
-                        myCacheItem.addFile(new File(StringUtils.trimToEmpty(responseLine)));
+                        myPlaylist.addFile(new File(StringUtils.trimToEmpty(responseLine)));
                     }
                 }
                 process.waitFor();
                 if (process.exitValue() == 0) {
-                    myCacheItem.setDone(true);
+                    myPlaylist.setDone(true);
                 } else {
-                    myCacheItem.setFailed(true);
+                    myPlaylist.setFailed(true);
                 }
             } catch (IOException e) {
-                myCacheItem.setFailed(true);
+                myPlaylist.setFailed(true);
             } catch (InterruptedException e) {
-                myCacheItem.setFailed(true);
+                myPlaylist.setFailed(true);
             } finally {
                 IOUtils.closeQuietly(reader);
             }
@@ -214,3 +190,4 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 }
+

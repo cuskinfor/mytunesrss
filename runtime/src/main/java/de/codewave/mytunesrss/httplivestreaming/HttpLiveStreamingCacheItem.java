@@ -9,71 +9,39 @@ import de.codewave.utils.io.ExpiringCacheItem;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HttpLiveStreamingCacheItem extends ExpiringCacheItem {
 
-    private List<File> myFiles = new ArrayList<File>();
-
-    private AtomicBoolean myDone = new AtomicBoolean(false);
-
-    private AtomicBoolean myFailed = new AtomicBoolean(false);
+    private Map<String, HttpLiveStreamingPlaylist> myPlaylists = new HashMap<String, HttpLiveStreamingPlaylist>();
 
     public HttpLiveStreamingCacheItem(String identifier, long timeout) {
         super(identifier, timeout);
     }
 
-    public boolean isDone() {
-        return myDone.get();
+    public synchronized HttpLiveStreamingPlaylist getPlaylist(String identifier) {
+        return myPlaylists.get(identifier);
     }
 
-    public void setDone(boolean done) {
-        myDone.set(done);
-    }
-
-    public boolean isFailed() {
-        return myFailed.get();
-    }
-
-    public void setFailed(boolean failed) {
-        myFailed.set(failed);
-    }
-
-    public void addFile(File file) {
-        myFiles.add(file);
-    }
-
-    public int getPlaylistSize() {
-        return myFiles.size();
-    }
-
-    public String getPlaylist() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("#EXTM3U\n");
-        sb.append("#EXT-X-TARGETDURATION:10\n");
-        for (File file : myFiles) {
-            sb.append("#EXTINF:10,\n");
-            sb.append(file.getName()).append("\n");
+    public synchronized boolean putIfAbsent(String identifier, HttpLiveStreamingPlaylist playlist) {
+        if (!myPlaylists.containsKey(identifier)) {
+            myPlaylists.put(identifier, playlist);
+            return true;
         }
-        if (isDone()) {
-            sb.append("#EXT-X-ENDLIST\n");
-        }
-        return sb.toString();
+        return false;
     }
 
     @Override
-    protected void onItemExpired() {
-        try {
-            while (!myDone.get() && !myFailed.get()) {
-                Thread.sleep(5000);
-            }
-        } catch (InterruptedException e) {
-            // we have been interrupted, so we do not wait anymore but cleanup what we have so far
+    protected synchronized void onItemExpired() {
+        for (HttpLiveStreamingPlaylist playlist : myPlaylists.values()) {
+            playlist.deleteFiles();
         }
-        for (File file : myFiles) {
-            FileUtils.deleteQuietly(file);
-        }
+    }
+
+    public synchronized void removePlaylist(String playlistIdentifier) {
+        myPlaylists.remove(playlistIdentifier);
     }
 }
