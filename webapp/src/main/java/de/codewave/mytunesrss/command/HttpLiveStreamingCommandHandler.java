@@ -60,7 +60,6 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
             } else {
                 sender = new FileSender(mediaFile, "video/MP2T", mediaFile.length());
                 sender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
-                sender.sendGetResponse(getRequest(), getResponse(), false);
             }
         } else {
             sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
