@@ -94,25 +94,28 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                     MyTunesRss.EXECUTOR_SERVICE.schedule(new HttpLiveStreamingSegmenterRunnable(cacheItem.getPlaylist(playlistIdentifier), mediaStream), 0, TimeUnit.MILLISECONDS);
                     MyTunesRss.HTTP_LIVE_STREAMING_CACHE.add(cacheItem);
                     getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
+                    getTransaction().commit();
                     getAuthUser().playLastFmTrack(track);
                 }
                 playlist = cacheItem.getPlaylist(playlistIdentifier);
                 // wait for at least 1 playlist item
                 try {
-                    while (!playlist.isFailed() && !playlist.isDone() && playlist.getSize() == 0) {
+                    long timeSlept = 0;
+                    while (!playlist.isFailed() && !playlist.isDone() && playlist.getSize() == 0 && timeSlept < 30000) {
                         Thread.sleep(500);
+                        timeSlept += 500;
                     }
                 } catch (InterruptedException e) {
                     // we have been interrupted, so send the playlist file or an error now
                 }
-
-                if (playlist.isFailed()) {
+                if (playlist.isFailed() || playlist.getSize() == 0) {
                     cacheItem.removePlaylist(playlistIdentifier);
                     sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
                 } else {
                     byte[] playlistBytes = playlist.getAsString().getBytes("ISO-8859-1");
                     sender = new StreamSender(new ByteArrayInputStream(playlistBytes), "application/x-mpegURL", playlistBytes.length);
                 }
+
             } else {
                 sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_FORBIDDEN);
             }
