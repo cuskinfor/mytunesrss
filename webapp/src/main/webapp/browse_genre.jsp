@@ -140,6 +140,9 @@
                                                            zipFileCount="${genre.trackCount}" />
                                         </c:when>
                                         <c:otherwise>
+                                            <c:if test="${authUser.player && config.showPlayer}">
+                                                <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/filename=${mtfn:virtualGenreName(genre)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                            </c:if>
                                             <a class="add" onclick="addGenresToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(genre.name)}']), false)" title="<fmt:message key="playlist.addGenre"/>"><span><fmt:message key="playlist.addGenre"/></span></a>
                                             <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/name=${cwfn:encodeUrl(genre.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="playlist.oneclickGenre"/>"><span><fmt:message key="playlist.oneclickGenre"/></span></a>
                                         </c:otherwise>

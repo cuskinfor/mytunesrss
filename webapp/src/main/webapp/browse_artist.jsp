@@ -149,6 +149,9 @@
                                                        editTagsId="${artist.name}" />
                                     </c:when>
                                     <c:otherwise>
+                                        <c:if test="${authUser.player && config.showPlayer}">
+                                            <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/fullAlbums=false/filename=${mtfn:virtualArtistName(artist)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                        </c:if>
                                         <a class="add" onclick="addArtistsToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(artist.name)}']), false)" title="<fmt:message key="playlist.addArtist"/>"><span><fmt:message key="playlist.addArtist"/></span></a>
                                         <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/name=${cwfn:encodeUrl(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="playlist.oneclickArtist"/>"><span><fmt:message key="playlist.oneclickArtist"/></span></a>
                                     </c:otherwise>

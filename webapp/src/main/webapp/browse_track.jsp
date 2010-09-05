@@ -143,6 +143,9 @@
                 
                                 </c:when>
                                 <c:otherwise>
+                                    <c:if test="${authUser.player && config.showPlayer}">
+                                        <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${sectionArguments}/filename=${mtfn:webSafeFileName(sectionFileName)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                    </c:if>
                                     <a class="add" onclick="addTracksToPlaylist(jQuery.makeArray([${mtfn:jsArray(fn:split(track.sectionIds, ","))}]))" alt="add"><span>Add</span></a>
                                 </c:otherwise>
                             </c:choose>
@@ -212,7 +215,10 @@
                                                editTagsId="${track.id}" />
                             </c:when>
                             <c:otherwise>
-                                <c:if test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && authUser.yahooMediaPlayer && config.yahooMediaPlayer}">
+                                <c:if test="${authUser.player && config.showPlayer}">
+                                    <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=track=${track.id}/filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                </c:if>
+                                <c:if test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && authUser.yahooPlayer && config.yahooMediaPlayer}">
                                     <c:set var="yahoo" value="true"/>
                                     <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>">
                                         <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=64</mt:encrypt>" style="display:none" alt=""/>
