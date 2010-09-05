@@ -7,9 +7,9 @@
 
     <body>
 
-        <release version="4.0.0-EAP-7" date="2010-08-28">
-            <action dev="mdescher" type="add">
-                Added configuration for an HTTP live streaming binary in the streaming config panel.
+        <release version="4.0.0-EAP-8" date="2010-xx-xx">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-191] Switching log level requires restart
             </action>
         </release>
 

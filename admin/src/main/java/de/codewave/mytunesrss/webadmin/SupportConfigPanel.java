@@ -103,7 +103,10 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
     }
 
     protected void writeToConfig() {
-        MyTunesRss.CONFIG.setCodewaveLogLevel((Level) myLogLevel.getValue());
+        if (!MyTunesRss.CONFIG.getCodewaveLogLevel().equals(myLogLevel.getValue())) {
+            MyTunesRss.CONFIG.setCodewaveLogLevel((Level) myLogLevel.getValue());
+            MyTunesRssUtils.setCodewaveLogLevel((Level) myLogLevel.getValue());
+        }
         MyTunesRss.CONFIG.setSupportName((String) myName.getValue());
         MyTunesRss.CONFIG.setSupportEmail((String) myEmail.getValue());
         MyTunesRss.CONFIG.save();
