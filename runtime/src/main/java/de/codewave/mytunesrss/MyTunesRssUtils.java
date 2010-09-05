@@ -297,7 +297,7 @@ public class MyTunesRssUtils {
     }
 
     public static void executeDatabaseUpdate() {
-        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate();
+        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.isIgnoreTimestamps());
         try {
             if (!MyTunesRss.EXECUTOR_SERVICE.getDatabaseUpdateResult()) {
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.updateNotRun"));

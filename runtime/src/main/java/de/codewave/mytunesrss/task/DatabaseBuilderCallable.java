@@ -56,7 +56,10 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
 
     private static long TX_BEGIN;
 
-    public DatabaseBuilderCallable() {
+    private boolean myIgnoreTimestamps;
+
+    public DatabaseBuilderCallable(boolean ignoreTimestamps) {
+        myIgnoreTimestamps = ignoreTimestamps;
         if (MyTunesRss.CONFIG.getDatasources() != null && MyTunesRss.CONFIG.getDatasources().size() > 0) {
             for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
                 addToDatasources(datasource);
@@ -126,8 +129,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     } finally {
                         DatabaseBuilderCallable.doCheckpoint(session, true);
                     }
-                    if (MyTunesRss.CONFIG.isIgnoreTimestamps()
-                            || baseDir.lastModified() > systemInformation.getLastUpdate()) {
+                    if (myIgnoreTimestamps || baseDir.lastModified() > systemInformation.getLastUpdate()) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Database update needed (file datasource changed).");
                         }
@@ -257,7 +259,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     MyTunesRssEventManager.getInstance().fireEvent(event);
                     lastEventTime = System.currentTimeMillis();
                 }
-                long timeLastImageUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : track.getLastImageUpdate();
+                long timeLastImageUpdate = myIgnoreTimestamps ? Long.MIN_VALUE : track.getLastImageUpdate();
                 storeSession.executeStatement(new HandleTrackImagesStatement(track.getSource(), track.getFile(), track
                         .getId(), timeLastImageUpdate));
                 doCheckpoint(storeSession, false);
@@ -294,7 +296,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
     private Map<String, Long> runUpdate(SystemInformation systemInformation, DataStoreSession storeSession)
             throws SQLException, IOException {
         Map<String, Long> missingItunesFiles = new HashMap<String, Long>();
-        long timeLastUpdate = MyTunesRss.CONFIG.isIgnoreTimestamps() ? Long.MIN_VALUE : systemInformation
+        long timeLastUpdate = myIgnoreTimestamps ? Long.MIN_VALUE : systemInformation
                 .getLastUpdate();
         Collection<String> itunesPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunes
                 .name()));

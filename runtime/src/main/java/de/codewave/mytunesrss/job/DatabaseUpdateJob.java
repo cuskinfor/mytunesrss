@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.job;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -25,7 +26,7 @@ public class DatabaseUpdateJob implements Job {
      */
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
-            DatabaseBuilderCallable callable = new DatabaseBuilderCallable();
+            DatabaseBuilderCallable callable = new DatabaseBuilderCallable(MyTunesRss.CONFIG.isIgnoreTimestamps());
             if (callable.needsUpdate()) {
                 callable.call();
             }

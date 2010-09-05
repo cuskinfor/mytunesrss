@@ -21,6 +21,10 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ForcedImageUpdateCallable.class);
 
+    public ForcedImageUpdateCallable(boolean ignoreTimestamps) {
+        super(ignoreTimestamps);
+    }
+
     @Override
     public Boolean call() throws Exception {
         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);

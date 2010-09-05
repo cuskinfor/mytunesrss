@@ -28,14 +28,14 @@ public class MyTunesRssExecutorService {
 
     private ScheduledFuture MYTUNESRSSCOM_UPDATE_FUTURE;
 
-    public synchronized void scheduleDatabaseUpdate() {
+    public synchronized void scheduleDatabaseUpdate(boolean ignoreTimestamps) {
         cancelDatabaseJob();
-        DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable());
+        DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable(ignoreTimestamps));
     }
 
     public void scheduleImageUpdate() {
         cancelDatabaseJob();
-        DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new ForcedImageUpdateCallable());
+        DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new ForcedImageUpdateCallable(MyTunesRss.CONFIG.isIgnoreTimestamps()));
     }
 
     public synchronized void scheduleDatabaseReset() {
