@@ -345,6 +345,7 @@ public class MyTunesRssUtils {
     public static String getSystemInfo() {
         StringBuilder systemInfo = new StringBuilder();
         systemInfo.append(MyTunesRssUtils.getBundleString(Locale.getDefault(), "sysinfo.quicktime." + Boolean.toString(MyTunesRss.QUICKTIME_PLAYER != null))).append(System.getProperty("line.separator"));
+        systemInfo.append(MyTunesRssUtils.getBundleString(Locale.getDefault(), "sysinfo.httplivestreaming." + Boolean.toString(MyTunesRss.HTTP_LIVE_STREAMING_AVAILABLE))).append(System.getProperty("line.separator"));
         return systemInfo.toString();
     }
 

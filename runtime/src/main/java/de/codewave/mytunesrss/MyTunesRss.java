@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.desktop.DesktopWrapper;
 import de.codewave.mytunesrss.desktop.DesktopWrapperFactory;
@@ -104,6 +105,7 @@ public class MyTunesRss {
     public static Queue<MyTunesRssNotification> NOTIFICATION_QUEUE = new ConcurrentLinkedQueue<MyTunesRssNotification>();
     public static boolean HEADLESS = GraphicsEnvironment.isHeadless();
     public static ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRss.class.getClassLoader());
+    public static boolean HTTP_LIVE_STREAMING_AVAILABLE;
 
     public static void main(final String[] args) throws Exception {
         /*NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Test1", "This is a test",  null));
@@ -126,6 +128,7 @@ public class MyTunesRss {
         startAdminServer();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
         initializeQuicktimePlayer();
+        checkHttpLiveStreamingSupport();
         logSystemInfo();
         prepareCacheDirs();
         Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(false));
@@ -487,6 +490,18 @@ public class MyTunesRss {
             } catch (ClassNotFoundException e) {
                 LOGGER.info("No quicktime environment found, quicktime player disabled.");
             }
+        }
+    }
+
+    private static void checkHttpLiveStreamingSupport() {
+        try {
+            File libDir = new File(MyTunesRssUtils.getPreferencesDataPath(), "lib");
+            HTTP_LIVE_STREAMING_AVAILABLE = HttpLiveStreamingSegmenter.isAvailable(libDir);
+        } catch (IOException e) {
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Could not get prefs data path, assuming no http live streaming available.");
+            }
+            HTTP_LIVE_STREAMING_AVAILABLE = false;
         }
     }
 

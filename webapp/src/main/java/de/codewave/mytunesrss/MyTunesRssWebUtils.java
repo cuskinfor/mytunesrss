@@ -258,7 +258,6 @@ public class MyTunesRssWebUtils {
      * Get language from cookie.
      *
      * @param request Servlet request.
-     *
      * @return Language from cookie or NULL if no cookie was found.
      */
     public static String getCookieLanguage(HttpServletRequest request) {
@@ -277,8 +276,8 @@ public class MyTunesRssWebUtils {
     /**
      * Set the language cookie.
      *
-     * @param request Servlet request.
-     * @param response Servlet response.
+     * @param request      Servlet request.
+     * @param response     Servlet response.
      * @param languageCode Language code.
      */
     public static void setCookieLanguage(HttpServletRequest request, HttpServletResponse response, String languageCode) {
@@ -320,9 +319,13 @@ public class MyTunesRssWebUtils {
     }
 
     public static boolean isHttpLiveStreaming(HttpServletRequest request, Track track) {
-        if (getUserAgent(request) == UserAgent.Iphone && track.getMediaType() == MediaType.Video) {
+        if (MyTunesRss.HTTP_LIVE_STREAMING_AVAILABLE && getUserAgent(request) == UserAgent.Iphone && track.getMediaType() == MediaType.Video) {
             Transcoder transcoder = getTranscoder(request, track);
-            return transcoder != null && "video/MP2T".equalsIgnoreCase(transcoder.getTargetContentType());
+            if (transcoder != null) {
+                return "video/MP2T".equalsIgnoreCase(transcoder.getTargetContentType());
+            } else {
+                return "video/MP2T".equalsIgnoreCase(track.getContentType());
+            }
         }
         return false;
     }
