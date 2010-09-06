@@ -160,17 +160,33 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                 for (String responseLine = reader.readLine(); responseLine != null; responseLine = reader.readLine()) {
                     if (responseLine.startsWith(getBaseDir().getAbsolutePath())) {
                         myPlaylist.addFile(new File(StringUtils.trimToEmpty(responseLine)));
+                    } else if (responseLine.startsWith("ERR")) {
+                        if (LOG.isErrorEnabled()) {
+                            LOG.error("HTTP Live Streaming segmenter error: " + responseLine);
+                        }
                     }
                 }
                 process.waitFor();
                 if (process.exitValue() == 0) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Segmenter process exited with code 0.");
+                    }
                     myPlaylist.setDone(true);
                 } else {
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("Segmenter process exited with code " + process.exitValue() + ".");
+                    }
                     myPlaylist.setFailed(true);
                 }
             } catch (IOException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Segmenter exception", e);
+                }
                 myPlaylist.setFailed(true);
             } catch (InterruptedException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Segmenter thread interrupted exception", e);
+                }
                 myPlaylist.setFailed(true);
             } finally {
                 IOUtils.closeQuietly(reader);

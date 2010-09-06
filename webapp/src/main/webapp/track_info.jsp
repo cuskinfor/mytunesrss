@@ -256,7 +256,7 @@
                                 <c:when test="${track.mediaType == 'Video'}">
                                     <c:set var="imgUrl" value="${appUrl}/images/movie_poster.png"/>
                                     <c:if test="${!empty(track.imageHash)}"><c:set var="imgUrl">${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=256</mt:encrypt></c:set></c:if>
-                                    <embed src="${imgUrl}" href="<c:out value="${mtfn:playbackLink(pageContext, track, 'notranscode=true')}"/>" type="${mtfn:contentType(config, authUser, track)}" <c:if test="${userAgent == 'Iphone'}">target="myself"</c:if> scale="1"></embed>
+                                    <embed src="${imgUrl}" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" type="${mtfn:contentType(config, authUser, track)}" <c:if test="${userAgent == 'Iphone'}">target="myself"</c:if> scale="1"></embed>
                                 </c:when>
                                 <c:otherwise>
                                     <img alt="${track.name} Album Art"
