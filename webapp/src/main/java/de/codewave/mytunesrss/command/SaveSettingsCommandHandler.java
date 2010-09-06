@@ -61,6 +61,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setShowThumbnailsForTracks(getBooleanRequestParameter("showThumbnailsForTracks", false));
         webConfig.setShowExternalSites(getBooleanRequestParameter("showExternalSites", false));
         webConfig.setShowEditTags(getBooleanRequestParameter("showEditTags", false));
+        webConfig.setShowAddToPlaylist(getBooleanRequestParameter("showAddToPlaylist", false));
         transferTranscoders(webConfig);
         boolean error = false;
         error |= transferAndValidatePageSize(webConfig);

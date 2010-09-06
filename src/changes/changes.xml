@@ -9,6 +9,9 @@
 
         <release version="4.0.0-EAP-8" date="2010-xx-xx">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-164] Add album/artist/genre/track to existing playlist
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-186] Allow flash player in playlist edit mode
             </action>
             <action dev="mdescher" type="fix">
@@ -16,6 +19,9 @@
             </action>
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-184] Button for full DB update
+            </action>
+            <action dev="mdescher" type="add">
+                HTTP live streaming for iPhone
             </action>
         </release>
 

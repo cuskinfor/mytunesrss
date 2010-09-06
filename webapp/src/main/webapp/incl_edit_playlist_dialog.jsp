@@ -43,3 +43,54 @@
         });
     </script>
 </c:if>
+
+<div id="addOneClickPlaylistDialog" title="<fmt:message key="editPlaylistDialogTitle"/>" style="display:none">
+    <p>
+        <fmt:message key="dialog.addToPlaylistOneClickSelect"/>
+    </p>
+    <p>
+        <select id="addOneClickPlaylistDialogPlaylistSelection" style="width:100%">
+            <c:forEach items="${editablePlaylists}" var="playlist">
+                <option value='${playlist.id}'><c:out value="${playlist.name}"/></option>
+            </c:forEach>
+        </select>
+    </p>
+    <p>
+        <fmt:message key="dialog.addToPlaylistOneClickEnter"/>
+    </p>
+    <p>
+        <input id="addOneClickPlaylistDialogPlaylistEnter" style="width:100%" type="text" />
+    </p>
+</div>
+<script type="text/javascript">
+    $jQ(document).ready(function() {
+        $jQ("#addOneClickPlaylistDialog").dialog({
+            autoOpen:false,
+            modal:true,
+            buttons:{
+                "<fmt:message key="doCancel"/>" : function() {
+                    $jQ("#addOneClickPlaylistDialog").dialog("close");
+                },
+                "<fmt:message key="addToPlaylistOneClick"/>" : function() {
+                    $jQ("#addOneClickPlaylistDialog").dialog("close");
+                    document.location.href = "${servletUrl}/addToOneClickPlaylist/${auth}/" + $jQ("#addOneClickPlaylistDialog").dialog("option", "linkFragment") + "/playlistId=" + $jQ("#addOneClickPlaylistDialogPlaylistSelection option:selected").val() + "/backUrl=${mtfn:encode64(backUrl)}";
+                },
+                "<fmt:message key="createPlaylistOneClick"/>" : function() {
+                    if ($jQ("#addOneClickPlaylistDialogPlaylistEnter").val() != '') {
+                        $jQ("#addOneClickPlaylistDialog").dialog("close");
+                        document.location.href = "${servletUrl}/addToOneClickPlaylist/${auth}/playlistName=" + escape($jQ("#addOneClickPlaylistDialogPlaylistEnter").val()) + "/" + $jQ("#addOneClickPlaylistDialog").dialog("option", "linkFragment") + "/backUrl=${mtfn:encode64(backUrl)}";
+                    } else {
+                        alert("TODO i18n: enter a name first!")
+                    }
+                }
+            }
+        });
+    });
+
+    function openAddOneClickPlaylistDialog(linkFragment, newPlaylistName) {
+        $jQ("#addOneClickPlaylistDialog").dialog("option", "linkFragment", linkFragment);
+        $jQ("#addOneClickPlaylistDialogPlaylistEnter").val(newPlaylistName);
+        $jQ("#addOneClickPlaylistDialog").dialog("open");
+    }
+
+</script>

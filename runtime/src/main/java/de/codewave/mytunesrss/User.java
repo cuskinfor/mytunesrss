@@ -529,7 +529,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
             addPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), ".", null));
         }
         setSharedUser(JXPathUtils.getBooleanValue(settings, "shared", false));
-        Iterator<JXPathContext> webConfigIterator = JXPathUtils.getContextIterator(settings, "webConfigs");
+        Iterator<JXPathContext> webConfigIterator = JXPathUtils.getContextIterator(settings, "webConfigs/config");
         myWebConfigs.clear();
         while (webConfigIterator.hasNext()) {
             JXPathContext webConfigContext = webConfigIterator.next();
@@ -600,10 +600,13 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         }
         users.appendChild(DOMUtils.createBooleanElement(settings, "shared", isSharedUser()));
         Element webConfigs = settings.createElement("webConfigs");
+        users.appendChild(webConfigs);
         for (Map.Entry<String, String> webConfig : myWebConfigs.entrySet()) {
             if (webConfig.getValue() != null) {
-                webConfigs.appendChild(DOMUtils.createTextElement(settings, "userAgent", webConfig.getKey()));
-                webConfigs.appendChild(DOMUtils.createTextElement(settings, "config", webConfig.getValue()));
+                Element config = settings.createElement("config");
+                webConfigs.appendChild(config);
+                config.appendChild(DOMUtils.createTextElement(settings, "userAgent", webConfig.getKey()));
+                config.appendChild(DOMUtils.createTextElement(settings, "config", webConfig.getValue()));
             }
         }
         if (StringUtils.isNotEmpty(getLastFmUsername()) && getLastFmPasswordHash() != null && getLastFmPasswordHash().length > 0) {

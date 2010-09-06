@@ -37,7 +37,6 @@ public enum MyTunesRssCommand implements Command {
     ShowJukebox("showJukebox", ShowJukeboxCommandHandler.class),
     ContinueExistingPlaylist("continueExistingPlaylist", ContinueExistingPlaylistCommandHandler.class),
     SendForgottenPassword("sendForgottenPassword", SendForgottenPasswordCommandHandler.class),
-    CreateOneClickPlaylist("createOneClickPlaylist", CreateOneClickPlaylistCommandHandler.class),
     EditSmartPlaylist("editSmartPlaylist", EditSmartPlaylistCommandHandler.class),
     SaveSmartPlaylist("saveSmartPlaylist", SaveSmartPlaylistCommandHandler.class),
     ShowRemoteControl("showRemoteControl", ShowRemoteControlHandler.class),
@@ -47,6 +46,7 @@ public enum MyTunesRssCommand implements Command {
     Upload("upload", UploadCommandHandler.class),
     GetTagsForAutocomplete("getTagsForAutocomplete", GetTagsForAutocompleteCommandHandler.class),
     HttpLiveStream("httpLiveStream", HttpLiveStreamingCommandHandler.class),
+    AddToOneClickPlaylist("addToOneClickPlaylist", AddToOneClickPlaylistCommandHandler.class),
     OpenSearch("openSearch", OpenSearchCommandHandler.class);
 
     private String myName;

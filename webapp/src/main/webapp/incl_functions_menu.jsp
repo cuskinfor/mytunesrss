@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
-<!-- TTT: ${track} -->
+<%--@elvariable id="editablePlaylists" type="java.util.List"--%>
 
 <div id="functions" style="display:none" class="actionsMenu">
     <a id="functions_externalsites" class="links" onclick="functionMenuClick('externalsites');">dummy</a>
@@ -14,6 +14,7 @@
     <a id="functions_playlist" class="playlist" onclick="functionMenuClick('playlist');">dummy</a>
     <a id="functions_player" class="flash" onclick="functionMenuClick('player');">dummy</a>
     <a id="functions_download" class="download" onclick="functionMenuClick('download');">dummy</a>
+    <a id="functions_oneclickplaylist" class="oneclickplaylist" onclick="functionMenuClick('oneclickplaylist');">dummy</a>
 </div>
 
 <script type="text/javascript">
@@ -27,14 +28,19 @@
         $jQ('#functions_playlist').text($jQ('#fn_playlist' + index).attr('title'));
         $jQ('#functions_player').text($jQ('#fn_player' + index).attr('title'));
         $jQ('#functions_download').text($jQ('#fn_download' + index).attr('title'));
+        $jQ('#functions_oneclickplaylist').text($jQ('#fn_oneclickplaylist' + index).attr('title'));
         $jQ('#functions').dialog('open');
     }
     function functionMenuClick(name) {
         $jQ('#functions').dialog('close');
-        if ($jQ('#fn_' + name + $jQ('#functions').dialog('option', 'functionIndex')).attr('href') == undefined) {
-            $jQ('#fn_' + name + $jQ('#functions').dialog('option', 'functionIndex')).trigger('click');
+        if (name === 'addToPlaylist') {
+
         } else {
-            self.document.location.href = $jQ('#fn_' + name + $jQ('#functions').dialog('option', 'functionIndex')).attr('href');
+            if ($jQ('#fn_' + name + $jQ('#functions').dialog('option', 'functionIndex')).attr('href') == undefined) {
+                $jQ('#fn_' + name + $jQ('#functions').dialog('option', 'functionIndex')).trigger('click');
+            } else {
+                self.document.location.href = $jQ('#fn_' + name + $jQ('#functions').dialog('option', 'functionIndex')).attr('href');
+            }
         }
     }
     function showHideLink(name) {
@@ -56,6 +62,8 @@
             showHideLink("playlist");
             showHideLink("player");
             showHideLink("download");
+            showHideLink("oneclickplaylist");
         }
     });
+
 </script>

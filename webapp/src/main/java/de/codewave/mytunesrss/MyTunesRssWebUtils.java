@@ -90,7 +90,7 @@ public class MyTunesRssWebUtils {
             if (webConfig == null) {
                 webConfig = new WebConfig();
                 webConfig.clearWithDefaults(httpServletRequest);
-                webConfig.load(httpServletRequest);
+                webConfig.load(httpServletRequest, getAuthUser(httpServletRequest));
                 httpServletRequest.getSession().setAttribute("config", webConfig);
                 LOGGER.debug("Created session configuration.");
             }
@@ -296,6 +296,7 @@ public class MyTunesRssWebUtils {
         if (user != null && !user.isSharedUser()) {
             // save in user profile on server
             user.setWebConfig(MyTunesRssWebUtils.getUserAgent(request), webConfig.createCookieValue());
+            MyTunesRss.CONFIG.save(); // save new user settings
         } else {
             // save in cookie
             webConfig.save(request, response);

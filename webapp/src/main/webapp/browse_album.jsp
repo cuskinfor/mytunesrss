@@ -176,7 +176,8 @@
                                            zipFileCount="${album.trackCount}"
                                            externalSitesFlag="${mtfn:externalSites('album') && !mtfn:unknown(album.name) && authUser.externalSites}"
                                            editTagsType="Album"
-                                           editTagsId="${album.name}" />
+                                           editTagsId="${album.name}"
+                                           defaultPlaylistName="${album.name}" />
 
                         </c:when>
                         <c:otherwise>
@@ -184,7 +185,6 @@
                                 <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=album=${cwfn:encodeUrl(mtfn:encode64(album.name))}/filename=${mtfn:virtualAlbumName(album)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <a class="add" onclick="addAlbumsToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(album.name)}']))" title="<fmt:message key="playlist.addAlbum"/>"><span><fmt:message key="playlist.addAlbum"/></span></a>
-                            <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(mtfn:encode64(album.name))}/name=${cwfn:encodeUrl(album.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="playlist.oneclickAlbum"/>"><span><fmt:message key="playlist.oneclickAlbum"/></span></a>
                         </c:otherwise>
                     </c:choose>
                 </td>
@@ -205,14 +205,14 @@
                                            backUrl="${mtfn:encode64(backUrl)}"
                                            linkFragment="fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}"
                                            filename="${mtfn:webSafeFileName(mtfn:decode64(param.artist))}"
-                                           zipFileCount="${allAlbumsTrackCount}" />
+                                           zipFileCount="${allAlbumsTrackCount}"
+                                           defaultPlaylistName="${param.artist}" />
                         </c:when>
                         <c:otherwise>
                             <c:if test="${authUser.player && config.showPlayer}">
                                 <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/filename=${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <a class="add" onclick="addToPlaylist(null, jQuery.makeArray(['${mtfn:escapeJs(cwfn:decode64(param.artist))}']), jQuery.makeArray(['${mtfn:escapeJs(cwfn:decode64(param.genre))}']), null, true)"><span>Add</span></a>
-                            <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/name=${cwfn:encodeUrl(param.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Add</span></a>
                         </c:otherwise>
                     </c:choose>
                 </td>
@@ -245,14 +245,14 @@
                                            backUrl="${mtfn:encode64(backUrl)}"
                                            linkFragment="artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/fullAlbums=false"
                                            filename="${mtfn:webSafeFileName(mtfn:decode64(param.artist))}"
-                                           zipFileCount="${allArtistGenreTrackCount}" />
+                                           zipFileCount="${allArtistGenreTrackCount}"
+                                           defaultPlaylistName="${param.artist}" />
                         </c:when>
                         <c:otherwise>
                             <c:if test="${authUser.player && config.showPlayer}">
                                 <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/fullAlbums=false/filename=${mtfn:webSafeFileName(mtfn:decode64(param.artist))}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <a class="add" onclick="addToPlaylist(null, jQuery.makeArray(['${mtfn:escapeJs(cwfn:decode64(param.artist))}']), jQuery.makeArray(['${mtfn:escapeJs(cwfn:decode64(param.genre))}']), null, false)"><span>Add</span></a>
-                            <a class="oneclickplaylist" href="${servletUrl}/createOneClickPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/name=${cwfn:encodeUrl(param.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Add</span></a>
                         </c:otherwise>
                     </c:choose>
                 </td>

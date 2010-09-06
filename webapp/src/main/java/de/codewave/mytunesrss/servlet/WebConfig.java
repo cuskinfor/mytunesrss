@@ -56,13 +56,14 @@ public class WebConfig {
     private static final String CFG_SHOW_THUMBNAILS_FOR_TRACKS = "showTrackThumbs";
     private static final String CFG_SHOW_EXTERNAL_SITES = "showExtSites";
     private static final String CFG_SHOW_EDIT_TAGS = "showEditTags";
+    private static final String CFG_SHOW_ADD_TO_PLAYLIST = "showAddToPlaylist";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     private static final String[] VALID_NAMES = {CFG_USER_NAME, CFG_PASSWORD_HASH, CFG_LOGIN_STORED, CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE,
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
             CFG_PLAYLIST_TYPE, CFG_THEME, CFG_RANDOM_SOURCE,
             CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
-            CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS, CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS};
+            CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS, CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS, CFG_SHOW_ADD_TO_PLAYLIST};
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
     public static final String MYTUNESRSS_COM_COOKIE = "mytunesrss_com_cookie";
@@ -145,6 +146,7 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_THUMBNAILS_FOR_TRACKS, "false");
         myConfigValues.put(CFG_SHOW_EXTERNAL_SITES, "false");
         myConfigValues.put(CFG_SHOW_EDIT_TAGS, "false");
+        myConfigValues.put(CFG_SHOW_ADD_TO_PLAYLIST, "false");
     }
 
     private void initWithIphoneDefaults() {
@@ -178,40 +180,36 @@ public class WebConfig {
      * @param user User.
      */
     public void load(HttpServletRequest request, User user) {
-        if (user != null && StringUtils.isNotEmpty(user.getWebConfig(MyTunesRssWebUtils.getUserAgent(request)))) {
+        if (user != null && !user.isSharedUser() && StringUtils.isNotEmpty(user.getWebConfig(MyTunesRssWebUtils.getUserAgent(request)))) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Initializing web configuration from user settings.");
+            }
             initFromString(MyTunesRssBase64Utils.decodeToString(user.getWebConfig(MyTunesRssWebUtils.getUserAgent(request))));
+        } else {
+            if (StringUtils.isNotEmpty(request.getParameter(WebConfig.MYTUNESRSS_COM_COOKIE))) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Initializing web configuration from request parameter.");
+                }
+                initFromString(MyTunesRssBase64Utils.decodeToString(request.getParameter(WebConfig.MYTUNESRSS_COM_COOKIE)));
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Initializing web configuration from cookie.");
+                }
+                try {
+                    initFromString(MyTunesRssBase64Utils.decodeToString(getCookieValue(request)));
+                } catch (Exception e) {
+                    // intentionally left blank
+                }
+            }
+            if (StringUtils.isNotEmpty(request.getParameter(WebConfig.MYTUNESRSS_COM_USER))) {
+                request.getSession().setAttribute(WebConfig.MYTUNESRSS_COM_USER, request.getParameter(WebConfig.MYTUNESRSS_COM_USER));
+            }
         }
     }
 
     public void clearWithDefaults(HttpServletRequest request) {
         clear();
         initWithDefaults(request);
-    }
-
-    /**
-     * Load web config from request parameter or cookie.
-     *
-     * @param request Servlet request.
-     */
-    public void load(HttpServletRequest request) {
-        if (StringUtils.isNotEmpty(request.getParameter(WebConfig.MYTUNESRSS_COM_COOKIE))) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Initializing web configuration from request parameter.");
-            }
-            initFromString(MyTunesRssBase64Utils.decodeToString(request.getParameter(WebConfig.MYTUNESRSS_COM_COOKIE)));
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Initializing web configuration from cookie.");
-            }
-            try {
-                initFromString(MyTunesRssBase64Utils.decodeToString(getCookieValue(request)));
-            } catch (Exception e) {
-                // intentionally left blank
-            }
-        }
-        if (StringUtils.isNotEmpty(request.getParameter(WebConfig.MYTUNESRSS_COM_USER))) {
-            request.getSession().setAttribute(WebConfig.MYTUNESRSS_COM_USER, request.getParameter(WebConfig.MYTUNESRSS_COM_USER));
-        }
     }
 
     private String getCookieValue(HttpServletRequest request) {
@@ -571,5 +569,13 @@ public class WebConfig {
 
     public void setShowEditTags(boolean showEditTags) {
         myConfigValues.put(CFG_SHOW_EDIT_TAGS, Boolean.toString(showEditTags));
+    }
+
+    public boolean isShowAddToPlaylist() {
+        return Boolean.parseBoolean(myConfigValues.get(CFG_SHOW_ADD_TO_PLAYLIST));
+    }
+
+    public void setShowAddToPlaylist(boolean showAddToPlaylist) {
+        myConfigValues.put(CFG_SHOW_ADD_TO_PLAYLIST, Boolean.toString(showAddToPlaylist));
     }
 }

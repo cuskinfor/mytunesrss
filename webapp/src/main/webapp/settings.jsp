@@ -378,6 +378,15 @@
                                 </td>
                             </tr>
                         </c:if>
+                        <c:if test="${authUser.createPlaylists}">
+                            <tr <mt:flipFlop/>>
+                                <td class="label"><fmt:message key="settings.showAddToPlaylist" /></td>
+                                <td>
+                                    <input type="checkbox" name="showAddToPlaylist" value="true" <c:if test="${config.showAddToPlaylist}">checked="checked"</c:if> />
+                                    <img src="${appUrl}/images/action-oneclickplaylist.png" alt="add to playlist" style="vertical-align:text-top;" />
+                                </td>
+                            </tr>
+                        </c:if>
                         <c:if test="${authUser.transcoder && !empty globalConfig.transcoderConfigs && !authUser.forceTranscoders}">
                             <c:forEach var="tc" items="${globalConfig.transcoderConfigs}">
                                 <tr <mt:flipFlop/>>

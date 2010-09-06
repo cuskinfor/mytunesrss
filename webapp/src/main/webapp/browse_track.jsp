@@ -16,6 +16,7 @@
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
+<%--@elvariable id="editablePlaylists" type="java.util.List"--%>
 
 <c:set var="backUrl" scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=${sortOrder}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
@@ -139,7 +140,8 @@
                                                    filename="${mtfn:webSafeFileName(sectionFileName)}"
                                                    zipFileCount="${mtfn:sectionTrackCount(track.sectionIds)}"
                                                    editTagsType="${cwfn:choose(empty track.sectionPlaylistId, 'Track', 'Playlist')}"
-                                                   editTagsId="${cwfn:choose(empty track.sectionPlaylistId, cwfn:encodeUrl(track.sectionIds), track.sectionPlaylistId)}" />                                   
+                                                   editTagsId="${cwfn:choose(empty track.sectionPlaylistId, cwfn:encodeUrl(track.sectionIds), track.sectionPlaylistId)}"
+                                                   defaultPlaylistName="${sectionFileName}" />
                 
                                 </c:when>
                                 <c:otherwise>
@@ -212,7 +214,8 @@
                                                track="${track}"
                                                externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}"
                                                editTagsType="Track"
-                                               editTagsId="${track.id}" />
+                                               editTagsId="${track.id}"
+                                               defaultPlaylistName="${track.name}" />
                             </c:when>
                             <c:otherwise>
                                 <c:if test="${authUser.player && config.showPlayer}">
