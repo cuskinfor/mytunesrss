@@ -98,7 +98,6 @@ public class PlaylistListener implements PListHandlerListener {
                     myDataStoreSession.executeStatement(statement);
                     myExistingIds.add(playlistId);
                     DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, true);
-                    MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_PLAYLIST_UPDATED));
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not insert/update playlist \"" + name + "\" into database.", e);

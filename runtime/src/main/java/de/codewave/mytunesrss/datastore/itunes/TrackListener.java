@@ -32,9 +32,6 @@ public class TrackListener implements PListHandlerListener {
     private int myUpdatedCount;
     private Map<Long, String> myTrackIdToPersId;
     private Collection<String> myTrackIds;
-    private long myScannedCount;
-    private long myLastEventTime;
-    private long myStartTime;
     private long myMissingFiles;
     private String[] myDisabledMp4Codecs;
     private Thread myWatchdogThread;
@@ -89,17 +86,6 @@ public class TrackListener implements PListHandlerListener {
     private boolean processTrack(Map track, boolean existing) {
         if (myWatchdogThread.isInterrupted()) {
             throw new ShutdownRequestedException();
-        }
-        myScannedCount++;
-        if (myLastEventTime == 0) {
-            myLastEventTime = System.currentTimeMillis();
-            myStartTime = myLastEventTime;
-        } else if (System.currentTimeMillis() - myLastEventTime > 2500L) {
-            MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
-            event.setMessageKey("settings.databaseUpdateRunningItunesWithCount");
-            event.setMessageParams(myScannedCount, myScannedCount / ((System.currentTimeMillis() - myStartTime) / 1000L));
-            MyTunesRssEventManager.getInstance().fireEvent(event);
-            myLastEventTime = System.currentTimeMillis();
         }
         String trackId = calculateTrackId(track);
         String name = (String) track.get("Name");

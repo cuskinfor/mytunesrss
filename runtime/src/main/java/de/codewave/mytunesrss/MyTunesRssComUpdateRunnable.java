@@ -64,7 +64,6 @@ public class MyTunesRssComUpdateRunnable implements Runnable {
             HttpClient client = MyTunesRssUtils.createHttpClient();
             try {
                 MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.MYTUNESRSS_COM_UPDATED);
-                LAST_UPDATE_EVENT = event;
                 int responseCode = client.executeMethod(postMethod);
                 if (responseCode != 200) {
                     if (LOG.isInfoEnabled()) {
@@ -75,7 +74,7 @@ public class MyTunesRssComUpdateRunnable implements Runnable {
                     event.setMessageKey("mytunesrsscom.updateOk");
                     event.setMessageParams(new SimpleDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "settings.lastMyTunesRssComUpdateDateFormat")).format(new Date()));
                 }
-                MyTunesRssEventManager.getInstance().fireEvent(event);
+                LAST_UPDATE_EVENT = event;
             } catch (IOException e) {
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Could not update mytunesrss.com", e);

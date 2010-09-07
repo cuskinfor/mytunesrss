@@ -27,8 +27,7 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
 
     @Override
     public Boolean call() throws Exception {
-        MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED);
-        event.setMessageKey("settings.databaseUpdateRunning");
+        MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunning");
         MyTunesRssEventManager.getInstance().fireEvent(event);
         DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
         try {
