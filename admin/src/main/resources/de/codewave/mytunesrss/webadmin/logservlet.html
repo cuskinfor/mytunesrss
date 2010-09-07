@@ -1,0 +1,49 @@
+<html>
+
+    <head>
+
+        <title>Logfile</title>
+
+        <script type="text/javascript" src="../jquery.js"></script>
+
+        <script type="text/javascript">
+
+            var $jQ = jQuery.noConflict();
+            var index = 0;
+
+            function loadLog() {
+                var req = new XMLHttpRequest();
+                req.open("GET", "?index=" + index, false);
+                req.send();
+                index = parseInt(req.getResponseHeader("X-MYTUNESRSS-LASTINDEX")) + 1;
+                if (req.status === 200) {
+                    $jQ("#log").append(req.responseText);
+                    if ($jQ("#autoscroll:checked").val() != undefined) {
+                        $jQ("#scrollpane").scrollTop($jQ("#scrollpane").attr("scrollHeight"));
+                    }
+                }
+                setTimeout(loadLog, 1000);
+            }
+
+        </script>
+
+    </head>
+
+    <body onload="loadLog();" style="overflow:hidden;">
+
+        <div style="padding:10px">
+            <button onclick="$jQ('#log').text('');">Clear log</button>
+            <span style="width:30px">&nbsp;</span>
+            <button onclick="document.location.href='../';">Back to admin</button>
+            <span style="width:30px">&nbsp;</span>
+            <input type="checkbox" id="autoscroll" checked="checked" />
+            <label for="autoscroll">Follow log file</label>
+        </div>
+
+        <div id="scrollpane" style="height:90%;overflow:auto;border:2px solid;margin:5px;">
+            <pre id="log"></pre>
+        </div>
+
+    </body>
+
+</html>

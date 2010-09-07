@@ -5,14 +5,10 @@
 
 package de.codewave.mytunesrss.httplivestreaming;
 
-import de.codewave.utils.io.ExpiringCacheItem;
-import org.apache.commons.io.FileUtils;
+import de.codewave.utils.cache.ExpiringCacheItem;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HttpLiveStreamingCacheItem extends ExpiringCacheItem {
 

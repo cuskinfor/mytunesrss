@@ -320,7 +320,8 @@ public class MyTunesRssUtils {
                 logger.setLevel(level);
             }
         }
-        org.apache.log4j.Logger.getLogger("de.codewave").setLevel(level);
+        org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("de.codewave");
+        logger.setLevel(level);
         LOGGER.error("Setting codewave log to level \"" + level + "\".");
     }
 

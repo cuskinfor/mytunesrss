@@ -20,12 +20,14 @@ import de.codewave.mytunesrss.task.InitializeDatabaseCallable;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
-import de.codewave.utils.io.ExpiringCache;
+import de.codewave.utils.cache.ExpiringCache;
 import de.codewave.utils.io.FileCache;
 import de.codewave.utils.maven.MavenUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.webapp.WebAppContext;
@@ -51,7 +53,9 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.Queue;
 import java.util.Timer;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -106,6 +110,7 @@ public class MyTunesRss {
     public static boolean HEADLESS = GraphicsEnvironment.isHeadless();
     public static ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRss.class.getClassLoader());
     public static boolean HTTP_LIVE_STREAMING_AVAILABLE;
+    public static BlockingQueue<IndexedLoggingEvent> LOG_BUFFER = new LinkedBlockingQueue<IndexedLoggingEvent>();
 
     public static void main(final String[] args) throws Exception {
         /*NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Test1", "This is a test",  null));
@@ -225,6 +230,27 @@ public class MyTunesRss {
             // ignore exceptions when deleting log files
         }
         DOMConfigurator.configure(MyTunesRss.class.getResource("/mytunesrss-log4j.xml"));
+        AppenderSkeleton appender = new AppenderSkeleton() {
+            @Override
+            protected void append(LoggingEvent event) {
+                MyTunesRss.LOG_BUFFER.offer(new IndexedLoggingEvent(event));
+                if (MyTunesRss.LOG_BUFFER.size() > 10000) { // limit backlog
+                    MyTunesRss.LOG_BUFFER.poll();
+                }
+            }
+
+            @Override
+            public boolean requiresLayout() {
+                return false;
+            }
+
+            @Override
+            public void close() {
+                MyTunesRss.LOG_BUFFER.clear();
+            }
+        };
+        org.apache.log4j.Logger.getRootLogger().addAppender(appender);
+        org.apache.log4j.Logger.getLogger("de.codewave").addAppender(appender);
     }
 
     private static void createDigests() {

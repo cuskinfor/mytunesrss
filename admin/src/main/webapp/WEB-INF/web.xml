@@ -15,9 +15,26 @@
             <param-value>
                 de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin
             </param-value>
-        </init-param>    </servlet>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>LogServlet</servlet-name>
+        <servlet-class>de.codewave.mytunesrss.webadmin.LogServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>org.mortbay.jetty.servlet.DefaultServlet</servlet-name>
+        <servlet-class>org.mortbay.jetty.servlet.DefaultServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VaadinServlet</servlet-name>
         <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LogServlet</servlet-name>
+        <url-pattern>/-system/log</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>org.mortbay.jetty.servlet.DefaultServlet</servlet-name>
+        <url-pattern>/jquery.js</url-pattern>
     </servlet-mapping>
 </web-app>

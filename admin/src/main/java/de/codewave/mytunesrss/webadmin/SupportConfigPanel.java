@@ -5,6 +5,8 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.terminal.ExternalResource;
+import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
@@ -125,13 +127,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
                 getApplication().showError("supportConfigPanel.error.allFieldsMandatoryForSupport");
             }
         } else if (clickEvent.getSource() == myShowLog) {
-            LogPanel logPanel = new LogPanel();
-            SinglePanelWindow logWindow = new SinglePanelWindow(80, Sizeable.UNITS_PERCENTAGE, null, getBundleString("supportConfigPanel.logWindowTitle"), logPanel);
-            logWindow.setHeight(80, Sizeable.UNITS_PERCENTAGE);
-            logWindow.setClosable(true);
-            logWindow.setResizable(true);
-            logWindow.setDraggable(true);
-            logWindow.show(getWindow());
+            getApplication().getMainWindow().open(new ExternalResource("-system/log"));
         } else {
             super.buttonClick(clickEvent);
         }
