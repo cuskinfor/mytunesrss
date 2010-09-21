@@ -103,7 +103,7 @@
         </fileSet>
         <fileSet>
             <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/native</outputDirectory>
-            <directory>etc/ffmpeg/m64</directory>
+            <directory>etc/ffmpeg/mac</directory>
         </fileSet>
     </fileSets>
 </assembly>
