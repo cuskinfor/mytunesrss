@@ -98,10 +98,10 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                     getAuthUser().playLastFmTrack(track);
                 }
                 playlist = cacheItem.getPlaylist(playlistIdentifier);
-                // wait for at least 1 playlist item
+                // wait for at least 3 playlist items
                 try {
                     long timeSlept = 0;
-                    while (!playlist.isFailed() && !playlist.isDone() && playlist.getSize() == 0 && timeSlept < 30000) {
+                    while (!playlist.isFailed() && !playlist.isDone() && playlist.getSize() < 3 && timeSlept < 30000) {
                         Thread.sleep(500);
                         timeSlept += 500;
                     }
