@@ -343,6 +343,10 @@ public class MyTunesRssUtils {
         return System.getProperty("de.codewave.mytunesrss.addons.builtin", ".");
     }
 
+    public static File getNativeLibPath() {
+        return new File(System.getProperty("de.codewave.mytunesrss.native", "./native"));
+    }
+
     public static String getSystemInfo() {
         StringBuilder systemInfo = new StringBuilder();
         systemInfo.append(MyTunesRssUtils.getBundleString(Locale.getDefault(), "sysinfo.quicktime." + Boolean.toString(MyTunesRss.QUICKTIME_PLAYER != null))).append(System.getProperty("line.separator"));

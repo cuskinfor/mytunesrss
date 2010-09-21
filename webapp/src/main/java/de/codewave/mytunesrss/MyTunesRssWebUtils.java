@@ -318,12 +318,30 @@ public class MyTunesRssWebUtils {
         }
     }
 
-    public static boolean isHttpLiveStreaming(HttpServletRequest request, Track track) {
+    public static boolean isHttpLiveStreaming(HttpServletRequest request, Track track, boolean ignoreContentType) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Checking for HTTP Live Streaming.");
+        }
         if (MyTunesRss.HTTP_LIVE_STREAMING_AVAILABLE && getUserAgent(request) == UserAgent.Iphone && track.getMediaType() == MediaType.Video) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("HTTP Live Streaming available, user agent is iPhone and media type is video.");
+            }
+            if (ignoreContentType) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Ignoring content type of track or transcoder.");
+                }
+                return true;
+            }
             Transcoder transcoder = getTranscoder(request, track);
             if (transcoder != null) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Transcoder content type is \"" + transcoder.getTargetContentType() + "\".");
+                }
                 return "video/MP2T".equalsIgnoreCase(transcoder.getTargetContentType());
             } else {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Track content type is \"" + track.getContentType() + "\".");
+                }
                 return "video/MP2T".equalsIgnoreCase(track.getContentType());
             }
         }

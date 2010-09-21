@@ -6,6 +6,7 @@ import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.servlet.WebConfig;
+import de.codewave.utils.io.FileCache;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.StreamSender;
 import org.apache.commons.io.IOUtils;
@@ -66,7 +67,8 @@ public class Transcoder {
     public StreamSender getStreamSender() throws IOException {
         final String identifier = myTrack.getId() + "_" + getTranscoderId();
         if (myTempFile) {
-            File transcodedFile = MyTunesRss.STREAMING_CACHE.lock(identifier).getFile();
+            FileCache.FileInfo fileInfo = MyTunesRss.STREAMING_CACHE.lock(identifier);
+            File transcodedFile = fileInfo != null ? fileInfo.getFile() : null;
             if (transcodedFile == null) {
                 transcodedFile = getTranscodedFile();
                 MyTunesRss.STREAMING_CACHE.add(identifier, transcodedFile, MyTunesRss.CONFIG.getStreamingCacheTimeout() * 60000);

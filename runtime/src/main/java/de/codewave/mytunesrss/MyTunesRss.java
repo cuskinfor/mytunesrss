@@ -523,6 +523,9 @@ public class MyTunesRss {
         try {
             File libDir = new File(MyTunesRssUtils.getPreferencesDataPath(), "lib");
             HTTP_LIVE_STREAMING_AVAILABLE = libDir.isDirectory() && HttpLiveStreamingSegmenter.isAvailable(libDir);
+            if (!HTTP_LIVE_STREAMING_AVAILABLE) {
+                HTTP_LIVE_STREAMING_AVAILABLE = HttpLiveStreamingSegmenter.isAvailable(MyTunesRssUtils.getNativeLibPath());
+            }
         } catch (IOException e) {
             if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn("Could not get prefs data path, assuming no http live streaming available.");

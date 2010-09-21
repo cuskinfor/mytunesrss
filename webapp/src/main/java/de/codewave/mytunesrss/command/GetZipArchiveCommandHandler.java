@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.servlet.WebConfig;
+import de.codewave.utils.io.FileCache;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.SessionManager.SessionInfo;
@@ -58,7 +59,8 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 if (tracks.getResultSize() < 10000) {
                     fileIdentifier = calculateIdentifier(tracks);
                     LOGGER.debug("Archive file ID is \"" + fileIdentifier + "\".");
-                    cachedFile = MyTunesRss.TEMP_CACHE.get(fileIdentifier).getFile();
+                    FileCache.FileInfo fileInfo = MyTunesRss.TEMP_CACHE.get(fileIdentifier);
+                    cachedFile = fileInfo != null ? fileInfo.getFile() : null;
                 } else {
                     LOGGER.debug("Result set has \"" + tracks.getResultSize() + "\" results which is too much for archive file ID generation.");
                 }

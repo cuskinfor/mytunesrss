@@ -68,5 +68,9 @@
                 <include>readme.*</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <outputDirectory>data/native</outputDirectory>
+            <directory>etc/ffmpeg/w32</directory>
+        </fileSet>
     </fileSets>
 </assembly>

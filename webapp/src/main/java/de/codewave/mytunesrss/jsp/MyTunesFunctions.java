@@ -252,7 +252,7 @@ public class MyTunesFunctions {
     }
 
     public static String playbackUrl(HttpServletRequest request, Track track, String extraPathInfo) {
-        if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Iphone && MyTunesRssWebUtils.isHttpLiveStreaming(request, track)) {
+        if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Iphone && MyTunesRssWebUtils.isHttpLiveStreaming(request, track, false)) {
             return httpLiveStreamUrl(request, track, extraPathInfo);
         }
         MyTunesRssCommand command = MyTunesRssCommand.PlayTrack;
