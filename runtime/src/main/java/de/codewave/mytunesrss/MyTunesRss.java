@@ -118,6 +118,7 @@ public class MyTunesRss {
         NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Error No. 3", "Mambo NO. 5",  null));*/
         registerShutdownHook();
         processArguments(args);
+        createMissingPrefDirs();
         copyOldPrefsAndCache();
         createDigests();
         prepareLogging();
@@ -160,6 +161,15 @@ public class MyTunesRss {
         }
         LOGGER.debug("Quit request was TRUE.");
         MyTunesRssUtils.shutdownGracefully();
+    }
+
+    private static void createMissingPrefDirs() throws IOException {
+        for (String dir : new String[] {"native", "lib", "themes", "languages", "flashplayer"}) {
+            File file = new File(MyTunesRssUtils.getPreferencesDataPath(), dir);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+        }
     }
 
     private static void prepareCacheDirs() throws IOException {
