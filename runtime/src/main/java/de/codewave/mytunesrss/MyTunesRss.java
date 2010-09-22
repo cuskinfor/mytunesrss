@@ -522,8 +522,14 @@ public class MyTunesRss {
     private static void checkHttpLiveStreamingSupport() {
         try {
             File libDir = new File(MyTunesRssUtils.getPreferencesDataPath(), "lib");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Checking native libs for http live streaming support: \"" + libDir.getAbsolutePath() + "\".");
+            }
             HTTP_LIVE_STREAMING_AVAILABLE = libDir.isDirectory() && HttpLiveStreamingSegmenter.isAvailable(libDir);
             if (!HTTP_LIVE_STREAMING_AVAILABLE) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Checking native libs for http live streaming support: \"" + MyTunesRssUtils.getNativeLibPath().getAbsolutePath() + "\".");
+                }
                 HTTP_LIVE_STREAMING_AVAILABLE = HttpLiveStreamingSegmenter.isAvailable(MyTunesRssUtils.getNativeLibPath());
             }
         } catch (IOException e) {
@@ -531,6 +537,10 @@ public class MyTunesRss {
                 LOGGER.warn("Could not get prefs data path, assuming no http live streaming available.");
             }
             HTTP_LIVE_STREAMING_AVAILABLE = false;
+        } finally {
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Http live streaming status is \"" + HTTP_LIVE_STREAMING_AVAILABLE + "\".");
+            }
         }
     }
 
