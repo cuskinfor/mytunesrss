@@ -521,7 +521,7 @@ public class MyTunesRss {
 
     private static void checkHttpLiveStreamingSupport() {
         try {
-            File libDir = new File(MyTunesRssUtils.getPreferencesDataPath(), "lib");
+            File libDir = new File(MyTunesRssUtils.getPreferencesDataPath(), "native");
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Checking native libs for http live streaming support: \"" + libDir.getAbsolutePath() + "\".");
             }

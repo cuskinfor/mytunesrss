@@ -5,9 +5,9 @@ Windows (mingw32):
 ==================
 --enable-memalign-hack --arch=x86 --target-os=mingw32 --cross-prefix=i386-mingw32- --enable-shared --disable-static --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffserver --disable-ffprobe --disable-avdevice --disable-swscale
 
-Mac OS X (64 Bit):
-==================
---enable-shared --disable-static --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffserver --disable-ffprobe --disable-avdevice --disable-swscale --arch=x86 --target-os=darwin --enable-cross-compile
+Mac OS X:
+=========
+--enable-shared --disable-static --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffserver --disable-ffprobe --disable-avdevice --disable-swscale
 
 The base revision of the sources is r25142 from the 0.6 branch of the FFmpeg subversion repository. You can
 checkout this base revision using

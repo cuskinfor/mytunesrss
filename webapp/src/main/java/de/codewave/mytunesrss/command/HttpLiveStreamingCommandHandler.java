@@ -140,7 +140,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
             String[] command = new String[6];
             command[0] = getJavaExecutablePath();
             try {
-                command[1] = "-Djna.library.path=" + MyTunesRssUtils.getPreferencesDataPath() + "/lib" + System.getProperty("path.separator") + MyTunesRssUtils.getNativeLibPath().getAbsolutePath();
+                command[1] = "-Djna.library.path=" + MyTunesRssUtils.getPreferencesDataPath() + "/native" + System.getProperty("path.separator") + MyTunesRssUtils.getNativeLibPath().getAbsolutePath();
             } catch (IOException e) {
                 throw new RuntimeException("Could not get prefs data path.", e);
             }
