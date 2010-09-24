@@ -73,6 +73,9 @@ public class MyTunesRss {
     // Location of the preferfences data path (e.g. -prefDataPath /var/mytunesrss/prefs)
     public static final String CMD_PREFS_PATH = "prefsDataPath";
 
+    // Headless mode (no GUI elements)
+    public static final String CMD_HEADLESS = "headless";
+
     // Cache directory names
     public static final String CACHEDIR_TEMP = "tmp";
     public static final String CACHEDIR_TRANSCODER = "transcoder";
@@ -107,7 +110,6 @@ public class MyTunesRss {
     public static MyTunesRssExecutorService EXECUTOR_SERVICE = new MyTunesRssExecutorService();
     public static Server ADMIN_SERVER;
     public static Queue<MyTunesRssNotification> NOTIFICATION_QUEUE = new ConcurrentLinkedQueue<MyTunesRssNotification>();
-    public static boolean HEADLESS = GraphicsEnvironment.isHeadless();
     public static ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRss.class.getClassLoader());
     public static boolean HTTP_LIVE_STREAMING_AVAILABLE;
     public static BlockingQueue<IndexedLoggingEvent> LOG_BUFFER = new LinkedBlockingQueue<IndexedLoggingEvent>();
@@ -481,7 +483,7 @@ public class MyTunesRss {
             }
 
             DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
-            if (!HEADLESS) {
+            if (!GraphicsEnvironment.isHeadless() && !COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS)) {
                 new Thread() {
                     @Override
                     public void run() {
