@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.0.0-EAP-9" date="2010-xx-xx">
+            <action dev="mdescher" type="add">
+                Added transcoder presets.
+            </action>
+        </release>
+
         <release version="4.0.0-EAP-8" date="2010-09-25">
             <action dev="mdescher" type="add">
                 Much improved log file viewer.

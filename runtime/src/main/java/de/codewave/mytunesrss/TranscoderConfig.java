@@ -41,7 +41,7 @@ public class TranscoderConfig {
         // intentionally left blank
     }
 
-    TranscoderConfig(JXPathContext context) {
+    public TranscoderConfig(JXPathContext context) {
         setName(JXPathUtils.getStringValue(context, "name", null));
         setBinary(JXPathUtils.getStringValue(context, "binary", null));
         setOptions(JXPathUtils.getStringValue(context, "options", null));
@@ -132,5 +132,10 @@ public class TranscoderConfig {
             return ArrayUtils.contains(myMp4CodecsSplitted, StringUtils.trim(StringUtils.lowerCase(mp4codec)));
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return StringUtils.isNotBlank(myName) ? myName : super.toString();
     }
 }

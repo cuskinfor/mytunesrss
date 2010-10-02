@@ -17,6 +17,7 @@ import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.task.InitializeDatabaseCallable;
+import de.codewave.mytunesrss.transcoding.PresetManager;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
@@ -113,6 +114,7 @@ public class MyTunesRss {
     public static ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRss.class.getClassLoader());
     public static boolean HTTP_LIVE_STREAMING_AVAILABLE;
     public static BlockingQueue<IndexedLoggingEvent> LOG_BUFFER = new LinkedBlockingQueue<IndexedLoggingEvent>();
+    public static PresetManager PRESET_MANAGER = new PresetManager();
 
     public static void main(final String[] args) throws Exception {
         /*NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Test1", "This is a test",  null));

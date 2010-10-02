@@ -86,4 +86,8 @@ public class MyTunesRssExecutorService {
     public synchronized void schedule(Runnable runnable, int delay, TimeUnit timeUnit) {
         GENERAL_EXECUTOR.schedule(runnable, delay, timeUnit);
     }
+
+    public synchronized void scheduleWithFixedDelay(Runnable runnable, int initialDelay, int delay, TimeUnit timeUnit) {
+        GENERAL_EXECUTOR.scheduleWithFixedDelay(runnable, initialDelay, delay, timeUnit);
+    }
 }
