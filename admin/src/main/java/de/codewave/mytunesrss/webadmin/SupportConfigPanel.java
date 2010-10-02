@@ -127,7 +127,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
                 getApplication().showError("supportConfigPanel.error.allFieldsMandatoryForSupport");
             }
         } else if (clickEvent.getSource() == myShowLog) {
-            getApplication().getMainWindow().open(new ExternalResource("-system/log"));
+            getApplication().getMainWindow().open(new ExternalResource("/-system/log"));
         } else {
             super.buttonClick(clickEvent);
         }
