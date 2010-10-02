@@ -2,16 +2,18 @@ package de.codewave.mytunesrss.remote;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.mytunesrss.servlet.WebConfig;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class MyTunesRssRemoteEnv {
-    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssRemoteEnv.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssRemoteEnv.class);
 
     private static final ThreadLocal<HttpServletRequest> THREAD_REQUESTS = new ThreadLocal<HttpServletRequest>();
 
@@ -37,7 +39,7 @@ public class MyTunesRssRemoteEnv {
                 sid = sid.substring(1);
             }
             THREAD_SESSIONS.set(RemoteApiSessionManager.getInstance(request).getSession(sid));
-            LOG.debug("Received remote API call for session \"" + sid + "\".");
+            LOGGER.debug("Received remote API call for session \"" + sid + "\".");
             request.setAttribute("auth", getAuth());
         }
     }
@@ -72,7 +74,7 @@ public class MyTunesRssRemoteEnv {
     }
 
     public static void addSession(HttpServletRequest request, Session session) {
-        LOG.debug("Adding remote API session with user \"" + session.getUser().getName() + "\" and \"" + session.getId() + "\".");
+        LOGGER.debug("Adding remote API session with user \"" + session.getUser().getName() + "\" and \"" + session.getId() + "\".");
         RemoteApiSessionManager.getInstance(request).addSession(session.getId(), session);
         THREAD_SESSIONS.set(session);
     }
@@ -81,7 +83,7 @@ public class MyTunesRssRemoteEnv {
         String sid = (String) request.getSession().getAttribute("remoteApiSessionId");
         if (StringUtils.isBlank(sid)) {
             sid = createSessionId();
-            LOG.debug("Adding remote API session with user \"" + user.getName() + "\" and \"" + sid + "\"");
+            LOGGER.debug("Adding remote API session with user \"" + user.getName() + "\" and \"" + sid + "\"");
             addSession(request, new Session(sid, user, user.getSessionTimeout() * 60000));
             request.getSession().setAttribute("remoteApiSessionId", sid);
         } else {
@@ -97,5 +99,14 @@ public class MyTunesRssRemoteEnv {
 
     public static String createSessionId() {
         return new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(UUID.randomUUID().toString() + System.currentTimeMillis()))));
+    }
+
+    public static void initRequestWebConfig() {
+        WebConfig webConfig = new WebConfig();
+        webConfig.clearWithDefaults(getRequest());
+        webConfig.setActiveTranscoders(StringUtils.join((String[]) MyTunesRssRemoteEnv.getSession().getAttribute("activeTranscoderNames"), ','));
+        MyTunesRssWebUtils.setTranscodingFromRequest(webConfig, getRequest());
+        getRequest().setAttribute("config", webConfig);
+        LOGGER.debug("Created request configuration: " + new HashMap<String, String>(webConfig.getMap()).toString());
     }
 }

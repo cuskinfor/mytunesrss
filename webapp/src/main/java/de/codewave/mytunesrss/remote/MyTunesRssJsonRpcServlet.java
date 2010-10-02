@@ -33,6 +33,7 @@ public class MyTunesRssJsonRpcServlet extends JSONRPCServlet {
         JSONRPCBridge.getGlobalBridge().registerObject("TranscodingService", new TranscodingService());
         JSONRPCBridge.getGlobalBridge().registerObject("RemoteControlService", new RemoteControlService());
         JSONRPCBridge.getGlobalBridge().registerObject("TagService", new TagService());
+        JSONRPCBridge.getGlobalBridge().registerObject("SessionService", new SessionService());
         try {
             JSONRPCBridge.setSerializer(new MyTunesRssJsonSerializer());
         } catch (Exception e) {
@@ -44,6 +45,7 @@ public class MyTunesRssJsonRpcServlet extends JSONRPCServlet {
     public void service(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
         HttpSession session = httpServletRequest.getSession(false);
         MyTunesRssRemoteEnv.setRequest(httpServletRequest);
+        MyTunesRssRemoteEnv.initRequestWebConfig();
         try {
             super.service(httpServletRequest, httpServletResponse);
         } finally {

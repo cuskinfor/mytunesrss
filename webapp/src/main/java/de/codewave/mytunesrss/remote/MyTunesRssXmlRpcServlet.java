@@ -19,6 +19,7 @@ public class MyTunesRssXmlRpcServlet extends XmlRpcServlet {
     @Override
     public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
         MyTunesRssRemoteEnv.setRequest(httpServletRequest);
+        MyTunesRssRemoteEnv.initRequestWebConfig();
         try {
             super.doPost(httpServletRequest, httpServletResponse);
         } finally {
