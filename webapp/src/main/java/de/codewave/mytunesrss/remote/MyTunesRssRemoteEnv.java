@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.remote;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.mytunesrss.remote.service.SessionService;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
@@ -104,7 +105,7 @@ public class MyTunesRssRemoteEnv {
     public static void initRequestWebConfig() {
         WebConfig webConfig = new WebConfig();
         webConfig.clearWithDefaults(getRequest());
-        webConfig.setActiveTranscoders(StringUtils.join((String[]) MyTunesRssRemoteEnv.getSession().getAttribute("activeTranscoderNames"), ','));
+        webConfig.setActiveTranscoders(StringUtils.join((String[]) MyTunesRssRemoteEnv.getSession().getAttribute(SessionService.ACTIVE_TRANSCODER_NAMES), ','));
         MyTunesRssWebUtils.setTranscodingFromRequest(webConfig, getRequest());
         getRequest().setAttribute("config", webConfig);
         LOGGER.debug("Created request configuration: " + new HashMap<String, String>(webConfig.getMap()).toString());
