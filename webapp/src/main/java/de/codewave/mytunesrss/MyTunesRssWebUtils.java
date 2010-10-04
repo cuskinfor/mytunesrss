@@ -352,8 +352,8 @@ public class MyTunesRssWebUtils {
 
     public static void rememberLogin(HttpServletRequest request, HttpServletResponse response, String username, byte[] passwordHash) {
         try {
-            StringBuilder cookieValue = new StringBuilder(Base64.encodeBase64String(username.getBytes("UTF-8")));
-            cookieValue.append(";").append(Base64.encodeBase64(passwordHash));
+            StringBuilder cookieValue = new StringBuilder(Base64.encodeBase64String(username.getBytes("UTF-8")).trim());
+            cookieValue.append(";").append(new String(Base64.encodeBase64(passwordHash), "UTF-8").trim());
             response.addCookie(createLoginCookie(request, cookieValue.toString()));
         } catch (UnsupportedEncodingException e) {
             if (LOGGER.isErrorEnabled()) {
