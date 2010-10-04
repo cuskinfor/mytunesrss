@@ -122,7 +122,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     private String getUpoadDirName() {
         String uploadDirName = MyTunesRss.CONFIG.getUploadDir();
         if (MyTunesRss.CONFIG.isUploadCreateUserDir()) {
-            uploadDirName += "/" + getWebConfig().getUserName();
+            uploadDirName += "/" + getAuthUser().getName();
         }
         return uploadDirName;
     }

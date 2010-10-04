@@ -31,12 +31,14 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                 authorize(WebAppScope.Session, userName);
                 WebConfig webConfig = getWebConfig();
                 Boolean rememberLogin = getBooleanRequestParameter("rememberLogin", false);
+                if (rememberLogin) {
+                    MyTunesRssWebUtils.rememberLogin(getRequest(), getResponse(), userName, passwordHash);
+                } else {
+                    MyTunesRssWebUtils.forgetLogin(getRequest(), getResponse());
+                }
                 String lc = getRequest().getParameter("lc");
                 MyTunesRssWebUtils.setCookieLanguage(getRequest(), getResponse(), lc);
-                webConfig.setLoginStored(rememberLogin);
-                webConfig.setUserName(userName);
-                webConfig.setPasswordHash(passwordHash);
-                MyTunesRssWebUtils.saveWebConfig(getRequest(), getResponse(), getWebConfig().getUser(), webConfig);
+                MyTunesRssWebUtils.saveWebConfig(getRequest(), getResponse(), getAuthUser(), webConfig);
                 StatisticsEventManager.getInstance().fireEvent(new LoginEvent(getAuthUser()));
                 if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
                     restartMyTunesRssCom();

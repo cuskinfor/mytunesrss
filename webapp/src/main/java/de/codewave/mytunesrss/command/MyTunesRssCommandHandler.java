@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import java.io.File;
@@ -32,8 +33,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandler
@@ -54,7 +53,11 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected boolean isAuthorized(String userName, byte[] passwordHash) {
-        return isAuthorizedLocalUsers(userName, passwordHash);
+        if (StringUtils.isNotBlank(userName) && passwordHash != null && passwordHash.length > 0) {
+            return isAuthorizedLocalUsers(userName, passwordHash);
+        } else {
+            return false;
+        }
     }
 
     private boolean isAuthorizedLocalUsers(String userName, byte[] passwordHash) {
@@ -303,9 +306,8 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         try {
             if (!isSessionAuthorized() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAutoLogin())) {
                 authorize(WebAppScope.Session, MyTunesRss.CONFIG.getAutoLogin());
-            } else if (!MyTunesRss.CONFIG.isDisableWebLogin() && !isSessionAuthorized() && getWebConfig().isLoginStored() && isAuthorized(getWebConfig().getUserName(),
-                    getWebConfig().getPasswordHash())) {
-                authorize(WebAppScope.Session, getWebConfig().getUserName());
+            } else if (!MyTunesRss.CONFIG.isDisableWebLogin() && !isSessionAuthorized() && isAuthorized(MyTunesRssWebUtils.getRememberedUsername(getRequest()), MyTunesRssWebUtils.getRememberedPasswordHash(getRequest()))) {
+                authorize(WebAppScope.Session, MyTunesRssWebUtils.getRememberedUsername(getRequest()));
             }
             if (!isRequestAuthorized()) {
                 forward(MyTunesRssResource.Login);

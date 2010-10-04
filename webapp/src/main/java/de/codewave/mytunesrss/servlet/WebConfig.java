@@ -26,9 +26,6 @@ public class WebConfig {
     private static final Logger LOG = LoggerFactory.getLogger(WebConfig.class);
 
     private static final String CONFIG_COOKIE_NAME = MyTunesRss.APPLICATION_IDENTIFIER + "Cookie";
-    private static final String CFG_USER_NAME = "userName";
-    private static final String CFG_PASSWORD_HASH = "passwordHash";
-    private static final String CFG_LOGIN_STORED = "rememberLogin";
     private static final String CFG_FEED_TYPE_RSS = "feedTypeRss";
     private static final String CFG_FEED_TYPE_PLAYLIST = "feedTypePlaylist";
     private static final String CFG_RSS_LIMIT = "rssLimit";
@@ -60,7 +57,7 @@ public class WebConfig {
     private static final String CFG_SHOW_ADD_TO_PLAYLIST = "showAddToPlaylist";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
-    private static final String[] VALID_NAMES = {CFG_USER_NAME, CFG_PASSWORD_HASH, CFG_LOGIN_STORED, CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE,
+    private static final String[] VALID_NAMES = {CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE,
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
             CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, CFG_PLAYLIST_TYPE, CFG_THEME, CFG_RANDOM_SOURCE,
             CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
@@ -124,8 +121,6 @@ public class WebConfig {
         myConfigValues.put(CFG_FEED_TYPE_RSS, "true");
         myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "true");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
-        myConfigValues.put(CFG_LOGIN_STORED, "false");
-        myConfigValues.put(CFG_PASSWORD_HASH, "");
         myConfigValues.put(CFG_PAGE_SIZE, "0");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
@@ -280,43 +275,6 @@ public class WebConfig {
 
     public boolean isShowPlayer() {
         return Boolean.valueOf(myConfigValues.get(CFG_SHOW_PLAYER));
-    }
-
-    public boolean isLoginStored() {
-        String passwordHashStored = myConfigValues.get(CFG_LOGIN_STORED);
-        return Boolean.valueOf(passwordHashStored);
-    }
-
-    public void setLoginStored(boolean passwordHashStored) {
-        myConfigValues.put(CFG_LOGIN_STORED, Boolean.toString(passwordHashStored));
-    }
-
-    public byte[] getPasswordHash() {
-        String passwordHash = myConfigValues.get(CFG_PASSWORD_HASH);
-        if (StringUtils.isNotEmpty(passwordHash)) {
-            try {
-                return MyTunesRssBase64Utils.decode(passwordHash);
-            } catch (IllegalArgumentException e) {
-                return null;// ignore exception
-            }
-        }
-        return null;
-    }
-
-    public void setPasswordHash(byte[] passwordHash) {
-        myConfigValues.put(CFG_PASSWORD_HASH, MyTunesRssBase64Utils.encode(passwordHash));
-    }
-
-    public String getUserName() {
-        return myConfigValues.get(CFG_USER_NAME);
-    }
-
-    public User getUser() {
-        return MyTunesRss.CONFIG.getUser(getUserName());
-    }
-
-    public void setUserName(String userName) {
-        myConfigValues.put(CFG_USER_NAME, userName);
     }
 
     public String getTheme() {
