@@ -69,6 +69,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         error |= transferAndValidateRandomValues(webConfig);
         error |= transferAndValidateLastUpdatedTrackCount(webConfig);
         error |= transferAndValidateMostPlayedTrackCount(webConfig);
+        error |= transferAndValidateRecentlyPlayedTrackCount(webConfig);
         error |= transferAndValidatePassword();
         error |= transferAndValidateLastFmAccount();
         return !error;
@@ -157,6 +158,20 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
             }
         } catch (NumberFormatException e) {
             addError(new BundleError("error.settingsMostPlayedPlaylistSizeRange"));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean transferAndValidateRecentlyPlayedTrackCount(WebConfig webConfig) {
+        try {
+            webConfig.setRecentlyPlayedPlaylistSize(getIntegerRequestParameter("recentlyPlayedPlaylistSize", 0));
+            if (webConfig.getRecentlyPlayedPlaylistSize()  < 0 || webConfig.getRecentlyPlayedPlaylistSize() > 999) {
+                addError(new BundleError("error.settingsRecentlyPlayedPlaylistSizeRange"));
+                return true;
+            }
+        } catch (NumberFormatException e) {
+            addError(new BundleError("error.settingsRecentlyPlayedPlaylistSizeRange"));
             return true;
         }
         return false;

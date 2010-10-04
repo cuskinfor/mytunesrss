@@ -37,6 +37,8 @@
 
     <fragment name="findMostPlayedTracksOrderClause">ORDER BY playcount DESC LIMIT :maxCount</fragment>
 
+    <fragment name="findRecentlyPlayedTracksOrderClause">ORDER BY ts_played DESC LIMIT :maxCount</fragment>
+
     <fragment name="likeEscape">ESCAPE '\\'</fragment>
 
 </statements>

@@ -250,6 +250,18 @@
                                 </td>
                             </tr>
                         </c:if>
+                        <c:if test="${authUser.specialPlaylists}">
+                            <tr <mt:flipFlop/>>
+                                <td class="label"><fmt:message key="settings.recentlyPlayedPlaylistSize" /></td>
+                                <td>
+                                    <input class="number"
+                                           type="text"
+                                           name="recentlyPlayedPlaylistSize"
+                                           maxlength="3"
+                                           value="<c:out value="${cwfn:choose(config.recentlyPlayedPlaylistSize > 0, config.recentlyPlayedPlaylistSize, '')}"/>" />
+                                </td>
+                            </tr>
+                        </c:if>
                         <c:if test="${globalConfig.myTunesRssComActive}">
                             <tr <mt:flipFlop/>>
                                 <td class="label"><fmt:message key="settings.myTunesRssComAddress" /></td>

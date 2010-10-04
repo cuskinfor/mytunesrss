@@ -25,6 +25,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
     public static final String PSEUDO_ID_ALL_BY_ALBUM = "PlaylistAllByAlbum";
     public static final String PSEUDO_ID_RANDOM = "PlaylistRandom";
     public static final String PSEUDO_ID_MOST_PLAYED = "PlaylistMostPlayed";
+    public static final String PSEUDO_ID_RECENTLY_PLAYED = "PlaylistRecentlyPlayed";
     public static final String PSEUDO_ID_LAST_UPDATED = "PlaylistLastUpdated";
 
     private String myId;
@@ -55,6 +56,10 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
             statement.setInt("maxCount", Integer.parseInt(splitted[1]));
         } else if (myId.startsWith(PSEUDO_ID_MOST_PLAYED)) {
             statement = MyTunesRssUtils.createStatement(connection, "findMostPlayedTracks", conditionals);
+            String[] splitted = myId.split("_");
+            statement.setInt("maxCount", Integer.parseInt(splitted[1]));
+        } else if (myId.startsWith(PSEUDO_ID_RECENTLY_PLAYED)) {
+            statement = MyTunesRssUtils.createStatement(connection, "findRecentlyPlayedTracks", conditionals);
             String[] splitted = myId.split("_");
             statement.setInt("maxCount", Integer.parseInt(splitted[1]));
         } else if (myId.startsWith(PSEUDO_ID_RANDOM)) {

@@ -38,6 +38,7 @@ public class WebConfig {
     private static final String CFG_RANDOM_PLAYLIST_SIZE = "randomPlaylistSize";
     private static final String CFG_LAST_UPDATED_PLAYLIST_SIZE = "lastUpdatedPlaylistSize";
     private static final String CFG_MOST_PLAYED_PLAYLIST_SIZE = "mostPlayedPlaylistSize";
+    private static final String CFG_RECENTLY_PLAYED_PLAYLIST_SIZE = "recentlyPlayedPlaylistSize";
     private static final String CFG_PLAYLIST_TYPE = "playlistType";
     private static final String CFG_THEME = "theme";
     private static final String CFG_RANDOM_SOURCE = "rndSrc";
@@ -61,7 +62,7 @@ public class WebConfig {
 
     private static final String[] VALID_NAMES = {CFG_USER_NAME, CFG_PASSWORD_HASH, CFG_LOGIN_STORED, CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE,
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
-            CFG_PLAYLIST_TYPE, CFG_THEME, CFG_RANDOM_SOURCE,
+            CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, CFG_PLAYLIST_TYPE, CFG_THEME, CFG_RANDOM_SOURCE,
             CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
             CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS, CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS, CFG_SHOW_ADD_TO_PLAYLIST};
 
@@ -131,6 +132,7 @@ public class WebConfig {
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
+        myConfigValues.put(CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.M3u.name());
         myConfigValues.put(CFG_RANDOM_SOURCE, "");
         myConfigValues.put(CFG_YAHOO_MEDIAPLAYER, "false");
@@ -420,6 +422,14 @@ public class WebConfig {
 
     public void setMostPlayedPlaylistSize(int count) {
         myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, Integer.toString(count));
+    }
+
+    public int getRecentlyPlayedPlaylistSize() {
+        return Integer.parseInt(myConfigValues.get(CFG_RECENTLY_PLAYED_PLAYLIST_SIZE));
+    }
+
+    public void setRecentlyPlayedPlaylistSize(int count) {
+        myConfigValues.put(CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, Integer.toString(count));
     }
 
     public String getPlaylistFileSuffix() {

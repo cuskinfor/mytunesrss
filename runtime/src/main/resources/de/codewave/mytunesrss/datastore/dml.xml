@@ -605,6 +605,18 @@
         </sql>
     </statement>
 
+    <statement name="findRecentlyPlayedTracks">
+        <sql>
+            <![CDATA[
+            {selectLimitedTracks}
+            FROM track t<restricted>, link_track_playlist rltp
+            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
+            AND t.id = rltp.track_id</restricted>
+            {findRecentlyPlayedTracksOrderClause}
+            ]]>
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[

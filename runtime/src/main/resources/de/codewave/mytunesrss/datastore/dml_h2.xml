@@ -34,7 +34,9 @@
     <fragment name="findLastUpdatedTracksOrderClause">ORDER BY ts_updated DESC</fragment>
 
     <fragment name="findMostPlayedTracksOrderClause">ORDER BY playcount DESC</fragment>
-    
+
+    <fragment name="findRecentlyPlayedTracksOrderClause">ORDER BY ts_played DESC</fragment>
+
     <fragment name="likeEscape">ESCAPE '\'</fragment>
 
 </statements>

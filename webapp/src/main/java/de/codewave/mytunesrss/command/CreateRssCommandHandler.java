@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
+import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
@@ -41,6 +43,7 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
                     }
                 }
                 getRequest().setAttribute("tracks", tracks);
+                setDateFieldIntoRequest();
                 forward(MyTunesRssResource.TemplateRss);
             } else {
                 addError(new BundleError("error.emptyFeed"));
@@ -48,6 +51,18 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
             }
         } else {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
+    }
+
+    /**
+     * Set the correct date field name into the request. Usually this is tsUpdated but for the playlist with the
+     * most recently played tracks it is tsPlayed.
+     */
+    private void setDateFieldIntoRequest() {
+        if (StringUtils.startsWith(getRequestParameter("playlist", null), FindPlaylistTracksQuery.PSEUDO_ID_RECENTLY_PLAYED)) {
+            getRequest().setAttribute("dateField", "tsPlayed");
+        } else {
+            getRequest().setAttribute("dateField", "tsUpdated");
         }
     }
 }

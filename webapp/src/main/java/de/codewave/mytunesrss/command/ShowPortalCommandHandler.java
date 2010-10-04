@@ -40,6 +40,13 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                                                MessageFormat.format(getBundleString("playlist.specialMostPlayed"), mostPlayedPlaylistSize),
                                                mostPlayedPlaylistSize));
                 }
+                int recentlyPlayedPlaylistSize = getWebConfig().getRecentlyPlayedPlaylistSize();
+                if (recentlyPlayedPlaylistSize > 0) {
+                    playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RECENTLY_PLAYED + "_" + recentlyPlayedPlaylistSize,
+                                               PlaylistType.MyTunesSmart,
+                                               MessageFormat.format(getBundleString("playlist.specialRecentlyPlayed"), recentlyPlayedPlaylistSize),
+                                               recentlyPlayedPlaylistSize));
+                }
                 int lastUpdatedPlaylistSize = getWebConfig().getLastUpdatedPlaylistSize();
                 if (lastUpdatedPlaylistSize > 0) {
                     playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_LAST_UPDATED + "_" + lastUpdatedPlaylistSize,
