@@ -609,8 +609,9 @@
         <sql>
             <![CDATA[
             {selectLimitedTracks}
-            FROM track t<restricted>, link_track_playlist rltp
-            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
+            FROM track t<restricted>, link_track_playlist rltp</restricted>
+            WHERE t.ts_played IS NOT NULL
+            <restricted>AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND t.id = rltp.track_id</restricted>
             {findRecentlyPlayedTracksOrderClause}
             ]]>
