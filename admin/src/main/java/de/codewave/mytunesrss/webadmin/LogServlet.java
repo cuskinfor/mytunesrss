@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.IndexedLoggingEvent;
 import de.codewave.mytunesrss.MyTunesRss;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Layout;
 import org.apache.log4j.PatternLayout;
 
 import javax.servlet.ServletException;
@@ -41,6 +42,12 @@ public class LogServlet extends HttpServlet {
             IndexedLoggingEvent indexedLoggingEvent = iter.next();
             if (indexedLoggingEvent.getIndex() >= index) {
                 baos.write(layout.format(indexedLoggingEvent.getLoggingEvent()).getBytes("UTF-8"));
+                if (layout.ignoresThrowable() && indexedLoggingEvent.getLoggingEvent().getThrowableStrRep() != null) {
+                    for (String s : indexedLoggingEvent.getLoggingEvent().getThrowableStrRep()) {
+                        baos.write(s.getBytes("UTF-8"));
+                        baos.write(Layout.LINE_SEP.getBytes("UTF-8"));
+                    }
+                }
             }
             lastIndex = indexedLoggingEvent.getIndex();
         }
