@@ -25,7 +25,8 @@ public class LogServlet extends HttpServlet {
         if (StringUtils.isBlank(request.getParameter("index"))) {
             sendPage(response);
         } else {
-            sendLogLines(Long.parseLong(request.getParameter("index")), response);
+            String lineSeparator = "\r\n";
+            sendLogLines(Long.parseLong(request.getParameter("index")), lineSeparator, response);
         }
     }
 
@@ -34,9 +35,9 @@ public class LogServlet extends HttpServlet {
         IOUtils.copy(getClass().getResourceAsStream("logservlet.html"), response.getOutputStream());
     }
 
-    private void sendLogLines(long index, HttpServletResponse response) throws IOException {
+    private void sendLogLines(long index, String lineSeparator, HttpServletResponse response) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
+        PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m" + lineSeparator);
         long lastIndex = Long.MIN_VALUE;
         for (Iterator<IndexedLoggingEvent> iter = MyTunesRss.LOG_BUFFER.iterator(); iter.hasNext();) {
             IndexedLoggingEvent indexedLoggingEvent = iter.next();
@@ -45,7 +46,7 @@ public class LogServlet extends HttpServlet {
                 if (layout.ignoresThrowable() && indexedLoggingEvent.getLoggingEvent().getThrowableStrRep() != null) {
                     for (String s : indexedLoggingEvent.getLoggingEvent().getThrowableStrRep()) {
                         baos.write(s.getBytes("UTF-8"));
-                        baos.write(Layout.LINE_SEP.getBytes("UTF-8"));
+                        baos.write(lineSeparator.getBytes("UTF-8"));
                     }
                 }
             }
@@ -64,4 +65,5 @@ public class LogServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
+
 }
