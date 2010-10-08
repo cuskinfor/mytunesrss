@@ -61,7 +61,7 @@ public class LogServlet extends HttpServlet {
             response.setContentLength(buffer.length);
             response.getOutputStream().write(buffer);
         } else {
-            response.sendError(HttpServletResponse.SC_NO_CONTENT);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 }
