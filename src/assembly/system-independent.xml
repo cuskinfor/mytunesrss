@@ -73,6 +73,7 @@
             <directory>etc</directory>
             <includes>
                 <include>readme.*</include>
+                <include>startup.bat</include>
             </includes>
         </fileSet>
     </fileSets>

@@ -12,6 +12,9 @@
 # Do not start browser on admin port after starting MyTunesRSS
 # -noBrowser
 #
+# Run without any GUI components (e.g. no admin server port notification at startup)
+# -headless
+#
 # Preferences data path (otherwise the default is used)
 # -prefsDataPath /var/mytunesrss/prefs
 #
