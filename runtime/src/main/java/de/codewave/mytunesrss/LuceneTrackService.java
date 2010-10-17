@@ -5,6 +5,7 @@ import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultBuilder;
+import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
@@ -46,7 +47,6 @@ public class LuceneTrackService {
         Directory directory = getDirectory();
         Analyzer analyzer = new WhitespaceAnalyzer();
         IndexWriter iwriter = new IndexWriter(directory, analyzer, true, new IndexWriter.MaxFieldLength(300));
-        FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         final Map<String, List<String>> trackTagMap = new HashMap<String, List<String>>();
         session.executeQuery(new DataStoreQuery<Object>() {
@@ -66,6 +66,9 @@ public class LuceneTrackService {
                 return null;
             }
         });
+        FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
+        query.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
+        query.setFetchSize(10000);
         DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
         for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
             Document document = createTrackDocument(track, trackTagMap);
@@ -110,7 +113,6 @@ public class LuceneTrackService {
         Directory directory = getDirectory();
         Analyzer analyzer = new WhitespaceAnalyzer();
         IndexWriter iwriter = new IndexWriter(directory, analyzer, false, new IndexWriter.MaxFieldLength(300));
-        FindTrackQuery query = FindTrackQuery.getForIds(trackIds);
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         final Map<String, List<String>> trackTagMap = new HashMap<String, List<String>>();
         session.executeQuery(new DataStoreQuery<Object>() {
@@ -130,6 +132,9 @@ public class LuceneTrackService {
                 return null;
             }
         });
+        FindTrackQuery query = FindTrackQuery.getForIds(trackIds);
+        query.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
+        query.setFetchSize(10000);
         DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
         Set<String> deletedTracks = new HashSet<String>(Arrays.asList(trackIds));
         for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {

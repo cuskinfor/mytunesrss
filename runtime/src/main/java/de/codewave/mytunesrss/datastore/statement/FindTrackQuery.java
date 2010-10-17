@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryParser.ParseException;
@@ -88,9 +89,14 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private String[] myArtists;
     private SortOrder mySortOrder;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
+    private ResultSetType myResultSetType = ResultSetType.TYPE_SCROLL_INSENSITIVE;
 
     private FindTrackQuery() {
         // intentionally left blank
+    }
+
+    public void setResultSetType(ResultSetType resultSetType) {
+        myResultSetType = resultSetType;
     }
 
     public QueryResult<Track> execute(Connection connection) throws SQLException {
@@ -99,7 +105,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         MyTunesRssUtils.createStatement(connection, "createSearchTempTables").execute(); // create if not exists
         MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
         if (!CollectionUtils.isEmpty(myIds)) {
-            statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
+            statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable", myResultSetType);
             statement.setObject("track_id", myIds);
             statement.execute();
             conditionals.put("temptables", Boolean.TRUE);

@@ -9,6 +9,10 @@
 
         <release version="4.0.0-EAP-10" date="2010-xx-xx">
             <action dev="mdescher" type="update">
+                Prevent OutOfMemory errors when building Lucene index by using forward only result set type and
+                fetch size of 10.000 when fetching tracks for the index.
+            </action>
+            <action dev="mdescher" type="update">
                 Updated japanese web interface translation.
             </action>
         </release>

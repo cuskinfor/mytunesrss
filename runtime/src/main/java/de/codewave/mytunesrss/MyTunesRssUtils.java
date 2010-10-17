@@ -7,6 +7,7 @@ import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -281,10 +282,18 @@ public class MyTunesRssUtils {
     }
 
     public static SmartStatement createStatement(Connection connection, String name) throws SQLException {
-        return createStatement(connection, name, Collections.<String, Boolean>emptyMap());
+        return createStatement(connection, name, Collections.<String, Boolean>emptyMap(), ResultSetType.TYPE_SCROLL_INSENSITIVE);
     }
 
-    public static SmartStatement createStatement(Connection connection, String name, final Map<String, Boolean> conditionals) throws SQLException {
+    public static SmartStatement createStatement(Connection connection, String name, Map<String, Boolean> conditionals) throws SQLException {
+        return createStatement(connection, name, conditionals, ResultSetType.TYPE_SCROLL_INSENSITIVE);
+    }
+
+    public static SmartStatement createStatement(Connection connection, String name, ResultSetType resultSetType) throws SQLException {
+        return createStatement(connection, name, Collections.<String, Boolean>emptyMap(), ResultSetType.TYPE_SCROLL_INSENSITIVE);
+    }
+
+    public static SmartStatement createStatement(Connection connection, String name, final Map<String, Boolean> conditionals, ResultSetType resultSetType) throws SQLException {
         return MyTunesRss.STORE.getSmartStatementFactory().createStatement(connection, name, (Map<String, Boolean>) Proxy.newProxyInstance(MyTunesRss.class.getClassLoader(), new Class[]{Map.class}, new InvocationHandler() {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if ("get".equals(method.getName()) && args.length == 1 && args[0] instanceof String) {
@@ -293,7 +302,7 @@ public class MyTunesRssUtils {
                     return method.invoke(conditionals, args);
                 }
             }
-        }));
+        }), resultSetType);
     }
 
     public static void executeDatabaseUpdate() {
