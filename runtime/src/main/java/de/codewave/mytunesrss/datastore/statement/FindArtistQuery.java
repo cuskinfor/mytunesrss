@@ -35,7 +35,7 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
         myAlbum = album;
         myGenre = genre;
         myIndex = index;
-        myRestrictedPlaylistIds = user.getPlaylistIds();
+        myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
     }
 
     public QueryResult<Artist> execute(Connection connection) throws SQLException {

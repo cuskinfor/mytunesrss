@@ -28,7 +28,7 @@ public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ge
 
     public FindGenreQuery(User user, int index) {
         myIndex = index;
-        myRestrictedPlaylistIds = user.getPlaylistIds();
+        myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
     }
 
     public QueryResult<Genre> execute(Connection connection) throws SQLException {

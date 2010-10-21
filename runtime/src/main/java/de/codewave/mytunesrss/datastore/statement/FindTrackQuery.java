@@ -34,7 +34,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     public static FindTrackQuery getForSearchTerm(User user, String searchTerm, int fuzziness, SortOrder sortOrder) throws IOException, ParseException {
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
-        query.myRestrictedPlaylistIds = user.getPlaylistIds();
+        query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         String[] searchTerms = StringUtils.split(StringUtils.defaultString(StringUtils.lowerCase(searchTerm)), " ");
         Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness);
         query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
@@ -44,7 +44,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     public static FindTrackQuery getForExpertSearchTerm(User user, String searchTerm, SortOrder sortOrder) throws IOException, ParseException, LuceneQueryParserException {
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
-        query.myRestrictedPlaylistIds = user.getPlaylistIds();
+        query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerm);
         query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
         return query;
@@ -57,7 +57,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         for (int i = 0; i < albums.length; i++) {
             query.myAlbums[i] = albums[i].toLowerCase();
         }
-        query.myRestrictedPlaylistIds = user.getPlaylistIds();
+        query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         return query;
     }
 
@@ -68,7 +68,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         for (int i = 0; i < artists.length; i++) {
             query.myArtists[i] = artists[i].toLowerCase();
         }
-        query.myRestrictedPlaylistIds = user.getPlaylistIds();
+        query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         return query;
     }
 
@@ -79,7 +79,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         for (int i = 0; i < genres.length; i++) {
             query.myGenres[i] = genres[i].toLowerCase();
         }
-        query.myRestrictedPlaylistIds = user.getPlaylistIds();
+        query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         return query;
     }
 

@@ -139,7 +139,8 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         addComponent(panel);
         myPlaylistsRestrictions = new Table();
         myPlaylistsRestrictions.setWidth(100, Sizeable.UNITS_PERCENTAGE);
-        myPlaylistsRestrictions.addContainerProperty("restricted", CheckBox.class, null, "", null, null);
+        myPlaylistsRestrictions.addContainerProperty("restricted", CheckBox.class, null, getBundleString("editUserConfigPanel.playlists.restricted"), null, null);
+        myPlaylistsRestrictions.addContainerProperty("excluded", CheckBox.class, null, getBundleString("editUserConfigPanel.playlists.excluded"), null, null);
         myPlaylistsRestrictions.addContainerProperty("name", String.class, null, getBundleString("editUserConfigPanel.playlists.name"), null, null);
         myPlaylistsRestrictions.setColumnExpandRatio("name", 1);
         myPlaylistsRestrictions.setEditable(false);
@@ -264,12 +265,14 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
                 playlists = session.executeQuery(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder, PlaylistType.M3uFile, PlaylistType.MyTunes, PlaylistType.MyTunesSmart), null, null, true)).getResults();
                 for (Playlist playlist : playlists) {
                     CheckBox restricted = new CheckBox();
-                    restricted.setValue(myUser.getPlaylistIds().contains(playlist.getId()));
+                    restricted.setValue(myUser.getRestrictedPlaylistIds().contains(playlist.getId()));
+                    CheckBox excluded = new CheckBox();
+                    restricted.setValue(myUser.getExcludedPlaylistIds().contains(playlist.getId()));
                     StringBuilder name = new StringBuilder();
                     for (Playlist pathElement : MyTunesRssUtils.getPlaylistPath(playlist, playlists)) {
                         name.append(" \u21E8 ").append(pathElement.getName());
                     }
-                    myPlaylistsRestrictions.addItem(new Object[]{restricted, name.substring(3)}, playlist);
+                    myPlaylistsRestrictions.addItem(new Object[]{restricted, excluded, name.substring(3)}, playlist);
                 }
                 myPlaylistsRestrictions.sort();
             } catch (SQLException e) {
@@ -337,14 +340,19 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setTranscoder(myPermTranscoder.booleanValue());
         myUser.setUpload(myPermUpload.booleanValue());
         myUser.setUrlEncryption(myEncryptUrls.booleanValue());
-        Set<String> ids = new HashSet<String>();
+        Set<String> restricted = new HashSet<String>();
+        Set<String> excluded = new HashSet<String>();
         for (Object itemId : myPlaylistsRestrictions.getItemIds()) {
             Playlist playlist = (Playlist) itemId;
             if ((Boolean) getTableCellPropertyValue(myPlaylistsRestrictions, playlist, "restricted")) {
-                ids.add(playlist.getId());
+                restricted.add(playlist.getId());
+            }
+            if ((Boolean) getTableCellPropertyValue(myPlaylistsRestrictions, playlist, "excluded")) {
+                excluded.add(playlist.getId());
             }
         }
-        myUser.setPlaylistIds(ids);
+        myUser.setRestrictedPlaylistIds(restricted);
+        myUser.setExcludedPlaylistIds(excluded);
         myUser.clearForceTranscoders();
         for (Object transcoderName : myForceTranscoders.getItemIds()) {
             if ((Boolean) getTableCellPropertyValue(myForceTranscoders, transcoderName, "active")) {

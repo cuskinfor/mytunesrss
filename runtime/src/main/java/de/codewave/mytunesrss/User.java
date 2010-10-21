@@ -71,7 +71,8 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private boolean mySpecialPlaylists = true;
     private boolean myTranscoder;
     private int myBandwidthLimit;
-    private Set<String> myPlaylistIds = new HashSet<String>();
+    private Set<String> myRestrictedPlaylistIds = new HashSet<String>();
+    private Set<String> myExcludedPlaylistIds = new HashSet<String>();
     private boolean mySharedUser;
     private Map<String, String> myWebConfigs = new HashMap<String, String>();
     private boolean myCreatePlaylists;
@@ -270,20 +271,36 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         myBandwidthLimit = bandwidthLimit;
     }
 
-    public List<String> getPlaylistIds() {
-        return getParent() != null ? getParent().getPlaylistIds() : new ArrayList<String>(myPlaylistIds);
+    public List<String> getRestrictedPlaylistIds() {
+        return getParent() != null ? getParent().getRestrictedPlaylistIds() : new ArrayList<String>(myRestrictedPlaylistIds);
     }
 
-    public void addPlaylistId(String playlistId) {
-        myPlaylistIds.add(playlistId);
+    public void addRestrictedPlaylistId(String playlistId) {
+        myRestrictedPlaylistIds.add(playlistId);
     }
 
-    public void removePlaylistId(String playlistId) {
-        myPlaylistIds.remove(playlistId);
+    public void removeRestrictedPlaylistId(String playlistId) {
+        myRestrictedPlaylistIds.remove(playlistId);
     }
 
-    public void setPlaylistIds(Set<String> playlistIds) {
-        myPlaylistIds = new HashSet<String>(playlistIds);
+    public void setRestrictedPlaylistIds(Set<String> playlistIds) {
+        myRestrictedPlaylistIds = new HashSet<String>(playlistIds);
+    }
+
+    public List<String> getExcludedPlaylistIds() {
+        return getParent() != null ? getParent().getExcludedPlaylistIds() : new ArrayList<String>(myExcludedPlaylistIds);
+    }
+
+    public void addExcludedPlaylistId(String playlistId) {
+        myExcludedPlaylistIds.add(playlistId);
+    }
+
+    public void removeExcludedPlaylistId(String playlistId) {
+        myExcludedPlaylistIds.remove(playlistId);
+    }
+
+    public void setExcludedPlaylistIds(Set<String> playlistIds) {
+        myExcludedPlaylistIds = new HashSet<String>(playlistIds);
     }
 
     public boolean isSharedUser() {
@@ -524,9 +541,13 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setTranscoder(JXPathUtils.getBooleanValue(settings, "featureTranscoder", myTranscoder));
         setSessionTimeout(JXPathUtils.getIntValue(settings, "sessionTimeout", mySessionTimeout));
         setBandwidthLimit(JXPathUtils.getIntValue(settings, "bandwidthLimit", myBandwidthLimit));
-        Iterator<JXPathContext> playlistIdIterator = JXPathUtils.getContextIterator(settings, "playlists/id");
+        Iterator<JXPathContext> playlistIdIterator = JXPathUtils.getContextIterator(settings, "playlists/restricted");
         while (playlistIdIterator.hasNext()) {
-            addPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), ".", null));
+            addRestrictedPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), ".", null));
+        }
+        playlistIdIterator = JXPathUtils.getContextIterator(settings, "playlists/excluded");
+        while (playlistIdIterator.hasNext()) {
+            addExcludedPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), ".", null));
         }
         setSharedUser(JXPathUtils.getBooleanValue(settings, "shared", false));
         Iterator<JXPathContext> webConfigIterator = JXPathUtils.getContextIterator(settings, "webConfigs/config");
@@ -591,11 +612,14 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createIntElement(settings, "sessionTimeout", getSessionTimeout()));
         users.appendChild(DOMUtils.createIntElement(settings, "bandwidthLimit", getBandwidthLimit()));
         users.appendChild(DOMUtils.createTextElement(settings, "email", getEmail()));
-        if (!CollectionUtils.isEmpty(getPlaylistIds())) {
+        if (!CollectionUtils.isEmpty(getRestrictedPlaylistIds()) || !CollectionUtils.isEmpty(getExcludedPlaylistIds())) {
             Element playlists = settings.createElement("playlists");
             users.appendChild(playlists);
-            for (String playlistId : getPlaylistIds()) {
-                playlists.appendChild(DOMUtils.createTextElement(settings, "id", playlistId));
+            for (String playlistId : getRestrictedPlaylistIds()) {
+                playlists.appendChild(DOMUtils.createTextElement(settings, "restricted", playlistId));
+            }
+            for (String playlistId : getExcludedPlaylistIds()) {
+                playlists.appendChild(DOMUtils.createTextElement(settings, "excluded", playlistId));
             }
         }
         users.appendChild(DOMUtils.createBooleanElement(settings, "shared", isSharedUser()));

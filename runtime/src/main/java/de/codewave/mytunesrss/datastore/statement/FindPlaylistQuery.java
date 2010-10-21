@@ -37,7 +37,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
 
     public FindPlaylistQuery(User user, List<PlaylistType> types, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly) {
         this(types, id, containerId, includeHidden);
-        myRestrictedPlaylistIds = user.getPlaylistIds();
+        myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         myUserName = user.getName();
         myMatchingOwnerOnly = matchingOwnerOnly;
     }

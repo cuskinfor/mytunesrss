@@ -41,7 +41,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
 
     public FindPlaylistTracksQuery(User user, String id, SortOrder sortOrder) {
         this(id, sortOrder);
-        myRestrictionPlaylistIds = user.getPlaylistIds();
+        myRestrictionPlaylistIds = user.getRestrictedPlaylistIds();
     }
 
     public void setResultSetType(ResultSetType resultSetType) {
